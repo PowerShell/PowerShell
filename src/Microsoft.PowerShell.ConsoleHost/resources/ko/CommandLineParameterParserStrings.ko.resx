@@ -1,0 +1,240 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CommandAlreadySpecified" xml:space="preserve">
+    <value>-Command, -CommandWithArgs 또는 -EncodedCommand로 명령이 이미 지정되었으므로 명령을 처리할 수 없습니다.</value>
+  </data>
+  <data name="MissingCommandParameter" xml:space="preserve">
+    <value>필수 매개 변수가 없어서 명령을 처리할 수 없습니다. -Command 뒤에 명령을 지정해야 합니다.</value>
+  </data>
+  <data name="UnknownParameter" xml:space="preserve">
+    <value>매개 변수 '{0}'을(를) 인식할 수 없습니다.</value>
+  </data>
+  <data name="TooManyParametersToCommand" xml:space="preserve">
+    <value>-Command 매개 변수로 '-'를 지정했습니다. -Command에 다른 인수는 허용되지 않습니다.</value>
+  </data>
+  <data name="StdinNotRedirected" xml:space="preserve">
+    <value>'-'가 -Command의 인수로 지정되었지만 이 프로세스에 대해 표준 입력이 리디렉션되지 않았습니다.</value>
+  </data>
+  <data name="MissingOutputFormatParameter" xml:space="preserve">
+    <value>OutputFormat 매개 변수에 인수가 제공되지 않아 명령을 실행할 수 없습니다.
+이 매개 변수에 대해 다음 형식 중 하나를 지정하세요:
+{0}</value>
+  </data>
+  <data name="MissingInputFormatParameter" xml:space="preserve">
+    <value>-InputFormat 매개 변수에 인수가 필요하므로 명령을 처리할 수 없습니다. 이 매개 변수에 유효한 형식 인수를 지정하세요.
+유효한 형식: 
+{0}</value>
+  </data>
+  <data name="BadFormatParameterValue" xml:space="preserve">
+    <value>매개 변수 값이 잘못되어 명령을 처리할 수 없습니다. "{0}"은(는) 유효한 형식이 아닙니다.
+유효한 형식: 
+{1}</value>
+  </data>
+  <data name="ArgsAlreadySpecified" xml:space="preserve">
+    <value>-EncodedArguments를 사용해 -Command 또는 -EncodedCommand의 인수가 이미 지정되었으므로 명령을 처리할 수 없습니다.</value>
+  </data>
+  <data name="MissingArgsValue" xml:space="preserve">
+    <value>-EncodedArguments에는 값이 필요하므로 명령을 처리할 수 없습니다. -EncodedArguments 매개 변수의 값을 지정하세요.</value>
+  </data>
+  <data name="MissingFileArgument" xml:space="preserve">
+    <value>File 매개 변수에 파일 경로가 필요하므로 명령을 실행할 수 없습니다. File 매개 변수의 경로를 제공한 후 명령을 다시 시도하세요.</value>
+  </data>
+  <data name="MissingWindowStyleArgument" xml:space="preserve">
+    <value>-WindowStyle에는 normal, hidden, minimized 또는 maximized 인수가 필요하므로 명령을 처리할 수 없습니다. 이러한 값 중 하나를 지정한 후 다시 시도하세요.</value>
+  </data>
+  <data name="InvalidFileArgument" xml:space="preserve">
+    <value>-File '{0}' 처리에 실패했습니다. {1} -File 매개 변수에 올바른 경로를 지정하세요.</value>
+  </data>
+  <data name="InvalidWindowStyleArgument" xml:space="preserve">
+    <value>-WindowStyle '{0}'을(를) 처리하지 못했습니다: {1}.</value>
+  </data>
+  <data name="InvalidFileArgumentExtension" xml:space="preserve">
+    <value>파일에 '.ps1' 확장명이 없어 -File '{0}'을(를) 처리하지 못했습니다. 유효한 PowerShell 스크립트 파일 이름을 지정한 후 다시 시도하세요.</value>
+  </data>
+  <data name="ArgumentFileDoesNotExist" xml:space="preserve">
+    <value>'{0}' 인수가 스크립트 파일 이름으로 인식되지 않습니다. 이름의 철자를 확인하거나, 포함된 경로가 올바른지 확인한 후 다시 시도하세요.</value>
+  </data>
+  <data name="BadArgsValue" xml:space="preserve">
+    <value>-EncodedArguments로 지정된 값이 제대로 인코딩되지 않아 명령을 처리할 수 없습니다. 값이 Base64로 인코딩되어야 합니다.</value>
+  </data>
+  <data name="BadCommandValue" xml:space="preserve">
+    <value>-EncodedCommand로 지정된 값이 제대로 인코딩되지 않아 명령을 처리할 수 없습니다. 값이 Base64로 인코딩되어야 합니다.</value>
+  </data>
+  <data name="MissingExecutionPolicyParameter" xml:space="preserve">
+    <value>정책 이름이 없어서 실행 정책을 처리할 수 없습니다. -ExecutionPolicy 뒤에 정책 이름을 지정해야 합니다.</value>
+  </data>
+  <data name="MtaStaMutuallyExclusive" xml:space="preserve">
+    <value>-STA와 -MTA가 둘 다 지정되어 명령을 처리할 수 없습니다. -STA 또는 -MTA 중 하나만 지정하세요.</value>
+  </data>
+  <data name="MissingConfigurationNameArgument" xml:space="preserve">
+    <value>-ConfigurationName에는 원격 엔드포인트 구성 이름을 나타내는 인수가 필요하므로 명령을 처리할 수 없습니다. 이 인수를 지정한 후 다시 시도하세요.</value>
+  </data>
+  <data name="MissingConfigurationFileArgument" xml:space="preserve">
+    <value>-ConfigurationFile에는 세션 구성(.pssc) 파일 경로를 나타내는 인수가 필요하므로 명령을 처리할 수 없습니다. 이 인수를 지정한 후 다시 시도하세요.</value>
+  </data>
+  <data name="MissingCustomPipeNameArgument" xml:space="preserve">
+    <value>-CustomPipeName에는 사용하려고 하는 파이프 이름을 나타내는 인수가 필요하므로 명령을 처리할 수 없습니다. 이 인수를 지정한 후 다시 시도하세요.</value>
+  </data>
+  <data name="CustomPipeNameTooLong" xml:space="preserve">
+    <value>지정한 -CustomPipeName이 너무 길어 명령을 처리할 수 없습니다. 이 플랫폼의 파이프 이름은 최대 {0}자까지 가능합니다. 현재 파이프 이름 '{1}'은(는) {2}자입니다.</value>
+  </data>
+  <data name="MissingSettingsFileArgument" xml:space="preserve">
+    <value>-SettingsFile에는 파일 경로를 나타내는 인수가 필요하므로 명령을 처리할 수 없습니다.</value>
+  </data>
+  <data name="InvalidSettingsFileArgument" xml:space="preserve">
+    <value>-SettingsFile '{0}' 처리에 실패했습니다: {1}. -SettingsFile 매개 변수에 올바른 경로를 지정하세요.</value>
+  </data>
+  <data name="SettingsFileNotExists" xml:space="preserve">
+    <value>-SettingsFile에 전달된 인수 '{0}'이(가) 없습니다. 기존 json 파일의 경로를 -SettingsFile 매개 변수의 인수로 제공하세요.</value>
+  </data>
+  <data name="InvalidArgument" xml:space="preserve">
+    <value>'{0}' 인수는 잘못되었습니다. 다음을 의미했나요?</value>
+  </data>
+  <data name="WindowStyleArgumentNotImplemented" xml:space="preserve">
+    <value>-WindowStyle 매개 변수는 이 플랫폼에서 지원되지 않습니다.</value>
+  </data>
+  <data name="MissingWorkingDirectoryArgument" xml:space="preserve">
+    <value>-WorkingDirectory에는 디렉터리 경로를 나타내는 인수가 필요하므로 명령을 처리할 수 없습니다.</value>
+  </data>
+  <data name="MTANotImplemented" xml:space="preserve">
+    <value>매개 변수 -MTA는 이 플랫폼에서 지원되지 않습니다.</value>
+  </data>
+  <data name="STANotImplemented" xml:space="preserve">
+    <value>매개 변수 -STA는 이 플랫폼에서 지원되지 않습니다.</value>
+  </data>
+  <data name="NullElementInArgs" xml:space="preserve">
+    <value>지정한 인수에 null 요소가 있으면 안 됩니다.</value>
+  </data>
+  <data name="InvalidExecutionPolicyArgument" xml:space="preserve">
+    <value>ExecutionPolicy 값 '{0}'이(가) 잘못되었습니다.</value>
+  </data>
+  <data name="MissingMandatoryArgument" xml:space="preserve">
+    <value>'{0}' 매개 변수에 제공할 인수가 필요합니다.</value>
+  </data>
+  <data name="FileOnlyEntryRequired" xml:space="preserve">
+    <value>정책상 매개 변수 "-File"이 필요합니다.</value>
+  </data>
+  <data name="FileOnlyEntryNoExitDisabled" xml:space="preserve">
+    <value>정책상 매개 변수 "-NoExit"를 사용할 수 없습니다.</value>
+  </data>
+  <data name="FileOnlyEntryServerMode" xml:space="preserve">
+    <value>정책상 서버 모드는 사용할 수 없습니다.</value>
+  </data>
+</root>

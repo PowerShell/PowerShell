@@ -49,4 +49,10 @@ Describe "Tests for the Import-PowerShellDataFile cmdlet" -Tags "CI" {
         $result = Import-PowerShellDataFile $largePsd1Path -SkipLimitCheck
         $result.Keys.Count | Should -Be 501
     }
+
+    It 'Fails if psd1 file is insecure while -SkipLimitCheck is used' {
+        $path = Setup -f insecure2.psd1 -Content '@{ Foo = [object] (calc.exe) }' -pass
+        { Import-PowerShellDataFile $path -SkipLimitCheck -ErrorAction Stop } |
+            Should -Throw -ErrorId "System.InvalidOperationException,Microsoft.PowerShell.Commands.ImportPowerShellDataFileCommand"
+    }
 }

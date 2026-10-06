@@ -1,0 +1,406 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="MemberAlreadyPresent" xml:space="preserve">
+    <value>“{0}" üyesi zaten var.</value>
+  </data>
+  <data name="MemberAlreadyPresentFromTypesXml" xml:space="preserve">
+    <value>Genişletilmiş tür veri dosyasından "{0}" boyut üyesi zaten mevcut.</value>
+  </data>
+  <data name="MemberNotPresent" xml:space="preserve">
+    <value>“{0}" üyesi mevcut değil.</value>
+  </data>
+  <data name="ExceptionWhenSetting" xml:space="preserve">
+    <value>“{0}" özelliğini ayarlarken özel durum oluştu: "{1}”</value>
+  </data>
+  <data name="ExceptionWhenGetting" xml:space="preserve">
+    <value>“{0}" alınırken özel durum oluştu: "{1}”</value>
+  </data>
+  <data name="EnumerationException" xml:space="preserve">
+    <value>Aşağıdaki özel durum, koleksiyon numaralandırılırken oluştu: "{0}".</value>
+  </data>
+  <data name="AccessMemberOutsidePSObject" xml:space="preserve">
+    <value>“{0}" üyesine PSObject dışında erişilemez.</value>
+  </data>
+  <data name="ChangeStaticMember" xml:space="preserve">
+    <value>Tür yapılandırmasından oluşturulan üye değiştirilemiyor: "{0}”</value>
+  </data>
+  <data name="ReservedMemberName" xml:space="preserve">
+    <value>“{0}" üye adı ayrılmıştır.</value>
+  </data>
+  <data name="CannotChangeReservedMember" xml:space="preserve">
+    <value>Bağdaştırıcı, "{0}" özelliğinin türünü alamıyor.</value>
+  </data>
+  <data name="MethodInvocationException" xml:space="preserve">
+    <value>“{0}" araması sırasında "{1}" bağımsız değişkeniyle özel durum oluştu: "{2}”</value>
+  </data>
+  <data name="CopyToInvocationException" xml:space="preserve">
+    <value>“{1}” türündeki bir nesnenin içeriğini ayıklamak için “{0}” çağrılmaya çalışılırken özel durum oluştu: “{2}”</value>
+  </data>
+  <data name="MethodArgumentCountException" xml:space="preserve">
+    <value>“{0}" için ve bağımsız değişken sayısı "{1}" için bir aşırı yükleme bulunamadı.</value>
+  </data>
+  <data name="MethodGenericArgumentCountException" xml:space="preserve">
+    <value>“{0}" için "{1}" tür parametreleri ve bağımsız değişken sayısı "{2}" ile uygun bir genel metot aşırı yüklemesi bulunamadı.</value>
+  </data>
+  <data name="MethodAmbiguousException" xml:space="preserve">
+    <value>“{0}" ve bağımsız değişken sayısı "{1}" için birden çok belirsiz aşırı yükleme bulundu.</value>
+  </data>
+  <data name="MethodArgumentConversionException" xml:space="preserve">
+    <value>“{0}" bağımsız değişkeni, "{1}" değeriyle, "{2}" için "{3}" türüne dönüştürülemez: "{4}”</value>
+  </data>
+  <data name="GetWithoutGetterException" xml:space="preserve">
+    <value>“{0}" özelliğinin get erişimcisi kullanılamaz.</value>
+  </data>
+  <data name="SetWithoutSetterException" xml:space="preserve">
+    <value>“{0}" özelliğinin Set erişimcisi kullanılamaz.</value>
+  </data>
+  <data name="CodePropertySetterFormat" xml:space="preserve">
+    <value>Ayarlayıcı metot genel, void, statik olmalı ve iki parametreye sahip olmalıdır. İlk parametre PSObject türünde olmalıdır. Alıcı metot da kullanılabiliyorsa ikinci bir parametre gerekir ve alıcı metodun dönüş türüyle aynı türe sahip olmalıdır.</value>
+  </data>
+  <data name="CodePropertyGetterFormat" xml:space="preserve">
+    <value>Alıcı metot genel olmalı, void olmamalı, statik olmalı ve PSObject türünde bir parametreye sahip olmalıdır.</value>
+  </data>
+  <data name="CodePropertyGetterAndSetterNull" xml:space="preserve">
+    <value>CodeProperty bir alıcı veya ayarlayıcı yöntem kullanmalıdır.</value>
+  </data>
+  <data name="CodeMethodMethodFormat" xml:space="preserve">
+    <value>Yöntem biçimi nedeniyle kod yöntemi oluşturulamıyor. Yöntem public, static olmalı ve PSObject türünde bir parametreye sahip olmalıdır.</value>
+  </data>
+  <data name="CycleInAlias" xml:space="preserve">
+    <value>“{0}" adlı diğer ad bir tekil anket içeriyor.</value>
+  </data>
+  <data name="InvalidCastException" xml:space="preserve">
+    <value>“{0}" değerinin "{1}" türünden "{2}" türüne dönüştürülmesi mümkün değil.</value>
+  </data>
+  <data name="InvalidCastExceptionWithoutValue" xml:space="preserve">
+    <value>“{0}" değerinin türü "{1}" türüne dönüştürülemiyor.</value>
+  </data>
+  <data name="InvalidCastExceptionWithInnerException" xml:space="preserve">
+    <value>“{0}" değerini "{1}" türüne dönüştürülemiyor. Hata: "{2}"</value>
+  </data>
+  <data name="InvalidCastExceptionEnumerationNoFlagAndComma" xml:space="preserve">
+    <value>“{0}" değerini "{1}" türüne dönüştürülemez; çünkü bu numaralandırma için virgüllere izin verilmez.</value>
+  </data>
+  <data name="InvalidCastExceptionEnumerationNoValue" xml:space="preserve">
+    <value>“{0}" değerini "{1}" türüne dönüştürülemez; çünkü bu numaralandırma için geçersiz değerler var. Lütfen aşağıdaki numaralandırma değerlerinden birini belirtin ve yeniden deneyin. Olası numaralandırma değerleri "{2}".</value>
+  </data>
+  <data name="InvalidCastExceptionEnumerationNull" xml:space="preserve">
+    <value>Geçersiz numaralandırma değerleri nedeniyle null, "{0}" türüne dönüştürülemez. Lütfen aşağıdaki numaralandırma değerlerinden birini belirtin ve yeniden deneyin. Olası numaralandırma değerleri "{1}".</value>
+  </data>
+  <data name="InvalidCastFromNull" xml:space="preserve">
+    <value>null değeri "{0}" türüne dönüştürülemiyor.</value>
+  </data>
+  <data name="InvalidCastExceptionNoStringForConversion" xml:space="preserve">
+    <value>Değer “{0}” türüne dönüştürülemiyor.  Hata: "{1}"</value>
+  </data>
+  <data name="InvalidCastCannotRetrieveString" xml:space="preserve">
+    <value>Değer System.String türüne dönüştürülemiyor.</value>
+  </data>
+  <data name="ReferenceTypeExpected" xml:space="preserve">
+    <value>Bağımsız değişkende başvuru türü bekleniyor.</value>
+  </data>
+  <data name="NotIcomparable" xml:space="preserve">
+    <value>“{0}" IComparable olmadığı için karşılaştırılamıyor.</value>
+  </data>
+  <data name="ComparisonFailure" xml:space="preserve">
+    <value>“{0}" ile "{1}" karşılaştırılamadı. Hata: "{2}"</value>
+  </data>
+  <data name="NotTheSameTypeOrNotIcomparable" xml:space="preserve">
+    <value>Nesneler aynı türde olmadığından veya “{0}” nesnesi “{2}” öğesini uygulamadığından “{0}” ile “{1}” karşılaştırılamaz.</value>
+  </data>
+  <data name="InvalidCastExceptionEnumerationMoreThanOneValue" xml:space="preserve">
+    <value>“{0}" değerini "{1}" türüne dönüştürülemez; çünkü en az iki eşleşme bulundu ({2}, {3}) ve bu sabit listesi için yalnızca bir eşleşmeye izin verilir.</value>
+  </data>
+  <data name="InvalidCastExceptionForBooleanArgumentValue" xml:space="preserve">
+    <value>“{0}" değerini "{1}" türüne dönüştürülemiyor. Boolean parametreler yalnızca boolean değerleri ve $True, $False, 1 veya 0 gibi sayıları kabul eder.</value>
+  </data>
+  <data name="WriteOnlyProperty" xml:space="preserve">
+    <value>“{0}" bir yazma amaçlı özelliktir, bu nedenle özellik değeri alınamıyor.</value>
+  </data>
+  <data name="ReadOnlyProperty" xml:space="preserve">
+    <value>“{0}" salt okunur bir özelliktir.</value>
+  </data>
+  <data name="XmlNodeSetShouldBeAString" xml:space="preserve">
+    <value>“{0}" ayarlanamıyor çünkü XmlNode özelliklerinin değeri olarak yalnızca dizeler kullanılabilir.</value>
+  </data>
+  <data name="XmlNodeSetRestrictions" xml:space="preserve">
+    <value>“{0}" ayarlanamıyor çünkü yalnızca benzersiz özellikler veya özniteliği olmayan benzersiz yaprak düğümler ayarlanabilir.</value>
+  </data>
+  <data name="CannotAddPropertyOrMethod" xml:space="preserve">
+    <value>Bu koleksiyona bir PSProperty veya PSMethod nesnesi eklenemez.</value>
+  </data>
+  <data name="TypesXmlError" xml:space="preserve">
+    <value>“{0}" değiştirilemez.</value>
+  </data>
+  <data name="ToStringException" xml:space="preserve">
+    <value>Dize alınırken aşağıdaki özel durum oluştu: "{0}”</value>
+  </data>
+  <data name="NotAClsCompliantFieldProperty" xml:space="preserve">
+    <value>“{1}” türü için “{0}” alanı veya özelliği, “{2}” alanı veya özelliğinden yalnızca büyük/küçük harf kullanımı bakımından farklıdır. Tür Common Language Specification (CLS) ile uyumlu olmalıdır.</value>
+  </data>
+  <data name="ExceptionRetrievingTypeNameHierarchy" xml:space="preserve">
+    <value>Aşağıdaki özel durum, tür adı hiyerarşisi alınırken oluştu: "{0}".</value>
+  </data>
+  <data name="ExceptionGettingMember" xml:space="preserve">
+    <value>Aşağıdaki özel durum, "{1}" üyesi alınırken oluştu: "{0}”</value>
+  </data>
+  <data name="ExceptionGettingMembers" xml:space="preserve">
+    <value>Aşağıdaki özel durum, üyeler alınırken oluştu: "{0}”</value>
+  </data>
+  <data name="ExceptionRetrievingPropertyReadState" xml:space="preserve">
+    <value>Aşağıdaki özel durum, "{1}" özelliği için okuma durumu alınırken oluştu: "{0}”</value>
+  </data>
+  <data name="ExceptionRetrievingPropertyWriteState" xml:space="preserve">
+    <value>Aşağıdaki özel durum, "{1}" özelliği için yazma durumu alınırken oluştu: "{0}”</value>
+  </data>
+  <data name="ExceptionRetrievingPropertyType" xml:space="preserve">
+    <value>Aşağıdaki özel durum, "{1}" özelliği için tür alınırken oluştu: "{0}”</value>
+  </data>
+  <data name="ExceptionRetrievingPropertyString" xml:space="preserve">
+    <value>Aşağıdaki özel durum, "{1}" özelliği için dize beyanı alınırken oluştu: "{0}”</value>
+  </data>
+  <data name="ExceptionRetrievingPropertyAttributes" xml:space="preserve">
+    <value>“{1}" özelliği için öznitelikler alınırken aşağıdaki özel durum oluştu: "{0}”</value>
+  </data>
+  <data name="ExceptionRetrievingMethodDefinitions" xml:space="preserve">
+    <value>Aşağıdaki özel durum, "{1}" metodu için tanımlar alınırken oluştu: "{0}”</value>
+  </data>
+  <data name="ExceptionRetrievingMethodString" xml:space="preserve">
+    <value>Aşağıdaki özel durum, "{1}" özelliği için dize beyanı alınırken oluştu: "{0}”</value>
+  </data>
+  <data name="ExceptionRetrievingParameterizedPropertytype" xml:space="preserve">
+    <value>Aşağıdaki özel durum, parametreli özellik "{1}" için tür alınırken oluştu: "{0}”</value>
+  </data>
+  <data name="ExceptionRetrievingParameterizedPropertyReadState" xml:space="preserve">
+    <value>Aşağıdaki özel durum, parametreli özellik "{1}" için okuma durumu alınırken oluştu: "{0}”</value>
+  </data>
+  <data name="ExceptionRetrievingParameterizedPropertyWriteState" xml:space="preserve">
+    <value>Aşağıdaki özel durum, parametreli özellik "{1}" için yazma durumu alınırken oluştu: "{0}”</value>
+  </data>
+  <data name="ExceptionRetrievingParameterizedPropertyDefinitions" xml:space="preserve">
+    <value>Aşağıdaki özel durum, parametreli özellik "{1}" için tanımlar alınırken oluştu: "{0}”</value>
+  </data>
+  <data name="ExceptionRetrievingParameterizedPropertyString" xml:space="preserve">
+    <value>Aşağıdaki özel durum, parametreli özellik "{1}" için dize beyanı alınırken oluştu: "{0}”</value>
+  </data>
+  <data name="CannotSetValueForMemberType" xml:space="preserve">
+    <value>Türü "{0}" olan PSMemberInfo nesnesi için Value özelliği ayarlanamıyor.</value>
+  </data>
+  <data name="NonRefArgumentToRefParameter" xml:space="preserve">
+    <value>Bağımsız değişken: '{0}' bir {1} olmalıdır. Şunu kullanın: {2}.</value>
+  </data>
+  <data name="RefArgumentToNonRefParameter" xml:space="preserve">
+    <value>Bağımsız değişken: '{0}' bir {1} olmamalıdır. {2} kullanmayın.</value>
+  </data>
+  <data name="PropertyNotFoundInTypeDescriptor" xml:space="preserve">
+    <value>Özellik "{0}" bulunamadı.</value>
+  </data>
+  <data name="InvalidComponent" xml:space="preserve">
+    <value>Özellik değerini almak veya kümelemek mümkün değil. “{0}" bağımsız değişkeni "{1}" veya "{2}" türünde olmalıdır.</value>
+  </data>
+  <data name="CannotSetNonManagementObject" xml:space="preserve">
+    <value>“{0}" özelliğinin değerini ayarlayamıyorum çünkü nesnenin türü "{1}" ve "{2}" değil.</value>
+  </data>
+  <data name="WMIMethodInvocationException" xml:space="preserve">
+    <value>“{0}" çağrılırken özel durum oluştu: "{1}”</value>
+  </data>
+  <data name="InvalidWMIClassPath" xml:space="preserve">
+    <value>“{0}" geçerli bir sınıf yolu değil.</value>
+  </data>
+  <data name="InvalidWMIPath" xml:space="preserve">
+    <value>{0} geçerli bir yol değil.</value>
+  </data>
+  <data name="PropertyIsSettableError" xml:space="preserve">
+    <value>Bağdaştırıcı, "{0}" özelliğinin değiştirilebilir olup olmadığını belirleyemiyor.</value>
+  </data>
+  <data name="PropertyIsGettableError" xml:space="preserve">
+    <value>Bağdaştırıcı, "{0}" özelliğinin alınabilir olup olmadığını belirleyemiyor.</value>
+  </data>
+  <data name="PropertyGetError" xml:space="preserve">
+    <value>Bağdaştırıcı, "{0}" özelliğinin değerini alamıyor.</value>
+  </data>
+  <data name="PropertySetError" xml:space="preserve">
+    <value>Bağdaştırıcı, "{0}" özelliğinin değerini ayarlayamıyor.</value>
+  </data>
+  <data name="PropertyTypeError" xml:space="preserve">
+    <value>Bağdaştırıcı, "{0}" özelliğinin türünü alamıyor.</value>
+  </data>
+  <data name="GetTypeNameHierarchyError" xml:space="preserve">
+    <value>Bağdaştırıcı, "{0}" öğesinin tür hiyerarşisini alamıyor.</value>
+  </data>
+  <data name="GetProperties" xml:space="preserve">
+    <value>Bağdaştırıcı, "{0}" öğesinin özelliklerini alamıyor.</value>
+  </data>
+  <data name="GetProperty" xml:space="preserve">
+    <value>Bağdaştırıcı, “{1}” için “{0}” özelliğini alamıyor.</value>
+  </data>
+  <data name="NullReturnValueError" xml:space="preserve">
+    <value>“{0}" null değerini döndürdü.</value>
+  </data>
+  <data name="PropertyNotFound" xml:space="preserve">
+    <value>‘{0}' özelliği, '{1}' nesnesi için bulunamadı. Ayarlanabilir özellikler şunlardır: {2}.</value>
+  </data>
+  <data name="NoSettableProperty" xml:space="preserve">
+    <value>‘{0}' özelliği, '{1}' nesnesi için bulunamadı. Kullanılabilir bir ayarlanabilir özellik yok.</value>
+  </data>
+  <data name="ObjectCreationError" xml:space="preserve">
+    <value>“{0}" türünde nesne oluşturulamıyor. {1}</value>
+  </data>
+  <data name="CannotInvokeStaticMethodOnUninstantiatedGenericType" xml:space="preserve">
+    <value>Açık genel tür {0} üzerinde statik yöntemler çağrılamaz veya statik özelliklere erişilemez.  Tür parametrelerini belirtin ve yeniden deneyin.  Örneğin, [System.Collections.Generic.HashSet``1]::CreateSetComparer() yerine [System.Collections.Generic.HashSet[int]]::CreateSetComparer() kullanın.</value>
+    <comment>Error message shown when somebody tries to access a property or invoke a static method on an uninstantiated generic type:
+PS&gt; [System.Collections.Generic.Comparer``1]::get_Default()
+
+{0} is a placeholder for a type name (for example: System.Collections.Generic.Comparer`1)</comment>
+  </data>
+  <data name="ExceptionConstructingAttribute" xml:space="preserve">
+    <value>Aşağıdaki özel durum, "{1}" özniteliği oluşturulurken oluştu: "{0}”</value>
+  </data>
+  <data name="CannotConvertValueToStringArray" xml:space="preserve">
+    <value>“{0}" değeri bir dize dizisine dönüştürülemiyor.</value>
+  </data>
+  <data name="InvalidCastExceptionNonCoreType" xml:space="preserve">
+    <value>Değer “{0}” türüne dönüştürülemiyor. Bu dil modunda yalnızca çekirdek türler desteklenir.</value>
+  </data>
+  <data name="InvalidCastToByRefLikeType" xml:space="preserve">
+    <value>ByRef benzeri türe "{0}" dönüştürme yapılamaz. ByRef benzeri türler Windows PowerShell'de desteklenmez.</value>
+  </data>
+  <data name="CannotAccessByRefLikePropertyOrField" xml:space="preserve">
+    <value>“{0}" özelliğini veya alanını ByRef benzeri "{1}" türünden alamaz veya ayarlayamaz. ByRef benzeri türler PowerShell'de desteklenmez.</value>
+  </data>
+  <data name="CannotCallMethodWithByRefLikeReturnType" xml:space="preserve">
+    <value>“{1}” ByRef benzeri dönüş türünün “{0}” yöntemi çağrılamıyor. ByRef benzeri türler PowerShell'de desteklenmez.</value>
+  </data>
+  <data name="CannotInstantiateBoxedByRefLikeType" xml:space="preserve">
+    <value>ByRef benzeri türe sahip bir örnek oluşturulamıyor: "{0}” ByRef benzeri türler Windows PowerShell'de desteklenmez.</value>
+  </data>
+  <data name="WDACHashTypeLogTitle" xml:space="preserve">
+    <value>Genişletilmiş Tür Sistemi Hashtable Dönüşümü</value>
+  </data>
+  <data name="WDACHashTypeLogMessage" xml:space="preserve">
+    <value>HashTable'dan '{0}' türüne dönüştürme, ConstrainedLanguage modunda izin verilmeyecektir.</value>
+  </data>
+  <data name="WDACTypeConversionLogTitle" xml:space="preserve">
+    <value>Genişletilmiş Tür Sistemi Hashtable Dönüşümü</value>
+  </data>
+  <data name="WDACTypeConversionLogMessage" xml:space="preserve">
+    <value>KısıtlanmışDil modunda '{0}' türünden '{1}' türüne dönüştürmeye izin verilmeyecek.</value>
+  </data>
+</root>

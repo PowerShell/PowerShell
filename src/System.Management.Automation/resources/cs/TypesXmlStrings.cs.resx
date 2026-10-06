@@ -1,0 +1,255 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="FileLineError" xml:space="preserve">
+    <value>{0}, {1}({2}) : Chyba: {3}</value>
+  </data>
+  <data name="FileLineTypeError" xml:space="preserve">
+    <value>{0}, {1}({2}) : Chyba v typu {3}: {4}</value>
+  </data>
+  <data name="NotMoreThanOnceOne" xml:space="preserve">
+    <value>Uzel {0} se pod uzlem {1} smí vyskytovat jen jednou. Nadřazený uzel {1} bude ignorován.</value>
+  </data>
+  <data name="UnknownNode" xml:space="preserve">
+    <value>Uzel {0} není povolený. Povolené jsou následující uzly: {1}.</value>
+  </data>
+  <data name="NodeShouldNotHaveInnerText" xml:space="preserve">
+    <value>Uzel {0} by neměl obsahovat vnitřní text.</value>
+  </data>
+  <data name="NodeShouldHaveInnerText" xml:space="preserve">
+    <value>Uzel {0} by měl obsahovat vnitřní text.</value>
+  </data>
+  <data name="NodeNotFoundOnce" xml:space="preserve">
+    <value>Uzel {0} se nenašel. Pod uzlem {1} se smí vyskytovat jen jednou. Nadřazený uzel {1} bude ignorován.</value>
+  </data>
+  <data name="TypeNodeShouldHaveMembersOrTypeConverters" xml:space="preserve">
+    <value>Uzel Type musí obsahovat Members, TypeConverters nebo TypeAdapters.</value>
+  </data>
+  <data name="UnableToInstantiateTypeConverter" xml:space="preserve">
+    <value>Instanci převaděče typů pro typ {0} nejde vytvořit kvůli výjimce: {1}.</value>
+  </data>
+  <data name="UnableToInstantiateTypeAdapter" xml:space="preserve">
+    <value>PowerShell nemůže vytvořit instanci adaptéru typů pro typ {0} kvůli následující výjimce: {1}.</value>
+  </data>
+  <data name="InvalidAdaptedType" xml:space="preserve">
+    <value>Adaptovaný typ {0} není platný.</value>
+  </data>
+  <data name="TypeConverterAlreadyPresent" xml:space="preserve">
+    <value>TypeConverter byl ignorován, protože už se vyskytuje.</value>
+  </data>
+  <data name="TypeAdapterAlreadyPresent" xml:space="preserve">
+    <value>TypeAdapter byl ignorován, protože už se vyskytuje.</value>
+  </data>
+  <data name="TypeIsNotTypeConverter" xml:space="preserve">
+    <value>Typ {0} musí být TypeConverter nebo PSTypeConverter.</value>
+  </data>
+  <data name="TypeIsNotTypeAdapter" xml:space="preserve">
+    <value>Typ {0} by měl být PSPropertyAdapter.</value>
+  </data>
+  <data name="DuplicateMember" xml:space="preserve">
+    <value>Člen {0} už existuje.</value>
+  </data>
+  <data name="ReservedNameMember" xml:space="preserve">
+    <value>Následující název členu je rezervovaný: {0}</value>
+  </data>
+  <data name="Exception" xml:space="preserve">
+    <value>Výjimka: {0}</value>
+  </data>
+  <data name="ScriptPropertyShouldHaveGetterOrSetter" xml:space="preserve">
+    <value>ScriptProperty musí obsahovat getter nebo setter.</value>
+  </data>
+  <data name="CodePropertyShouldHaveGetterOrSetter" xml:space="preserve">
+    <value>CodeProperty musí obsahovat getter nebo setter.</value>
+  </data>
+  <data name="FileError" xml:space="preserve">
+    <value>{0}, {1} : {2}</value>
+  </data>
+  <data name="ValueShouldBeTrueOrFalse" xml:space="preserve">
+    <value>Místo hodnoty {0} použijte TRUE nebo FALSE.</value>
+  </data>
+  <data name="IsHiddenNotSupported" xml:space="preserve">
+    <value>Uzel {0} by neměl obsahovat atribut {1}.</value>
+  </data>
+  <data name="FileNotFound" xml:space="preserve">
+    <value>{0}, {1}: Soubor se nenašel.</value>
+  </data>
+  <data name="DuplicateFile" xml:space="preserve">
+    <value>{0}, {1}: Soubor byl přeskočen, protože už byl načtený pomocí {2}.</value>
+  </data>
+  <data name="CannotFindRegistryKey" xml:space="preserve">
+    <value>Klíč registru se nenašel: {0}{1}. Konfigurační soubory se načítají pomocí {2}.</value>
+  </data>
+  <data name="CannotFindRegistryKeyPath" xml:space="preserve">
+    <value>Cesta {0} zadaná v klíči registru {1}{2} se nenašla. Konfigurační soubory se načítají pomocí {3}.</value>
+  </data>
+  <data name="EntryShouldBeMshXml" xml:space="preserve">
+    <value>{0}, {1}: Soubor byl přeskočen, protože nemá příponu názvu souboru ps1xml.</value>
+  </data>
+  <data name="ValidationException" xml:space="preserve">
+    <value>{0}, {1}: Soubor byl přeskočen kvůli následující výjimce při ověřování: {2}.</value>
+  </data>
+  <data name="MemberShouldBeNote" xml:space="preserve">
+    <value>Člen {0} musí být poznámka.</value>
+  </data>
+  <data name="ErrorConvertingNote" xml:space="preserve">
+    <value>Poznámku {0}:{1} nejde převést.</value>
+  </data>
+  <data name="MemberShouldNotBePresent" xml:space="preserve">
+    <value>Člen {0} tady nepoužívejte.</value>
+  </data>
+  <data name="MemberShouldHaveType" xml:space="preserve">
+    <value>Člen {0} musí být typu {1}.</value>
+  </data>
+  <data name="MemberMustBePresent" xml:space="preserve">
+    <value>Prvek {0} musí existovat, když {1} má hodnotu {2} a {3} má hodnotu {4}.</value>
+  </data>
+  <data name="SerializationSettingsIgnored" xml:space="preserve">
+    <value>Kvůli předchozí chybě byla ignorována všechna nastavení serializace.</value>
+  </data>
+  <data name="NotAStandardMember" xml:space="preserve">
+    <value>{0} není standardní člen a bude ignorován.</value>
+  </data>
+  <data name="TypeFileNotRooted" xml:space="preserve">
+    <value>Cesta {0} není plně kvalifikovaná. Zadejte plně kvalifikovanou cestu k souboru typu.</value>
+  </data>
+  <data name="SharedTypeTableCannotBeUpdated" xml:space="preserve">
+    <value>Objekt TypeTable nejde aktualizovat, protože mohl být vytvořený mimo prostředí runspace.</value>
+  </data>
+  <data name="TypeTableLoadErrors" xml:space="preserve">
+    <value>Při načítání objektu TypeTable došlo k chybám. Podrobné chybové zprávy najdete ve vlastnosti Errors.</value>
+  </data>
+  <data name="TypeDataTypeError" xml:space="preserve">
+    <value>Chyba v TypeData {0}: {1}</value>
+  </data>
+  <data name="TypeDataShouldHaveValue" xml:space="preserve">
+    <value>Prvek {0} by měl mít ve vlastnosti {1} hodnotu.</value>
+  </data>
+  <data name="TypeDataShouldNotBeNullOrEmpty" xml:space="preserve">
+    <value>Prvek {0} nesmí mít ve vlastnosti {1} hodnotu null ani prázdný řetězec.</value>
+  </data>
+  <data name="TypeNotFound" xml:space="preserve">
+    <value>Typ {0} se nenašel. Hodnota názvu typu musí být úplný název typu. Ověřte název typu a spusťte příkaz znovu.</value>
+  </data>
+  <data name="TypeDataShouldNotBeEmpty" xml:space="preserve">
+    <value>TypeData musí obsahovat Members, TypeConverters, TypeAdapters nebo StandardMembers.</value>
+  </data>
+  <data name="TypeTableCannotCoExist" xml:space="preserve">
+    <value>Sdílenou tabulku typů nejde aktualizovat více než jednou položkou.</value>
+  </data>
+</root>

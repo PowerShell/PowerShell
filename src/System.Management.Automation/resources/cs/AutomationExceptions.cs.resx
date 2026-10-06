@@ -1,0 +1,210 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Argument" xml:space="preserve">
+    <value>Argument nelze zpracovat, protože hodnota argumentu {0} není platná. Změňte hodnotu argumentu {0} a spusťte operaci znovu.</value>
+  </data>
+  <data name="InvalidScopeIdArgument" xml:space="preserve">
+    <value>Argument nelze zpracovat, protože hodnota parametru {0} není platná. Platné hodnoty jsou Global, Local nebo Script, případně číslo relativní k aktuálnímu oboru (od 0 do počtu oborů, kde 0 představuje aktuální obor a 1 jeho nadřazený obor). Změňte hodnotu parametru {0} a spusťte operaci znovu.</value>
+  </data>
+  <data name="ArgumentNull" xml:space="preserve">
+    <value>Argument nelze zpracovat, protože hodnota argumentu {0} je null. Změňte hodnotu argumentu {0} na jinou než null.</value>
+  </data>
+  <data name="ArgumentOutOfRange" xml:space="preserve">
+    <value>Argument nelze zpracovat, protože hodnota argumentu {0} je mimo povolený rozsah. Změňte argument {0} na hodnotu v povoleném rozsahu.</value>
+  </data>
+  <data name="InvalidOperation" xml:space="preserve">
+    <value>Operaci nelze provést, protože operace {0} není platná. Odeberte operaci {0} nebo zjistěte, proč není platná.</value>
+  </data>
+  <data name="NotImplemented" xml:space="preserve">
+    <value>Operaci nelze provést, protože operace {0} není implementována.</value>
+  </data>
+  <data name="NotSupported" xml:space="preserve">
+    <value>Operaci nelze provést, protože operace {0} není podporována.</value>
+  </data>
+  <data name="ObjectDisposed" xml:space="preserve">
+    <value>Operaci nelze provést, protože objekt {0} už byl uvolněn.</value>
+  </data>
+  <data name="ScriptBlockInvokeOnOneClauseOnly" xml:space="preserve">
+    <value>Blok skriptu nelze vyvolat, protože obsahuje více než jednu klauzuli. Metodu Invoke() lze použít pouze u bloků skriptů, které obsahují jedinou klauzuli.</value>
+  </data>
+  <data name="CanConvertOneClauseOnly" xml:space="preserve">
+    <value>Blok skriptu nelze převést, protože obsahuje více než jednu klauzuli. Výrazy ani řídicí struktury nejsou povoleny. Ověřte, že blok skriptu obsahuje právě jeden kanál nebo příkaz.</value>
+  </data>
+  <data name="CantConvertEmptyPipeline" xml:space="preserve">
+    <value>Prázdný blok skriptu nelze převést. Ověřte, že blok skriptu obsahuje právě jeden kanál nebo příkaz.</value>
+  </data>
+  <data name="CanOnlyConvertOnePipeline" xml:space="preserve">
+    <value>Převést lze pouze blok skriptu, který obsahuje právě jeden kanál nebo příkaz. Výrazy ani řídicí struktury nejsou povoleny. Ověřte, že blok skriptu obsahuje právě jeden kanál nebo příkaz.</value>
+  </data>
+  <data name="CantConvertScriptBlockWithTrap" xml:space="preserve">
+    <value>Blok skriptu obsahující příkaz trap nejvyšší úrovně nelze převést.</value>
+  </data>
+  <data name="CantConvertWithUndeclaredVariables" xml:space="preserve">
+    <value>Pro blok ScriptBlock odkazující na proměnné, které nejsou deklarované v bloku param(...), nelze vytvořit objekt PowerShell.  Název nedeklarované proměnné: {0}</value>
+  </data>
+  <data name="CantConvertWithNonConstantExpression" xml:space="preserve">
+    <value>Pro blok ScriptBlock, který vyhodnocuje nekonstantní výrazy, nelze vytvořit objekt PowerShell. Nekonstantní výraz: {0}</value>
+  </data>
+  <data name="CantConvertWithDynamicExpression" xml:space="preserve">
+    <value>Pro blok ScriptBlock, který vyhodnocuje dynamické výrazy, nelze vytvořit objekt PowerShell. Dynamický výraz: {0}</value>
+  </data>
+  <data name="CantConvertWithScriptBlocks" xml:space="preserve">
+    <value>Pro blok ScriptBlock, který se pokouší předat další bloky skriptů jako hodnoty argumentů, nelze vytvořit objekt PowerShell.</value>
+  </data>
+  <data name="CantConvertWithCommandInvocations" xml:space="preserve">
+    <value>Pro blok ScriptBlock, který vyvolává kanály, příkazy nebo funkce za účelem vyhodnocení argumentů hlavního kanálu, nelze vytvořit objekt PowerShell.</value>
+  </data>
+  <data name="CantConvertWithDotSourcing" xml:space="preserve">
+    <value>Pro blok ScriptBlock, který používá dot-sourcing, nelze vytvořit objekt PowerShell.</value>
+  </data>
+  <data name="CantConvertWithScriptBlockInvocation" xml:space="preserve">
+    <value>Pro blok ScriptBlock, který vyvolává jiné bloky skriptů, nelze vytvořit objekt PowerShell.</value>
+  </data>
+  <data name="CanConvertOneOutputErrorRedir" xml:space="preserve">
+    <value>Blok skriptu nelze převést na objekt PowerShell, protože obsahuje nepovolené operátory přesměrování.</value>
+  </data>
+  <data name="CantConvertScriptBlockWithNoContext" xml:space="preserve">
+    <value>Pro blok ScriptBlock, který nemá přidružený kontext operace, nelze vytvořit objekt PowerShell.</value>
+  </data>
+  <data name="HaltCommandException" xml:space="preserve">
+    <value>Příkaz byl zastaven uživatelem.</value>
+  </data>
+  <data name="DynamicParametersWrongType" xml:space="preserve">
+    <value>Objekt {0} není správného typu pro vrácení z bloku dynamicparam. Blok dynamicparam musí vrátit buď hodnotu $null, nebo objekt typu [System.Management.Automation.RuntimeDefinedParameterDictionary].</value>
+  </data>
+  <data name="CantConvertScriptBlockToOpenGenericType" xml:space="preserve">
+    <value>Blok skriptu nelze převést na otevřený obecný typ. Definujte odpovídající uzavřený obecný typ a zkuste to znovu.</value>
+  </data>
+  <data name="CantConvertPipelineStartsWithExpression" xml:space="preserve">
+    <value>Pro blok ScriptBlock, který spouští kanál výrazem, nelze vytvořit objekt PowerShell.</value>
+  </data>
+  <data name="UsingVariableIsUndefined" xml:space="preserve">
+    <value>Hodnotu proměnné using $using:{0} nelze načíst, protože v místní relaci nebyla nastavena.</value>
+  </data>
+  <data name="CantGetUsingExpressionValueWithSpecifiedVariableDictionary" xml:space="preserve">
+    <value>Hodnotu výrazu Using {0} nelze získat ze zadaného slovníku proměnných. Při vytváření instance PowerShellu z bloku skriptu nesmí výraz Using obsahovat operaci indexování ani operaci přístupu ke členu.</value>
+  </data>
+  <data name="WDACCompiledScriptBlockLogTitle" xml:space="preserve">
+    <value>Zkompilovaný blok skriptu načtený do aktuálního oboru platnosti (dot source)</value>
+  </data>
+  <data name="WDACCompiledScriptBlockLogMessage" xml:space="preserve">
+    <value>Vyvolání bloku skriptu {0} do aktuálního oboru bude v režimu Constrained Language zakázáno. Režim jazyka skriptu: {1}, režim jazyka kontextu: {2}.</value>
+  </data>
+</root>

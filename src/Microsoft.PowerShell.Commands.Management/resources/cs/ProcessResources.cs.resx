@@ -1,0 +1,234 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="NoProcessFoundForGivenName" xml:space="preserve">
+    <value>Nelze najít proces s názvem {0}. Ověřte název procesu a znovu zavolejte rutinu.</value>
+  </data>
+  <data name="RecommendIdTagForGivenName" xml:space="preserve">
+    <value>Nelze najít proces s názvem {0}. Zkuste procesy vyhledat podle ID spuštěním příkazu s parametrem -Id.</value>
+  </data>
+  <data name="NoDebuggerFound" xml:space="preserve">
+    <value>Tento příkaz nelze spustit, protože ladicí program nelze připojit k procesu {0} ({1}). Zadejte jiný proces a spusťte příkaz.</value>
+  </data>
+  <data name="NoProcessFoundForGivenId" xml:space="preserve">
+    <value>Nelze najít proces s identifikátorem procesu {1}.</value>
+  </data>
+  <data name="CouldNotStopProcess" xml:space="preserve">
+    <value>Proces {0} ({1}) nelze zastavit kvůli následující chybě: {2}</value>
+  </data>
+  <data name="ProcessNameForConfirmation" xml:space="preserve">
+    <value>{0} ({1})</value>
+  </data>
+  <data name="StartProcessTarget" xml:space="preserve">
+    <value>{0} {1}</value>
+  </data>
+  <data name="CouldNotEnumerateModules" xml:space="preserve">
+    <value>Nelze vytvořit výčet modulů procesu {0}.</value>
+  </data>
+  <data name="CouldNotEnumerateFileVer" xml:space="preserve">
+    <value>Nelze vytvořit výčet informací o verzi souboru procesu {0}.</value>
+  </data>
+  <data name="CouldNotEnumerateModuleFileVer" xml:space="preserve">
+    <value>Nelze vytvořit výčet modulů a informací o verzi souboru procesu {0}.</value>
+  </data>
+  <data name="ConfirmStopProcess" xml:space="preserve">
+    <value>Opravdu chcete provést operaci Stop-Process u následující položky: {0}({1})?</value>
+  </data>
+  <data name="UseShell" xml:space="preserve">
+    <value>Zadaná cesta není platná aplikace win32. Zkuste to znovu s UseShellExecute.</value>
+  </data>
+  <data name="ProcessIsNotTerminated" xml:space="preserve">
+    <value>Tento příkaz zastavil operaci s procesem {0} ({1}) kvůli následující chybě: {2}.</value>
+  </data>
+  <data name="RedirectionParams" xml:space="preserve">
+    <value>Tento příkaz nelze spustit, protože parametry Redirection nelze použít s parametrem UseShellExecute.</value>
+  </data>
+  <data name="NoComputerNameWithFileVersion" xml:space="preserve">
+    <value>Došlo k výjimce při získávání Modules nebo FileVersion: Tato funkce není podporována pro vzdálené počítače.</value>
+  </data>
+  <data name="DebuggerError" xml:space="preserve">
+    <value>Tento příkaz nemůže připojit ladicí program k procesu kvůli {0}, protože není k dispozici žádný výchozí ladicí program.</value>
+  </data>
+  <data name="WaitOnIdleProcess" xml:space="preserve">
+    <value>Tento příkaz zastavil operaci, protože nemůže čekat na proces System Idle. Zadejte jiný proces a spusťte příkaz znovu.</value>
+  </data>
+  <data name="WaitOnItself" xml:space="preserve">
+    <value>Tento příkaz zastavil operaci, protože nemůže čekat sám na sebe. Zadejte jiný proces a spusťte příkaz znovu.</value>
+  </data>
+  <data name="ProcessNotTerminated" xml:space="preserve">
+    <value>Tento příkaz zastavil operaci, protože proces {0} ({1}) není v zadaném časovém limitu zastaven.</value>
+  </data>
+  <data name="InvalidStartProcess" xml:space="preserve">
+    <value>Tento příkaz nelze spustit kvůli následující chybě: {0}.</value>
+  </data>
+  <data name="InvalidApplication" xml:space="preserve">
+    <value>Tento příkaz nelze spustit, protože vstup {0} není platná aplikace.  Zadejte platnou aplikaci a spusťte příkaz znovu.</value>
+  </data>
+  <data name="InvalidInput" xml:space="preserve">
+    <value>Tento příkaz nelze spustit, protože parametr {0} má neplatnou hodnotu nebo jej nelze použít s tímto příkazem. Zadejte platný vstup a spusťte příkaz znovu.</value>
+  </data>
+  <data name="DuplicateEntry" xml:space="preserve">
+    <value>Tento příkaz nelze spustit, protože {0} a {1} jsou stejné. Zadejte jiné vstupy a spusťte příkaz znovu.</value>
+  </data>
+  <data name="CannotStarttheProcess" xml:space="preserve">
+    <value>Tento příkaz nelze spustit úplně, protože systém nemůže najít všechny požadované informace.</value>
+  </data>
+  <data name="FailedToCreateProcessObject" xml:space="preserve">
+    <value>Nepodařilo se načíst nový popisovač procesu: {0}. Výstupní objekt Process může obsahovat některé vlastnosti a metody, které nefungují správně.</value>
+  </data>
+  <data name="InvalidUserError" xml:space="preserve">
+    <value>Tento příkaz nejde spustit kvůli chybě 1783. Možnou příčinou této chyby může být použití neexistující uživatele {0}. Zadejte platného uživatele a spusťte příkaz znovu.</value>
+  </data>
+  <data name="JoinNetworkFailed" xml:space="preserve">
+    <value>Chyba při přidávání položky {0} do sítě: {1}</value>
+  </data>
+  <data name="RemoveFailed" xml:space="preserve">
+    <value>Chyba při odebírání položky {0} ze sítě: {1}</value>
+  </data>
+  <data name="RenameFailed" xml:space="preserve">
+    <value>Chyba při přejmenovávání {0}: {1}</value>
+  </data>
+  <data name="ContradictParametersSpecified" xml:space="preserve">
+    <value>Parametry {0} a {1} nelze zadat současně.</value>
+  </data>
+  <data name="CouldNotDebugProcess" xml:space="preserve">
+    <value>Proces {0} ({1}) nelze ladit kvůli následující chybě: {2}.</value>
+  </data>
+  <data name="AttachDebuggerReturnCode2" xml:space="preserve">
+    <value>Uživatel nemá přístup k požadovaným informacím.</value>
+  </data>
+  <data name="AttachDebuggerReturnCode21" xml:space="preserve">
+    <value>Zadaný parametr není platný.</value>
+  </data>
+  <data name="AttachDebuggerReturnCode3" xml:space="preserve">
+    <value>Uživatel nemá dostatečná oprávnění.</value>
+  </data>
+  <data name="AttachDebuggerReturnCode8" xml:space="preserve">
+    <value>Došlo k neznámé chybě.</value>
+  </data>
+  <data name="AttachDebuggerReturnCode9" xml:space="preserve">
+    <value>Zadaná cesta neexistuje.</value>
+  </data>
+  <data name="ParameterNotSupported" xml:space="preserve">
+    <value>Parametr {0} není v této edici Windows pro rutinu {1} podporován.</value>
+  </data>
+  <data name="ParameterNotSupportedOnPSEdition" xml:space="preserve">
+    <value>Parametr {0} není pro rutinu {1} v této edici PowerShellu podporován.</value>
+  </data>
+</root>

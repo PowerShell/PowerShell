@@ -21,12 +21,15 @@ runs:
       id: check
       shell: pwsh
       env:
-        CHANGED_FILES_JSON: ${{ steps.changed-files.outputs.files }}
+        CHANGED_FILES_PATH: ${{ steps.changed-files.outputs.files_path }}
       run: |
-        # Get changed files from environment variable (secure against injection)
-        $changedFilesJson = $env:CHANGED_FILES_JSON
-        # Ensure we always have an array (ConvertFrom-Json returns null for empty JSON arrays)
-        $changedFiles = @($changedFilesJson | ConvertFrom-Json)
+        # Read changed files from temp file to avoid ARG_MAX limits with large PRs
+        $changedFilesPath = $env:CHANGED_FILES_PATH
+        if ($changedFilesPath -and (Test-Path $changedFilesPath)) {
+          $changedFiles = @(Get-Content $changedFilesPath -Raw | ConvertFrom-Json)
+        } else {
+          $changedFiles = @()
+        }
 
         # Import ci.psm1 and run the check
         Import-Module "$env:GITHUB_WORKSPACE/tools/ci.psm1" -Force

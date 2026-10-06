@@ -47,6 +47,7 @@ function Install-Wix
     if (-not $respository) {
         Write-Verbose -Verbose "Registering dotnet-eng repository..."
         Register-PSResourceRepository -Name 'dotnet-eng' -Uri 'https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json' -Trusted
+        Set-PSResourceRepository -CredentialProvider None -Name 'dotnet-eng' -Trusted
     }
 
     # keep version in sync with Microsoft.PowerShell.Packaging.csproj

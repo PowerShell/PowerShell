@@ -1,0 +1,610 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CannotDeserializeTabCompletionResult" xml:space="preserve">
+    <value>Das Ergebnis der TAB-Vervollständigung kann nicht ordnungsgemäß deserialisiert werden, da der Remotesitzungsbereich keine TypeTable-Instanz enthält.</value>
+  </data>
+  <data name="NoAccessToProperties" xml:space="preserve">
+    <value>Auf Eigenschaften einer NULL-Instanz vom Typ CompletionResult kann nicht zugegriffen werden.</value>
+  </data>
+  <data name="bnotOperatorDescription" xml:space="preserve">
+    <value>Bitweises NOT</value>
+  </data>
+  <data name="notOperatorDescription" xml:space="preserve">
+    <value>Logisches "Nicht" Negiert die darauf folgende Anweisung.</value>
+  </data>
+  <data name="eqOperatorDescription" xml:space="preserve">
+    <value>Gleich – Groß-/Kleinschreibung nicht beachten. Wenn der linke Operand eine Auflistung ist, werden Werte aus der Auflistung zurückgegeben, die gleich dem rechten Operand sind. Andernfalls wird TRUE zurückgegeben, wenn der linke Operand gleich dem rechten Operand ist.</value>
+  </data>
+  <data name="ieqOperatorDescription" xml:space="preserve">
+    <value>Gleich – Groß-/Kleinschreibung nicht beachten. Wenn der linke Operand eine Auflistung ist, werden Werte aus der Auflistung zurückgegeben, die gleich dem rechten Operand sind. Andernfalls wird TRUE zurückgegeben, wenn der linke Operand gleich dem rechten Operand ist.</value>
+  </data>
+  <data name="ceqOperatorDescription" xml:space="preserve">
+    <value>Gleich – Groß-/Kleinschreibung beachten. Wenn der linke Operand eine Auflistung ist, werden Werte aus der Auflistung zurückgegeben, die gleich dem rechten Operand sind. Andernfalls wird TRUE zurückgegeben, wenn der linke Operand gleich dem rechten Operand ist.</value>
+  </data>
+  <data name="neOperatorDescription" xml:space="preserve">
+    <value>Ungleich – Groß-/Kleinschreibung nicht beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die dem rechten Operanden nicht entsprechen. Andernfalls gibt er TRUE zurück, wenn der linke Operand nicht mit dem rechten Operanden übereinstimmt.</value>
+  </data>
+  <data name="ineOperatorDescription" xml:space="preserve">
+    <value>Ungleich – Groß-/Kleinschreibung nicht beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die dem rechten Operanden nicht entsprechen. Andernfalls gibt er TRUE zurück, wenn der linke Operand nicht mit dem rechten Operanden übereinstimmt.</value>
+  </data>
+  <data name="cneOperatorDescription" xml:space="preserve">
+    <value>Ungleich – Groß-/Kleinschreibung beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die dem rechten Operanden nicht entsprechen. Andernfalls gibt er TRUE zurück, wenn der linke Operand nicht mit dem rechten Operanden übereinstimmt.</value>
+  </data>
+  <data name="geOperatorDescription" xml:space="preserve">
+    <value>Größer als oder gleich – Groß-/Kleinschreibung beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die größer oder gleich dem rechten Operanden sind. Andernfalls gibt er TRUE zurück, wenn der linke Operand größer oder gleich dem rechten Operanden ist.</value>
+  </data>
+  <data name="igeOperatorDescription" xml:space="preserve">
+    <value>Größer als oder gleich – Groß-/Kleinschreibung beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die größer oder gleich dem rechten Operanden sind. Andernfalls gibt er TRUE zurück, wenn der linke Operand größer oder gleich dem rechten Operanden ist.</value>
+  </data>
+  <data name="cgeOperatorDescription" xml:space="preserve">
+    <value>Größer als oder gleich – Groß-/Kleinschreibung beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die größer oder gleich dem rechten Operanden sind. Andernfalls gibt er TRUE zurück, wenn der linke Operand größer oder gleich dem rechten Operanden ist.</value>
+  </data>
+  <data name="gtOperatorDescription" xml:space="preserve">
+    <value>Größer als – Groß-/Kleinschreibung nicht beachten. Wenn der linke Operand eine Auflistung ist, werden Werte aus der Auflistung zurückgegeben, die größer als der rechte Operand sind. Andernfalls wird TRUE zurückgegeben, wenn der linke Operand größer als der rechte Operand ist.</value>
+  </data>
+  <data name="igtOperatorDescription" xml:space="preserve">
+    <value>Größer als – Groß-/Kleinschreibung nicht beachten. Wenn der linke Operand eine Auflistung ist, werden Werte aus der Auflistung zurückgegeben, die größer als der rechte Operand sind. Andernfalls wird TRUE zurückgegeben, wenn der linke Operand größer als der rechte Operand ist.</value>
+  </data>
+  <data name="cgtOperatorDescription" xml:space="preserve">
+    <value>Größer als – Groß-/Kleinschreibung beachten. Wenn der linke Operand eine Auflistung ist, werden Werte aus der Auflistung zurückgegeben, die größer als der rechte Operand sind. Andernfalls wird TRUE zurückgegeben, wenn der linke Operand größer als der rechte Operand ist.</value>
+  </data>
+  <data name="ltOperatorDescription" xml:space="preserve">
+    <value>Kleiner als – Groß-/Kleinschreibung nicht beachten. Wenn der linke Operand eine Auflistung ist, werden Werte aus der Auflistung zurückgegeben, die kleiner als der rechte Operand sind. Andernfalls wird TRUE zurückgegeben, wenn der linke Operand kleiner als der rechte Operand ist.</value>
+  </data>
+  <data name="iltOperatorDescription" xml:space="preserve">
+    <value>Kleiner als – Groß-/Kleinschreibung nicht beachten. Wenn der linke Operand eine Auflistung ist, werden Werte aus der Auflistung zurückgegeben, die kleiner als der rechte Operand sind. Andernfalls wird TRUE zurückgegeben, wenn der linke Operand kleiner als der rechte Operand ist.</value>
+  </data>
+  <data name="cltOperatorDescription" xml:space="preserve">
+    <value>Kleiner als – Groß-/Kleinschreibung beachten. Wenn der linke Operand eine Auflistung ist, werden Werte aus der Auflistung zurückgegeben, die kleiner als der rechte Operand sind. Andernfalls wird TRUE zurückgegeben, wenn der linke Operand kleiner als der rechte Operand ist.</value>
+  </data>
+  <data name="leOperatorDescription" xml:space="preserve">
+    <value>Kleiner als oder gleich – Groß-/Kleinschreibung beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die kleiner oder gleich dem rechten Operanden sind. Andernfalls gibt er TRUE zurück, wenn der linke Operand kleiner oder gleich dem rechten Operanden ist.</value>
+  </data>
+  <data name="ileOperatorDescription" xml:space="preserve">
+    <value>Kleiner als oder gleich – Groß-/Kleinschreibung beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die kleiner oder gleich dem rechten Operanden sind. Andernfalls gibt er TRUE zurück, wenn der linke Operand kleiner oder gleich dem rechten Operanden ist.</value>
+  </data>
+  <data name="cleOperatorDescription" xml:space="preserve">
+    <value>Kleiner als oder gleich – Groß-/Kleinschreibung beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die kleiner oder gleich dem rechten Operanden sind. Andernfalls gibt er TRUE zurück, wenn der linke Operand kleiner oder gleich dem rechten Operanden ist.</value>
+  </data>
+  <data name="likeOperatorDescription" xml:space="preserve">
+    <value>Platzhalterabgleichsoperator – Groß-/Kleinschreibung nicht beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die dem rechten Operanden entsprechen. Andernfalls gibt er TRUE zurück, wenn der linke Operand mit dem rechten Operanden übereinstimmt.</value>
+  </data>
+  <data name="ilikeOperatorDescription" xml:space="preserve">
+    <value>Platzhalterabgleichsoperator – Groß-/Kleinschreibung nicht beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die dem rechten Operanden entsprechen. Andernfalls gibt er TRUE zurück, wenn der linke Operand mit dem rechten Operanden übereinstimmt.</value>
+  </data>
+  <data name="clikeOperatorDescription" xml:space="preserve">
+    <value>Platzhalterabgleichsoperator – Groß-/Kleinschreibung beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die dem rechten Operanden entsprechen. Andernfalls gibt er TRUE zurück, wenn der linke Operand mit dem rechten Operanden übereinstimmt.</value>
+  </data>
+  <data name="notlikeOperatorDescription" xml:space="preserve">
+    <value>Platzhalterabgleichsoperator – Groß-/Kleinschreibung nicht beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die dem rechten Operanden nicht entsprechen. Andernfalls gibt er TRUE zurück, wenn der linke Operand nicht mit dem rechten Operanden übereinstimmt.</value>
+  </data>
+  <data name="inotlikeOperatorDescription" xml:space="preserve">
+    <value>Platzhalterabgleichsoperator – Groß-/Kleinschreibung nicht beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die dem rechten Operanden nicht entsprechen. Andernfalls gibt er TRUE zurück, wenn der linke Operand nicht mit dem rechten Operanden übereinstimmt.</value>
+  </data>
+  <data name="cnotlikeOperatorDescription" xml:space="preserve">
+    <value>Platzhalterabgleichsoperator – Groß-/Kleinschreibung beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die dem rechten Operanden nicht entsprechen. Andernfalls gibt er TRUE zurück, wenn der linke Operand nicht mit dem rechten Operanden übereinstimmt.</value>
+  </data>
+  <data name="matchOperatorDescription" xml:space="preserve">
+    <value>Operator für den Abgleich regulärer Ausdrücke – Groß-/Kleinschreibung nicht beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die dem rechten Operanden entsprechen. Andernfalls gibt er TRUE zurück, wenn der linke Operand mit dem rechten Operanden übereinstimmt.</value>
+  </data>
+  <data name="imatchOperatorDescription" xml:space="preserve">
+    <value>Operator für den Abgleich regulärer Ausdrücke – Groß-/Kleinschreibung nicht beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die dem rechten Operanden entsprechen. Andernfalls gibt er TRUE zurück, wenn der linke Operand mit dem rechten Operanden übereinstimmt.</value>
+  </data>
+  <data name="cmatchOperatorDescription" xml:space="preserve">
+    <value>Operator für den Abgleich regulärer Ausdrücke – Groß-/Kleinschreibung beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die dem rechten Operanden entsprechen. Andernfalls gibt er TRUE zurück, wenn der linke Operand mit dem rechten Operanden übereinstimmt.</value>
+  </data>
+  <data name="notmatchOperatorDescription" xml:space="preserve">
+    <value>Operator für den Abgleich regulärer Ausdrücke – Groß-/Kleinschreibung nicht beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die dem rechten Operanden nicht entsprechen. Andernfalls gibt er TRUE zurück, wenn der linke Operand nicht mit dem rechten Operanden übereinstimmt.</value>
+  </data>
+  <data name="inotmatchOperatorDescription" xml:space="preserve">
+    <value>Operator für den Abgleich regulärer Ausdrücke – Groß-/Kleinschreibung nicht beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die dem rechten Operanden nicht entsprechen. Andernfalls gibt er TRUE zurück, wenn der linke Operand nicht mit dem rechten Operanden übereinstimmt.</value>
+  </data>
+  <data name="cnotmatchOperatorDescription" xml:space="preserve">
+    <value>Operator für den Abgleich regulärer Ausdrücke – Groß-/Kleinschreibung beachten. Wenn der linke Operand eine Auflistung ist, gibt dieser Operator Werte aus der Auflistung zurück, die dem rechten Operanden nicht entsprechen. Andernfalls gibt er TRUE zurück, wenn der linke Operand nicht mit dem rechten Operanden übereinstimmt.</value>
+  </data>
+  <data name="replaceOperatorDescription" xml:space="preserve">
+    <value>Ersetzungsoperator – Groß-/Kleinschreibung nicht beachten. Ändert den linken Operanden. Beispiel: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
+  </data>
+  <data name="ireplaceOperatorDescription" xml:space="preserve">
+    <value>Ersetzungsoperator – Groß-/Kleinschreibung nicht beachten. Ändert den linken Operanden. Beispiel: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
+  </data>
+  <data name="creplaceOperatorDescription" xml:space="preserve">
+    <value>Ersetzungsoperator – Groß-/Kleinschreibung beachten. Ändert den linken Operanden. Beispiel: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
+  </data>
+  <data name="containsOperatorDescription" xml:space="preserve">
+    <value>Enthaltenheitsoperator – Groß-/Kleinschreibung nicht beachten. Gibt TRUE zurück, wenn der Testwert (rechter Operand) genau mit mindestens einem der Werte im linken Operanden übereinstimmt.</value>
+  </data>
+  <data name="icontainsOperatorDescription" xml:space="preserve">
+    <value>Enthaltenheitsoperator – Groß-/Kleinschreibung nicht beachten. Gibt TRUE zurück, wenn der Testwert (rechter Operand) genau mit mindestens einem der Werte im linken Operanden übereinstimmt.</value>
+  </data>
+  <data name="ccontainsOperatorDescription" xml:space="preserve">
+    <value>Enthaltenheitsoperator – Groß-/Kleinschreibung beachten. Gibt nur TRUE zurück, wenn der Testwert (rechter Operand) genau mit mindestens einem der Werte im linken Operanden übereinstimmt.</value>
+  </data>
+  <data name="notcontainsOperatorDescription" xml:space="preserve">
+    <value>Enthaltenheitsoperator – Groß-/Kleinschreibung nicht beachten. Gibt TRUE zurück, wenn der Testwert (rechter Operand) genau mit keinem der Werte im linken Operanden übereinstimmt.</value>
+  </data>
+  <data name="inotcontainsOperatorDescription" xml:space="preserve">
+    <value>Enthaltenheitsoperator – Groß-/Kleinschreibung nicht beachten. Gibt TRUE zurück, wenn der Testwert (rechter Operand) genau mit keinem der Werte im linken Operanden übereinstimmt.</value>
+  </data>
+  <data name="cnotcontainsOperatorDescription" xml:space="preserve">
+    <value>Enthaltenheitsoperator – Groß-/Kleinschreibung beachten. Gibt TRUE zurück, wenn der Testwert (rechter Operand) genau mit keinem der Werte im linken Operanden übereinstimmt.</value>
+  </data>
+  <data name="inOperatorDescription" xml:space="preserve">
+    <value>Enthaltenheitsoperator – Groß-/Kleinschreibung nicht beachten. Gibt TRUE zurück, wenn der Testwert (linker Operand) genau mit mindestens einem der Werte im rechten Operanden übereinstimmt.</value>
+  </data>
+  <data name="iinOperatorDescription" xml:space="preserve">
+    <value>Enthaltenheitsoperator – Groß-/Kleinschreibung nicht beachten. Gibt TRUE zurück, wenn der Testwert (linker Operand) genau mit mindestens einem der Werte im rechten Operanden übereinstimmt.</value>
+  </data>
+  <data name="cinOperatorDescription" xml:space="preserve">
+    <value>Enthaltenheitsoperator – Groß-/Kleinschreibung beachten. Gibt TRUE zurück, wenn der Testwert (linker Operand) genau mit mindestens einem der Werte im rechten Operanden übereinstimmt.</value>
+  </data>
+  <data name="notinOperatorDescription" xml:space="preserve">
+    <value>Enthaltenheitsoperator – Groß-/Kleinschreibung beachten. Gibt TRUE zurück, wenn der Testwert (linker Operand) genau mit keinem der Werte im rechten Operanden übereinstimmt.</value>
+  </data>
+  <data name="inotinOperatorDescription" xml:space="preserve">
+    <value>Enthaltenheitsoperator – Groß-/Kleinschreibung nicht beachten. Gibt TRUE zurück, wenn der Testwert (linker Operand) genau mit keinem der Werte im rechten Operanden übereinstimmt.</value>
+  </data>
+  <data name="cnotinOperatorDescription" xml:space="preserve">
+    <value>Enthaltenheitsoperator – Groß-/Kleinschreibung beachten. Gibt TRUE zurück, wenn der Testwert (linker Operand) genau mit keinem der Werte im rechten Operanden übereinstimmt.</value>
+  </data>
+  <data name="splitOperatorDescription" xml:space="preserve">
+    <value>Teilen – Groß-/Kleinschreibung nicht beachten. Teilt eine oder mehrere Zeichenfolgen in Teilzeichenfolgen auf.
+-Split &lt;String&gt;
+
+&lt;String&gt; -Split &lt;Delimiter&gt;[,&lt;Max-substrings&gt;[,"&lt;Options&gt;"]]
+
+&lt;String&gt; -Split {&lt;ScriptBlock&gt;} [,&lt;Max-substrings&gt;]</value>
+  </data>
+  <data name="isplitOperatorDescription" xml:space="preserve">
+    <value>Teilen – Groß-/Kleinschreibung nicht beachten. Teilt eine oder mehrere Zeichenfolgen in Teilzeichenfolgen auf.
+-Split &lt;String&gt;
+
+&lt;String&gt; -Split &lt;Delimiter&gt;[,&lt;Max-substrings&gt;[,"&lt;Options&gt;"]]
+
+&lt;String&gt; -Split {&lt;ScriptBlock&gt;} [,&lt;Max-substrings&gt;]</value>
+  </data>
+  <data name="csplitOperatorDescription" xml:space="preserve">
+    <value>Split – Groß-/Kleinschreibung beachten. Teilt eine oder mehrere Zeichenfolgen in Teilzeichenfolgen auf.
+-Split &lt;String&gt;
+
+&lt;String&gt; -Split &lt;Delimiter&gt;[,&lt;Max-substrings&gt;[,"&lt;Options&gt;"]]
+
+&lt;String&gt; -Split {&lt;ScriptBlock&gt;} [,&lt;Max-substrings&gt;]</value>
+  </data>
+  <data name="isnotOperatorDescription" xml:space="preserve">
+    <value>Gibt TRUE zurück, wenn der linke Operand keine Instanz des angegebenen .NET Framework-Typs (rechter Operand) ist.</value>
+  </data>
+  <data name="isOperatorDescription" xml:space="preserve">
+    <value>Gibt TRUE zurück, wenn der linke Operand eine Instanz des angegebenen .NET Framework-Typs (rechter Operand) ist.</value>
+  </data>
+  <data name="asOperatorDescription" xml:space="preserve">
+    <value>Konvertiert den linken Operanden in den angegebenen .NET Framework-Typ (rechter Operand).</value>
+  </data>
+  <data name="fOperatorDescription" xml:space="preserve">
+    <value>Formatiert Zeichenfolgen mithilfe der Formatmethode von Zeichenfolgenobjekten.</value>
+  </data>
+  <data name="andOperatorDescription" xml:space="preserve">
+    <value>Logisches "Und" Gibt TRUE zurück, wenn beide Anweisungen TRUE sind.</value>
+  </data>
+  <data name="bandOperatorDescription" xml:space="preserve">
+    <value>Bitweises AND</value>
+  </data>
+  <data name="orOperatorDescription" xml:space="preserve">
+    <value>Logisches "Oder" TRUE, wenn eine oder beide Anweisungen TRUE sind.</value>
+  </data>
+  <data name="borOperatorDescription" xml:space="preserve">
+    <value>Bitweises OR (inklusiv)</value>
+  </data>
+  <data name="xorOperatorDescription" xml:space="preserve">
+    <value>Logisches XODER. Gibt TRUE zurück, wenn eine der Anweisungen TRUE und die andere FALSE ist.</value>
+  </data>
+  <data name="bxorOperatorDescription" xml:space="preserve">
+    <value>Bitweises OR (exklusiv)</value>
+  </data>
+  <data name="joinOperatorDescription" xml:space="preserve">
+    <value>Verknüpfen – mehrere Zeichenfolgen zu einer einzelnen Zeichenfolge kombinieren.
+-Join &lt;String[]&gt;
+&lt;String[]&gt; -Join &lt;Delimiter&gt;</value>
+  </data>
+  <data name="shlOperatorDescription" xml:space="preserve">
+    <value>Bitoperator „Nach links verschieben“. Fügt an der ganz rechten Bitposition eine Null ein.</value>
+  </data>
+  <data name="shrOperatorDescription" xml:space="preserve">
+    <value>Bitoperator „Nach rechts verschieben“. Fügt an der ganz linken Bitposition eine Null ein. Bei vorzeichenbehafteten Werten bleibt das Vorzeichenbit erhalten.</value>
+  </data>
+  <data name="NameHashtableKeyDescription" xml:space="preserve">
+    <value>[string]
+Gibt den Namen der Eigenschaft an.</value>
+  </data>
+  <data name="LabelHashtableKeyDescription" xml:space="preserve">
+    <value>[string]
+Gibt den Namen der Eigenschaft an.</value>
+  </data>
+  <data name="ExpressionHashtableKeyDescription" xml:space="preserve">
+    <value>[scriptblock]
+Ein Skriptblock zum Berechnen des Werts der neuen Eigenschaft.</value>
+  </data>
+  <data name="AlignmentHashtableKeyDescription" xml:space="preserve">
+    <value>[string]
+Gibt an, wie die Werte in einer Spalte angezeigt werden.
+Gültige Werte sind „left“, „center“ oder „right“.</value>
+  </data>
+  <data name="FormatStringHashtableKeyDescription" xml:space="preserve">
+    <value>[string]
+Gibt eine Formatzeichenfolge an, die definiert, wie der Wert für die Ausgabe formatiert wird.</value>
+  </data>
+  <data name="WidthHashtableKeyDescription" xml:space="preserve">
+    <value>[int]
+Gibt die maximale Spaltenbreite in einer Tabelle an, wenn der Wert angezeigt wird.
+Der Wert muss größer als 0 sein.</value>
+  </data>
+  <data name="DepthHashtableKeyDescription" xml:space="preserve">
+    <value>[int]
+Der Tiefenschlüssel gibt die Tiefe der Erweiterung pro Eigenschaft an.</value>
+  </data>
+  <data name="AscendingHashtableKeyDescription" xml:space="preserve">
+    <value>[bool]
+Gibt die Sortierreihenfolge für eine oder mehrere Eigenschaften an.</value>
+  </data>
+  <data name="DescendingHashtableKeyDescription" xml:space="preserve">
+    <value>[bool]
+Gibt die Sortierreihenfolge für eine oder mehrere Eigenschaften an.</value>
+  </data>
+  <data name="LogNameHashtableKeyDescription" xml:space="preserve">
+    <value>[String[]]
+Gibt die Protokollnamen an, aus denen Ereignisse abgerufen werden sollen.
+Unterstützt Platzhalter.</value>
+  </data>
+  <data name="ProviderNameHashtableKeyDescription" xml:space="preserve">
+    <value>[String[]]
+Gibt die Ereignisprotokollanbieter an, von denen Ereignisse abgerufen werden sollen.
+Unterstützt Platzhalter.</value>
+  </data>
+  <data name="PathHashtableKeyDescription" xml:space="preserve">
+    <value>[String[]]
+Gibt Dateipfade zu Protokolldateien an, aus denen Ereignisse abgerufen werden sollen.
+Gültige Dateiformate sind .etl, .evt und .evtx</value>
+  </data>
+  <data name="KeywordsHashtableKeyDescription" xml:space="preserve">
+    <value>[Long[]]
+Wählt Ereignisse mit der angegebenen Schlüsselwortbitmaske aus.
+Im Folgenden sind die Standardschlüsselwörter aufgeführt:
+4503599627370496: AuditFailure
+9007199254740992: AuditSuccess
+4503599627370496: CorrelationHint
+18014398509481984: CorrelationHint2
+36028797018963968: EventLogClassic
+281474976710656: ResponseTime
+2251799813685248: Sqm
+562949953421312: WdiContext
+1125899906842624: WdiDiagnostic</value>
+  </data>
+  <data name="IDHashtableKeyDescription" xml:space="preserve">
+    <value>[int[]]
+Wählt Ereignisse mit den angegebenen Ereignis-IDs aus.</value>
+  </data>
+  <data name="LevelHashtableKeyDescription" xml:space="preserve">
+    <value>[int[]]
+Wählt Ereignisse mit den angegebenen Protokollebenen aus.
+Die folgenden Protokollebenen sind gültig:
+1: Kritisch
+2: Fehler
+3: Warnung
+4: Informational
+5: Ausführlich</value>
+  </data>
+  <data name="StartTimeHashtableKeyDescription" xml:space="preserve">
+    <value>[datetime]
+Wählt Ereignisse aus, die nach dem angegebenen Datum und der angegebenen Uhrzeit erstellt wurden.</value>
+  </data>
+  <data name="EndTimeHashtableKeyDescription" xml:space="preserve">
+    <value>[datetime]
+Wählt Ereignisse aus, die vor dem angegebenen Datum und der angegebenen Uhrzeit erstellt wurden.</value>
+  </data>
+  <data name="UserIDHashtableKeyDescription" xml:space="preserve">
+    <value>[string]
+Wählt Ereignisse aus, die vom angegebenen Benutzer generiert wurden.
+Dies kann entweder eine Zeichenfolgendarstellung einer SID oder eine Domäne und ein Benutzername im Format DOMÄNE\BENUTZERNAME oder USERNAME@DOMAIN sein.</value>
+  </data>
+  <data name="DataHashtableKeyDescription" xml:space="preserve">
+    <value>[string[]]
+Wählt Ereignisse mit einem der angegebenen Werte im Abschnitt „EventData“ aus.</value>
+  </data>
+  <data name="SuppressHashFilterHashtableKeyDescription" xml:space="preserve">
+    <value>[hashtable]
+Schließt Ereignisse aus, die mit den in der Hashtabelle angegebenen Werten übereinstimmen.</value>
+  </data>
+  <data name="RequiresModulesParameterDescription" xml:space="preserve">
+    <value>[string] oder [hashtable]
+Gibt ein Array von PowerShell-Modulen an, die das Skript erfordert.
+Jedes Element kann entweder eine Zeichenfolge mit dem Modulnamen als Wert oder eine Hashtabelle mit den folgenden Schlüsseln sein:
+Name: Der Name des Moduls
+GUID: GUID des Moduls
+Eine der folgenden Optionen:
+ModuleVersion: Gibt eine minimal zulässige Version des Moduls an.
+RequiredVersion: Gibt eine exakte, erforderliche Version des Moduls an.
+MaximumVersion: Gibt die maximal zulässige Version des Moduls an.</value>
+  </data>
+  <data name="RequiresPSEditionParameterDescription" xml:space="preserve">
+    <value>[string]
+Gibt eine PowerShell-Edition an, die das Skript erfordert.
+Gültige Werte sind „Core“ und „Desktop“.</value>
+  </data>
+  <data name="RequiresRunAsAdministratorParameterDescription" xml:space="preserve">
+    <value>[switch]
+Gibt an, dass PowerShell unter Windows als Admin ausgeführt werden muss.
+Dies muss der letzte Parameter in der Zeile mit der #requires-Anweisung sein.</value>
+  </data>
+  <data name="RequiresVersionParameterDescription" xml:space="preserve">
+    <value>[version]
+Gibt die mindestens erforderliche PowerShell-Version für das Skript an.</value>
+  </data>
+  <data name="RequiresPsEditionCoreDescription" xml:space="preserve">
+    <value>Gibt an, dass für die Ausführung des Skripts PowerShell 7+ erforderlich ist.</value>
+  </data>
+  <data name="RequiresPsEditionDesktopDescription" xml:space="preserve">
+    <value>Gibt an, dass für die Ausführung des Skripts Windows PowerShell 5.1 erforderlich ist.</value>
+  </data>
+  <data name="RequiresModuleSpecModuleNameDescription" xml:space="preserve">
+    <value>[string]
+Obligatorisch Gibt den Namen des Moduls an.</value>
+  </data>
+  <data name="RequiresModuleSpecGUIDDescription" xml:space="preserve">
+    <value>[string]
+Optional Gibt den GUID des Moduls an.</value>
+  </data>
+  <data name="RequiresModuleSpecModuleVersionDescription" xml:space="preserve">
+    <value>[string]
+Gibt eine minimal zulässige Version des Moduls an.</value>
+  </data>
+  <data name="RequiresModuleSpecRequiredVersionDescription" xml:space="preserve">
+    <value>[string]
+Gibt eine exakte, erforderliche Version des Moduls an.</value>
+  </data>
+  <data name="RequiresModuleSpecMaximumVersionDescription" xml:space="preserve">
+    <value>[string]
+Gibt die maximal zulässige Version des Moduls an.</value>
+  </data>
+  <data name="CommentHelpSYNOPSISKeywordDescription" xml:space="preserve">
+    <value>Eine kurze Beschreibung der Funktion oder des Skripts.
+Dieses Schlüsselwort kann nur einmal für jeden Inhalt verwendet werden.</value>
+  </data>
+  <data name="CommentHelpDESCRIPTIONKeywordDescription" xml:space="preserve">
+    <value>Eine detaillierte Beschreibung der Funktion oder des Skripts.
+Dieses Schlüsselwort kann nur einmal für jeden Inhalt verwendet werden.</value>
+  </data>
+  <data name="CommentHelpPARAMETERKeywordDescription" xml:space="preserve">
+    <value>.PARAMETER  &lt;Parameter-Name&gt;
+Die Beschreibung eines Parameters.
+Fügen Sie für jeden Parameter in der Funktions- oder Skriptsyntax ein .PARAMETER-Schlüsselwort hinzu.</value>
+  </data>
+  <data name="CommentHelpEXAMPLEKeywordDescription" xml:space="preserve">
+    <value>Ein Beispielbefehl, der die Funktion oder das Skript verwendet, optional gefolgt von einer Beispielausgabe und einer Beschreibung.
+Wiederholen Sie dieses Schlüsselwort für jedes Beispiel.</value>
+  </data>
+  <data name="CommentHelpINPUTSKeywordDescription" xml:space="preserve">
+    <value>Die .NET-Typen von Objekten, die an die Funktion oder das Skript weitergeleitet werden können.
+Sie können auch eine Beschreibung der Eingabeobjekte einschließen.</value>
+  </data>
+  <data name="CommentHelpOUTPUTSKeywordDescription" xml:space="preserve">
+    <value>Der .NET-Typ der Objekte, die vom Cmdlet zurückgegeben werden.
+Sie können auch eine Beschreibung der zurückgegebenen Objekte einschließen.</value>
+  </data>
+  <data name="CommentHelpNOTESKeywordDescription" xml:space="preserve">
+    <value>Zusätzliche Informationen zur Funktion oder zum Skript.</value>
+  </data>
+  <data name="CommentHelpLINKKeywordDescription" xml:space="preserve">
+    <value>Der Name eines verwandten Themas.
+Wiederholen Sie das Schlüsselwort .LINK für jedes verwandte Thema.
+Der Inhalt des .LINK-Schlüsselworts kann auch einen URI zu einer Onlineversion des Hilfethemas enthalten.</value>
+  </data>
+  <data name="CommentHelpCOMPONENTKeywordDescription" xml:space="preserve">
+    <value>Der Name der Technologie oder des Features, die bzw. das von der Funktion oder dem Skript verwendet wird oder mit dem bzw. der es verknüpft ist.</value>
+  </data>
+  <data name="CommentHelpROLEKeywordDescription" xml:space="preserve">
+    <value>Der Name der Benutzerrolle für das Hilfethema.</value>
+  </data>
+  <data name="CommentHelpFUNCTIONALITYKeywordDescription" xml:space="preserve">
+    <value>Die Schlüsselwörter, die die beabsichtigte Verwendung der Funktion beschreiben.</value>
+  </data>
+  <data name="CommentHelpFORWARDHELPTARGETNAMEKeywordDescription" xml:space="preserve">
+    <value>.FORWARDHELPTARGETNAME &lt;Command-Name&gt;
+Leitet zum Hilfethema für den angegebenen Befehl um.</value>
+  </data>
+  <data name="CommentHelpFORWARDHELPCATEGORYKeywordDescription" xml:space="preserve">
+    <value>.FORWARDHELPCATEGORY &lt;Category&gt;
+Dieser Befehl gibt die Hilfekategorie des Elements in ForwardHelpTargetName an.</value>
+  </data>
+  <data name="CommentHelpREMOTEHELPRUNSPACEKeywordDescription" xml:space="preserve">
+    <value>.REMOTEHELPRUNSPACE &lt;PSSession-variable&gt;
+Gibt eine Sitzung an, die das Hilfethema enthält.
+Geben Sie eine Variable ein, die ein PSSession-Objekt enthält.</value>
+  </data>
+  <data name="CommentHelpEXTERNALHELPKeywordDescription" xml:space="preserve">
+    <value>.EXTERNALHELP &lt;XML Help File&gt;
+Das Schlüsselwort .ExternalHelp ist erforderlich, wenn eine Funktion oder ein Skript in XML-Dateien dokumentiert ist.</value>
+  </data>
+  <data name="AssemblyKeywordDescription" xml:space="preserve">
+    <value>Gibt den Pfad zu einer .NET-Assembly an, die geladen werden soll.
+
+using assembly &lt;.NET-assembly-path&gt;</value>
+  </data>
+  <data name="ModuleKeywordDescription" xml:space="preserve">
+    <value>Gibt ein PowerShell-Modul an, aus dem Klassen geladen werden.
+
+using module &lt;ModuleName or Path&gt;
+
+using module &lt;ModuleSpecification hashtable&gt;</value>
+  </data>
+  <data name="NamespaceKeywordDescription" xml:space="preserve">
+    <value>Gibt einen .NET-Namespace an, aus dem Typen aufgelöst werden sollen, oder einen Namespacealias.
+
+using namespace &lt;.NET-namespace&gt;
+
+using namespace &lt;AliasName&gt; = &lt;.NET-namespace&gt;</value>
+  </data>
+  <data name="TypeKeywordDescription" xml:space="preserve">
+    <value>Gibt einen Alias für einen .NET-Typ an.
+
+using type &lt;AliasName&gt; = &lt;.NET-type&gt;</value>
+  </data>
+  <data name="RegistryStringToolTip" xml:space="preserve">
+    <value>Eine normale Zeichenfolge.</value>
+  </data>
+  <data name="RegistryExpandStringToolTip" xml:space="preserve">
+    <value>Eine Zeichenfolge, die nicht erweiterte Verweise auf Umgebungsvariablen enthält, die beim Abrufen des Werts erweitert werden.</value>
+  </data>
+  <data name="RegistryBinaryToolTip" xml:space="preserve">
+    <value>Binärdaten in beliebiger Form.</value>
+  </data>
+  <data name="RegistryDWordToolTip" xml:space="preserve">
+    <value>Eine 32-Bit-Binärzahl.</value>
+  </data>
+  <data name="RegistryMultiStringToolTip" xml:space="preserve">
+    <value>Ein Array der Zeichenfolgen.</value>
+  </data>
+  <data name="RegistryQWordToolTip" xml:space="preserve">
+    <value>Eine 64-Bit-Binärzahl.</value>
+  </data>
+  <data name="RegistryUnknownToolTip" xml:space="preserve">
+    <value>Ein nicht unterstützter Registrierungsdatentyp.</value>
+  </data>
+  <data name="SeparatorCommaToolTip" xml:space="preserve">
+    <value>',' – Komma</value>
+  </data>
+  <data name="SeparatorCommaSpaceToolTip" xml:space="preserve">
+    <value>', ' – Komma-Leerzeichen</value>
+  </data>
+  <data name="SeparatorSemiColonToolTip" xml:space="preserve">
+    <value>';' – Semikolon</value>
+  </data>
+  <data name="SeparatorSemiColonSpaceToolTip" xml:space="preserve">
+    <value>'; ' – Semikolon-Leerzeichen</value>
+  </data>
+  <data name="SeparatorNewlineToolTip" xml:space="preserve">
+    <value>{0} – Zeilenumbruch</value>
+  </data>
+  <data name="SeparatorDashToolTip" xml:space="preserve">
+    <value>'-' – Gedankenstrich</value>
+  </data>
+  <data name="SeparatorSpaceToolTip" xml:space="preserve">
+    <value>' ' – Leerzeichen</value>
+  </data>
+</root>

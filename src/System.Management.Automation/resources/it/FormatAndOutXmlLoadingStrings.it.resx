@@ -1,0 +1,324 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AttributesNotAllowed" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: l'elemento XML {2} non consente attributi.</value>
+  </data>
+  <data name="NoChildrenAllowed" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: il nodo {2} non può avere oggetti figlio.</value>
+  </data>
+  <data name="InvalidNode" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: {2} non è valido.</value>
+  </data>
+  <data name="NoDefaultShapeEntry" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: è necessario specificare almeno un valore predefinito {2}.</value>
+  </data>
+  <data name="TooManyDefaultShapeEntry" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: non può esserci più di un valore predefinito {2}.</value>
+  </data>
+  <data name="NullControlName" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: il nome del controllo non può essere null o vuoto.</value>
+  </data>
+  <data name="InvalidControlForOutOfBandView" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: le visualizzazioni Out Of Band possono avere solo CustomControl o ListControl.</value>
+  </data>
+  <data name="OutOfBandGroupByConflict" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: una visualizzazione Out Of Band non può avere GroupBy.</value>
+  </data>
+  <data name="ViewNotLoaded" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: non è possibile caricare la visualizzazione.</value>
+  </data>
+  <data name="InvalidAlignmentValue" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: "{2}" non è un valore di allineamento valido.</value>
+  </data>
+  <data name="ExpectPositiveInteger" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: è previsto un numero intero positivo.</value>
+  </data>
+  <data name="InvalidColumnHeader" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: la definizione dell'intestazione di colonna non è valida; tutte le intestazioni verranno ignorate.</value>
+  </data>
+  <data name="IncorrectRowItemCount" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: il numero di elementi della riga = {2} nel set alternativo #{3} non corrisponde al numero di elementi della riga predefinita = {4}.</value>
+  </data>
+  <data name="IncorrectHeaderItemCount" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: il numero di elementi dell'intestazione = {2} non corrisponde al numero di elementi della riga predefinita = {3}.</value>
+  </data>
+  <data name="NoListViewItem" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: è necessario specificare almeno un elemento della visualizzazione elenco.</value>
+  </data>
+  <data name="InvalidPropertyEntry" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: la voce di proprietà non è valida.</value>
+  </data>
+  <data name="NoDefinitionList" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: manca l'elenco delle definizioni.</value>
+  </data>
+  <data name="ExpectBoolean" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: è previsto un valore booleano.</value>
+  </data>
+  <data name="ExpectNaturalNumber" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: è previsto un numero intero non negativo.</value>
+  </data>
+  <data name="ExpectInteger" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: è previsto un numero intero.</value>
+  </data>
+  <data name="MissingInnerText" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: manca il valore del testo interno.</value>
+  </data>
+  <data name="EmptyCustomControlList" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: l'elenco dei token del controllo personalizzato non può essere vuoto.</value>
+  </data>
+  <data name="LoadTagFailed" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: {2} non è possibile caricare.</value>
+  </data>
+  <data name="NodeWithoutExpression" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: {2} non può essere specificato senza un'espressione.</value>
+  </data>
+  <data name="NodeWithExpression" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: {2} non può essere specificato con un'espressione.</value>
+  </data>
+  <data name="NoFormatString" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: manca una stringa di formato.</value>
+  </data>
+  <data name="NoScriptBlockText" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: manca il testo del blocco di script.</value>
+  </data>
+  <data name="NoProperty" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: manca una proprietà.</value>
+  </data>
+  <data name="InvalidScriptBlock" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: il blocco di script "{2}" non è valido.</value>
+  </data>
+  <data name="StringResourceNotFound" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: la stringa {2} della risorsa {3} nell'assembly {4} non è stata trovata.</value>
+  </data>
+  <data name="ResourceNotFound" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: la risorsa {2} nell'assembly {3} non è stata trovata.</value>
+  </data>
+  <data name="AssemblyNotFound" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: non è possibile trovare l'assembly {2}.</value>
+  </data>
+  <data name="NonXmlElementNode" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: il nodo deve essere un XmlElement.</value>
+  </data>
+  <data name="ExpectExpression" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: è necessaria un'espressione.</value>
+  </data>
+  <data name="ControlLabelWithoutExpression" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: non è possibile avere un controllo o un'etichetta senza un'espressione.</value>
+  </data>
+  <data name="ControlAndLabel" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: controllo ed etichetta non possono essere presenti contemporaneamente.</value>
+  </data>
+  <data name="SelectionSetNameAndTypeName" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: SelectionSetName e TypeName non possono essere presenti contemporaneamente.</value>
+  </data>
+  <data name="EmptyAppliesTo" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: non è specificato alcun tipo o condizione per l'applicazione della visualizzazione.</value>
+  </data>
+  <data name="InvalidNodeValue" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: il valore {2} non è valido.</value>
+  </data>
+  <data name="DuplicatedNode" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: esiste un nodo duplicato.</value>
+  </data>
+  <data name="MutuallyExclusiveNode" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: {2} e {3} si escludono a vicenda.</value>
+  </data>
+  <data name="ThreeMutuallyExclusiveNode" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: {2}, {3} e {4} si escludono a vicenda.</value>
+  </data>
+  <data name="UnknownNode" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: {2} è un nodo sconosciuto.</value>
+  </data>
+  <data name="UnknownAttribute" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: {2} è un attributo sconosciuto.</value>
+  </data>
+  <data name="MissingAttribute" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: {2} è un attributo mancante.</value>
+  </data>
+  <data name="MissingNode" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: il nodo {2} è mancante.</value>
+  </data>
+  <data name="MissingNodeFromList" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: manca un nodo in {2}.</value>
+  </data>
+  <data name="EmptyNode" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: {2} è un nodo vuoto.</value>
+  </data>
+  <data name="EmptyAttribute" xml:space="preserve">
+    <value>Errore in XPath {0} nel file {1}: {2} è un attributo vuoto.</value>
+  </data>
+  <data name="ErrorInFile" xml:space="preserve">
+    <value>Errore nel file {0}: {1}</value>
+  </data>
+  <data name="TooManyErrors" xml:space="preserve">
+    <value>Troppi errori nel file {0}.</value>
+  </data>
+  <data name="FormatLoadingErrors" xml:space="preserve">
+    <value>Si sono verificati errori durante il caricamento del file di dati di formato: {0}</value>
+  </data>
+  <data name="AssemblyInGAC" xml:space="preserve">
+    <value>(Global Assembly Cache) {0}</value>
+  </data>
+  <data name="MshSnapinQualifiedError" xml:space="preserve">
+    <value>{0}, {1}</value>
+  </data>
+  <data name="FormatFileNotRooted" xml:space="preserve">
+    <value>Il percorso {0} non è completo. Specificare un percorso di file con formato completo.</value>
+  </data>
+  <data name="SharedFormatTableCannotBeUpdated" xml:space="preserve">
+    <value>Non è possibile aggiornare FormatTable perché potrebbe essere stata creata all'esterno dello spazio di esecuzione.</value>
+  </data>
+  <data name="FormatTableLoadErrors" xml:space="preserve">
+    <value>Si sono verificati errori durante il caricamento di FormatTable. Visualizzare il contenuto della proprietà Errors per ottenere messaggi di errore dettagliati.</value>
+  </data>
+  <data name="ErrorInFormattingData" xml:space="preserve">
+    <value>Errore durante la formattazione dei dati "{0}": {1}</value>
+  </data>
+  <data name="IncorrectHeaderItemCountInFormattingData" xml:space="preserve">
+    <value>Errore nei dati della visualizzazione con nome di tipo {0} all'indice {1}: il numero di elementi dell'intestazione = {2} non corrisponde al numero predefinito di elementi della riga = {3}.</value>
+  </data>
+  <data name="InvalidFormattingData" xml:space="preserve">
+    <value>Errore nei dati di visualizzazione con nome di tipo {0} all'indice {1}: i dati di formattazione "{2}" non sono validi.</value>
+  </data>
+  <data name="InvalidScriptBlockInFormattingData" xml:space="preserve">
+    <value>Errore nei dati di visualizzazione con nome di tipo {0} all'indice {1}: il blocco di script "{2}" non è valido.</value>
+  </data>
+  <data name="LoadTagFailedInFormattingData" xml:space="preserve">
+    <value>Errore nei dati di visualizzazione con nome di tipo {0} all'indice {1}: caricamento di {2} non riuscito.</value>
+  </data>
+  <data name="MultipleRowEntriesFoundInFormattingData" xml:space="preserve">
+    <value>Errore nei dati di visualizzazione con nome di tipo {0} all'indice {1}: un TableControl deve contenere solo un elemento {2}.</value>
+  </data>
+  <data name="NoDefaultShapeEntryInFormattingData" xml:space="preserve">
+    <value>Errore nei dati di visualizzazione con nome di tipo {0} all'indice {1}: è necessario specificare almeno un valore predefinito {2}.</value>
+  </data>
+  <data name="NoListViewItemInFormattingData" xml:space="preserve">
+    <value>Errore nei dati di visualizzazione con nome di tipo {0} all'indice {1}: è necessario specificare almeno un elemento della visualizzazione elenco.</value>
+  </data>
+  <data name="TooManyDefaultShapeEntryInFormattingData" xml:space="preserve">
+    <value>Errore nei dati di visualizzazione con nome di tipo {0} all'indice {1}: non può esserci più di un valore predefinito {2}.</value>
+  </data>
+  <data name="TooManyErrorsInFormattingData" xml:space="preserve">
+    <value>Troppi errori nei dati di formattazione per il tipo "{0}".</value>
+  </data>
+  <data name="FormatTableCannotCoExist" xml:space="preserve">
+    <value>Non è possibile aggiornare una tabella di formato condivisa con più di una voce.</value>
+  </data>
+</root>

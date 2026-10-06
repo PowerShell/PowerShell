@@ -13,6 +13,9 @@ env:
   SYSTEM_ARTIFACTSDIRECTORY: ${{ github.workspace }}/artifacts
   BUILD_ARTIFACTSTAGINGDIRECTORY: ${{ github.workspace }}/artifacts
 
+permissions:
+  contents: read
+
 jobs:
   package:
     name: ${{ matrix.architecture }} - ${{ matrix.channel }}
@@ -36,7 +39,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 1000
 
@@ -61,7 +64,7 @@ jobs:
         shell: pwsh
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
         with:
           global-json-file: ./global.json
 
@@ -81,7 +84,7 @@ jobs:
 
       - name: Upload Build Artifacts
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: windows-packaging-${{ matrix.architecture }}-${{ matrix.channel }}
           path: |

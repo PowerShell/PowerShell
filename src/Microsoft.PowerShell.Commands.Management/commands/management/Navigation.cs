@@ -2718,7 +2718,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         // Get the localized prompt string
 
-                        string prompt = StringUtil.Format(NavigationResources.RemoveItemWithChildren, resolvedPath.Path);
+                        string prompt = StringUtil.Format(NavigationResources.RemoveItemWithChildren, providerPath);
 
                         // Confirm the user wants to remove all children and the item even if
                         // they did not specify -recurse

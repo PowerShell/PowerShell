@@ -1,0 +1,315 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CounterNotALogFile" xml:space="preserve">
+    <value>Soubor {0} nemá očekávanou příponu názvu souboru. Při použití parametru Path zadávejte pouze soubory .blg, .csv nebo .tsv.</value>
+  </data>
+  <data name="CounterApiError" xml:space="preserve">
+    <value>Interní volání rozhraní API čítače výkonu selhalo. Chyba: {0:x8}</value>
+  </data>
+  <data name="LogProviderOrPathNeeded" xml:space="preserve">
+    <value>Je nutné zadat alespoň jednu dvojici klíč-hodnota Log, Provider nebo Path.</value>
+  </data>
+  <data name="NoMatchingProvidersFound" xml:space="preserve">
+    <value>V počítači {0} není žádný zprostředkovatel událostí, který odpovídá hodnotě {1}.</value>
+  </data>
+  <data name="NullNotAllowedInHashtable" xml:space="preserve">
+    <value>V klíči zatřiďovací tabulky {0} byla zjištěna hodnota null. Hodnoty null nejsou povoleny.</value>
+  </data>
+  <data name="QueryTrace" xml:space="preserve">
+    <value>Vytvořený strukturovaný dotaz:
+{0}.</value>
+  </data>
+  <data name="ProviderLogLink" xml:space="preserve">
+    <value>Zprostředkovatel {0} zapisuje události do protokolu {1}.</value>
+  </data>
+  <data name="CounterInvalidDateRange" xml:space="preserve">
+    <value>Hodnota parametru StartTime musí být menší než hodnota parametru EndTime.</value>
+  </data>
+  <data name="NoMatchingLogsFound" xml:space="preserve">
+    <value>V počítači {0} není protokol událostí, který odpovídá hodnotě {1}.</value>
+  </data>
+  <data name="Vendor" xml:space="preserve">
+    <value>Microsoft</value>
+  </data>
+  <data name="CounterCircularNoMaxSize" xml:space="preserve">
+    <value>Parametr Circular bude ignorován, pokud není zadán také parametr MaxSize.</value>
+  </data>
+  <data name="FileOpenFailed" xml:space="preserve">
+    <value>Soubor {0} nelze otevřít pro zápis.</value>
+  </data>
+  <data name="KeywordLongExpected" xml:space="preserve">
+    <value>Pro klíčové slovo byla zadána neplatná hodnota {0}.</value>
+  </data>
+  <data name="CounterExportSampleNotInInitialSet" xml:space="preserve">
+    <value>Čítač výkonu {0} nelze exportovat do souboru {1}, protože nebyl součástí první sady vzorků.</value>
+  </data>
+  <data name="NoMatchingEventsFound" xml:space="preserve">
+    <value>Nebyly nalezeny žádné události, které odpovídají zadaným kritériím výběru.</value>
+  </data>
+  <data name="CounterPathTranslationFailed" xml:space="preserve">
+    <value>Výchozí hodnoty pro tento příkaz selhaly. Chyba: {0:x8}</value>
+  </data>
+  <data name="CounterNoMixedLogTypes" xml:space="preserve">
+    <value>V jednom příkazu nelze importovat různé typy souborů protokolu výkonu.  V parametru Path zadejte pouze jeden typ souboru.</value>
+  </data>
+  <data name="NotAFileSystemPath" xml:space="preserve">
+    <value>Cesta {0} zřejmě není platnou cestou k souboru protokolu. Zadejte platnou cestu systému souborů.</value>
+  </data>
+  <data name="EventIdNotSpecified" xml:space="preserve">
+    <value>Je nutné zadat platné ID události.</value>
+  </data>
+  <data name="ProviderMetadataUnavailable" xml:space="preserve">
+    <value>Nepodařilo se načíst informace o zprostředkovateli {0}. Chyba: {1}.</value>
+  </data>
+  <data name="SpecifyOldestForLog" xml:space="preserve">
+    <value>Protokol událostí {0} lze číst pouze v chronologickém pořadí vpřed, protože se jedná o analytický protokol nebo protokol ladění. Pokud chcete zobrazit události z protokolu událostí {0}, použijte v příkazu parametr Oldest.</value>
+  </data>
+  <data name="ExportDestPathAmbiguous" xml:space="preserve">
+    <value>Následující cílová cesta exportu je nejednoznačná: {0}.</value>
+  </data>
+  <data name="CounterPathIsInvalid" xml:space="preserve">
+    <value>Cesta k čítači výkonu {0} není platná.</value>
+  </data>
+  <data name="CounterSampleDataInvalid" xml:space="preserve">
+    <value>Data v jednom ze vzorků čítače výkonu nejsou platná. Zobrazte vlastnost Status každého objektu PerformanceCounterSample a ověřte, že obsahuje platná data.</value>
+  </data>
+  <data name="PayloadMismatch" xml:space="preserve">
+    <value>Zadaná datová část neodpovídá šabloně definované pro ID události {0}.
+Definovaná šablona je následující:
+{1}</value>
+  </data>
+  <data name="NoMatchingCounterSetsFound" xml:space="preserve">
+    <value>V počítači {0} nelze najít žádné sady čítačů výkonu, které odpovídají následujícímu zadání: {1}.</value>
+  </data>
+  <data name="CounterPathsInFilesInvalid" xml:space="preserve">
+    <value>V souborech nebyly nalezeny žádné platné cesty k čítačům.</value>
+  </data>
+  <data name="FileCreateFailed" xml:space="preserve">
+    <value>Nelze vytvořit soubor {0}. Ověřte, že je cesta platná.</value>
+  </data>
+  <data name="NoCounterSetsOnComputer" xml:space="preserve">
+    <value>V počítači {0} nelze najít žádné sady čítačů výkonu: chyba {1:x8}. Ověřte, že počítač {0} existuje, je zjistitelný a že máte dostatečná oprávnění k zobrazení dat čítačů výkonu v tomto počítači.</value>
+  </data>
+  <data name="IncorrectEventId" xml:space="preserve">
+    <value>Událost nelze zapsat, protože pro zprostředkovatele {1} nejsou definovány žádné události s ID {0}.  Opravte ID události a zkuste to znovu.</value>
+  </data>
+  <data name="InvalidContext" xml:space="preserve">
+    <value>Hodnota klíče Context {0} není platným identifikátorem SID ani názvem účtu NT.</value>
+  </data>
+  <data name="IncorrectEventVersion" xml:space="preserve">
+    <value>Událost nelze zapsat, protože zadaná verze {0} pro událost {1} není definována pro zprostředkovatele {2}.  Opravte prosím verzi a zkuste to znovu.</value>
+  </data>
+  <data name="Counter32FileLimit" xml:space="preserve">
+    <value>V každém příkazu můžete importovat maximálně 32 souborů protokolu čítačů .blg.</value>
+  </data>
+  <data name="SpecifiedProvidersDontWriteToLog" xml:space="preserve">
+    <value>Zadaní zprostředkovatelé nezapisují události do protokolu {0}. Tento protokol bude ignorován.</value>
+  </data>
+  <data name="InvalidSIDFormat" xml:space="preserve">
+    <value>Následující hodnota není v platném formátu identifikátoru zabezpečení (SID): {0}. Zadejte platný identifikátor SID, například S-1-5-32-544.</value>
+  </data>
+  <data name="NoProviderFound" xml:space="preserve">
+    <value>Nebyl nalezen žádný zprostředkovatel s názvem {0}.</value>
+  </data>
+  <data name="CounterSetEnumAccessDenied" xml:space="preserve">
+    <value>Informace o sadě čítačů výkonu {0} nelze načíst, protože přístup byl odepřen.</value>
+  </data>
+  <data name="VersionNotSpecified" xml:space="preserve">
+    <value>Událost nelze zapsat, protože pro zprostředkovatele {1} je definováno více událostí s ID {0}.  Zadejte prosím verzi události a zkuste to znovu.</value>
+  </data>
+  <data name="SpecifyOldestForEtlEvt" xml:space="preserve">
+    <value>Soubor protokolu událostí {0} lze číst pouze v chronologickém pořadí vpřed, protože se jedná o soubor .etl nebo .evt. Pokud chcete zobrazit události z protokolu událostí {0}, použijte v příkazu parametr Oldest.</value>
+  </data>
+  <data name="ProviderNotSpecified" xml:space="preserve">
+    <value>Je nutné zadat název zprostředkovatele.</value>
+  </data>
+  <data name="NotALogFile" xml:space="preserve">
+    <value>Soubor {0} zřejmě není platným souborem protokolu. Jako hodnoty parametru Path zadejte pouze soubory .evtx, .etl nebo .evt.</value>
+  </data>
+  <data name="CounterPathInvalidOrNotInFile" xml:space="preserve">
+    <value>Cesta k čítači výkonu {0} buď není platná, nebo není obsažena v následujících souborech: {1}.</value>
+  </data>
+  <data name="Timestamp" xml:space="preserve">
+    <value>Časové razítko</value>
+  </data>
+  <data name="DateTimeExpected" xml:space="preserve">
+    <value>Následující hodnota není v platném formátu DateTime: {0}.</value>
+  </data>
+  <data name="LogInfoUnavailable" xml:space="preserve">
+    <value>Pokud chcete získat přístup k protokolu {0}, spusťte PowerShell se zvýšenými uživatelskými právy.  Chyba: {1}</value>
+  </data>
+  <data name="LogInfoNoAccess" xml:space="preserve">
+    <value>Přístup k protokolu byl odepřen: {0}.</value>
+  </data>
+  <data name="SuggestElevation" xml:space="preserve">
+    <value>Spusťte PowerShell se zvýšenými uživatelskými právy.</value>
+  </data>
+  <data name="NoEventMessage" xml:space="preserve">
+    <value>Text zprávy události nelze načíst.</value>
+  </data>
+  <data name="CounterFileExists" xml:space="preserve">
+    <value>Soubor {0} již existuje. Pokud chcete tento soubor přepsat, použijte v příkazu Export-Counter parametr Force.</value>
+  </data>
+  <data name="CounterContinuousOrMaxSamples" xml:space="preserve">
+    <value>Parametry Continuous a MaxSamples nelze použít ve stejném příkazu.</value>
+  </data>
+  <data name="ExportCtrWin7Required" xml:space="preserve">
+    <value>Tuto rutinu lze spustit pouze v systému Microsoft Windows 7 a novějším.</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Tento modul snap-in PowerShellu obsahuje rutiny pro zpracování událostí Windows a čítače výkonu.</value>
+  </data>
+  <data name="NoMatchingCounterSetsInFile" xml:space="preserve">
+    <value>V souborech ({0}) nelze najít žádné sady čítačů výkonu, které odpovídají následujícímu zadání: {1}.</value>
+  </data>
+  <data name="LogsAndProvidersDontOverlap" xml:space="preserve">
+    <value>Zadaní zprostředkovatelé nezapisují události do žádného ze zadaných protokolů.</value>
+  </data>
+  <data name="CookedValues" xml:space="preserve">
+    <value>Vypočtené hodnoty</value>
+  </data>
+  <data name="Counter1FileLimit" xml:space="preserve">
+    <value>V každém příkazu můžete importovat maximálně jeden soubor čítačů výkonu s hodnotami oddělenými čárkami (.csv) nebo tabulátory (.tsv).</value>
+  </data>
+  <data name="LogCountLimitExceeded" xml:space="preserve">
+    <value>Počet protokolů ({0}) překračuje limit rozhraní API protokolu událostí Windows ({1}). Upravte filtr tak, aby vracel méně názvů protokolů.</value>
+  </data>
+  <data name="ListLogParamHelp" xml:space="preserve">
+    <value>Určuje protokoly událostí. Zástupné znaky jsou povoleny.</value>
+  </data>
+  <data name="GetLogParamHelp" xml:space="preserve">
+    <value>Určuje protokoly událostí, ze kterých tato rutina získá události. Zástupné znaky jsou povoleny.</value>
+  </data>
+  <data name="ListProviderParamHelp" xml:space="preserve">
+    <value>Určuje zprostředkovatele protokolu událostí, které tato rutina získá.</value>
+  </data>
+  <data name="GetProviderParamHelp" xml:space="preserve">
+    <value>Určuje zprostředkovatele protokolu událostí, od kterých tato rutina získá události.</value>
+  </data>
+  <data name="PathParamHelp" xml:space="preserve">
+    <value>Určuje cestu k souborům protokolu událostí, ze kterých tato rutina získá události.</value>
+  </data>
+  <data name="MaxEventsParamHelp" xml:space="preserve">
+    <value>Určuje maximální počet vrácených událostí.</value>
+  </data>
+  <data name="ComputerNameParamHelp" xml:space="preserve">
+    <value>Určuje název počítače, ze kterého tato rutina získá data.</value>
+  </data>
+</root>

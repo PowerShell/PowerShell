@@ -46,18 +46,15 @@ Describe "Packaging Module Functions" {
             $result.PackageIdentifier | Should -Be "com.microsoft.powershell"
         }
 
-        It "Should NOT use package name for preview detection (bug fix verification)" {
+        It "Should NOT use package name for preview detection (bug fix verification) - <Name>" -TestCases @(
+            @{ Version = "7.6.0-preview.6"; Name = "Preview" }
+            @{ Version = "7.6.0-rc.1"; Name = "RC" }
+        ) {
             # This test verifies the fix for issue #26673
             # The bug was using ($Name -like '*-preview') which always returned false
             # because preview builds use Name="powershell" not "powershell-preview"
-            
-            $Version = "7.6.0-preview.6"
-            $Name = "powershell"  # Preview builds use "powershell" not "powershell-preview"
-            
-            # The INCORRECT logic (the bug): $Name -like '*-preview'
-            $incorrectCheck = $Name -like '*-preview'
-            $incorrectCheck | Should -Be $false -Because "Package name is 'powershell' not 'powershell-preview'"
-            
+            param($Version)
+
             # The CORRECT logic (the fix): uses version string
             $result = Get-MacOSPackageIdentifierInfo -Version $Version -LTS:$false
             $result.IsPreview | Should -Be $true -Because "Version string correctly identifies preview"

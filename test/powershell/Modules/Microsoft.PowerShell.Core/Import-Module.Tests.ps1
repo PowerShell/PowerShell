@@ -62,6 +62,7 @@ Describe "Import-Module" -Tags "CI" {
             'X86' { 'x86' }
             'X64' { 'amd64' }
             'Arm64' { 'arm' }
+            'Arm' { 'arm' }
             default { throw "Unknown processor architecture" }
         }
         New-ModuleManifest -Path "$TestDrive\TestModule.psd1" -ProcessorArchitecture $currentProcessorArchitecture

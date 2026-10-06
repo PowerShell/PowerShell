@@ -1,0 +1,180 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="LineLessThanOne" xml:space="preserve">
+    <value>行不可小於 1。</value>
+  </data>
+  <data name="BreakpointIdNotFound" xml:space="preserve">
+    <value>找不到識別碼為 '{0}' 的中斷點。</value>
+  </data>
+  <data name="FileDoesNotExist" xml:space="preserve">
+    <value>檔案 '{0}' 不存在。</value>
+  </data>
+  <data name="WrongExtension" xml:space="preserve">
+    <value>無法在檔案 '{0}' 上設定中斷點；只有 *.ps1 和 *.psm1 檔案有效。</value>
+  </data>
+  <data name="RemoteDebuggerNotSupported" xml:space="preserve">
+    <value>遠端工作階段不支援偵錯。</value>
+  </data>
+  <data name="CannotSetBreakpointInconsistentLanguageMode" xml:space="preserve">
+    <value>無法設定中斷點。此工作階段的語言模式與全系統的語言模式不相容。</value>
+  </data>
+  <data name="RemoteDebuggerNotSupportedInHost" xml:space="preserve">
+    <value>無法在遠端工作階段中設定中斷點，因為目前的主機不支援遠端偵錯。</value>
+  </data>
+  <data name="RunspaceDebuggingCannotDebugDefaultRunspace" xml:space="preserve">
+    <value>您無法使用此 Cmdlet 對預設主機 Runspace 進行偵錯。若要偵錯預設 Runspace，請使用主機上的一般偵錯命令。</value>
+  </data>
+  <data name="RunspaceDebuggingNoHostRunspaceOrDebugger" xml:space="preserve">
+    <value>無法偵錯 Runspace。主機沒有偵錯工具。請在 PowerShell 主控台中，或使用 Visual Studio Code 偵錯 Runspace，這兩者都有內建偵錯工具。</value>
+  </data>
+  <data name="RunspaceDebuggingNoHost" xml:space="preserve">
+    <value>無法偵錯 Runspace。沒有主機或主機 UI。偵錯需要主機和主機 UI。</value>
+  </data>
+  <data name="RunspaceDebuggingTooManyRunspacesFound" xml:space="preserve">
+    <value>找到多個 Runspace。一次只能偵錯一個 Runspace。</value>
+  </data>
+  <data name="RunspaceDebuggingEndSession" xml:space="preserve">
+    <value>若要結束偵錯工作階段，請在偵錯工具提示字元中輸入 'Detach' 命令；否則請輸入 'Ctrl+C'。</value>
+  </data>
+  <data name="RunspaceDebuggingScriptCompleted" xml:space="preserve">
+    <value>命令或指令碼已完成。</value>
+  </data>
+  <data name="RunspaceDebuggingStarted" xml:space="preserve">
+    <value>正在偵錯 Runspace: {0}</value>
+  </data>
+  <data name="RunspaceOptionInvalidRunspaceState" xml:space="preserve">
+    <value>無法在 Runspace {0} 上設定偵錯選項，因為它不在已開啟狀態。</value>
+  </data>
+  <data name="PersistDebugPreferenceFailure" xml:space="preserve">
+    <value>無法保存處理序 {0} 的偵錯選項。</value>
+  </data>
+  <data name="RunspaceOptionNoDebugger" xml:space="preserve">
+    <value>找不到 Runspace {0} 的偵錯工具。</value>
+  </data>
+  <data name="RunspaceDebuggingNoRunspaceFound" xml:space="preserve">
+    <value>找不到 Runspace。</value>
+  </data>
+  <data name="DebugBreakMessage" xml:space="preserve">
+    <value>在 {1} 的第 {0} 行呼叫了 Wait-Debugger。</value>
+  </data>
+  <data name="RunspaceInstanceIdNotFound" xml:space="preserve">
+    <value>無法更新與另一個 Runspace 關聯的中斷點，因為沒有執行個體識別碼為 '{0}' 的 Runspace。</value>
+  </data>
+</root>

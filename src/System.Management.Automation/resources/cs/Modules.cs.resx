@@ -1,0 +1,687 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ModuleNotFound" xml:space="preserve">
+    <value>Zadaný modul {0} nebyl načten, protože v žádném adresáři modulů nebyl nalezen platný soubor modulu.</value>
+  </data>
+  <data name="ModuleWithVersionNotFound" xml:space="preserve">
+    <value>Zadaný modul {0} verze {1} nebyl načten, protože v žádném adresáři modulů nebyl nalezen platný soubor modulu.</value>
+  </data>
+  <data name="MaximumVersionFormatIncorrect" xml:space="preserve">
+    <value>Zadaná hodnota MaximumVersion {0} nebyla správná. Pokud používáte *, MaximumVersion podporuje jen jeden znak * a ten musí být vždy na konci hodnoty MaximumVersion.</value>
+  </data>
+  <data name="MaximumVersionNotFound" xml:space="preserve">
+    <value>Zadaný modul {0} s MaximumVersion {1} nebyl načten, protože v žádném adresáři modulů nebyl nalezen platný soubor modulu.</value>
+  </data>
+  <data name="MinimumVersionAndMaximumVersionNotFound" xml:space="preserve">
+    <value>Zadaný modul {0} s MinimumVersion {1} a MaximumVersion {2} nebyl načten, protože v žádném adresáři modulů nebyl nalezen platný soubor modulu.</value>
+  </data>
+  <data name="MinimumVersionAndMaximumVersionInvalidRange" xml:space="preserve">
+    <value>MinimumVersion {0} by neměla být vyšší než MaximumVersion {1}.</value>
+  </data>
+  <data name="ModuleAssemblyFound" xml:space="preserve">
+    <value>Sestavení {0} nebylo načteno, protože nebylo nalezeno žádné sestavení s tímto názvem. Ověřte název sestavení a zkuste to znovu.</value>
+  </data>
+  <data name="ManifestMemberNotFound" xml:space="preserve">
+    <value>Modul ke zpracování {0}, uvedený v poli {1} manifestu modulu {2}, nebyl zpracován, protože v žádném adresáři modulů nebyl nalezen platný modul.</value>
+  </data>
+  <data name="CantUseAsCustomObjectWithBinaryModule" xml:space="preserve">
+    <value>Pro modul {0} nebyl vrácen žádný vlastní objekt, protože parametr -AsCustomObject je možné použít jen s moduly skriptů.</value>
+  </data>
+  <data name="InvalidModuleManifest" xml:space="preserve">
+    <value>Manifest modulu {0} se nepovedlo zpracovat, protože nejde o platný soubor manifestu modulu PowerShellu. Odeberte nepovolené prvky: {1}</value>
+  </data>
+  <data name="EmptyModuleManifest" xml:space="preserve">
+    <value>Zpracováním souboru manifestu modulu {0} nevznikl platný objekt manifestu. Upravte soubor tak, aby obsahoval platný manifest modulu PowerShellu. Platný manifest můžete vytvořit pomocí rutiny New-ModuleManifest.</value>
+  </data>
+  <data name="InvalidModuleManifestMember" xml:space="preserve">
+    <value>Modul {0} nejde importovat, protože jeho manifest obsahuje jednoho nebo více neplatných členů. Platní členové manifestu jsou ({1}). Odeberte neplatné členy ({2}) a potom zkuste modul importovat znovu.</value>
+  </data>
+  <data name="InvalidModuleSpecificationMember" xml:space="preserve">
+    <value>Tabulka hash popisující modul obsahuje jednoho nebo více neplatných členů. Platní členové jsou ({0}). Odeberte neplatné členy ({1}) a zkuste to znovu.</value>
+  </data>
+  <data name="ModuleTooDeeplyNested" xml:space="preserve">
+    <value>Modul {0} nejde načíst, protože byl překročen limit vnoření modulů. Moduly je možné vnořit jen do {1} úrovní. Vyhodnoťte a změňte pořadí načítání modulů, aby se nepřekročil limit vnoření, a potom zkuste skript spustit znovu.</value>
+  </data>
+  <data name="ModuleManifestMissingModuleVersion" xml:space="preserve">
+    <value>Člen ModuleVersion není v manifestu modulu přítomný. Tento člen musí existovat a musí mu být přiřazeno číslo verze ve tvaru :n.n.n.n:. Přidejte chybějící člen do souboru {0}.</value>
+  </data>
+  <data name="ModuleManifestInvalidValue" xml:space="preserve">
+    <value>Člen {0} není v souboru manifestu modulu {2} platný: {1}</value>
+  </data>
+  <data name="ModuleManifestInsufficientModuleVersion" xml:space="preserve">
+    <value>Verze {0} modulu {1} nesplňuje požadavek na minimální verzi {2}. Ověřte, že je číslo verze podporované, a potom zkuste modul znovu načíst.</value>
+  </data>
+  <data name="ModuleManifestInsufficientPowerShellVersion" xml:space="preserve">
+    <value>Verze PowerShellu v tomto počítači je {0}. Modul {1} vyžaduje ke spuštění minimálně PowerShell verze {2}. Ověřte, že máte nainstalovanou minimální požadovanou verzi PowerShellu, a potom to zkuste znovu.</value>
+  </data>
+  <data name="ModuleManifestNestedModulesCantGoWithModuleToProcess" xml:space="preserve">
+    <value>Člen NestedModules manifestu modulu nejde použít, pokud je člen ModuleToProcess binární modul. Upravte soubor manifestu modulu v umístění {0} a potom to zkuste znovu.</value>
+  </data>
+  <data name="ModuleManifestInvalidManifestMember" xml:space="preserve">
+    <value>Člen {0} v manifestu modulu není platný: {1}. Ověřte, že je pro toto pole v souboru {2} zadaná platná hodnota.</value>
+  </data>
+  <data name="InvalidModuleManifestPath" xml:space="preserve">
+    <value>Cesta k manifestu modulu {0} není platná. Hodnota argumentu Path musí odkazovat na jeden soubor s příponou .psd1. Změňte hodnotu argumentu Path tak, aby odkazovala na platný soubor psd1, a potom to zkuste znovu.</value>
+  </data>
+  <data name="InvalidModuleManifestVersion" xml:space="preserve">
+    <value>Klíč ModuleVersion v manifestu modulu {0} určuje verzi modulu {1}, která neodpovídá názvu složky verze v umístění {2}. Změňte hodnotu klíče ModuleVersion tak, aby odpovídala názvu složky verze.</value>
+  </data>
+  <data name="InvalidNestedModuleinModuleManifest" xml:space="preserve">
+    <value>Zadaná položka NestedModule {0} v manifestu modulu {1} není platná. Po aktualizaci této položky platnými hodnotami to zkuste znovu.</value>
+  </data>
+  <data name="InvalidRequiredAssembliesInModuleManifest" xml:space="preserve">
+    <value>Zadaná položka RequiredAssemblies {0} v manifestu modulu {1} není platná. Po aktualizaci této položky platnými hodnotami to zkuste znovu.</value>
+  </data>
+  <data name="InvalidFilePathinModuleManifest" xml:space="preserve">
+    <value>Zadaná položka FileList {0} v manifestu modulu {1} není platná. Po aktualizaci této položky platnými hodnotami to zkuste znovu.</value>
+  </data>
+  <data name="InvalidRequiredModulesinModuleManifest" xml:space="preserve">
+    <value>Zadaná položka RequiredModules {0} v manifestu modulu {1} není platná. Po aktualizaci této položky platnými hodnotami to zkuste znovu.</value>
+  </data>
+  <data name="InvalidModuleListinModuleManifest" xml:space="preserve">
+    <value>Zadaná položka ModuleList {0} v manifestu modulu {1} není platná. Po aktualizaci této položky platnými hodnotami to zkuste znovu.</value>
+  </data>
+  <data name="InvalidPowerShellVersionInModuleManifest" xml:space="preserve">
+    <value>Manifest modulu {0} je zadaný s klíčem CompatiblePSEditions, který se podporuje jen v PowerShellu verze 5.1 nebo novější. Aktualizujte hodnotu klíče PowerShellVersion na 5.1 nebo novější a zkuste to znovu.</value>
+  </data>
+  <data name="DuplicateEntriesInCompatiblePSEditions" xml:space="preserve">
+    <value>Zadaná hodnota {0} pro CompatiblePSEditions obsahuje duplicitní názvy edic PowerShellu. Po odebrání duplicitních názvů edic PowerShellu to zkuste znovu.</value>
+  </data>
+  <data name="ModuleVersionEqualsToVersionFolder" xml:space="preserve">
+    <value>Verze zadaná v klíči ModuleVersion se shoduje s názvem složky verze.</value>
+  </data>
+  <data name="SkippingInvalidModuleVersionFolder" xml:space="preserve">
+    <value>Složka verze {0} pod modulem {1} se přeskakuje, protože neobsahuje platný soubor manifestu modulu.</value>
+  </data>
+  <data name="RequiredModuleMissingModuleName" xml:space="preserve">
+    <value>Člen ModuleName v tabulce hash popisující tento modul neexistuje.</value>
+  </data>
+  <data name="RequiredModuleMissingModuleVersion" xml:space="preserve">
+    <value>Členy ModuleVersion, MaximumVersion a RequiredVersion v tabulce hash popisující tento modul neexistují. Jeden z těchto tří členů musí existovat a musí mu být přiřazeno číslo verze ve formátu n.n.n.n.</value>
+  </data>
+  <data name="RequiredModuleNotLoaded" xml:space="preserve">
+    <value>Požadovaný modul {1} není načtený. Načtěte modul nebo ho odeberte z RequiredModules v souboru {0}.</value>
+  </data>
+  <data name="RequiredModuleNotLoadedWrongGuid" xml:space="preserve">
+    <value>Požadovaný modul {1} s GUID {2} není načtený. Načtěte modul nebo ho odeberte z RequiredModules v souboru {0}.</value>
+  </data>
+  <data name="RequiredModuleNotLoadedWrongVersion" xml:space="preserve">
+    <value>Požadovaný modul {1} verze {2} není načtený. Načtěte modul nebo ho odeberte z RequiredModules v souboru {0}.</value>
+  </data>
+  <data name="RequiredModuleNotLoadedWrongMaximumVersion" xml:space="preserve">
+    <value>Požadovaný modul {1} s MaximumVersion {2} není načtený. Načtěte modul nebo ho odeberte z RequiredModules v souboru {0}.</value>
+  </data>
+  <data name="RequiredModuleNotLoadedWrongMinimumVersionAndMaximumVersion" xml:space="preserve">
+    <value>Požadovaný modul {1} s MinimumVersion {2} a MaximumVersion {3} není načtený. Načtěte modul nebo ho odeberte z RequiredModules v souboru {0}.</value>
+  </data>
+  <data name="RequiredModuleNotFoundModuleVersion" xml:space="preserve">
+    <value>Modul {0} s ModuleVersion {1} nejde najít.</value>
+  </data>
+  <data name="RequiredModuleNotFoundRequiredVersion" xml:space="preserve">
+    <value>Modul {0} s RequiredVersion {1} nejde najít.</value>
+  </data>
+  <data name="RequiredModuleNotFoundMaximumVersion" xml:space="preserve">
+    <value>Modul {0} s MaximumVersion {1} nejde najít.</value>
+  </data>
+  <data name="RequiredModuleNotFoundModuleAndMaximumVersion" xml:space="preserve">
+    <value>Modul {0} s ModuleVersion {1} a MaximumVersion {2} nejde najít.</value>
+  </data>
+  <data name="RequiredModuleNotFoundWithoutVersion" xml:space="preserve">
+    <value>Modul {0} nejde najít.</value>
+  </data>
+  <data name="NoModulesRemoved" xml:space="preserve">
+    <value>Nebyly odebrány žádné moduly. Ověřte, že je zadání modulů k odebrání správné a že tyto moduly v runspace existují.</value>
+  </data>
+  <data name="UnableToRemoveModuleMember" xml:space="preserve">
+    <value>Člen {0}, který byl importován z modulu {1}, nejde odebrat z tohoto důvodu: {2}</value>
+  </data>
+  <data name="ModuleIsReadOnly" xml:space="preserve">
+    <value>Modul {0} nejde odebrat, protože je jen pro čtení. Pokud chcete odebrat moduly jen pro čtení, přidejte do příkazu parametr Force.</value>
+  </data>
+  <data name="ModuleIsConstant" xml:space="preserve">
+    <value>Modul {0} nejde odebrat, protože je označený jako konstanta. Modul nejde odebrat, pokud je označený jako konstanta.</value>
+  </data>
+  <data name="ModuleIsRequired" xml:space="preserve">
+    <value>Modul {0} nejde odebrat, protože ho vyžaduje {1}. Pokud chcete modul odebrat, přidejte do příkazu parametr Force.</value>
+  </data>
+  <data name="CanOnlyBeUsedFromWithinAModule" xml:space="preserve">
+    <value>Rutinu Export-ModuleMember je možné volat jen z modulu.</value>
+  </data>
+  <data name="InvalidModuleExtension" xml:space="preserve">
+    <value>Přípona {0} není platná přípona modulu. Podporované přípony modulů jsou .dll, .ps1, .psm1, .psd1 a .cdxml. Opravte příponu a potom zkuste soubor {1} přidat znovu.</value>
+  </data>
+  <data name="InvalidOperationOnBinaryModule" xml:space="preserve">
+    <value>Tuto operaci nejde provést s binárním modulem. Je možné ji provést jen s modulem skriptu.</value>
+  </data>
+  <data name="ScriptsToProcessIncorrectExtension" xml:space="preserve">
+    <value>Soubor {0} není povolený, protože nemá příponu .ps1.</value>
+  </data>
+  <data name="DefaultCompanyName" xml:space="preserve">
+    <value>Neznámá</value>
+  </data>
+  <data name="DefaultCopyrightMessage" xml:space="preserve">
+    <value>(c) {0}. Všechna práva vyhrazena.</value>
+  </data>
+  <data name="RemovingImportedFunction" xml:space="preserve">
+    <value>Odebírá se importovaná funkce {0}.</value>
+  </data>
+  <data name="RemovingImportedAlias" xml:space="preserve">
+    <value>Odebírá se importovaný alias {0}.</value>
+  </data>
+  <data name="RemovingImportedVariable" xml:space="preserve">
+    <value>Odebírá se importovaná proměnná {0}.</value>
+  </data>
+  <data name="LoadingModule" xml:space="preserve">
+    <value>Načítá se modul z cesty {0}.</value>
+  </data>
+  <data name="LoadingFile" xml:space="preserve">
+    <value>Načítá se {0} z cesty {1}.</value>
+  </data>
+  <data name="DottingScriptFile" xml:space="preserve">
+    <value>Načítá se soubor skriptu {0} pomocí operátoru dot-source.</value>
+  </data>
+  <data name="ImportingFunction" xml:space="preserve">
+    <value>Importuje se funkce {0}.</value>
+  </data>
+  <data name="ImportingCmdlet" xml:space="preserve">
+    <value>Importuje se rutina {0}.</value>
+  </data>
+  <data name="ImportingAlias" xml:space="preserve">
+    <value>Importuje se alias {0}.</value>
+  </data>
+  <data name="ImportingVariable" xml:space="preserve">
+    <value>Importuje se proměnná {0}.</value>
+  </data>
+  <data name="ExportingCmdlet" xml:space="preserve">
+    <value>Exportuje se rutina {0}.</value>
+  </data>
+  <data name="ExportingFunction" xml:space="preserve">
+    <value>Exportuje se funkce {0}.</value>
+  </data>
+  <data name="ExportingAlias" xml:space="preserve">
+    <value>Exportuje se alias {0}.</value>
+  </data>
+  <data name="ExportingVariable" xml:space="preserve">
+    <value>Exportuje se proměnná {0}.</value>
+  </data>
+  <data name="ImportingNonStandardVerb" xml:space="preserve">
+    <value>Názvy některých importovaných příkazů z modulu {0} obsahují neschválená slovesa, takže se můžou hůř vyhledávat. Příkazy s neschválenými slovesy najdete tak, že znovu spustíte příkaz Import-Module s parametrem Verbose. Seznam schválených sloves zobrazíte zadáním Get-Verb.</value>
+  </data>
+  <data name="ImportingNonStandardVerbVerbose" xml:space="preserve">
+    <value>Příkaz {0} v modulu {1} byl importován, ale protože jeho název neobsahuje schválené sloveso, může se obtížně hledat. Seznam schválených sloves zobrazíte zadáním Get-Verb.</value>
+  </data>
+  <data name="ImportingNonStandardVerbVerboseSuggestion" xml:space="preserve">
+    <value>Příkaz {0} v modulu {2} byl importován, ale protože jeho název neobsahuje schválené sloveso, může se obtížně hledat. Navrhovaná alternativní slovesa jsou {1}.</value>
+  </data>
+  <data name="ImportingNonStandardNoun" xml:space="preserve">
+    <value>Některé názvy importovaných příkazů obsahují jeden nebo více z těchto zakázaných znaků: # , ( ) {{ }} [ ] &amp; - / \ $ ^ ; : " ' &lt; &gt; | ? @ ` * % + = ~</value>
+  </data>
+  <data name="ImportingNonStandardNounVerbose" xml:space="preserve">
+    <value>Název příkazu {0} z modulu {1} obsahuje jeden nebo více z těchto zakázaných znaků: # , ( ) {{ }} [ ] &amp; - / \ $ ^ ; : " ' &lt; &gt; | ? @ ` * % + = ~</value>
+  </data>
+  <data name="CreatingModuleManifestFile" xml:space="preserve">
+    <value>Vytváří se soubor manifestu modulu {0}.</value>
+  </data>
+  <data name="ConfirmRemoveModule" xml:space="preserve">
+    <value>{0} (Cesta: {1})</value>
+  </data>
+  <data name="InvalidProcessorArchitecture" xml:space="preserve">
+    <value>Aktuální architektura procesoru je: {0}. Modul {1} vyžaduje tuto architekturu: {2}.</value>
+  </data>
+  <data name="InvalidPowerShellHostName" xml:space="preserve">
+    <value>Název aktuálního hostitele PowerShellu je: {0}. Modul {1} vyžaduje tohoto hostitele PowerShellu: {2}.</value>
+  </data>
+  <data name="InvalidPowerShellHostVersion" xml:space="preserve">
+    <value>Aktuální hostitel PowerShellu je: {0} (verze {1}). Modul {2} vyžaduje ke spuštění minimálně hostitele PowerShellu verze {3}.</value>
+  </data>
+  <data name="ManifestHeaderLine1" xml:space="preserve">
+    <value>Manifest modulu pro modul {0}</value>
+  </data>
+  <data name="ManifestHeaderLine2" xml:space="preserve">
+    <value>Vygeneroval(a): {0}</value>
+  </data>
+  <data name="ManifestHeaderLine3" xml:space="preserve">
+    <value>Vygenerováno: {0}</value>
+  </data>
+  <data name="RootModule" xml:space="preserve">
+    <value>Soubor modulu skriptu nebo binárního modulu přidružený k tomuto manifestu.</value>
+  </data>
+  <data name="NestedModules" xml:space="preserve">
+    <value>Moduly, které se mají importovat jako vnořené moduly modulu zadaného v RootModule/ModuleToProcess</value>
+  </data>
+  <data name="GUID" xml:space="preserve">
+    <value>ID sloužící k jedinečné identifikaci tohoto modulu</value>
+  </data>
+  <data name="Author" xml:space="preserve">
+    <value>Autor tohoto modulu</value>
+  </data>
+  <data name="CompanyName" xml:space="preserve">
+    <value>Společnost nebo dodavatel tohoto modulu</value>
+  </data>
+  <data name="Copyright" xml:space="preserve">
+    <value>Prohlášení o autorských právech k tomuto modulu</value>
+  </data>
+  <data name="ModuleVersion" xml:space="preserve">
+    <value>Číslo verze tohoto modulu.</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Popis funkcí poskytovaných tímto modulem</value>
+  </data>
+  <data name="PowerShellVersion" xml:space="preserve">
+    <value>Minimální verze prostředí PowerShell, kterou tento modul vyžaduje</value>
+  </data>
+  <data name="CLRVersion" xml:space="preserve">
+    <value>Minimální verze prostředí Common Language Runtime (CLR), kterou tento modul vyžaduje. {0}</value>
+  </data>
+  <data name="RequiredModules" xml:space="preserve">
+    <value>Moduly, které se musí importovat do globálního prostředí před importem tohoto modulu</value>
+  </data>
+  <data name="ScriptsToProcess" xml:space="preserve">
+    <value>Soubory skriptů (.ps1), které se spustí v prostředí volajícího před importem tohoto modulu.</value>
+  </data>
+  <data name="TypesToProcess" xml:space="preserve">
+    <value>Soubory typů (.ps1xml), které se mají načíst při importu tohoto modulu</value>
+  </data>
+  <data name="FormatsToProcess" xml:space="preserve">
+    <value>Soubory formátu (.ps1xml), které se mají načíst při importu tohoto modulu</value>
+  </data>
+  <data name="RequiredAssemblies" xml:space="preserve">
+    <value>Sestavení, která se musí načíst před importem tohoto modulu</value>
+  </data>
+  <data name="FileList" xml:space="preserve">
+    <value>Seznam všech souborů zahrnutých v tomto modulu</value>
+  </data>
+  <data name="PrivateData" xml:space="preserve">
+    <value>Soukromá data, která se mají předat modulu zadanému v RootModule/ModuleToProcess. Můžou obsahovat také tabulku hash PSData s dalšími metadaty modulu používanými PowerShellem.</value>
+  </data>
+  <data name="Tags" xml:space="preserve">
+    <value>Značky použité na tento modul. Pomáhají s vyhledáváním modulů v online galeriích.</value>
+  </data>
+  <data name="ProjectUri" xml:space="preserve">
+    <value>Adresa URL hlavního webu tohoto projektu.</value>
+  </data>
+  <data name="LicenseUri" xml:space="preserve">
+    <value>Adresa URL licence pro tento modul.</value>
+  </data>
+  <data name="IconUri" xml:space="preserve">
+    <value>Adresa URL ikony představující tento modul.</value>
+  </data>
+  <data name="ReleaseNotes" xml:space="preserve">
+    <value>Poznámky k verzi tohoto modulu</value>
+  </data>
+  <data name="Prerelease" xml:space="preserve">
+    <value>Řetězec předběžné verze tohoto modulu</value>
+  </data>
+  <data name="RequireLicenseAcceptance" xml:space="preserve">
+    <value>Příznak určující, jestli modul vyžaduje výslovný souhlas uživatele s instalací, aktualizací nebo uložením</value>
+  </data>
+  <data name="ExternalModuleDependencies" xml:space="preserve">
+    <value>Externí závislé moduly tohoto modulu</value>
+  </data>
+  <data name="EndOfManifestHashTable" xml:space="preserve">
+    <value>Konec tabulky hash {0}</value>
+  </data>
+  <data name="PrivateDataValueTypeShouldBeHashTableError" xml:space="preserve">
+    <value>Pokud chcete vytvořit manifest modulu s hodnotami parametrů Tags, ProjectUri, LicenseUri, IconUri nebo ReleaseNotes, musí být hodnota parametru PrivateData tabulka hash. Odeberte hodnoty parametrů Tags, ProjectUri, LicenseUri, IconUri nebo ReleaseNotes, nebo obsah PrivateData uzavřete do tabulky hash.</value>
+  </data>
+  <data name="PrivateDataValueTypeShouldBeHashTableWarning" xml:space="preserve">
+    <value>PrivateData by měla být definována jako tabulka hash, ale tento manifest modulu ji definuje jako objekt. Zvažte uzavření obsahu PrivateData do tabulky hash. Díky tomu budete moct později přidat do manifestu modulu vlastnosti Tags, ProjectUri, LicenseUri, IconUri a ReleaseNotes.</value>
+  </data>
+  <data name="InvalidParameterValue" xml:space="preserve">
+    <value>Zadaná hodnota {0} není platná. Zkuste to znovu s platnou hodnotou.</value>
+  </data>
+  <data name="FunctionsToExport" xml:space="preserve">
+    <value>Funkce, které se mají z tohoto modulu exportovat. Kvůli nejlepšímu výkonu nepoužívejte zástupné znaky ani položku neodstraňujte. Pokud se nemají exportovat žádné funkce, použijte prázdné pole.</value>
+  </data>
+  <data name="AliasesToExport" xml:space="preserve">
+    <value>Aliasy, které se mají z tohoto modulu exportovat. Kvůli nejlepšímu výkonu nepoužívejte zástupné znaky ani položku neodstraňujte. Pokud se nemají exportovat žádné aliasy, použijte prázdné pole.</value>
+  </data>
+  <data name="CmdletsToExport" xml:space="preserve">
+    <value>Rutiny, které se mají z tohoto modulu exportovat. Kvůli nejlepšímu výkonu nepoužívejte zástupné znaky ani položku neodstraňujte. Pokud se nemají exportovat žádné rutiny, použijte prázdné pole.</value>
+  </data>
+  <data name="VariablesToExport" xml:space="preserve">
+    <value>Proměnné, které se mají z tohoto modulu exportovat</value>
+  </data>
+  <data name="DscResourcesToExport" xml:space="preserve">
+    <value>Prostředky DSC, které se mají z tohoto modulu exportovat</value>
+  </data>
+  <data name="CompatiblePSEditions" xml:space="preserve">
+    <value>Podporované PSEditions</value>
+  </data>
+  <data name="ProcessorArchitecture" xml:space="preserve">
+    <value>Architektura procesoru (None, X86, Amd64) vyžadovaná tímto modulem</value>
+  </data>
+  <data name="ModuleList" xml:space="preserve">
+    <value>Seznam všech modulů zahrnutých v tomto modulu</value>
+  </data>
+  <data name="DotNetFrameworkVersion" xml:space="preserve">
+    <value>Minimální verze Microsoft .NET Frameworku, kterou tento modul vyžaduje. {0}</value>
+  </data>
+  <data name="PowerShellHostName" xml:space="preserve">
+    <value>Název hostitele PowerShellu vyžadovaného tímto modulem</value>
+  </data>
+  <data name="PowerShellHostVersion" xml:space="preserve">
+    <value>Minimální verze hostitele PowerShellu vyžadovaná tímto modulem</value>
+  </data>
+  <data name="HelpInfoURI" xml:space="preserve">
+    <value>Identifikátor URI HelpInfo tohoto modulu</value>
+  </data>
+  <data name="ModuleDriveInUse" xml:space="preserve">
+    <value>Protože modul {0} poskytuje v aktuální relaci PowerShellu jednotku PSDrive, nebyly odebrány žádné moduly. Změňte aktuálního poskytovatele PSDrive a potom zkuste moduly odebrat znovu.</value>
+  </data>
+  <data name="ImportModuleNoClobberForCmdlet" xml:space="preserve">
+    <value>Rutina {0} nebyla importována, protože v aktuálním oboru existuje člen se stejným názvem.</value>
+  </data>
+  <data name="ImportModuleNoClobberForAlias" xml:space="preserve">
+    <value>Alias {0} nebyl importován, protože v aktuálním oboru existuje člen se stejným názvem.</value>
+  </data>
+  <data name="ImportModuleNoClobberForFunction" xml:space="preserve">
+    <value>Funkce {0} nebyla importována, protože v aktuálním oboru existuje člen se stejným názvem.</value>
+  </data>
+  <data name="ImportModuleNoClobberForVariable" xml:space="preserve">
+    <value>Proměnná {0} nebyla importována, protože v aktuálním oboru existuje člen se stejným názvem.</value>
+  </data>
+  <data name="WildCardNotAllowedInModuleToProcessAndInNestedModules" xml:space="preserve">
+    <value>Zástupné znaky nejsou v členech ModuleToProcess, RootModule ani NestedModules v manifestu modulu {0} povolené.</value>
+  </data>
+  <data name="CoreModuleCannotBeRemoved" xml:space="preserve">
+    <value>Modul {0} je základní modul PowerShellu. Pokud chcete odebrat základní moduly, přidejte do příkazu parametr Force.</value>
+  </data>
+  <data name="ModuleManifestCannotContainBothModuleToProcessAndRootModule" xml:space="preserve">
+    <value>Manifest modulu nemůže obsahovat současně členy ModuleToProcess a RootModule. V souboru manifestu modulu v umístění {0} odeberte jeden z těchto členů a potom to zkuste znovu.</value>
+  </data>
+  <data name="ModuleToProcessFieldDeprecated" xml:space="preserve">
+    <value>Člen ModuleToProcess manifestu modulu je zastaralý. Místo něj použijte člen RootModule.</value>
+  </data>
+  <data name="DefaultCommandPrefix" xml:space="preserve">
+    <value>Výchozí předpona pro příkazy exportované z tohoto modulu. Výchozí předponu můžete přepsat pomocí Import-Module -Prefix.</value>
+  </data>
+  <data name="GlobalAndScopeParameterCannotBeSpecifiedTogether" xml:space="preserve">
+    <value>Parametry Global a Scope nejde zadat současně. Odeberte jeden z těchto parametrů a potom zkuste příkaz spustit znovu.</value>
+  </data>
+  <data name="RequiredModulesCyclicDependency" xml:space="preserve">
+    <value>Požadovaný modul {0} není načtený. Modul {0} má požadovaný modul {1} uvedený v manifestu modulu {2}, který odkazuje na cyklickou závislost.</value>
+  </data>
+  <data name="RequiredModuleNotFound" xml:space="preserve">
+    <value>Požadovaný modul {0} nebyl načten, protože v žádném adresáři modulů nebyl nalezen platný soubor modulu.</value>
+  </data>
+  <data name="MixedModuleOverCimSessionWarning" xml:space="preserve">
+    <value>Některé příkazy z modulu {0} nejde importovat přes CimSession. Pokud chcete získat všechny příkazy, ověřte, že je na vzdáleném serveru povolená vzdálená správa PowerShellu, a potom zkuste přidat parametr PSSession do rutiny Import-Module.</value>
+  </data>
+  <data name="WinCompatModuleWarning" xml:space="preserve">
+    <value>Modul {0} je načtený ve Windows PowerShellu pomocí vzdálené relace {1}. Upozorňujeme, že veškerý vstup a výstup příkazů z tohoto modulu bude ve formě deserializovaných objektů. Pokud chcete tento modul načíst do PowerShellu, použijte syntaxi Import-Module -SkipEditionCheck.</value>
+  </data>
+  <data name="WinCompatRequredVersionError" xml:space="preserve">
+    <value>Byla zjištěna verze Windows PowerShellu {0}. K načítání modulů pomocí funkce kompatibility s Windows PowerShellem je vyžadován Windows PowerShell 5.1. Nainstalujte Windows Management Framework (WMF) 5.1 z adresy https://aka.ms/WMF5Download a povolte tak tuto funkci.</value>
+  </data>
+  <data name="WinCompatModuleInDenyList" xml:space="preserve">
+    <value>Načtení modulu {0} pomocí funkce kompatibility s Windows PowerShellem blokuje nastavení WindowsPowerShellCompatibilityModuleDenyList v konfiguračním souboru PowerShellu.</value>
+  </data>
+  <data name="PsModuleOverCimSessionError" xml:space="preserve">
+    <value>Modul {0} nejde importovat přes CimSession. Zkuste použít parametr PSSession rutiny Import-Module.</value>
+  </data>
+  <data name="InvalidProcessorArchitectureInManifest" xml:space="preserve">
+    <value>Hodnota architektury procesoru {0} není podporovaná. Spusťte příkaz New-ModuleManifest znovu a pro architekturu procesoru zadejte jednu z těchto podporovaných hodnot výčtu: None, MSIL, X86, Amd64, Arm</value>
+  </data>
+  <data name="RemoteDiscoveryWorksOnlyInListAvailableMode" xml:space="preserve">
+    <value>Rutina Get-Module spuštěná vůči vzdálenému počítači může jen vypsat dostupné moduly. Přidejte do příkazu parametr ListAvailable a potom to zkuste znovu.</value>
+  </data>
+  <data name="ModuleLoadedAsASnapin" xml:space="preserve">
+    <value>Modul {0} nebyl importován, protože modul snap-in {0} už byl importován.</value>
+  </data>
+  <data name="WildCardNotAllowedInRequiredAssemblies" xml:space="preserve">
+    <value>Zástupné znaky nejsou v členu RequiredAssemblies v manifestu modulu {0} povolené.</value>
+  </data>
+  <data name="CmdletizationDoesSupportRexportingNestedModules" xml:space="preserve">
+    <value>Hodnota klíče {0} v {1} je {2} a modul má vnořené moduly. Když je kořenovým modulem soubor CDXML, příkaz Import-Module selže, protože příkazy ve vnořených modulech nejde exportovat. Přesuňte soubor CDXML do klíče NestedModules a zkuste příkaz znovu.</value>
+    <comment>{0} is equal to either ModuleToProcess or RootModule
+{1} is a placeholder for a file path to psd1 file
+{2} is a placeholder for a file path to cdxml file</comment>
+  </data>
+  <data name="RemoteDiscoveryRemotePsrpCommandFailed" xml:space="preserve">
+    <value>Chyba vzdáleného příkazu: {0}: {{0}}</value>
+  </data>
+  <data name="RemoteDiscoveryFailedToGenerateProxyForRemoteModule" xml:space="preserve">
+    <value>Nepovedlo se vygenerovat proxy pro vzdálený modul {0}. {{0}}</value>
+  </data>
+  <data name="RemoteDiscoveryFailedToProcessRemoteModule" xml:space="preserve">
+    <value>Nepovedlo se zpracovat vzdálený modul {0}. {1}</value>
+  </data>
+  <data name="RemoteDiscoveryFailureFromDiscoveryProvider" xml:space="preserve">
+    <value>Nepovedlo se přijmout data modulu ze vzdálené relace CimSession. {0}</value>
+  </data>
+  <data name="RequiredModuleNotFoundWrongGuidVersion" xml:space="preserve">
+    <value>Požadovaný modul {0} s GUID {1} a verzí {2} nebyl načten, protože v žádném adresáři modulů nebyl nalezen platný soubor modulu.</value>
+  </data>
+  <data name="RemoteDiscoveryProviderNotFound" xml:space="preserve">
+    <value>Na serveru CIM nebyl nalezen poskytovatel CIM pro zjišťování modulů. {0}</value>
+    <comment>{0} is a placeholder for a more detailed error message</comment>
+  </data>
+  <data name="CannotDetectNetFrameworkVersion" xml:space="preserve">
+    <value>Verzi Microsoft .NET Frameworku {0} nejde ověřit, protože není uvedená v seznamu povolených verzí.</value>
+  </data>
+  <data name="ScriptAnalysisModule" xml:space="preserve">
+    <value>Analyzuje se {0}.</value>
+    <comment>{0} should not be localized, is used to contain a file path.</comment>
+  </data>
+  <data name="ScriptAnalysisPreparing" xml:space="preserve">
+    <value>Připravují se moduly pro první použití.</value>
+  </data>
+  <data name="DeterminingAvailableModules" xml:space="preserve">
+    <value>Hledají se dostupné moduly</value>
+  </data>
+  <data name="SearchingUncShare" xml:space="preserve">
+    <value>Prohledává se sdílená složka UNC {0}.</value>
+    <comment>{0} should not be localized, is used to contain a file path.</comment>
+  </data>
+  <data name="RemoteDiscoveryWorksOnlyForUnQualifiedNames" xml:space="preserve">
+    <value>Rutinu Get-Module je možné spustit vůči vzdálenému počítači jen pro názvy modulů, které neobsahují cestu. Parametr Name obsahuje prvek {0}, který se překládá na cestu. Aktualizujte parametr Name tak, aby neobsahoval prvky cesty, a potom to zkuste znovu.</value>
+  </data>
+  <data name="ModuleDiscoveryForLoadedModulesWorksOnlyForUnQualifiedNames" xml:space="preserve">
+    <value>Spuštění rutiny Get-Module bez parametru ListAvailable není podporováno u názvů modulů, které obsahují cestu. Parametr Name obsahuje prvek {0}, který se překládá na cestu. Aktualizujte parametr Name tak, aby neobsahoval prvky cesty, a potom to zkuste znovu.</value>
+  </data>
+  <data name="ModuleNotFoundForGetModule" xml:space="preserve">
+    <value>Zadaný modul {0} nebyl nalezen. Aktualizujte parametr Name tak, aby odkazoval na platnou cestu, a potom to zkuste znovu. </value>
+  </data>
+  <data name="PopulatingRepositorySourceLocation" xml:space="preserve">
+    <value>Vyplňuje se vlastnost RepositorySourceLocation pro modul {0}.</value>
+  </data>
+  <data name="ManifestMemberNotValid" xml:space="preserve">
+    <value>Modul ke zpracování {0}, uvedený v poli {1} manifestu modulu {2}, nebyl zpracován. {3}</value>
+  </data>
+  <data name="PrerequisiteForDesktopEditionOnly" xml:space="preserve">
+    <value>Tento předpoklad platí jen pro edici PowerShell Desktop.</value>
+  </data>
+  <data name="PSEditionNotSupported" xml:space="preserve">
+    <value>Modul {0} nepodporuje aktuální edici PowerShellu {1}. Podporované edice jsou {2}. Kompatibilitu tohoto modulu můžete ignorovat pomocí Import-Module -SkipEditionCheck.</value>
+  </data>
+  <data name="ImplicitWinCompatDisabled" xml:space="preserve">
+    <value>Modul {0} podporuje edici PowerShellu {1} a nejde ho implicitně načíst pomocí funkce Kompatibilita s Windows, protože je v souboru nastavení zakázaná. Tento modul můžete načíst s Windows PowerShellem pomocí Import-Module -UseWindowsPowerShell nebo se ho pokusit načíst v aktuálním PowerShellu pomocí Import-Module -SkipEditionCheck.</value>
+  </data>
+  <data name="ExperimentalFeatureNameMissingOrEmpty" xml:space="preserve">
+    <value>Pro experimentální funkci deklarovanou v manifestu modulu zadejte neprázdnou řetězcovou hodnotu.</value>
+  </data>
+  <data name="InvalidExperimentalFeatureName" xml:space="preserve">
+    <value>Byl nalezen jeden nebo více neplatných názvů experimentálních funkcí: {0}. Název experimentální funkce modulu by měl dodržovat tento formát: ModuleName.FeatureName.</value>
+  </data>
+  <data name="SkipEditionCheckNotSupportedWithoutListAvailable" xml:space="preserve">
+    <value>Přepínací parametr -SkipEditionCheck nejde použít bez přepínacího parametru -ListAvailable.</value>
+  </data>
+  <data name="ImportPSFileNotAllowedInConstrainedLanguage" xml:space="preserve">
+    <value>Import souborů *.ps1 jako modulů není v režimu ConstrainedLanguage povolený.</value>
+  </data>
+  <data name="MismatchedLanguageModes" xml:space="preserve">
+    <value>Při načítání modulu skriptu {0} došlo k chybě, protože má jiný jazykový režim než manifest modulu. Jazykový režim manifestu je {1} a jazykový režim modulu je {2}. Ověřte, že jsou všechny soubory modulu podepsané nebo jinak zahrnuté v konfiguraci seznamu povolených aplikací.</value>
+  </data>
+  <data name="CannotUseDotSourceWithWildCardFunctionExport" xml:space="preserve">
+    <value>Tento modul při exportu funkcí pomocí zástupných znaků používá operátor dot-source. To není povolené, pokud systém vynucuje ověřování aplikací.</value>
+  </data>
+  <data name="CannotExportMembersAccrossLanguageBoundaries" xml:space="preserve">
+    <value>Členy modulu nejde exportovat z modulu, který má jiný jazykový režim než spuštěná relace.</value>
+  </data>
+  <data name="CannotCreateModuleWithScriptBlock" xml:space="preserve">
+    <value>V režimu ConstrainedLanguage nejde vytvořit nový modul.</value>
+  </data>
+  <data name="CannotFindCoreCompatibleBuiltInModule" xml:space="preserve">
+    <value>Nejde najít předdefinovaný modul {0}, který je kompatibilní s edicí Core. Ověřte, že jsou předdefinované moduly PowerShellu dostupné. Obvykle jsou součástí balíčku PowerShellu v cestě modulu $PSHOME a PowerShell je potřebuje ke správnému fungování.</value>
+  </data>
+  <data name="WDACExportModuleCommandLogTitle" xml:space="preserve">
+    <value>Rutina Export-ModuleMember</value>
+  </data>
+  <data name="WDACExportModuleCommandLogMessage" xml:space="preserve">
+    <value>Export členů modulu v režimu Constrained Language selže, protože modul {0} má jazykový režim {1}, který se liší od aktuální relace {2}.</value>
+  </data>
+  <data name="WDACImplicitFunctionExportLogTitle" xml:space="preserve">
+    <value>Implicitní export funkcí modulu</value>
+  </data>
+  <data name="WDACImplicitFunctionExportLogMessage" xml:space="preserve">
+    <value>Implicitní export funkcí modulu {0} bude zamítnut, protože modul je důvěryhodný (běží v režimu Full Language), ale relace důvěryhodná není (běží v režimu Constrained Language). Osvědčeným postupem je vždy exportovat funkce modulu jednotlivě pod úplným názvem.</value>
+  </data>
+  <data name="WDACScriptFileImportLogTitle" xml:space="preserve">
+    <value>Import souboru skriptu jako modulu</value>
+  </data>
+  <data name="WDACScriptFileImportLogMessage" xml:space="preserve">
+    <value>Import souboru skriptu {0} jako modulu nebude v režimu ConstrainedLanguage povolený.</value>
+  </data>
+  <data name="WDACModuleDotSourceLogTitle" xml:space="preserve">
+    <value>Modul obsahuje operátor dot-source</value>
+  </data>
+  <data name="WDACModuleDotSourceLogMessage" xml:space="preserve">
+    <value>Import modulu {0} v režimu ConstrainedLanguage selže, protože modul exportuje funkce pomocí zástupných znaků a zároveň používá operátor dot-source.</value>
+  </data>
+  <data name="WDACModuleFnExportWithNestedModulesLogTitle" xml:space="preserve">
+    <value>Funkce exportované modulem</value>
+  </data>
+  <data name="WDACModuleFnExportWithNestedModulesLogMessage" xml:space="preserve">
+    <value>Modul {0} exportuje funkce pomocí zástupných znaků v názvech. Při spuštění v režimu Constrained Language se odeberou všechny názvy funkcí vnořených modulů.</value>
+  </data>
+  <data name="WDACNewModuleCommandLogTitle" xml:space="preserve">
+    <value>Rutina New-Module</value>
+  </data>
+  <data name="WDACNewModuleCommandLogMessage" xml:space="preserve">
+    <value>Novému modulu z nedůvěryhodné relace Constrained Language bude zablokováno poskytování bloku skriptu FullLanguage.</value>
+  </data>
+  <data name="WDACMismatchedLanguageModesTitle" xml:space="preserve">
+    <value>Neshodné jazykové režimy modulu</value>
+  </data>
+  <data name="WDACMismatchedLanguageModesMessage" xml:space="preserve">
+    <value>Načítá se závislý modul, který má jiný jazykový režim než nadřazený modul. V režimu Constrained Language to nebude povolené.</value>
+  </data>
+</root>

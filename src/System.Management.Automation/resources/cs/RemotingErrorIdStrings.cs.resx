@@ -1,0 +1,1735 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="DefaultRemotingExceptionMessage" xml:space="preserve">
+    <value>Došlo k chybě typu {0}.</value>
+  </data>
+  <data name="OutOfMemory" xml:space="preserve">
+    <value>Nedostatek paměti pro procesy.</value>
+  </data>
+  <data name="UnsupportedOSForRemoteEnumeration" xml:space="preserve">
+    <value>Výčet vzdálené relace PSSession s -ComputerName je podporován pouze ve Windows, nikoli v{0}.</value>
+  </data>
+  <data name="PipelineIdsDoNotMatch" xml:space="preserve">
+    <value>ID kanálu {0} neodpovídá ID instance aktuálně spuštěného kanálu {1}.</value>
+  </data>
+  <data name="PipelineNotFoundOnServer" xml:space="preserve">
+    <value>ID kanálu „{0}“ nebylo na serveru nalezeno.</value>
+  </data>
+  <data name="PipelineStopped" xml:space="preserve">
+    <value>Vzdálený kanál byl zastaven.</value>
+  </data>
+  <data name="RunspaceAlreadyExists" xml:space="preserve">
+    <value>Relace již existuje. Opětovné vytvoření relace se stejným InstanceId {0} není povoleno.</value>
+  </data>
+  <data name="RunspaceIdsDoNotMatch" xml:space="preserve">
+    <value>Zadaná hodnota InstanceId relace klienta „{0}“ neodpovídá hodnotě InstanceId existující relace "{1}".</value>
+  </data>
+  <data name="RemoteRunspaceOpenFailed" xml:space="preserve">
+    <value>Otevření vzdálené relace se nezdařilo.</value>
+  </data>
+  <data name="RunspaceCannotBeFound" xml:space="preserve">
+    <value>Zadanou vzdálenou relaci s InstanceId klienta „{0}“ nelze najít.</value>
+  </data>
+  <data name="ResponsePromptIdCannotBeFound" xml:space="preserve">
+    <value>Odpověď na výzvu obsahuje ID výzvy „{0}“, které nelze najít.</value>
+  </data>
+  <data name="RemoteHostCallFailed" xml:space="preserve">
+    <value>Volání vzdáleného hostitele {0} se nezdařilo.</value>
+  </data>
+  <data name="RemoteHostMethodNotImplemented" xml:space="preserve">
+    <value>Metoda vzdáleného hostitele {0} není implementována.</value>
+  </data>
+  <data name="RemoteHostDataEncodingNotSupported" xml:space="preserve">
+    <value>Kódování dat metody vzdáleného hostitele se pro typ {0}nepodporuje.</value>
+  </data>
+  <data name="RemoteHostDataDecodingNotSupported" xml:space="preserve">
+    <value>Dekódování dat metody vzdáleného hostitele se pro typ {0}nepodporuje.</value>
+  </data>
+  <data name="NestedPipelineNotSupported" xml:space="preserve">
+    <value>Vytváření vnořených kanálů se nepodporuje.</value>
+  </data>
+  <data name="RelativeUriForRunspacePathNotSupported" xml:space="preserve">
+    <value>Relativní identifikátory URI se při vytváření vzdálených relací nepodporují.</value>
+  </data>
+  <data name="RemoteHostDecodingFailed" xml:space="preserve">
+    <value>Při dekódování dat ze vzdáleného hostitele došlo k chybě. V síťových datech došlo k chybě.</value>
+  </data>
+  <data name="MustBeAdminToOverrideThreadOptions" xml:space="preserve">
+    <value>Možnosti vlákna mohou vzdáleně přepsat pouze správci.</value>
+  </data>
+  <data name="RemoteHostPromptForCredentialModifiedCaption" xml:space="preserve">
+    <value>Žádost o přihlašovací údaje k PowerShellu: {0}</value>
+  </data>
+  <data name="RemoteHostPromptForCredentialModifiedMessage" xml:space="preserve">
+    <value>Upozornění: Skript nebo aplikace na vzdáleném počítači {0} požaduje vaše přihlašovací údaje. Přihlašovací údaje zadejte pouze v případě, že důvěřujete vzdálenému počítači a aplikaci nebo skriptu, který je požaduje.
+
+{1}</value>
+  </data>
+  <data name="RemoteHostReadLineAsSecureStringPrompt" xml:space="preserve">
+    <value>Skript nebo aplikace na vzdáleném počítači {0} žádá o bezpečné zadání jednoho řádku. Citlivé informace, jako jsou vaše přihlašovací údaje, zadejte pouze v případě, že důvěřujete vzdálenému počítači a aplikaci nebo skriptu, který o to žádá.</value>
+  </data>
+  <data name="RemoteHostGetBufferContents" xml:space="preserve">
+    <value>Skript nebo aplikace na vzdáleném počítači {0} se pokouší přečíst obsah vyrovnávací paměti na hostiteli PowerShellu. Z bezpečnostních důvodů to není povoleno; volání bylo potlačeno.</value>
+  </data>
+  <data name="RemoteHostPromptSecureStringPrompt" xml:space="preserve">
+    <value>Skript nebo aplikace na vzdáleném počítači {0} odesílá požadavek na výzvu. Po zobrazení výzvy zadejte citlivé informace, jako jsou přihlašovací údaje nebo hesla, pouze pokud důvěřujete vzdálenému počítači a aplikaci nebo skriptu, který požaduje data.</value>
+  </data>
+  <data name="ReceivedUnsupportedRemoteHostCall" xml:space="preserve">
+    <value>Přijato nepodporované volání vzdáleného hostitele: {0}.</value>
+  </data>
+  <data name="ReceivedUnsupportedAction" xml:space="preserve">
+    <value>Byla přijata data vzdálené komunikace s nepodporovanou akcí: {0}.</value>
+  </data>
+  <data name="ReceivedUnsupportedDataType" xml:space="preserve">
+    <value>Byla přijata data vzdálené komunikace s nepodporovaným datovým typem {0}.</value>
+  </data>
+  <data name="MissingDestination" xml:space="preserve">
+    <value>V datech vzdálené komunikace chybí vlastnost destination.</value>
+  </data>
+  <data name="MissingTarget" xml:space="preserve">
+    <value>V datech vzdálené komunikace chybí vlastnost cílového rozhraní.</value>
+  </data>
+  <data name="MissingRunspaceId" xml:space="preserve">
+    <value>V datech vzdálené komunikace chybí vlastnost InstanceId relace.</value>
+  </data>
+  <data name="MissingDataType" xml:space="preserve">
+    <value>V datech vzdálené komunikace chybí vlastnost RemotingDataType.</value>
+  </data>
+  <data name="MissingCallId" xml:space="preserve">
+    <value>V datech vzdálené komunikace chybí vlastnost CallId.</value>
+  </data>
+  <data name="MissingMethodName" xml:space="preserve">
+    <value>V datech vzdálené komunikace chybí vlastnost MethodName.</value>
+  </data>
+  <data name="MissingIsStartFragment" xml:space="preserve">
+    <value>Pro první fragment není nastaven příznak IsStartFragment.</value>
+  </data>
+  <data name="MissingProperty" xml:space="preserve">
+    <value>V datech vzdálené komunikace chybí vlastnost {0}.</value>
+  </data>
+  <data name="ObjectIdsNotMatching" xml:space="preserve">
+    <value>Bylo přijato neočekávané ObjectId. K tomu může dojít v případě, že fragmenty nejsou správně sestaveny vzdáleným počítačem, nebo mohla být poškozena nebo změněna data.</value>
+  </data>
+  <data name="ObjectIdCannotBeLessThanZero" xml:space="preserve">
+    <value>ObjectId nemůže být menší nebo rovno 0. K tomu může dojít v případě, že fragmenty nejsou správně sestaveny vzdáleným počítačem nebo pokud byla data změněna neoprávněnými uživateli.</value>
+  </data>
+  <data name="FragmentIdsNotInSequence" xml:space="preserve">
+    <value>Identifikátory FragmentID stejného objektu musí být v pořadí a jejich hodnoty se musí postupně zvyšovat o 1. K tomu může dojít, pokud vzdálený počítač fragmenty nesestaví správně. Data mohla být také poškozena nebo změněna.</value>
+  </data>
+  <data name="ObjectIsTooBig" xml:space="preserve">
+    <value>Data vzdálené komunikace jsou příliš velká a nelze je znovu sestavit z fragmentů. K tomu může dojít, pokud je délka dat ve fragmentu větší než Int32.Max. Může k tomu dojít také v případě, že data změnili neoprávnění uživatelé.</value>
+  </data>
+  <data name="MissingIsEndFragment" xml:space="preserve">
+    <value>Pro poslední fragment není nastaven příznak IsEndFragment. K tomu může dojít v případě, že fragmenty nejsou správně sestaveny vzdáleným počítačem nebo pokud byla data poškozena nebo změněna.</value>
+  </data>
+  <data name="DeserializedObjectIsNull" xml:space="preserve">
+    <value>Deserializovaná data vzdálené komunikace mají hodnotu null.</value>
+  </data>
+  <data name="BlobLengthNotInRange" xml:space="preserve">
+    <value>Délka objektu blob fragmentu je mimo rozsah: {0}</value>
+  </data>
+  <data name="DecodingErrorForErrorRecord" xml:space="preserve">
+    <value>Chyba při dekódování hodnoty ErrorRecord.</value>
+  </data>
+  <data name="DecodingErrorForPipelineStateInfo" xml:space="preserve">
+    <value>Chyba při dekódování PipelineStateInfo.</value>
+  </data>
+  <data name="DecodingErrorForRunspaceStateInfo" xml:space="preserve">
+    <value>Chyba při dekódování RunspaceStateInfo.</value>
+  </data>
+  <data name="ReceivedUnsupportedRemotingTargetInterfaceType" xml:space="preserve">
+    <value>Byl přijat nepodporovaný typ RemotingTargetInterface: {0}</value>
+  </data>
+  <data name="UnknownTargetClass" xml:space="preserve">
+    <value>Metoda vzdáleného hostitele byla vyvolána pro neznámou cílovou třídu: {0}</value>
+  </data>
+  <data name="MissingTargetClass" xml:space="preserve">
+    <value>Metoda vzdáleného hostitele byla vyvolána bez zadání cílové třídy.</value>
+  </data>
+  <data name="DecodingErrorForRunspacePoolStateInfo" xml:space="preserve">
+    <value>Při dekódování runspacePoolStateInfo došlo k chybě.</value>
+  </data>
+  <data name="DecodingErrorForMinRunspaces" xml:space="preserve">
+    <value>Chyba při dekódování minimálního počtu prostředí runspace.</value>
+  </data>
+  <data name="DecodingErrorForMaxRunspaces" xml:space="preserve">
+    <value>Chyba při dekódování maximálního počtu prostředí runspace.</value>
+  </data>
+  <data name="DecodingErrorForPowerShellStateInfo" xml:space="preserve">
+    <value>Chyba při dekódování PowerShellStateInfo.</value>
+  </data>
+  <data name="CantCastPropertyToExpectedType" xml:space="preserve">
+    <value>Neočekávaný typ vlastnosti {0} (očekáváno {1}, obdrženo {2}).</value>
+  </data>
+  <data name="CantCastRemotingDataToPSObject" xml:space="preserve">
+    <value>Neočekávaný typ dat vzdálené komunikace (očekáváno: PSObject; obdrženo: {0}).</value>
+  </data>
+  <data name="CantCastCommandToPSObject" xml:space="preserve">
+    <value>Neočekávaný typ zakódovaného příkazu (očekáváno: PSObject; obdrženo: {0}).</value>
+  </data>
+  <data name="CantCastParameterToPSObject" xml:space="preserve">
+    <value>Neočekávaný typ zakódovaného parametru příkazu (očekáváno: PSObject; obdrženo: {0}).</value>
+  </data>
+  <data name="NotEnoughHeaderForRemoteDataObject" xml:space="preserve">
+    <value>Při dekódování dat přijatých ze vzdáleného počítače došlo k chybě. Dekódování deserializovaného objektu přijatého ze vzdáleného počítače vyžaduje alespoň {0} bajtů dat. K tomu může dojít v případě, že fragmenty nejsou správně sestaveny vzdáleným počítačem nebo pokud byla data poškozena nebo změněna.</value>
+  </data>
+  <data name="RemotingDestinationNotForMe" xml:space="preserve">
+    <value>Přijatý paket není určen pro přihlášeného uživatele: uživatel = {0}, cíl paketu = {1}.</value>
+  </data>
+  <data name="ClientNegotiationTimeout" xml:space="preserve">
+    <value>Časovač vyjednávání klienta vypršel. Časový limit vyjednávání je {0} ms.</value>
+  </data>
+  <data name="ClientNegotiationFailed" xml:space="preserve">
+    <value>Klient PowerShellu nepodporuje {0} {1} vyjednané serverem. Ujistěte se, že server je kompatibilní se sestavením {2} a verzí protokolu {3} PowerShellu.</value>
+  </data>
+  <data name="ClientNotFoundCapabilityProperties" xml:space="preserve">
+    <value>{0}. Vyjednávání se serverem se nezdařilo. Ujistěte se, že server je kompatibilní se sestavením {1} a verzí protokolu {2} PowerShellu.</value>
+  </data>
+  <data name="ServerRequestedToCloseSession" xml:space="preserve">
+    <value>Cílový server odeslal požadavek na uzavření relace.</value>
+  </data>
+  <data name="ServerNegotiationFailed" xml:space="preserve">
+    <value>Server, na kterém běží PowerShell, nepodporuje {0} {1} vyjednané klientským počítačem. Ujistěte se, že server je kompatibilní se sestavením {2} a verzí protokolu {3} PowerShellu.</value>
+  </data>
+  <data name="ServerConnectFailedOnNegotiation" xml:space="preserve">
+    <value>Server s PowerShellem nepodporuje operace připojení na {0} {1}, které vyjednal klientský počítač. Ujistěte se, že je klientský počítač kompatibilní se sestavením {2} a verzí protokolu {3} PowerShellu.</value>
+  </data>
+  <data name="ServerConnectFailedOnInputValidation" xml:space="preserve">
+    <value>Server, na kterém běží Prostředí PowerShell, nemůže zpracovat operaci připojení, protože nebyly nalezeny nebo nejsou platné následující informace: Informace o schopnostech klienta a informace o fondu RunspacePool připojení.</value>
+  </data>
+  <data name="ServerConnectFailedOnServerStateValidation" xml:space="preserve">
+    <value>Server, na kterém je spuštěný PowerShell, nemůže zpracovat operaci připojení, protože server buď nebyl spuštěn, nebo se vypíná.</value>
+  </data>
+  <data name="ServerConnectFailedOnMismatchedRunspacePoolProperties" xml:space="preserve">
+    <value>Server, na kterém běží PowerShell, nemůže zpracovat operaci připojení, protože vlastnosti fondu runspace serveru neodpovídají zadaným vlastnostem klientského počítače.</value>
+  </data>
+  <data name="ServerNotFoundCapabilityProperties" xml:space="preserve">
+    <value>{0}. Vyjednávání s klientem se nezdařilo. Ujistěte se, že je klient kompatibilní se sestavením {1} a verzí {2} protokolu PowerShellu.</value>
+  </data>
+  <data name="ServerNegotiationTimeout" xml:space="preserve">
+    <value>Časovač vyjednávání serveru vypršel. Časový limit vyjednávání je {0} ms.</value>
+  </data>
+  <data name="ClientRequestedToCloseSession" xml:space="preserve">
+    <value>Klientský počítač odeslal žádost o ukončení relace.</value>
+  </data>
+  <data name="FatalErrorCausingClose" xml:space="preserve">
+    <value>Došlo k chybě, kterou PowerShell nemůže zpracovat. Vzdálená relace mohla být ukončena.</value>
+  </data>
+  <data name="ClientKeyExchangeFailed" xml:space="preserve">
+    <value>Server neodpověděl se šifrovaným klíčem relace v zadaném časovém limitu.</value>
+  </data>
+  <data name="ServerKeyExchangeFailed" xml:space="preserve">
+    <value>Klient neodpověděl pomocí veřejného klíče ve stanoveném časovém limitu.</value>
+  </data>
+  <data name="ConnectFailed" xml:space="preserve">
+    <value>Pokus o připojení se nezdařil.</value>
+  </data>
+  <data name="CloseIsCalled" xml:space="preserve">
+    <value>Probíhá pokus o uzavření relace.</value>
+  </data>
+  <data name="ForceClosed" xml:space="preserve">
+    <value>PowerShell nemůže správně zavřít vzdálenou relaci. Relace je v nedefinovaném stavu, protože se po odpojení neotevřela ani nepřipojila. PowerShell se pokusí vynutit ukončení relace na místním počítači, ale relace nemusí být ve vzdáleném počítači uzavřena. Chcete-li vzdálenou relaci správně zavřít, nejprve ji otevřete nebo připojte.</value>
+  </data>
+  <data name="CloseFailed" xml:space="preserve">
+    <value>Relaci nelze zavřít.</value>
+  </data>
+  <data name="CloseCompleted" xml:space="preserve">
+    <value>Relace je uzavřena.</value>
+  </data>
+  <data name="UnsupportedWaitHandleType" xml:space="preserve">
+    <value>Typ popisovače čekání „{0}“ není podporován.</value>
+  </data>
+  <data name="ReceivedDataStreamIsNotStdout" xml:space="preserve">
+    <value>Přijatá data mají index ID datového proudu {0}. Je podporován pouze index ID standardního výstupního datového proudu „0“.</value>
+  </data>
+  <data name="StdInIsNotOpen" xml:space="preserve">
+    <value>Popisovač standardního vstupu není otevřený.</value>
+  </data>
+  <data name="NativeWriteFileFailed" xml:space="preserve">
+    <value>Volání nativního rozhraní API WriteFile se nezdařilo. Kód chyby je {0}.</value>
+  </data>
+  <data name="NativeReadFileFailed" xml:space="preserve">
+    <value>Volání nativního rozhraní API pro ReadFile se nezdařilo. Kód chyby je {0}.</value>
+  </data>
+  <data name="InvalidSchemeValue" xml:space="preserve">
+    <value>{0} není platná hodnota schématu. Platné hodnoty jsou http a https.</value>
+  </data>
+  <data name="ClientReceiveFailed" xml:space="preserve">
+    <value>Přijetí volání na straně klienta se nezdařilo.</value>
+  </data>
+  <data name="ClientSendFailed" xml:space="preserve">
+    <value>Volání odeslání na straně klienta se nezdařilo.</value>
+  </data>
+  <data name="CommandHandleIsNull" xml:space="preserve">
+    <value>Popisovač příkazu vrácený z rozhraní WINRS API WSManRunShellCommand má hodnotu null.</value>
+  </data>
+  <data name="StdInCannotBeSetToNoWait" xml:space="preserve">
+    <value>Popisovač standardního vstupu nelze nastavit na stav „no wait“. Kód systémové chyby je {0}.</value>
+  </data>
+  <data name="PortIsOutOfRange" xml:space="preserve">
+    <value>Číslo portu {0} není v rozsahu platných hodnot. Rozsah platných hodnot je od 1 do 65535.</value>
+  </data>
+  <data name="ServerProcessExited" xml:space="preserve">
+    <value>Proces serveru byl ukončen.</value>
+  </data>
+  <data name="CannotGetStdInHandle" xml:space="preserve">
+    <value>Volání rutiny GetStdHandle rozhraní API systému Windows pro získání popisovače standardního vstupu způsobilo kód chyby: {0}.</value>
+  </data>
+  <data name="CannotGetStdOutHandle" xml:space="preserve">
+    <value>Volání rutiny GetStdHandle rozhraní API systému Windows pro získání popisovače Standardní výstup způsobilo kód chyby: {0}.</value>
+  </data>
+  <data name="CannotGetStdErrHandle" xml:space="preserve">
+    <value>Volání rutiny GetStdHandle rozhraní API systému Windows pro získání popisovače standardní chyby způsobilo kód chyby: {0}.</value>
+  </data>
+  <data name="ConnectExFailed" xml:space="preserve">
+    <value>Připojení ke vzdálenému serveru {0} se nezdařilo.</value>
+  </data>
+  <data name="ConnectExCallBackError" xml:space="preserve">
+    <value>Připojení ke vzdálenému serveru {0} se nezdařilo s následující chybovou zprávou: {1}</value>
+  </data>
+  <data name="CloseExCallBackError" xml:space="preserve">
+    <value>Zavření instance prostředí vzdáleného serveru se nezdařilo s následující chybovou zprávou: {0}</value>
+  </data>
+  <data name="SendExFailed" xml:space="preserve">
+    <value>Odeslání dat na vzdálený server {0} se nezdařilo.</value>
+  </data>
+  <data name="SendExCallBackError" xml:space="preserve">
+    <value>Odeslání dat na vzdálený server {0} se nezdařilo s následující chybovou zprávou: {1}</value>
+  </data>
+  <data name="ReceiveExFailed" xml:space="preserve">
+    <value>Příjem dat ze vzdáleného serveru {0} se nezdařil.</value>
+  </data>
+  <data name="ReceiveExCallBackError" xml:space="preserve">
+    <value>Zpracování dat ze vzdáleného serveru {0} se nezdařilo s následující chybovou zprávou: {1}</value>
+  </data>
+  <data name="RunShellCommandExFailed" xml:space="preserve">
+    <value>Spuštění příkazu na vzdáleném serveru se nezdařilo.</value>
+  </data>
+  <data name="RunShellCommandExCallBackError" xml:space="preserve">
+    <value>Spuštění příkazu na vzdáleném serveru se nezdařilo s následující chybovou zprávou: {0}</value>
+  </data>
+  <data name="ReconnectShellCommandExCallBackError" xml:space="preserve">
+    <value>Opětovné připojení k příkazu na vzdáleném serveru se nezdařilo s následující chybovou zprávou: {0}</value>
+  </data>
+  <data name="CommandSendExFailed" xml:space="preserve">
+    <value>Odeslání dat vzdálenému příkazu se nezdařilo.</value>
+  </data>
+  <data name="CommandSendExCallBackError" xml:space="preserve">
+    <value>Odeslání dat do vzdáleného příkazu se nezdařilo s následující chybovou zprávou: {0}</value>
+  </data>
+  <data name="CommandReceiveExFailed" xml:space="preserve">
+    <value>Příjem dat pro vzdálený příkaz se nezdařil.</value>
+  </data>
+  <data name="CommandReceiveExCallBackError" xml:space="preserve">
+    <value>Zpracování dat pro vzdálený příkaz se nezdařilo s následující chybovou zprávou: {0}</value>
+  </data>
+  <data name="GeneralError" xml:space="preserve">
+    <value>Při volání metody {1} došlo k chybě s kódem chyby {0}.</value>
+  </data>
+  <data name="TroubleShootingHelpTopic" xml:space="preserve">
+    <value>{0} Další informace najdete v tématu nápovědy about_Remote_Troubleshooting.</value>
+  </data>
+  <data name="DisconnectShellExFailed" xml:space="preserve">
+    <value>Odpojení od vzdáleného serveru {0} se nezdařilo.</value>
+  </data>
+  <data name="DisconnectShellExCallBackErrr" xml:space="preserve">
+    <value>Odpojení od vzdáleného serveru se nezdařilo s následující chybovou zprávou: {0}</value>
+  </data>
+  <data name="ReconnectShellExFailed" xml:space="preserve">
+    <value>Opětovné připojení ke vzdálenému serveru se nezdařilo.</value>
+  </data>
+  <data name="ReconnectShellExCallBackErrr" xml:space="preserve">
+    <value>Opětovné připojení ke vzdálenému serveru {0} se nezdařilo s následující chybovou zprávou: {1}</value>
+  </data>
+  <data name="IPCTransportConnectError" xml:space="preserve">
+    <value>Přenos meziprocesové komunikace (IPC) nepodporuje operace připojení.</value>
+  </data>
+  <data name="NonExistentInitialSessionStateProvider" xml:space="preserve">
+    <value>Konfigurace EndpointConfiguration s ID {0} na vzdáleném serveru neexistuje. Obraťte se na správce PowerShellu nebo vlastníka nebo autora konfigurace koncového bodu.</value>
+  </data>
+  <data name="InitialSessionStateNull" xml:space="preserve">
+    <value>Konfigurace EndpointConfiguration s identifikátorem {0} není na vzdáleném počítači v platném počátečním stavu relace. Obraťte se na správce PowerShellu nebo vlastníka nebo autora konfigurace koncového bodu.</value>
+  </data>
+  <data name="MandatoryValueNotPresent" xml:space="preserve">
+    <value>Pro klíč registru {1} není zadána povinná hodnota {0}.</value>
+  </data>
+  <data name="MandatoryValueNotInCorrectFormat" xml:space="preserve">
+    <value>Povinná hodnota {0} nemá správný formát pro klíč registru {1}. Očekávaný formát je řetězec.</value>
+  </data>
+  <data name="StartupScriptNotCorrect" xml:space="preserve">
+    <value>„{0}“ musí určovat soubor skriptu PowerShellu, který končí příponou .ps1.</value>
+  </data>
+  <data name="DuplicateInitializationParameterFound" xml:space="preserve">
+    <value>Parametr {0} je již zadán v oddílu {1}. Obraťte se na správce a ujistěte se, že {0} je zadán pouze jednou.</value>
+  </data>
+  <data name="NoAttributesFoundForParamElement" xml:space="preserve">
+    <value>V elementu „{0}“ se očekávají atributy „{1}“ a „{2}“.</value>
+  </data>
+  <data name="AssemblyLoadAttributesNotFound" xml:space="preserve">
+    <value>„{0}“, „{1}“ musí být zadány v oddílu „{2}“ pro dynamické načtení sestavení.</value>
+  </data>
+  <data name="UnableToLoadAssembly" xml:space="preserve">
+    <value>Sestavení „{0}“ zadané v oddílu „{1}“ nelze načíst.</value>
+  </data>
+  <data name="UnableToLoadType" xml:space="preserve">
+    <value>Nelze načíst typ „{0}“ zadaný v oddílu „{1}“.</value>
+  </data>
+  <data name="TypeNeedsAssembly" xml:space="preserve">
+    <value>V části „{2}“ musí být zadáno „{1}“ i „{0}“.</value>
+  </data>
+  <data name="RedirectedURINotWellFormatted" xml:space="preserve">
+    <value>Cíl „{0}“ požádal o přesměrování připojení na „{1}“. „{1}“ ale není správně formátovaný identifikátor URI.</value>
+  </data>
+  <data name="URIEndPointNotResolved" xml:space="preserve">
+    <value>{0}Nahlášené umístění přesměrování: {1}.</value>
+  </data>
+  <data name="URIRedirectWarningToHost" xml:space="preserve">
+    <value>Vaše připojení bylo přesměrováno na následující identifikátor URI: „{0}“</value>
+  </data>
+  <data name="URIRedirectionReported" xml:space="preserve">
+    <value>{0} Chcete-li se automaticky připojit k přesměrovanému identifikátoru URI, ověřte vlastnost {1} proměnné předvoleb relace {2} a v rutině použijte parametr {3}.</value>
+  </data>
+  <data name="ReceivedObjectSizeExceededMaximumClient" xml:space="preserve">
+    <value>Aktuální velikost deserializovaného objektu dat přijatých ze vzdáleného serveru překročila povolenou maximální velikost objektu. Aktuální velikost deserializovaného objektu je {0}. Maximální povolená velikost objektu je {1}.</value>
+  </data>
+  <data name="ReceivedDataSizeExceededMaximumClient" xml:space="preserve">
+    <value>Celkové množství dat přijatých ze vzdáleného serveru překročilo povolené maximum. Povolené maximum je {0}.</value>
+  </data>
+  <data name="ReceivedObjectSizeExceededMaximumServer" xml:space="preserve">
+    <value>Aktuální velikost deserializovaného objektu dat přijatých ze vzdáleného klientského počítače překročila povolenou maximální velikost objektu. Aktuální velikost deserializovaného objektu je {0}. Maximální povolená velikost objektu je {1}.</value>
+  </data>
+  <data name="ReceivedDataSizeExceededMaximumServer" xml:space="preserve">
+    <value>Celkové množství dat přijatých od vzdáleného klienta překročilo povolené maximum. Povolené maximum je {0}.</value>
+  </data>
+  <data name="StartupScriptThrewTerminatingError" xml:space="preserve">
+    <value>Spuštění spouštěcího skriptu vyvolalo chybu: {0}.</value>
+  </data>
+  <data name="RemoteRunspaceInfoHasDuplicates" xml:space="preserve">
+    <value>Zadané objekty RemoteRunspaceInfo mají duplicitní položky.</value>
+  </data>
+  <data name="RemoteRunspaceInfoLimitExceeded" xml:space="preserve">
+    <value>Zadané objekty RemoteRunspaceInfo překročily maximální povolený limit.</value>
+  </data>
+  <data name="RemoteRunspaceOpenUnknownState" xml:space="preserve">
+    <value>Otevření vzdálené relace se nezdařilo s neočekávaným stavem. Stav {0}.</value>
+  </data>
+  <data name="UriSpecifiedNotValid" xml:space="preserve">
+    <value>Zadaný identifikátor URI {0} není platný.</value>
+  </data>
+  <data name="RemoteRunspaceClosed" xml:space="preserve">
+    <value>Vzdálená relace pro identifikátor URI {0} byla uzavřena.</value>
+  </data>
+  <data name="RemoteRunspaceNotAvailableForSpecifiedComputer" xml:space="preserve">
+    <value>Vzdálená relace není pro ComputerName {0} k dispozici.</value>
+  </data>
+  <data name="RemoteRunspaceNotAvailableForSpecifiedRunspaceId" xml:space="preserve">
+    <value>Vzdálená relace není pro {0} k dispozici.</value>
+  </data>
+  <data name="StopPSJobWhatIfTarget" xml:space="preserve">
+    <value>Vzdálený příkaz: {0}, přidružený k úloze, která má ID „{1}“.</value>
+  </data>
+  <data name="NewRunspaceAmbiguousAuthentication" xml:space="preserve">
+    <value>Parametr {0} nelze zadat, pokud je zadán parametr {1}.</value>
+  </data>
+  <data name="WildCardErrorFilePathParameter" xml:space="preserve">
+    <value>Pro parametr FilePath nejsou podporovány zástupné znaky. Zadejte cestu bez zástupných znaků.</value>
+  </data>
+  <data name="FilePathNotFromFileSystemProvider" xml:space="preserve">
+    <value>Cesta zadaná jako hodnota parametru FilePath nepochází od zprostředkovatele FileSystem.</value>
+  </data>
+  <data name="FilePathShouldPS1Extension" xml:space="preserve">
+    <value>Hodnota parametru FilePath musí být soubor skriptu PowerShellu. Zadejte cestu k souboru s příponou .ps1 a příkaz opakujte.</value>
+  </data>
+  <data name="InvalidComputerName" xml:space="preserve">
+    <value>Jeden nebo více názvů počítačů není platných. Pokud se pokoušíte předat URI, použijte parametr -ConnectionUri nebo místo řetězců předejte objekty URI.</value>
+  </data>
+  <data name="InvalidJobStateGeneral" xml:space="preserve">
+    <value>Stav aktuální instance úlohy není pro tuto operaci platný.</value>
+  </data>
+  <data name="JobWithSpecifiedNameNotFound" xml:space="preserve">
+    <value>Příkaz nemůže úlohu najít, protože nebyl nalezen název úlohy {0}. Ověřte hodnotu parametru Name a příkaz zopakujte.</value>
+  </data>
+  <data name="JobWithSpecifiedInstanceIdNotFound" xml:space="preserve">
+    <value>Příkaz nemůže najít úlohu s identifikátorem instance {0}. Ověřte hodnotu parametru InstanceId a příkaz zopakujte.</value>
+  </data>
+  <data name="JobWithSpecifiedSessionIdNotFound" xml:space="preserve">
+    <value>Příkaz nemůže najít úlohu s ID úlohy {0}. Ověřte hodnotu parametru ID a příkaz zopakujte.</value>
+  </data>
+  <data name="JobWithSpecifiedNameNotCompleted" xml:space="preserve">
+    <value>Příkaz nemůže odebrat úlohu s ID úlohy {0} a názvem {1}, protože úloha nebyla dokončena. Pokud chcete úlohu odebrat, nejprve úlohu zastavte nebo použijte parametr Force.</value>
+  </data>
+  <data name="JobWithSpecifiedSessionIdNotCompleted" xml:space="preserve">
+    <value>Příkaz nemůže odebrat úlohu s ID úlohy {0}, protože úloha není dokončená. Pokud chcete úlohu odebrat, nejprve úlohu zastavte nebo použijte parametr Force.</value>
+  </data>
+  <data name="JobWithSpecifiedInstanceIdNotCompleted" xml:space="preserve">
+    <value>Příkaz nemůže odebrat úlohu s ID úlohy {0} a identifikátorem instance {1}, protože úloha není dokončená. Pokud chcete úlohu odebrat, nejprve úlohu zastavte nebo použijte parametr Force.</value>
+  </data>
+  <data name="RemovePSJobWhatIfTarget" xml:space="preserve">
+    <value>Vzdálený příkaz: {0}, přidružený k úloze, která má ID „{1}“.</value>
+  </data>
+  <data name="ComputerNameParamNotSupported" xml:space="preserve">
+    <value>Příkaz nemůže načíst úlohy zadaných počítačů. Parametr ComputerName lze použít pouze s úlohami vytvořenými pomocí vzdálené komunikace PowerShellu.</value>
+  </data>
+  <data name="RunspaceParamNotSupported" xml:space="preserve">
+    <value>Parametr Session lze použít pouze s objekty PSRemotingJob.</value>
+  </data>
+  <data name="RemoteRunspaceNotAvailableForSpecifiedName" xml:space="preserve">
+    <value>Vzdálená relace s názvem {0} není k dispozici.</value>
+  </data>
+  <data name="RemoteRunspaceNotAvailableForSpecifiedSessionId" xml:space="preserve">
+    <value>Vzdálená relace s ID relace {0} není k dispozici.</value>
+  </data>
+  <data name="ItemNotFoundInRepository" xml:space="preserve">
+    <value>{0} neobsahuje položku s ID {1}.</value>
+  </data>
+  <data name="CannotRemoveJob" xml:space="preserve">
+    <value>Příkaz nemůže odebrat úlohu, protože neexistuje nebo je podřízenou úlohou. Podřízené úlohy lze odebrat pouze odebráním nadřazené úlohy.</value>
+  </data>
+  <data name="CSCDoubleParameterOutOfRange" xml:space="preserve">
+    <value>{0} není platná hodnota parametru {1}. Hodnota musí být větší než nebo rovna 0.</value>
+  </data>
+  <data name="ProxyAmbiguousAuthentication" xml:space="preserve">
+    <value>{0} nelze zadat jako mechanismus ověřování proxy serveru. Pro ověřování proxy serveru se podporují jenom {1}, {2} nebo {3}.</value>
+  </data>
+  <data name="ProxyCredentialWithoutAccess" xml:space="preserve">
+    <value>Při použití následujícího typu přístupu k proxy serveru nelze zadat přihlašovací údaje proxy serveru: {0}. Buď zadejte jiný typ přístupu, nebo nezadávejte přihlašovací údaje proxy serveru.</value>
+  </data>
+  <data name="WrongSessionOptionValue" xml:space="preserve">
+    <value>Pro možnost relace {1} je nutné zadat hodnotu {0}.</value>
+  </data>
+  <data name="PushedRunspaceMustBeOpen" xml:space="preserve">
+    <value>Relace musí být otevřená.</value>
+  </data>
+  <data name="HostDoesNotSupportPushRunspace" xml:space="preserve">
+    <value>Hostitel nepodporuje Enter-PSSession a Exit-PSSession.</value>
+  </data>
+  <data name="RemoteRunspaceHasMultipleMatchesForSpecifiedRunspaceId" xml:space="preserve">
+    <value>Bylo nalezeno více shod pro ID relace {0}.</value>
+  </data>
+  <data name="RemoteRunspaceHasMultipleMatchesForSpecifiedSessionId" xml:space="preserve">
+    <value>Bylo nalezeno více shod pro ID relace {0}.</value>
+  </data>
+  <data name="RemoteRunspaceHasMultipleMatchesForSpecifiedName" xml:space="preserve">
+    <value>Pro název {0} bylo nalezeno více shod.</value>
+  </data>
+  <data name="RemoteRunspaceDoesNotSupportPushRunspace" xml:space="preserve">
+    <value>Příkaz Enter-PSSession se nezdařil, protože vzdálená relace neposkytuje požadované příkazy.</value>
+  </data>
+  <data name="HostInNestedPrompt" xml:space="preserve">
+    <value>Enter-PSSession nelze spustit z vnořené výzvy.</value>
+  </data>
+  <data name="WsmanMaxRedirectionCountVariableDescription" xml:space="preserve">
+    <value>Maximální počet přesměrování identifikátoru URI WS-Man, která se mají povolit při připojování ke vzdálenému počítači.</value>
+  </data>
+  <data name="PSDefaultSessionOptionDescription" xml:space="preserve">
+    <value>Výchozí možnosti relace pro nové vzdálené relace</value>
+  </data>
+  <data name="PSSessionConfigurationName" xml:space="preserve">
+    <value>Název konfigurace relace, která bude načtena do vzdáleného počítače</value>
+  </data>
+  <data name="PSSessionAppName" xml:space="preserve">
+    <value>AppName, kde bude navázáno vzdálené připojení</value>
+  </data>
+  <data name="PSSenderInfoDescription" xml:space="preserve">
+    <value>Obsahuje informace o vzdáleném uživateli, který spouští vzdálenou relaci. Tato proměnná je k dispozici pouze ze vzdálené relace.</value>
+  </data>
+  <data name="CSCmdsTypeNeedsAssembly" xml:space="preserve">
+    <value>Buď musí být zadán „{0}“ i „{1}“, nebo nesmí být zadán ani jeden z nich.</value>
+  </data>
+  <data name="CSCmdsShellNotFound" xml:space="preserve">
+    <value>Konfigurace relace „{0}“ nebyla nalezena.</value>
+  </data>
+  <data name="CSCmdsShellNotPowerShellBased" xml:space="preserve">
+    <value>Konfigurace relace „{0}“ není prostředí založené na PowerShellu.</value>
+  </data>
+  <data name="CSCmdsPowerShellCoreShellNotModifiable" xml:space="preserve">
+    <value>Konfigurace relace „{0}“ je prostředí založené na PowerShellu. K úpravě použijte PowerShell 6+.</value>
+  </data>
+  <data name="CSCmdsWindowsPowerShellCoreNotModifiable" xml:space="preserve">
+    <value>Konfigurace relace „{0}“ je prostředí založené na Windows PowerShell. K úpravě použijte Windows PowerShell.</value>
+  </data>
+  <data name="CustomShellNotFound" xml:space="preserve">
+    <value>Žádná konfigurace relace neodpovídá kritériím „{0}“.</value>
+  </data>
+  <data name="CSShouldProcessAction" xml:space="preserve">
+    <value>{0}</value>
+  </data>
+  <data name="CSShouldProcessTarget" xml:space="preserve">
+    <value>Název: {0}</value>
+  </data>
+  <data name="CSShouldProcessTargetAdminEnable" xml:space="preserve">
+    <value>Název: {0}. To správcům umožňuje na tomto počítači vzdáleně spouštět příkazy PowerShellu.</value>
+  </data>
+  <data name="NcsCannotDeleteFile" xml:space="preserve">
+    <value>Nelze odstranit dočasný soubor {0}. Důvod selhání: {1}.</value>
+  </data>
+  <data name="NcsCannotDeleteFileAfterInstall" xml:space="preserve">
+    <value>Nové prostředí bylo úspěšně zaregistrováno, ale prostředí PowerShell nemůže odstranit dočasný soubor {0}. Důvod selhání: {1}.</value>
+  </data>
+  <data name="NcsCannotWritePluginContent" xml:space="preserve">
+    <value>Konfigurační data prostředí nelze zapsat do dočasného souboru {0}. Důvod selhání: {1}.</value>
+  </data>
+  <data name="NcsScriptMessageV" xml:space="preserve">
+    <value>Spouští se příkaz „{0}“ pro vytvoření nové konfigurace relace.</value>
+  </data>
+  <data name="NcsShouldProcessTargetSDDL" xml:space="preserve">
+    <value>Název: {0} SDDL: {1}. To umožňuje vybraným uživatelům vzdáleně spouštět příkazy PowerShellu v tomto počítači.</value>
+  </data>
+  <data name="RcsScriptMessageV" xml:space="preserve">
+    <value>Spouští se příkaz „{0}“ k odebrání konfigurace relace.</value>
+  </data>
+  <data name="GcsScriptMessageV" xml:space="preserve">
+    <value>Spouští se příkaz „{0}“ k získání konfigurací relací založených na PowerShellu.</value>
+  </data>
+  <data name="ScsScriptMessageV" xml:space="preserve">
+    <value>Spouští se příkaz „{0}“ k aktualizaci vlastností konfigurace relace.</value>
+  </data>
+  <data name="ScsShouldProcessTargetSDDL" xml:space="preserve">
+    <value>Název: {0} SDDL: {1}</value>
+  </data>
+  <data name="EcsScriptMessageV" xml:space="preserve">
+    <value>Spouští se příkaz „{0}“ k povolení konfigurace relace.</value>
+  </data>
+  <data name="EcsWSManQCCaption" xml:space="preserve">
+    <value>Rychlá konfigurace WinRM</value>
+  </data>
+  <data name="EcsWSManQCQuery" xml:space="preserve">
+    <value>Spouští se příkaz „{0}“ k povolení vzdálené správy tohoto počítače pomocí služby Windows Remote Management (WinRM).
+ To zahrnuje: 
+    1. Spuštění nebo restartování služby WinRM, pokud už běží.
+    2. Nastavení typu spuštění služby WinRM na Automaticky.
+    3. Vytvoření naslouchacího procesu pro přijímání požadavků na libovolné IP adrese.
+    4. Povolení výjimek příchozích pravidel brány Windows Firewall pro přenosy služby WS-Management (pouze pro protokol HTTP).
+
+Chcete pokračovat?</value>
+  </data>
+  <data name="EcsWSManShouldProcessDesc" xml:space="preserve">
+    <value>Provádění operace „{0}“.</value>
+  </data>
+  <data name="EcsShouldProcessTarget" xml:space="preserve">
+    <value>Název: {0} SDDL: {1}. To umožňuje vybraným uživatelům vzdáleně spouštět příkazy PowerShellu v tomto počítači.</value>
+  </data>
+  <data name="DcsScriptMessageV" xml:space="preserve">
+    <value>Spouští se příkaz „{0}“ k zakázání konfigurace relace.</value>
+  </data>
+  <data name="DcsShouldProcessTarget" xml:space="preserve">
+    <value>Název: {0} SDDL: {1}. Tím se odepře přístup ke konfiguraci této relace pro všechny.</value>
+  </data>
+  <data name="DcsWarningMessage" xml:space="preserve">
+    <value>Zakázáním konfigurací relací nedojde k vrácení všech změn provedených rutinou Enable-PSRemoting nebo Enable-PSSessionConfiguration. Změny možná budete muset vrátit zpět ručně pomocí následujícího postupu:
+    1. Zastavte a zakažte službu WinRM.
+    2. Odstraňte naslouchací proces, který přijímá požadavky na libovolné IP adrese.
+    3. Zakažte výjimky brány firewall pro komunikaci WS-Management.
+    4. Obnovte hodnotu LocalAccountTokenFilterPolicy na hodnotu 0, která omezí vzdálený přístup na členy skupiny Administrators v počítači.</value>
+  </data>
+  <data name="EDcsRequiresElevation" xml:space="preserve">
+    <value>Přístup je odepřený. Pokud chcete tuto rutinu spustit, spusťte PowerShell s možností Spustit jako správce.</value>
+  </data>
+  <data name="RestartWSManServiceMessageV" xml:space="preserve">
+    <value>Restartování služby WinRM</value>
+  </data>
+  <data name="RestartWSManServiceAction" xml:space="preserve">
+    <value>„Restart-Service“</value>
+  </data>
+  <data name="RestartWSManServiceTarget" xml:space="preserve">
+    <value>Název: {0}</value>
+  </data>
+  <data name="RestartWSManRequiredShowUI" xml:space="preserve">
+    <value>Před zobrazením uživatelského rozhraní pro výběr popisovače SecurityDescriptor je nutné restartovat službu WinRM. Restartujte službu WinRM a spusťte následující příkaz: „{0}“</value>
+  </data>
+  <data name="ERemotingCaption" xml:space="preserve">
+    <value>Registruje se konfigurace relace</value>
+  </data>
+  <data name="ERemotingQuery" xml:space="preserve">
+    <value>Konfigurace relace {0} nebyla nalezena. Spouští se příkaz „{1}“ k vytvoření konfigurace relace „{0}“. Spuštění tohoto příkazu restartuje službu WinRM.</value>
+  </data>
+  <data name="ShowUIAndSDDLCannotExist" xml:space="preserve">
+    <value>Parametry „{0}“ a „{1}“ nelze zadat společně. Zadejte buď parametr „{0}“, nebo „{1}“.</value>
+  </data>
+  <data name="RestartWinRMMessage" xml:space="preserve">
+    <value>Tato operace může restartovat službu WinRM. Chcete pokračovat?</value>
+  </data>
+  <data name="IPCUnknownNodeType" xml:space="preserve">
+    <value>Nelze zpracovat element s typem uzlu „{0}“. Jsou podporovány pouze typy uzlů {1} a {2}.</value>
+  </data>
+  <data name="IPCInsufficientDataforElement" xml:space="preserve">
+    <value>Ke zpracování elementu {0} není k dispozici dostatek dat.</value>
+  </data>
+  <data name="IPCWrongAttributeCountForDataElement" xml:space="preserve">
+    <value>V elementu{2} byly očekávány pouze dva atributy s názvy „{0}“ a „{1}“.</value>
+  </data>
+  <data name="IPCOnlyTextExpectedInDataElement" xml:space="preserve">
+    <value>Typ uzlu „{0}“ je v elementu {1} neznámý. V elementu {2} se očekává pouze typ uzlu „{1}“.</value>
+  </data>
+  <data name="IPCWrongAttributeCountForElement" xml:space="preserve">
+    <value>V elementu {0} byl očekáván pouze jeden atribut s názvem „{1}“.</value>
+  </data>
+  <data name="IPCUnknownElementReceived" xml:space="preserve">
+    <value>Byl přijat neznámý element „{0}“. K tomu může dojít, pokud se vzdálený proces předčasně ukončil nebo skončil neočekávaně.</value>
+  </data>
+  <data name="IPCSupportsOnlyDefaultAuth" xml:space="preserve">
+    <value>Zadaný mechanismus ověřování „{0}“ není podporován. Pro tuto operaci se podporuje jenom „{1}“.</value>
+  </data>
+  <data name="IPCPwshExecutableNotFound" xml:space="preserve">
+    <value>Spustitelný soubor pwsh nebyl nalezen v „{0}“.
+Všimněte si, že Start-Job se záměrně nepodporuje ve scénářích, ve kterých je PowerShell hostován v jiných aplikacích. Místo toho se v takových scénářích doporučuje použít modul ThreadJob.</value>
+  </data>
+  <data name="RunAs32NotSupported" xml:space="preserve">
+    <value>Nelze spustit 32bitový proces pwsh z 64bitové instalace pwsh. Pokud potřebujete spustit PowerShell v 32bitovém procesu, nainstalujte 32bitovou verzi pwsh.</value>
+  </data>
+  <data name="IPCServerProcessReportedError" xml:space="preserve">
+    <value>Proces na pozadí ohlásil chybu s následující zprávou: {0}.</value>
+  </data>
+  <data name="IPCServerProcessExited" xml:space="preserve">
+    <value>Proces na pozadí byl neočekávaně uzavřen nebo ukončen: {0}.</value>
+  </data>
+  <data name="IPCErrorProcessingServerData" xml:space="preserve">
+    <value>Při zpracování dat z procesu na pozadí došlo k chybě. Nahlášená chyba: {0}.</value>
+  </data>
+  <data name="IPCUnknownCommandGuid" xml:space="preserve">
+    <value>Byla přijata data pro neaktivní příkaz s identifikátorem {0}. Přijatá data: {1}.</value>
+  </data>
+  <data name="IPCNoSignalForSession" xml:space="preserve">
+    <value>Zpráva {0} do relace není podporovaná. Zprávu {0} lze odeslat pouze příkazu.</value>
+  </data>
+  <data name="IPCSignalTimedOut" xml:space="preserve">
+    <value>Klient neobdržel odpověď na operaci signálu v zadaném časovém intervalu. K tomu může dojít, když příkaz včas nereaguje na zprávu Stop.</value>
+  </data>
+  <data name="IPCCloseTimedOut" xml:space="preserve">
+    <value>Klient neobdržel odpověď na operaci „Zavřít“ v zadaném časovém intervalu. K tomu může dojít, když příkaz včas nereaguje na zprávu Stop.</value>
+  </data>
+  <data name="IPCExceptionLaunchingProcess" xml:space="preserve">
+    <value>Při spouštění procesu na pozadí došlo k chybě. Nahlášená chyba: {0}.</value>
+  </data>
+  <data name="ThrottlingJobChildAlreadyRunning" xml:space="preserve">
+    <value>Metoda ThrottlingJob.AddChildJob přijímá pouze podřízené úlohy ve stavu NotStarted.</value>
+    <comment>{StrContains="ThrottlingJob.AddChildJob"}
+{StrContains="NotStarted"}</comment>
+  </data>
+  <data name="ThrottlingJobChildAddedAfterEndOfChildJobs" xml:space="preserve">
+    <value>Metodu ThrottlingJob.AddChildJob nelze volat po volání metody ThrottlingJob.EndOfChildJobs.</value>
+    <comment>{StrContains="ThrottlingJob.AddChildJob"}
+{StrContains="ThrottlingJob.EndOfChildJobs"}</comment>
+  </data>
+  <data name="ThrottlingJobStatusMessage" xml:space="preserve">
+    <value>{0}/{1} dokončeno</value>
+    <comment>{0} is a placeholder for a number of completed child jobs
+{1} is a placeholder for a total number of child jobs</comment>
+  </data>
+  <data name="NestedPipelineMissingRunspace" xml:space="preserve">
+    <value>Vyvolání vnořeného kanálu vyžaduje platné prostředí runspace.</value>
+  </data>
+  <data name="JobSourceAdapterError" xml:space="preserve">
+    <value>Zdrojový adaptér úlohy {1} vyvolal výjimku s následující zprávou: {0}</value>
+  </data>
+  <data name="PSVersionParameterOutOfRange" xml:space="preserve">
+    <value>Hodnota {0} není platná pro parametr {1}. Jediná povolená hodnota je 5.1.</value>
+  </data>
+  <data name="BlockCannotBeUsedWithKeep" xml:space="preserve">
+    <value>Parametry Wait a Keep nelze použít společně ve stejném příkazu.</value>
+  </data>
+  <data name="WriteEventsCannotBeUsedWithoutWait" xml:space="preserve">
+    <value>Parametr WriteEvents nelze použít bez parametru Wait.</value>
+  </data>
+  <data name="PowerShellVersionNotSupported" xml:space="preserve">
+    <value>Správa verzí koncového bodu vzdálené komunikace PowerShellu se v PowerShellu 7+ nepodporuje.</value>
+  </data>
+  <data name="JobManagerRegistrationConstructorError" xml:space="preserve">
+    <value>Následující typ nelze vytvořit jako instanci, protože jeho konstruktor není veřejný: {0}.</value>
+  </data>
+  <data name="JobSourceAdapterNotFound" xml:space="preserve">
+    <value>Operaci úlohy (Create, Get nebo Remove) nelze provést, protože typ JobSourceAdapter zadaný v definici JobDefinition není zaregistrován. Zaregistrujte typ JobSourceAdapter buď pomocí explicitního volání, nebo voláním rutiny Import-Module a zadáním sestavení.</value>
+  </data>
+  <data name="NewJobSpecificationError" xml:space="preserve">
+    <value>Úlohu nelze vytvořit, protože objekt JobInvocationInfo neobsahuje JobDefinition. Spusťte JobInvocationInfo s JobDefinition.</value>
+  </data>
+  <data name="InvalidJobStateSpecific" xml:space="preserve">
+    <value>Stav aktuální instance úlohy je {0}. Tento stav není platný pro požadovanou operaci. {1}</value>
+  </data>
+  <data name="JobConnectFailed" xml:space="preserve">
+    <value>Úlohu {0} nelze připojit ke vzdálenému serveru.</value>
+  </data>
+  <data name="RunspaceDisconnectFailed" xml:space="preserve">
+    <value>Operace Disconnect-PSSession se nezdařila pro prostředí runspace s ID = {0}.</value>
+  </data>
+  <data name="RunspaceConnectFailed" xml:space="preserve">
+    <value>Operace připojení pro relaci {0} se nezdařila. Stav prostředí Runspace je {1} místo „Otevřeno“.</value>
+  </data>
+  <data name="RunspaceQueryFailed" xml:space="preserve">
+    <value>Dotaz na odpojenou relaci PSSession pro počítač „{0}“ se nezdařil.</value>
+  </data>
+  <data name="RunspaceCannotBeConnected" xml:space="preserve">
+    <value>Relaci PSSession „{0}“ nelze připojit, protože není ve stavu Odpojeno nebo není k dispozici pro připojení.</value>
+  </data>
+  <data name="RunspaceCannotBeConnectedForVMContainerSession" xml:space="preserve">
+    <value>Připojení relace se pro PSSession „{0}“ na cílovém počítači „{1}“ nepodporuje, protože typ cílového počítače je „{2}“.</value>
+  </data>
+  <data name="RunspaceCannotBeDisconnected" xml:space="preserve">
+    <value>Relaci PSSession {0} nelze odpojit, protože není ve stavu Otevřeno.</value>
+  </data>
+  <data name="RunspaceCannotBeDisconnectedForVMContainerSession" xml:space="preserve">
+    <value>Odpojení relace se pro PSSession „{0}“ na cílovém počítači „{1}“ nepodporuje, protože typ cílového počítače je „{2}“.</value>
+  </data>
+  <data name="RunspaceCannotBeReceivedForVMContainerSession" xml:space="preserve">
+    <value>Receive-PSSession nepodporuje PSSession „{0}“ na cílovém počítači „{1}“, protože typ cílového počítače je "{2}".</value>
+  </data>
+  <data name="JobActionInvalidWithNullChild" xml:space="preserve">
+    <value>Příkaz nelze dokončit, protože vlastnost ChildJobs obsahuje neplatnou hodnotu.</value>
+  </data>
+  <data name="JobSuspendNotSupported" xml:space="preserve">
+    <value>Úlohu s ID {0} nelze pozastavit. Pozastavení úloh není u některých typů úloh podporováno. Další informace o podpoře pozastavení úloh najdete v tématu nápovědy pro typ úlohy.</value>
+  </data>
+  <data name="JobResumeNotSupported" xml:space="preserve">
+    <value>Nelze obnovit úlohu s ID {0}. Obnovení úloh není u některých typů úloh podporováno. Další informace o podpoře obnovení úloh najdete v tématu nápovědy pro typ úlohy.</value>
+  </data>
+  <data name="AsJobAndDisconnectedError" xml:space="preserve">
+    <value>Rutinu Invoke-Command nelze použít současně s parametry AsJob a Disconnected ve stejném příkazu.</value>
+  </data>
+  <data name="QueryForRunspacesFailed" xml:space="preserve">
+    <value>Dotaz na vzdálenou relaci pro {0} se nezdařil s následující chybovou zprávou: {1}</value>
+  </data>
+  <data name="JobIdNotYetAssigned" xml:space="preserve">
+    <value>Došlo k pokusu o vytvoření úlohy s ID {0}. Úlohu s tímto ID nyní nelze vytvořit. Ověřte, zda toto ID už bylo na tomto počítači jednou přiřazeno.</value>
+  </data>
+  <data name="JobSessionIdLessThanOne" xml:space="preserve">
+    <value>Nelze vytvořit úlohu s ID {0}; toto není platné ID. Zadejte celé číslo pro ID úlohy, které je větší než 0.</value>
+  </data>
+  <data name="JobIdentifierNull" xml:space="preserve">
+    <value>Zadaný identifikátor JobIdentifier nesmí mít hodnotu null. Zadejte platný identifikátor JobIdentifier.</value>
+  </data>
+  <data name="JobBlockedSoWaitJobCannotContinue" xml:space="preserve">
+    <value>Rutina Wait-Job nemůže dokončit činnost, protože jedna nebo více úloh je blokována a čeká na interakci uživatele.  Zpracujte výstup interaktivní úlohy pomocí rutiny Receive-Job a zkuste to znovu.</value>
+  </data>
+  <data name="RemoveRunspaceNotConnected" xml:space="preserve">
+    <value>Vzdálenou relaci {0} nelze připojit a nelze ji odebrat ze serveru. Objekt vzdálené relace klienta bude odebrán ze serveru, ale stav vzdálené relace na serveru je neznámý.</value>
+  </data>
+  <data name="RunspaceDisconnectFailedWithReason" xml:space="preserve">
+    <value>Operace Disconnect-PSSession se nezdařila pro prostředí runspace s ID = {0} z následujícího důvodu: {1}</value>
+  </data>
+  <data name="StopJobNotConnected" xml:space="preserve">
+    <value>Úlohu „{0}“ nelze připojit k serveru, a proto ji nelze zastavit.</value>
+  </data>
+  <data name="SessionIdMatchFailed" xml:space="preserve">
+    <value>Příkaz nemůže najít relaci PSSession s hodnotou InstanceId {0}.</value>
+  </data>
+  <data name="SessionNameMatchFailed" xml:space="preserve">
+    <value>Příkaz nemůže najít relaci PSSession s názvem {0}.</value>
+  </data>
+  <data name="WinPERemotingNotSupported" xml:space="preserve">
+    <value>Vzdálená komunikace PowerShellu není podporována v Předinstalačním prostředí systému Windows (Windows PE).</value>
+  </data>
+  <data name="WinRMRequiresRestart" xml:space="preserve">
+    <value>Změny provedené {0} se projeví až po restartování služby WinRM.</value>
+  </data>
+  <data name="WinRMRestartWarning" xml:space="preserve">
+    <value>Pokud byla konfigurace s tímto názvem nedávno zrušena, může být potřeba restartovat službu WinRM {0}, protože některé systémové datové struktury můžou být stále uložené v mezipaměti. V takovém případě může být nutné restartovat službu WinRM.
+Všechny relace WinRM připojené ke konfiguracím relací PowerShellu, jako je Microsoft.PowerShell, a ke konfiguracím relací vytvořeným pomocí rutiny Register-PSSessionConfiguration budou odpojeny.</value>
+  </data>
+  <data name="WinRMForceRestartWarning" xml:space="preserve">
+    <value>Používáte vzdálenou relaci a vybrali jste možnost Vynutit, což znamená, že se služba WinRM může restartovat. Pokud se služba WinRM restartuje, tato vzdálená relace se ukončí a budete muset vytvořit novou relaci, abyste mohli pokračovat.</value>
+  </data>
+  <data name="JobSourceAdapterCannotSaveNullJob" xml:space="preserve">
+    <value>Při pokusu o uložení identifikátorů měla úloha hodnotu null. Zadejte úlohu, aby bylo možné uložit její identifikátory.</value>
+  </data>
+  <data name="NoPowerShellForJob" xml:space="preserve">
+    <value>Pro tuto relaci PSSession se nepodařilo najít spuštěný příkaz.</value>
+  </data>
+  <data name="NetFrameWorkV2NotInstalled" xml:space="preserve">
+    <value>Prostředí Microsoft .NET Framework 2.0, které je vyžadováno pro Windows PowerShell 2.0, není nainstalováno. Nainstalujte .NET Framework 2.0 a zkuste to znovu.</value>
+  </data>
+  <data name="PipelineFailedWithoutReason" xml:space="preserve">
+    <value>Vzdálený kanál selhal.</value>
+  </data>
+  <data name="PipelineFailedWithReason" xml:space="preserve">
+    <value>Vzdálený kanál selhal z následujícího důvodu: {0}</value>
+  </data>
+  <data name="ResumeJobInvalidJobState" xml:space="preserve">
+    <value>Jednu nebo více úloh nelze obnovit, protože stav nebyl pro tuto operaci platný.</value>
+  </data>
+  <data name="RemoteHostNullClientHost" xml:space="preserve">
+    <value>Pro vzdálené prostředí runspace, na kterém běží metoda na straně klienta, nebyl zadán žádný klientský počítač.</value>
+  </data>
+  <data name="DisableRemotingShouldProcessTarget" xml:space="preserve">
+    <value>Název: {0} SDDL: {1}. Tím se odepře vzdálený přístup k této konfiguraci relace.</value>
+  </data>
+  <data name="SetEnabledFalseTarget" xml:space="preserve">
+    <value>Povoleno: False. Tato možnost nakonfiguruje službu WS-Management tak, aby žádost o připojení odmítla.</value>
+  </data>
+  <data name="SetEnabledTrueTarget" xml:space="preserve">
+    <value>Povoleno: True. Tato možnost nakonfiguruje službu WS-Management tak, aby žádost o připojení přijala.</value>
+  </data>
+  <data name="DISCAliasDefinitionsComment" xml:space="preserve">
+    <value>Aliasy, které se mají definovat při použití v relaci</value>
+  </data>
+  <data name="DISCAssembliesToLoadComment" xml:space="preserve">
+    <value>Sestavení, která se mají načíst při použití v relaci</value>
+  </data>
+  <data name="DISCAuthorComment" xml:space="preserve">
+    <value>Autor tohoto dokumentu</value>
+  </data>
+  <data name="DISCCLRVersionComment" xml:space="preserve">
+    <value>Verze modulu CLR, která se použije při použití v relaci</value>
+  </data>
+  <data name="DISCCompanyNameComment" xml:space="preserve">
+    <value>Společnost přidružená k tomuto dokumentu</value>
+  </data>
+  <data name="DISCCopyrightComment" xml:space="preserve">
+    <value>Prohlášení o autorských právech pro tento dokument</value>
+  </data>
+  <data name="DISCDescriptionComment" xml:space="preserve">
+    <value>Popis funkcí poskytovaných těmito nastaveními</value>
+  </data>
+  <data name="DISCEnvironmentVariablesComment" xml:space="preserve">
+    <value>Proměnné prostředí, které se mají definovat při použití v relaci</value>
+  </data>
+  <data name="DISCExecutionPolicyComment" xml:space="preserve">
+    <value>Zásady spouštění, které se použijí při použití v relaci</value>
+  </data>
+  <data name="DISCFormatsToProcessComment" xml:space="preserve">
+    <value>Formátujte soubory (.ps1xml), které se mají načíst při použití v relaci</value>
+  </data>
+  <data name="DISCFunctionDefinitionsComment" xml:space="preserve">
+    <value>Funkce, které se mají definovat při použití v relaci</value>
+  </data>
+  <data name="DISCGUIDComment" xml:space="preserve">
+    <value>ID použité k jedinečné identifikaci tohoto dokumentu</value>
+  </data>
+  <data name="DISCInitialSessionStateComment" xml:space="preserve">
+    <value>Pro tuto konfiguraci relace se použije výchozí typ relace. Může být RestrictedRemoteServer (doporučeno), Empty nebo Default</value>
+  </data>
+  <data name="DISCTranscriptDirectoryComment" xml:space="preserve">
+    <value>Adresář pro ukládání přepisů relací pro tuto konfiguraci relace</value>
+  </data>
+  <data name="DISCRunAsVirtualAccountComment" xml:space="preserve">
+    <value>Určuje, jestli se má tato konfigurace relace spustit jako (virtuální) účet správce počítače</value>
+  </data>
+  <data name="DISCLanguageModeComment" xml:space="preserve">
+    <value>Jazykový režim, který se použije při použití v relaci. Může být NoLanguage (doporučeno), RestrictedLanguage, ConstrainedLanguage nebo FullLanguage</value>
+  </data>
+  <data name="DISCModulesToImportComment" xml:space="preserve">
+    <value>Moduly, které se mají importovat při použití v relaci</value>
+  </data>
+  <data name="DISCPowerShellVersionComment" xml:space="preserve">
+    <value>Verze modulu PowerShellu, která se použije při použití v relaci</value>
+  </data>
+  <data name="DISCProcessorArchitectureComment" xml:space="preserve">
+    <value>Architektura procesoru, která se má použít při použití v relaci</value>
+  </data>
+  <data name="DISCSchemaVersionComment" xml:space="preserve">
+    <value>Číslo verze schématu použitého pro tento dokument</value>
+  </data>
+  <data name="DISCScriptsToProcessComment" xml:space="preserve">
+    <value>Skripty, které se mají spustit při použití v relaci</value>
+  </data>
+  <data name="DISCTypesToAddComment" xml:space="preserve">
+    <value>Typy, které se mají přidat při použití v relaci</value>
+  </data>
+  <data name="DISCTypesToProcessComment" xml:space="preserve">
+    <value>Zadejte soubory (.ps1xml), které se mají načíst při použití v relaci</value>
+  </data>
+  <data name="DISCVariableDefinitionsComment" xml:space="preserve">
+    <value>Proměnné, které se mají definovat při použití v relaci</value>
+  </data>
+  <data name="DISCRoleDefinitionsComment" xml:space="preserve">
+    <value>Role uživatelů (skupiny zabezpečení) a možnosti rolí, které se na ně mají použít při použití v relaci</value>
+  </data>
+  <data name="DISCVisibleAliasesComment" xml:space="preserve">
+    <value>Aliasy, které se mají zobrazit při použití v relaci</value>
+  </data>
+  <data name="DISCVisibleCmdletsComment" xml:space="preserve">
+    <value>Rutiny, které se mají zobrazit při použití v relaci</value>
+  </data>
+  <data name="DISCCommandModificationSyntax" xml:space="preserve">
+    <value>Nepovedlo se parsovat viditelnou definici příkazu pro „{0}“. Viditelná definice příkazu musí být zatřiďovací tabulka s klíči Name a Parameters. Hodnota klíče Parameters musí být kolekce zatřiďovací tabulky s klíči Name a volitelně ValidateSet nebo ValidatePattern.</value>
+  </data>
+  <data name="DISCVisibleFunctionsComment" xml:space="preserve">
+    <value>Funkce, které se mají zobrazit při použití v relaci</value>
+  </data>
+  <data name="DISCVisibleProvidersComment" xml:space="preserve">
+    <value>Poskytovatelé, kteří se mají zobrazit při použití v relaci</value>
+  </data>
+  <data name="DISCVisibleExternalCommandsComment" xml:space="preserve">
+    <value>Externí příkazy (skripty a aplikace), které se mají zobrazit při použití v relaci</value>
+  </data>
+  <data name="InvalidPSSessionConfigurationFilePath" xml:space="preserve">
+    <value>Cesta ke konfiguračnímu souboru PSSession „{0}“ není platná. Argument cesty se musí přeložit na jeden soubor v systému souborů s příponou .pssc. Opravte specifikaci cesty a zkuste to znovu.</value>
+  </data>
+  <data name="InvalidRoleCapabilityFilePath" xml:space="preserve">
+    <value>Cesta k souboru schopností role „{0}“ není platná. Argument cesty se musí přeložit na jeden soubor v systému souborů s příponou .psrc. Opravte specifikaci cesty a zkuste to znovu.</value>
+  </data>
+  <data name="InvalidRoleEntry" xml:space="preserve">
+    <value>Položka „Role“ musí být zatřiďovací tabulka, ale byla {0}.</value>
+  </data>
+  <data name="InvalidRoleValue" xml:space="preserve">
+    <value>Hodnotu položky role „{0}“ nelze převést na zatřiďovací tabulku. Položka „Role“ musí být zatřiďovací tabulka s názvy skupin pro klíče, kde hodnota přidružená ke každému klíči je další zatřiďovací tabulkou vlastností konfigurace relace pro danou roli.</value>
+  </data>
+  <data name="CouldNotFindRoleCapability" xml:space="preserve">
+    <value>Nepovedlo se najít možnost role „{0}“. Schopnost role musí být soubor s názvem „{1}“ v adresáři RoleCapabilities v modulu v aktuální cestě modulu.</value>
+  </data>
+  <data name="InvalidRegisterPSSessionConfigurationModulePath" xml:space="preserve">
+    <value>Nelze najít cestu k modulu, který se má importovat. Hodnota parametru ModulesToImport {0} neexistuje nebo se nejedná o adresář modulu. Opravte hodnotu a opakujte příkaz.</value>
+  </data>
+  <data name="PSSessionConfigurationFileNotFound" xml:space="preserve">
+    <value>Zadaný konfigurační soubor {0} nebyl načten, protože nebyl nalezen žádný platný konfigurační soubor.</value>
+  </data>
+  <data name="RCAutoDisconnected" xml:space="preserve">
+    <value>Počítač {0} byl úspěšně odpojen.</value>
+  </data>
+  <data name="RCAutoDisconnectingWarning" xml:space="preserve">
+    <value>Pokus o opětovné připojení k {0} se nezdařil. Probíhá pokus o odpojení relace...</value>
+  </data>
+  <data name="RCConnectionRetryAttempt" xml:space="preserve">
+    <value>Probíhá pokus o opětovné připojení k {0}...</value>
+  </data>
+  <data name="RCInternalError" xml:space="preserve">
+    <value>Síťové připojení k {0} bylo ztraceno a pokus o opětovné připojení se nezdařil. Opravte síťové připojení a znovu se připojte pomocí connect-PSSession nebo Receive-PSSession.</value>
+  </data>
+  <data name="RCNetworkFailureDetected" xml:space="preserve">
+    <value>Síťové připojení k {0} bylo přerušeno. Probíhá pokus o opětovné připojení po dobu až {1} min...</value>
+  </data>
+  <data name="RCReconnectSucceeded" xml:space="preserve">
+    <value>Síťové připojení k {0} bylo obnoveno.</value>
+  </data>
+  <data name="AuthenticationMechanismRequiresCredential" xml:space="preserve">
+    <value>Ověřování {0} vyžaduje explicitní uživatelské jméno a heslo.  Zadejte uživatelské jméno a heslo pomocí parametru -Credential a příkaz opakujte.</value>
+  </data>
+  <data name="BasicAuthOverHttpNotSupported" xml:space="preserve">
+    <value>Základní ověřování není v systému Unix přes HTTP podporováno.</value>
+  </data>
+  <data name="StartJobDefinitionNotFound1" xml:space="preserve">
+    <value>Nelze najít naplánovanou úlohu s názvem {0}.</value>
+    <comment>{0} is the job definition name</comment>
+  </data>
+  <data name="StartJobManyDefNameMatches" xml:space="preserve">
+    <value>Byla nalezena více než jedna definice úlohy s názvem {0}. Zkuste do Start-Job přidat parametr -DefinitionType, aby se hledání definice úlohy zúžilo na jediný zdrojový adaptér úlohy.</value>
+  </data>
+  <data name="DISCMissingSchemaVersion" xml:space="preserve">
+    <value>Člen SchemaVersion se v konfiguračním souboru nenachází. Tento člen musí existovat a musí mu být přiřazeno číslo verze ve tvaru :n.n.n.n:. Přidejte chybějícího člena do souboru {0}.</value>
+  </data>
+  <data name="DISCTypeMustBeString" xml:space="preserve">
+    <value>Člen „{0}“ musí být řetězec. Změňte člena na správný typ v souboru {1}.</value>
+  </data>
+  <data name="DISCTypeMustBeStringArray" xml:space="preserve">
+    <value>Člen {0} musí být pole řetězců. Změňte člena na správný typ v souboru {1}.</value>
+  </data>
+  <data name="DISCTypeMustBeHashtable" xml:space="preserve">
+    <value>Člen „{0}“ musí být zatřiďovací tabulka. Změňte člena na správný typ v souboru {1}.</value>
+  </data>
+  <data name="DISCTypeMustBeHashtableArray" xml:space="preserve">
+    <value>Člen „{0}“ musí být pole zatřiďovací tabulky. Změňte člena na správný typ v souboru {1}.</value>
+  </data>
+  <data name="DISCInvalidKey" xml:space="preserve">
+    <value>Člen {0} není platný klíč. Změňte člena na platný klíč v souboru {1}.</value>
+  </data>
+  <data name="DISCTypeMustBeValidEnum" xml:space="preserve">
+    <value>Člen „{0}“ musí být platný typ výčtu „{1}“. Platné hodnoty výčtu jsou „{2}“. Změňte člena na správný typ v souboru {3}.</value>
+  </data>
+  <data name="DISCErrorParsingConfigFile" xml:space="preserve">
+    <value>Při analýze konfiguračního souboru {0} došlo k chybě s následující zprávou: {1}</value>
+  </data>
+  <data name="WriteJobInResultsCannotBeUsedWithoutWait" xml:space="preserve">
+    <value>Parametr -WriteJobInResults nelze použít bez parametru -Wait.</value>
+  </data>
+  <data name="DISCPathsMustBeAbsolute" xml:space="preserve">
+    <value>Člen {0} není absolutní cesta {1}. Změňte člena na absolutní cestu v souboru {2}.</value>
+  </data>
+  <data name="DISCTypeContainsInvalidKey" xml:space="preserve">
+    <value>Klíč „{0}“ v členovi „{1}“ není platný. Změňte klíč v souboru {2}.</value>
+  </data>
+  <data name="DISCTypeMustContainKey" xml:space="preserve">
+    <value>Člen {0} musí obsahovat požadovaný klíč {1}. Přidejte požadovaný klíč do souboru {2}.</value>
+  </data>
+  <data name="DISCInvalidExtension" xml:space="preserve">
+    <value>Klíč „{0}“ obsahuje neplatné rozšíření {1}. Zadejte rozšíření z následujícího seznamu: {{{2}}}.</value>
+  </data>
+  <data name="DISCKeyMustBeScriptBlock" xml:space="preserve">
+    <value>Klíč {0} v členovi {1} musí být blok skriptu. Změňte klíč na správný typ v souboru {2}.</value>
+  </data>
+  <data name="InvalidPSSessionConfigurationFile" xml:space="preserve">
+    <value>Konfigurační soubor relace {0} není platný. Zadejte platný konfigurační soubor relace a opakujte příkaz.</value>
+  </data>
+  <data name="RCProgressActivity" xml:space="preserve">
+    <value>Síťové připojení přerušeno</value>
+  </data>
+  <data name="RCProgressStatus" xml:space="preserve">
+    <value>Probíhá pokus o opětovné připojení k {0}...</value>
+  </data>
+  <data name="RCDisconnectedJob" xml:space="preserve">
+    <value>Pro opětovné připojení byla vytvořena úloha {0}.</value>
+  </data>
+  <data name="RCDisconnectSession" xml:space="preserve">
+    <value>Relace {0} s ID instance {1} na počítači {2} byla úspěšně odpojena.</value>
+  </data>
+  <data name="RCDisconnectSessionCreated" xml:space="preserve">
+    <value>Relace {0} s ID instance {1} byla vytvořena pro opětovné připojení.</value>
+  </data>
+  <data name="SessionNameWithoutInvokeDisconnected" xml:space="preserve">
+    <value>Parametr SessionName lze použít pouze s přepínačem Disconnected.</value>
+  </data>
+  <data name="SessionConnectFailed" xml:space="preserve">
+    <value>Při pokusu o připojení relace PSSession došlo k chybě.</value>
+  </data>
+  <data name="VMSessionConnectFailed" xml:space="preserve">
+    <value>Při pokusu o připojení k cílovému virtuálnímu počítači došlo k chybě.</value>
+  </data>
+  <data name="ContainerSessionConnectFailed" xml:space="preserve">
+    <value>Při pokusu o připojení k cílovému kontejneru došlo k chybě.</value>
+  </data>
+  <data name="SessionNotAvailableForConnection" xml:space="preserve">
+    <value>PSSession je v odpojeném stavu a není k dispozici pro připojení.</value>
+  </data>
+  <data name="HyperVModuleNotAvailable" xml:space="preserve">
+    <value>Modul Hyper-V pro PowerShell není na tomto počítači k dispozici.</value>
+  </data>
+  <data name="CannotCreateProcessInContainer" xml:space="preserve">
+    <value>Nepovedlo se spustit proces PowerShellu ({1}) uvnitř kontejneru s ID {0} s chybou: {2}.</value>
+  </data>
+  <data name="ContainersFeatureNotEnabled" xml:space="preserve">
+    <value>Na tomto počítači možná není povolená funkce Kontejnery.</value>
+  </data>
+  <data name="CannotTerminateProcessInContainer" xml:space="preserve">
+    <value>Nepovedlo se ukončit proces PowerShellu s ID {0} uvnitř kontejneru s ID {1}.</value>
+  </data>
+  <data name="InvalidContainerId" xml:space="preserve">
+    <value>Vstupní ContainerId {0} neexistuje nebo odpovídající kontejner není spuštěný.</value>
+  </data>
+  <data name="InvalidVMId" xml:space="preserve">
+    <value>Vstupní parametr VMId se nepřekládá na jeden virtuální počítač.</value>
+  </data>
+  <data name="InvalidVMIdNotSingle" xml:space="preserve">
+    <value>Vstupní VMId {0} se nepřekládá na jeden virtuální počítač.</value>
+  </data>
+  <data name="InvalidVMNameNoVM" xml:space="preserve">
+    <value>Vstupní parametr VMName se nepřekládá na žádný virtuální počítač.</value>
+  </data>
+  <data name="InvalidVMNameMultipleVM" xml:space="preserve">
+    <value>Vstupní parametr VMName se překládá na více virtuálních počítačů.</value>
+  </data>
+  <data name="InvalidVMNameNotSingle" xml:space="preserve">
+    <value>Vstupní VMName {0} se nepřekládá na jeden virtuální počítač.</value>
+  </data>
+  <data name="InvalidVMState" xml:space="preserve">
+    <value>Virtuální počítač {0} není ve spuštěném stavu.</value>
+  </data>
+  <data name="InvalidCredential" xml:space="preserve">
+    <value>Přihlašovací údaje jsou neplatné.</value>
+  </data>
+  <data name="InvalidUsername" xml:space="preserve">
+    <value>Vstupní uživatelské jméno nemůže být prázdné.</value>
+  </data>
+  <data name="EnterPSSessionBrokenSession" xml:space="preserve">
+    <value>Nelze zadat {0} relace, protože není v odpojeném stavu nebo není k dispozici pro připojení. Načtěte vzdálenou relaci pomocí příkazu Get-PSSession -ComputerName {1} -InstanceId {2}.</value>
+  </data>
+  <data name="EnterPSSessionDisconnected" xml:space="preserve">
+    <value>Nelze zadat {0} relace, protože není v odpojeném stavu nebo není k dispozici pro připojení. Znovu se připojte pomocí Connect-PSSession nebo Receive-PSSession.</value>
+  </data>
+  <data name="RCAutoDisconnectingError" xml:space="preserve">
+    <value>Síťové připojení k {0} bylo ztraceno a pokus o opětovné připojení se nezdařil. Opravte síťové připojení a znovu se připojte pomocí connect-PSSession nebo Receive-PSSession.</value>
+  </data>
+  <data name="RemoteSessionHyperVSocketClientConstructorSetSocketOptionFailure" xml:space="preserve">
+    <value>Nepodařilo se vytvořit instanci RemoteSessionHyperVSocketClient kvůli chybě SetSocketOption.</value>
+  </data>
+  <data name="RemoteSessionHyperVSocketServerConstructorFailure" xml:space="preserve">
+    <value>Nepodařilo se vytvořit instanci RemoteSessionHyperVSocketServer.</value>
+  </data>
+  <data name="StopCommandOnRetry" xml:space="preserve">
+    <value>Pokus o opětovné připojení byl zrušen. Opravte síťové připojení a znovu se připojte pomocí connect-PSSession nebo Receive-PSSession.</value>
+  </data>
+  <data name="SuspendJobInvalidJobState" xml:space="preserve">
+    <value>Jednu nebo více úloh nelze pozastavit, protože stav nebyl pro tuto operaci platný.</value>
+  </data>
+  <data name="AutoRemoveCannotBeUsedWithoutWait" xml:space="preserve">
+    <value>Parametr -AutoRemoveJob nelze použít bez parametru -Wait</value>
+  </data>
+  <data name="InvalidConfigurationName" xml:space="preserve">
+    <value>Služba WS-Management nemůže požadavek zpracovat. Konfiguraci relace {0} nelze najít na jednotce WSMan: v počítači {1}. Další informace najdete v tématu nápovědy about_Remote_Troubleshooting.</value>
+  </data>
+  <data name="BadRunspaceTypeForJob" xml:space="preserve">
+    <value>Ze specifikace {0} nelze vytvořit úlohu, protože zadané prostředí runspace není místní prostředí runspace. Zkuste to znovu pomocí místního prostředí runspace nebo zadejte argument RunspaceMode.</value>
+  </data>
+  <data name="CannotDisconnectSessionWithInvalidIdleTimeout" xml:space="preserve">
+    <value>Relaci {0} nelze odpojit, protože zadaná hodnota časového limitu nečinnosti {1} (sekund) je buď větší než maximální povolená hodnota serveru {2} (sekund), nebo menší než minimální povolená hodnota {3} (sekund).  Zadejte hodnotu časového limitu nečinnosti, která je v povoleném rozsahu, a zkuste to znovu.</value>
+    <comment>{0} is a placeholder for the session name
+{1} is a placeholder for the provided idletimeout value
+{2} is a placeholder for the maximum allowed idletimeout value
+{3} is a placeholder for the minimum allowed idletimeout value</comment>
+  </data>
+  <data name="InvalidIdleTimeoutOption" xml:space="preserve">
+    <value>Zadaná možnost relace IdleTimeout {0} (sekundy) není platný interval.  Zadejte hodnotu IdleTimeout, která je větší nebo rovna minimálně povolené hodnotě {1} (sekundy).</value>
+    <comment>{0} is a placeholder for the provided idletimeout
+{1} is a placeholder for the minimum allowed idletimeout value</comment>
+  </data>
+  <data name="DISCVisibilityAndAutoLoadingCannotBeBothSpecified" xml:space="preserve">
+    <value>Rutina „{0}“ nebo alias „{1}“ nemůže být přítomna, pokud jsou v konfiguračním souboru relace zadány klíče „{2}“, „{3}“, „{4}“ nebo „{5}“.</value>
+  </data>
+  <data name="InvalidConfigurationXMLAttribute" xml:space="preserve">
+    <value>Možnost přenosu není platná. Parametr „{0}“ může být nenulový pouze v případě, že je parametr „{1}“ nastavený na True.</value>
+  </data>
+  <data name="DISCTypeMustBeStringOrHashtableArray" xml:space="preserve">
+    <value>Člen „{0}“ musí být pole složené buď z řetězců, nebo z prvků typu zatřiďovací tabulka.</value>
+  </data>
+  <data name="DISCTypeMustBeStringOrHashtableArrayInFile" xml:space="preserve">
+    <value>Člen „{0}“ musí být pole složené buď z řetězců, nebo z prvků typu zatřiďovací tabulka. Změňte člena na správný typ v souboru {1}.</value>
+  </data>
+  <data name="StartJobDefinitionPathInvalidNotFSProvider" xml:space="preserve">
+    <value>Nelze načíst definici úlohy {0}, protože cesta {1} odkazuje na cestu zprostředkovatele {2}.  Změňte parametr cesty na cestu systému souborů.</value>
+    <comment>{0} is job definition name
+{1} is the user provided path
+{2} is the path provider</comment>
+  </data>
+  <data name="StartJobDefinitionPathInvalidNotSingle" xml:space="preserve">
+    <value>Nejde načíst definici úlohy {0}, protože cesta {1} se překládá na více cest k souborům.  Změňte parametr cesty tak, aby obsahoval jen jednu cestu.</value>
+    <comment>{0} is job definition name
+{1} is the user provided path</comment>
+  </data>
+  <data name="StartJobDefinitionNotFound2" xml:space="preserve">
+    <value>Nelze najít naplánovanou úlohu s typem {0} a názvem {1}.</value>
+    <comment>{0} is the job definition type and {1} is the job definition name.</comment>
+  </data>
+  <data name="StartJobWorkingDirectoryNotFound" xml:space="preserve">
+    <value>Nelze najít cestu WorkingDirectory {0}.</value>
+  </data>
+  <data name="CannotFindSessionForConnect" xml:space="preserve">
+    <value>Nelze se připojit k relaci {0}.  Relace už na počítači {1} neexistuje.</value>
+    <comment>{0} is the session name that cannot be found.
+{1} is the computer name where the session was.</comment>
+  </data>
+  <data name="RunspaceConnectFailedWithMessage" xml:space="preserve">
+    <value>Operace připojení pro relaci {0} se nezdařila s následující chybovou zprávou: {1}</value>
+  </data>
+  <data name="ForceCannotBeUsedWithoutWait" xml:space="preserve">
+    <value>Parametr -Force nelze použít bez parametru -Wait.</value>
+  </data>
+  <data name="JobSuspendedDisconnectedWaitWithForce" xml:space="preserve">
+    <value>Nejméně jedna úloha je v pozastaveném nebo odpojeném stavu a nemůže pokračovat bez dalšího zásahu uživatele.  Zadejte parametr -Force, chcete-li pokračovat do dokončeného, neúspěšného nebo zastaveného stavu.</value>
+  </data>
+  <data name="RunAsSessionConfigurationSecurityWarning" xml:space="preserve">
+    <value>Pokud je v konfiguraci relace PowerShellu povolená funkce RunAs, model zabezpečení Windows nemůže vynutit hranici zabezpečení mezi různými uživatelskými relacemi vytvořenými pomocí tohoto koncového bodu. Ověřte, zda je konfigurace prostředí PowerShell runspace omezena pouze na nezbytnou sadu rutin a funkcí.</value>
+  </data>
+  <data name="ForceSuspendJob" xml:space="preserve">
+    <value>Úloha byla úspěšně pozastavena přidáním parametru Force.</value>
+  </data>
+  <data name="InvalidPSSessionConfigurationFileErrorProcessing" xml:space="preserve">
+    <value>Konfigurační soubor relace {0} není platný. Zadejte platný konfigurační soubor relace a opakujte příkaz. Při analýze konfiguračního souboru došlo k chybě: {1}.</value>
+  </data>
+  <data name="ErrorParsingTheKeyInPSSessionConfigurationFile" xml:space="preserve">
+    <value>Register-PSSessionConfiguration: Klíč „{0}“ v {1}. Konfigurační soubor relace obsahuje neplatnou hodnotu. Opravte soubor a příkaz opakujte. </value>
+  </data>
+  <data name="EndpointDoesNotSupportDisconnect" xml:space="preserve">
+    <value>Odpojené relace jsou podporovány pouze v případě, že vzdálený počítač používá PowerShell 3.0 nebo novější verzi PowerShellu.</value>
+  </data>
+  <data name="ThrottlingJobFlowControlMemoryWarning" xml:space="preserve">
+    <value>Využití paměti rutiny překročilo úroveň upozornění. Abyste se této situaci vyhnuli, zkuste jednu z následujících věcí: 1) Snižte rychlost, jakou operace CIM vytvářejí data (například předáním nízké hodnoty parametru ThrottleLimit), 2) Zvyšte rychlost, jakou jsou data spotřebovávat podřízenými rutinami, nebo 3) Pomocí rutiny Invoke-Command spusťte na serveru celý kanál. Rutina, která překročila úroveň upozornění pro využití paměti, byla spuštěna následujícím příkazovým řádkem: {0}</value>
+  </data>
+  <data name="EnableNetworkAccessWarning" xml:space="preserve">
+    <value>Relace PSSession {0} byla vytvořena pomocí parametru EnableNetworkAccess a lze ji znovu připojit pouze z místního počítače.</value>
+  </data>
+  <data name="CannotStartJobInconsistentLanguageMode" xml:space="preserve">
+    <value>Nelze spustit úlohu. Jazykový režim této relace není kompatibilní se systémovým jazykovým režimem.</value>
+  </data>
+  <data name="CannotCreateRunspaceInconsistentState" xml:space="preserve">
+    <value>Nelze vytvořit prostředí runspace. Jazykový režim této konfigurace není kompatibilní se systémovým jazykovým režimem.</value>
+  </data>
+  <data name="CannotExitNestedPipeline" xml:space="preserve">
+    <value>Vnořený kanál nelze ukončit, protože není ve vnořeném stavu.</value>
+  </data>
+  <data name="PowerShellInvokerInvalidState" xml:space="preserve">
+    <value>Relace serveru PowerShell není v platném stavu pro spouštění vnořených příkazů.  V této relaci nelze spustit žádné vnořené příkazy.</value>
+  </data>
+  <data name="CannotInvokeNestedCommandNestedCommandRunning" xml:space="preserve">
+    <value>Ve vzdálené relaci nelze vyvolat vnořený příkaz, protože vnořený příkaz už běží.</value>
+  </data>
+  <data name="ServerSideNestedCommandInvokeFailed" xml:space="preserve">
+    <value>Vzdálená relace nemohla vyvolat příkaz {0} s chybou: {1}.</value>
+  </data>
+  <data name="ReceivePSSessionInDebugMode" xml:space="preserve">
+    <value>Příkaz vzdálené relace je aktuálně zastaven v ladicím programu.  Pomocí rutiny Enter-PSSession se interaktivně připojte ke vzdálené relaci a automaticky vstupte do ladicího programu konzoly.</value>
+  </data>
+  <data name="RemoteDebuggingEndpointVersionError" xml:space="preserve">
+    <value>Vzdálená relace, ke které jste připojeni, nepodporuje vzdálené ladění. Musíte se připojit ke vzdálenému počítači s PowerShellem 4.0 nebo novějším.</value>
+  </data>
+  <data name="ICMInvalidSessionState" xml:space="preserve">
+    <value>Protože stav relace pro relaci {0}, {1}, {2} není Otevřeno, nelze v relaci spustit příkaz.  Stav relace je {3}.</value>
+  </data>
+  <data name="ICMNoValidRunspaces" xml:space="preserve">
+    <value>Nebyly zadány žádné platné relace.  Ujistěte se, že zadáváte platné relace, které jsou ve stavu Otevřeno a jsou k dispozici pro spouštění příkazů.</value>
+  </data>
+  <data name="ICMInvalidSessionAvailability" xml:space="preserve">
+    <value>Relace {0}, {1}, {2} není k dispozici pro spouštění příkazů.  Dostupnost relace je {3}.</value>
+  </data>
+  <data name="JobActionInvalidWithNoChildJobs" xml:space="preserve">
+    <value>Příkaz nelze spustit, protože vlastnost ChildJobs je prázdná.</value>
+  </data>
+  <data name="CannotDebugJobNoHostDebugger" xml:space="preserve">
+    <value>Úlohu nelze ladit, protože není k dispozici žádný ladicí program hostitele PowerShellu.  Ujistěte se, že tento příkaz spouštíte v hostiteli, který podporuje ladění.</value>
+  </data>
+  <data name="CannotFindJobWithId" xml:space="preserve">
+    <value>Nelze najít úlohu s ID {0}.</value>
+  </data>
+  <data name="CannotFindJobWithInstanceId" xml:space="preserve">
+    <value>Nelze najít úlohu s ID instance {0}.</value>
+  </data>
+  <data name="CannotFindJobWithName" xml:space="preserve">
+    <value>Nelze najít úlohu s názvem {0}.</value>
+  </data>
+  <data name="CannotDebugJobNoHostUI" xml:space="preserve">
+    <value>Úlohu nelze ladit, protože není k dispozici žádné uživatelské rozhraní hostitele.  Ujistěte se, že tento příkaz spouštíte v hostiteli PowerShellu, který implementuje PSHostUserInterface.</value>
+  </data>
+  <data name="CannotDebugJobInvalidDebuggerMode" xml:space="preserve">
+    <value>Úlohu nelze ladit, protože režim ladicího programu hostitele je nastaven na None nebo Default.  Režim ladicího programu hostitele musí být LocalScript nebo RemoteScript.</value>
+  </data>
+  <data name="FoundMultipleJobsWithId" xml:space="preserve">
+    <value>Bylo nalezeno více úloh s ID {0}.  Debug-Job může ladit pouze jednu úlohu současně.</value>
+  </data>
+  <data name="FoundMultipleJobsWithName" xml:space="preserve">
+    <value>Bylo nalezeno více úloh s názvem {0}.  Debug-Job může ladit pouze jednu úlohu současně.</value>
+  </data>
+  <data name="NamedPipeAlreadyListening" xml:space="preserve">
+    <value>Naslouchací proces serveru pojmenovaného kanálu, který se používá pro připojení procesu, už běží.</value>
+  </data>
+  <data name="EnterPSHostProcessCantEnterSameProcess" xml:space="preserve">
+    <value>Enter-PSHostProcess nepodporuje vstup do stejné relace PowerShellu, ve které běží.</value>
+  </data>
+  <data name="EnterPSHostProcessMultipleProcessesFoundWithName" xml:space="preserve">
+    <value>Bylo nalezeno více procesů s tímto názvem {0}. Pomocí ID procesu určete jeden proces, který chcete zadat.</value>
+  </data>
+  <data name="EnterPSHostProcessNoPowerShell" xml:space="preserve">
+    <value>Nelze zadat procese s ID „{0}“, protože nenačetl modul PowerShell nebo byl naslouchací proces pojmenovaného kanálu zakázán.</value>
+  </data>
+  <data name="EnterPSHostProcessNoProcessFoundWithId" xml:space="preserve">
+    <value>Nebyl nalezen žádný proces s ID: {0}.</value>
+  </data>
+  <data name="EnterPSHostProcessNoProcessFoundWithName" xml:space="preserve">
+    <value>Nebyl nalezen žádný proces s názvem %1 {0}.</value>
+  </data>
+  <data name="EnterPSHostProcessNoNamedPipeFound" xml:space="preserve">
+    <value>Nebyl nalezen žádný pojmenovaný kanál s CustomPipeName: {0}.</value>
+  </data>
+  <data name="CustomPipeNameTooLong" xml:space="preserve">
+    <value>Příkaz nelze zpracovat, protože zadaný název pipeName je příliš dlouhý. Názvy kanálů na této platformě mohou mít až {0} znaků. Název kanálu {1} má {2} znaků.</value>
+  </data>
+  <data name="HostDoesNotSupportIASession" xml:space="preserve">
+    <value>Aktuální hostitel nepodporuje rutinu Enter-PSHostProcess.</value>
+  </data>
+  <data name="NamedPipeTransportProcessEnded" xml:space="preserve">
+    <value>„Cílový proces pojmenovaného kanálu byl ukončen.“</value>
+  </data>
+  <data name="HyperVSocketTransportProcessEnded" xml:space="preserve">
+    <value>„Cílový proces soketu Hyper-V byl ukončen.“</value>
+  </data>
+  <data name="EnterPSHostProcessPrompt" xml:space="preserve">
+    <value>{0}[Proces:{1}]: {2}</value>
+  </data>
+  <data name="EnterVMSessionPrompt" xml:space="preserve">
+    <value>{0}[{1}]: {2}</value>
+  </data>
+  <data name="EnterPSHostProcessCannotConnectToProcess" xml:space="preserve">
+    <value>Nelze se připojit k názvu aplikační domény {0} procesu {1}.  Chyba: {2}.</value>
+  </data>
+  <data name="EnterPSHostProcessCannotConnectToPipe" xml:space="preserve">
+    <value>Nelze se připojit ke kanálu s názvem {0}.  Chyba: {1}.</value>
+  </data>
+  <data name="WSManPluginConnectNoNegotiationData" xml:space="preserve">
+    <value>Modul plug-in PowerShellu nemůže zpracovat operaci připojení, protože požadované informace o vyjednávání buď chybí, nebo nejsou úplné.</value>
+  </data>
+  <data name="WSManPluginConnectOperationFailed" xml:space="preserve">
+    <value>Modulu plug-in PowerShellu se nepodařilo zpracovat operaci připojení.</value>
+  </data>
+  <data name="WSManPluginContextNotFound" xml:space="preserve">
+    <value>Zadaný kontext modulu plug-in není platný.</value>
+  </data>
+  <data name="WSManPluginInvalidArgSet" xml:space="preserve">
+    <value>Modul plug-in PowerShellu zjistil závažnou chybu při zpracování argumentů ({0}).</value>
+  </data>
+  <data name="WSManPluginInvalidCommandContext" xml:space="preserve">
+    <value>Zadaný kontext příkazu není platný.</value>
+  </data>
+  <data name="WSManPluginInvalidInputDataType" xml:space="preserve">
+    <value>Zadaná vstupní data nejsou platná. Podporována jsou pouze vstupní data typu {0}.</value>
+  </data>
+  <data name="WSManPluginInvalidInputStream" xml:space="preserve">
+    <value>Zadaný vstupní datový proud není platný. Jako vstupní datový proud se podporuje pouze {0}.</value>
+  </data>
+  <data name="WSManPluginInvalidOutputStream" xml:space="preserve">
+    <value>Zadaná sada výstupních datových proudů není platná. Jako výstupní datový proud se podporuje pouze {0}.</value>
+  </data>
+  <data name="WSManPluginInvalidSenderDetails" xml:space="preserve">
+    <value>Zadaná hodnota WSMAN_SENDER_DETAILS není platná. Nelze zpracovat WSMAN_SENDER_DETAILS s hodnotou null.</value>
+  </data>
+  <data name="WSManPluginInvalidShellContext" xml:space="preserve">
+    <value>Zadaný kontext prostředí není platný.</value>
+  </data>
+  <data name="WSManPluginManagedException" xml:space="preserve">
+    <value>{0}</value>
+  </data>
+  <data name="WSManPluginNullInvalidInput" xml:space="preserve">
+    <value>Hodnota NULL není povolena pro {0} s metodou modulu plug-in {1}.</value>
+  </data>
+  <data name="WSManPluginNullInvalidStreamSet" xml:space="preserve">
+    <value>Hodnota NULL není povolena pro sady vstupních a výstupních streamů. {0} a {1} jsou podporované vstupní a výstupní streamy.</value>
+  </data>
+  <data name="WSManPluginNullPluginContext" xml:space="preserve">
+    <value>Hodnota NULL není povolena pro {0} s metodou modulu plug-in {1}.</value>
+  </data>
+  <data name="WSManPluginNullShellContext" xml:space="preserve">
+    <value>Hodnota NULL není povolena pro {0} s metodou modulu plug-in {1}.</value>
+  </data>
+  <data name="WSManPluginOperationClose" xml:space="preserve">
+    <value>Operace modulu plug-in PowerShellu se ukončuje. K tomu může dojít, pokud se hostitelská služba nebo aplikace vypíná.</value>
+  </data>
+  <data name="WSManPluginOptionNotUnderstood" xml:space="preserve">
+    <value>Modul plug-in PowerShellu nerozpoznal možnost {0}. Ujistěte se, že je klient kompatibilní se sestavením {1} a verzí {2} protokolu PowerShellu.</value>
+  </data>
+  <data name="WSManPluginProtocolVersionNotFound" xml:space="preserve">
+    <value>Od klienta je očekávána možnost s názvem {0}. Ujistěte se, že je klient kompatibilní se sestavením {1} a verzí {2} protokolu PowerShellu.</value>
+  </data>
+  <data name="WSManPluginProtocolVersionNotMatch" xml:space="preserve">
+    <value>&lt;PSProtocolVersionError ServerProtocolVersion="{0}" ServerBuildVersion="{1}"&gt;Modul plug-in PowerShell nepodporuje verzi protokolu {2} požadovanou klientem.&lt;/PSProtocolVersionError&gt;</value>
+  </data>
+  <data name="WSManPluginReportContextFailed" xml:space="preserve">
+    <value>Modul plug-in PowerShellu zaznamenal závažnou chybu při hlášení kontextu službě WSMan.</value>
+  </data>
+  <data name="WSManPluginSessionCreationFailed" xml:space="preserve">
+    <value>Nelze vytvořit relaci na spravovaném serveru.</value>
+  </data>
+  <data name="WSManPluginShutdownRegistrationFailed" xml:space="preserve">
+    <value>Modul plug-in PowerShellu zaznamenal závažnou chybu při registraci obslužné rutiny čekání na oznámení o vypnutí.</value>
+  </data>
+  <data name="ServerDriverRemoteHostAlreadyPushed" xml:space="preserve">
+    <value>Nelze zadat prostředí Runspace, protože prostředí Runspace je již v této relaci použito.</value>
+  </data>
+  <data name="ServerDriverRemoteHostNoDebuggerToPush" xml:space="preserve">
+    <value>Nelze zadat prostředí Runspace, protože není k dispozici žádný vzdálený ladicí program serveru.</value>
+  </data>
+  <data name="ServerDriverRemoteHostNotRemoteRunspace" xml:space="preserve">
+    <value>Nelze zadat Runspace, protože se nejedná o vzdálené prostředí Runspace.</value>
+  </data>
+  <data name="RemoteTransportError" xml:space="preserve">
+    <value>Chyba vzdáleného přenosu: {0}</value>
+  </data>
+  <data name="CannotConnectContainerNamedPipe" xml:space="preserve">
+    <value>Nepovedlo se otevřít připojení kanálu pro PowerShell v kontejneru. Kód chyby: {0}.</value>
+  </data>
+  <data name="CannotCreateNamedPipe" xml:space="preserve">
+    <value>Nepovedlo se vytvořit pojmenovaný kanál PowerShell IPC. Kód chyby: {0}.</value>
+  </data>
+  <data name="ConnectNamedPipeTimeout" xml:space="preserve">
+    <value>Vypršel časový limit, než bylo možné vytvořit připojení k pojmenovanému kanálu.</value>
+  </data>
+  <data name="WSManInitFailed" xml:space="preserve">
+    <value>Inicializace nástroje WSMan se nezdařila. Kód chyby: {0}.</value>
+  </data>
+  <data name="NamedPipeServerCannotStart" xml:space="preserve">
+    <value>Server pojmenovaného kanálu nelze spustit v režimu serveru.</value>
+  </data>
+  <data name="CouldNotResolveRoleDefinitionPrincipal" xml:space="preserve">
+    <value>Nelze udělit vzdálený přístup k „{0}“:„{1}“. Konfigurace relace byla zaregistrována, ale tato skupina nemá přístup. Chcete-li tuto chybu vyřešit, zadejte platný název skupiny a znovu zaregistrujte konfiguraci relace.</value>
+  </data>
+  <data name="SessionConfigurationMustBeFileBased" xml:space="preserve">
+    <value>Nepodařilo se získat možnosti relace pro konfiguraci relace{0}: Tato konfigurace nebyla zaregistrována v konfiguračním souboru relace (.pssc), například v konfiguraci vytvořené rutinou New-PSSessionConfigurationFile.</value>
+  </data>
+  <data name="CouldNotResolveUsername" xml:space="preserve">
+    <value>Nepovedlo se přeložit uživatelské jméno „{0}“. Ověřte uživatelské jméno a zkuste to znovu.</value>
+  </data>
+  <data name="DISCRunAsVirtualAccountGroupsComment" xml:space="preserve">
+    <value>Skupiny přidružené k (virtuálnímu) účtu správce počítače</value>
+  </data>
+  <data name="CannotCreateConfiguredRunspace" xml:space="preserve">
+    <value>Nelze vytvořit nebo otevřít relaci konfigurace {0}.</value>
+  </data>
+  <data name="DISCEnforceInputParameterValidation" xml:space="preserve">
+    <value>Vynutí ověřování vstupního parametru skriptu. Tato možnost se automaticky povolí, když se zadá MountUserDrive.</value>
+  </data>
+  <data name="DISCMountUserDriveComment" xml:space="preserve">
+    <value>Vytvoří v relaci PSDrive User pro použití s copy-item, když není viditelný zprostředkovatel systému souborů.</value>
+  </data>
+  <data name="DISCTypeMustBeBoolean" xml:space="preserve">
+    <value>Člen „{0}“ musí být logická hodnota. Změňte člena na správný typ v souboru {1}.</value>
+  </data>
+  <data name="DISCTypeMustBeInteger" xml:space="preserve">
+    <value>Člen {0} musí být celé číslo. Změňte člena na správný typ v souboru {1}.</value>
+  </data>
+  <data name="UserDriveProcessingThrewTerminatingError" xml:space="preserve">
+    <value>Při zpracování jednotky uživatele došlo k chybě {0}.</value>
+  </data>
+  <data name="DISCUserDriveMaxSizeComment" xml:space="preserve">
+    <value>Volitelná maximální velikost v bajtech uživatelského disku vytvořeného pomocí parametru MountUserDrive. Výchozí maximální velikost uživatelského disku je 50 MB.</value>
+  </data>
+  <data name="UserDriveCannotGetFileSystemProvider" xml:space="preserve">
+    <value>Nelze najít zprostředkovatele systému souborů.</value>
+  </data>
+  <data name="DISCGMSAComment" xml:space="preserve">
+    <value>Název skupinového účtu spravované služby, pod kterým se konfigurace spustí</value>
+  </data>
+  <data name="InvalidGMSAName" xml:space="preserve">
+    <value>Neplatný název skupinového účtu spravované služby. Název účtu musí mít tvar „DomainName\UserName“.</value>
+  </data>
+  <data name="DISCRequiredGroupsComment" xml:space="preserve">
+    <value>Skupinové účty, u kterých je pro použití relace nutné členství.</value>
+  </data>
+  <data name="BadSDDLMismatchedParens" xml:space="preserve">
+    <value>Řetězec sddl nelze analyzovat, protože obsahuje neshodné závorky: {0}.</value>
+  </data>
+  <data name="RequiredGroupsHashMultipleKeys" xml:space="preserve">
+    <value>Zatřiďovací tabulka vlastnosti RequiredGroups musí obsahovat pouze jeden klíč.</value>
+  </data>
+  <data name="RequiredGroupsNotHashTable" xml:space="preserve">
+    <value>Vlastnost RequiredGroups není ve formátu zatřiďovací tabulky páru název/hodnota.  Musí to být zatřiďovací tabulka formuláře (pomocí syntaxe PowerShellu): RequiredGroups = @{ Or = 'Administrators' }.</value>
+  </data>
+  <data name="UnknownGroupMembershipKey" xml:space="preserve">
+    <value>Neznámý klíč v konfiguraci požadovaných skupin.  Zatřiďovací tabulka požadovaných skupin může obsahovat pouze hashovací klíče And a Or pro logické seskupení členství.</value>
+  </data>
+  <data name="UnknownGroupMembershipValue" xml:space="preserve">
+    <value>Neznámá hodnota v konfiguraci požadovaných skupin.  Zatřiďovací tabulka požadovaných skupin může obsahovat jen hodnoty, které jsou buď názvy skupin, nebo jiná logická zatřiďovací tabulka.</value>
+  </data>
+  <data name="RequiredGroupsMalformedACE" xml:space="preserve">
+    <value>Chybné ACE {0}.  Běžné ACE musí mít přesně 6 oddílů.</value>
+  </data>
+  <data name="InvalidUserDriveName" xml:space="preserve">
+    <value>Nelze vytvořit jednotku uživatele relace, protože aktuální uživatelské jméno obsahuje neplatné znaky cesty k souboru.</value>
+  </data>
+  <data name="InvalidRoleCapabilityKey" xml:space="preserve">
+    <value>Neplatný klíč schopnosti role: {0}. Ujistěte se, že je název schopnosti role napsaný správně a že jde o platnou vlastnost konfigurace relace.</value>
+  </data>
+  <data name="InvalidRoleCapabilityKeyType" xml:space="preserve">
+    <value>Neplatný typ klíče schopnosti role: {0}. Klíče schopností role musí být řetězce, které identifikují platnou vlastnost konfigurace relace.</value>
+  </data>
+  <data name="InvalidRoleKeyType" xml:space="preserve">
+    <value>Neplatný typ klíče role: {0}. Klíče role musí být řetězce, které identifikují skupinu zabezpečení.</value>
+  </data>
+  <data name="RemotingErrorNoLogonSessionExist" xml:space="preserve">
+    <value> Další možná příčina: 
+  – Název domény nebo počítače nebyl součástí zadaných přihlašovacích údajů, například: DOMÉNA\Uživatelské_jméno nebo POČÍTAČ\Uživatelské_jméno.</value>
+  </data>
+  <data name="CannotStartSSHClient" xml:space="preserve">
+    <value>Nepodařilo se spustit proces klienta SSH potřebný pro připojení vzdálené komunikace s chybou: {0}.</value>
+  </data>
+  <data name="KeyFileNotFound" xml:space="preserve">
+    <value>Zadaný soubor klíče {0} nebyl nalezen.</value>
+  </data>
+  <data name="SSHClientEndWithErrorMessage" xml:space="preserve">
+    <value>Relace klienta SSH skončila s chybovou zprávou: {0}</value>
+  </data>
+  <data name="SSHClientConnectTimeout" xml:space="preserve">
+    <value>Pokus o připojení SSH se nezdařil po vypršení časového limitu: {0} s.</value>
+  </data>
+  <data name="SSHClientConnectProcessTerminated" xml:space="preserve">
+    <value>
+Proces klienta SSH se ukončil dříve, než bylo možné navázat připojení.</value>
+  </data>
+  <data name="MissingRequiredSSHParameter" xml:space="preserve">
+    <value>V zadané zatřiďovací tabulce SSHConnection chybí požadovaný parametr ComputerName nebo HostName.</value>
+  </data>
+  <data name="InvalidSSHConnectionParameter" xml:space="preserve">
+    <value>Zadaný název parametru nebo prvek v zatřiďovací tabulce SSHConnection má hodnotu null nebo je prázdný.</value>
+  </data>
+  <data name="UnknownSSHConnectionParameter" xml:space="preserve">
+    <value>Zadaný parametr {0} zatřiďovací tabulky SSHConnection se nepodporuje.</value>
+  </data>
+  <data name="SSHConnectionDuplicateHostName" xml:space="preserve">
+    <value>Zadaná zatřiďovací tabulka SSHConnection obsahuje parametr ComputerName i HostName.  Lze zadat pouze jeden.</value>
+  </data>
+  <data name="SSHConnectionDuplicateKeyPath" xml:space="preserve">
+    <value>Zadaná zatřiďovací tabulka SSHConnection obsahuje parametr KeyFilePath i IdentityFilePath.  Lze zadat pouze jeden.</value>
+  </data>
+  <data name="CouldNotFindRoleCapabilityFile" xml:space="preserve">
+    <value>Nepovedlo se najít poskytnutý soubor možností role {0}.</value>
+  </data>
+  <data name="InvalidRoleCapabilityFileExtension" xml:space="preserve">
+    <value>Zadaný soubor schopností role {0} nemá požadovanou příponu .psrc.</value>
+  </data>
+  <data name="SSHAbruptlyTerminated" xml:space="preserve">
+    <value>Proces přenosu SSH byl náhle ukončen, což způsobilo přerušení této vzdálené relace.</value>
+  </data>
+  <data name="InvalidProcessorArchitecture" xml:space="preserve">
+    <value>PowerShell 6+ nepodporuje WOW64. Binární soubor musí odpovídat architektuře procesoru.</value>
+  </data>
+  <data name="WowComponentNotPresent" xml:space="preserve">
+    <value>Spustitelný soubor {0} nebyl nalezen. Ověřte, že je nainstalovaná funkce WOW64.</value>
+  </data>
+  <data name="UnableToInstallPlugin" xml:space="preserve">
+    <value>Nelze nainstalovat modul plug-in {0} do adresáře {1}.</value>
+  </data>
+  <data name="PluginDllMissing" xml:space="preserve">
+    <value>Chybí knihovna DLL modulu plug-in WinRM {0} pro PowerShell. Spusťte Enable-PSRemoting a pak opakujte tento příkaz.</value>
+  </data>
+  <data name="WSManClientDllNotAvailable" xml:space="preserve">
+    <value>Tato sada parametrů vyžaduje WSMan a nebyla nalezena žádná podporovaná klientská knihovna WSMan. Služba WSMan není pro tento systém nainstalována nebo není k dispozici.</value>
+  </data>
+  <data name="ProcessExitInfo" xml:space="preserve">
+    <value>
+      Ukončovací kód: {0}
+      Stdout: '{1}'
+      Stderr: '{2}'
+    </value>
+  </data>
+  <data name="ProcessInfoNotRecoverable" xml:space="preserve">
+    <value>Informace o procesu nelze přečíst: {0}.</value>
+  </data>
+  <data name="CannotGetHostInteropTypes" xml:space="preserve">
+    <value>Hostitelský systém nemá správnou verzi schématu Hyper-V.</value>
+  </data>
+  <data name="UnixOnlyHttpsWithoutSkipCACheckNotSupported" xml:space="preserve">
+    <value>Protokol HTTPS v systému Unix v současné době nepodporuje kontroly certifikační autority nebo CN. Použijte PSSessionOption -SkipCACheck a -SkipCNCheck, pokud si jste jisti, že důvěřujete serveru, ke kterému se připojujete, i síti mezi vámi.</value>
+  </data>
+  <data name="PSCoreRemotingDisableWarning" xml:space="preserve">
+    <value>Vzdálená komunikace PowerShellu je zakázaná jenom pro konfigurace PowerShellu 6+ a nemá vliv na konfigurace vzdálené komunikace Windows PowerShellu. Spuštěním této rutiny ve Windows PowerShellu ovlivníte všechny konfigurace vzdálené komunikace PowerShellu.
+</value>
+  </data>
+  <data name="PSCoreRemotingEnableWarning" xml:space="preserve">
+    <value>Vzdálená komunikace PowerShellu je povolená jenom pro konfigurace PowerShellu 6+ a nemá vliv na konfigurace vzdálené komunikace Windows PowerShellu. Spuštěním této rutiny ve Windows PowerShellu ovlivníte všechny konfigurace vzdálené komunikace PowerShellu.</value>
+  </data>
+  <data name="EnterPSHostProcessCmdletDisabled" xml:space="preserve">
+    <value>Rutina Enter-PSHostProcess je zakázaná, protože jsou vynucovány zásady řízení aplikací, například AppLocker nebo Řízení aplikací v Microsoft Defenderu.</value>
+  </data>
+  <data name="RemoteDebuggerError" xml:space="preserve">
+    <value>Výjimka vzdáleného ladicího programu: {0}, chybová zpráva: {1}</value>
+  </data>
+  <data name="WindowsPowerShellNotPresent" xml:space="preserve">
+    <value>Proces Windows PowerShellu nelze vytvořit, protože na tomto počítači nebyl Windows PowerShell nalezen.</value>
+  </data>
+  <data name="InvalidPSSessionArgument" xml:space="preserve">
+    <value>Argument prostředí Runspace, které se má vytvořit, musí být objekt RemoteRunspace, který není null.</value>
+  </data>
+  <data name="DISCInvalidConfigKeyType" xml:space="preserve">
+    <value>Zatřiďovací tabulka konfigurace relace obsahuje neplatný typ klíče. Klíče by měly být řetězcové typy.</value>
+  </data>
+  <data name="DISCUnsupportedConfigName" xml:space="preserve">
+    <value>Konfigurační soubor relace obsahuje nepodporovanou možnost konfigurace: {0}. Jde o možnost konfigurace koncového bodu vzdálené správy, která se nevztahuje na stav relace PowerShellu.</value>
+  </data>
+  <data name="DISCUnknownConfigName" xml:space="preserve">
+    <value>Konfigurační soubor relace obsahuje neznámou možnost konfigurace: {0}.</value>
+  </data>
+  <data name="WDACGetPowerShellLogTitle" xml:space="preserve">
+    <value>Vyhodnocení výrazu může selhat</value>
+  </data>
+  <data name="WDACGetPowerShellLogMessage" xml:space="preserve">
+    <value>Vytvoření objektu PowerShellu z bloku skriptu může vyžadovat vyhodnocení některých výrazů uvnitř bloku skriptu. Vyhodnocení výrazu v tichém režimu selže a vrátí hodnotu null v režimu omezeného jazyka, pokud výraz nepředstavuje konstantní hodnotu.</value>
+  </data>
+  <data name="HyperVFailedToGetStateUnknownType" xml:space="preserve">
+    <value>Nepovedlo se získat stav virtuálního počítače Hyper-V. Hodnota byla typu {0}, ale očekávala se hodnota Microsoft.HyperV.PowerShell.VMState nebo System.String.</value>
+  </data>
+  <data name="HyperVInvalidResponse" xml:space="preserve">
+    <value>Technologie Hyper-V {0} během vyjednávání připojení odeslala neplatnou odpověď {1}.</value>
+  </data>
+  <data name="HyperVNegotiationFailed" xml:space="preserve">
+    <value>Vyjednávání zabezpečeného připojení k Hyper-V se nezdařilo. Ujistěte se, že hostitel i host jsou aktualizováni o všechny relevantní aktualizace Microsoftu.</value>
+  </data>
+</root>

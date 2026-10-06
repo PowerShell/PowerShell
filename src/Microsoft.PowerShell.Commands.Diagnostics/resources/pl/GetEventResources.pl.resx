@@ -1,0 +1,315 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CounterNotALogFile" xml:space="preserve">
+    <value>Plik {0} nie ma oczekiwanego rozszerzenia nazwy pliku. Określ tylko pliki blg, .csv lub tsv podczas używania parametru Path.</value>
+  </data>
+  <data name="CounterApiError" xml:space="preserve">
+    <value>Wywołanie interfejsu API wewnętrznego licznika wydajności nie powiodło się. Błąd: {0:x8}.</value>
+  </data>
+  <data name="LogProviderOrPathNeeded" xml:space="preserve">
+    <value>Musisz określić co najmniej jedną parę klucz-wartość dziennika, dostawcy lub ścieżki.</value>
+  </data>
+  <data name="NoMatchingProvidersFound" xml:space="preserve">
+    <value>Na komputerze {0} nie ma dostawcy zdarzeń zgodnego z parametrem „{1}”.</value>
+  </data>
+  <data name="NullNotAllowedInHashtable" xml:space="preserve">
+    <value>W kluczu tablicy skrótów {0} napotkano wartość null. Wartości null są niedozwolone.</value>
+  </data>
+  <data name="QueryTrace" xml:space="preserve">
+    <value>Utworzono ustrukturyzowane zapytanie:
+{0}.</value>
+  </data>
+  <data name="ProviderLogLink" xml:space="preserve">
+    <value>Dostawca {0} zapisuje zdarzenia w dzienniku {1}.</value>
+  </data>
+  <data name="CounterInvalidDateRange" xml:space="preserve">
+    <value>Wartość parametru StartTime musi być mniejsza niż wartość parametru EndTime.</value>
+  </data>
+  <data name="NoMatchingLogsFound" xml:space="preserve">
+    <value>Na komputerze {0} nie ma dziennika zdarzeń pasującego do „{1}”.</value>
+  </data>
+  <data name="Vendor" xml:space="preserve">
+    <value>Microsoft</value>
+  </data>
+  <data name="CounterCircularNoMaxSize" xml:space="preserve">
+    <value>Parametr Circular będzie ignorowany, chyba że określono również parametr MaxSize.</value>
+  </data>
+  <data name="FileOpenFailed" xml:space="preserve">
+    <value>Nie można otworzyć pliku {0} do zapisu.</value>
+  </data>
+  <data name="KeywordLongExpected" xml:space="preserve">
+    <value>Określono nieprawidłową wartość „{0}” dla słowa kluczowego.</value>
+  </data>
+  <data name="CounterExportSampleNotInInitialSet" xml:space="preserve">
+    <value>Nie można wyeksportować licznika wydajności {0} do pliku {1}, ponieważ nie był on częścią pierwszego zestawu przykładów.</value>
+  </data>
+  <data name="NoMatchingEventsFound" xml:space="preserve">
+    <value>Nie znaleziono zdarzeń spełniających określone kryteria wyboru.</value>
+  </data>
+  <data name="CounterPathTranslationFailed" xml:space="preserve">
+    <value>Wartości domyślne dla tego polecenia nie powiodły się. Błąd: {0:x8}.</value>
+  </data>
+  <data name="CounterNoMixedLogTypes" xml:space="preserve">
+    <value>Nie można zaimportować różnych typów plików dziennika wydajności w tym samym poleceniu.  Określ tylko jeden typ pliku w parametrze Path.</value>
+  </data>
+  <data name="NotAFileSystemPath" xml:space="preserve">
+    <value>Ścieżka {0} prawdopodobnie nie jest prawidłową ścieżką pliku dziennika. Określ prawidłową ścieżkę systemu plików.</value>
+  </data>
+  <data name="EventIdNotSpecified" xml:space="preserve">
+    <value>Należy określić prawidłowy identyfikator zdarzenia.</value>
+  </data>
+  <data name="ProviderMetadataUnavailable" xml:space="preserve">
+    <value>Nie można pobrać informacji o dostawcy {0}. Błąd: {1}.</value>
+  </data>
+  <data name="SpecifyOldestForLog" xml:space="preserve">
+    <value>Dziennik zdarzeń {0} może być tylko do odczytu w kolejności chronologicznej przesyłania dalej, ponieważ jest to dziennik analityczny lub debugowania. Aby wyświetlić zdarzenia z dziennika zdarzeń {0}, użyj najstarszego parametru w poleceniu.</value>
+  </data>
+  <data name="ExportDestPathAmbiguous" xml:space="preserve">
+    <value>Następująca ścieżka docelowa eksportu jest niejednoznaczna: {0}.</value>
+  </data>
+  <data name="CounterPathIsInvalid" xml:space="preserve">
+    <value>Ścieżka licznika wydajności {0} jest nieprawidłowa.</value>
+  </data>
+  <data name="CounterSampleDataInvalid" xml:space="preserve">
+    <value>Dane w jednej z próbek licznika wydajności są nieprawidłowe. Wyświetl właściwość Status dla każdego obiektu PerformanceCounterSample, aby upewnić się, że zawiera on prawidłowe dane.</value>
+  </data>
+  <data name="PayloadMismatch" xml:space="preserve">
+    <value>Podany ładunek jest niezgodny z szablonem zdefiniowanym dla identyfikatora zdarzenia {0}.
+Zdefiniowany szablon jest następujący:
+{1}</value>
+  </data>
+  <data name="NoMatchingCounterSetsFound" xml:space="preserve">
+    <value>Nie można odnaleźć żadnych zestawów liczników wydajności na komputerze {0} zgodnych z następującymi elementami: {1}.</value>
+  </data>
+  <data name="CounterPathsInFilesInvalid" xml:space="preserve">
+    <value>Nie znaleziono prawidłowych ścieżek liczników w plikach.</value>
+  </data>
+  <data name="FileCreateFailed" xml:space="preserve">
+    <value>Nie można utworzyć pliku {0}. Sprawdź, czy ścieżka jest prawidłowa.</value>
+  </data>
+  <data name="NoCounterSetsOnComputer" xml:space="preserve">
+    <value>Nie można odnaleźć żadnych zestawów liczników wydajności na komputerze {0}: błąd {1:x8}. Sprawdź, czy komputer {0} istnieje, czy jest wykrywalny i czy masz wystarczające uprawnienia do wyświetlania danych licznika wydajności na tym komputerze.</value>
+  </data>
+  <data name="IncorrectEventId" xml:space="preserve">
+    <value>Nie można zapisać zdarzenia, ponieważ nie zdefiniowano żadnych zdarzeń o identyfikatorze {0} dostawcy {1}.  Popraw identyfikator zdarzenia i spróbuj ponownie.</value>
+  </data>
+  <data name="InvalidContext" xml:space="preserve">
+    <value>Wartość {0} klucza kontekstu nie jest prawidłową nazwą konta SID lub NT.</value>
+  </data>
+  <data name="IncorrectEventVersion" xml:space="preserve">
+    <value>Nie można zapisać zdarzenia, ponieważ określona wersja {0} zdarzenia {1} nie jest zdefiniowana dla dostawcy {2}.  Popraw wersję i spróbuj ponownie.</value>
+  </data>
+  <data name="Counter32FileLimit" xml:space="preserve">
+    <value>W żadnym poleceniu nie można zaimportować więcej niż 32 plików dziennika licznika BLG.</value>
+  </data>
+  <data name="SpecifiedProvidersDontWriteToLog" xml:space="preserve">
+    <value>Określeni dostawcy nie zapisują zdarzeń w dzienniku {0}. Ten dziennik zostanie zignorowany.</value>
+  </data>
+  <data name="InvalidSIDFormat" xml:space="preserve">
+    <value>Następująca wartość nie ma prawidłowego formatu identyfikatora zabezpieczeń (SID): {0}. Wprowadź prawidłowy identyfikator SID, taki jak S-1-5-32-544.</value>
+  </data>
+  <data name="NoProviderFound" xml:space="preserve">
+    <value>Nie znaleziono dostawcy o nazwie {0}.</value>
+  </data>
+  <data name="CounterSetEnumAccessDenied" xml:space="preserve">
+    <value>Nie można pobrać informacji o zestawie liczników wydajności {0}, ponieważ odmówiono dostępu.</value>
+  </data>
+  <data name="VersionNotSpecified" xml:space="preserve">
+    <value>Nie można zapisać zdarzenia, ponieważ dla dostawcy {1} zdefiniowano wiele zdarzeń o identyfikatorze {0}.  Podaj wersję zdarzenia i spróbuj ponownie.</value>
+  </data>
+  <data name="SpecifyOldestForEtlEvt" xml:space="preserve">
+    <value>Plik dziennika zdarzeń {0} może być tylko do odczytu w kolejności chronologicznej przesyłania dalej, ponieważ jest to plik etl lub evt. Aby wyświetlić zdarzenia z dziennika zdarzeń {0}, użyj najstarszego parametru w poleceniu.</value>
+  </data>
+  <data name="ProviderNotSpecified" xml:space="preserve">
+    <value>Należy określić nazwę dostawcy.</value>
+  </data>
+  <data name="NotALogFile" xml:space="preserve">
+    <value>Plik {0} prawdopodobnie nie jest prawidłowym plikiem dziennika. Określ tylko pliki evtx, etl lub evt jako wartości parametru Path.</value>
+  </data>
+  <data name="CounterPathInvalidOrNotInFile" xml:space="preserve">
+    <value>Ścieżka licznika wydajności {0} jest nieprawidłowa lub nie występuje w następujących plikach: {1}.</value>
+  </data>
+  <data name="Timestamp" xml:space="preserve">
+    <value>Znacznik czasu</value>
+  </data>
+  <data name="DateTimeExpected" xml:space="preserve">
+    <value>Następująca wartość nie ma prawidłowego formatu daty/godziny: {0}.</value>
+  </data>
+  <data name="LogInfoUnavailable" xml:space="preserve">
+    <value>Aby uzyskać dostęp do dziennika „{0}”, uruchom program PowerShell z podwyższonym poziomem praw użytkownika.  Błąd: {1}</value>
+  </data>
+  <data name="LogInfoNoAccess" xml:space="preserve">
+    <value>Odmowa dostępu do dziennika: „{0}”.</value>
+  </data>
+  <data name="SuggestElevation" xml:space="preserve">
+    <value>Uruchom program PowerShell z podwyższonym poziomem praw użytkownika.</value>
+  </data>
+  <data name="NoEventMessage" xml:space="preserve">
+    <value>Nie można pobrać tekstu komunikatu zdarzenia.</value>
+  </data>
+  <data name="CounterFileExists" xml:space="preserve">
+    <value>Plik {0} już istnieje. Aby zastąpić ten plik, użyj parametru Force w poleceniu Export-Counter.</value>
+  </data>
+  <data name="CounterContinuousOrMaxSamples" xml:space="preserve">
+    <value>Parametry Continuous i MaxSamples nie mogą być używane w tym samym poleceniu.</value>
+  </data>
+  <data name="ExportCtrWin7Required" xml:space="preserve">
+    <value>To polecenie cmdlet można uruchomić tylko w systemie Microsoft Windows 7 lub nowszym.</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Ta przystawka programu PowerShell zawiera polecenia cmdlet licznika zdarzeń i wydajności systemu Windows.</value>
+  </data>
+  <data name="NoMatchingCounterSetsInFile" xml:space="preserve">
+    <value>Nie można odnaleźć żadnych zestawów liczników wydajności w plikach {0} zgodnych z następującymi elementami: {1}.</value>
+  </data>
+  <data name="LogsAndProvidersDontOverlap" xml:space="preserve">
+    <value>Określeni dostawcy nie zapisują zdarzeń w żadnym z określonych dzienników.</value>
+  </data>
+  <data name="CookedValues" xml:space="preserve">
+    <value>Przetworzone wartości</value>
+  </data>
+  <data name="Counter1FileLimit" xml:space="preserve">
+    <value>W żadnym poleceniu nie można zaimportować więcej niż jednego pliku rozdzielanego przecinkami (.csv) ani pliku licznika wydajności rozdzielanego tabulatorami (tsv).</value>
+  </data>
+  <data name="LogCountLimitExceeded" xml:space="preserve">
+    <value>Liczba dzienników ({0}) przekracza limit interfejsu API dziennika zdarzeń systemu Windows ({1}). Dostosuj filtr, aby zwracał mniej nazw dzienników.</value>
+  </data>
+  <data name="ListLogParamHelp" xml:space="preserve">
+    <value>Określa dzienniki zdarzeń. Symbole wieloznaczne są dozwolone.</value>
+  </data>
+  <data name="GetLogParamHelp" xml:space="preserve">
+    <value>Określa dzienniki zdarzeń, z których to polecenie cmdlet pobiera zdarzenia. Symbole wieloznaczne są dozwolone.</value>
+  </data>
+  <data name="ListProviderParamHelp" xml:space="preserve">
+    <value>Określa dostawców dziennika zdarzeń, z których to polecenie cmdlet pobiera dane.</value>
+  </data>
+  <data name="GetProviderParamHelp" xml:space="preserve">
+    <value>Określa dostawców dziennika zdarzeń, od których to polecenie cmdlet pobiera zdarzenia.</value>
+  </data>
+  <data name="PathParamHelp" xml:space="preserve">
+    <value>Określa ścieżkę do plików dziennika zdarzeń, z których to polecenie cmdlet pobiera zdarzenia.</value>
+  </data>
+  <data name="MaxEventsParamHelp" xml:space="preserve">
+    <value>Określa maksymalną liczbę zwracanych zdarzeń.</value>
+  </data>
+  <data name="ComputerNameParamHelp" xml:space="preserve">
+    <value>Określa nazwę komputera, z którego to polecenie cmdlet pobiera dane.</value>
+  </data>
+</root>

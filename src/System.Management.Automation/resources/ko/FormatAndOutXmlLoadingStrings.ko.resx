@@ -1,0 +1,324 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AttributesNotAllowed" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: XML 요소 {2}에는 특성을 사용할 수 없습니다.</value>
+  </data>
+  <data name="NoChildrenAllowed" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: 노드 {2}에는 자식 개체가 있을 수 없습니다.</value>
+  </data>
+  <data name="InvalidNode" xml:space="preserve">
+    <value>파일 {1}의 XPath {0}에서 오류가 발생했습니다: {2}은(는) 유효하지 않습니다.</value>
+  </data>
+  <data name="NoDefaultShapeEntry" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: 기본값 {2}이(가) 하나 이상 있어야 합니다.</value>
+  </data>
+  <data name="TooManyDefaultShapeEntry" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: 기본값 {2}이(가) 두 개 이상 있을 수 없습니다.</value>
+  </data>
+  <data name="NullControlName" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: 컨트롤 이름은 null이거나 비워 둘 수 없습니다.</value>
+  </data>
+  <data name="InvalidControlForOutOfBandView" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: Out Of Band 보기는 CustomControl 또는 ListControl만 사용할 수 있습니다.</value>
+  </data>
+  <data name="OutOfBandGroupByConflict" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: Out Of Band 보기에는 GroupBy를 사용할 수 없습니다.</value>
+  </data>
+  <data name="ViewNotLoaded" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: 뷰를 로드할 수 없습니다.</value>
+  </data>
+  <data name="InvalidAlignmentValue" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: "{2}"은(는) 올바른 맞춤 값이 아닙니다.</value>
+  </data>
+  <data name="ExpectPositiveInteger" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: 양의 정수가 필요합니다.</value>
+  </data>
+  <data name="InvalidColumnHeader" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: 열 머리글 정의가 올바르지 않습니다. 모든 머리글이 무시됩니다.</value>
+  </data>
+  <data name="IncorrectRowItemCount" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: 대체 집합 #{3}의 행 항목 수 = {2}이(가) 기본 행 항목 수 = {4}과(와) 일치하지 않습니다.</value>
+  </data>
+  <data name="IncorrectHeaderItemCount" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: 헤더 항목 수 = {2}이(가) 기본 행 항목 수 = {3}과(와) 일치하지 않습니다.</value>
+  </data>
+  <data name="NoListViewItem" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: 목록 보기 항목은 하나 이상 지정해야 합니다.</value>
+  </data>
+  <data name="InvalidPropertyEntry" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: 속성 항목이 올바르지 않습니다.</value>
+  </data>
+  <data name="NoDefinitionList" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: 정의 목록이 없습니다.</value>
+  </data>
+  <data name="ExpectBoolean" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: 부울 값이 필요합니다.</value>
+  </data>
+  <data name="ExpectNaturalNumber" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: 음수가 아닌 정수가 필요합니다.</value>
+  </data>
+  <data name="ExpectInteger" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: 정수가 필요합니다.</value>
+  </data>
+  <data name="MissingInnerText" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: 내부 텍스트 값이 없습니다.</value>
+  </data>
+  <data name="EmptyCustomControlList" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: 사용자 지정 컨트롤 토큰 목록은 비워 둘 수 없습니다.</value>
+  </data>
+  <data name="LoadTagFailed" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: {2}을(를) 로드하지 못했습니다.</value>
+  </data>
+  <data name="NodeWithoutExpression" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: 식 없이 {2}을(를) 지정할 수 없습니다.</value>
+  </data>
+  <data name="NodeWithExpression" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: 식과 함께 {2}을(를) 지정할 수 없습니다.</value>
+  </data>
+  <data name="NoFormatString" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: 서식 문자열이 없습니다.</value>
+  </data>
+  <data name="NoScriptBlockText" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: 스크립트 블록 텍스트가 없습니다.</value>
+  </data>
+  <data name="NoProperty" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: 속성이 없습니다.</value>
+  </data>
+  <data name="InvalidScriptBlock" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: 스크립트 블록 "{2}"이(가) 올바르지 않습니다.</value>
+  </data>
+  <data name="StringResourceNotFound" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: 어셈블리 {4}의 리소스 {3}에서 문자열 {2}을(를) 찾을 수 없습니다.</value>
+  </data>
+  <data name="ResourceNotFound" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: 어셈블리 {3}의 리소스 {2}을(를) 찾을 수 없습니다.</value>
+  </data>
+  <data name="AssemblyNotFound" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: 어셈블리 {2}을(를) 찾을 수 없습니다.</value>
+  </data>
+  <data name="NonXmlElementNode" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: 노드는 XmlElement여야 합니다.</value>
+  </data>
+  <data name="ExpectExpression" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: 식이 필요합니다.</value>
+  </data>
+  <data name="ControlLabelWithoutExpression" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: 식 없이 컨트롤이나 Label을 사용할 수 없습니다.</value>
+  </data>
+  <data name="ControlAndLabel" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: 컨트롤과 Label을 동시에 사용할 수 없습니다.</value>
+  </data>
+  <data name="SelectionSetNameAndTypeName" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: SelectionSetName과 TypeName을 동시에 사용할 수 없습니다.</value>
+  </data>
+  <data name="EmptyAppliesTo" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: 뷰를 적용할 형식 또는 조건이 지정되지 않았습니다.</value>
+  </data>
+  <data name="InvalidNodeValue" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: {2}은(는) 유효하지 않습니다.</value>
+  </data>
+  <data name="DuplicatedNode" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: 중복된 노드가 있습니다.</value>
+  </data>
+  <data name="MutuallyExclusiveNode" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: {2} 과(와) {3}은(는) 서로 배타적입니다.</value>
+  </data>
+  <data name="ThreeMutuallyExclusiveNode" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: {2}, {3} 및 {4}은(는) 서로 배타적입니다.</value>
+  </data>
+  <data name="UnknownNode" xml:space="preserve">
+    <value>파일 {1}의 XPath {0}에서 오류가 발생했습니다: {2}은(는) 알 수 없는 노드입니다.</value>
+  </data>
+  <data name="UnknownAttribute" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: {2}은(는) 알 수 없는 특성입니다.</value>
+  </data>
+  <data name="MissingAttribute" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: {2}은(는) 누락된 특성입니다.</value>
+  </data>
+  <data name="MissingNode" xml:space="preserve">
+    <value>파일 {1}의 XPath {0}에서 오류가 발생했습니다. 노드 {2}이(가) 없습니다.</value>
+  </data>
+  <data name="MissingNodeFromList" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: {2}에 노드가 없습니다.</value>
+  </data>
+  <data name="EmptyNode" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: {2}은(는) 알 수 없는 노드입니다.</value>
+  </data>
+  <data name="EmptyAttribute" xml:space="preserve">
+    <value>파일 {1}의 XPath {0} 오류: {2}은(는) 빈 특성입니다.</value>
+  </data>
+  <data name="ErrorInFile" xml:space="preserve">
+    <value>파일 {0}에서 오류가 발생했습니다: {1}</value>
+  </data>
+  <data name="TooManyErrors" xml:space="preserve">
+    <value>파일 {0}에 오류가 너무 많습니다.</value>
+  </data>
+  <data name="FormatLoadingErrors" xml:space="preserve">
+    <value>형식 데이터 파일을 로드하는 동안 오류가 발생했습니다. {0}</value>
+  </data>
+  <data name="AssemblyInGAC" xml:space="preserve">
+    <value>(전역 어셈블리 캐시) {0}</value>
+  </data>
+  <data name="MshSnapinQualifiedError" xml:space="preserve">
+    <value>{0}, {1}</value>
+  </data>
+  <data name="FormatFileNotRooted" xml:space="preserve">
+    <value>경로 {0}이(가) 완전히 정규화되지 않았습니다. 완전히 정규화된 형식 파일 경로를 지정하세요.</value>
+  </data>
+  <data name="SharedFormatTableCannotBeUpdated" xml:space="preserve">
+    <value>FormatTable이 runspace 외부에서 만들어졌을 수 있으므로 FormatTable을 업데이트할 수 없습니다.</value>
+  </data>
+  <data name="FormatTableLoadErrors" xml:space="preserve">
+    <value>FormatTable을 로드하는 동안 오류가 발생했습니다. 자세한 오류 메시지를 보려면 Errors 속성의 내용을 확인하세요.</value>
+  </data>
+  <data name="ErrorInFormattingData" xml:space="preserve">
+    <value>데이터 "{0}"의 서식을 지정하는 동안 오류가 발생했습니다: {1}</value>
+  </data>
+  <data name="IncorrectHeaderItemCountInFormattingData" xml:space="preserve">
+    <value>인덱스 {1}의 형식 이름 {0}이(가) 있는 뷰 데이터에서 오류가 발생했습니다. 헤더 항목 수= {2}이(가) 기본 행 항목 수= {3}과(와) 일치하지 않습니다.</value>
+  </data>
+  <data name="InvalidFormattingData" xml:space="preserve">
+    <value>형식 이름 {0}의 인덱스 {1}에 있는 뷰 데이터 오류: 서식 데이터 "{2}"이(가) 올바르지 않습니다.</value>
+  </data>
+  <data name="InvalidScriptBlockInFormattingData" xml:space="preserve">
+    <value>형식 이름 {0}의 인덱스 {1}에 있는 뷰 데이터 오류: 스크립트 블록 "{2}"이(가) 올바르지 않습니다.</value>
+  </data>
+  <data name="LoadTagFailedInFormattingData" xml:space="preserve">
+    <value>형식 이름 {0}의 인덱스 {1}에 있는 뷰 데이터 오류: {2}을(를) 로드하지 못했습니다.</value>
+  </data>
+  <data name="MultipleRowEntriesFoundInFormattingData" xml:space="preserve">
+    <value>형식 이름 {0}의 인덱스 {1}에 있는 뷰 데이터 오류: TableControl에는 {2}이(가) 하나만 포함되어야 합니다.</value>
+  </data>
+  <data name="NoDefaultShapeEntryInFormattingData" xml:space="preserve">
+    <value>형식 이름 {0}의 인덱스 {1}에 있는 뷰 데이터 오류: 기본값이 하나 이상 있어야 합니다 {2}.</value>
+  </data>
+  <data name="NoListViewItemInFormattingData" xml:space="preserve">
+    <value>형식 이름 {0}의 인덱스{1}에 있는 뷰 데이터 오류: 목록 보기 항목을 하나 이상 지정해야 합니다.</value>
+  </data>
+  <data name="TooManyDefaultShapeEntryInFormattingData" xml:space="preserve">
+    <value>형식 이름 {0}의 인덱스 {1}에 있는 뷰 데이터 오류: 기본값 {2}이(가) 두 개 이상 있을 수 없습니다.</value>
+  </data>
+  <data name="TooManyErrorsInFormattingData" xml:space="preserve">
+    <value>"{0}" 형식의 서식 데이터에 오류가 너무 많습니다.</value>
+  </data>
+  <data name="FormatTableCannotCoExist" xml:space="preserve">
+    <value>공유 형식 테이블은 항목을 하나만 사용해 업데이트할 수 있습니다.</value>
+  </data>
+</root>

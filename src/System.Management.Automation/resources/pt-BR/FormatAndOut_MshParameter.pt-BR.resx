@@ -1,0 +1,177 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="UnknownParameterTypeError" xml:space="preserve">
+    <value>Não é possível converter {0} em um dos seguintes tipos {1}.</value>
+  </data>
+  <data name="NullParameterTypeError" xml:space="preserve">
+    <value>O valor de um parâmetro era nulo; esperava-se um dos seguintes tipos: {0}.</value>
+  </data>
+  <data name="DuplicateKeyError" xml:space="preserve">
+    <value>A chave duplicada "{0}" está em conflito com "{1}".</value>
+  </data>
+  <data name="IllegalTypeMultiError" xml:space="preserve">
+    <value>A chave "{0}" tem um tipo, {1}, que não é válido; os tipos esperados são {2}.</value>
+  </data>
+  <data name="IllegalTypeSingleError" xml:space="preserve">
+    <value>A chave "{0}" tem um tipo, {1}, que não é válido; o tipo esperado é {2}.</value>
+  </data>
+  <data name="AmbiguousKeyError" xml:space="preserve">
+    <value>A chave {0} é ambígua; há conflito entre {1} e {2}.</value>
+  </data>
+  <data name="DictionaryKeyNullError" xml:space="preserve">
+    <value>O valor de uma chave não pode ser nulo.</value>
+  </data>
+  <data name="DictionaryKeyNonStringError" xml:space="preserve">
+    <value>O tipo da chave {0} não é válido. A chave deve ser uma cadeia de caracteres.</value>
+  </data>
+  <data name="MissingKeyValueError" xml:space="preserve">
+    <value>A chave {0} não tem valor.</value>
+  </data>
+  <data name="MissingKeyMandatoryEntryError" xml:space="preserve">
+    <value>Falta uma entrada obrigatória para {0}.</value>
+  </data>
+  <data name="IllegalKeyError" xml:space="preserve">
+    <value>A chave {0} não é válida.</value>
+  </data>
+  <data name="IllegalAlignmentValueError" xml:space="preserve">
+    <value>O valor "{0}" da chave "{1}" não é válido; os valores válidos são {2}.</value>
+  </data>
+  <data name="OutOfRangeWidthValueError" xml:space="preserve">
+    <value>O valor "{0}" da chave "{1}" deve ser maior que 0.</value>
+  </data>
+  <data name="EmptyFormatStringValueError" xml:space="preserve">
+    <value>Não é possível ter uma cadeia de caracteres de formatação vazia para a chave "{0}".</value>
+  </data>
+  <data name="MshExEmptyStringHashError" xml:space="preserve">
+    <value>A chave "{0}" não pode ter um valor de cadeia de caracteres vazio.</value>
+  </data>
+  <data name="MshExEmptyStringError" xml:space="preserve">
+    <value>Um valor de cadeia de caracteres vazio não é permitido.</value>
+  </data>
+  <data name="MshExGlobbingHashError" xml:space="preserve">
+    <value>A chave "{0}" não pode ter caracteres curinga no valor "{1}".</value>
+  </data>
+  <data name="MshExGlobbingStringError" xml:space="preserve">
+    <value>Caracteres curinga não são permitidos em "{0}".</value>
+  </data>
+  <data name="IllegalEnumerableExpansionValue" xml:space="preserve">
+    <value>O valor de EnumerableExpansion não é válido.</value>
+  </data>
+</root>

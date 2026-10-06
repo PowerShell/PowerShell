@@ -1,0 +1,657 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="InvalidProviderInfo" xml:space="preserve">
+    <value>Non è possibile elaborare le informazioni restituite perché quelle restituite dal metodo Start del provider erano per un provider diverso da quello passato.</value>
+  </data>
+  <data name="InvalidProviderInfoNull" xml:space="preserve">
+    <value>Non è possibile elaborare le informazioni restituite perché le informazioni restituite dal metodo Start del provider erano null.</value>
+  </data>
+  <data name="GetItemProviderException" xml:space="preserve">
+    <value>Tentativo di eseguire l'operazione GetItem sul provider '{0}' non riuscito per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="GetItemDynamicParametersProviderException" xml:space="preserve">
+    <value>Non è possibile recuperare i parametri dinamici per l'operazione GetItem dal provider '{0}' per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="SetItemProviderException" xml:space="preserve">
+    <value>Tentativo di eseguire l'operazione SetItem sul provider '{0}' non riuscito per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="SetItemDynamicParametersProviderException" xml:space="preserve">
+    <value>Non è possibile recuperare i parametri dinamici per l'operazione SetItem dal provider '{0}' per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="ClearItemProviderException" xml:space="preserve">
+    <value>Tentativo di eseguire l'operazione ClearItem sul provider '{0}' non riuscito per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="InvokeDefaultActionProviderException" xml:space="preserve">
+    <value>Tentativo di eseguire l'operazione InvokeDefaultAction sul provider '{0}' non riuscito per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="InvokeDefaultActionDynamicParametersProviderException" xml:space="preserve">
+    <value>Non è possibile recuperare i parametri dinamici per l'operazione InvokeDefaultAction dal provider '{0}' per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="ItemExistsProviderException" xml:space="preserve">
+    <value>Tentativo di eseguire l'operazione ItemExists sul provider '{0}' non riuscito per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="ItemExistsDynamicParametersProviderException" xml:space="preserve">
+    <value>Non è possibile recuperare i parametri dinamici per l'operazione ItemExists dal provider '{0}' per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="IsValidPathProviderException" xml:space="preserve">
+    <value>Tentativo di eseguire l'operazione IsValidPath sul provider '{0}' non riuscito per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="IsItemContainerProviderException" xml:space="preserve">
+    <value>Tentativo di eseguire l'operazione IsItemContainer sul provider '{0}' non riuscito per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="RemoveItemProviderException" xml:space="preserve">
+    <value>Tentativo di eseguire l'operazione RemoveItem sul provider '{0}' non riuscito per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="GetChildrenProviderException" xml:space="preserve">
+    <value>Tentativo di eseguire l'operazione GetChildItems sul provider '{0}' non riuscito per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="GetChildrenDynamicParametersProviderException" xml:space="preserve">
+    <value>Non è possibile recuperare i parametri dinamici per l'operazione GetChildItems dal provider '{0}' per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="GetChildNamesProviderException" xml:space="preserve">
+    <value>Tentativo di eseguire l'operazione GetChildNames sul provider '{0}' non riuscito per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="GetChildNamesDynamicParametersProviderException" xml:space="preserve">
+    <value>Non è possibile recuperare i parametri dinamici per l'operazione GetChildNames dal provider '{0}' per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="RenameItemProviderException" xml:space="preserve">
+    <value>Tentativo di eseguire l'operazione RenameItem sul provider '{0}' non riuscito per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="RenameItemDynamicParametersProviderException" xml:space="preserve">
+    <value>Non è possibile recuperare i parametri dinamici per l'operazione RenameItem dal provider '{0}' per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="NewItemProviderException" xml:space="preserve">
+    <value>Tentativo di eseguire l'operazione NewItem sul provider '{0}' non riuscito per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="NewItemDynamicParametersProviderException" xml:space="preserve">
+    <value>Non è possibile recuperare i parametri dinamici per l'operazione NewItem dal provider '{0}' per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="HasChildItemsProviderException" xml:space="preserve">
+    <value>Tentativo di eseguire l'operazione HasChildItems sul provider '{0}' non riuscito per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="CopyItemProviderException" xml:space="preserve">
+    <value>Tentativo di eseguire l'operazione CopyItem sul provider '{0}' non riuscito per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="CopyItemDynamicParametersProviderException" xml:space="preserve">
+    <value>Non è possibile recuperare i parametri dinamici per l'operazione CopyItem dal provider '{0}' per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="GetParentPathProviderException" xml:space="preserve">
+    <value>Tentativo di eseguire l'operazione GetParentPath sul provider '{0}' non riuscito per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="NormalizeRelativePathProviderException" xml:space="preserve">
+    <value>Tentativo di eseguire l'operazione NormalizeRelativePath sul provider '{0}' non riuscito per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="MakePathProviderException" xml:space="preserve">
+    <value>Tentativo di eseguire l'operazione MakePath sul provider '{0}' non riuscito per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="GetChildNameProviderException" xml:space="preserve">
+    <value>Tentativo di eseguire l'operazione GetChildName sul provider '{0}' non riuscito per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="MoveItemProviderException" xml:space="preserve">
+    <value>Tentativo di eseguire l'operazione MoveItem sul provider '{0}' non riuscito per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="MoveItemDynamicParametersProviderException" xml:space="preserve">
+    <value>Non è possibile recuperare i parametri dinamici per l'operazione MoveItem dal provider '{0}' per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="GetPropertyProviderException" xml:space="preserve">
+    <value>Tentativo di eseguire l'operazione GetProperty sul provider '{0}' non riuscito per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="GetPropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>Non è possibile recuperare i parametri dinamici per l'operazione GetProperty dal provider '{0}' per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="SetPropertyProviderException" xml:space="preserve">
+    <value>Tentativo di eseguire l'operazione SetProperty sul provider '{0}' non riuscito per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="SetPropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>Non è possibile recuperare i parametri dinamici per l'operazione SetProperty dal provider '{0}' per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="ClearPropertyProviderException" xml:space="preserve">
+    <value>Tentativo di eseguire l'operazione ClearProperty sul provider '{0}' non riuscito per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="ClearPropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>Non è possibile recuperare i parametri dinamici per l'operazione ClearProperty dal provider '{0}' per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="NewPropertyProviderException" xml:space="preserve">
+    <value>Tentativo di eseguire l'operazione NewProperty sul provider '{0}' non riuscito per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="NewPropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>Non è possibile recuperare i parametri dinamici per l'operazione NewProperty dal provider '{0}' per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="RemovePropertyProviderException" xml:space="preserve">
+    <value>Tentativo di eseguire l'operazione RemoveProperty sul provider '{0}' non riuscito per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="RemovePropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>Non è possibile recuperare i parametri dinamici per l'operazione RemoveProperty dal provider '{0}' per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="CopyPropertyProviderException" xml:space="preserve">
+    <value>Tentativo di eseguire l'operazione CopyProperty sul provider '{0}' non riuscito per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="CopyPropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>Non è possibile recuperare i parametri dinamici per l'operazione CopyProperty per il provider '{0}' per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="MovePropertyProviderException" xml:space="preserve">
+    <value>Tentativo di eseguire l'operazione MoveProperty sul provider '{0}' non riuscito per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="MovePropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>Non è possibile recuperare i parametri dinamici per l'operazione MoveProperty per il provider '{0}' per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="RenamePropertyProviderException" xml:space="preserve">
+    <value>Tentativo di eseguire l'operazione RenameProperty sul provider '{0}' non riuscito per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="RenamePropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>Non è possibile recuperare i parametri dinamici per RenameProperty dal provider '{0}' per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="GetContentReaderProviderException" xml:space="preserve">
+    <value>Non è possibile recuperare il lettore di contenuto per il provider '{0}' per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="GetContentReaderDynamicParametersProviderException" xml:space="preserve">
+    <value>Non è possibile recuperare i parametri dinamici per l'operazione GetContentReader per il provider '{0}' per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="GetContentWriterProviderException" xml:space="preserve">
+    <value>Non è possibile recuperare il writer di contenuto per il provider '{0}' per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="GetContentWriterDynamicParametersProviderException" xml:space="preserve">
+    <value>Non è possibile recuperare i parametri dinamici per l'operazione GetContentWriter per il provider '{0}' per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="GetContainerContentException" xml:space="preserve">
+    <value>Non è possibile ottenere il contenuto perché si tratta di una directory: '{0}'. Usare invece 'Get-ChildItem'.</value>
+  </data>
+  <data name="WriteContainerContentException" xml:space="preserve">
+    <value>Non è possibile scrivere il contenuto perché si tratta di una directory: '{0}'.</value>
+  </data>
+  <data name="LocationUndoStackIsEmpty" xml:space="preserve">
+    <value>Non è rimasta alcuna cronologia delle posizioni per spostarsi all'indietro.</value>
+  </data>
+  <data name="LocationRedoStackIsEmpty" xml:space="preserve">
+    <value>Non è rimasta alcuna cronologia delle posizioni per spostarsi in avanti.</value>
+  </data>
+  <data name="BoundedStackIsEmpty" xml:space="preserve">
+    <value>BoundedStack è vuoto.</value>
+  </data>
+  <data name="ClearContentProviderException" xml:space="preserve">
+    <value>Tentativo di eseguire l'operazione ClearContent sul provider '{0}' non riuscito per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="ClearDirectoryContent" xml:space="preserve">
+    <value>Non è possibile cancellare il contenuto di '{0}' perché si tratta di una directory. Clear-Content è supportato solo sui file.</value>
+  </data>
+  <data name="ClearContentDynamicParametersProviderException" xml:space="preserve">
+    <value>Non è possibile recuperare i parametri dinamici per l'operazione ClearContent dal provider '{0}' per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="GetSecurityDescriptorProviderException" xml:space="preserve">
+    <value>Tentativo di eseguire l'operazione GetSecurityDescriptor sul provider '{0}' non riuscito per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="SetSecurityDescriptorProviderException" xml:space="preserve">
+    <value>Tentativo di eseguire l'operazione SetSecurityDescriptor sul provider '{0}' non riuscito per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="ProviderStartException" xml:space="preserve">
+    <value>Il tentativo di eseguire l'operazione Start sul provider '{0}' non è riuscito. {1}</value>
+  </data>
+  <data name="InitializeDefaultDrivesException" xml:space="preserve">
+    <value>Tentativo di eseguire l'operazione InitializeDefaultDrives sul provider '{0}' non riuscito.</value>
+  </data>
+  <data name="NewDriveProviderException" xml:space="preserve">
+    <value>Tentativo di eseguire l'operazione NewDrive sul provider '{0}' non riuscito per l'unità con radice '{1}'. {2}</value>
+  </data>
+  <data name="NewDriveDynamicParametersProviderException" xml:space="preserve">
+    <value>Non è possibile recuperare i parametri dinamici per NewDrive dal provider '{0}'. {1}</value>
+  </data>
+  <data name="RemoveDriveProviderException" xml:space="preserve">
+    <value>La chiamata di RemoveDrive sul provider '{0}' non è riuscita. {1}</value>
+  </data>
+  <data name="DriveRemovalPreventedByProvider" xml:space="preserve">
+    <value>Non è possibile rimuovere l'unità '{0}' perché il provider '{1}' lo ha impedito.</value>
+  </data>
+  <data name="NormalizeRelativePathOutsideBase" xml:space="preserve">
+    <value>Il percorso '{0}' faceva riferimento a un elemento esterno alla base '{1}'.</value>
+  </data>
+  <data name="ProviderSeekError" xml:space="preserve">
+    <value>La chiamata di Seek sul writer di contenuto del provider '{0}' non è riuscita per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="ProviderContentCloseError" xml:space="preserve">
+    <value>La chiamata di Close sul lettore o writer di contenuto del provider '{0}' non è riuscita per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="ProviderContentReadError" xml:space="preserve">
+    <value>La chiamata di Read sul lettore di contenuto del provider '{0}' non è riuscita per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="ProviderContentWriteError" xml:space="preserve">
+    <value>La chiamata di Write sul writer di contenuto del provider '{0}' non è riuscita per il percorso '{1}'. {2}</value>
+  </data>
+  <data name="ProviderCannotBeUsedAsVariable" xml:space="preserve">
+    <value>Il provider '{0}' non può essere usato per ottenere o impostare dati usando la sintassi della variabile. {2}</value>
+  </data>
+  <data name="ProviderVariableSyntaxInvalid" xml:space="preserve">
+    <value>La sintassi della variabile non può essere usata per ottenere o impostare dati nel provider. {2}</value>
+  </data>
+  <data name="AliasNotWritable" xml:space="preserve">
+    <value>Non è possibile scrivere sull'alias perché l'alias {0} è di sola lettura o costante e non è possibile eseguire operazioni di scrittura su di esso.</value>
+  </data>
+  <data name="FunctionNotWritable" xml:space="preserve">
+    <value>Non è possibile scrivere nella funzione {0} perché è di sola lettura o costante.</value>
+  </data>
+  <data name="VariableNotWritable" xml:space="preserve">
+    <value>Non è possibile sovrascrivere la variabile {0} perché è di sola lettura o costante.</value>
+  </data>
+  <data name="VariableIsPrivate" xml:space="preserve">
+    <value>Non è possibile accedere alla variabile '${0}' perché è una variabile privata.</value>
+  </data>
+  <data name="NamedCommandIsPrivate" xml:space="preserve">
+    <value>Non è possibile accedere al comando '{0}' perché è privato.</value>
+  </data>
+  <data name="CommandIsPrivate" xml:space="preserve">
+    <value>Non è possibile accedere al comando perché è privato.</value>
+  </data>
+  <data name="ResourceIsPrivate" xml:space="preserve">
+    <value>Non è possibile accedere alla risorsa dello stato della sessione perché è una risorsa privata. </value>
+  </data>
+  <data name="AliasNotRemovable" xml:space="preserve">
+    <value>L'alias non è stato rimosso perché l'alias {0} è costante o di sola lettura.</value>
+  </data>
+  <data name="FunctionNotRemovable" xml:space="preserve">
+    <value>Non è possibile rimuovere la funzione {0} perché è costante.</value>
+  </data>
+  <data name="VariableNotRemovable" xml:space="preserve">
+    <value>Non è possibile rimuovere la variabile {0} perché è costante o di sola lettura. Se la variabile è di sola lettura, riprovare specificando l'opzione Forza.</value>
+  </data>
+  <data name="AliasIsConstant" xml:space="preserve">
+    <value>Non è possibile modificare l'alias {0} perché è costante.</value>
+  </data>
+  <data name="AliasIsReadOnly" xml:space="preserve">
+    <value>Non è possibile modificare l'alias {0} perché è di sola lettura.</value>
+  </data>
+  <data name="FunctionIsConstant" xml:space="preserve">
+    <value>Non è possibile modificare la funzione {0} perché è costante.</value>
+  </data>
+  <data name="FunctionIsReadOnly" xml:space="preserve">
+    <value>Non è possibile modificare la funzione {0} perché è di sola lettura.</value>
+  </data>
+  <data name="AliasCannotBeMadeConstant" xml:space="preserve">
+    <value>L'alias {0} non può essere reso costante dopo la creazione. Gli alias possono essere resi costanti solo al momento della creazione.</value>
+  </data>
+  <data name="FunctionCannotBeMadeConstant" xml:space="preserve">
+    <value>Non è possibile rendere costante la funzione esistente {0}. Le funzioni possono essere rese costanti solo al momento della creazione.</value>
+  </data>
+  <data name="VariableCannotBeMadeConstant" xml:space="preserve">
+    <value>Non è possibile rendere costante la variabile {0} esistente. Le variabili possono essere rese costanti solo al momento della creazione.</value>
+  </data>
+  <data name="AliasAllScopeOptionCannotBeRemoved" xml:space="preserve">
+    <value>L'opzione AllScope non può essere rimossa dall'alias '{0}'.</value>
+  </data>
+  <data name="FunctionAllScopeOptionCannotBeRemoved" xml:space="preserve">
+    <value>L'opzione AllScope non può essere rimossa dalla funzione '{0}'.</value>
+  </data>
+  <data name="VariableAllScopeOptionCannotBeRemoved" xml:space="preserve">
+    <value>L'opzione AllScope non può essere rimossa dalla variabile '{0}'.</value>
+  </data>
+  <data name="ScopedFunctionMustHaveName" xml:space="preserve">
+    <value>La definizione della funzione '{0}' conteneva un qualificatore di ambito, ma non un nome di funzione.</value>
+  </data>
+  <data name="RemoveDrivesBeforeRemovingProvider" xml:space="preserve">
+    <value>Non è possibile rimuovere il provider {0}. Prima di rimuovere il provider {0}, è necessario rimuovere tutte le unità associate al provider {0}.</value>
+  </data>
+  <data name="DriveNameIllegalCharacters" xml:space="preserve">
+    <value>Non è possibile elaborare il nome dell'unità perché contiene uno o più dei seguenti caratteri non validi: ; ~ / \ . :</value>
+  </data>
+  <data name="NewDriveProviderFailed" xml:space="preserve">
+    <value>La creazione della nuova unità è riuscita. Il provider non consente la creazione della nuova unità.</value>
+  </data>
+  <data name="StackNameResolvedToMultiple" xml:space="preserve">
+    <value>Il valore specificato '{0}' è stato risolto in più di uno stack di posizioni.</value>
+  </data>
+  <data name="StackNotFound" xml:space="preserve">
+    <value>Non è possibile trovare lo stack di posizioni '{0}'. Non esiste, oppure non è un contenitore.</value>
+  </data>
+  <data name="PathNotFound" xml:space="preserve">
+    <value>Non è possibile trovare il percorso '{0}' perché non esiste.</value>
+  </data>
+  <data name="AliasNotFound" xml:space="preserve">
+    <value>Non è possibile trovare l'alias perché l'alias '{0}' non esiste.</value>
+  </data>
+  <data name="PathResolvedToMultiple" xml:space="preserve">
+    <value>Non è possibile impostare la posizione perché il percorso '{0}' è stato risolto in più contenitori. È possibile impostare la posizione solo su un contenitore alla volta.</value>
+  </data>
+  <data name="VariablePathResolvedToMultiple" xml:space="preserve">
+    <value>Non è possibile elaborare la variabile perché il percorso della variabile '{0}' è stato risolto in più elementi. È possibile ottenere o impostare il valore della variabile solo un elemento alla volta.</value>
+  </data>
+  <data name="DriveNotFound" xml:space="preserve">
+    <value>Non è possibile trovare l'unità. L'unità con il nome "{0}" non esiste.</value>
+  </data>
+  <data name="ProviderNotFound" xml:space="preserve">
+    <value>Non è possibile trovare un provider con il nome '{0}'.</value>
+  </data>
+  <data name="ProviderNotFoundBadFormat" xml:space="preserve">
+    <value>Non è possibile trovare un provider con il nome '{0}'. Il nome non è nel formato corretto. Un nome di provider può contenere solo caratteri alfanumerici, oppure un nome di snap-in di PowerShell seguito da un singolo '\', seguito da caratteri alfanumerici.</value>
+  </data>
+  <data name="ProviderNameAmbiguous" xml:space="preserve">
+    <value>'{0}' è stato risolto in più di un nome di provider. Le possibili corrispondenze includono:{1}.</value>
+  </data>
+  <data name="ProviderNotFoundInAssembly" xml:space="preserve">
+    <value>Si è verificato un errore durante il tentativo di creare un'istanza del provider. Non è possibile trovare il nome del tipo di provider '{0}' nell'assembly.</value>
+  </data>
+  <data name="ProviderNameNotValid" xml:space="preserve">
+    <value>Il nome del provider specificato '{0}' non può essere usato perché contiene uno o più dei seguenti caratteri non validi: \ [ ] ? * :</value>
+  </data>
+  <data name="ProviderCtorException" xml:space="preserve">
+    <value>Si è verificato un errore durante il tentativo di creare un'istanza del provider '{0}'. {1} </value>
+  </data>
+  <data name="VariableNotFound" xml:space="preserve">
+    <value>Non è possibile trovare una variabile con il nome '{0}'.</value>
+  </data>
+  <data name="TraceSourceNotFound" xml:space="preserve">
+    <value>Non è possibile trovare un'origine di traccia con il nome '{0}'.</value>
+  </data>
+  <data name="DriveAlreadyExists" xml:space="preserve">
+    <value>Esiste già un'unità denominata '{0}'.</value>
+  </data>
+  <data name="VariableAlreadyExists" xml:space="preserve">
+    <value>Esiste già una variabile con il nome '{0}'.</value>
+  </data>
+  <data name="AliasAlreadyExists" xml:space="preserve">
+    <value>L'alias non è consentito perché esiste già un alias con il nome '{0}'.</value>
+  </data>
+  <data name="CmdletProviderAlreadyExists" xml:space="preserve">
+    <value>Non è possibile registrare il provider cmdlet perché esiste già un provider cmdlet con il nome '{0}'.</value>
+  </data>
+  <data name="MustBeFileSystemPath" xml:space="preserve">
+    <value>Il percorso non fa riferimento a un percorso del file system.</value>
+  </data>
+  <data name="GlobalScopeCannotRemove" xml:space="preserve">
+    <value>Non è possibile rimuovere l'ambito globale.</value>
+  </data>
+  <data name="ScopeIDExceedsAvailableScopes" xml:space="preserve">
+    <value>Il numero di ambito '{0}' supera il numero di ambiti attivi.</value>
+  </data>
+  <data name="OnlyAbleToComparePSDriveInfo" xml:space="preserve">
+    <value>Non è possibile confrontare PSDriveInfo. Un'istanza di PSDriveInfo può essere confrontata solo con un'altra istanza di PSDriveInfo.</value>
+  </data>
+  <data name="OutputStreamingNotEnabled" xml:space="preserve">
+    <value>Il provider cmdlet non può trasmettere i risultati perché non è stato specificato alcun cmdlet tramite cui trasmettere l'output.</value>
+  </data>
+  <data name="ErrorStreamingNotEnabled" xml:space="preserve">
+    <value>Il provider cmdlet non può trasmettere i risultati perché non è stato specificato alcun cmdlet tramite cui trasmettere l'errore.</value>
+  </data>
+  <data name="HomePathNotSet" xml:space="preserve">
+    <value>La posizione Home per questo provider non è impostata. Per impostare la posizione Home, chiamare "(get-psprovider '{0}').Home = 'path'".</value>
+  </data>
+  <data name="NotProviderQualifiedPath" xml:space="preserve">
+    <value>Il percorso non è nel formato corretto. I percorsi del provider devono contenere un ID provider, seguito da "::", seguito da un percorso specifico del provider.</value>
+  </data>
+  <data name="MovePropertyDestinationResolveToSingle" xml:space="preserve">
+    <value>Non è possibile spostare l'elemento perché il percorso di destinazione può essere risolto solo in un singolo percorso.</value>
+  </data>
+  <data name="MoveItemSourceAndDestinationNotSameProvider" xml:space="preserve">
+    <value>Non è possibile spostare l'elemento perché i percorsi di origine e di destinazione non sono stati risolti nello stesso provider.</value>
+  </data>
+  <data name="MoveItemPathMultipleDestinationNotContainer" xml:space="preserve">
+    <value>Non è possibile spostare l'elemento perché il percorso di origine punta a uno o più elementi e il percorso di destinazione non è un contenitore. Verificare che il percorso di destinazione sia un contenitore e riprovare.</value>
+  </data>
+  <data name="MoveItemOneDestination" xml:space="preserve">
+    <value>Non è possibile spostare l'elemento perché la destinazione è stata risolta in più percorsi. Specificare un percorso di destinazione che porti a una sola destinazione e riprovare.</value>
+  </data>
+  <data name="CopyContainerItemToLeafError" xml:space="preserve">
+    <value>Non è possibile copiare il contenitore sopra un elemento foglia esistente.</value>
+  </data>
+  <data name="CopyContainerToContainerWithoutRecurseOrContainer" xml:space="preserve">
+    <value>Non è possibile copiare il contenitore in un altro contenitore. Il parametro -Recurse o -Container non è specificato.</value>
+  </data>
+  <data name="CopyItemSourceAndDestinationNotSameProvider" xml:space="preserve">
+    <value>Il percorso di origine e quello di destinazione non sono stati risolti nello stesso provider.</value>
+  </data>
+  <data name="RenameMultipleItemError" xml:space="preserve">
+    <value>Non è possibile rinominare l'elemento perché il percorso è stato risolto in più elementi. È possibile rinominare un solo elemento alla volta.</value>
+  </data>
+  <data name="ProviderImplementationInconsistent" xml:space="preserve">
+    <value>Il provider '{0}' non può essere usato per risolvere il percorso '{1}' a causa di un errore nel provider.</value>
+  </data>
+  <data name="IContentCmdletProvider_NotSupported" xml:space="preserve">
+    <value>Non è possibile usare l'interfaccia. L'interfaccia IContentCmdletProvider non è implementata da questo provider.</value>
+  </data>
+  <data name="IPropertyCmdletProvider_NotSupported" xml:space="preserve">
+    <value>Non è possibile usare l'interfaccia. L'interfaccia IPropertyCmdletProvider non è supportata da questo provider.</value>
+  </data>
+  <data name="IDynamicPropertyCmdletProvider_NotSupported" xml:space="preserve">
+    <value>Non è possibile usare l'interfaccia. L'interfaccia IDynamicPropertyCmdletProvider non è implementata da questo provider.</value>
+  </data>
+  <data name="NavigationCmdletProvider_NotSupported" xml:space="preserve">
+    <value>I metodi NavigationCmdletProvider non sono supportati da questo provider.</value>
+  </data>
+  <data name="ContainerCmdletProvider_NotSupported" xml:space="preserve">
+    <value>Metodi del provider non elaborati. I metodi ContainerCmdletProvider non sono supportati da questo provider.</value>
+  </data>
+  <data name="ItemCmdletProvider_NotSupported" xml:space="preserve">
+    <value>Non è possibile chiamare metodi. I metodi ItemCmdletProvider non sono supportati da questo provider.</value>
+  </data>
+  <data name="DriveCmdletProvider_NotSupported" xml:space="preserve">
+    <value>I metodi DriveCmdletProvider non sono supportati da questo provider.</value>
+  </data>
+  <data name="CmdletProvider_NotSupported" xml:space="preserve">
+    <value>Operazione del provider interrotta perché il provider non supporta questa operazione.</value>
+  </data>
+  <data name="CmdletProvider_NotSupportedRecursionDepth" xml:space="preserve">
+    <value>Operazione del provider interrotta perché il provider non supporta il parametro 'Depth'.</value>
+  </data>
+  <data name="IContent_Seek_NotSupported" xml:space="preserve">
+    <value>Non è possibile chiamare il metodo. Il metodo Seek per il contenuto non è supportato da questo provider.</value>
+  </data>
+  <data name="IContent_Clear_NotSupported" xml:space="preserve">
+    <value>Non è possibile eseguire l'operazione ClearContent. Questa operazione non è supportata da questo provider.</value>
+  </data>
+  <data name="Credentials_NotSupported" xml:space="preserve">
+    <value>Il provider non supporta l'uso di credenziali. Eseguire di nuovo l'operazione senza specificare le credenziali.</value>
+  </data>
+  <data name="FileSystemProviderCredentials_NotSupported" xml:space="preserve">
+    <value>Il provider FileSystem supporta le credenziali solo nel cmdlet New-PSDrive. Eseguire di nuovo l'operazione senza specificare le credenziali.</value>
+  </data>
+  <data name="Transactions_NotSupported" xml:space="preserve">
+    <value>Transazioni non supportate dal provider. Eseguire di nuovo l'operazione senza il parametro -UseTransaction.</value>
+  </data>
+  <data name="Filter_NotSupported" xml:space="preserve">
+    <value>Non è possibile chiamare il metodo. Il provider non supporta l'uso di filtri.</value>
+  </data>
+  <data name="NewDriveCredentials_NotSupported" xml:space="preserve">
+    <value>Non è possibile creare unità. Il provider non supporta l'uso di credenziali.</value>
+  </data>
+  <data name="NewItemAlreadyExists" xml:space="preserve">
+    <value>L'elemento nel percorso '{0}' esiste già.</value>
+  </data>
+  <data name="CopyItemDoesntExist" xml:space="preserve">
+    <value>Non è possibile copiare l'elemento. L'elemento presso il percorso '{0}' non esiste.</value>
+  </data>
+  <data name="RenameItemDoesntExist" xml:space="preserve">
+    <value>L'elemento nel percorso '{0}' non esiste.</value>
+  </data>
+  <data name="AliasDriveDescription" xml:space="preserve">
+    <value>Unità che contiene una visualizzazione degli alias archiviati nello stato della sessione</value>
+  </data>
+  <data name="EnvironmentDriveDescription" xml:space="preserve">
+    <value>Unità che contiene una visualizzazione delle variabili di ambiente per il processo</value>
+  </data>
+  <data name="FunctionDriveDescription" xml:space="preserve">
+    <value>Unità che contiene una visualizzazione delle funzioni archiviate nello stato della sessione</value>
+  </data>
+  <data name="VariableDriveDescription" xml:space="preserve">
+    <value>Unità che contiene una visualizzazione delle variabili archiviate nello stato della sessione</value>
+  </data>
+  <data name="TempDriveDescription" xml:space="preserve">
+    <value>Unità che mappa al percorso della directory temporanea per l'utente corrente</value>
+  </data>
+  <data name="NewLinkTargetNotSpecified" xml:space="preserve">
+    <value>Il collegamento '{0}' non può essere creato perché il valore di destinazione non è stato specificato.</value>
+  </data>
+  <data name="DollarNullDescription" xml:space="preserve">
+    <value>I riferimenti alla variabile null restituiscono sempre il valore null. Le assegnazioni non hanno effetto.</value>
+  </data>
+  <data name="MaxHistoryCountDescription" xml:space="preserve">
+    <value>Numero massimo di oggetti cronologia da mantenere in una sessione</value>
+  </data>
+  <data name="CannotRenameFunction" xml:space="preserve">
+    <value>Non è possibile rinominare la funzione perché la funzione {0} è di sola lettura o costante.</value>
+  </data>
+  <data name="CannotRenameAlias" xml:space="preserve">
+    <value>Non è possibile rinominare l'alias perché l'alias {0} è di sola lettura o costante.</value>
+  </data>
+  <data name="CannotRenameVariable" xml:space="preserve">
+    <value>Non è possibile rinominare la variabile perché la variabile {0} è di sola lettura o costante.</value>
+  </data>
+  <data name="VariableOptionsNotSettable" xml:space="preserve">
+    <value>Non è possibile impostare opzioni sulla variabile locale {0}. Usare New-Variable per creare una variabile che consenta di impostare opzioni.</value>
+  </data>
+  <data name="CmdletIsReadOnly" xml:space="preserve">
+    <value>Non è possibile modificare il cmdlet {0} perché è di sola lettura.</value>
+  </data>
+  <data name="VariableNotRemovableRare" xml:space="preserve">
+    <value>Non è possibile rimuovere la variabile {0} perché è stata ottimizzata e non può essere rimossa. Provare a usare il cmdlet Remove-Variable (senza alias), oppure eseguire il dot-sourcing del comando usato per rimuovere la variabile.</value>
+  </data>
+  <data name="VariableNotWritableRare" xml:space="preserve">
+    <value>Non è possibile sovrascrivere la variabile {0} perché è stata ottimizzata. Provare a usare il cmdlet New-Variable o Set-Variable (senza alias), oppure eseguire il dot-sourcing del comando usato per impostare la variabile.</value>
+  </data>
+  <data name="GetContent_TailAndHeadCannotCoexist" xml:space="preserve">
+    <value>I parametri {0} e {1} non possono essere usati insieme. Specificare un solo parametro.</value>
+  </data>
+  <data name="GetContent_TailNotSupported" xml:space="preserve">
+    <value>Il parametro Tail è attualmente supportato solo per il provider FileSystem.</value>
+  </data>
+  <data name="AliasWithCommandNameAlreadyExists" xml:space="preserve">
+    <value>L'alias non è consentito perché esiste già un comando con il nome '{0}' e il tipo di comando '{1}'.</value>
+  </data>
+  <data name="CanNotRun" xml:space="preserve">
+    <value>Non è possibile eseguire il software. Accesso negato.</value>
+  </data>
+  <data name="CopyItemFromSessionToSession" xml:space="preserve">
+    <value>'-{0}' e '-{1}' si escludono a vicenda e non possono essere specificati contemporaneamente.</value>
+  </data>
+  <data name="CopyItemRemotelyPathIsNotAbsolute" xml:space="preserve">
+    <value>Il percorso '{0}' non è valido. Nelle operazioni di copia remota sono supportati solo i percorsi assoluti.</value>
+  </data>
+  <data name="CopyItemValidateRemotePath" xml:space="preserve">
+    <value>Non è possibile convalidare il percorso remoto '{0}'.</value>
+  </data>
+  <data name="CopyItemSessionProperties" xml:space="preserve">
+    <value>Non è possibile eseguire l'operazione perché la sessione {0} è impostata su {1}.</value>
+  </data>
+  <data name="CopyItemRemotelyPathIsNullOrEmpty" xml:space="preserve">
+    <value>Il parametro '{0}' non può essere null o vuoto.</value>
+  </data>
+  <data name="WDACSessionStateVarLogTitle" xml:space="preserve">
+    <value>Variabili di stato della sessione</value>
+  </data>
+  <data name="WDACSessionStateVarLogMessage" xml:space="preserve">
+    <value>La modifica o la creazione dell'ambito della variabile '{0}' in AllScope non sarà consentita in modalità ConstrainedLanguage.</value>
+  </data>
+</root>

@@ -1,0 +1,493 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ShellBannerPowerShell" xml:space="preserve">
+    <value>PowerShell {0}</value>
+  </data>
+  <data name="ShellBannerCLMode" xml:space="preserve">
+    <value>[Modo de Linguagem Restritiva]</value>
+  </data>
+  <data name="ShellBannerCLAuditMode" xml:space="preserve">
+    <value>[Modo de AUDITORIA de Linguagem Restrita: Sem Restrições]</value>
+  </data>
+  <data name="ShellBannerNLMode" xml:space="preserve">
+    <value>[Modo sem Linguagem]</value>
+  </data>
+  <data name="ShellBannerRLMode" xml:space="preserve">
+    <value>[Modo de Linguagem Restrita]</value>
+  </data>
+  <data name="PreviewUpdateNotificationMessage" xml:space="preserve">
+    <value>  {1} Uma nova versão prévia do PowerShell está disponível: v{0} {2}
+  {1} Atualize agora ou confira a página da versão em:{3}{2}
+  {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
+</value>
+  </data>
+  <data name="StableUpdateNotificationMessage" xml:space="preserve">
+    <value>  {1} Uma nova versão estável do PowerShell está disponível: v{0} {2}
+  {1} Atualize agora ou confira a página da versão em:{3}{2}
+  {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
+</value>
+  </data>
+  <data name="LTSUpdateNotificationMessage" xml:space="preserve">
+    <value>  {1} Uma nova versão LTS do PowerShell está disponível: v{0} {2}
+  {1} Atualize agora ou confira a página da versão em:{3}{2}
+  {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
+</value>
+  </data>
+  <data name="UsageHelp" xml:space="preserve">
+    <value>Uso: pwsh[.exe] [-Login] [[-File] &lt;filePath&gt; [args]]
+                  [-Command { - | &lt;script-block&gt; [-args &lt;arg-array&gt;]
+                                | &lt;string&gt; [&lt;CommandParameters&gt;] } ]
+                  [-CommandWithArgs &lt;string&gt; [&lt;CommandParameters&gt;]
+                  [-ConfigurationName &lt;string&gt;] [-ConfigurationFile &lt;filePath&gt;]
+                  [-CustomPipeName &lt;string&gt;] [-EncodedCommand &lt;Base64EncodedCommand&gt;]
+                  [-ExecutionPolicy &lt;ExecutionPolicy&gt;] [-InputFormat {Text | XML}]
+                  [-Interactive] [-MTA] [-NoExit] [-NoLogo] [-NonInteractive] [-NoProfile]
+                  [-NoProfileLoadTime] [-OutputFormat {Text | XML}]
+                  [-SettingsFile &lt;filePath&gt;] [-SSHServerMode] [-STA]
+                  [-Version] [-WindowStyle &lt;style&gt;]
+                  [-WorkingDirectory &lt;directoryPath&gt;]
+
+       pwsh[.exe] -h | -Help | -? | /?
+
+Ajuda Online do PowerShell https://aka.ms/powershell-docs
+
+Todos os parâmetros não diferenciam maiúsculas de minúsculas.</value>
+  </data>
+  <data name="ExtendedHelp" xml:space="preserve">
+    <value>
+
+-File | -f
+
+    Se o valor de File for "-", será feita a leitura do texto do comando a partir da entrada padrão.
+    Executar "pwsh -File -" sem entrada padrão redirecionada inicia uma sessão
+    regular. Isso é o mesmo que não especificar o parâmetro File de forma alguma.
+
+    Este é o parâmetro padrão quando não há parâmetros, mas há valores
+    presente na linha de comando. O script especificado é executado no escopo local
+    ("dot-sourced"), para que as funções e variáveis que o script
+    cria fiquem disponíveis na sessão atual. Insira o caminho do arquivo de script
+    e quaisquer parâmetros. File deve ser o último parâmetro no comando, porque
+    todos os caracteres digitados após o nome do parâmetro File são interpretados como o
+    caminho do arquivo de script seguido pelos parâmetros do script.
+
+    Normalmente, os parâmetros de opção de um script são incluídos ou
+    omitidos. Por exemplo, o comando a seguir usa o parâmetro All do
+    Get-Script.ps1 arquivo de script: "-File .\Get-Script.ps1 -All"
+
+    Em casos raros, talvez seja necessário fornecer um valor BOOLIANO para um parâmetro
+    de opção. Para fornecer um valor BOOLIANO para um parâmetro de opção no valor
+    do parâmetro FILE, use o parâmetro normalmente seguido imediatamente por
+    dois-pontos e pelo valor booleano, como no exemplo a seguir:
+    "-File .\Get-Script.ps1 -All:$False".
+
+    Os parâmetros passados para o script são passados como cadeias de caracteres literais, após
+    a interpretação pelo shell atual. Por exemplo, se você estiver no cmd.exe e
+    quiser passar um valor de variável de ambiente, você usaria a sintaxe do
+    cmd.exe: "pwsh -File .\test.ps1 -TestParam %windir%"
+
+    Em contraste, executar "pwsh -File .\test.ps1 -TestParam $env:windir" em
+    cmd.exe fará com que o script receba a cadeia de caracteres literal "$env:windir"
+    porque ela não tem um significado especial para o shell cmd.exe atual. O
+    O estilo de referência de variável de ambiente "$env:windir" pode ser usado dentro de um
+    parâmetro Command, pois lá ele é interpretado como código do PowerShell.
+
+    Da mesma forma, se você quiser executar o mesmo comando a partir de um script de Lote,
+    você usaria "%~dp0" em vez de ".\" ou "$PSScriptRoot" para representar o diretório
+    de execução atual: "pwsh -File %~dp0test.ps1 -TestParam %windir%". Se você
+    usasse ".\test.ps1", o PowerShell geraria um erro porque ele não consegue
+    localizar o caminho literal ".\test.ps1".
+
+    Quando o arquivo de script invocado termina com um comando de saída, o
+    o código de saída do processo é definido como o argumento numérico usado com o comando de saída. Em
+    caso de encerramento normal, o código de saída é sempre 0.
+
+    Semelhante a -Command, quando ocorre um erro que termina o script, o código de saída
+    é definido como 1. No entanto, ao contrário de -Command, quando a execução é
+    interrompida com Ctrl-C, o código de saída é 0.
+
+-Command | -c
+
+    Executa os comandos especificados (e quaisquer parâmetros) como se fossem
+    digitados no prompt de comando do PowerShell e, em seguida, encerrados, a menos que o parâmetro NoExit
+    seja especificado.
+
+    O valor de Command pode ser "-", um bloco de script ou uma cadeia de caracteres. Se o valor
+    de Command for "-", o texto do comando será lido da entrada padrão.
+
+    O parâmetro Command aceita um bloco de script para execução somente quando consegue
+    reconhecer o valor passado para Command como um tipo ScriptBlock. Isso só é
+    possível somente ao executar pwsh de outro processo que hospeda o PowerShell. O tipo ScriptBlock
+    pode estar contido em uma variável existente, ser retornado de uma expressão,
+    ou analisado pelo processo que hospeda o PowerShell como um bloco de script literal delimitado por
+    chaves curvas "{}", antes de ser passado para pwsh.
+
+        pwsh -Command {Get-WinEvent -LogName security}
+
+    No cmd.exe, não existe algo como um bloco de script (ou tipo ScriptBlock),
+    portanto, o valor passado para Command será sempre uma cadeia de caracteres. Você pode escrever o
+    bloco de script dentro da cadeia, mas, em vez de ser executado, ele
+    se comportará exatamente como se você o tivesse digitado em um prompt típico do PowerShell,
+    imprimindo o conteúdo do bloco de script de volta para você.
+
+    Uma cadeia de caracteres passada para Command ainda é executada como script do PowerShell, portanto,
+    as chaves do bloco de script geralmente nem são necessárias quando
+    em execução a partir de cmd.exe. Para executar um bloco de script embutido definido dentro de uma
+    cadeia de caracteres, pode-se usar o operador de chamada &amp;:
+
+        pwsh -Command "&amp; {Get-WinEvent -LogName security}"
+
+    Se o valor de Command for uma cadeia, Command deverá ser o último parâmetro de
+    pwsh, pois todos os argumentos posteriores a ele são interpretados como parte do
+    comando a executar.
+
+    Quando chamado de uma sessão existente do PowerShell, os resultados são
+    retornados ao shell pai como objetos XML desserializados, não como objetos ativos.
+    Para outros shells, os resultados são retornados como cadeias de caracteres.
+
+    Se o valor de Command for "-", o texto do comando será lido da entrada
+    padrão. Você deve redirecionar a entrada padrão ao usar o parâmetro Command
+    com entrada padrão. Por exemplo:
+
+        @'
+        "in"
+
+        "olá" |
+        % { "$_ there" }
+
+        "out"
+        '@ | powershell -NoProfile -Command -
+
+    Este exemplo produz a seguinte saída:
+
+        in
+        hi there
+        out
+
+    O código de saída do processo é determinado pelo status do 
+    comando executado no bloco de script (executado). O código de saída é 0 quando $? é $true ou 1
+    quando $? é $false. Se o último comando for um programa externo ou um
+    Script do PowerShell que defina explicitamente um código de saída diferente de 0 ou 1,
+    o código de saída será convertido em 1 para o código de saída do processo. Para preservar o
+    código de saída específico, adicione exit $LASTEXITCODE à cadeia de caracteres do comando ou ao bloco de script.
+
+    Da mesma forma, o valor 1 é retornado quando ocorre um erro de encerramento de script
+    (erro que encerra o script), como um throw ou -ErrorAction Stop, ocorre
+    ou quando a execução é interrompida com Ctrl-C.
+
+-CommandWithArgs | -cwa
+
+    [Experimental]
+    Executa um comando do PowerShell com argumentos.  Ao contrário de `-Command`, esse
+    parâmetro preenche a variável interna `$args, que pode ser usada pelo
+    comando.
+
+    A primeira cadeia de caracteres é o comando e as cadeias de caracteres seguintes, separadas por espaços em branco,
+    são os argumentos.
+
+    Por exemplo:
+
+        pwsh -CommandWithArgs '$args | % { "arg: $_" }' arg1 arg2
+
+    Este exemplo produz a seguinte saída:
+
+        arg: arg1
+        arg: arg2
+
+-ConfigurationName | -config
+
+    Especifica um ponto de extremidade de configuração no qual o PowerShell é executado. Esse pode ser
+    qualquer ponto de extremidade registrado no computador local, incluindo
+    pontos de extremidade padrão de comunicação remota do PowerShell ou um ponto de extremidade personalizado com capacidades específicas de
+    função de usuário.
+
+    Exemplo: "pwsh -ConfigurationName AdminRoles"
+
+-ConfigurationFile
+
+    Especifica o caminho de um arquivo de configuração de sessão (.pssc). A configuração
+    contida no arquivo de configuração será aplicada à sessão do
+    PowerShell.
+
+    Exemplo: "pwsh -ConfigurationFile "C:\ProgramData\PowerShell\MyConfig.pssc"
+
+-CustomPipeName
+
+    Especifica o nome que será usado para um servidor IPC adicional (pipe nomeado) usado
+    para depuração e outras comunicações entre processos. Este oferece um
+    mecanismo previsível para se conectar a outras instâncias do PowerShell.
+    Normalmente usado com o parâmetro CustomPipeName no comando "Enter-PSHostProcess".
+
+    Este parâmetro foi introduzido no PowerShell 6.2.
+
+    Por exemplo:
+
+        # Instância do PowerShell 1
+        pwsh -CustomPipeName mydebugpipe
+        # Instância do PowerShell 2
+        Enter-PSHostProcess -CustomPipeName mydebugpipe
+
+-EncodedCommand | -e | -ec
+
+    Aceita uma versão do comando codificada em Base64 de um comando. Use este parâmetro para
+    enviar comandos ao PowerShell que exigem aspas complexas e aninhadas. O
+    A representação em Base64 deve ser uma cadeia de caracteres codificada em UTF-16.
+
+    Por exemplo:
+
+        $command = 'dir "c:\program files" '
+        $bytes = [System.Text.Encoding]::Unicode.GetBytes($command)
+        $encodedCommand = [Convert]::ToBase64String($bytes)
+        pwsh -encodedcommand $encodedCommand
+
+-ExecutionPolicy | -ex | -ep
+
+    Define a política de execução padrão para a sessão atual e a salva na
+    variável de ambiente $env:PSExecutionPolicyPreference. Este parâmetro
+    não altera as políticas de execução configuradas de forma persistente.
+
+    Este parâmetro aplica-se somente a computadores Windows. A
+    variável de ambiente $env:PSExecutionPolicyPreference não existe em
+    plataformas não Windows.
+
+-InputFormat | -inp | -if
+
+    Descreve o formato dos dados enviados ao PowerShell. Os valores válidos são "Text"
+    (cadeias de caracteres de texto) ou "XML" (formato CLIXML serializado).
+
+-Interactive | -i
+
+    Apresente um prompt interativo ao usuário. É o inverso do parâmetro
+    NonInteractive.
+
+-Login | -l
+
+    No Linux e macOS, inicia o PowerShell como um shell de logon, usando /bin/sh para
+    executar perfis de logon, como /etc/profile e ~/.profile. No Windows,
+    este parâmetro de opçã não faz nada.
+
+    [!IMPORTANT] Este parâmetro deve vir primeiro para iniciar o PowerShell como um shell
+    de logon. O parâmetro será ignorado se for passado em qualquer outra posição.
+
+    Para configurar o pwsh como o shell de logon em sistemas operacionais semelhantes ao UNIX:
+
+    - Verifique se o caminho absoluto completo para pwsh está listado em /etc/shells
+
+      - Este caminho geralmente é algo como /usr/bin/pwsh no Linux ou
+        /usr/local/bin/pwsh no macOS
+      - Com alguns métodos de instalação, esta entrada é adicionada
+        automaticamente durante a instalação
+      - Se o pwsh não estiver presente em /etc/shells, use um editor para acrescentar o
+        caminho para pwsh na última linha. A edição exige privilégios elevados para
+        editar.
+
+    - Use o utilitário chsh para definir o shell do usuário atual como pwsh:
+
+        chsh -s /usr/bin/pwsh
+
+    [!WARNING] No momento, não há suporte para definir pwsh como o shell de logon no
+    Subsistema do Windows para Linux (WSL), e tentar definir o pwsh como
+    shell de logon no WSL pode fazer com que não seja possível iniciar o WSL interativamente.
+
+-MTA
+
+    Iniciar o PowerShell usando um multi-threaded apartment. Este parâmetro só está
+    disponível no Windows.
+
+-NoExit | -noe
+
+    Não encerra o PowerShell após executar os comandos de inicialização.
+
+    Exemplo: "pwsh -NoExit -Command Get-Date"
+
+-NoLogo | -nol
+
+    Oculta o texto da barra de notificação na inicialização de sessões interativas.
+
+-NonInteractive | -noni
+
+    Este parâmetro é usado para criar sessões que não devem exigir a entrada do usuário.
+    Isto é útil para scripts executados em tarefas agendadas ou pipelines de CI/CD.
+    Todas as tentativas de usar recursos interativos, como 'Read-Host' ou prompts de confirmação,
+    resultam em erros de término de instrução em vez de ficarem aguardando indefinidamente.
+
+-NoProfile | -nop
+
+    Não carrega os perfis do PowerShell.
+
+-NoProfileLoadTime
+
+    Oculta o texto do tempo de carregamento do perfil do PowerShell exibido na inicialização quando esse
+    tempo ultrapassa 500 milissegundos.
+
+-OutputFormat | -o | -of
+
+    Determina como a saída do PowerShell é formatada. Os valores válidos são "Text"
+    (cadeias de caracteres de texto) ou "XML" (formato CLIXML serializado).
+
+    Exemplo: "pwsh -o XML -c Get-Date"
+
+    Quando chamado em uma sessão do PowerShell, você obtém objetos desserializados como
+    saída, em vez de cadeias de caracteres simples. Quando chamado de outros shells, a saída é
+    dados de cadeia de caracteres formatados como texto CLIXML.
+
+-SettingsFile | -settings
+
+    Substitui, para a sessão, o arquivo de configurações
+    "powershell.config.json". Por padrão, as configurações de todo o sistema são lidas do
+    "powershell.config.json" no diretório "$PSHOME".
+
+    Observe que essas configurações não são usadas pelo ponto de extremidade especificado pelo
+    argumento "-ConfigurationName".
+
+    Exemplo: "pwsh -SettingsFile c:\myproject\powershell.config.json"
+
+-SSHServerMode | -sshs
+
+    Usado em sshd_config para executar o PowerShell como subsistema SSH. Não se
+    destina a nenhum outro uso, que também não tem suporte.
+
+-STA
+
+    Iniciar PowerShell usando um single-threaded apartment. Esse é o padrão.
+    Este parâmetro só está disponível no Windows.
+
+-Version | -v
+
+    Exibe a versão do PowerShell. Os parâmetros adicionais são ignorados.
+
+-WindowStyle | -w
+
+    Define o estilo da janela para a sessão. Os valores válidos são Normal, Minimized,
+    Maximized e Hidden.
+
+-WorkingDirectory | -wd
+
+    Define o diretório de trabalho inicial executando na inicialização. Há suporte para
+    qualquer caminho de arquivo válido do PowerShell.
+
+    Para iniciar o PowerShell no diretório inicial, use: pwsh -WorkingDirectory ~
+
+-Help, -?, /?
+
+    Exibe a ajuda do pwsh. Se você estiver digitando um comando pwsh no PowerShell,
+    preceda os parâmetros do comando com um hífen (-), não com uma barra (/).
+    </value>
+  </data>
+</root>

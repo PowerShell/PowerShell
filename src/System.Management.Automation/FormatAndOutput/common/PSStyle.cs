@@ -642,6 +642,11 @@ namespace System.Management.Automation
         public OutputRendering OutputRendering { get; set; } = OutputRendering.Host;
 
         /// <summary>
+        /// Gets or sets whether to force the default implicit formatting to use 'AutoSize'.
+        /// </summary>
+        public bool AutoSizeDefaultFormatting { get; set; }
+
+        /// <summary>
         /// Gets value to turn off all attributes.
         /// </summary>
         public string Reset { get; } = "\x1b[0m";
@@ -892,7 +897,7 @@ namespace System.Management.Automation
                 throw new ArgumentOutOfRangeException(paramName: nameof(foregroundColor));
             }
 
-            if (backIndex < 0 || backIndex >= ForegroundColorMap.Length)
+            if (backIndex < 0 || backIndex >= BackgroundColorMap.Length)
             {
                 throw new ArgumentOutOfRangeException(paramName: nameof(backgroundColor));
             }

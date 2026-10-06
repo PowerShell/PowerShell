@@ -1199,80 +1199,67 @@ namespace System.Management.Automation
         /// </remarks>
         internal LookupPathCollection GetLookupDirectoryPaths()
         {
-            LookupPathCollection result = new LookupPathCollection();
-
             string path = Environment.GetEnvironmentVariable("PATH");
+            discoveryTracer.WriteLine("PATH: {0}", path);
 
-            discoveryTracer.WriteLine(
-                "PATH: {0}",
-                path);
-
-            bool isPathCacheValid =
-                path != null &&
-                string.Equals(_pathCacheKey, path, StringComparison.OrdinalIgnoreCase) &&
-                _cachedPath != null;
+            bool isPathCacheValid = _cachedLookupPaths is not null
+                && string.Equals(_pathCacheKey, path, StringComparison.OrdinalIgnoreCase);
 
             if (!isPathCacheValid)
             {
-                // Reset the cached lookup paths
+                _pathCacheKey = path;
                 _cachedLookupPaths = null;
 
-                // Tokenize the path and cache it
-
-                _pathCacheKey = path;
-
-                if (_pathCacheKey != null)
+                if (string.IsNullOrEmpty(path))
                 {
+                    // Cache an empty collection when PATH is null (unset) or an empty string.
+                    _cachedLookupPaths = new List<string>();
+                }
+                else
+                {
+                    // Tokenize the path and cache it
                     string[] tokenizedPath = _pathCacheKey.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries);
-                    _cachedPath = new Collection<string>();
+                    _cachedLookupPaths = new List<string>(capacity: tokenizedPath.Length);
 
                     foreach (string directory in tokenizedPath)
                     {
-                        string tempDir = directory.TrimStart();
-                        if (tempDir.EqualsOrdinalIgnoreCase("~"))
+                        string tempDir = directory.Trim();
+                        if (tempDir.StartsWith('~'))
                         {
-                            tempDir = Environment.GetFolderPath(
-                                Environment.SpecialFolder.UserProfile,
-                                Environment.SpecialFolderOption.DoNotVerify);
-                        }
-                        else if (tempDir.StartsWith("~" + Path.DirectorySeparatorChar))
-                        {
-                            tempDir = Environment.GetFolderPath(
-                                Environment.SpecialFolder.UserProfile,
-                                Environment.SpecialFolderOption.DoNotVerify)
-                                + Path.DirectorySeparatorChar
-                                + tempDir.Substring(2);
+                            if (tempDir.Length is 1)
+                            {
+                                tempDir = Environment.GetFolderPath(
+                                    Environment.SpecialFolder.UserProfile,
+                                    Environment.SpecialFolderOption.DoNotVerify);
+                            }
+                            else if (tempDir[1] == Path.DirectorySeparatorChar)
+                            {
+                                string homeDir = Environment.GetFolderPath(
+                                    Environment.SpecialFolder.UserProfile,
+                                    Environment.SpecialFolderOption.DoNotVerify);
+                                tempDir = $"{homeDir}{Path.DirectorySeparatorChar}{tempDir.AsSpan(2)}";
+                            }
                         }
 
-                        _cachedPath.Add(tempDir);
-                        result.Add(tempDir);
+                        _cachedLookupPaths.Add(tempDir);
                     }
                 }
             }
-            else
-            {
-                result.AddRange(_cachedPath);
-            }
 
-            // Cache the new lookup paths
-            return _cachedLookupPaths ??= result;
+            // The returned instance will be mutated in 'CommandPathSearch.ResolveCurrentDirectoryInLookupPaths' when resolving relative paths,
+            // which depends on user's current working directory. So, we need to return a copy of the lookup paths to keep the cache intact.
+            return new LookupPathCollection(_cachedLookupPaths);
         }
 
         /// <summary>
-        /// The cached list of lookup paths. It can be invalidated by
-        /// the PATH changing.
+        /// The cached list of lookup paths. It can be invalidated by the PATH changing.
         /// </summary>
-        private LookupPathCollection _cachedLookupPaths;
+        private List<string> _cachedLookupPaths;
 
         /// <summary>
         /// The key that determines if the cached PATH can be used.
         /// </summary>
         private string _pathCacheKey;
-
-        /// <summary>
-        /// The cache of the tokenized PATH directories.
-        /// </summary>
-        private Collection<string> _cachedPath;
 
         #endregion internal members
 

@@ -518,9 +518,11 @@ namespace Microsoft.PowerShell.Commands
                             ||
                             (wildLogPattern.IsMatch(logName)))
                         {
+                            EventLogConfiguration logObj;
+                            EventLogInformation logInfoObj;
                             try
                             {
-                                EventLogConfiguration logObj = new(logName, eventLogSession);
+                                logObj = new EventLogConfiguration(logName, eventLogSession);
 
                                 //
                                 // Skip direct channels matching the wildcard unless -Force is present.
@@ -533,19 +535,25 @@ namespace Microsoft.PowerShell.Commands
                                     continue;
                                 }
 
-                                EventLogInformation logInfoObj = eventLogSession.GetLogInformation(logName, PathType.LogName);
-
-                                PSObject outputObj = new(logObj);
-
-                                outputObj.Properties.Add(new PSNoteProperty("FileSize", logInfoObj.FileSize));
-                                outputObj.Properties.Add(new PSNoteProperty("IsLogFull", logInfoObj.IsLogFull));
-                                outputObj.Properties.Add(new PSNoteProperty("LastAccessTime", logInfoObj.LastAccessTime));
-                                outputObj.Properties.Add(new PSNoteProperty("LastWriteTime", logInfoObj.LastWriteTime));
-                                outputObj.Properties.Add(new PSNoteProperty("OldestRecordNumber", logInfoObj.OldestRecordNumber));
-                                outputObj.Properties.Add(new PSNoteProperty("RecordCount", logInfoObj.RecordCount));
-
-                                WriteObject(outputObj);
                                 bMatchFound = true;
+                                logInfoObj = eventLogSession.GetLogInformation(logName, PathType.LogName);
+                            }
+                            catch (UnauthorizedAccessException exc)
+                            {
+                                string exceptionMsg = string.Format(CultureInfo.InvariantCulture, GetEventResources.LogInfoNoAccess, logName);
+                                var newExc = new UnauthorizedAccessException(exceptionMsg, exc);
+
+                                string recommendationMsg = GetEventResources.SuggestElevation;
+                                var eRecord = new ErrorRecord(newExc, "LogInfoNoAccess", ErrorCategory.PermissionDenied, logName)
+                                {
+                                    ErrorDetails = new ErrorDetails(string.Empty)
+                                    {
+                                        RecommendedAction = recommendationMsg
+                                    }
+                                };
+
+                                WriteError(eRecord);
+                                continue;
                             }
                             catch (Exception exc)
                             {
@@ -556,6 +564,16 @@ namespace Microsoft.PowerShell.Commands
                                 WriteError(new ErrorRecord(outerExc, "LogInfoUnavailable", ErrorCategory.NotSpecified, null));
                                 continue;
                             }
+
+                            PSObject outputObj = new(logObj);
+                            outputObj.Properties.Add(new PSNoteProperty("FileSize", logInfoObj.FileSize));
+                            outputObj.Properties.Add(new PSNoteProperty("IsLogFull", logInfoObj.IsLogFull));
+                            outputObj.Properties.Add(new PSNoteProperty("LastAccessTime", logInfoObj.LastAccessTime));
+                            outputObj.Properties.Add(new PSNoteProperty("LastWriteTime", logInfoObj.LastWriteTime));
+                            outputObj.Properties.Add(new PSNoteProperty("OldestRecordNumber", logInfoObj.OldestRecordNumber));
+                            outputObj.Properties.Add(new PSNoteProperty("RecordCount", logInfoObj.RecordCount));
+
+                            WriteObject(outputObj);
                         }
                     }
 

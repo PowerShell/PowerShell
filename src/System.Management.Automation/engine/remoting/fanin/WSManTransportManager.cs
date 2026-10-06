@@ -317,18 +317,13 @@ namespace System.Management.Automation.Remoting.Client
         #endregion
 
         #region Private Data
+
         // operation handles are owned by WSMan
-        [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private IntPtr _wsManSessionHandle;
-
-        [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private IntPtr _wsManShellOperationHandle;
-
-        [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private IntPtr _wsManReceiveOperationHandle;
-
-        [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private IntPtr _wsManSendOperationHandle;
+
         // this is used with WSMan callbacks to represent a session transport manager.
         private long _sessionContextID;
 
@@ -2643,7 +2638,6 @@ namespace System.Management.Automation.Remoting.Client
         /// </summary>
         internal class WSManAPIDataCommon : IDisposable
         {
-            [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             private IntPtr _handle;
             // if any
             private WSManNativeApi.WSManStreamIDSet_ManToUn _inputStreamSet;
@@ -2791,18 +2785,11 @@ namespace System.Management.Automation.Remoting.Client
 
         // operation handles
         private readonly IntPtr _wsManShellOperationHandle;
-
-        [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private IntPtr _wsManCmdOperationHandle;
-
-        [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private IntPtr _cmdSignalOperationHandle;
-
-        [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private IntPtr _wsManReceiveOperationHandle;
-
-        [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private IntPtr _wsManSendOperationHandle;
+
         // this is used with WSMan callbacks to represent a command transport manager.
         private long _cmdContextId;
 

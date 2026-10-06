@@ -1199,7 +1199,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Dispose the current runspacepool.
+        /// Release all resources.
         /// </summary>
         public void Dispose()
         {

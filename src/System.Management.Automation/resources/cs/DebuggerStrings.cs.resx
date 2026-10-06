@@ -1,0 +1,264 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="VariableBreakpointString" xml:space="preserve">
+    <value>Zarážka proměnné na ${0} (přístup {1})</value>
+  </data>
+  <data name="VariableScriptBreakpointString" xml:space="preserve">
+    <value>Zarážka proměnné na {0}:${1} (přístup {2})</value>
+  </data>
+  <data name="LineBreakpointString" xml:space="preserve">
+    <value>Zarážka řádku na {0}:{1}</value>
+  </data>
+  <data name="StatementBreakpointString" xml:space="preserve">
+    <value>Zarážka řádku na {0}:{1}, {2}</value>
+  </data>
+  <data name="CommandBreakpointString" xml:space="preserve">
+    <value>Zarážka příkazu na {0}</value>
+  </data>
+  <data name="CommandScriptBreakpointString" xml:space="preserve">
+    <value>Zarážka příkazu na {0}:{1}</value>
+  </data>
+  <data name="WarningBreakpointWillNotBeHit" xml:space="preserve">
+    <value>Zarážka {0} nebude dosažena</value>
+  </data>
+  <data name="StepHelp" xml:space="preserve">
+    <value> {0}, {1,-16} Jeden krok (vstup do funkcí, skriptů atd.)</value>
+  </data>
+  <data name="StepOverHelp" xml:space="preserve">
+    <value> {0}, {1,-16} Přejít na další příkaz (krok nad přes funkce, skripty atd.).</value>
+  </data>
+  <data name="StepOutHelp" xml:space="preserve">
+    <value> {0}, {1,-16} Vystoupit z aktuální funkce, skriptu atd.</value>
+  </data>
+  <data name="ContinueHelp" xml:space="preserve">
+    <value> {0}, {1,-16} Pokračovat v operaci</value>
+  </data>
+  <data name="StopHelp" xml:space="preserve">
+    <value> {0}, {1,-16} Zastavit operaci a ukončit ladicí program</value>
+  </data>
+  <data name="GetStackTraceHelp" xml:space="preserve">
+    <value> {0}, Get-PSCallStack Zobrazit zásobník volání</value>
+  </data>
+  <data name="ListHelp" xml:space="preserve">
+    <value> {0}, {1,-16} Vypsat zdrojový kód aktuálního skriptu.  </value>
+  </data>
+  <data name="AdditionalListHelp1" xml:space="preserve">
+    <value>                     Pomocí příkazu list začněte na aktuálním řádku, list &lt;m&gt;.  </value>
+  </data>
+  <data name="AdditionalListHelp2" xml:space="preserve">
+    <value>                     spustit od řádku &lt;m&gt; a pomocí příkazu list &lt;m&gt; &lt;n&gt; zobrazit &lt;n&gt; řádků </value>
+  </data>
+  <data name="AdditionalListHelp3" xml:space="preserve">
+    <value>                     řádky od řádku &lt;m&gt;</value>
+  </data>
+  <data name="EnterHelp" xml:space="preserve">
+    <value> &lt;enter&gt;             Zopakovat poslední příkaz, pokud to byl {0}, {1} nebo {2}.</value>
+  </data>
+  <data name="HelpCommandHelp" xml:space="preserve">
+    <value> {0}, {1,-16} zobrazí tuto zprávu nápovědy.</value>
+  </data>
+  <data name="PromptHelp" xml:space="preserve">
+    <value>Pokyny k přizpůsobení výzvy ladicího programu zobrazíte zadáním příkazu help about_prompt.</value>
+  </data>
+  <data name="SessionDoesNotSupportDebugger" xml:space="preserve">
+    <value>
+Aktuální relace nepodporuje ladění. Operace bude pokračovat. 
+
+</value>
+  </data>
+  <data name="LocationFormat" xml:space="preserve">
+    <value>{0}: řádek {1}</value>
+  </data>
+  <data name="NoSourceCode" xml:space="preserve">
+    <value>Není k dispozici žádný zdrojový kód.</value>
+  </data>
+  <data name="BadStartFormat" xml:space="preserve">
+    <value>Počáteční číslo řádku musí být kladné celé číslo, které není větší než {0}.</value>
+  </data>
+  <data name="BadCountFormat" xml:space="preserve">
+    <value>Počet řádků musí být kladné celé číslo.</value>
+  </data>
+  <data name="NoFile" xml:space="preserve">
+    <value>&lt;Žádný soubor&gt;</value>
+  </data>
+  <data name="StackTraceFormat" xml:space="preserve">
+    <value>v {0}, {1}: řádek {2}</value>
+  </data>
+  <data name="CannotProcessDebuggerCommandNotStopped" xml:space="preserve">
+    <value>Ladicí program nemůže zpracovat příkazy, pokud není ve stavu Zastaveno.</value>
+  </data>
+  <data name="CannotSetDebuggerAction" xml:space="preserve">
+    <value>Rutina SetDebugAction není implementována pro místní ladicí program skriptů.</value>
+  </data>
+  <data name="CannotSetRemoteDebuggerAction" xml:space="preserve">
+    <value>Ladicí program nemůže nastavit akci pokračování, protože ladicí program ve vzdálené relaci není ve stavu Zastaveno.</value>
+  </data>
+  <data name="CannotStartJobDebuggingDebuggerBusy" xml:space="preserve">
+    <value>Úlohu nelze ladit, protože je ladicí program momentálně zaneprázdněn.</value>
+  </data>
+  <data name="NoDebuggableJobsFound" xml:space="preserve">
+    <value>Zadaná úloha a všechny podřízené úlohy byly prozkoumány, ale nebyly nalezeny žádné úlohy, které by bylo možné ladit.  Aby bylo možné ladit úlohu nebo podřízenou úlohu, musí úloha podporovat ladění a musí být také ve spuštěném stavu.</value>
+  </data>
+  <data name="CannotEnableDebuggerSteppingInvalidMode" xml:space="preserve">
+    <value>Ladicí program nelze pro krokový režim povolit, protože je vypnutý a režim ladění je nastavený na None.</value>
+  </data>
+  <data name="RunspaceDebuggingDebuggerBusy" xml:space="preserve">
+    <value>Prostředí runspace nelze ladit, protože ladicí program hostitele je momentálně zaneprázdněný.</value>
+  </data>
+  <data name="RunspaceDebuggingDebuggerIsOff" xml:space="preserve">
+    <value>Nelze ladit prostředí runspace. Ladicí program prostředí runspace je v tuto chvíli vypnutý (DebugMode je None).</value>
+  </data>
+  <data name="RunspaceDebuggingInvalidRunspaceState" xml:space="preserve">
+    <value>Prostředí runspace, které není ve stavu Otevřeno, nelze ladit. Stav tohoto prostředí runspace je {0}.</value>
+  </data>
+  <data name="RunspaceDebuggingNoRunspaceDebugger" xml:space="preserve">
+    <value>Nelze ladit prostředí runspace. Prostředí Runspace {0} nemá žádný přidružený ladicí program.</value>
+  </data>
+  <data name="RemoteServerDebuggerAlreadyPushed" xml:space="preserve">
+    <value>Ladicí program je již přepsán.</value>
+  </data>
+  <data name="RemoteServerDebuggerCannotPushSelf" xml:space="preserve">
+    <value>Objekt ladicího programu nelze vložit do sebe sama.</value>
+  </data>
+  <data name="CommandNotSupportedForRemoteUseInServerDebugger" xml:space="preserve">
+    <value>Příkaz {0} není podporován pro vzdálené použití ve verzi PowerShellu spuštěné ve vzdáleném prostředí runspace.</value>
+  </data>
+  <data name="NestedRunspaceDebuggerPromptProcessName" xml:space="preserve">
+    <value>Proces</value>
+  </data>
+  <data name="DetachHelp" xml:space="preserve">
+    <value> {0}, {1,-16} Pokračujte v operaci a odpojte ladicí program.</value>
+  </data>
+  <data name="InvalidDetachCommand" xml:space="preserve">
+    <value>Příkaz detach ladicího programu se nedá použít.  Příkaz detach lze použít pouze při ladění úloh a prostředí runspace pomocí rutin Debug-Job nebo Debug-Runspace.</value>
+  </data>
+  <data name="InvalidRunspaceId" xml:space="preserve">
+    <value>Neplatné ID prostředí runspace: {0}</value>
+  </data>
+  <data name="UnableToGetRunspace" xml:space="preserve">
+    <value>Nelze získat prostředí runspace.</value>
+  </data>
+  <data name="BreakpointOrBreakpointListNotSpecified" xml:space="preserve">
+    <value>Musí být zadána zarážka nebo BreakpointList.</value>
+  </data>
+  <data name="BreakpointListContainedANonBreakpoint" xml:space="preserve">
+    <value>Seznam BreakpointList obsahoval položku, která nebyla zarážkou.</value>
+  </data>
+</root>

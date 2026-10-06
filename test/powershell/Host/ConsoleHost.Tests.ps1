@@ -745,8 +745,8 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
     }
 
     Context "PATH environment variable" {
-        It "`$PSHOME should be in front so that pwsh.exe starts current running PowerShell" {
-            & $powershell -v | Should -Match $PSVersionTable.GitCommitId
+        It "Running 'pwsh' should start the currently running PowerShell" {
+            pwsh -v | Should -Match $PSVersionTable.GitCommitId
         }
 
         It "powershell starts if PATH is not set" -Skip:($IsWindows) {
@@ -860,6 +860,8 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
     Context "ApartmentState WPF tests" -Tag Slow {
 
         It "WPF requires STA and will work" -Skip:(!$IsWindows -or [System.Management.Automation.Platform]::IsNanoServer) {
+            Set-ItResult -Pending -Because "Disabled due to issue - https://github.com/dotnet/wpf/issues/11651 in .NET 11 Preview 5"
+
             Add-Type -AssemblyName presentationframework
 
             $xaml = [xml]@"
@@ -1188,11 +1190,23 @@ Describe 'Pwsh startup and PATH' -Tag CI {
         $version | Should -BeExactly "PowerShell $($PSVersionTable.GitCommitId)"
     }
 
-    It 'pwsh starts even if PATH is not defined' {
+    It 'pwsh updates PATH correctly even if PATH is not defined' {
         $pwsh = Join-Path -Path $PSHOME -ChildPath "pwsh"
         Remove-Item Env:\PATH
         $path = & $pwsh -noprofile -command '$env:PATH'
-        $path | Should -BeExactly ($PSHOME + [System.IO.Path]::PathSeparator)
+
+        $ExpectedPath = $PSHOME
+        if ($PSHOME.StartsWith("$env:ProgramFiles\WindowsApps\Microsoft.PowerShell")) {
+            # MSIX installed PowerShell uses the stable path instead of PSHOME.
+            $ExpectedPath = $PSHOME.Replace($env:ProgramFiles, "$env:LOCALAPPDATA\Microsoft")
+
+            # Remove the version-specific part from the expected path.
+            $version = $PSVersionTable.PSVersion
+            $verStrRegex = "$($version.Major)\.$($version.Minor)\.$($version.Build).+__"
+            $ExpectedPath = $ExpectedPath -replace $verStrRegex, ''
+        }
+
+        $path | Should -BeExactly ($ExpectedPath + [System.IO.Path]::PathSeparator)
     }
 }
 

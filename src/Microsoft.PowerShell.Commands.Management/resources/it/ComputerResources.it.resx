@@ -1,0 +1,393 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="NotSupported" xml:space="preserve">
+    <value>Questa funzionalità non è supportata in questo sistema operativo.</value>
+  </data>
+  <data name="NotEnabled" xml:space="preserve">
+    <value>Impossibile abilitare l'unità {0}.</value>
+  </data>
+  <data name="InvalidDrive" xml:space="preserve">
+    <value>Non è possibile attivare l'infrastruttura di ripristino del computer nel computer specificato perché l'unità specificata non è valida. Immettere un'unità valida nel parametro Drive e riprovare.</value>
+  </data>
+  <data name="NoSystemDrive" xml:space="preserve">
+    <value>Includere l'unità di sistema nell'elenco delle unità.</value>
+  </data>
+  <data name="NotValidDrive" xml:space="preserve">
+    <value>Non è possibile disattivare l'infrastruttura di ripristino del computer perché l'unità specificata non è valida. Immettere un'unità valida nel parametro Drive e riprovare.</value>
+  </data>
+  <data name="NotDisabled" xml:space="preserve">
+    <value>Non è possibile disattivare Ripristino configurazione di sistema sull'unità {0}. È possibile che non si disponga di autorizzazioni sufficienti per eseguire questa operazione.</value>
+  </data>
+  <data name="ServiceDisabled" xml:space="preserve">
+    <value>Il servizio di Ripristino configurazione di sistema è disabilitato.</value>
+  </data>
+  <data name="RestorePointNotCreated" xml:space="preserve">
+    <value>L'infrastruttura di Ripristino configurazione di sistema non è in grado di creare un punto di ripristino.</value>
+  </data>
+  <data name="RestoreFailed" xml:space="preserve">
+    <value>L'ultimo tentativo di ripristino del computer non è riuscito.</value>
+  </data>
+  <data name="RestoreSuccess" xml:space="preserve">
+    <value>Il computer è stato ripristinato al punto di ripristino specificato.</value>
+  </data>
+  <data name="RestoreInterrupted" xml:space="preserve">
+    <value>L'ultimo tentativo di ripristino del computer è stato interrotto.</value>
+  </data>
+  <data name="NoRestorePoint" xml:space="preserve">
+    <value>Non è possibile individuare il punto di ripristino "{0}". Verificare il numero di sequenza "{0}" e riprovare a eseguire il comando.</value>
+  </data>
+  <data name="DoubleComputerName" xml:space="preserve">
+    <value>{0} ({1})</value>
+  </data>
+  <data name="RestartcomputerFailed" xml:space="preserve">
+    <value>Non è possibile riavviare il computer {0} con il seguente messaggio di errore: {1}.</value>
+  </data>
+  <data name="OperationFailed" xml:space="preserve">
+    <value>Non è possibile eseguire il comando nel computer di destinazione ''{1}'' a causa del seguente errore: {0}.{2}</value>
+  </data>
+  <data name="StopcomputerFailed" xml:space="preserve">
+    <value>Non è possibile arrestare il computer {0} con il seguente messaggio di errore: {1}.</value>
+  </data>
+  <data name="InvalidRestorePoint" xml:space="preserve">
+    <value>Non è possibile ripristinare il computer perché "{0}" non è stato impostato come punto di ripristino valido. Immettere un punto di ripristino valido nel parametro RestorePoint e riprovare.</value>
+  </data>
+  <data name="RestartNeeded" xml:space="preserve">
+    <value>Le modifiche avranno effetto dopo il riavvio del computer {1}.</value>
+  </data>
+  <data name="RemoveComputerConfirm" xml:space="preserve">
+    <value>Dopo aver lasciato il dominio, sarà necessario conoscere la password dell'account Amministratore locale per accedere a questo computer. Continuare?</value>
+  </data>
+  <data name="InvalidComputerNameFormat" xml:space="preserve">
+    <value>Il nome di computer seguente non è valido: {0}. Verificare che il nome del computer non superi i 255 caratteri, che non contenga due o più punti consecutivi, che non inizi con un punto, che non contenga solo caratteri numerici e che non contenga nessuno dei caratteri seguenti:
+{{|}}~[\]^:;&lt;=&gt;?@!"#$%^`()+/,</value>
+  </data>
+  <data name="InvalidDomainNameFormat" xml:space="preserve">
+    <value>Il dominio nel nome computer ''{0}'' non è valido. Verificare che il dominio esista e che il nome sia un nome di dominio valido.</value>
+  </data>
+  <data name="ComputerNamesAreEqual" xml:space="preserve">
+    <value>Il valore specificato per il parametro NewComputerName è uguale al valore del parametro ComputerName. Specificare un valore diverso per il parametro NewComputerName.</value>
+  </data>
+  <data name="ResetComputerMachinePassword" xml:space="preserve">
+    <value>"La password del canale sicuro tra ''{0}'' e ''{1}'' è stata reimpostata."</value>
+  </data>
+  <data name="SystemRestoreServiceDisabled" xml:space="preserve">
+    <value>Questo comando non può essere eseguito a causa del seguente errore: il servizio non può essere avviato perché è disabilitato o non ha dispositivi abilitati associati.</value>
+  </data>
+  <data name="ProgressActivity" xml:space="preserve">
+    <value>Creazione di un punto di ripristino di sistema in corso...</value>
+  </data>
+  <data name="ProgressStatusCreatingRestorePoint" xml:space="preserve">
+    <value>Creazione di un punto di ripristino del sistema in corso... {0}% completato.</value>
+  </data>
+  <data name="ProgressStatusCompleted" xml:space="preserve">
+    <value>Completato.</value>
+  </data>
+  <data name="NetworkPathNotFound" xml:space="preserve">
+    <value>Provare le opzioni seguenti ed eseguire di nuovo il comando.
+1. Verificare che il computer di destinazione (''{0}'') sia in esecuzione.
+2. Specificare il nome completo del computer di destinazione (''{0}'').</value>
+  </data>
+  <data name="PrivilegeNotEnabled" xml:space="preserve">
+    <value>Non è possibile riavviare il computer {0}. Non è possibile abilitare i diritti di accesso {1} per il processo di chiamata.</value>
+  </data>
+  <data name="RestartComputerAction" xml:space="preserve">
+    <value>Abilitare il {0} e riavviare il computer.</value>
+  </data>
+  <data name="LocalShutdownPrivilege" xml:space="preserve">
+    <value>Diritti di accesso per l'arresto locale</value>
+  </data>
+  <data name="RemoteShutdownPrivilege" xml:space="preserve">
+    <value>Diritti di accesso per l'arresto remoto</value>
+  </data>
+  <data name="CannotWaitLocalComputer" xml:space="preserve">
+    <value>Non è possibile attendere il riavvio del computer locale. Il computer locale viene ignorato quando si specifica il parametro Wait.</value>
+  </data>
+  <data name="RestartComputerInvalidParameter" xml:space="preserve">
+    <value>I parametri Timeout, For e Delay sono validi solo se è specificato il parametro Wait.</value>
+  </data>
+  <data name="RestartMultipleComputersActivity" xml:space="preserve">
+    <value> Riavvio dei computer in corso...</value>
+  </data>
+  <data name="RestartSingleComputerActivity" xml:space="preserve">
+    <value> Riavvio dell’ambiente di calcolo {0}</value>
+  </data>
+  <data name="WaitForMultipleComputers" xml:space="preserve">
+    <value>Operazione completata: {0}/{1}.</value>
+  </data>
+  <data name="VerifyRebootStage" xml:space="preserve">
+    <value>Verifica del riavvio del computer in corso...</value>
+  </data>
+  <data name="WaitForPowerShell" xml:space="preserve">
+    <value>In attesa della connettività di PowerShell...</value>
+  </data>
+  <data name="WaitForRestartToBegin" xml:space="preserve">
+    <value>In attesa dell'inizio del riavvio...</value>
+  </data>
+  <data name="WaitForWinRM" xml:space="preserve">
+    <value>In attesa della connettività WinRM...</value>
+  </data>
+  <data name="WaitForWMI" xml:space="preserve">
+    <value>In attesa della connettività WMI...</value>
+  </data>
+  <data name="RestartComplete" xml:space="preserve">
+    <value>Riavvio completato</value>
+  </data>
+  <data name="NoSupportForCombinedServiceType" xml:space="preserve">
+    <value>I tipi di servizio combinati non sono supportati al momento.</value>
+  </data>
+  <data name="CannotResolveComputerName" xml:space="preserve">
+    <value>Non è possibile risolvere il nome del computer {0} con l'eccezione: {1}.</value>
+  </data>
+  <data name="IncorrectNewNameNumber" xml:space="preserve">
+    <value>Il numero di nuovi nomi non corrisponde al numero di computer di destinazione.</value>
+  </data>
+  <data name="InvalidNewName" xml:space="preserve">
+    <value>Ignorare il computer ''{0}'' con il nuovo nome ''{1}'' perché il nuovo nome non è valido. Il nuovo nome di computer immesso non è formattato correttamente. I nomi Standard possono contenere lettere (a-z, A-Z), numeri (0-9) e trattini (-), ma non spazi o punti (.). Il nome non può essere costituito esclusivamente da cifre e non può contenere più di 63 caratteri.</value>
+  </data>
+  <data name="NewNameIsOldName" xml:space="preserve">
+    <value>Ignorare il computer ''{0}'' con il nuovo nome ''{1}'' perché il nuovo nome è uguale al nome corrente.</value>
+  </data>
+  <data name="ComputerNotInDomain" xml:space="preserve">
+    <value>Non è possibile rimuovere il computer ''{0}'' perché non è incluso in un dominio.</value>
+  </data>
+  <data name="FailToJoinWorkGroup" xml:space="preserve">
+    <value>Non è possibile aggiungere il computer ''{0}'' al gruppo di lavoro ''{1}'' con il messaggio di errore seguente: {2}</value>
+  </data>
+  <data name="NetworkDown" xml:space="preserve">
+    <value>Non è possibile rimuovere i computer dal dominio perché la rete locale non è disponibile.</value>
+  </data>
+  <data name="FailToRename" xml:space="preserve">
+    <value>Non è possibile rinominare il computer ''{0}'' in ''{1}'' a causa della seguente eccezione: {2}.</value>
+  </data>
+  <data name="AddComputerActionDomain" xml:space="preserve">
+    <value>Partecipa al dominio ''{0}''</value>
+  </data>
+  <data name="AddComputerActionWorkgroup" xml:space="preserve">
+    <value>Partecipa al gruppo di lavoro ''{0}''</value>
+  </data>
+  <data name="AddComputerToSameDomain" xml:space="preserve">
+    <value>Non è possibile aggiungere il computer ''{0}'' al dominio ''{1}'' perché è già in tale dominio.</value>
+  </data>
+  <data name="AddComputerToSameWorkgroup" xml:space="preserve">
+    <value>Non è possibile aggiungere il computer ''{0}'' al gruppo di lavoro ''{1}'' perché è già incluso in tale gruppo di lavoro.</value>
+  </data>
+  <data name="FailToRenameAfterJoinWorkgroup" xml:space="preserve">
+    <value>Il computer ''{0}'' è stato aggiunto al gruppo di lavoro ''{1}'', ma non è stato possibile rinominarlo in ''{2}'' con il seguente messaggio di errore: {3}.</value>
+  </data>
+  <data name="FailToSwitchFromDomainToWorkgroup" xml:space="preserve">
+    <value>Il computer ''{0}'' è stato separato correttamente dal dominio ''{1}'', ma non è stato possibile unirlo al gruppo di lavoro ''{2}'' con il seguente messaggio di errore: {3}.</value>
+  </data>
+  <data name="FailToUnjoinDomain" xml:space="preserve">
+    <value>Non è possibile separare il computer ''{0}'' dal dominio ''{1}'' con il seguente messaggio di errore: {2}.</value>
+  </data>
+  <data name="FailToConnectToComputer" xml:space="preserve">
+    <value>Non è possibile stabilire la connessione WMI al computer ''{0}'' con il seguente messaggio di errore: {1}.</value>
+  </data>
+  <data name="FailToJoinDomainFromWorkgroup" xml:space="preserve">
+    <value>Non è possibile aggiungere il computer ''{0}'' al dominio ''{1}'' dal relativo gruppo di lavoro corrente ''{2}'' con il seguente messaggio di errore: {3}.</value>
+  </data>
+  <data name="FailToJoinNewDomainAfterUnjoinOldDomain" xml:space="preserve">
+    <value>Il computer ''{0}'' è stato separato correttamente dal dominio ''{1}'', ma non è possibile unirlo al nuovo dominio ''{2}'' con il seguente messaggio di errore: {3}.</value>
+  </data>
+  <data name="FailToRenameAfterJoinDomain" xml:space="preserve">
+    <value>Il computer ''{0}' è stato aggiunto correttamente al nuovo dominio ''{1}'', ma non è stato possibile rinominarlo in ''{2}'' con il seguente messaggio di errore: {3}.</value>
+  </data>
+  <data name="InvalidJoinOptions" xml:space="preserve">
+    <value>Il flag ''{0}'' è valido solo se è specificato il flag ''{1}''.</value>
+  </data>
+  <data name="CannotRenameMultipleComputers" xml:space="preserve">
+    <value>Non è possibile rinominare più computer. Il parametro NewName è valido solo se viene specificato un solo computer.</value>
+  </data>
+  <data name="CannotFindMachineAccountFromDomain" xml:space="preserve">
+    <value>Non è possibile trovare l'account computer per il computer locale nel dominio {0}.</value>
+  </data>
+  <data name="CannotFindMachineAccountFromServer" xml:space="preserve">
+    <value>Non è possibile trovare l'account computer per il computer locale dal controller di dominio {0}.</value>
+  </data>
+  <data name="FailToGetDomainInformation" xml:space="preserve">
+    <value>Non è possibile ottenere informazioni sul dominio del computer locale a causa della seguente eccezione: {0}.</value>
+  </data>
+  <data name="FailToResetPasswordOnDomain" xml:space="preserve">
+    <value>Non è possibile reimpostare la password del canale sicuro per l'account del computer nel dominio. Operazione non riuscita con l'eccezione seguente: {0}.</value>
+  </data>
+  <data name="FailToResetPasswordOnLocalMachine" xml:space="preserve">
+    <value>Reimpostazione della password del canale sicuro per il computer locale non riuscita con il seguente messaggio di errore: {0}.</value>
+  </data>
+  <data name="NeedAdminPrivilegeToResetPassword" xml:space="preserve">
+    <value>Per reimpostare la password del canale sicuro nel computer locale sono necessari diritti di Amministratore. Accesso negato.</value>
+  </data>
+  <data name="ResetComputerNotInDomain" xml:space="preserve">
+    <value>Non è possibile reimpostare la password del canale sicuro per l'account del computer locale. Il computer locale non fa attualmente parte di un dominio.</value>
+  </data>
+  <data name="TruncateNetBIOSName" xml:space="preserve">
+    <value>Il nome NetBIOS del computer è limitato a 15 byte, ovvero 15 caratteri in questo caso. Il nome NetBIOS verrà abbreviato in "{0}", il che potrebbe causare conflitti nella risoluzione dei nomi NetBIOS. Continuare?</value>
+  </data>
+  <data name="TruncateNetBIOSNameCaption" xml:space="preserve">
+    <value>Il nome NetBIOS verrà troncato.</value>
+  </data>
+  <data name="CannotResolveServerName" xml:space="preserve">
+    <value>Non è possibile risolvere il nome del server specificato {0}.</value>
+  </data>
+  <data name="CannotCreateRestorePointWarning" xml:space="preserve">
+    <value>Non è possibile creare un nuovo punto di ripristino del sistema perché ne è già stato creato uno negli ultimi {0} minuti. La frequenza di creazione dei punti di ripristino può essere modificata creando il valore DWORD ''SystemRestorePointCreationFrequency'' nella chiave del Registro di sistema ''HKLM\Software\Microsoft\Windows NT\CurrentVersion\SystemRestore''. Il valore di questa chiave del Registro di sistema indica l'intervallo di tempo necessario (in minuti) tra la creazione di due punti di ripristino. Il valore predefinito è 1440 minuti (24 ore).</value>
+  </data>
+  <data name="CannotGetOperatingSystemObject" xml:space="preserve">
+    <value>Non è possibile recuperare l'oggetto WMI Win32_OperatingSystem.</value>
+  </data>
+  <data name="RestartComputerSkipped" xml:space="preserve">
+    <value>Il computer {0} viene ignorato. Non è possibile recuperare LastBootUpTime tramite il servizio WMI con il seguente messaggio di errore: {1}.</value>
+  </data>
+  <data name="FailToTestSecureChannel" xml:space="preserve">
+    <value>Non è possibile verificare il canale sicuro per il computer locale. Operazione non riuscita con l'eccezione seguente: {0}.</value>
+  </data>
+  <data name="RepairSecureChannelFail" xml:space="preserve">
+    <value>Il tentativo di ripristinare il canale sicuro tra il computer locale e il dominio {0} non è riuscito.</value>
+  </data>
+  <data name="RepairSecureChannelSucceed" xml:space="preserve">
+    <value>Il canale sicuro tra il computer locale e il dominio {0} è stato ripristinato correttamente.</value>
+  </data>
+  <data name="SecureChannelAlive" xml:space="preserve">
+    <value>Il canale sicuro tra il computer locale e il dominio {0} è integro.</value>
+  </data>
+  <data name="SecureChannelBroken" xml:space="preserve">
+    <value>Il canale sicuro tra il computer locale e il dominio {0} è interrotto.</value>
+  </data>
+  <data name="TestComputerNotInDomain" xml:space="preserve">
+    <value>Non è possibile verificare la password del canale sicuro per il computer locale. Il computer locale non fa attualmente parte di un dominio.</value>
+  </data>
+  <data name="SystemRestoreNotSupported" xml:space="preserve">
+    <value>Non è possibile eseguire l'operazione perché le API di Ripristino configurazione di sistema non sono supportate nella piattaforma Advanced RISC Machine (ARM).</value>
+  </data>
+  <data name="TimeoutError" xml:space="preserve">
+    <value>Il riavvio del computer non è stato completato entro il periodo di timeout specificato.</value>
+  </data>
+  <data name="FailToRetrieveLastRestorePoint" xml:space="preserve">
+    <value>Non è possibile convalidare l'intervallo di tempo per la creazione del punto di ripristino. Non è possibile recuperare l'ultimo punto di ripristino con il seguente messaggio di errore: {0}.</value>
+  </data>
+  <data name="InvalidParameterSetAsJob" xml:space="preserve">
+    <value>Il set di parametri AsJob non è supportato.</value>
+  </data>
+  <data name="InvalidParameterForCoreClr" xml:space="preserve">
+    <value>Il parametro {0} non è supportato per CoreCLR.</value>
+  </data>
+  <data name="ShutdownCommandNotFound" xml:space="preserve">
+    <value>Il comando nativo richiesto ''shutdown'' non è stato trovato.</value>
+  </data>
+</root>

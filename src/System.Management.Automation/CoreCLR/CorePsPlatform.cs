@@ -179,9 +179,12 @@ namespace System.Management.Automation
         {
             int result = Interop.Windows.CoInitializeEx(IntPtr.Zero, Interop.Windows.COINIT_APARTMENTTHREADED);
 
-            // If 0 is returned the thread has been initialized for the first time
-            // as an STA and thus supported and needs to be uninitialized.
-            if (result > 0)
+            // Per COM documentation: Each successful call to CoInitializeEx (including S_FALSE)
+            // must be balanced by a corresponding call to CoUninitialize.
+            //  - S_OK (0) means we initialized for the first time.
+            //  - S_FALSE (1) means already initialized, but still increments the reference count.
+            // Both require CoUninitialize to decrement the reference count.
+            if (result >= 0)
             {
                 Interop.Windows.CoUninitialize();
             }
@@ -277,7 +280,17 @@ namespace System.Management.Automation
             try
             {
                 s_tempHome = Path.Combine(Path.GetTempPath(), StringUtil.Format(tempHomeFolderName, Environment.UserName));
-                Directory.CreateDirectory(s_tempHome);
+
+                // Create the temporary home directory with the user-only permission.
+                UnixFileMode userOnlyMode = UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute;
+                var dirInfo = Directory.CreateDirectory(s_tempHome, userOnlyMode);
+                if (dirInfo.UnixFileMode != userOnlyMode)
+                {
+                    // The permission is not as expected, which indicates the directory may be pre-created by a different user.
+                    // Throw an exception and fail PowerShell in this case for security reason.
+                    throw new InvalidOperationException(
+                        StringUtil.Format(CoreClrStubResources.TempHomeDirectoryUnsafePermission, s_tempHome));
+                }
             }
             catch (UnauthorizedAccessException)
             {

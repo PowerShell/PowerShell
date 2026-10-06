@@ -569,7 +569,7 @@ namespace Microsoft.PowerShell.Commands
             if (driveIsFixed)
             {
                 // Since the drive is fixed, ensure the root is valid.
-                validDrive = Directory.Exists(drive.Root);
+                validDrive = SafeDoesPathExist(drive.Root);
             }
 
             if (validDrive)
@@ -908,7 +908,7 @@ namespace Microsoft.PowerShell.Commands
 
                         if (newDrive.DriveType == DriveType.Fixed)
                         {
-                            if (!newDrive.RootDirectory.Exists)
+                            if (!SafeDoesPathExist(newDrive.RootDirectory.FullName))
                             {
                                 continue;
                             }
@@ -1224,6 +1224,29 @@ namespace Microsoft.PowerShell.Commands
             catch (UnauthorizedAccessException accessException)
             {
                 WriteError(new ErrorRecord(accessException, "GetItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
+            }
+        }
+
+        private static bool SafeDoesPathExist(string rootDirectory)
+        {
+            if (Directory.Exists(rootDirectory))
+            {
+                return true;
+            }
+
+            try
+            {
+                return (File.GetAttributes(rootDirectory) & FileAttributes.Directory) is not 0;
+            }
+            // In some scenarios (like AppContainers) direct access to the root directory may
+            // be prevented, but more specific paths may be accessible.
+            catch (UnauthorizedAccessException)
+            {
+                return true;
+            }
+            catch
+            {
+                return false;
             }
         }
 
@@ -4083,6 +4106,14 @@ namespace Microsoft.PowerShell.Commands
 
             if (IsItemContainer(destination))
             {
+                if (CanRemoteNameCausePathTraversal(sourceDirectoryName))
+                {
+                    throw PSTraceSource.NewArgumentException(
+                        nameof(sourceDirectoryName),
+                        FileSystemProviderStrings.DirectoryNamePathTraversal,
+                        sourceDirectoryName);
+                }
+
                 destination = MakePath(destination, sourceDirectoryName);
             }
 
@@ -4318,6 +4349,14 @@ namespace Microsoft.PowerShell.Commands
             // to the destination path.
             if (IsItemContainer(destinationPath))
             {
+                if (CanRemoteNameCausePathTraversal(sourceFileName))
+                {
+                    throw PSTraceSource.NewArgumentException(
+                        nameof(sourceFileName),
+                        FileSystemProviderStrings.FileNamePathTraversal,
+                        sourceFileName);
+                }
+
                 destinationPath = MakePath(destinationPath, sourceFileName);
             }
 
@@ -4345,6 +4384,11 @@ namespace Microsoft.PowerShell.Commands
                     {
                         foreach (string streamName in remoteFileStreams)
                         {
+                            if (CanRemoteNameCausePathTraversal(streamName))
+                            {
+                                throw PSTraceSource.NewArgumentException(nameof(streamName), FileSystemProviderStrings.ADSPathTraversal, streamName);
+                            }
+
                             result = PerformCopyFileFromRemoteSession(sourceFileFullName, destinationFile, destinationPath, force, ps, fileSize, true, streamName);
                             if (!result)
                             {
@@ -4939,6 +4983,30 @@ namespace Microsoft.PowerShell.Commands
 
             return pathIsReservedDeviceName;
         }
+
+        /// <summary>
+        /// Check if a file/directory name or an alternate stream name is a plain name that does not contain any characters that could allow path traversal.
+        /// </summary>
+        private static bool CanRemoteNameCausePathTraversal(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                // 'MakePath' handles null or empty value, so we just let it flow through.
+                return false;
+            }
+
+            // Detect characters and name patterns that could enable path traversal.
+            return name.IndexOfAny(s_pathTraversalChars) >= 0 || name is "." or "..";
+        }
+
+        // Characters that must never appear in a remote-supplied file system item name or an alternate stream name
+        // because we expect a plain name, not a path, and we don't want to allow any path traversal.
+        private static readonly char[] s_pathTraversalChars =
+#if UNIX
+            ['\\', '/'];
+#else
+            ['\\', '/', ':'];
+#endif
 
         private long _totalFiles;
         private long _totalBytes;
@@ -8397,7 +8465,6 @@ namespace System.Management.Automation.Internal
             [Parameter(ParameterSetName=""PSCopyFileToRemoteSession"")]
             [Parameter(ParameterSetName=""PSCopyAlternateStreamToRemoteSession"")]
             {0}
-
             [string] $copyToFilePath,
 
             [Parameter(ParameterSetName=""PSCopyFileToRemoteSession"", Mandatory=$false)]
@@ -8417,12 +8484,10 @@ namespace System.Management.Automation.Internal
 
             [Parameter(ParameterSetName=""PSTargetSupportsAlternateStreams"", Mandatory=$true)]
             {0}
-
             [string] $supportAltStreamPath,
 
             [Parameter(ParameterSetName=""PSSetFileMetadata"", Mandatory=$true)]
             {0}
-
             [string] $metaDataFilePath,
 
             [Parameter(ParameterSetName=""PSSetFileMetadata"", Mandatory=$true)]
@@ -8431,17 +8496,14 @@ namespace System.Management.Automation.Internal
 
             [Parameter(ParameterSetName=""PSRemoteDestinationPathIsFile"", Mandatory=$true)]
             {0}
-
             [string] $isFilePath,
 
             [Parameter(ParameterSetName=""PSGetRemotePathInfo"", Mandatory=$true)]
             {0}
-
             [string] $remotePath,
 
             [Parameter(ParameterSetName=""PSCreateDirectoryOnRemoteSession"", Mandatory=$true)]
             {0}
-
             [string] $createDirectoryPath,
 
             [Parameter(ParameterSetName=""PSCreateDirectoryOnRemoteSession"")]
@@ -8578,7 +8640,13 @@ namespace System.Management.Automation.Internal
                 CheckPSDriveSize $resolvedPath $fragment.Length
 
                 # Write the stream
-                Microsoft.PowerShell.Management\Add-Content -Path ($resolvedPath.ProviderPath) -Value $fragment -Encoding Byte -Stream $streamName -ErrorAction Stop
+                if ($PSVersionTable.PSEdition -eq 'Desktop') {{
+                    Microsoft.PowerShell.Management\Add-Content -Path ($resolvedPath.ProviderPath) -Value $fragment -Encoding Byte -Stream $streamName -ErrorAction Stop
+                }}
+                else {{
+                    Microsoft.PowerShell.Management\Add-Content -Path ($resolvedPath.ProviderPath) -Value $fragment -AsByteStream -Stream $streamName -ErrorAction Stop
+                }}
+
                 $op['BytesWritten'] = $fragment.Length
             }}
             catch
@@ -8863,7 +8931,6 @@ namespace System.Management.Automation.Internal
         param (
             [Parameter(ParameterSetName=""PSCopyFileFromRemoteSession"", Mandatory=$true)]
             {0}
-
             [string] $copyFromFilePath,
 
             [Parameter(ParameterSetName=""PSCopyFileFromRemoteSession"", Mandatory=$true)]
@@ -8886,22 +8953,18 @@ namespace System.Management.Automation.Internal
 
             [Parameter(ParameterSetName=""PSSourceSupportsAlternateStreams"", Mandatory=$true)]
             {0}
-
             [string] $supportAltStreamPath,
 
             [Parameter(ParameterSetName=""PSGetFileMetadata"", Mandatory=$true)]
             {0}
-
             [string] $getMetaFilePath,
 
             [Parameter(ParameterSetName=""PSGetPathItems"", Mandatory=$true)]
             {0}
-
             [string] $getPathItems,
 
             [Parameter(ParameterSetName=""PSGetPathDirAndFiles"", Mandatory=$true)]
             {0}
-
             [string] $getPathDir
         )
 
@@ -8950,7 +9013,12 @@ namespace System.Management.Automation.Internal
                 {{
                     if ($isAlternateStream)
                     {{
-                        $content = Microsoft.PowerShell.Management\Get-Content $filePath -stream $streamName -Encoding Byte -Raw
+                        $content = if ($PSVersionTable.PSEdition -eq 'Desktop') {{
+                            Microsoft.PowerShell.Management\Get-Content $filePath -stream $streamName -Encoding Byte -Raw
+                        }}
+                        else {{
+                            Microsoft.PowerShell.Management\Get-Content $filePath -stream $streamName -AsByteStream -Raw
+                        }}
                         $rstream = [System.IO.MemoryStream]::new($content)
                     }}
                     else

@@ -241,7 +241,7 @@ function Install-CIPester
     Write-Verbose "Checking for Pester module (required: $MinimumVersion - $MaximumVersion)" -Verbose
 
     # Check if a compatible version of Pester is already installed
-    $installedPester = Get-Module -Name Pester -ListAvailable | 
+    $installedPester = Get-Module -Name Pester -ListAvailable |
         Where-Object { $_.Version -ge $MinimumVersion -and $_.Version -le $MaximumVersion } |
         Sort-Object -Property Version -Descending |
         Select-Object -First 1
@@ -616,20 +616,9 @@ function Invoke-CIFinish
             Restore-PSOptions -PSOptionsPath "${buildFolder}/psoptions.json"
             $preReleaseVersion = $env:CI_FINISH_RELASETAG
 
-            # Build packages	            $preReleaseVersion = "$previewPrefix-$previewLabel.$prereleaseIteration"
-            switch -regex ($Runtime){
-                default {
-                    $runPackageTest = $true
-                    $packageTypes = 'msi', 'zip', 'zip-pdb', 'msix'
-                }
-                'win-arm.*' {
-                    $runPackageTest = $false
-                    $packageTypes = 'msi', 'zip', 'zip-pdb', 'msix'
-                }
-            }
+            # Build packages
+            $packageTypes = 'zip', 'zip-pdb', 'msix'
 
-            Import-Module "$PSScriptRoot\wix\wix.psm1"
-            Install-Wix -arm64:$true
             $packages = Start-PSPackage -Type $packageTypes -ReleaseTag $preReleaseVersion -SkipReleaseChecks -WindowsRuntime $Runtime
 
             foreach ($package in $packages) {
@@ -641,40 +630,9 @@ function Invoke-CIFinish
 
                 if ($package -is [string]) {
                     $null = $artifacts.Add($package)
-                } elseif ($package -is [pscustomobject] -and $package.psobject.Properties['msi']) {
-                    $null = $artifacts.Add($package.msi)
-                    $null = $artifacts.Add($package.wixpdb)
                 }
             }
 
-            if ($runPackageTest) {
-                # the packaging tests find the MSI package using env:PSMsiX64Path
-                $env:PSMsiX64Path = $artifacts | Where-Object { $_.EndsWith(".msi")}
-                $architechture = $Runtime.Split('-')[1]
-                $exePath = New-ExePackage -ProductVersion ($preReleaseVersion -replace '^v') -ProductTargetArchitecture $architechture -MsiLocationPath $env:PSMsiX64Path
-                Write-Verbose "exe Path: $exePath" -Verbose
-                $artifacts.Add($exePath)
-                $env:PSExePath = $exePath
-                $env:PSMsiChannel = $Channel
-                $env:PSMsiRuntime = $Runtime
-
-                # Install the latest Pester and import it
-                $maximumPesterVersion = '4.99'
-                Install-CIPester -MinimumVersion '4.0.0' -MaximumVersion $maximumPesterVersion -Force
-                Import-Module Pester -Force -MaximumVersion $maximumPesterVersion
-
-                $testResultPath = Join-Path -Path $env:TEMP -ChildPath "win-package-$channel-$runtime.xml"
-
-                # start the packaging tests and get the results
-                $packagingTestResult = Invoke-Pester -Script (Join-Path $repoRoot '.\test\packaging\windows\') -PassThru -OutputFormat NUnitXml -OutputFile $testResultPath
-
-                Publish-TestResults -Title "win-package-$channel-$runtime" -Path $testResultPath
-
-                # fail the CI job if the tests failed, or nothing passed
-                if (-not $packagingTestResult -is [pscustomobject] -or $packagingTestResult.FailedCount -ne 0 -or $packagingTestResult.PassedCount -eq 0) {
-                    throw "Packaging tests failed ($($packagingTestResult.FailedCount) failed/$($packagingTestResult.PassedCount) passed)"
-                }
-            }
         }
     } catch {
         Get-Error -InputObject $_
@@ -932,12 +890,12 @@ function New-LinuxPackage
         } else {
             "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}"
         }
-        
+
         # Ensure artifacts directory exists
         if (-not (Test-Path $artifactsDir)) {
             New-Item -ItemType Directory -Path $artifactsDir -Force | Out-Null
         }
-        
+
         Write-Log -message "Artifacts directory: $artifactsDir"
         Copy-Item $packageObj.FullName -Destination $artifactsDir -Force
     }
@@ -950,7 +908,7 @@ function New-LinuxPackage
         } else {
             "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}"
         }
-        
+
         # Create and package Raspbian .tgz
         # Build must be clean for Raspbian
         Start-PSBuild -PSModuleRestore -Clean -Runtime linux-arm -Configuration 'Release'
@@ -1062,13 +1020,13 @@ Function Test-MergeConflictMarker
             [string]$OutputPath,
             [string]$SummaryPath
         )
-        
+
         # Output results to GitHub Actions
         if ($OutputPath) {
             "files-checked=0" | Out-File -FilePath $OutputPath -Append -Encoding utf8
             "conflicts-found=0" | Out-File -FilePath $OutputPath -Append -Encoding utf8
         }
-        
+
         # Create GitHub Actions job summary
         if ($SummaryPath) {
             $summaryContent = @"
@@ -1097,11 +1055,11 @@ $Message
     # Filter out *.cs files from merge conflict checking
     $filesToCheck = @($File | Where-Object { $_ -notlike "*.cs" })
     $filteredCount = $File.Count - $filesToCheck.Count
-    
+
     if ($filteredCount -gt 0) {
         Write-Host "Filtered out $filteredCount *.cs file(s) from merge conflict checking" -ForegroundColor Yellow
     }
-    
+
     if ($filesToCheck.Count -eq 0) {
         Write-Host "No files to check after filtering (all files were *.cs)" -ForegroundColor Yellow
         Write-NoFilesOutput -Message "All $filteredCount file(s) were filtered out (*.cs files are excluded from merge conflict checking)." -OutputPath $OutputPath -SummaryPath $SummaryPath
@@ -1135,14 +1093,14 @@ $Message
         }
 
         $filesChecked++
-        
+
         # Get relative path for display
         $relativePath = if ($WorkspacePath -and $filePath.StartsWith($WorkspacePath)) {
             $filePath.Substring($WorkspacePath.Length).TrimStart([System.IO.Path]::DirectorySeparatorChar, [System.IO.Path]::AltDirectorySeparatorChar)
         } else {
             $filePath
         }
-        
+
         Write-Host "  Checking: $relativePath" -ForegroundColor Gray
 
         # Search for conflict markers using Select-String

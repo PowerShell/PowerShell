@@ -1,0 +1,228 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CimOperationCompleted" xml:space="preserve">
+    <value>Operación "{0}" completada.</value>
+    <comment>{0} is a placeholder for operation name. (i.e, GetCimInstance)</comment>
+  </data>
+  <data name="CimOperationNameCreateInstance" xml:space="preserve">
+    <value>Creación de CimInstance</value>
+  </data>
+  <data name="CimOperationNameDeleteInstance" xml:space="preserve">
+    <value>Eliminar CimInstance</value>
+  </data>
+  <data name="CimOperationNameEnumerateAssociatedInstances" xml:space="preserve">
+    <value>Enumerar CimInstances asociadas</value>
+  </data>
+  <data name="CimOperationNameEnumerateClasses" xml:space="preserve">
+    <value>Enumerar CimClasses</value>
+  </data>
+  <data name="CimOperationNameEnumerateInstances" xml:space="preserve">
+    <value>Enumerar CimInstances</value>
+  </data>
+  <data name="CimOperationNameGetClass" xml:space="preserve">
+    <value>Obtener CimClass</value>
+  </data>
+  <data name="CimOperationNameGetInstance" xml:space="preserve">
+    <value>Obtener CimInstance</value>
+  </data>
+  <data name="CimOperationNameInvokeMethod" xml:space="preserve">
+    <value>Invocar CimMethod</value>
+  </data>
+  <data name="CimOperationNameModifyInstance" xml:space="preserve">
+    <value>Modificar CimInstance</value>
+  </data>
+  <data name="CimOperationNameQueryInstances" xml:space="preserve">
+    <value>Instancias CimInstances de consulta</value>
+  </data>
+  <data name="CimOperationNameSubscribeIndication" xml:space="preserve">
+    <value>Suscribir CimIndication</value>
+  </data>
+  <data name="CimOperationStart" xml:space="preserve">
+    <value>Realice la operación "{0}" con los siguientes parámetros, "{1}".</value>
+    <comment>{0} is a placeholder for operation name; {1} is a placeholder for parameters value</comment>
+  </data>
+  <data name="ConflictParameterWasSet" xml:space="preserve">
+    <value>El parámetro "{0}" no se puede usar con el parámetro "{1}".</value>
+    <comment>{0} is a placeholder for parameter name; {1} is a placeholder for another parameter name;</comment>
+  </data>
+  <data name="CouldNotFindCimsessionObject" xml:space="preserve">
+    <value>No se pudo encontrar CimSession con el especificado {0} = {1}</value>
+    <comment>{0} is a placeholder for property name; {1} is a placeholder for property value.</comment>
+  </data>
+  <data name="CouldNotFindPropertyFromGivenClass" xml:space="preserve">
+    <value>No se encontraron las siguientes propiedades en la clase dada {0}: {1}.</value>
+    <comment>{0} is a placeholder for class name; {1} is a placeholder for list of property names.</comment>
+  </data>
+  <data name="CouldNotModifyReadonlyProperty" xml:space="preserve">
+    <value>No se pudo modificar la propiedad de solo lectura "{0}" del objeto "{1}".</value>
+    <comment>{0} is a placeholder for propertyname; {1} is a placeholder for object string.</comment>
+  </data>
+  <data name="DefaultStatusDescription" xml:space="preserve">
+    <value>Descripción del estado predeterminado.</value>
+    <comment>N/A</comment>
+  </data>
+  <data name="DidNotResolveFile" xml:space="preserve">
+    <value>No se puede realizar la operación porque la ruta de acceso comodín {0} no se resolvió en un archivo.</value>
+    <comment>{0} is a placeholder for a path</comment>
+  </data>
+  <data name="InvalidAuthenticationTypeWithNullCredential" xml:space="preserve">
+    <value>El tipo de autenticación "{0}" no es válido sin credenciales. Solo se permiten los siguientes tipos de autenticación sin credenciales, "{1}", "{2}", "{3}" o "{4}".</value>
+    <comment>{0} is a placeholder for authentication type. {1}-{4} are placeholders for authentication types.</comment>
+  </data>
+  <data name="InvalidMethod" xml:space="preserve">
+    <value>No se encuentra el método "{0}" en la clase "{1}".</value>
+    <comment>{0} is a placeholder for method name. {1} is a placeholders for class name.</comment>
+  </data>
+  <data name="InvalidMethodParameter" xml:space="preserve">
+    <value>No se encuentra el parámetro "{0}" en el método "{1}" de la clase "{2}".</value>
+    <comment>{0} is a placeholder for parameter name; {1} is a placeholder for method name; {2} is a placeholder for class name.</comment>
+  </data>
+  <data name="InvalidOperation" xml:space="preserve">
+    <value>Operación no válida. El cmdlet actual ya tiene una operación creada.</value>
+    <comment>N/A</comment>
+  </data>
+  <data name="InvalidParameterValue" xml:space="preserve">
+    <value>El argumento "{0}" contiene caracteres no permitidos en el parámetro "{1}". Proporcione un argumento que sea válido e intente el comando de nuevo.</value>
+    <comment>{0} stand for argument value, {1} stand for parameter name.</comment>
+  </data>
+  <data name="MultipleFilesNotSupported" xml:space="preserve">
+    <value>No se puede realizar la operación porque la ruta de acceso se resolvió en más de un archivo. Este comando no puede funcionar en varios archivos.</value>
+  </data>
+  <data name="NullArgument" xml:space="preserve">
+    <value>El argumento "{0}" no puede ser null.</value>
+    <comment>N/A</comment>
+  </data>
+  <data name="OperationInProgress" xml:space="preserve">
+    <value>El objeto proxy CimSession ya tiene una operación en curso.</value>
+    <comment>N/A</comment>
+  </data>
+  <data name="ReadWriteFileNotFileSystemProvider" xml:space="preserve">
+    <value>No se puede abrir el archivo porque el proveedor actual ({0}) no puede abrir un archivo.</value>
+    <comment>{0} is a placeholder for PowerShell filesystem-like provider name (i.e. registry provider)</comment>
+  </data>
+  <data name="UnableToAddPropertyToInstance" xml:space="preserve">
+    <value>No se puede agregar la propiedad "{0}" al objeto de entrada "{1}". El esquema de clase no contiene la propiedad.</value>
+    <comment>{0} stand for property name, {1} stand for cim instance path.</comment>
+  </data>
+  <data name="UnableToResolveParameterSetName" xml:space="preserve">
+    <value>No se puede resolver el nombre del conjunto de parámetros.</value>
+    <comment>N/A</comment>
+  </data>
+</root>

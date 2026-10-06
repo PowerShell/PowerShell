@@ -1738,15 +1738,22 @@ namespace System.Management.Automation
             int position,
             Dictionary<string, AstParameterArgumentPair> boundArguments = null)
         {
-            bool isProcessedAsPositional = false;
             bool isDefaultParameterSetValid = defaultParameterSetFlag != 0 &&
                                               (defaultParameterSetFlag & validParameterSetFlags) != 0;
-            MergedCompiledCommandParameter positionalParam = null;
 
-            MergedCompiledCommandParameter bestMatchParam = null;
-            ParameterSetSpecificMetadata bestMatchSet = null;
+            // Find all the parameters with the position closest to the specified position. Different parameter
+            // sets can declare a parameter at the same position, so there can be more than one candidate.
+            // Only parameters from the still valid parameter sets are considered and the default parameter set
+            // is given priority if it's still valid.
+            //
+            // The candidate from the default parameter set is tried first, and when it doesn't produce any
+            // completion results, the candidates from the other parameter sets are tried in turn.
+            // For example, 'Get-Process | ForEach-Object <Tab>' should complete member names for '-MemberName'
+            // (PropertyAndMethodSet) because '-Process' (the default 'ScriptBlockSet') has nothing to offer.
+            int bestPosition = int.MaxValue;
+            MergedCompiledCommandParameter defaultSetParam = null;
+            List<MergedCompiledCommandParameter> alternativeParams = null;
 
-            // Finds the parameter with the position closest to the specified position
             foreach (MergedCompiledCommandParameter param in parameters)
             {
                 bool isInParameterSet = (param.Parameter.ParameterSetFlags & validParameterSetFlags) != 0 || param.Parameter.IsInAllSets;
@@ -1755,6 +1762,7 @@ namespace System.Management.Automation
                     continue;
                 }
 
+                bool addedToAltParamList = false;
                 var parameterSetDataCollection = param.Parameter.GetMatchingParameterSetData(validParameterSetFlags);
 
                 foreach (ParameterSetSpecificMetadata parameterSetData in parameterSetDataCollection)
@@ -1774,54 +1782,89 @@ namespace System.Management.Automation
                         continue;
                     }
 
-                    if (bestMatchSet is null
-                        || bestMatchSet.Position > positionInParameterSet
-                        || (isDefaultParameterSetValid && positionInParameterSet == bestMatchSet.Position && defaultParameterSetFlag == parameterSetData.ParameterSetFlag))
+                    if (positionInParameterSet > bestPosition)
                     {
-                        bestMatchParam = param;
-                        bestMatchSet = parameterSetData;
-                        if (positionInParameterSet == position)
+                        // A parameter closer to the specified position was already found.
+                        continue;
+                    }
+
+                    if (positionInParameterSet < bestPosition)
+                    {
+                        // This parameter is closer to the specified position, so the candidates found so far are no longer relevant.
+                        bestPosition = positionInParameterSet;
+                        defaultSetParam = null;
+                        alternativeParams?.Clear();
+                        addedToAltParamList = false;
+                    }
+
+                    // Prioritize the parameter from the default set, but only if we have not found such a default param yet.
+                    // If 'defaultSetParam' is not null, then that means there are 2 parameters in the default set with the same position.
+                    // That would be invalid parameter declaration, but we tolerate that in tab completion.
+                    if (isDefaultParameterSetValid && parameterSetData.ParameterSetFlag == defaultParameterSetFlag && defaultSetParam is null)
+                    {
+                        defaultSetParam = param;
+
+                        if (addedToAltParamList)
                         {
+                            // If we already added the param to the list when processing a previous set, remove it from the list.
+                            alternativeParams.RemoveAt(alternativeParams.Count - 1);
+                        }
+
+                        if (bestPosition == position)
+                        {
+                            // If it's the exact position, no need to go through the rest of the sets for this parameter.
                             break;
                         }
+
+                        // We still need to go through the rest of the sets in case that the position in any of them is closer.
+                        // But for the same position from a different set, no need to add the param to the list anymore.
+                        addedToAltParamList = true;
+                    }
+                    else if (!addedToAltParamList)
+                    {
+                        addedToAltParamList = true;
+                        (alternativeParams ??= new()).Add(param);
                     }
                 }
             }
 
-            if (bestMatchParam is not null)
+            bool isProcessedAsPositional = false;
+            if (defaultSetParam is not null)
             {
-                if (isDefaultParameterSetValid)
+                ProcessParameter(commandName, commandAst, context, result, defaultSetParam, boundArguments);
+                if (result.Count > 0)
                 {
-                    if (bestMatchSet.ParameterSetFlag == defaultParameterSetFlag)
-                    {
-                        ProcessParameter(commandName, commandAst, context, result, bestMatchParam, boundArguments);
-                        isProcessedAsPositional = result.Count > 0;
-                    }
-                    else
-                    {
-                        positionalParam ??= bestMatchParam;
-                    }
+                    return;
                 }
-                else
-                {
-                    isProcessedAsPositional = true;
-                    ProcessParameter(commandName, commandAst, context, result, bestMatchParam, boundArguments);
-                }
-            }
 
-            if (!isProcessedAsPositional && positionalParam != null)
-            {
                 isProcessedAsPositional = true;
-                ProcessParameter(commandName, commandAst, context, result, positionalParam, boundArguments);
+            }
+
+            if (alternativeParams?.Count > 0)
+            {
+                // There are alternative parameters at the same best position. Process them in the discovery order.
+                foreach (MergedCompiledCommandParameter param in alternativeParams)
+                {
+                    ProcessParameter(commandName, commandAst, context, result, param, boundArguments);
+                    if (result.Count > 0)
+                    {
+                        return;
+                    }
+                }
+
+                isProcessedAsPositional = true;
             }
 
             if (!isProcessedAsPositional)
             {
+                // If we found no applicable positional parameter, then try the remaining argument parameters.
                 foreach (MergedCompiledCommandParameter param in parameters)
                 {
                     bool isInParameterSet = (param.Parameter.ParameterSetFlags & validParameterSetFlags) != 0 || param.Parameter.IsInAllSets;
                     if (!isInParameterSet)
+                    {
                         continue;
+                    }
 
                     var parameterSetDataCollection = param.Parameter.GetMatchingParameterSetData(validParameterSetFlags);
                     foreach (ParameterSetSpecificMetadata parameterSetData in parameterSetDataCollection)
@@ -2675,14 +2718,17 @@ namespace System.Management.Automation
                 scriptBlock,
                 new object[] { commandName, parameterName, wordToComplete, commandAst, GetBoundArgumentsAsHashtable(context) },
                 resultList);
-            if (result)
-            {
-                resultList.Add(CompletionResult.Null);
-            }
 
             return result;
         }
 
+        /// <summary>
+        /// Invoke the custom argument completer and process its return values.
+        /// If we consider the completion successful, we add a null instance of the type 'CompletionResult'
+        /// to the end of the 'result' list to indicate that the argument completion has been processed, so we
+        /// will not go through the default argument completion even if the 'result' list is still empty.
+        /// </summary>
+        /// <returns>'true' if the argument completion was successful. 'false' otherwise.</returns>
         private static bool InvokeScriptArgumentCompleter(
             ScriptBlock scriptBlock,
             object[] argumentsToCompleter,
@@ -2702,20 +2748,44 @@ namespace System.Management.Automation
                 return false;
             }
 
+            if (customResults.Count is 1 && customResults[0] is { BaseObject: "" } or null)
+            {
+                // If the script block returns a single empty string or a null value, we will treat it as if it has
+                // completed successfully but has no results to return.
+                // This allows a custom completer to suppress the default completions that we may fall back otherwise.
+                result.Add(CompletionResult.Null);
+                return true;
+            }
+
+            int initialCount = result.Count;
+
             foreach (var customResult in customResults)
             {
-                var resultAsCompletion = customResult.BaseObject as CompletionResult;
-                if (resultAsCompletion != null)
+                if (customResult is null)
+                {
+                    continue;
+                }
+
+                if (customResult.BaseObject is CompletionResult resultAsCompletion)
                 {
                     result.Add(resultAsCompletion);
                     continue;
                 }
 
                 var resultAsString = customResult.ToString();
-                result.Add(new CompletionResult(resultAsString));
+                if (!string.IsNullOrEmpty(resultAsString))
+                {
+                    result.Add(new CompletionResult(resultAsString));
+                }
             }
 
-            return true;
+            bool success = result.Count > initialCount;
+            if (success)
+            {
+                result.Add(CompletionResult.Null);
+            }
+
+            return success;
         }
 
         // All the methods for native command argument completion will add a null instance of the type CompletionResult to the end of the
@@ -2723,9 +2793,9 @@ namespace System.Management.Automation
         // and has been processed already. So if the "result" list is still empty afterward, we will not go through the default argument completion anymore.
         #region Native Command Argument Completion
 
-        private static void RemoveLastNullCompletionResult(List<CompletionResult> result)
+        internal static void RemoveLastNullCompletionResult(List<CompletionResult> result)
         {
-            if (result.Count > 0 && result[result.Count - 1].Equals(CompletionResult.Null))
+            if (result?.Count > 0 && result[^1].Equals(CompletionResult.Null))
             {
                 result.RemoveAt(result.Count - 1);
             }

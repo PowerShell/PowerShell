@@ -1,0 +1,223 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="WriteDebugLineStoppedError" xml:space="preserve">
+    <value>WriteDebug 已停止，因為 DebugPreference 變數的值是 'Stop'。</value>
+  </data>
+  <data name="UnsupportedPreferenceError" xml:space="preserve">
+    <value>值 {0} 不是支援的 ActionPreference 值。</value>
+  </data>
+  <data name="PromptEmptyDescriptionsError" xml:space="preserve">
+    <value>"{0}" 參數必須至少包含一個值。</value>
+  </data>
+  <data name="ShouldContinueYesLabel" xml:space="preserve">
+    <value>是(&amp;Y)</value>
+  </data>
+  <data name="ShouldContinueYesHelp" xml:space="preserve">
+    <value>繼續。</value>
+  </data>
+  <data name="ShouldContinueYesToAllLabel" xml:space="preserve">
+    <value>全部皆是(&amp;A)</value>
+  </data>
+  <data name="ShouldContinueYesToAllHelp" xml:space="preserve">
+    <value>繼續，並且不要再詢問是否要在此工作階段中繼續。</value>
+  </data>
+  <data name="ShouldContinueNoLabel" xml:space="preserve">
+    <value>否(&amp;N)</value>
+  </data>
+  <data name="ShouldContinueNoHelp" xml:space="preserve">
+    <value>以錯誤結束作業。</value>
+  </data>
+  <data name="ShouldContinueNoToAllLabel" xml:space="preserve">
+    <value>全部皆否(&amp;L)</value>
+  </data>
+  <data name="ShouldContinueNoToAllHelp" xml:space="preserve">
+    <value>以錯誤結束作業。請勿要求在此工作階段繼續作業。</value>
+  </data>
+  <data name="ShouldContinueSuspendLabel" xml:space="preserve">
+    <value>暫止(&amp;S)</value>
+  </data>
+  <data name="ShouldContinueSuspendHelp" xml:space="preserve">
+    <value>暫停目前的作業，並進入命令提示字元。輸入 "exit" 以繼續已暫停的作業。</value>
+  </data>
+  <data name="ShouldContinuePromptMessage" xml:space="preserve">
+    <value>要繼續此作業嗎?</value>
+  </data>
+  <data name="DefaultChoice" xml:space="preserve">
+    <value>(預設為 "{0}")</value>
+  </data>
+  <data name="DefaultChoicesForMultipleChoices" xml:space="preserve">
+    <value>(預設選項為 {0})</value>
+  </data>
+  <data name="ChoiceMessage" xml:space="preserve">
+    <value>選擇[{0}]:</value>
+  </data>
+  <data name="EmptyChoicesError" xml:space="preserve">
+    <value>"{0}" 應至少有一個元素。</value>
+  </data>
+  <data name="InvalidDefaultChoiceForMultipleSelection" xml:space="preserve">
+    <value>"{0}" 必須是 "{1}" 的有效索引。"{2}" 不是有效的索引。</value>
+  </data>
+  <data name="InvalidChoiceHotKeyError" xml:space="preserve">
+    <value>無法處理快速鍵，因為問號 ("?") 不能用作快速鍵。</value>
+  </data>
+  <data name="VerboseFormatString" xml:space="preserve">
+    <value>詳細資訊: {0}</value>
+  </data>
+  <data name="WarningFormatString" xml:space="preserve">
+    <value>警告: {0}</value>
+  </data>
+  <data name="DebugFormatString" xml:space="preserve">
+    <value>偵錯: {0}</value>
+  </data>
+  <data name="HostNotTranscribing" xml:space="preserve">
+    <value>主機目前未進行轉錄。</value>
+  </data>
+  <data name="CommandStartTime" xml:space="preserve">
+    <value>命令開始時間: {0}</value>
+  </data>
+  <data name="TranscriptPrologue" xml:space="preserve">
+    <value>**********************
+PowerShell 文字記錄開始
+開始時間: {0:yyyyMMddHHmmss}
+使用者名稱: {1}
+RunAs 使用者: {2}
+設定名稱: {3}
+機器: {4}({5})
+主應用程式: {6}
+處理序識別碼: {7}
+{8}
+**********************</value>
+  </data>
+  <data name="MinimalTranscriptPrologue" xml:space="preserve">
+    <value>**********************
+PowerShell 文字記錄開始
+開始時間: {0:yyyyMMddHHmmss}
+**********************</value>
+  </data>
+  <data name="TranscriptEpilogue" xml:space="preserve">
+    <value>**********************
+PowerShell 文字記錄結束
+結束時間: {0:yyyyMMddHHmmss}
+**********************</value>
+  </data>
+  <data name="InvalidTranscriptFilePath" xml:space="preserve">
+    <value>檔案路徑 {0} 會解析為目錄。</value>
+  </data>
+</root>

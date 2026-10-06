@@ -59,8 +59,8 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -189,5 +189,8 @@ To update these Help topics, start PowerShell by using the "Run as Administrator
   </data>
   <data name="NoNetworkCommands" xml:space="preserve">
     <value>Cannot get help from a network location when in a restricted session.</value>
+  </data>
+  <data name="NotAllowedInRestrictedRemoting" xml:space="preserve">
+    <value>Command not allowed in a restricted session.</value>
   </data>
 </root>

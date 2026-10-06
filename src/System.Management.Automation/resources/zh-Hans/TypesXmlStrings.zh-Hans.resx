@@ -1,0 +1,255 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="FileLineError" xml:space="preserve">
+    <value>{0}, {1}({2}) : 错误: {3}</value>
+  </data>
+  <data name="FileLineTypeError" xml:space="preserve">
+    <value>{0}, {1}({2}) : 类型“{3}”出错: {4}</value>
+  </data>
+  <data name="NotMoreThanOnceOne" xml:space="preserve">
+    <value>节点“{0}”在“{1}”下只能出现一次。将忽略父节点“{1}”。</value>
+  </data>
+  <data name="UnknownNode" xml:space="preserve">
+    <value>不允许节点 {0}。允许以下节点: {1}。</value>
+  </data>
+  <data name="NodeShouldNotHaveInnerText" xml:space="preserve">
+    <value>节点“{0}”不应有内部文本。</value>
+  </data>
+  <data name="NodeShouldHaveInnerText" xml:space="preserve">
+    <value>节点“{0}”应具有内部文本。</value>
+  </data>
+  <data name="NodeNotFoundOnce" xml:space="preserve">
+    <value>找不到节点“{0}”。在“{1}”下应只出现一次。将忽略父节点“{1}”。</value>
+  </data>
+  <data name="TypeNodeShouldHaveMembersOrTypeConverters" xml:space="preserve">
+    <value>"Type" 节点必须包含 "Members"、"TypeConverters" 或 "TypeAdapters"。</value>
+  </data>
+  <data name="UnableToInstantiateTypeConverter" xml:space="preserve">
+    <value>由于异常: {1}，无法为类型 {0} 创建类型转换器实例。</value>
+  </data>
+  <data name="UnableToInstantiateTypeAdapter" xml:space="preserve">
+    <value>由于发生以下异常: {1}，PowerShell 无法为类型 {0} 创建类型适配器实例。</value>
+  </data>
+  <data name="InvalidAdaptedType" xml:space="preserve">
+    <value>适配的类型“{0}”无效。</value>
+  </data>
+  <data name="TypeConverterAlreadyPresent" xml:space="preserve">
+    <value>TypeConverter 被忽略，因为它已发生。</value>
+  </data>
+  <data name="TypeAdapterAlreadyPresent" xml:space="preserve">
+    <value>TypeAdapter 被忽略，因为它已发生。</value>
+  </data>
+  <data name="TypeIsNotTypeConverter" xml:space="preserve">
+    <value>类型“{0}”应为 TypeConverter 或 PSTypeConverter。</value>
+  </data>
+  <data name="TypeIsNotTypeAdapter" xml:space="preserve">
+    <value>类型“{0}”应为 PSPropertyAdapter。</value>
+  </data>
+  <data name="DuplicateMember" xml:space="preserve">
+    <value>成员 {0} 已存在。</value>
+  </data>
+  <data name="ReservedNameMember" xml:space="preserve">
+    <value>以下成员名称已保留: {0}</value>
+  </data>
+  <data name="Exception" xml:space="preserve">
+    <value>异常: {0}</value>
+  </data>
+  <data name="ScriptPropertyShouldHaveGetterOrSetter" xml:space="preserve">
+    <value>ScriptProperty 应具有 getter 或 setter。</value>
+  </data>
+  <data name="CodePropertyShouldHaveGetterOrSetter" xml:space="preserve">
+    <value>CodeProperty 应具有 getter 或 setter。</value>
+  </data>
+  <data name="FileError" xml:space="preserve">
+    <value>{0}, {1} : {2}</value>
+  </data>
+  <data name="ValueShouldBeTrueOrFalse" xml:space="preserve">
+    <value>该值应为 TRUE 或 FALSE，而不是 {0}。</value>
+  </data>
+  <data name="IsHiddenNotSupported" xml:space="preserve">
+    <value>节点“{0}”不应具有“{1}”属性。</value>
+  </data>
+  <data name="FileNotFound" xml:space="preserve">
+    <value>{0}, {1}: 找不到该文件。</value>
+  </data>
+  <data name="DuplicateFile" xml:space="preserve">
+    <value>{0}, {1}: 已跳过该文件，因为它已由 {2} 加载。</value>
+  </data>
+  <data name="CannotFindRegistryKey" xml:space="preserve">
+    <value>无法找到注册表项: {0}{1}。使用 {2} 加载配置文件。</value>
+  </data>
+  <data name="CannotFindRegistryKeyPath" xml:space="preserve">
+    <value>找不到注册表项中指定的路径 {0}: {1}{2}。使用 {3} 加载配置文件。</value>
+  </data>
+  <data name="EntryShouldBeMshXml" xml:space="preserve">
+    <value>{0}, {1}: 已跳过该文件，因为它没有 ps1xml 文件扩展名。</value>
+  </data>
+  <data name="ValidationException" xml:space="preserve">
+    <value>{0}, {1}: 已跳过该文件，因为出现以下验证异常: {2}。</value>
+  </data>
+  <data name="MemberShouldBeNote" xml:space="preserve">
+    <value>成员“{0}”必须是注释。</value>
+  </data>
+  <data name="ErrorConvertingNote" xml:space="preserve">
+    <value>无法转换注释“{0}”:“{1}”。</value>
+  </data>
+  <data name="MemberShouldNotBePresent" xml:space="preserve">
+    <value>请勿在此处使用成员“{0}”。</value>
+  </data>
+  <data name="MemberShouldHaveType" xml:space="preserve">
+    <value>成员“{0}”必须具有类型“{1}”。</value>
+  </data>
+  <data name="MemberMustBePresent" xml:space="preserve">
+    <value>当“{1}”为“{2}”且“{3}”为“{4}”时，“{0}”必须存在。</value>
+  </data>
+  <data name="SerializationSettingsIgnored" xml:space="preserve">
+    <value>先前的错误导致忽略所有序列化设置。</value>
+  </data>
+  <data name="NotAStandardMember" xml:space="preserve">
+    <value>“{0}”不是标准成员，将被忽略。</value>
+  </data>
+  <data name="TypeFileNotRooted" xml:space="preserve">
+    <value>{0} 路径未完全限定。请指定完全限定的类型文件路径。</value>
+  </data>
+  <data name="SharedTypeTableCannotBeUpdated" xml:space="preserve">
+    <value>无法更新 TypeTable，因为 TypeTable 可能是在运行空间外部创建的。</value>
+  </data>
+  <data name="TypeTableLoadErrors" xml:space="preserve">
+    <value>加载 TypeTable 时出错。请查看 Errors 属性以获取详细错误消息。</value>
+  </data>
+  <data name="TypeDataTypeError" xml:space="preserve">
+    <value>TypeData “{0}” 中出错: {1}</value>
+  </data>
+  <data name="TypeDataShouldHaveValue" xml:space="preserve">
+    <value>“{0}”应具有其属性“{1}”的值。</value>
+  </data>
+  <data name="TypeDataShouldNotBeNullOrEmpty" xml:space="preserve">
+    <value>“{0}”的属性“{1}”中不应包含 null 或空字符串。</value>
+  </data>
+  <data name="TypeNotFound" xml:space="preserve">
+    <value>找不到类型“{0}”。类型名称值必须是该类型的全名。请验证类型名称，然后再次运行该命令。</value>
+  </data>
+  <data name="TypeDataShouldNotBeEmpty" xml:space="preserve">
+    <value>TypeData 必须具有 "Members"、"TypeConverters"、"TypeAdapters" 或 "StandardMembers"。</value>
+  </data>
+  <data name="TypeTableCannotCoExist" xml:space="preserve">
+    <value>无法使用多个条目更新共享类型表。</value>
+  </data>
+</root>

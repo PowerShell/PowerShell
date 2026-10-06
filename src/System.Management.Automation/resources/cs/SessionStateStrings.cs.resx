@@ -1,0 +1,657 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="InvalidProviderInfo" xml:space="preserve">
+    <value>Vrácené informace nelze zpracovat, protože informace vrácené metodou Start poskytovatele se týkaly jiného než předaného poskytovatele.</value>
+  </data>
+  <data name="InvalidProviderInfoNull" xml:space="preserve">
+    <value>Vrácené informace nelze zpracovat, protože informace vrácené metodou Start poskytovatele mají hodnotu null.</value>
+  </data>
+  <data name="GetItemProviderException" xml:space="preserve">
+    <value>Pokus o provedení operace GetItem u poskytovatele {0} pro cestu {1} se nezdařil. {2}</value>
+  </data>
+  <data name="GetItemDynamicParametersProviderException" xml:space="preserve">
+    <value>Dynamické parametry pro operaci GetItem nelze načíst od poskytovatele {0} pro cestu {1}. {2}</value>
+  </data>
+  <data name="SetItemProviderException" xml:space="preserve">
+    <value>Pokus o provedení operace SetItem u poskytovatele {0} pro cestu {1} se nezdařil. {2}</value>
+  </data>
+  <data name="SetItemDynamicParametersProviderException" xml:space="preserve">
+    <value>Dynamické parametry pro operaci SetItem nelze načíst od poskytovatele {0} pro cestu {1}. {2}</value>
+  </data>
+  <data name="ClearItemProviderException" xml:space="preserve">
+    <value>Pokus o provedení operace ClearItem u poskytovatele {0} pro cestu {1} se nezdařil. {2}</value>
+  </data>
+  <data name="InvokeDefaultActionProviderException" xml:space="preserve">
+    <value>Pokus o provedení operace InvokeDefaultAction u poskytovatele {0} pro cestu {1} se nezdařil. {2}</value>
+  </data>
+  <data name="InvokeDefaultActionDynamicParametersProviderException" xml:space="preserve">
+    <value>Dynamické parametry pro operaci InvokeDefaultAction nelze načíst od poskytovatele {0} pro cestu {1}. {2}</value>
+  </data>
+  <data name="ItemExistsProviderException" xml:space="preserve">
+    <value>Pokus o provedení operace ItemExists u poskytovatele {0} pro cestu {1} se nezdařil. {2}</value>
+  </data>
+  <data name="ItemExistsDynamicParametersProviderException" xml:space="preserve">
+    <value>Dynamické parametry pro operaci ItemExists nelze načíst od poskytovatele {0} pro cestu {1}. {2}</value>
+  </data>
+  <data name="IsValidPathProviderException" xml:space="preserve">
+    <value>Pokus o provedení operace IsValidPath u poskytovatele {0} pro cestu {1} se nezdařil. {2}</value>
+  </data>
+  <data name="IsItemContainerProviderException" xml:space="preserve">
+    <value>Pokus o provedení operace IsItemContainer u poskytovatele {0} pro cestu {1} se nezdařil. {2}</value>
+  </data>
+  <data name="RemoveItemProviderException" xml:space="preserve">
+    <value>Pokus o provedení operace RemoveItem u poskytovatele {0} pro cestu {1} se nezdařil. {2}</value>
+  </data>
+  <data name="GetChildrenProviderException" xml:space="preserve">
+    <value>Pokus o provedení operace GetChildItems u poskytovatele {0} pro cestu {1} se nezdařil. {2}</value>
+  </data>
+  <data name="GetChildrenDynamicParametersProviderException" xml:space="preserve">
+    <value>Dynamické parametry pro operaci GetChildItems nelze načíst od poskytovatele {0} pro cestu {1}. {2}</value>
+  </data>
+  <data name="GetChildNamesProviderException" xml:space="preserve">
+    <value>Pokus o provedení operace GetChildNames u poskytovatele {0} pro cestu {1} se nezdařil. {2}</value>
+  </data>
+  <data name="GetChildNamesDynamicParametersProviderException" xml:space="preserve">
+    <value>Dynamické parametry pro operaci GetChildNames nelze načíst od poskytovatele {0} pro cestu {1}. {2}</value>
+  </data>
+  <data name="RenameItemProviderException" xml:space="preserve">
+    <value>Pokus o provedení operace RenameItem u poskytovatele {0} pro cestu {1} se nezdařil. {2}</value>
+  </data>
+  <data name="RenameItemDynamicParametersProviderException" xml:space="preserve">
+    <value>Dynamické parametry pro operaci RenameItem nelze načíst od poskytovatele {0} pro cestu {1}. {2}</value>
+  </data>
+  <data name="NewItemProviderException" xml:space="preserve">
+    <value>Pokus o provedení operace NewItem u poskytovatele {0} pro cestu {1} se nezdařil. {2}</value>
+  </data>
+  <data name="NewItemDynamicParametersProviderException" xml:space="preserve">
+    <value>Dynamické parametry pro operaci NewItem nelze načíst od poskytovatele {0} pro cestu {1}. {2}</value>
+  </data>
+  <data name="HasChildItemsProviderException" xml:space="preserve">
+    <value>Pokus o provedení operace HasChildItems u poskytovatele {0} pro cestu {1} se nezdařil. {2}</value>
+  </data>
+  <data name="CopyItemProviderException" xml:space="preserve">
+    <value>Pokus o provedení operace CopyItem u poskytovatele {0} pro cestu {1} se nezdařil. {2}</value>
+  </data>
+  <data name="CopyItemDynamicParametersProviderException" xml:space="preserve">
+    <value>Dynamické parametry pro operaci CopyItem nelze načíst od poskytovatele {0} pro cestu {1}. {2}</value>
+  </data>
+  <data name="GetParentPathProviderException" xml:space="preserve">
+    <value>Pokus o provedení operace GetParentPath u poskytovatele {0} pro cestu {1} se nezdařil. {2}</value>
+  </data>
+  <data name="NormalizeRelativePathProviderException" xml:space="preserve">
+    <value>Pokus o provedení operace NormalizeRelativePath u poskytovatele {0} pro cestu {1} se nezdařil. {2}</value>
+  </data>
+  <data name="MakePathProviderException" xml:space="preserve">
+    <value>Pokus o provedení operace MakePath u poskytovatele {0} pro cestu {1} se nezdařil. {2}</value>
+  </data>
+  <data name="GetChildNameProviderException" xml:space="preserve">
+    <value>Pokus o provedení operace GetChildName u poskytovatele {0} pro cestu {1} se nezdařil. {2}</value>
+  </data>
+  <data name="MoveItemProviderException" xml:space="preserve">
+    <value>Pokus o provedení operace MoveItem u poskytovatele {0} pro cestu {1} se nezdařil. {2}</value>
+  </data>
+  <data name="MoveItemDynamicParametersProviderException" xml:space="preserve">
+    <value>Dynamické parametry pro operaci MoveItem nelze načíst od poskytovatele {0} pro cestu {1}. {2}</value>
+  </data>
+  <data name="GetPropertyProviderException" xml:space="preserve">
+    <value>Pokus o provedení operace GetProperty u poskytovatele {0} pro cestu {1} se nezdařil. {2}</value>
+  </data>
+  <data name="GetPropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>Dynamické parametry pro operaci GetProperty nelze načíst od poskytovatele {0} pro cestu {1}. {2}</value>
+  </data>
+  <data name="SetPropertyProviderException" xml:space="preserve">
+    <value>Pokus o provedení operace SetProperty u poskytovatele {0} pro cestu {1} se nezdařil. {2}</value>
+  </data>
+  <data name="SetPropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>Dynamické parametry pro operaci SetProperty nelze načíst od poskytovatele {0} pro cestu {1}. {2}</value>
+  </data>
+  <data name="ClearPropertyProviderException" xml:space="preserve">
+    <value>Pokus o provedení operace ClearProperty u poskytovatele {0} pro cestu {1} se nezdařil. {2}</value>
+  </data>
+  <data name="ClearPropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>Dynamické parametry pro operaci ClearProperty nelze načíst od poskytovatele {0} pro cestu {1}. {2}</value>
+  </data>
+  <data name="NewPropertyProviderException" xml:space="preserve">
+    <value>Pokus o provedení operace NewProperty u poskytovatele {0} pro cestu {1} se nezdařil. {2}</value>
+  </data>
+  <data name="NewPropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>Dynamické parametry pro operaci NewProperty nelze načíst od poskytovatele {0} pro cestu {1}. {2}</value>
+  </data>
+  <data name="RemovePropertyProviderException" xml:space="preserve">
+    <value>Pokus o provedení operace RemoveProperty u poskytovatele {0} pro cestu {1} se nezdařil. {2}</value>
+  </data>
+  <data name="RemovePropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>Dynamické parametry pro operaci RemoveProperty nelze načíst od poskytovatele {0} pro cestu {1}. {2}</value>
+  </data>
+  <data name="CopyPropertyProviderException" xml:space="preserve">
+    <value>Pokus o provedení operace CopyProperty u poskytovatele {0} pro cestu {1} se nezdařil. {2}</value>
+  </data>
+  <data name="CopyPropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>Dynamické parametry pro operaci CopyProperty nelze načíst od poskytovatele {0} pro cestu {1}. {2}</value>
+  </data>
+  <data name="MovePropertyProviderException" xml:space="preserve">
+    <value>Pokus o provedení operace MoveProperty u poskytovatele {0} pro cestu {1} se nezdařil. {2}</value>
+  </data>
+  <data name="MovePropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>Dynamické parametry pro operaci MoveProperty nelze načíst od poskytovatele {0} pro cestu {1}. {2}</value>
+  </data>
+  <data name="RenamePropertyProviderException" xml:space="preserve">
+    <value>Pokus o provedení operace RenameProperty u poskytovatele {0} pro cestu {1} se nezdařil. {2}</value>
+  </data>
+  <data name="RenamePropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>Dynamické parametry pro RenameProperty nelze načíst pro poskytovatele {0} pro cestu {1}. {2}</value>
+  </data>
+  <data name="GetContentReaderProviderException" xml:space="preserve">
+    <value>Čtečku obsahu nelze načíst pro poskytovatele {0} a cestu {1}. {2}</value>
+  </data>
+  <data name="GetContentReaderDynamicParametersProviderException" xml:space="preserve">
+    <value>Dynamické parametry pro operaci GetContentReader nelze načíst od poskytovatele {0} pro cestu {1}. {2}</value>
+  </data>
+  <data name="GetContentWriterProviderException" xml:space="preserve">
+    <value>Zapisovač obsahu nelze načíst pro poskytovatele {0} a cestu {1}. {2}</value>
+  </data>
+  <data name="GetContentWriterDynamicParametersProviderException" xml:space="preserve">
+    <value>Dynamické parametry pro operaci GetContentWriter nelze načíst od poskytovatele {0} pro cestu {1}. {2}</value>
+  </data>
+  <data name="GetContainerContentException" xml:space="preserve">
+    <value>Obsah nelze získat, protože se jedná o adresář: {0}. Místo toho prosím použijte Get-ChildItem.</value>
+  </data>
+  <data name="WriteContainerContentException" xml:space="preserve">
+    <value>Obsah nelze zapsat, protože se jedná o adresář: {0}.</value>
+  </data>
+  <data name="LocationUndoStackIsEmpty" xml:space="preserve">
+    <value>V historii umístění už nejsou žádné položky, ke kterým by bylo možné přejít zpět.</value>
+  </data>
+  <data name="LocationRedoStackIsEmpty" xml:space="preserve">
+    <value>V historii umístění už nejsou žádné položky, ke kterým by bylo možné přejít vpřed.</value>
+  </data>
+  <data name="BoundedStackIsEmpty" xml:space="preserve">
+    <value>BoundedStack je prázdný.</value>
+  </data>
+  <data name="ClearContentProviderException" xml:space="preserve">
+    <value>Pokus o provedení operace ClearContent u poskytovatele {0} pro cestu {1} se nezdařil. {2}</value>
+  </data>
+  <data name="ClearDirectoryContent" xml:space="preserve">
+    <value>Obsah položky {0} nelze vymazat, protože se jedná o adresář. Operace Clear-Content je podporována pouze u souborů.</value>
+  </data>
+  <data name="ClearContentDynamicParametersProviderException" xml:space="preserve">
+    <value>Dynamické parametry pro operaci ClearContent nelze načíst od poskytovatele {0} pro cestu {1}. {2}</value>
+  </data>
+  <data name="GetSecurityDescriptorProviderException" xml:space="preserve">
+    <value>Pokus o provedení operace GetSecurityDescriptor u poskytovatele {0} pro cestu {1} se nezdařil. {2}</value>
+  </data>
+  <data name="SetSecurityDescriptorProviderException" xml:space="preserve">
+    <value>Pokus o provedení operace SetSecurityDescriptor u poskytovatele {0} pro cestu {1} se nezdařil. {2}</value>
+  </data>
+  <data name="ProviderStartException" xml:space="preserve">
+    <value>Pokus o provedení operace Start u poskytovatele {0} se nezdařil. {1}</value>
+  </data>
+  <data name="InitializeDefaultDrivesException" xml:space="preserve">
+    <value>Pokus o provedení operace InitializeDefaultDrives u poskytovatele {0} se nezdařil.</value>
+  </data>
+  <data name="NewDriveProviderException" xml:space="preserve">
+    <value>Pokus o provedení operace NewDrive u poskytovatele {0} pro jednotku s kořenovou cestou {1} se nezdařil. {2}</value>
+  </data>
+  <data name="NewDriveDynamicParametersProviderException" xml:space="preserve">
+    <value>Dynamické parametry pro NewDrive nelze pro poskytovatele {0} načíst. {1}</value>
+  </data>
+  <data name="RemoveDriveProviderException" xml:space="preserve">
+    <value>Volání RemoveDrive u poskytovatele {0} se nezdařilo. {1}</value>
+  </data>
+  <data name="DriveRemovalPreventedByProvider" xml:space="preserve">
+    <value>Jednotku {0} nelze odebrat, protože tomu poskytovatel {1} zabránil.</value>
+  </data>
+  <data name="NormalizeRelativePathOutsideBase" xml:space="preserve">
+    <value>Cesta {0} odkazovala na položku, která se nacházela mimo základní cestu {1}.</value>
+  </data>
+  <data name="ProviderSeekError" xml:space="preserve">
+    <value>Vyvolání operace Seek u zapisovače obsahu poskytovatele {0} pro cestu {1} se nezdařilo. {2}</value>
+  </data>
+  <data name="ProviderContentCloseError" xml:space="preserve">
+    <value>Vyvolání operace Close ve čtečce nebo zapisovači obsahu poskytovatele {0} pro cestu {1} se nezdařilo. {2}</value>
+  </data>
+  <data name="ProviderContentReadError" xml:space="preserve">
+    <value>Vyvolání operace Read u čtečky obsahu poskytovatele {0} pro cestu {1} se nezdařilo. {2}</value>
+  </data>
+  <data name="ProviderContentWriteError" xml:space="preserve">
+    <value>Vyvolání operace Write u zapisovače obsahu poskytovatele {0} pro cestu {1} se nezdařilo. {2}</value>
+  </data>
+  <data name="ProviderCannotBeUsedAsVariable" xml:space="preserve">
+    <value>Poskytovatele {0} nelze použít k získání nebo nastavení dat pomocí syntaxe proměnné. {2}</value>
+  </data>
+  <data name="ProviderVariableSyntaxInvalid" xml:space="preserve">
+    <value>Syntaxi proměnné nelze použít k získání nebo nastavení dat v rámci poskytovatele. {2}</value>
+  </data>
+  <data name="AliasNotWritable" xml:space="preserve">
+    <value>Do aliasu nelze zapisovat, protože alias {0} je jen pro čtení nebo je konstantní.</value>
+  </data>
+  <data name="FunctionNotWritable" xml:space="preserve">
+    <value>Do funkce {0} nelze zapisovat, protože je jen pro čtení nebo je konstanta.</value>
+  </data>
+  <data name="VariableNotWritable" xml:space="preserve">
+    <value>Proměnnou {0} nelze přepsat, protože je jen pro čtení nebo je konstanta.</value>
+  </data>
+  <data name="VariableIsPrivate" xml:space="preserve">
+    <value>K proměnné ${0} nelze získat přístup, protože je privátní.</value>
+  </data>
+  <data name="NamedCommandIsPrivate" xml:space="preserve">
+    <value>K příkazu {0} nelze získat přístup, protože je privátní.</value>
+  </data>
+  <data name="CommandIsPrivate" xml:space="preserve">
+    <value>K příkazu nelze získat přístup, protože je privátní.</value>
+  </data>
+  <data name="ResourceIsPrivate" xml:space="preserve">
+    <value>K prostředku stavu relace nelze získat přístup, protože se jedná o privátní prostředek. </value>
+  </data>
+  <data name="AliasNotRemovable" xml:space="preserve">
+    <value>Alias nebyl odebrán, protože alias {0} je konstanta nebo jen pro čtení.</value>
+  </data>
+  <data name="FunctionNotRemovable" xml:space="preserve">
+    <value>Funkci {0} nelze odebrat, protože je konstanta.</value>
+  </data>
+  <data name="VariableNotRemovable" xml:space="preserve">
+    <value>Proměnnou {0} nelze odebrat, protože je konstanta nebo jen pro čtení. Pokud je proměnná jen pro čtení, zkuste operaci provést znovu se zadanou možností Force.</value>
+  </data>
+  <data name="AliasIsConstant" xml:space="preserve">
+    <value>Alias {0} nelze upravit, protože je konstanta.</value>
+  </data>
+  <data name="AliasIsReadOnly" xml:space="preserve">
+    <value>Alias {0} nelze změnit, protože je jen pro čtení.</value>
+  </data>
+  <data name="FunctionIsConstant" xml:space="preserve">
+    <value>Funkci {0} nelze upravit, protože je konstanta.</value>
+  </data>
+  <data name="FunctionIsReadOnly" xml:space="preserve">
+    <value>Funkci {0} nelze upravit, protože je jen pro čtení.</value>
+  </data>
+  <data name="AliasCannotBeMadeConstant" xml:space="preserve">
+    <value>Alias {0} nelze po vytvoření změnit na konstantu. Aliasy lze nastavit jako konstanty pouze při jejich vytvoření.</value>
+  </data>
+  <data name="FunctionCannotBeMadeConstant" xml:space="preserve">
+    <value>Existující funkci {0} nelze změnit na konstantu. Funkce lze nastavit jako konstanty pouze při jejich vytvoření.</value>
+  </data>
+  <data name="VariableCannotBeMadeConstant" xml:space="preserve">
+    <value>Existující proměnnou {0} nelze změnit na konstantu. Proměnné lze nastavit jako konstanty pouze při jejich vytvoření.</value>
+  </data>
+  <data name="AliasAllScopeOptionCannotBeRemoved" xml:space="preserve">
+    <value>Možnost AllScope nelze z aliasu {0} odebrat.</value>
+  </data>
+  <data name="FunctionAllScopeOptionCannotBeRemoved" xml:space="preserve">
+    <value>Možnost AllScope nelze z funkce {0} odebrat.</value>
+  </data>
+  <data name="VariableAllScopeOptionCannotBeRemoved" xml:space="preserve">
+    <value>Možnost AllScope nelze z proměnné {0} odebrat.</value>
+  </data>
+  <data name="ScopedFunctionMustHaveName" xml:space="preserve">
+    <value>Definice funkce {0} obsahovala kvalifikátor oboru, ale neobsahovala žádný název funkce.</value>
+  </data>
+  <data name="RemoveDrivesBeforeRemovingProvider" xml:space="preserve">
+    <value>Poskytovatele {0} nelze odebrat. Před odebráním poskytovatele {0} je nutné odebrat všechny jednotky přidružené k poskytovateli {0}.</value>
+  </data>
+  <data name="DriveNameIllegalCharacters" xml:space="preserve">
+    <value>Název jednotky nelze zpracovat, protože obsahuje jeden nebo více následujících neplatných znaků: ; ~ / \ . :</value>
+  </data>
+  <data name="NewDriveProviderFailed" xml:space="preserve">
+    <value>Vytvoření nové jednotky se nezdařilo, protože poskytovatel nepovoluje vytvoření nové jednotky.</value>
+  </data>
+  <data name="StackNameResolvedToMultiple" xml:space="preserve">
+    <value>Zadaná hodnota {0} byla přeložena na více než jeden zásobník umístění.</value>
+  </data>
+  <data name="StackNotFound" xml:space="preserve">
+    <value>Nelze najít zásobník umístění {0}. Neexistuje nebo není kontejnerem.</value>
+  </data>
+  <data name="PathNotFound" xml:space="preserve">
+    <value>Cesta {0} se nenašla, protože neexistuje.</value>
+  </data>
+  <data name="AliasNotFound" xml:space="preserve">
+    <value>Alias nelze najít, protože alias {0} neexistuje.</value>
+  </data>
+  <data name="PathResolvedToMultiple" xml:space="preserve">
+    <value>Umístění nelze nastavit, protože se cesta {0} přeložila na více kontejnerů. Umístění můžete nastavit vždy jen na jeden kontejner.</value>
+  </data>
+  <data name="VariablePathResolvedToMultiple" xml:space="preserve">
+    <value>Proměnnou nelze zpracovat, protože cesta proměnné {0} byla přeložena na více položek. Hodnotu proměnné můžete získat nebo nastavit vždy jen pro jednu položku.</value>
+  </data>
+  <data name="DriveNotFound" xml:space="preserve">
+    <value>Jednotku nelze najít. Jednotka s názvem {0} neexistuje.</value>
+  </data>
+  <data name="ProviderNotFound" xml:space="preserve">
+    <value>Nelze najít poskytovatele s názvem {0}.</value>
+  </data>
+  <data name="ProviderNotFoundBadFormat" xml:space="preserve">
+    <value>Nelze najít poskytovatele s názvem {0}. Název nemá správný formát. Název poskytovatele může obsahovat pouze alfanumerické znaky nebo může jít o název modulu snap-in PowerShellu následovaný jedním znakem zpětného lomítka (\) a poté alfanumerickými znaky.</value>
+  </data>
+  <data name="ProviderNameAmbiguous" xml:space="preserve">
+    <value>Hodnota {0} byla přeložena na více než jeden název poskytovatele. Mezi možné shody patří:{1}.</value>
+  </data>
+  <data name="ProviderNotFoundInAssembly" xml:space="preserve">
+    <value>Při pokusu o vytvoření instance poskytovatele došlo k chybě. Název typu poskytovatele {0} nebyl v sestavení nalezen.</value>
+  </data>
+  <data name="ProviderNameNotValid" xml:space="preserve">
+    <value>Zadaný název poskytovatele {0} nelze použít, protože obsahuje jeden nebo více následujících neplatných znaků: \ [ ] ? * :</value>
+  </data>
+  <data name="ProviderCtorException" xml:space="preserve">
+    <value>Při pokusu o vytvoření instance poskytovatele {0} došlo k chybě. {1} </value>
+  </data>
+  <data name="VariableNotFound" xml:space="preserve">
+    <value>Nelze najít proměnnou s názvem {0}.</value>
+  </data>
+  <data name="TraceSourceNotFound" xml:space="preserve">
+    <value>Nelze najít zdroj trasování s názvem {0}.</value>
+  </data>
+  <data name="DriveAlreadyExists" xml:space="preserve">
+    <value>Jednotka s názvem {0} již existuje.</value>
+  </data>
+  <data name="VariableAlreadyExists" xml:space="preserve">
+    <value>Proměnná s názvem {0} již existuje.</value>
+  </data>
+  <data name="AliasAlreadyExists" xml:space="preserve">
+    <value>Alias není povolen, protože alias s názvem {0} již existuje.</value>
+  </data>
+  <data name="CmdletProviderAlreadyExists" xml:space="preserve">
+    <value>Poskytovatele rutin nelze zaregistrovat, protože poskytovatel rutin s názvem {0} už existuje.</value>
+  </data>
+  <data name="MustBeFileSystemPath" xml:space="preserve">
+    <value>Cesta neodkazuje na cestu systému souborů.</value>
+  </data>
+  <data name="GlobalScopeCannotRemove" xml:space="preserve">
+    <value>Globální obor nelze odebrat.</value>
+  </data>
+  <data name="ScopeIDExceedsAvailableScopes" xml:space="preserve">
+    <value>Číslo oboru {0} překračuje počet aktivních oborů.</value>
+  </data>
+  <data name="OnlyAbleToComparePSDriveInfo" xml:space="preserve">
+    <value>Nelze porovnat PSDriveInfo. Instanci PSDriveInfo lze porovnat pouze s jinou instancí PSDriveInfo.</value>
+  </data>
+  <data name="OutputStreamingNotEnabled" xml:space="preserve">
+    <value>Poskytovatel rutiny nemůže streamovat výsledky, protože nebyla zadána žádná rutina, prostřednictvím které by se měl streamovat výstup.</value>
+  </data>
+  <data name="ErrorStreamingNotEnabled" xml:space="preserve">
+    <value>Poskytovatel rutiny nemůže streamovat výsledky, protože nebyla zadána žádná rutina, prostřednictvím které by se měla streamovat chyba.</value>
+  </data>
+  <data name="HomePathNotSet" xml:space="preserve">
+    <value>Domovské umístění pro tohoto poskytovatele není nastavené. Pokud chcete nastavit domovské umístění, zavolejte "(get-psprovider '{0}').Home='path'".</value>
+  </data>
+  <data name="NotProviderQualifiedPath" xml:space="preserve">
+    <value>Cesta nemá správný formát. Cesty poskytovatele musí obsahovat ID poskytovatele, za ním „::“ a poté cestu specifickou pro poskytovatele.</value>
+  </data>
+  <data name="MovePropertyDestinationResolveToSingle" xml:space="preserve">
+    <value>Položku nelze přesunout, protože cílovou cestu lze přeložit pouze na jednu cestu.</value>
+  </data>
+  <data name="MoveItemSourceAndDestinationNotSameProvider" xml:space="preserve">
+    <value>Položku nelze přesunout, protože zdrojová a cílová cesta neodkazují na stejného poskytovatele.</value>
+  </data>
+  <data name="MoveItemPathMultipleDestinationNotContainer" xml:space="preserve">
+    <value>Položku nelze přesunout, protože zdrojová cesta odkazuje na jednu nebo více položek a cílová cesta není kontejner. Ověřte, že cílová cesta je kontejner, a zkuste to znovu.</value>
+  </data>
+  <data name="MoveItemOneDestination" xml:space="preserve">
+    <value>Položku nelze přesunout, protože cíl se přeložil na více cest. Zadejte cílovou cestu, která se přeloží na jediný cíl, a zkuste to znovu.</value>
+  </data>
+  <data name="CopyContainerItemToLeafError" xml:space="preserve">
+    <value>Kontejner nelze zkopírovat do existující položky typu list.</value>
+  </data>
+  <data name="CopyContainerToContainerWithoutRecurseOrContainer" xml:space="preserve">
+    <value>Kontejner nelze zkopírovat do jiného kontejneru. Není zadaný parametr -Recurse ani -Container.</value>
+  </data>
+  <data name="CopyItemSourceAndDestinationNotSameProvider" xml:space="preserve">
+    <value>Zdrojová a cílová cesta nebyly přeloženy na stejného poskytovatele.</value>
+  </data>
+  <data name="RenameMultipleItemError" xml:space="preserve">
+    <value>Položku nelze přejmenovat, protože cesta byla přeložena na více položek. Najednou lze přejmenovat pouze jednu položku.</value>
+  </data>
+  <data name="ProviderImplementationInconsistent" xml:space="preserve">
+    <value>Poskytovatele {0} nelze použít k překladu cesty {1} kvůli chybě v poskytovateli.</value>
+  </data>
+  <data name="IContentCmdletProvider_NotSupported" xml:space="preserve">
+    <value>Nelze použít rozhraní. Tento poskytovatel neimplementuje rozhraní IContentCmdletProvider.</value>
+  </data>
+  <data name="IPropertyCmdletProvider_NotSupported" xml:space="preserve">
+    <value>Nelze použít rozhraní. Rozhraní IPropertyCmdletProvider není tímto poskytovatelem podporováno.</value>
+  </data>
+  <data name="IDynamicPropertyCmdletProvider_NotSupported" xml:space="preserve">
+    <value>Nelze použít rozhraní. Tento poskytovatel neimplementuje rozhraní IDynamicPropertyCmdletProvider.</value>
+  </data>
+  <data name="NavigationCmdletProvider_NotSupported" xml:space="preserve">
+    <value>Metody NavigationCmdletProvider nejsou tímto poskytovatelem podporovány.</value>
+  </data>
+  <data name="ContainerCmdletProvider_NotSupported" xml:space="preserve">
+    <value>Metody poskytovatele nebyly zpracovány. Metody ContainerCmdletProvider nejsou tímto poskytovatelem podporovány.</value>
+  </data>
+  <data name="ItemCmdletProvider_NotSupported" xml:space="preserve">
+    <value>Nelze volat metody. Metody ItemCmdletProvider nejsou tímto poskytovatelem podporovány.</value>
+  </data>
+  <data name="DriveCmdletProvider_NotSupported" xml:space="preserve">
+    <value>Metody DriveCmdletProvider nejsou tímto poskytovatelem podporovány.</value>
+  </data>
+  <data name="CmdletProvider_NotSupported" xml:space="preserve">
+    <value>Operace poskytovatele se zastavila, protože poskytovatel tuto operaci nepodporuje.</value>
+  </data>
+  <data name="CmdletProvider_NotSupportedRecursionDepth" xml:space="preserve">
+    <value>Operace poskytovatele se zastavila, protože poskytovatel nepodporuje parametr Depth.</value>
+  </data>
+  <data name="IContent_Seek_NotSupported" xml:space="preserve">
+    <value>Metodu nelze zavolat. Metoda Seek obsahu není tímto poskytovatelem podporována.</value>
+  </data>
+  <data name="IContent_Clear_NotSupported" xml:space="preserve">
+    <value>Operaci ClearContent nelze provést. Operace ClearContent není tímto poskytovatelem podporována.</value>
+  </data>
+  <data name="Credentials_NotSupported" xml:space="preserve">
+    <value>Poskytovatel nepodporuje použití přihlašovacích údajů. Proveďte operaci znovu bez zadání přihlašovacích údajů.</value>
+  </data>
+  <data name="FileSystemProviderCredentials_NotSupported" xml:space="preserve">
+    <value>Zprostředkovatel FileSystem podporuje přihlašovací údaje pouze v rutině New-PSDrive. Proveďte operaci znovu bez zadání přihlašovacích údajů.</value>
+  </data>
+  <data name="Transactions_NotSupported" xml:space="preserve">
+    <value>Poskytovatel nepodporuje transakce. Proveďte operaci znovu bez parametru -UseTransaction.</value>
+  </data>
+  <data name="Filter_NotSupported" xml:space="preserve">
+    <value>Metodu nelze zavolat. Poskytovatel nepodporuje použití filtrů.</value>
+  </data>
+  <data name="NewDriveCredentials_NotSupported" xml:space="preserve">
+    <value>Nelze vytvořit jednotku. Poskytovatel nepodporuje použití přihlašovacích údajů.</value>
+  </data>
+  <data name="NewItemAlreadyExists" xml:space="preserve">
+    <value>Položka v cestě {0} již existuje.</value>
+  </data>
+  <data name="CopyItemDoesntExist" xml:space="preserve">
+    <value>Položku nelze zkopírovat. Položka v cestě {0} neexistuje.</value>
+  </data>
+  <data name="RenameItemDoesntExist" xml:space="preserve">
+    <value>Položka v cestě {0} neexistuje.</value>
+  </data>
+  <data name="AliasDriveDescription" xml:space="preserve">
+    <value>Jednotka obsahující zobrazení aliasů uložených ve stavu relace</value>
+  </data>
+  <data name="EnvironmentDriveDescription" xml:space="preserve">
+    <value>Jednotka obsahující zobrazení proměnných prostředí pro daný proces</value>
+  </data>
+  <data name="FunctionDriveDescription" xml:space="preserve">
+    <value>Jednotka obsahující zobrazení funkcí uložených ve stavu relace</value>
+  </data>
+  <data name="VariableDriveDescription" xml:space="preserve">
+    <value>Jednotka obsahující zobrazení těchto proměnných uložených ve stavu relace</value>
+  </data>
+  <data name="TempDriveDescription" xml:space="preserve">
+    <value>Jednotka mapovaná na cestu k dočasnému adresáři aktuálního uživatele</value>
+  </data>
+  <data name="NewLinkTargetNotSpecified" xml:space="preserve">
+    <value>Odkaz {0} nelze vytvořit, protože nebyla zadána cílová hodnota.</value>
+  </data>
+  <data name="DollarNullDescription" xml:space="preserve">
+    <value>Odkazy na proměnnou null vždy vracejí hodnotu null. Přiřazení nemají žádný vliv.</value>
+  </data>
+  <data name="MaxHistoryCountDescription" xml:space="preserve">
+    <value>Maximální počet objektů historie, které se mají uchovávat v relaci</value>
+  </data>
+  <data name="CannotRenameFunction" xml:space="preserve">
+    <value>Funkci {0} nelze přejmenovat, protože je jen pro čtení nebo je konstanta.</value>
+  </data>
+  <data name="CannotRenameAlias" xml:space="preserve">
+    <value>Alias nelze přejmenovat, protože alias {0} je jen pro čtení nebo je konstanta.</value>
+  </data>
+  <data name="CannotRenameVariable" xml:space="preserve">
+    <value>Proměnnou {0} nelze přejmenovat, protože je jen pro čtení nebo je konstanta.</value>
+  </data>
+  <data name="VariableOptionsNotSettable" xml:space="preserve">
+    <value>U místní proměnné {0} nelze nastavit možnosti. Pomocí New-Variable vytvořte proměnnou, která umožňuje nastavit možnosti.</value>
+  </data>
+  <data name="CmdletIsReadOnly" xml:space="preserve">
+    <value>Rutinu {0} nelze změnit, protože je jen pro čtení.</value>
+  </data>
+  <data name="VariableNotRemovableRare" xml:space="preserve">
+    <value>Proměnnou {0} nelze odebrat, protože byla optimalizována a není odebratelná. Zkuste použít rutinu Remove-Variable (bez aliasů) nebo pomocí tečkové syntaxe spusťte příkaz, který používáte k odebrání proměnné.</value>
+  </data>
+  <data name="VariableNotWritableRare" xml:space="preserve">
+    <value>Proměnnou {0} nelze přepsat, protože byla optimalizována. Zkuste použít rutinu New-Variable nebo Set-Variable (bez aliasů) nebo pomocí tečkové syntaxe spusťte příkaz, který používáte k nastavení proměnné.</value>
+  </data>
+  <data name="GetContent_TailAndHeadCannotCoexist" xml:space="preserve">
+    <value>Parametry {0} a {1} nelze použít společně. Zadejte prosím pouze jeden parametr.</value>
+  </data>
+  <data name="GetContent_TailNotSupported" xml:space="preserve">
+    <value>Parametr Tail je aktuálně podporován pouze pro zprostředkovatele FileSystem.</value>
+  </data>
+  <data name="AliasWithCommandNameAlreadyExists" xml:space="preserve">
+    <value>Alias není povolen, protože už existuje příkaz s názvem {0} a typem příkazu {1}.</value>
+  </data>
+  <data name="CanNotRun" xml:space="preserve">
+    <value>Nelze spustit software. Oprávnění bylo odepřeno.</value>
+  </data>
+  <data name="CopyItemFromSessionToSession" xml:space="preserve">
+    <value>-{0} a -{1} se vzájemně vylučují a nelze je zadat současně.</value>
+  </data>
+  <data name="CopyItemRemotelyPathIsNotAbsolute" xml:space="preserve">
+    <value>Cesta {0} není platná. Pro operace vzdáleného kopírování jsou podporovány pouze absolutní cesty.</value>
+  </data>
+  <data name="CopyItemValidateRemotePath" xml:space="preserve">
+    <value>Vzdálenou cestu {0} nelze ověřit.</value>
+  </data>
+  <data name="CopyItemSessionProperties" xml:space="preserve">
+    <value>Operaci nelze provést, protože relace {0} je nastavená na {1}.</value>
+  </data>
+  <data name="CopyItemRemotelyPathIsNullOrEmpty" xml:space="preserve">
+    <value>Parametr {0} nesmí obsahovat hodnotu null ani nesmí být prázdný.</value>
+  </data>
+  <data name="WDACSessionStateVarLogTitle" xml:space="preserve">
+    <value>Proměnné stavu relace</value>
+  </data>
+  <data name="WDACSessionStateVarLogMessage" xml:space="preserve">
+    <value>V režimu ConstrainedLanguage nebude možné změnit ani vytvořit proměnnou {0} s oborem AllScope.</value>
+  </data>
+</root>

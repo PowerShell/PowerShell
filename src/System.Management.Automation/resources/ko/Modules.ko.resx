@@ -1,0 +1,687 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ModuleNotFound" xml:space="preserve">
+    <value>지정한 모듈 '{0}'은(는) 어떤 모듈 디렉터리에서도 유효한 모듈 파일을 찾을 수 없어 로드되지 않았습니다.</value>
+  </data>
+  <data name="ModuleWithVersionNotFound" xml:space="preserve">
+    <value>버전이 '{0}'인 지정된 모듈 '{1}'은(는) 어떤 모듈 디렉터리에서도 유효한 모듈 파일을 찾을 수 없어 로드되지 않았습니다.</value>
+  </data>
+  <data name="MaximumVersionFormatIncorrect" xml:space="preserve">
+    <value>지정한 MaximumVersion '{0}'이(가) 잘못되었습니다. '*'를 사용하는 경우 MaximumVersion에 '*'를 하나만 사용할 수 있으며, 항상 MaximumVersion의 끝에 위치해야 합니다.</value>
+  </data>
+  <data name="MaximumVersionNotFound" xml:space="preserve">
+    <value>MaximumVersion이 '{1}'인 지정된 모듈 '{0}'은(는) 어떤 모듈 디렉터리에서도 유효한 모듈 파일을 찾지 못해 로드되지 않았습니다.</value>
+  </data>
+  <data name="MinimumVersionAndMaximumVersionNotFound" xml:space="preserve">
+    <value>MinimumVersion이 '{1}'이고 MaximumVersion이 '{2}'인 지정된 모듈 '{0}'은(는) 어떤 모듈 디렉터리에서도 유효한 모듈 파일을 찾지 못해 로드되지 않았습니다.</value>
+  </data>
+  <data name="MinimumVersionAndMaximumVersionInvalidRange" xml:space="preserve">
+    <value>MinimumVersion '{0}'은(는) MaximumVersion '{1}'보다 클 수 없습니다.</value>
+  </data>
+  <data name="ModuleAssemblyFound" xml:space="preserve">
+    <value>해당 이름의 어셈블리를 찾을 수 없어 어셈블리 '{0}'를 로드하지 못했습니다. 어셈블리 이름을 확인한 후 다시 시도하세요.</value>
+  </data>
+  <data name="ManifestMemberNotFound" xml:space="preserve">
+    <value>모듈 매니페스트 '{2}'의 필드 '{1}'에 나열된, '{0}'을(를) 처리할 모듈은 어떤 모듈 디렉터리에서도 유효한 모듈을 찾지 못해 처리되지 않았습니다.</value>
+  </data>
+  <data name="CantUseAsCustomObjectWithBinaryModule" xml:space="preserve">
+    <value>-AsCustomObject 매개 변수는 스크립트 모듈에만 사용할 수 있으므로 모듈 '{0}'에 대해 사용자 지정 개체가 반환되지 않았습니다.</value>
+  </data>
+  <data name="InvalidModuleManifest" xml:space="preserve">
+    <value>모듈 매니페스트 '{0}'은(는) 유효한 PowerShell 모듈 매니페스트 파일이 아니므로 처리할 수 없습니다. 허용되지 않는 요소를 제거하세요: {1}</value>
+  </data>
+  <data name="EmptyModuleManifest" xml:space="preserve">
+    <value>모듈 매니페스트 파일 '{0}'을(를) 처리하는 과정에서 유효한 매니페스트 개체를 생성하지 못했습니다. 파일을 수정하여 유효한 PowerShell 모듈 매니페스트가 포함되도록 하세요. 유효한 매니페스트는 New-ModuleManifest cmdlet으로 만들 수 있습니다.</value>
+  </data>
+  <data name="InvalidModuleManifestMember" xml:space="preserve">
+    <value>'{0}' 모듈의 매니페스트에 잘못된 멤버가 하나 이상 포함되어 있어 모듈을 가져올 수 없습니다. 유효한 매니페스트 멤버는 ({1})입니다. 잘못된 멤버({2})를 제거한 후 모듈을 다시 가져오세요.</value>
+  </data>
+  <data name="InvalidModuleSpecificationMember" xml:space="preserve">
+    <value>모듈을 설명하는 해시 테이블에 잘못된 멤버가 하나 이상 있습니다. 유효한 멤버는 ({0})입니다. 잘못된 멤버({1})를 제거한 후 다시 시도하세요.</value>
+  </data>
+  <data name="ModuleTooDeeplyNested" xml:space="preserve">
+    <value>모듈 중첩 제한을 초과했으므로 모듈 '{0}'을(를) 로드할 수 없습니다. 모듈은 {1} 단계까지만 중첩할 수 있습니다. 모듈을 로드하는 순서를 검토하여 중첩 제한을 넘지 않도록 변경한 후 스크립트를 다시 실행하세요.</value>
+  </data>
+  <data name="ModuleManifestMissingModuleVersion" xml:space="preserve">
+    <value>'ModuleVersion' 멤버가 모듈 매니페스트에 없습니다. 이 멤버는 반드시 있어야 하고 'n.n.n.n' 형식의 버전 번호가 할당되어야 합니다. 누락된 멤버를 파일 '{0}'에 추가하세요.</value>
+  </data>
+  <data name="ModuleManifestInvalidValue" xml:space="preserve">
+    <value>모듈 매니페스트 파일 '{2}'의 '{0}' 멤버가 잘못되었습니다: {1}</value>
+  </data>
+  <data name="ModuleManifestInsufficientModuleVersion" xml:space="preserve">
+    <value>모듈 '{1}'의 버전 '{0}'이(가) 필요한 최소 버전 '{2}'을(를) 충족하지 않습니다. 지원되는 버전 번호인지 확인한 후 모듈을 다시 로드해 보세요.</value>
+  </data>
+  <data name="ModuleManifestInsufficientPowerShellVersion" xml:space="preserve">
+    <value>이 컴퓨터의 PowerShell 버전은 '{0}'입니다. 모듈 '{1}'을(를) 실행하려면 '{2}' 이상의 PowerShell 버전이 필요합니다. 최소 요구 버전 이상의 PowerShell이 설치되어 있는지 확인한 후 다시 시도하세요.</value>
+  </data>
+  <data name="ModuleManifestNestedModulesCantGoWithModuleToProcess" xml:space="preserve">
+    <value>'ModuleToProcess' 멤버가 이진 모듈이면 모듈 매니페스트 멤버 'NestedModules'를 사용할 수 없습니다. '{0}'에서 모듈 매니페스트 파일을 편집한 후 다시 시도하세요.</value>
+  </data>
+  <data name="ModuleManifestInvalidManifestMember" xml:space="preserve">
+    <value>모듈 매니페스트의 멤버 '{0}'이(가) 잘못되었습니다: {1}. '{2}' 파일의 이 필드에 유효한 값이 지정되어 있는지 확인하세요.</value>
+  </data>
+  <data name="InvalidModuleManifestPath" xml:space="preserve">
+    <value>모듈 매니페스트 경로 '{0}'이(가) 잘못되었습니다. Path 인수의 값은 확장자가 '.psd1'인 단일 파일로 확인되어야 합니다. Path 인수의 값을 유효한 psd1 파일 경로로 변경한 후 다시 시도하세요.</value>
+  </data>
+  <data name="InvalidModuleManifestVersion" xml:space="preserve">
+    <value>모듈 매니페스트 '{0}'의 ModuleVersion 키에 지정된 모듈 버전 '{1}'이(가) '{2}'의 버전 폴더 이름과 일치하지 않습니다. ModuleVersion 키의 값을 버전 폴더 이름과 일치하도록 변경하세요.</value>
+  </data>
+  <data name="InvalidNestedModuleinModuleManifest" xml:space="preserve">
+    <value>모듈 매니페스트 '{1}'의 지정된 NestedModule 항목 '{0}'이(가) 잘못되었습니다. 이 항목을 유효한 값으로 업데이트한 후 다시 시도하세요.</value>
+  </data>
+  <data name="InvalidRequiredAssembliesInModuleManifest" xml:space="preserve">
+    <value>모듈 매니페스트 '{1}'의 지정된 RequiredAssemblies 항목 '{0}'이(가) 잘못되었습니다. 이 항목을 유효한 값으로 업데이트한 후 다시 시도하세요.</value>
+  </data>
+  <data name="InvalidFilePathinModuleManifest" xml:space="preserve">
+    <value>모듈 매니페스트 '{1}'의 지정된 FileList 항목 '{0}'이(가) 잘못되었습니다. 이 항목을 유효한 값으로 업데이트한 후 다시 시도하세요.</value>
+  </data>
+  <data name="InvalidRequiredModulesinModuleManifest" xml:space="preserve">
+    <value>모듈 매니페스트 '{1}'의 지정된 RequiredModules 항목 '{0}'이(가) 잘못되었습니다. 이 항목을 유효한 값으로 업데이트한 후 다시 시도하세요.</value>
+  </data>
+  <data name="InvalidModuleListinModuleManifest" xml:space="preserve">
+    <value>모듈 매니페스트 '{1}'의 지정된 ModuleList 항목 '{0}'이(가) 잘못되었습니다. 이 항목을 유효한 값으로 업데이트한 후 다시 시도하세요.</value>
+  </data>
+  <data name="InvalidPowerShellVersionInModuleManifest" xml:space="preserve">
+    <value>모듈 매니페스트 '{0}'은(는) PowerShell 버전 '5.1' 이상에서만 지원되는 CompatiblePSEditions 키로 지정되어 있습니다. PowerShellVersion 키의 값을 '5.1' 이상으로 업데이트한 후 다시 시도하세요.</value>
+  </data>
+  <data name="DuplicateEntriesInCompatiblePSEditions" xml:space="preserve">
+    <value>CompatiblePSEditions에 지정한 값 '{0}'에 중복된 PowerShell 에디션 이름이 있습니다. 중복된 PowerShell 에디션 이름을 제거한 후 다시 시도하세요.</value>
+  </data>
+  <data name="ModuleVersionEqualsToVersionFolder" xml:space="preserve">
+    <value>ModuleVersion 키에 지정된 버전이 버전 폴더 이름과 같습니다.</value>
+  </data>
+  <data name="SkippingInvalidModuleVersionFolder" xml:space="preserve">
+    <value>모듈 {1} 아래의 버전 폴더 {0}에 유효한 모듈 매니페스트 파일이 없으므로 해당 폴더를 건너뜁니다.</value>
+  </data>
+  <data name="RequiredModuleMissingModuleName" xml:space="preserve">
+    <value>이 모듈을 설명하는 해시 테이블에 'ModuleName' 멤버가 없습니다.</value>
+  </data>
+  <data name="RequiredModuleMissingModuleVersion" xml:space="preserve">
+    <value>이 모듈을 설명하는 해시 테이블에 'ModuleVersion', 'MaximumVersion' 및 'RequiredVersion' 멤버가 없습니다. 이 세 멤버 중 하나는 있어야 하며 'n.n.n.n' 형식의 버전 번호가 할당되어야 합니다.</value>
+  </data>
+  <data name="RequiredModuleNotLoaded" xml:space="preserve">
+    <value>필수 모듈 '{1}'이(가) 로드되지 않았습니다. 모듈을 로드하거나 파일 '{0}'의 'RequiredModules'에서 해당 모듈을 제거하세요.</value>
+  </data>
+  <data name="RequiredModuleNotLoadedWrongGuid" xml:space="preserve">
+    <value>GUID가 '{2}'인 필수 모듈 '{1}'이(가) 로드되지 않았습니다. 모듈을 로드하거나 파일 '{0}'의 'RequiredModules'에서 해당 모듈을 제거하세요.</value>
+  </data>
+  <data name="RequiredModuleNotLoadedWrongVersion" xml:space="preserve">
+    <value>버전이 '{2}'인 필수 모듈 '{1}'이(가) 로드되지 않았습니다. 모듈을 로드하거나 파일 '{0}'의 'RequiredModules'에서 해당 모듈을 제거하세요.</value>
+  </data>
+  <data name="RequiredModuleNotLoadedWrongMaximumVersion" xml:space="preserve">
+    <value>MaximumVersion이 '{2}'인 필수 모듈 '{1}'이(가) 로드되지 않았습니다. 모듈을 로드하거나 파일 '{0}'의 'RequiredModules'에서 해당 모듈을 제거하세요.</value>
+  </data>
+  <data name="RequiredModuleNotLoadedWrongMinimumVersionAndMaximumVersion" xml:space="preserve">
+    <value>MinimumVersion이 '{2}'이고 MaximumVersion이 '{3}'인 필수 모듈 '{1}'이(가) 로드되지 않았습니다. 모듈을 로드하거나 파일 '{0}'의 'RequiredModules'에서 해당 모듈을 제거하세요.</value>
+  </data>
+  <data name="RequiredModuleNotFoundModuleVersion" xml:space="preserve">
+    <value>ModuleVersion이 '{1}'인 모듈 '{0}'을(를) 찾을 수 없습니다.</value>
+  </data>
+  <data name="RequiredModuleNotFoundRequiredVersion" xml:space="preserve">
+    <value>RequiredVersion이 '{1}'인 모듈 '{0}'을(를) 찾을 수 없습니다.</value>
+  </data>
+  <data name="RequiredModuleNotFoundMaximumVersion" xml:space="preserve">
+    <value>최대 버전이 '{1}'인 모듈 '{0}'을(를) 찾을 수 없습니다.</value>
+  </data>
+  <data name="RequiredModuleNotFoundModuleAndMaximumVersion" xml:space="preserve">
+    <value>ModuleVersion이 '{1}'이고 MaximumVersion이 '{2}'인 모듈 '{0}'을(를) 찾을 수 없습니다.</value>
+  </data>
+  <data name="RequiredModuleNotFoundWithoutVersion" xml:space="preserve">
+    <value>모듈 '{0}'을(를) 찾을 수 없습니다.</value>
+  </data>
+  <data name="NoModulesRemoved" xml:space="preserve">
+    <value>제거된 모듈이 없습니다. 제거할 모듈을 올바르게 지정했는지, 해당 모듈이 runspace에 있는지 확인하세요.</value>
+  </data>
+  <data name="UnableToRemoveModuleMember" xml:space="preserve">
+    <value>모듈 '{1}'에서 가져온 '{0}' 멤버는 다음 이유로 제거할 수 없습니다. {2}</value>
+  </data>
+  <data name="ModuleIsReadOnly" xml:space="preserve">
+    <value>모듈 '{0}'은(는) 읽기 전용이어서 제거할 수 없습니다. 읽기 전용 모듈을 제거하려면 명령에 Force 매개 변수를 추가하세요.</value>
+  </data>
+  <data name="ModuleIsConstant" xml:space="preserve">
+    <value>모듈 '{0}'이(가) 'constant'로 표시되어 있으므로 제거할 수 없습니다. 'constant'로 표시된 모듈은 제거할 수 없습니다.</value>
+  </data>
+  <data name="ModuleIsRequired" xml:space="preserve">
+    <value>모듈 '{0}'은(는) '{1}'에 필요하므로 제거할 수 없습니다. 모듈을 제거하려면 명령에 Force 매개 변수를 추가하세요.</value>
+  </data>
+  <data name="CanOnlyBeUsedFromWithinAModule" xml:space="preserve">
+    <value>Export-ModuleMember cmdlet은 모듈 내부에서만 호출할 수 있습니다.</value>
+  </data>
+  <data name="InvalidModuleExtension" xml:space="preserve">
+    <value>확장명 '{0}'은(는) 유효한 모듈 확장명이 아닙니다. 지원되는 모듈 확장명은 '.dll', '.ps1', '.psm1', '.psd1' 및 '.cdxml'입니다. 확장명을 수정한 후 파일 '{1}'을(를) 다시 추가해 보세요.</value>
+  </data>
+  <data name="InvalidOperationOnBinaryModule" xml:space="preserve">
+    <value>이 작업은 이진 모듈에서는 수행할 수 없습니다. 스크립트 모듈에서만 수행할 수 있습니다.</value>
+  </data>
+  <data name="ScriptsToProcessIncorrectExtension" xml:space="preserve">
+    <value>파일 '{0}'은(는) 파일 확장명이 '.ps1'가 아니므로 허용되지 않습니다.</value>
+  </data>
+  <data name="DefaultCompanyName" xml:space="preserve">
+    <value>알 수 없음</value>
+  </data>
+  <data name="DefaultCopyrightMessage" xml:space="preserve">
+    <value>(c) {0}. All rights reserved.</value>
+  </data>
+  <data name="RemovingImportedFunction" xml:space="preserve">
+    <value>가져온 "{0}" 함수를 제거하는 중입니다.</value>
+  </data>
+  <data name="RemovingImportedAlias" xml:space="preserve">
+    <value>가져온 "{0}" 별칭을 제거하는 중입니다.</value>
+  </data>
+  <data name="RemovingImportedVariable" xml:space="preserve">
+    <value>가져온 "{0}" 변수를 제거하는 중입니다.</value>
+  </data>
+  <data name="LoadingModule" xml:space="preserve">
+    <value>'{0}' 경로에서 모듈을 로드하는 중입니다.</value>
+  </data>
+  <data name="LoadingFile" xml:space="preserve">
+    <value>'{0}'을(를) '{1}' 경로에서 로드하는 중입니다.</value>
+  </data>
+  <data name="DottingScriptFile" xml:space="preserve">
+    <value>스크립트 파일 '{0}'을(를) 도트 소싱하는 중입니다.</value>
+  </data>
+  <data name="ImportingFunction" xml:space="preserve">
+    <value>함수 '{0}을(를) 가져오는 중입니다.</value>
+  </data>
+  <data name="ImportingCmdlet" xml:space="preserve">
+    <value>cmdlet '{0}'을(를) 가져오는 중입니다.</value>
+  </data>
+  <data name="ImportingAlias" xml:space="preserve">
+    <value>별칭 '{0}'을(를) 가져오는 중입니다.</value>
+  </data>
+  <data name="ImportingVariable" xml:space="preserve">
+    <value>변수 '{0}'을(를) 가져오는 중입니다.</value>
+  </data>
+  <data name="ExportingCmdlet" xml:space="preserve">
+    <value>cmdlet '{0}'을(를) 내보내는 중입니다.</value>
+  </data>
+  <data name="ExportingFunction" xml:space="preserve">
+    <value>함수 '{0}'을(를) 내보내는 중입니다.</value>
+  </data>
+  <data name="ExportingAlias" xml:space="preserve">
+    <value>별칭 '{0}'을(를) 내보내는 중입니다.</value>
+  </data>
+  <data name="ExportingVariable" xml:space="preserve">
+    <value>변수 '{0}'을(를) 내보내는 중입니다.</value>
+  </data>
+  <data name="ImportingNonStandardVerb" xml:space="preserve">
+    <value>모듈 '{0}'에서 가져온 일부 명령 이름에 승인되지 않은 동사가 포함되어 있어 검색이 잘 안될 수 있습니다. 승인되지 않은 동사가 있는 명령을 찾으려면 Verbose 매개 변수와 함께 Import-Module 명령을 다시 실행하세요. 승인된 동사 목록을 보려면 Get-Verb를 입력하세요.</value>
+  </data>
+  <data name="ImportingNonStandardVerbVerbose" xml:space="preserve">
+    <value>{1} 모듈의 '{0}' 명령을 가져왔지만, 이름에 승인된 동사가 포함되어 있지 않아 찾기 어려울 수 있습니다. 승인된 동사 목록을 보려면 Get-Verb를 입력하세요.</value>
+  </data>
+  <data name="ImportingNonStandardVerbVerboseSuggestion" xml:space="preserve">
+    <value>{2} 모듈의 '{0}' 명령을 가져왔지만, 이름에 승인된 동사가 포함되어 있지 않아 찾기 어려울 수 있습니다. 제안된 대체 동사는 "{1}"입니다.</value>
+  </data>
+  <data name="ImportingNonStandardNoun" xml:space="preserve">
+    <value>가져온 일부 명령 이름에 다음 제한 문자 중 하나 이상이 포함되어 있습니다: # , ( ) {{ }} [ ] &amp; - / \ $ ^ ; : " ' &lt; &gt; | ? @ ` * % + = ~</value>
+  </data>
+  <data name="ImportingNonStandardNounVerbose" xml:space="preserve">
+    <value>모듈 '{1}'의 명령 이름 '{0}'에 다음 제한 문자 중 하나 이상이 포함되어 있습니다: # , ( ) {{ }} [ ] &amp; - / \ $ ^ ; : " ' &lt; &gt; | ? @ ` * % + = ~</value>
+  </data>
+  <data name="CreatingModuleManifestFile" xml:space="preserve">
+    <value>"{0}" 모듈 매니페스트 파일을 만드는 중입니다.</value>
+  </data>
+  <data name="ConfirmRemoveModule" xml:space="preserve">
+    <value>{0} (경로: '{1}')</value>
+  </data>
+  <data name="InvalidProcessorArchitecture" xml:space="preserve">
+    <value>현재 프로세서 아키텍처는 {0}입니다. 모듈 '{1}'에는 {2} 아키텍처가 필요합니다.</value>
+  </data>
+  <data name="InvalidPowerShellHostName" xml:space="preserve">
+    <value>현재 PowerShell 호스트 이름은 '{0}'입니다. 모듈 '{1}'을(를) 사용하려면 PowerShell 호스트 '{2}'이(가) 필요합니다.</value>
+  </data>
+  <data name="InvalidPowerShellHostVersion" xml:space="preserve">
+    <value>현재 PowerShell 호스트는 '{0}'(버전 {1})입니다. 모듈 '{2}'을(를) 실행하려면 '{3}' 이상의 PowerShell 호스트 버전이 필요합니다.</value>
+  </data>
+  <data name="ManifestHeaderLine1" xml:space="preserve">
+    <value>모듈 '{0}'의 모듈 매니페스트</value>
+  </data>
+  <data name="ManifestHeaderLine2" xml:space="preserve">
+    <value>생성자: {0}</value>
+  </data>
+  <data name="ManifestHeaderLine3" xml:space="preserve">
+    <value>생성 날짜: {0}</value>
+  </data>
+  <data name="RootModule" xml:space="preserve">
+    <value>이 매니페스트와 연결된 스크립트 모듈 또는 이진 모듈 파일입니다.</value>
+  </data>
+  <data name="NestedModules" xml:space="preserve">
+    <value>RootModule/ModuleToProcess에 지정된 모듈의 중첩 모듈로 가져올 모듈</value>
+  </data>
+  <data name="GUID" xml:space="preserve">
+    <value>이 모듈을 고유하게 식별하는 데 사용하는 ID</value>
+  </data>
+  <data name="Author" xml:space="preserve">
+    <value>이 모듈의 작성자</value>
+  </data>
+  <data name="CompanyName" xml:space="preserve">
+    <value>이 모듈의 회사 또는 공급업체</value>
+  </data>
+  <data name="Copyright" xml:space="preserve">
+    <value>이 모듈의 저작권 문구</value>
+  </data>
+  <data name="ModuleVersion" xml:space="preserve">
+    <value>이 모듈의 버전 번호입니다.</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>이 모듈에서 제공하는 기능에 대한 설명</value>
+  </data>
+  <data name="PowerShellVersion" xml:space="preserve">
+    <value>이 모듈에 필요한 PowerShell 엔진의 최소 버전</value>
+  </data>
+  <data name="CLRVersion" xml:space="preserve">
+    <value>이 모듈에 필요한 CLR(공용 언어 런타임)의 최소 버전입니다. {0}</value>
+  </data>
+  <data name="RequiredModules" xml:space="preserve">
+    <value>이 모듈을 가져오기 전에 전역 환경으로 가져와야 하는 모듈</value>
+  </data>
+  <data name="ScriptsToProcess" xml:space="preserve">
+    <value>이 모듈을 가져오기 전에 호출자의 환경에서 실행되는 스크립트 파일(.ps1)입니다.</value>
+  </data>
+  <data name="TypesToProcess" xml:space="preserve">
+    <value>이 모듈을 가져올 때 로드할 형식 파일(.ps1xml)</value>
+  </data>
+  <data name="FormatsToProcess" xml:space="preserve">
+    <value>이 모듈을 가져올 때 로드할 서식 파일(.ps1xml)</value>
+  </data>
+  <data name="RequiredAssemblies" xml:space="preserve">
+    <value>이 모듈을 가져오기 전에 로드해야 하는 어셈블리</value>
+  </data>
+  <data name="FileList" xml:space="preserve">
+    <value>이 모듈과 함께 패키지된 모든 파일 목록</value>
+  </data>
+  <data name="PrivateData" xml:space="preserve">
+    <value>RootModule/ModuleToProcess에 지정된 모듈에 전달할 프라이빗 데이터입니다. 여기에는 PowerShell에서 사용하는 추가 모듈 메타데이터가 있는 PSData 해시 테이블도 포함될 수 있습니다.</value>
+  </data>
+  <data name="Tags" xml:space="preserve">
+    <value>이 모듈에 적용된 태그입니다. 온라인 갤러리에서 모듈을 검색하는 데 도움이 됩니다.</value>
+  </data>
+  <data name="ProjectUri" xml:space="preserve">
+    <value>이 프로젝트의 기본 웹 사이트 URL입니다.</value>
+  </data>
+  <data name="LicenseUri" xml:space="preserve">
+    <value>이 모듈의 라이선스 URL입니다.</value>
+  </data>
+  <data name="IconUri" xml:space="preserve">
+    <value>이 모듈을 나타내는 아이콘의 URL입니다.</value>
+  </data>
+  <data name="ReleaseNotes" xml:space="preserve">
+    <value>이 모듈의 ReleaseNotes</value>
+  </data>
+  <data name="Prerelease" xml:space="preserve">
+    <value>이 모듈의 시험판 문자열</value>
+  </data>
+  <data name="RequireLicenseAcceptance" xml:space="preserve">
+    <value>설치/업데이트/저장 시 모듈에 명시적 사용자 승인이 필요한지 여부를 나타내는 플래그</value>
+  </data>
+  <data name="ExternalModuleDependencies" xml:space="preserve">
+    <value>이 모듈의 외부 종속 모듈</value>
+  </data>
+  <data name="EndOfManifestHashTable" xml:space="preserve">
+    <value>해시 테이블 {0}의 끝</value>
+  </data>
+  <data name="PrivateDataValueTypeShouldBeHashTableError" xml:space="preserve">
+    <value>Tags, ProjectUri, LicenseUri, IconUri 또는 ReleaseNotes 매개 변수 값을 사용하여 모듈 매니페스트를 만들려면 PrivateData 매개 변수 값이 해시 테이블이어야 합니다. Tags, ProjectUri, LicenseUri, IconUri 또는 ReleaseNotes 매개 변수 값을 제거하거나, PrivateData 내용을 해시 테이블로 감싸세요.</value>
+  </data>
+  <data name="PrivateDataValueTypeShouldBeHashTableWarning" xml:space="preserve">
+    <value>PrivateData가 해시 테이블로 정의되어야 하는데, 이 모듈 매니페스트에서는 개체로 정의되어 있습니다. PrivateData 내용을 해시 테이블로 감싸는 것이 좋습니다. 이렇게 하면 나중에 모듈 매니페스트에 Tags, ProjectUri, LicenseUri, IconUri 및 ReleaseNotes 속성을 추가할 수 있습니다.</value>
+  </data>
+  <data name="InvalidParameterValue" xml:space="preserve">
+    <value>지정한 값 '{0}'이(가) 잘못되었습니다. 유효한 값으로 다시 시도하세요.</value>
+  </data>
+  <data name="FunctionsToExport" xml:space="preserve">
+    <value>이 모듈에서 내보낼 함수입니다. 최상의 성능을 위해 와일드카드를 사용하지 말고, 항목을 삭제하지 마세요. 내보낼 함수가 없으면 빈 배열을 사용하세요.</value>
+  </data>
+  <data name="AliasesToExport" xml:space="preserve">
+    <value>이 모듈에서 내보낼 별칭입니다. 최상의 성능을 위해 와일드카드를 사용하지 말고, 항목을 삭제하지 마세요. 내보낼 별칭이 없으면 빈 배열을 사용하세요.</value>
+  </data>
+  <data name="CmdletsToExport" xml:space="preserve">
+    <value>이 모듈에서 내보낼 cmdlet입니다. 최상의 성능을 위해 와일드카드를 사용하지 말고, 항목을 삭제하지 마세요. 내보낼 cmdlet이 없으면 빈 배열을 사용하세요.</value>
+  </data>
+  <data name="VariablesToExport" xml:space="preserve">
+    <value>이 모듈에서 내보낼 변수</value>
+  </data>
+  <data name="DscResourcesToExport" xml:space="preserve">
+    <value>이 모듈에서 내보낼 DSC 리소스</value>
+  </data>
+  <data name="CompatiblePSEditions" xml:space="preserve">
+    <value>지원되는 PSEditions</value>
+  </data>
+  <data name="ProcessorArchitecture" xml:space="preserve">
+    <value>이 모듈에 필요한 프로세서 아키텍처(None, X86, Amd64)</value>
+  </data>
+  <data name="ModuleList" xml:space="preserve">
+    <value>이 모듈과 함께 패키지된 모든 모듈 목록</value>
+  </data>
+  <data name="DotNetFrameworkVersion" xml:space="preserve">
+    <value>이 모듈에 필요한 Microsoft .NET Framework의 최소 버전입니다. {0}</value>
+  </data>
+  <data name="PowerShellHostName" xml:space="preserve">
+    <value>이 모듈에 필요한 PowerShell 호스트의 이름</value>
+  </data>
+  <data name="PowerShellHostVersion" xml:space="preserve">
+    <value>이 모듈에 필요한 PowerShell 호스트의 최소 버전</value>
+  </data>
+  <data name="HelpInfoURI" xml:space="preserve">
+    <value>이 모듈의 HelpInfo URI</value>
+  </data>
+  <data name="ModuleDriveInUse" xml:space="preserve">
+    <value>현재 PowerShell 세션에서 {0} 모듈이 PSDrive를 제공하고 있으므로 어떤 모듈도 제거되지 않았습니다. 현재 PSDrive 공급자를 변경한 후 모듈을 다시 제거해 보세요.</value>
+  </data>
+  <data name="ImportModuleNoClobberForCmdlet" xml:space="preserve">
+    <value>현재 범위에 동일한 이름의 멤버가 있어 cmdlet '{0}'을(를) 가져오지 않았습니다.</value>
+  </data>
+  <data name="ImportModuleNoClobberForAlias" xml:space="preserve">
+    <value>현재 범위에 동일한 이름의 멤버가 있어 별칭 '{0}'을(를) 가져오지 않았습니다.</value>
+  </data>
+  <data name="ImportModuleNoClobberForFunction" xml:space="preserve">
+    <value>현재 범위에 동일한 이름의 멤버가 있어 함수 '{0}'을(를) 가져오지 않았습니다.</value>
+  </data>
+  <data name="ImportModuleNoClobberForVariable" xml:space="preserve">
+    <value>현재 범위에 동일한 이름의 멤버가 있어 변수 '{0}'을(를) 가져오지 않았습니다.</value>
+  </data>
+  <data name="WildCardNotAllowedInModuleToProcessAndInNestedModules" xml:space="preserve">
+    <value>모듈 매니페스트 '{0}'의 'ModuleToProcess', 'RootModule' 또는 'NestedModules' 멤버에는 와일드카드 문자를 사용할 수 없습니다.</value>
+  </data>
+  <data name="CoreModuleCannotBeRemoved" xml:space="preserve">
+    <value>모듈 '{0}'은(는) PowerShell의 핵심 모듈입니다. 핵심 모듈을 제거하려면 명령에 Force 매개 변수를 추가하세요.</value>
+  </data>
+  <data name="ModuleManifestCannotContainBothModuleToProcessAndRootModule" xml:space="preserve">
+    <value>모듈 매니페스트에는 'ModuleToProcess' 멤버와 'RootModule' 멤버가 동시에 포함될 수 없습니다. '{0}'에서 둘 중 하나를 모듈 매니페스트 파일에서 제거한 후 다시 시도하세요.</value>
+  </data>
+  <data name="ModuleToProcessFieldDeprecated" xml:space="preserve">
+    <value>모듈 매니페스트 멤버 'ModuleToProcess'는 더 이상 사용되지 않습니다. 대신 'RootModule' 멤버를 사용하세요.</value>
+  </data>
+  <data name="DefaultCommandPrefix" xml:space="preserve">
+    <value>이 모듈에서 내보낸 명령의 기본 접두사입니다. Import-Module -Prefix를 사용하여 기본 접두사를 재정의하세요.</value>
+  </data>
+  <data name="GlobalAndScopeParameterCannotBeSpecifiedTogether" xml:space="preserve">
+    <value>'Global' 및 'Scope' 매개 변수는 함께 지정할 수 없습니다. 이 매개 변수 중 하나를 제거한 후 명령을 다시 실행해 보세요.</value>
+  </data>
+  <data name="RequiredModulesCyclicDependency" xml:space="preserve">
+    <value>필수 모듈 '{0}'이(가) 로드되지 않았습니다. 모듈 '{0}'의 모듈 매니페스트 '{1}'에 순환 종속성을 가리키는 requiredModule '{2}'이 있습니다.</value>
+  </data>
+  <data name="RequiredModuleNotFound" xml:space="preserve">
+    <value>필수 모듈 '{0}'은(는) 어떤 모듈 디렉터리에서도 유효한 모듈 파일을 찾지 못해 로드되지 않았습니다.</value>
+  </data>
+  <data name="MixedModuleOverCimSessionWarning" xml:space="preserve">
+    <value>모듈 {0}의 일부 명령은 CimSession을 통해 가져올 수 없습니다. 모든 명령을 가져오려면 원격 서버에 PowerShell 원격 관리가 사용하도록 설정되어 있는지 확인한 후 Import-Module cmdlet에 PSSession 매개 변수를 추가해 보세요.</value>
+  </data>
+  <data name="WinCompatModuleWarning" xml:space="preserve">
+    <value>모듈 {0}은(는) Windows PowerShell에서 {1} 원격 세션을 사용해 로드됩니다. 이 모듈의 모든 명령 입력과 출력은 역직렬화된 개체가 됩니다. 이 모듈을 PowerShell에 로드하려면 'Import-Module -SkipEditionCheck' 구문을 사용하세요.</value>
+  </data>
+  <data name="WinCompatRequredVersionError" xml:space="preserve">
+    <value>Windows PowerShell 버전 {0}이(가) 감지되었습니다. Windows PowerShell 호환성 기능을 사용하여 모듈을 로드하려면 Windows PowerShell 5.1이 있어야 합니다. 이 기능을 사용하려면 https://aka.ms/WMF5Download에서 Windows Management Framework(WMF) 5.1을 설치하세요.</value>
+  </data>
+  <data name="WinCompatModuleInDenyList" xml:space="preserve">
+    <value>PowerShell 구성 파일의 'WindowsPowerShellCompatibilityModuleDenyList' 설정에 의해 모듈 '{0}'이(가) Windows PowerShell 호환성 기능을 사용해 로드되는 것이 차단되었습니다.</value>
+  </data>
+  <data name="PsModuleOverCimSessionError" xml:space="preserve">
+    <value>모듈 {0}은(는) CimSession을 통해 가져올 수 없습니다. Import-Module cmdlet의 PSSession 매개 변수를 사용해 보세요.</value>
+  </data>
+  <data name="InvalidProcessorArchitectureInManifest" xml:space="preserve">
+    <value>{0}의 프로세서 아키텍처 값은 지원되지 않습니다. 프로세서 아키텍처에 대해 지원되는 열거형 값(None, MSIL, X86, Amd64, Arm) 중 하나를 지정하여 New-ModuleManifest 명령을 다시 실행하세요.</value>
+  </data>
+  <data name="RemoteDiscoveryWorksOnlyInListAvailableMode" xml:space="preserve">
+    <value>원격 컴퓨터에 대해 Get-Module cmdlet을 실행하면 사용할 수 있는 모듈만 나열됩니다. 명령에 ListAvailable 매개 변수를 추가한 후 다시 시도하세요.</value>
+  </data>
+  <data name="ModuleLoadedAsASnapin" xml:space="preserve">
+    <value>'{0}' 스냅인을 이미 가져왔으므로 '{0}' 모듈을 가져오지 못했습니다.</value>
+  </data>
+  <data name="WildCardNotAllowedInRequiredAssemblies" xml:space="preserve">
+    <value>모듈 매니페스트 '{0}'의 'RequiredAssemblies' 멤버에는 와일드카드 문자를 사용할 수 없습니다.</value>
+  </data>
+  <data name="CmdletizationDoesSupportRexportingNestedModules" xml:space="preserve">
+    <value>{1}의 {0} 키 값이 {2}이며, 모듈에 중첩 모듈이 있습니다. CDXML 파일이 루트 모듈일 때 중첩 모듈의 명령은 내보낼 수 없으므로 Import-Module 명령이 실패합니다. CDXML 파일을 NestedModules 키로 이동한 후 명령을 다시 시도하세요.</value>
+    <comment>{0} is equal to either ModuleToProcess or RootModule
+{1} is a placeholder for a file path to psd1 file
+{2} is a placeholder for a file path to cdxml file</comment>
+  </data>
+  <data name="RemoteDiscoveryRemotePsrpCommandFailed" xml:space="preserve">
+    <value>원격 명령 실패: {0}: {{0}}</value>
+  </data>
+  <data name="RemoteDiscoveryFailedToGenerateProxyForRemoteModule" xml:space="preserve">
+    <value>원격 모듈 '{0}'에 대한 프록시를 생성하지 못했습니다. {{0}}</value>
+  </data>
+  <data name="RemoteDiscoveryFailedToProcessRemoteModule" xml:space="preserve">
+    <value>원격 모듈 {0}을(를) 처리하지 못했습니다. {1}</value>
+  </data>
+  <data name="RemoteDiscoveryFailureFromDiscoveryProvider" xml:space="preserve">
+    <value>원격 CimSession에서 모듈 데이터를 받지 못했습니다. {0}</value>
+  </data>
+  <data name="RequiredModuleNotFoundWrongGuidVersion" xml:space="preserve">
+    <value>GUID가 '{1}'이고 버전이 '{2}'인 필수 모듈 '{0}'은(는) 어떤 모듈 디렉터리에서 유효한 모듈 파일을 찾을 수 없어 로드되지 않았습니다.</value>
+  </data>
+  <data name="RemoteDiscoveryProviderNotFound" xml:space="preserve">
+    <value>CIM 서버에서 모듈 검색을 위한 CIM 공급자를 찾을 수 없습니다. {0}</value>
+    <comment>{0} is a placeholder for a more detailed error message</comment>
+  </data>
+  <data name="CannotDetectNetFrameworkVersion" xml:space="preserve">
+    <value>Microsoft .NET Framework 버전 {0}은(는) 허용된 버전 목록에 포함되어 있지 않아 확인할 수 없습니다.</value>
+  </data>
+  <data name="ScriptAnalysisModule" xml:space="preserve">
+    <value>{0}을(를) 분석하는 중입니다.</value>
+    <comment>{0} should not be localized, is used to contain a file path.</comment>
+  </data>
+  <data name="ScriptAnalysisPreparing" xml:space="preserve">
+    <value>처음 사용할 모듈을 준비하는 중입니다.</value>
+  </data>
+  <data name="DeterminingAvailableModules" xml:space="preserve">
+    <value>사용 가능한 모듈을 검색하는 중</value>
+  </data>
+  <data name="SearchingUncShare" xml:space="preserve">
+    <value>UNC 공유 {0}을(를) 검색하는 중입니다.</value>
+    <comment>{0} should not be localized, is used to contain a file path.</comment>
+  </data>
+  <data name="RemoteDiscoveryWorksOnlyForUnQualifiedNames" xml:space="preserve">
+    <value>원격 컴퓨터에 대해 Get-Module cmdlet을 실행할 때는 경로를 포함하지 않는 모듈 이름만 사용할 수 있습니다. Name 매개 변수에 경로로 확인되는 요소 '{0}'이(가) 있습니다. Name 매개 변수에 경로가 포함되지 않도록 수정한 후 다시 시도하세요.</value>
+  </data>
+  <data name="ModuleDiscoveryForLoadedModulesWorksOnlyForUnQualifiedNames" xml:space="preserve">
+    <value>모듈 이름에 경로가 포함되어 있으면 ListAvailable 매개 변수 없이 Get-Module cmdlet을 실행할 수 없습니다. Name 매개 변수에 경로로 확인되는 요소 '{0}'이(가) 있습니다. Name 매개 변수에 경로가 포함되지 않도록 수정한 후 다시 시도하세요.</value>
+  </data>
+  <data name="ModuleNotFoundForGetModule" xml:space="preserve">
+    <value>지정한 모듈 '{0}'을(를) 찾을 수 없습니다. Name 매개 변수를 올바른 경로로 업데이트한 후 다시 시도하세요. </value>
+  </data>
+  <data name="PopulatingRepositorySourceLocation" xml:space="preserve">
+    <value>모듈 {0}의 RepositorySourceLocation 속성을 채우는 중입니다.</value>
+  </data>
+  <data name="ManifestMemberNotValid" xml:space="preserve">
+    <value>모듈 매니페스트 '{2}'의 필드 '{1}'에 나열된, '{0}'을(를) 처리할 모듈이 처리되지 않았습니다. {3}</value>
+  </data>
+  <data name="PrerequisiteForDesktopEditionOnly" xml:space="preserve">
+    <value>이 필수 구성 요소는 PowerShell 데스크톱 버전에만 유효합니다.</value>
+  </data>
+  <data name="PSEditionNotSupported" xml:space="preserve">
+    <value>모듈 '{0}'은(는) 현재 PowerShell 에디션 '{1}'을(를) 지원하지 않습니다. 지원되는 에디션은 '{2}'입니다. 이 모듈의 호환성 검사를 무시하려면 'Import-Module -SkipEditionCheck'를 사용하세요.</value>
+  </data>
+  <data name="ImplicitWinCompatDisabled" xml:space="preserve">
+    <value>모듈 '{0}'은(는) PowerShell 버전 '{1}'을(를) 지원하며, 설정 파일에 Windows 호환성 기능이 비활성화되어 있으므로 이를 사용해 암시적으로 로드할 수 없습니다. Windows PowerShell로 이 모듈을 로드하려면 'Import-Module -UseWindowsPowerShell'을 사용하고, 현재 PowerShell에서 로드를 시도하려면 'Import-Module -SkipEditionCheck'를 사용하세요.</value>
+  </data>
+  <data name="ExperimentalFeatureNameMissingOrEmpty" xml:space="preserve">
+    <value>모듈 매니페스트에 선언된 실험적 기능에는 비어 있지 않은 문자열 값을 지정해야 합니다.</value>
+  </data>
+  <data name="InvalidExperimentalFeatureName" xml:space="preserve">
+    <value>잘못된 실험적 기능 이름이 하나 이상 발견되었습니다: {0}. 모듈 실험적 기능 이름은 'ModuleName.FeatureName' 형식을 따라야 합니다.</value>
+  </data>
+  <data name="SkipEditionCheckNotSupportedWithoutListAvailable" xml:space="preserve">
+    <value>-SkipEditionCheck 스위치 매개 변수는 -ListAvailable 스위치 매개 변수 없이 사용할 수 없습니다.</value>
+  </data>
+  <data name="ImportPSFileNotAllowedInConstrainedLanguage" xml:space="preserve">
+    <value>ConstrainedLanguage 모드에서는 *.ps1 파일을 모듈로 가져올 수 없습니다.</value>
+  </data>
+  <data name="MismatchedLanguageModes" xml:space="preserve">
+    <value>스크립트 모듈 {0}은(는) 모듈 매니페스트와 언어 모드가 다르기 때문에 로드하는 동안 오류가 발생했습니다. 매니페스트 언어 모드는 {1}이고 모듈 언어 모드는 {2}입니다. 모든 모듈 파일이 서명되어 있는지, 또는 애플리케이션 허용 목록 구성에 포함되어 있는지 확인하세요.</value>
+  </data>
+  <data name="CannotUseDotSourceWithWildCardFunctionExport" xml:space="preserve">
+    <value>이 모듈은 와일드카드 문자를 사용해 함수를 내보내는 동안 도트 소싱 연산자를 사용합니다. 이는 시스템이 애플리케이션 검증 적용 상태일 때는 허용되지 않습니다.</value>
+  </data>
+  <data name="CannotExportMembersAccrossLanguageBoundaries" xml:space="preserve">
+    <value>실행 중인 세션과 언어 모드가 다른 모듈에서는 모듈 멤버를 내보낼 수 없습니다.</value>
+  </data>
+  <data name="CannotCreateModuleWithScriptBlock" xml:space="preserve">
+    <value>세션이 ConstrainedLanguage 모드인 동안에는 새 모듈을 만들 수 없습니다.</value>
+  </data>
+  <data name="CannotFindCoreCompatibleBuiltInModule" xml:space="preserve">
+    <value>'Core' 버전과 호환되는 기본 제공 모듈 '{0}'을(를) 찾을 수 없습니다. PowerShell 기본 제공 모듈이 사용 가능한지 확인하세요. 이 모듈은 일반적으로 $PSHOME 모듈 경로 아래의 PowerShell 패키지와 함께 제공되며, PowerShell이 제대로 작동하는 데 필요합니다.</value>
+  </data>
+  <data name="WDACExportModuleCommandLogTitle" xml:space="preserve">
+    <value>Export-ModuleMember Cmdlet</value>
+  </data>
+  <data name="WDACExportModuleCommandLogMessage" xml:space="preserve">
+    <value>모듈 '{0}'은(는) 현재 세션 '{1}'과 다른 언어 모드 '{2}'이(가) 있어 제한된 언어 모드에서 모듈 멤버를 내보낼 수 없습니다.</value>
+  </data>
+  <data name="WDACImplicitFunctionExportLogTitle" xml:space="preserve">
+    <value>모듈 암시적 함수 내보내기</value>
+  </data>
+  <data name="WDACImplicitFunctionExportLogMessage" xml:space="preserve">
+    <value>모듈 '{0}'에 대한 암시적 함수 내보내기가 거부됩니다. 이 모듈은 신뢰할 수 있지만(전체 언어 모드에서 실행), 세션은 신뢰할 수 없기 때문입니다(제한된 언어 모드에서 실행). 모듈 함수는 항상 전체 이름으로 개별적으로 내보내는 것이 좋습니다.</value>
+  </data>
+  <data name="WDACScriptFileImportLogTitle" xml:space="preserve">
+    <value>스크립트 파일을 모듈로 가져오기</value>
+  </data>
+  <data name="WDACScriptFileImportLogMessage" xml:space="preserve">
+    <value>ConstrainedLanguage 모드에서는 스크립트 파일 '{0}'을(를) 모듈로 가져올 수 없습니다.</value>
+  </data>
+  <data name="WDACModuleDotSourceLogTitle" xml:space="preserve">
+    <value>모듈에 도트 소싱 연산자가 포함되어 있음</value>
+  </data>
+  <data name="WDACModuleDotSourceLogMessage" xml:space="preserve">
+    <value>모듈 '{0}'은(는) 와일드카드 문자를 사용해 함수를 내보내면서 동시에 도트 소싱 연산자를 사용하므로 제한된 언어 모드에서 가져오기에 실패합니다.</value>
+  </data>
+  <data name="WDACModuleFnExportWithNestedModulesLogTitle" xml:space="preserve">
+    <value>"함수를 내보내는 모듈</value>
+  </data>
+  <data name="WDACModuleFnExportWithNestedModulesLogMessage" xml:space="preserve">
+    <value>모듈 '{0}'은(는) 이름 와일드카드 문자를 사용하여 함수를 내보냅니다. 제한된 언어 모드에서 실행하면 중첩된 모듈 함수 이름이 제거됩니다.</value>
+  </data>
+  <data name="WDACNewModuleCommandLogTitle" xml:space="preserve">
+    <value>"New-Module cmdlet</value>
+  </data>
+  <data name="WDACNewModuleCommandLogMessage" xml:space="preserve">
+    <value>신뢰할 수 없는 제한된 언어 세션의 새 모듈은 FullLanguage 스크립트 블록을 제공하지 못하도록 차단됩니다.</value>
+  </data>
+  <data name="WDACMismatchedLanguageModesTitle" xml:space="preserve">
+    <value>"모듈 언어 모드가 일치하지 않음</value>
+  </data>
+  <data name="WDACMismatchedLanguageModesMessage" xml:space="preserve">
+    <value>부모 모듈과 다른 언어 모드를 사용하는 종속 모듈이 로드되고 있습니다. 제한된 언어 모드에서는 이 작업이 허용되지 않습니다.</value>
+  </data>
+</root>

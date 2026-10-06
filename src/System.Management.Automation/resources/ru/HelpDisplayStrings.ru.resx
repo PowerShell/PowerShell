@@ -1,0 +1,473 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Name" xml:space="preserve">
+    <value>Имя</value>
+  </data>
+  <data name="Synopsis" xml:space="preserve">
+    <value>Краткий обзор</value>
+  </data>
+  <data name="DetailedDescription" xml:space="preserve">
+    <value>ОПИСАНИЕ</value>
+  </data>
+  <data name="Syntax" xml:space="preserve">
+    <value>СИНТАКСИС</value>
+  </data>
+  <data name="Parameters" xml:space="preserve">
+    <value>ПАРАМЕТРЫ</value>
+  </data>
+  <data name="InputType" xml:space="preserve">
+    <value>ВХОДНЫЕ ДАННЫЕ</value>
+  </data>
+  <data name="ReturnType" xml:space="preserve">
+    <value>ВЫХОДНЫЕ ДАННЫЕ</value>
+  </data>
+  <data name="TerminatingErrors" xml:space="preserve">
+    <value>ПРЕРЫВАЮЩИЕ ОШИБКИ</value>
+  </data>
+  <data name="NonHyphenTerminatingErrors" xml:space="preserve">
+    <value>НЕПРЕРЫВАЮЩИЕ ОШИБКИ</value>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>ПРИМЕЧАНИЯ</value>
+  </data>
+  <data name="Examples" xml:space="preserve">
+    <value>ПРИМЕРЫ</value>
+  </data>
+  <data name="Example" xml:space="preserve">
+    <value>Пример</value>
+  </data>
+  <data name="ExampleUpperCase" xml:space="preserve">
+    <value>ПРИМЕР</value>
+  </data>
+  <data name="Output" xml:space="preserve">
+    <value>ВЫХОДНЫЕ ДАННЫЕ</value>
+  </data>
+  <data name="RelatedLinks" xml:space="preserve">
+    <value>СВЯЗАННЫЕ ССЫЛКИ</value>
+  </data>
+  <data name="ShortDescription" xml:space="preserve">
+    <value>КРАТКОЕ ОПИСАНИЕ</value>
+  </data>
+  <data name="TitleColon" xml:space="preserve">
+    <value>Название:</value>
+  </data>
+  <data name="QuestionColon" xml:space="preserve">
+    <value>Вопрос:</value>
+  </data>
+  <data name="Answer" xml:space="preserve">
+    <value>Ответ</value>
+  </data>
+  <data name="TermColon" xml:space="preserve">
+    <value>Срок:</value>
+  </data>
+  <data name="DefinitionColon" xml:space="preserve">
+    <value>Определение:</value>
+  </data>
+  <data name="ContentColon" xml:space="preserve">
+    <value>Содержимое:</value>
+  </data>
+  <data name="ProviderName" xml:space="preserve">
+    <value>ИМЯ ПОСТАВЩИКА</value>
+  </data>
+  <data name="BaseCmdletInformation" xml:space="preserve">
+    <value>    Этот командлет поддерживает общие параметры: Verbose, Debug,
+    ErrorAction, ErrorVariable, WarningAction, WarningVariable,
+    OutBuffer, PipelineVariable и OutVariable. Дополнительные сведения см. в разделе
+    about_CommonParameters (https://go.microsoft.com/fwlink/?LinkID=113216). </value>
+  </data>
+  <data name="ParameterRequired" xml:space="preserve">
+    <value>Обязательно?                    </value>
+  </data>
+  <data name="ParameterPosition" xml:space="preserve">
+    <value>Позиция?                    </value>
+  </data>
+  <data name="TypeColon" xml:space="preserve">
+    <value>Тип: </value>
+  </data>
+  <data name="TargetObjectTypeColon" xml:space="preserve">
+    <value>Тип целевого объекта:   </value>
+  </data>
+  <data name="ParameterDefaultValue" xml:space="preserve">
+    <value>Значение по умолчанию                </value>
+  </data>
+  <data name="AcceptsPipelineInput" xml:space="preserve">
+    <value>Принимать входные данные конвейера?       </value>
+  </data>
+  <data name="AcceptsWildCardCharacters" xml:space="preserve">
+    <value>Принимать подстановочные знаки?  </value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>(Категория: </value>
+  </data>
+  <data name="SuggestedActionColon" xml:space="preserve">
+    <value>Рекомендуемое действие: </value>
+  </data>
+  <data name="VerboseHelpInfo" xml:space="preserve">
+    <value>Чтобы получить дополнительные сведения, введите: </value>
+  </data>
+  <data name="FullHelpInfo" xml:space="preserve">
+    <value>Чтобы просмотреть технические сведения, введите: </value>
+  </data>
+  <data name="ExampleHelpInfo" xml:space="preserve">
+    <value>Чтобы просмотреть примеры, введите: </value>
+  </data>
+  <data name="RelatedLinksHelpInfo" xml:space="preserve">
+    <value>Чтобы получить справку в Интернете, введите: </value>
+  </data>
+  <data name="CommonParameters" xml:space="preserve">
+    <value>&lt;CommonParameters&gt;</value>
+  </data>
+  <data name="RemarksSection" xml:space="preserve">
+    <value>ПРИМЕЧАНИЯ</value>
+  </data>
+  <data name="TrueShort" xml:space="preserve">
+    <value>true</value>
+  </data>
+  <data name="NamedParameter" xml:space="preserve">
+    <value>Именованный</value>
+  </data>
+  <data name="Drives" xml:space="preserve">
+    <value>ДИСКИ</value>
+  </data>
+  <data name="Capabilities" xml:space="preserve">
+    <value>ВОЗМОЖНОСТИ</value>
+  </data>
+  <data name="Tasks" xml:space="preserve">
+    <value>ЗАДАЧИ</value>
+  </data>
+  <data name="Task" xml:space="preserve">
+    <value>ЗАДАЧА: </value>
+  </data>
+  <data name="Filters" xml:space="preserve">
+    <value>ФИЛЬТРЫ</value>
+  </data>
+  <data name="DynamicParameters" xml:space="preserve">
+    <value>ДИНАМИЧЕСКИЕ ПАРАМЕТРЫ</value>
+  </data>
+  <data name="CmdletsSupported" xml:space="preserve">
+    <value>Поддерживаемые командлеты: </value>
+  </data>
+  <data name="AliasesSection" xml:space="preserve">
+    <value>ПСЕВДОНИМЫ</value>
+  </data>
+  <data name="GetLatestHelpContent" xml:space="preserve">
+    <value>Get-Help не удается найти файлы справки для указанного командлета на этом компьютере. Справка отображается частично.
+    -- Чтобы скачать и установить файлы справки для модуля, который включает этот командлет, используйте Update-Help.
+    -- Чтобы просмотреть раздел справки для этого командлета в Интернете, введите: "Get-Help {0} -Online" или
+       перейдите сюда: {1}.</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Нет</value>
+  </data>
+  <data name="ParameterAliases" xml:space="preserve">
+    <value>Псевдонимы                      </value>
+  </data>
+  <data name="ParameterIsDynamic" xml:space="preserve">
+    <value>Динамический?                     </value>
+  </data>
+  <data name="ParameterSetName" xml:space="preserve">
+    <value>Имя набора параметров           </value>
+  </data>
+  <data name="UnableToRetrieveHelpInfoXml" xml:space="preserve">
+    <value>Не удается получить XML-файл HelpInfo для языка и региональных параметров пользовательского интерфейса {0}. Убедитесь, что свойство HelpInfoUri в манифесте модуля допустимо, или проверьте сетевое подключение, а затем повторите команду.</value>
+  </data>
+  <data name="PipelineByPropertyName" xml:space="preserve">
+    <value>ByPropertyName</value>
+  </data>
+  <data name="PipelineByValue" xml:space="preserve">
+    <value>ByValue</value>
+  </data>
+  <data name="PipelineFromRemainingArguments" xml:space="preserve">
+    <value>FromRemainingArguments</value>
+  </data>
+  <data name="HelpCultureNotSupported" xml:space="preserve">
+    <value>Указанные язык и региональные параметры не поддерживаются: {0}. Укажите язык и региональные параметры из следующего списка: {{{1}}}.</value>
+  </data>
+  <data name="HelpCultureNotSupportedFallback" xml:space="preserve">
+    <value>Откладывание обработки ошибки и попытка использовать резервные варианты языка и региональных параметров будет отображаться как ошибка, если ни один из резервных вариантов не поддерживается:
+{0}</value>
+  </data>
+  <data name="ModuleBaseMustExist" xml:space="preserve">
+    <value>Не удается найти каталог ModuleBase. Проверьте каталог и повторите попытку.</value>
+  </data>
+  <data name="PathMustBeValidContainers" xml:space="preserve">
+    <value>Путь {0} не является допустимым каталогом. Убедитесь, что каталог существует, и повторите попытку.</value>
+  </data>
+  <data name="TooManyRedirections" xml:space="preserve">
+    <value>URI справки не может содержать более 10 перенаправлений. Укажите допустимый URI справки.</value>
+  </data>
+  <data name="UpdateProgressActivity" xml:space="preserve">
+    <value>Обновление справки</value>
+  </data>
+  <data name="UpdateProgressConnecting" xml:space="preserve">
+    <value>Подключение к содержимому справки…</value>
+  </data>
+  <data name="UpdateProgressDownloading" xml:space="preserve">
+    <value>Скачивание содержимого справки…</value>
+  </data>
+  <data name="UpdateProgressInstalling" xml:space="preserve">
+    <value>Установка содержимого справки…</value>
+  </data>
+  <data name="UpdateProgressLocating" xml:space="preserve">
+    <value>Поиск содержимого справки…</value>
+  </data>
+  <data name="AllParameterSetsName" xml:space="preserve">
+    <value>(все)</value>
+  </data>
+  <data name="CannotMatchModulePattern" xml:space="preserve">
+    <value>Не найдены модули PowerShell, соответствующие следующему шаблону: {0}. Проверьте шаблон и повторите команду.</value>
+  </data>
+  <data name="ModuleNotFoundWithFullyQualifiedName" xml:space="preserve">
+    <value>Не найдены модули PowerShell, соответствующие указанному FullyQualifiedModule {0}. Проверьте значение FullyQualifiedModule и повторите команду.</value>
+  </data>
+  <data name="HelpContentNotFound" xml:space="preserve">
+    <value>Не удается найти содержимое справки. Убедитесь, что сервер доступен и что расположение содержимого справки правильно определено в XML-файле HelpInfo.</value>
+  </data>
+  <data name="HelpInfoUriNotFound" xml:space="preserve">
+    <value>Не удалось выполнить команду Update-Help, так как указанный модуль не поддерживает обновляемую справку. Используйте Get-Help -Online или выполните поиск в Интернете, чтобы получить справку по командам в этом модуле.</value>
+  </data>
+  <data name="ModuleNameNullOrEmpty" xml:space="preserve">
+    <value>Следующий параметр не должен быть пустым или иметь значение null: Модуль.</value>
+  </data>
+  <data name="PathNullOrEmpty" xml:space="preserve">
+    <value>Следующий параметр не должен быть пустым или иметь значение null: Путь.</value>
+  </data>
+  <data name="UpdateHelpCompleted" xml:space="preserve">
+    <value>Команда Update-Help выполнена.</value>
+  </data>
+  <data name="UnzipFailure" xml:space="preserve">
+    <value>Ошибка при извлечении содержимого справки.</value>
+  </data>
+  <data name="UnableToConnect" xml:space="preserve">
+    <value>Не удается подключиться к содержимому справки. Возможно, сервер, на котором хранится содержимое справки, недоступен. Убедитесь, что сервер доступен, или дождитесь, пока он снова станет доступен, и повторите команду.</value>
+  </data>
+  <data name="HelpContentXmlValidationFailure" xml:space="preserve">
+    <value>Содержимое справки в указанном расположении недопустимо. Укажите расположение, в котором находится допустимое содержимое справки.</value>
+  </data>
+  <data name="HelpInfoXmlValidationFailure" xml:space="preserve">
+    <value>XML-файл HelpInfo недопустим. Укажите допустимый XML-файл HelpInfo.</value>
+  </data>
+  <data name="SaveHelpCompleted" xml:space="preserve">
+    <value>Содержимое справки сохранено в следующем расположении: {0}</value>
+  </data>
+  <data name="HelpContentXsdNotFound" xml:space="preserve">
+    <value>Не удается найти XSD-файл содержимого справки в {0}. Убедитесь, что XSD-файл существует в указанном расположении, и повторите команду.</value>
+  </data>
+  <data name="FailedToUpdateHelpForModule" xml:space="preserve">
+    <value>Не удалось обновить справку для модулей: 
+"{0}"
+{1}</value>
+  </data>
+  <data name="SaveProgressActivity" xml:space="preserve">
+    <value>Сохранение справки</value>
+  </data>
+  <data name="HelpContentContainsInvalidFiles" xml:space="preserve">
+    <value>Содержимое справки включает недопустимые файлы. Поддерживаются только файлы TXT и XML.</value>
+  </data>
+  <data name="FailedToSaveHelpForModule" xml:space="preserve">
+    <value>Не удалось сохранить справку для модулей "{0}": {1}</value>
+  </data>
+  <data name="FailedToSaveHelpForModuleWithCulture" xml:space="preserve">
+    <value>Не удалось сохранить справку для модулей "{0}" с языком и региональными параметрами пользовательского интерфейса {{{1}}}: {2}.
+Содержимое справки English-US доступно и может быть сохранено с помощью команды Save-Help -UICulture en-US.</value>
+  </data>
+  <data name="FailedToUpdateHelpForModuleWithCulture" xml:space="preserve">
+    <value>Не удалось обновить справку для модулей "{0}" с языком и региональными параметрами пользовательского интерфейса {{{1}}}: {2}.
+Содержимое справки English-US доступно и может быть установлено с помощью команды Update-Help -UICulture en-US.</value>
+  </data>
+  <data name="FailedToUpdateHelpWithLocaleNoUICulture" xml:space="preserve">
+    <value>Ваши текущие язык и региональные параметры — ({0}) и не связаны ни с одним языком. Попробуйте изменить язык и региональные параметры системы или установить содержимое справки English-US с помощью команды Update-Help -UICulture en-US.</value>
+  </data>
+  <data name="FalseShort" xml:space="preserve">
+    <value>false</value>
+  </data>
+  <data name="CannotSpecifyRecurseWithoutPath" xml:space="preserve">
+    <value>Параметр -Recurse доступен, только если указан путь к источнику.</value>
+  </data>
+  <data name="ProviderIsNotFileSystem" xml:space="preserve">
+    <value>В пути {0} не указан поставщик FileSystem. Убедитесь, что в этом пути указан поставщик FileSystem, и повторите команду.</value>
+  </data>
+  <data name="SearchingForHelpContent" xml:space="preserve">
+    <value>Поиск справки для {0}…</value>
+  </data>
+  <data name="CannotMatchUICulturePattern" xml:space="preserve">
+    <value>Не найдены язык и региональные параметры пользовательского интерфейса, соответствующие следующему шаблону: {0}. Проверьте шаблон и повторите команду.</value>
+  </data>
+  <data name="UseForceToSaveHelp" xml:space="preserve">
+    <value>Справка для модуля {0} не сохранена, так как команда Save-Help выполнялась на этом компьютере в течение последних 24 часов.
+Чтобы снова сохранить справку, добавьте в команду параметр Force.</value>
+  </data>
+  <data name="UseForceToUpdateHelp" xml:space="preserve">
+    <value>Справка для модуля {0} не обновлена, так как команда Update-Help выполнялась на этом компьютере в течение последних 24 часов.
+Чтобы снова обновить справку, добавьте в команду параметр Force.</value>
+  </data>
+  <data name="NewestContentAlreadyInstalled" xml:space="preserve">
+    <value>Самые актуальные файлы справки уже установлены.</value>
+  </data>
+  <data name="SuccessfullyUpdatedHelpContent" xml:space="preserve">
+    <value>{0}: {1}. Язык и региональные параметры {2} Версия {3}</value>
+  </data>
+  <data name="UpdatedHelpContent" xml:space="preserve">
+    <value>Обновлено {0}</value>
+  </data>
+  <data name="InvalidHelpInfoUri" xml:space="preserve">
+    <value>Значение ключа HelpInfoUri в манифесте модуля должно указывать на URL-адрес контейнера или корня на веб-сайте, где хранятся файлы справки. Ключ HelpInfoUri "{0}" не указывает на контейнер.</value>
+  </data>
+  <data name="HelpContentMustBeInTargetNamespace" xml:space="preserve">
+    <value>Содержимое справки должно находиться в пространстве имен {0}.</value>
+  </data>
+  <data name="GetLatestHelpContentWithoutHelpUri" xml:space="preserve">
+    <value>Get-Help не удается найти файлы справки для указанного командлета на этом компьютере. Справка отображается частично.
+    -- Чтобы скачать и установить файлы справки для модуля, который включает этот командлет, используйте Update-Help.</value>
+  </data>
+  <data name="NewestContentAlreadyDownloaded" xml:space="preserve">
+    <value>Самые актуальные файлы справки уже скачаны.</value>
+  </data>
+  <data name="SavedHelpContent" xml:space="preserve">
+    <value>Сохранено {0}</value>
+  </data>
+  <data name="InvalidHelpInfoUriFormat" xml:space="preserve">
+    <value>HelpInfoURI {0} не начинается с HTTP.</value>
+  </data>
+  <data name="RootElementMustBeHelpItems" xml:space="preserve">
+    <value>Корневым элементом содержимого справки должен быть "helpItems".</value>
+  </data>
+  <data name="SaveProgressActivityForModule" xml:space="preserve">
+    <value>Сохранение справки для модуля {0}</value>
+  </data>
+  <data name="UpdateProgressActivityForModule" xml:space="preserve">
+    <value>Обновление справки для модуля {0}</value>
+  </data>
+  <data name="UpdateHelpResolveUriVerbose" xml:space="preserve">
+    <value>Разрешение URI: "{0}"</value>
+  </data>
+  <data name="OnlineHelpUri" xml:space="preserve">
+    <value>URI справки: {0}</value>
+  </data>
+  <data name="UpdateHelpShouldProcessActionMessage" xml:space="preserve">
+    <value>{0}, текущая версия: {1}, доступная версия: {2}, UICulture: {3}</value>
+  </data>
+  <data name="Properties" xml:space="preserve">
+    <value>СВОЙСТВА</value>
+  </data>
+  <data name="Methods" xml:space="preserve">
+    <value>МЕТОДЫ</value>
+  </data>
+</root>

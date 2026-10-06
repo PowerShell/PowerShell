@@ -1,0 +1,420 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Add" xml:space="preserve">
+    <value>컨테이너에 리소스를 추가하거나 항목을 다른 항목에 연결합니다.</value>
+  </data>
+  <data name="Approve" xml:space="preserve">
+    <value>리소스 또는 프로세스의 상태를 확인하거나 이에 동의합니다.</value>
+  </data>
+  <data name="Assert" xml:space="preserve">
+    <value>리소스의 상태를 확인합니다.</value>
+  </data>
+  <data name="Backup" xml:space="preserve">
+    <value>데이터를 복제하여 저장합니다.</value>
+  </data>
+  <data name="Block" xml:space="preserve">
+    <value>리소스에 대한 액세스를 제한합니다.</value>
+  </data>
+  <data name="Build" xml:space="preserve">
+    <value>몇몇 입력 파일 집합(일반적으로 소스 코드 또는 선언적 문서)에서 하나의 아티팩트(일반적으로 이진 또는 문서)를 만듭니다.</value>
+  </data>
+  <data name="Checkpoint" xml:space="preserve">
+    <value>데이터의 현재 상태 또는 해당 구성의 스냅샷을 만듭니다.</value>
+  </data>
+  <data name="Clear" xml:space="preserve">
+    <value>컨테이너에서 모든 리소스를 제거하지만 컨테이너는 삭제하지 않습니다.</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>리소스의 상태를 변경하여 액세스할 수 없거나, 사용할 수 없게 만듭니다.</value>
+  </data>
+  <data name="Compare" xml:space="preserve">
+    <value>한 리소스의 데이터를 다른 리소스의 데이터에 대해 평가합니다.</value>
+  </data>
+  <data name="Complete" xml:space="preserve">
+    <value>작업을 종료합니다.</value>
+  </data>
+  <data name="Compress" xml:space="preserve">
+    <value>리소스의 데이터를 압축합니다.</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>리소스 또는 프로세스의 상태를 승인 또는 확인하거나 유효성을 검사합니다.</value>
+  </data>
+  <data name="Connect" xml:space="preserve">
+    <value>원본과 대상 간에 링크를 만듭니다.</value>
+  </data>
+  <data name="Convert" xml:space="preserve">
+    <value>cmdlet이 양방향 변환을 지원하거나 cmdlet이 여러 데이터 형식 간의 변환을 지원하는 경우 한 표현에서 다른 표현 방식으로 데이터를 변경합니다.</value>
+  </data>
+  <data name="ConvertFrom" xml:space="preserve">
+    <value>입력의 한 가지 기본 형식(cmdlet 명사는 입력을 나타냄)을 하나 이상의 지원되는 출력 형식으로 변환합니다.</value>
+  </data>
+  <data name="ConvertTo" xml:space="preserve">
+    <value>하나 이상의 입력 형식에서 기본 출력 형식(cmdlet 명사는 출력 형식을 나타냄)으로 변환합니다.</value>
+  </data>
+  <data name="Copy" xml:space="preserve">
+    <value>리소스를 다른 이름 또는 다른 컨테이너에 복사합니다.</value>
+  </data>
+  <data name="Debug" xml:space="preserve">
+    <value>리소스를 검사하여 운영 문제를 진단합니다.</value>
+  </data>
+  <data name="Deny" xml:space="preserve">
+    <value>리소스 또는 프로세스의 상태를 거부, 이의 제지, 차단 또는 반대합니다.</value>
+  </data>
+  <data name="Deploy" xml:space="preserve">
+    <value>배포가 완료된 후 해당 솔루션의 소비자가 액세스할 수 있는 방식으로 애플리케이션, 웹 사이트 또는 솔루션을 원격 대상에 보냅니다.</value>
+  </data>
+  <data name="Disable" xml:space="preserve">
+    <value>리소스를 사용할 수 없는 상태 또는 비활성 상태로 구성합니다.</value>
+  </data>
+  <data name="Disconnect" xml:space="preserve">
+    <value>원본과 대상 간의 연결을 끊습니다.</value>
+  </data>
+  <data name="Dismount" xml:space="preserve">
+    <value>위치에서 명명된 엔터티를 분리합니다.</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>콘텐츠를 추가하거나 제거하여 기존 데이터를 수정합니다.</value>
+  </data>
+  <data name="Enable" xml:space="preserve">
+    <value>리소스를 사용 가능한 상태 또는 활성 상태로 구성합니다.</value>
+  </data>
+  <data name="Enter" xml:space="preserve">
+    <value>사용자가 리소스로 이동하도록 허용하는 작업을 지정합니다.</value>
+  </data>
+  <data name="Exit" xml:space="preserve">
+    <value>현재 환경 또는 컨텍스트를 가장 최근에 사용한 컨텍스트로 설정합니다.</value>
+  </data>
+  <data name="Expand" xml:space="preserve">
+    <value>원래 상태로 압축된 리소스의 데이터를 복원합니다.</value>
+  </data>
+  <data name="Export" xml:space="preserve">
+    <value>기본 입력을 파일과 같은 영구적 데이터 저장소나 교환 형식으로 캡슐화합니다.</value>
+  </data>
+  <data name="Find" xml:space="preserve">
+    <value>알 수 없거나, 암시적이거나, 선택적이거나, 지정된 컨테이너에서 개체를 찾습니다.</value>
+  </data>
+  <data name="Format" xml:space="preserve">
+    <value>지정된 양식 또는 레이아웃의 개체를 정렬합니다.</value>
+  </data>
+  <data name="Get" xml:space="preserve">
+    <value>리소스를 검색하는 작업을 지정합니다.</value>
+  </data>
+  <data name="Grant" xml:space="preserve">
+    <value>리소스에 대한 액세스를 허용합니다.</value>
+  </data>
+  <data name="Group" xml:space="preserve">
+    <value>하나 이상의 리소스를 정렬하거나 연결합니다.</value>
+  </data>
+  <data name="Hide" xml:space="preserve">
+    <value>리소스를 감지할 수 없게 만듭니다.</value>
+  </data>
+  <data name="Import" xml:space="preserve">
+    <value>영구 데이터 저장소(예: 파일)에 저장되거나 교환 형식으로 저장된 데이터에서 리소스를 만듭니다.</value>
+  </data>
+  <data name="Initialize" xml:space="preserve">
+    <value>사용할 리소스를 준비하고 기본 상태로 설정합니다.</value>
+  </data>
+  <data name="Install" xml:space="preserve">
+    <value>리소스를 위치에 배치하고, 필요한 경우 초기화합니다.</value>
+  </data>
+  <data name="Invoke" xml:space="preserve">
+    <value>명령 또는 메서드 실행과 같은 작업을 수행합니다.</value>
+  </data>
+  <data name="Join" xml:space="preserve">
+    <value>리소스를 하나의 리소스로 결합합니다.</value>
+  </data>
+  <data name="Limit" xml:space="preserve">
+    <value>리소스에 제약 조건을 적용합니다.</value>
+  </data>
+  <data name="Lock" xml:space="preserve">
+    <value>리소스를 보호합니다.</value>
+  </data>
+  <data name="Measure" xml:space="preserve">
+    <value>지정된 작업에서 사용되는 리소스를 식별하거나 리소스에 대한 통계를 검색합니다.</value>
+  </data>
+  <data name="Merge" xml:space="preserve">
+    <value>여러 리소스에서 단일 리소스를 만듭니다.</value>
+  </data>
+  <data name="Mount" xml:space="preserve">
+    <value>명명된 엔터티를 위치에 연결합니다.</value>
+  </data>
+  <data name="Move" xml:space="preserve">
+    <value>리소스를 한 위치에서 다른 위치로 이동합니다.</value>
+  </data>
+  <data name="New" xml:space="preserve">
+    <value>리소스를 만듭니다.</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>리소스의 상태를 변경하여 액세스 가능 또는 사용 가능하도록 만듭니다.</value>
+  </data>
+  <data name="Optimize" xml:space="preserve">
+    <value>리소스의 효율성을 높입니다.</value>
+  </data>
+  <data name="Out" xml:space="preserve">
+    <value>환경 외부로 데이터를 보냅니다.</value>
+  </data>
+  <data name="Ping" xml:space="preserve">
+    <value>테스트 동사를 사용합니다.</value>
+  </data>
+  <data name="Pop" xml:space="preserve">
+    <value>스택의 맨 위에서 항목을 제거합니다.</value>
+  </data>
+  <data name="Protect" xml:space="preserve">
+    <value>공격 또는 손실로부터 리소스를 보호합니다.</value>
+  </data>
+  <data name="Publish" xml:space="preserve">
+    <value>다른 사용자가 리소스를 사용할 수 있도록 합니다.</value>
+  </data>
+  <data name="Push" xml:space="preserve">
+    <value>스택의 맨 위에 항목을 추가합니다.</value>
+  </data>
+  <data name="Read" xml:space="preserve">
+    <value>원본에서 정보를 가져옵니다.</value>
+  </data>
+  <data name="Receive" xml:space="preserve">
+    <value>원본에서 보낸 정보를 수락합니다.</value>
+  </data>
+  <data name="Redo" xml:space="preserve">
+    <value>리소스를 실행 취소된 상태로 다시 설정합니다.</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>데이터베이스와 같은 리포지토리에 리소스에 대한 항목을 만듭니다.</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>컨테이너에서 리소스를 삭제합니다.</value>
+  </data>
+  <data name="Rename" xml:space="preserve">
+    <value>리소스의 이름을 변경합니다.</value>
+  </data>
+  <data name="Repair" xml:space="preserve">
+    <value>리소스를 사용 가능한 상태로 복원합니다.</value>
+  </data>
+  <data name="Request" xml:space="preserve">
+    <value>리소스를 요청하거나 사용 권한을 요청합니다.</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>리소스를 원래 상태로 다시 설정합니다.</value>
+  </data>
+  <data name="Resize" xml:space="preserve">
+    <value>리소스의 크기를 변경합니다.</value>
+  </data>
+  <data name="Resolve" xml:space="preserve">
+    <value>리소스의 약식 표현을 보다 완전한 표현으로 매핑합니다.</value>
+  </data>
+  <data name="Restart" xml:space="preserve">
+    <value>작업을 중지한 다음 다시 시작합니다.</value>
+  </data>
+  <data name="Restore" xml:space="preserve">
+    <value>리소스를 검사점에서 설정한 상태와 같이 미리 정의된 상태로 설정합니다.</value>
+  </data>
+  <data name="Resume" xml:space="preserve">
+    <value>일시 중단된 작업을 시작합니다.</value>
+  </data>
+  <data name="Revoke" xml:space="preserve">
+    <value>리소스에 대한 액세스를 허용하지 않는 작업을 지정합니다.</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>손실을 방지하기 위해 데이터를 보존합니다.</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>컨테이너의 리소스에 대한 참조를 만듭니다.</value>
+  </data>
+  <data name="Select" xml:space="preserve">
+    <value>컨테이너에서 리소스를 찾습니다.</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>대상에 정보를 전달합니다.</value>
+  </data>
+  <data name="Set" xml:space="preserve">
+    <value>기존 리소스의 데이터를 대체하거나 일부 데이터가 포함된 리소스를 만듭니다.</value>
+  </data>
+  <data name="Show" xml:space="preserve">
+    <value>리소스를 사용자에게 표시합니다.</value>
+  </data>
+  <data name="Sync" xml:space="preserve">
+    <value>둘 이상의 리소스가 동일한 상태에 있도록 보장합니다.</value>
+  </data>
+  <data name="Skip" xml:space="preserve">
+    <value>시퀀스에서 하나 이상의 리소스나 지점을 건너뜁니다.</value>
+  </data>
+  <data name="Split" xml:space="preserve">
+    <value>리소스의 여러 부분를 분리합니다.</value>
+  </data>
+  <data name="Start" xml:space="preserve">
+    <value>작업을 시작합니다.</value>
+  </data>
+  <data name="Step" xml:space="preserve">
+    <value>시퀀스의 다음 지점 또는 리소스로 이동합니다.</value>
+  </data>
+  <data name="Stop" xml:space="preserve">
+    <value>활동을 중단합니다.</value>
+  </data>
+  <data name="Submit" xml:space="preserve">
+    <value>승인을 위한 리소스를 제시합니다.</value>
+  </data>
+  <data name="Suspend" xml:space="preserve">
+    <value>활동을 일시 중지합니다.</value>
+  </data>
+  <data name="Switch" xml:space="preserve">
+    <value>두 위치, 책임 또는 상태 간에 전환하는 등 두 리소스 사이를 번갈아 수행하는 작업을 지정합니다.</value>
+  </data>
+  <data name="Test" xml:space="preserve">
+    <value>리소스의 작업 또는 일관성을 확인합니다.</value>
+  </data>
+  <data name="Trace" xml:space="preserve">
+    <value>리소스의 활동을 추적합니다.</value>
+  </data>
+  <data name="Unblock" xml:space="preserve">
+    <value>리소스에 대한 제한을 제거합니다.</value>
+  </data>
+  <data name="Undo" xml:space="preserve">
+    <value>리소스를 이전 상태로 설정합니다.</value>
+  </data>
+  <data name="Uninstall" xml:space="preserve">
+    <value>지정된 위치에서 리소스를 제거합니다.</value>
+  </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>잠긴 리소스를 해제합니다.</value>
+  </data>
+  <data name="Unprotect" xml:space="preserve">
+    <value>공격 또는 손실을 방지하기 위해 추가된 리소스에서 세이프가드를 제거합니다.</value>
+  </data>
+  <data name="Unpublish" xml:space="preserve">
+    <value>리소스를 다른 사용자가 사용할 수 없게 만듭니다.</value>
+  </data>
+  <data name="Unregister" xml:space="preserve">
+    <value>리포지토리에서 리소스에 대한 항목을 제거합니다.</value>
+  </data>
+  <data name="Update" xml:space="preserve">
+    <value>리소스의 상태, 정확성, 적합성 또는 규정 준수를 유지하기 위해 최신 상태로 유지합니다.</value>
+  </data>
+  <data name="Use" xml:space="preserve">
+    <value>작업을 수행하기 위해 리소스를 사용하거나 포함합니다.</value>
+  </data>
+  <data name="Wait" xml:space="preserve">
+    <value>지정된 이벤트가 발생할 때까지 작업을 일시 중지합니다.</value>
+  </data>
+  <data name="Watch" xml:space="preserve">
+    <value>리소스의 변경 내용을 지속적으로 검사하거나 모니터링합니다.</value>
+  </data>
+  <data name="Write" xml:space="preserve">
+    <value>대상에 정보를 추가합니다.</value>
+  </data>
+</root>

@@ -34,7 +34,7 @@ pr:
     - .vsts-ci/misc-analysis.yml
     - .vsts-ci/windows.yml
     - .vsts-ci/windows/*
-    - tools/cgmanifest.json
+    - tools/cgmanifest/*
     - LICENSE.txt
     - test/common/markdown/*
     - test/perf/*

@@ -1,0 +1,177 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Invalidpath" xml:space="preserve">
+    <value>{2} tiene una o varias excepciones que no son válidas.</value>
+  </data>
+  <data name="FileNotFound" xml:space="preserve">
+    <value>No se puede ejecutar este comando porque la ruta de acceso del archivo "{0}" no es válida. Proporcione una ruta de acceso de archivo válida y, a continuación, ejecute el comando.</value>
+  </data>
+  <data name="EmptyCSSUri" xml:space="preserve">
+    <value>No se puede ejecutar este comando porque "{0}" está vacío o en blanco. Especifique CSSUri y, a continuación, ejecute el comando.</value>
+  </data>
+  <data name="FileOpenError" xml:space="preserve">
+    <value>No se puede abrir el archivo porque el proveedor actual ({0}) no puede abrir archivos.</value>
+  </data>
+  <data name="SearchXMLPrefixNullError" xml:space="preserve">
+    <value>No se puede ejecutar este comando porque el valor de prefijo del parámetro Namespace es null. Proporcione un valor válido para el prefijo y, a continuación, vuelva a ejecutar el comando.</value>
+  </data>
+  <data name="InvalidOperation" xml:space="preserve">
+    <value>Los objetos agrupados por esta propiedad no se pueden expandir porque hay una duplicación de claves. Proporcione un valor válido para la propiedad y vuelva a intentarlo.</value>
+  </data>
+  <data name="NotSupported" xml:space="preserve">
+    <value>El comando no se admite en este sistema operativo.</value>
+  </data>
+  <data name="FileReadError" xml:space="preserve">
+    <value>No se puede leer el archivo "{0}": {1}</value>
+  </data>
+  <data name="FormatHexTypeNotSupported" xml:space="preserve">
+    <value>No se puede convertir la entrada de tipo "{0}" a hexadecimal. Para ver el formato hexadecimal de su representación de cadena, canalícela al cmdlet Out-String antes de canalizarla a Format-Hex.</value>
+  </data>
+  <data name="FormatHexOnlySupportsFileSystemPaths" xml:space="preserve">
+    <value>No se admite la ruta de acceso especificada "{0}". Este comando solo admite las rutas de acceso del proveedor FileSystem.</value>
+  </data>
+  <data name="FormatHexPathPrefix" xml:space="preserve">
+    <value>Ruta: </value>
+  </data>
+  <data name="GroupObjectWithHashTable" xml:space="preserve">
+    <value>No se puede ejecutar el comando porque el parámetro AsString requiere que especifique el parámetro AsHashtable.</value>
+  </data>
+  <data name="GroupObjectSingleProperty" xml:space="preserve">
+    <value>No se puede ejecutar el comando porque, para usar el parámetro AsHashTable con más de una propiedad, debe agregar el parámetro AsString.</value>
+  </data>
+  <data name="PathDoesNotExist" xml:space="preserve">
+    <value>No se encuentra la ruta de acceso '{0}' porque no existe.</value>
+  </data>
+  <data name="PSPrefixReservedInInformationTag" xml:space="preserve">
+    <value>No se puede usar la etiqueta "{0}". El prefijo "PS" está reservado.</value>
+  </data>
+  <data name="CouldNotParseAsPowerShellDataFile" xml:space="preserve">
+    <value>No se pudo analizar el archivo "{0}" como un archivo de datos de PowerShell.</value>
+  </data>
+  <data name="InvalidSDDL" xml:space="preserve">
+    <value>No se puede construir un descriptor de seguridad a partir del SDDL especificado debido al siguiente error: {0}</value>
+  </data>
+  <data name="IEXWDACLogTitle" xml:space="preserve">
+    <value>Cmdlet Invoke-Expression</value>
+  </data>
+  <data name="IEXWDACLogMessage" xml:space="preserve">
+    <value>El bloque de script del cmdlet Invoke-Expression se ejecutará en modo ConstrainedLanguage.</value>
+  </data>
+</root>

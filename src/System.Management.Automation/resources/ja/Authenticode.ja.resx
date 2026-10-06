@@ -1,0 +1,195 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Reason_DoNotRun" xml:space="preserve">
+    <value>今回はこのソフトウェアを実行しないことが選択されたため、ファイル {0} を読み込めません。</value>
+  </data>
+  <data name="Reason_NeverRun" xml:space="preserve">
+    <value>この発行元のソフトウェアを決して実行しないことが選択されたため、ファイル {0} を読み込めません。</value>
+  </data>
+  <data name="Reason_NotTrusted" xml:space="preserve">
+    <value>ファイル {0} は {1}によって公開されています。このシステム上では、この発行元を信頼しないことが明示されています。このスクリプトは、このシステム上では実行されません。詳細については、コマンド "get-help about_signing" を実行してください。</value>
+  </data>
+  <data name="Reason_RestrictedMode" xml:space="preserve">
+    <value>このシステムではスクリプトの実行が無効になっているため、ファイル {0} を読み込めません。詳細については、https://go.microsoft.com/fwlink/?LinkID=135170 の about_Execution_Policies を参照してください。</value>
+  </data>
+  <data name="Reason_Unknown" xml:space="preserve">
+    <value>ファイル {0} を読み込めません。{1}。</value>
+  </data>
+  <data name="Reason_DisallowedBySafer" xml:space="preserve">
+    <value>ソフトウェア制限ポリシー (例: グループ ポリシーなどで作成されたもの) によって操作がブロックされているため、ファイル {0} を読み込めません。</value>
+  </data>
+  <data name="Reason_FileContentUnavailable" xml:space="preserve">
+    <value>内容を読み取れなかったため、ファイル {0} を読み込めません。</value>
+  </data>
+  <data name="CertNotGoodForSigning" xml:space="preserve">
+    <value>コードに署名できません。指定された証明書はコード署名に適していません。</value>
+  </data>
+  <data name="TimeStampUrlRequired" xml:space="preserve">
+    <value>コードに署名できません。TimeStamp サーバー URL は、http://&lt;server url&gt; または https://&lt;server url&gt; の形式で完全修飾されている必要があります。</value>
+  </data>
+  <data name="InvalidHashAlgorithm" xml:space="preserve">
+    <value>コードに署名できません。このハッシュ アルゴリズムはサポートされていません。</value>
+  </data>
+  <data name="AuthenticodePromptCaption" xml:space="preserve">
+    <value>この信頼されていない発行元からのソフトウェアを実行しますか?</value>
+  </data>
+  <data name="AuthenticodePromptText" xml:space="preserve">
+    <value>ファイル {0} は {1} によって公開されており、このシステム上では信頼されません。信頼できる発行元からのスクリプトのみ実行してください。</value>
+  </data>
+  <data name="AuthenticodePromptText_UnknownPublisher" xml:space="preserve">
+    <value>ソフトウェア {0} は不明な発行元によって公開されたものです。このソフトウェアは実行しないことをおすすめします。</value>
+  </data>
+  <data name="RemoteFilePromptCaption" xml:space="preserve">
+    <value>セキュリティ警告</value>
+  </data>
+  <data name="RemoteFilePromptText" xml:space="preserve">
+    <value>信頼できるスクリプトのみ実行してください。インターネットから取得したスクリプトは役立つ場合がありますが、このスクリプトには、コンピューターに害を及ぼす可能性もあります。このスクリプトを信頼する場合は、Unblock-File コマンドレットを使用すると、この警告メッセージを表示せずにスクリプトを実行できるようになります。{0} を実行しますか?</value>
+  </data>
+  <data name="Choice_NeverRun" xml:space="preserve">
+    <value>決して実行しない(&amp;V)</value>
+  </data>
+  <data name="Choice_NeverRun_Help" xml:space="preserve">
+    <value>今回、この発行元からのスクリプトを実行しません。以後、このスクリプトの実行確認を求めません。今後このスクリプトの実行が試行された場合は通知なしで失敗します。</value>
+  </data>
+  <data name="Choice_DoNotRun" xml:space="preserve">
+    <value>実行しない(&amp;D)</value>
+  </data>
+  <data name="Choice_DoNotRun_Help" xml:space="preserve">
+    <value>今回、この発行元からのスクリプトを実行しません。以後、このスクリプトを実行する際は引き続き確認を求めます。</value>
+  </data>
+  <data name="Choice_RunOnce" xml:space="preserve">
+    <value>今回は実行する(&amp;R)</value>
+  </data>
+  <data name="Choice_RunOnce_Help" xml:space="preserve">
+    <value>今回、この発行元からのスクリプトを実行します。以後、このスクリプトを実行する際は引き続き確認を求めます。</value>
+  </data>
+  <data name="Choice_AlwaysRun" xml:space="preserve">
+    <value>常に実行(&amp;A)</value>
+  </data>
+  <data name="Choice_AlwaysRun_Help" xml:space="preserve">
+    <value>今回、この発行元からのスクリプトを実行します。以後、このスクリプトの実行確認を求めません。</value>
+  </data>
+  <data name="Choice_Suspend" xml:space="preserve">
+    <value>一時停止(&amp;S)</value>
+  </data>
+  <data name="Choice_Suspend_Help" xml:space="preserve">
+    <value>現在のパイプラインを一時停止し、コマンド プロンプトに戻ります。終了後、「exit」と入力して操作を再開してください。</value>
+  </data>
+</root>

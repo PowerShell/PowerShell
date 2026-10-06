@@ -1,0 +1,216 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ErrorMalformedDataFromRemoteCommand" xml:space="preserve">
+    <value>원격 {0} 명령에서 반환된 데이터가 예상 형식이 아닙니다.</value>
+  </data>
+  <data name="ErrorRequiredRemoteCommandNotFound" xml:space="preserve">
+    <value>{0} cmdlet을 사용하려면 원격 세션에 Get-Command, Get-FormatData, Select-Objec 명령이 필요합니다. Get-Help, Measure-Object 명령은 사용되지만 선택 사항입니다. 원격 세션에 필요한 명령이 포함되어 있는지 확인한 다음 다시 시도하세요.</value>
+  </data>
+  <data name="ErrorFromRemoteCommand" xml:space="preserve">
+    <value>원격 세션에서 {0} 명령을 실행하는 동안 {1} 오류가 보고되었습니다.</value>
+  </data>
+  <data name="ErrorNoResultsFromRemoteEnd" xml:space="preserve">
+    <value>원격 세션에서 {0} 명령을 실행해도 결과가 반환되지 않았습니다.</value>
+  </data>
+  <data name="ErrorNoRunspaceForThisModule" xml:space="preserve">
+    <value>이 암시적 원격 모듈과 연결된 세션이 없습니다.</value>
+  </data>
+  <data name="ErrorCouldntResolveAlias" xml:space="preserve">
+    <value>원격 별칭 '{0}'을(를) 확인할 수 없습니다.</value>
+  </data>
+  <data name="ErrorSkippedNonRequestedCommand" xml:space="preserve">
+    <value>이름이 Name 매개 변수의 값과 일치하지 않아 '{0}' 명령에 대한 프록시 만들기를 건너뛰었습니다.</value>
+  </data>
+  <data name="ErrorSkippedNonRequestedTypeDefinition" xml:space="preserve">
+    <value>'{0}' 형식은 이름이 FormatTypeName 매개 변수의 값과 일치하지 않아 해당 형식에 대한 확장 형식 정의를 건너뛰었습니다.</value>
+  </data>
+  <data name="ErrorSkippedUnsafeCommandName" xml:space="preserve">
+    <value>PowerShell에서 명령 이름의 안전성을 확인할 수 없어 '{0}' 명령에 대한 프록시 만들기를 건너뛰었습니다.</value>
+  </data>
+  <data name="ErrorCommandSkippedBecauseOfShadowing" xml:space="preserve">
+    <value>'{0}' 명령은 기존 로컬 명령과 겹치므로 프록시 만들기를 건너뛰었습니다.  기존 로컬 명령과 겹치게 하려면 AllowClobber 매개 변수를 사용하세요.</value>
+  </data>
+  <data name="ErrorNoCommandsImportedBecauseOfSkipping" xml:space="preserve">
+    <value>요청된 모든 원격 명령이 기존 로컬 명령과 겹치므로 명령 프록시를 만들지 않았습니다.  기존 로컬 명령과 겹치게 하려면 AllowClobber 매개 변수를 사용하세요.</value>
+  </data>
+  <data name="ProxyModuleDescription" xml:space="preserve">
+    <value>{0}에 대한 암시적 원격</value>
+  </data>
+  <data name="EventSourceIdentifier" xml:space="preserve">
+    <value>암시적 원격 이벤트(세션 ID: {0}, 이벤트 처리기 ID: {1})</value>
+  </data>
+  <data name="ModuleHeaderTitle" xml:space="preserve">
+    <value>암시적 원격 모듈</value>
+  </data>
+  <data name="ModuleHeaderDate" xml:space="preserve">
+    <value>{0}에 생성됨</value>
+  </data>
+  <data name="ModuleHeaderCommand" xml:space="preserve">
+    <value>{0} cmdlet 기준</value>
+  </data>
+  <data name="ModuleHeaderCommandLine" xml:space="preserve">
+    <value>{0} 명령줄로 호출되었습니다.</value>
+  </data>
+  <data name="ModuleHeaderRunspaceOverrideParameter" xml:space="preserve">
+    <value>이 프록시 모듈이 작동할 세션을 지정하는 데 사용할 수 있는 선택적 매개 변수입니다.</value>
+  </data>
+  <data name="CreateNewRunspaceMessageTemplate" xml:space="preserve">
+    <value>"{{0}}" 명령의 암시적 원격 작업을 위한 새 세션을 만드는 중...</value>
+  </data>
+  <data name="ProxyRunspaceNameTemplate" xml:space="preserve">
+    <value>{{0}}의 암시적 원격 모듈 세션</value>
+  </data>
+  <data name="ProgressActivity" xml:space="preserve">
+    <value>암시적 원격 모듈을 만드는 중 ...</value>
+  </data>
+  <data name="ProgressStatusGetCommandStart" xml:space="preserve">
+    <value>원격 세션에서 명령 정보를 가져오는 중 ...</value>
+  </data>
+  <data name="ProgressStatusGetCommandProgress" xml:space="preserve">
+    <value>원격 세션에서 명령 정보를 가져오는 중 ... {0} 명령 받음</value>
+  </data>
+  <data name="ProgressStatusGetFormatDataStart" xml:space="preserve">
+    <value>원격 세션에서 형식 및 출력 정보를 가져오는 중...</value>
+  </data>
+  <data name="ProgressStatusGetFormatDataProgress" xml:space="preserve">
+    <value>원격 세션에서 형식 및 출력 정보를 가져오는 중 ... {0} 개체 받음</value>
+  </data>
+  <data name="ProgressStatusCompleted" xml:space="preserve">
+    <value>완료했습니다.</value>
+  </data>
+  <data name="CredentialRequestTitle" xml:space="preserve">
+    <value>PowerShell 자격 증명 요청</value>
+  </data>
+  <data name="CredentialRequestBody" xml:space="preserve">
+    <value>{0}에 대한 자격 증명을 입력하세요.</value>
+  </data>
+  <data name="ProxyCredentialRequestBody" xml:space="preserve">
+    <value>{0} 연결에 사용할 HTTP 프록시 자격 증명을 입력하세요.</value>
+  </data>
+  <data name="WarningMismatchedImplicitRemotingHash" xml:space="preserve">
+    <value>새 원격 세션에서 사용할 수 있는 명령은 암시적 원격 모듈을 만들 때 사용할 수 있는 명령과 다릅니다.  Export-PSSession cmdlet을 사용해 모듈을 다시 만드는 것이 좋습니다.</value>
+  </data>
+  <data name="CertificateNeeded" xml:space="preserve">
+    <value>이 시스템에서 스크립트 실행이 비활성화되어 파일을 로드할 수 없습니다. 파일 서명에 유효한 인증서를 제공하세요.</value>
+  </data>
+  <data name="InvalidSigningOperation" xml:space="preserve">
+    <value>파일 {0}을(를) 저장할 수 없습니다.</value>
+  </data>
+</root>

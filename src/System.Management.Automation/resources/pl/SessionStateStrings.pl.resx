@@ -1,0 +1,657 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="InvalidProviderInfo" xml:space="preserve">
+    <value>Nie można przetworzyć zwróconych informacji, ponieważ informacje zwrócone przez metodę Start dostawcy dotyczyły innego dostawcy niż ten, który przekazano.</value>
+  </data>
+  <data name="InvalidProviderInfoNull" xml:space="preserve">
+    <value>Nie można przetworzyć zwróconych informacji, ponieważ informacje zwrócone przez metodę Start dostawcy miały wartość null.</value>
+  </data>
+  <data name="GetItemProviderException" xml:space="preserve">
+    <value>Nie można wykonać operacji GetItem dla dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="GetItemDynamicParametersProviderException" xml:space="preserve">
+    <value>Nie można pobrać parametrów dynamicznych dla operacji GetItem od dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="SetItemProviderException" xml:space="preserve">
+    <value>Nie można wykonać operacji SetItem dla dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="SetItemDynamicParametersProviderException" xml:space="preserve">
+    <value>Nie można pobrać parametrów dynamicznych dla operacji SetItem od dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="ClearItemProviderException" xml:space="preserve">
+    <value>Nie można wykonać operacji ClearItem dla dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="InvokeDefaultActionProviderException" xml:space="preserve">
+    <value>Nie można wykonać operacji InvokeDefaultAction dla dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="InvokeDefaultActionDynamicParametersProviderException" xml:space="preserve">
+    <value>Nie można pobrać parametrów dynamicznych dla operacji InvokeDefaultAction od dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="ItemExistsProviderException" xml:space="preserve">
+    <value>Nie można wykonać operacji ItemExists dla dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="ItemExistsDynamicParametersProviderException" xml:space="preserve">
+    <value>Nie można pobrać parametrów dynamicznych dla operacji ItemExists od dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="IsValidPathProviderException" xml:space="preserve">
+    <value>Nie można wykonać operacji IsValidPath dla dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="IsItemContainerProviderException" xml:space="preserve">
+    <value>Nie można wykonać operacji IsItemContainer dla dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="RemoveItemProviderException" xml:space="preserve">
+    <value>Nie można wykonać operacji RemoveItem dla dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="GetChildrenProviderException" xml:space="preserve">
+    <value>Nie można wykonać operacji GetChildItems dla dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="GetChildrenDynamicParametersProviderException" xml:space="preserve">
+    <value>Nie można pobrać parametrów dynamicznych dla operacji GetChildItems od dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="GetChildNamesProviderException" xml:space="preserve">
+    <value>Nie można wykonać operacji GetChildNames dla dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="GetChildNamesDynamicParametersProviderException" xml:space="preserve">
+    <value>Nie można pobrać parametrów dynamicznych dla operacji GetChildNames od dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="RenameItemProviderException" xml:space="preserve">
+    <value>Nie można wykonać operacji RenameItem dla dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="RenameItemDynamicParametersProviderException" xml:space="preserve">
+    <value>Nie można pobrać parametrów dynamicznych dla operacji RenameItem od dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="NewItemProviderException" xml:space="preserve">
+    <value>Nie można wykonać operacji NewItem dla dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="NewItemDynamicParametersProviderException" xml:space="preserve">
+    <value>Nie można pobrać parametrów dynamicznych dla operacji NewItem od dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="HasChildItemsProviderException" xml:space="preserve">
+    <value>Nie można wykonać operacji HasChildItems dla dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="CopyItemProviderException" xml:space="preserve">
+    <value>Nie można wykonać operacji CopyItem dla dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="CopyItemDynamicParametersProviderException" xml:space="preserve">
+    <value>Nie można pobrać parametrów dynamicznych dla operacji CopyItem od dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="GetParentPathProviderException" xml:space="preserve">
+    <value>Nie można wykonać operacji GetParentPath dla dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="NormalizeRelativePathProviderException" xml:space="preserve">
+    <value>Nie można wykonać operacji NormalizeRelativePath dla dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="MakePathProviderException" xml:space="preserve">
+    <value>Nie można wykonać operacji MakePath dla dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="GetChildNameProviderException" xml:space="preserve">
+    <value>Nie można wykonać operacji GetChildName dla dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="MoveItemProviderException" xml:space="preserve">
+    <value>Nie można wykonać operacji MoveItem dla dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="MoveItemDynamicParametersProviderException" xml:space="preserve">
+    <value>Nie można pobrać parametrów dynamicznych dla operacji MoveItem od dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="GetPropertyProviderException" xml:space="preserve">
+    <value>Nie można wykonać operacji GetProperty dla dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="GetPropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>Nie można pobrać parametrów dynamicznych dla operacji GetProperty od dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="SetPropertyProviderException" xml:space="preserve">
+    <value>Nie można wykonać operacji SetProperty dla dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="SetPropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>Nie można pobrać parametrów dynamicznych dla operacji SetProperty od dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="ClearPropertyProviderException" xml:space="preserve">
+    <value>Nie można wykonać operacji ClearProperty dla dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="ClearPropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>Nie można pobrać parametrów dynamicznych dla operacji ClearProperty od dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="NewPropertyProviderException" xml:space="preserve">
+    <value>Nie można wykonać operacji NewProperty dla dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="NewPropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>Nie można pobrać parametrów dynamicznych dla operacji NewProperty od dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="RemovePropertyProviderException" xml:space="preserve">
+    <value>Nie można wykonać operacji RemoveProperty dla dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="RemovePropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>Nie można pobrać parametrów dynamicznych dla operacji RemoveProperty od dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="CopyPropertyProviderException" xml:space="preserve">
+    <value>Nie można wykonać operacji CopyProperty dla dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="CopyPropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>Nie można pobrać parametrów dynamicznych dla operacji CopyProperty od dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="MovePropertyProviderException" xml:space="preserve">
+    <value>Nie można wykonać operacji MoveProperty dla dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="MovePropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>Nie można pobrać parametrów dynamicznych dla operacji MoveProperty od dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="RenamePropertyProviderException" xml:space="preserve">
+    <value>Nie można wykonać operacji RenameProperty dla dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="RenamePropertyDynamicParametersProviderException" xml:space="preserve">
+    <value>Nie można pobrać parametrów dynamicznych dla operacji RenameProperty od dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="GetContentReaderProviderException" xml:space="preserve">
+    <value>Nie można pobrać czytnika zawartości dla dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="GetContentReaderDynamicParametersProviderException" xml:space="preserve">
+    <value>Nie można pobrać parametrów dynamicznych dla operacji GetContentReader od dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="GetContentWriterProviderException" xml:space="preserve">
+    <value>Nie można pobrać autora zawartości dla dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="GetContentWriterDynamicParametersProviderException" xml:space="preserve">
+    <value>Nie można pobrać parametrów dynamicznych dla operacji GetContentWriter od dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="GetContainerContentException" xml:space="preserve">
+    <value>Nie można pobrać zawartości, ponieważ to katalog: „{0}”. Użyj zamiast tego polecenia „Get-ChildItem”.</value>
+  </data>
+  <data name="WriteContainerContentException" xml:space="preserve">
+    <value>Nie można zapisać zawartości, ponieważ to katalog: „{0}”.</value>
+  </data>
+  <data name="LocationUndoStackIsEmpty" xml:space="preserve">
+    <value>Brak historii lokalizacji, która umożliwiałaby wsteczną nawigację.</value>
+  </data>
+  <data name="LocationRedoStackIsEmpty" xml:space="preserve">
+    <value>Brak historii lokalizacji umożliwiającej dalszą nawigację.</value>
+  </data>
+  <data name="BoundedStackIsEmpty" xml:space="preserve">
+    <value>Element BoundedStack jest pusty.</value>
+  </data>
+  <data name="ClearContentProviderException" xml:space="preserve">
+    <value>Nie można wykonać operacji ClearContent dla dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="ClearDirectoryContent" xml:space="preserve">
+    <value>Nie można wyczyścić zawartości elementu „{0}”, ponieważ jest to katalog. Polecenie Clear-Content jest obsługiwane tylko dla plików.</value>
+  </data>
+  <data name="ClearContentDynamicParametersProviderException" xml:space="preserve">
+    <value>Nie można pobrać parametrów dynamicznych dla operacji ClearContent od dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="GetSecurityDescriptorProviderException" xml:space="preserve">
+    <value>Nie można wykonać operacji GetSecurityDescriptor dla dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="SetSecurityDescriptorProviderException" xml:space="preserve">
+    <value>Nie można wykonać operacji SetSecurityDescriptor dla dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="ProviderStartException" xml:space="preserve">
+    <value>Nie można wykonać operacji Start dla dostawcy „{0}”. {1}</value>
+  </data>
+  <data name="InitializeDefaultDrivesException" xml:space="preserve">
+    <value>Nie można wykonać operacji InitializeDefaultDrives u dostawcy „{0}”.</value>
+  </data>
+  <data name="NewDriveProviderException" xml:space="preserve">
+    <value>Nie można wykonać operacji NewDrive dla dysku z poziomem głównym „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="NewDriveDynamicParametersProviderException" xml:space="preserve">
+    <value>Nie można pobrać parametrów dynamicznych dla dostawcy „{0}” dla operacji NewDrive. {1}</value>
+  </data>
+  <data name="RemoveDriveProviderException" xml:space="preserve">
+    <value>Wywołanie RemoveDrive u dostawcy „{0}” zakończyło się niepowodzeniem. {1}</value>
+  </data>
+  <data name="DriveRemovalPreventedByProvider" xml:space="preserve">
+    <value>Nie można usunąć dysku „{0}”, ponieważ uniemożliwił to dostawca „{1}”.</value>
+  </data>
+  <data name="NormalizeRelativePathOutsideBase" xml:space="preserve">
+    <value>Ścieżka „{0}” odwoływała się do elementu znajdującego się poza podstawą „{1}”.</value>
+  </data>
+  <data name="ProviderSeekError" xml:space="preserve">
+    <value>Nie można wywołać metody Seek w module zapisu zawartości dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="ProviderContentCloseError" xml:space="preserve">
+    <value>Nie można wywołać metody Close w module odczytu lub zapisu zawartości dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="ProviderContentReadError" xml:space="preserve">
+    <value>Nie można wywołać metody Read w module odczytu zawartości dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="ProviderContentWriteError" xml:space="preserve">
+    <value>Nie można wywołać metody Write w module zapisu zawartości dostawcy „{0}” dla ścieżki „{1}”. {2}</value>
+  </data>
+  <data name="ProviderCannotBeUsedAsVariable" xml:space="preserve">
+    <value>Dostawcy „{0}” nie można użyć do pobierania ani ustawiania danych przy użyciu składni zmiennej. {2}</value>
+  </data>
+  <data name="ProviderVariableSyntaxInvalid" xml:space="preserve">
+    <value>Składnia zmiennej nie może być używana do pobierania lub ustawiania danych w dostawcy. {2}</value>
+  </data>
+  <data name="AliasNotWritable" xml:space="preserve">
+    <value>Alias nie jest zapisywalny, ponieważ alias {0} jest tylko do odczytu lub stały i nie można go zmieniać.</value>
+  </data>
+  <data name="FunctionNotWritable" xml:space="preserve">
+    <value>Nie można zapisać do funkcji {0}, ponieważ jest ona tylko do odczytu lub stała.</value>
+  </data>
+  <data name="VariableNotWritable" xml:space="preserve">
+    <value>Nie można zastąpić zmiennej {0}, ponieważ jest tylko do odczytu lub stała.</value>
+  </data>
+  <data name="VariableIsPrivate" xml:space="preserve">
+    <value>Nie można uzyskać dostępu do zmiennej „${0}”, ponieważ jest to zmienna prywatna.</value>
+  </data>
+  <data name="NamedCommandIsPrivate" xml:space="preserve">
+    <value>Nie można uzyskać dostępu do polecenia „{0}”, ponieważ jest ono prywatne.</value>
+  </data>
+  <data name="CommandIsPrivate" xml:space="preserve">
+    <value>Nie można uzyskać dostępu do polecenia, ponieważ jest ono prywatne.</value>
+  </data>
+  <data name="ResourceIsPrivate" xml:space="preserve">
+    <value>Nie można uzyskać dostępu do zasobu stanu sesji, ponieważ jest to zasób prywatny. </value>
+  </data>
+  <data name="AliasNotRemovable" xml:space="preserve">
+    <value>Alias nie został usunięty, ponieważ alias {0} jest stały lub tylko do odczytu.</value>
+  </data>
+  <data name="FunctionNotRemovable" xml:space="preserve">
+    <value>Nie można usunąć funkcji {0}, ponieważ jest stała.</value>
+  </data>
+  <data name="VariableNotRemovable" xml:space="preserve">
+    <value>Nie można usunąć zmiennej {0}, ponieważ jest stała lub tylko do odczytu. Jeśli zmienna jest tylko do odczytu, spróbuj ponownie, używając opcji Force.</value>
+  </data>
+  <data name="AliasIsConstant" xml:space="preserve">
+    <value>Alias {0} nie może zostać zmodyfikowany ponieważ jest stały.</value>
+  </data>
+  <data name="AliasIsReadOnly" xml:space="preserve">
+    <value>Alias {0} nie może zostać zmodyfikowany ponieważ jest tylko do odczytu.</value>
+  </data>
+  <data name="FunctionIsConstant" xml:space="preserve">
+    <value>Nie można zmodyfikować funkcji {0}, ponieważ jest stała.</value>
+  </data>
+  <data name="FunctionIsReadOnly" xml:space="preserve">
+    <value>Nie można zmodyfikować funkcji {0}, ponieważ jest tylko do odczytu.</value>
+  </data>
+  <data name="AliasCannotBeMadeConstant" xml:space="preserve">
+    <value>Nie można ustawić aliasu {0} jako stałego po jego utworzeniu. Alias można ustawić jako stały tylko w momencie tworzenia.</value>
+  </data>
+  <data name="FunctionCannotBeMadeConstant" xml:space="preserve">
+    <value>Istniejącej funkcji {0} nie można ustawić jako stałej. Funkcje można oznaczyć jako stałe tylko w chwili tworzenia.</value>
+  </data>
+  <data name="VariableCannotBeMadeConstant" xml:space="preserve">
+    <value>Istniejącej zmiennej {0} nie można ustawić jako stałej. Zmienne można oznaczyć jako stałe tylko w chwili tworzenia.</value>
+  </data>
+  <data name="AliasAllScopeOptionCannotBeRemoved" xml:space="preserve">
+    <value>Nie można usunąć opcji AllScope z aliasu „{0}”.</value>
+  </data>
+  <data name="FunctionAllScopeOptionCannotBeRemoved" xml:space="preserve">
+    <value>Nie można usunąć opcji AllScope z funkcji „{0}”.</value>
+  </data>
+  <data name="VariableAllScopeOptionCannotBeRemoved" xml:space="preserve">
+    <value>Nie można usunąć opcji AllScope ze zmiennej „{0}”.</value>
+  </data>
+  <data name="ScopedFunctionMustHaveName" xml:space="preserve">
+    <value>Definicja funkcji „{0}” zawierała kwalifikator zakresu, ale nie zawierała nazwy funkcji.</value>
+  </data>
+  <data name="RemoveDrivesBeforeRemovingProvider" xml:space="preserve">
+    <value>Nie można usunąć dostawcy {0}. Przed usunięciem dostawcy {0} trzeba usunąć wszystkie dyski skojarzone z dostawcą {0}.</value>
+  </data>
+  <data name="DriveNameIllegalCharacters" xml:space="preserve">
+    <value>Nie można przetworzyć nazwy dysku, ponieważ zawiera co najmniej jeden z tych nieprawidłowych znaków: ; ~ / \ . :</value>
+  </data>
+  <data name="NewDriveProviderFailed" xml:space="preserve">
+    <value>Nie można utworzyć nowego dysku, ponieważ dostawca nie zezwala na tworzenie nowego dysku.</value>
+  </data>
+  <data name="StackNameResolvedToMultiple" xml:space="preserve">
+    <value>Podana wartość „{0}” została rozpoznana jako więcej niż jeden stos lokalizacji.</value>
+  </data>
+  <data name="StackNotFound" xml:space="preserve">
+    <value>Nie można znaleźć stosu lokalizacji „{0}”. Element nie istnieje albo nie jest kontenerem.</value>
+  </data>
+  <data name="PathNotFound" xml:space="preserve">
+    <value>Nie można odnaleźć ścieżki „{0}”, ponieważ nie istnieje.</value>
+  </data>
+  <data name="AliasNotFound" xml:space="preserve">
+    <value>Nie można znaleźć aliasu, ponieważ alias „{0}” nie istnieje.</value>
+  </data>
+  <data name="PathResolvedToMultiple" xml:space="preserve">
+    <value>Nie można ustawić lokalizacji, ponieważ ścieżka „{0}” wskazuje na wiele kontenerów. Lokalizację można ustawić tylko dla jednego kontenera na raz.</value>
+  </data>
+  <data name="VariablePathResolvedToMultiple" xml:space="preserve">
+    <value>Nie można przetworzyć zmiennej, ponieważ ścieżka zmiennej „{0}” wskazuje wiele elementów. Wartość zmiennej można pobierać lub ustawiać tylko dla jednego elementu na raz.</value>
+  </data>
+  <data name="DriveNotFound" xml:space="preserve">
+    <value>Nie można odnaleźć dysku. Dysk o nazwie „{0}” nie istnieje.</value>
+  </data>
+  <data name="ProviderNotFound" xml:space="preserve">
+    <value>Nie można znaleźć dostawcy o nazwie „{0}”.</value>
+  </data>
+  <data name="ProviderNotFoundBadFormat" xml:space="preserve">
+    <value>Nie można znaleźć dostawcy o nazwie „{0}”. Nazwa ma nieprawidłowy format. Nazwa dostawcy może zawierać tylko znaki alfanumeryczne albo nazwę przystawki programu PowerShell, po której występuje pojedynczy znak „\”, a potem znaki alfanumeryczne.</value>
+  </data>
+  <data name="ProviderNameAmbiguous" xml:space="preserve">
+    <value>Element „{0}” rozpoznano jako więcej niż jedną nazwę dostawcy. Możliwe dopasowania to: {1}.</value>
+  </data>
+  <data name="ProviderNotFoundInAssembly" xml:space="preserve">
+    <value>Wystąpił błąd podczas próby utworzenia wystąpienia dostawcy. Nie można odnaleźć nazwy typu dostawcy „{0}” w zestawie.</value>
+  </data>
+  <data name="ProviderNameNotValid" xml:space="preserve">
+    <value>Nie można użyć określonej nazwy dostawcy „{0}”, ponieważ zawiera co najmniej jeden z tych nieprawidłowych znaków: \ [ ] ? * :</value>
+  </data>
+  <data name="ProviderCtorException" xml:space="preserve">
+    <value>Wystąpił błąd podczas próby utworzenia wystąpienia dostawcy „{0}”. {1} </value>
+  </data>
+  <data name="VariableNotFound" xml:space="preserve">
+    <value>Nie można znaleźć zmiennej o nazwie „{0}”.</value>
+  </data>
+  <data name="TraceSourceNotFound" xml:space="preserve">
+    <value>Nie można odnaleźć źródła śledzenia o nazwie „{0}”.</value>
+  </data>
+  <data name="DriveAlreadyExists" xml:space="preserve">
+    <value>Dysk o nazwie „{0}” już istnieje.</value>
+  </data>
+  <data name="VariableAlreadyExists" xml:space="preserve">
+    <value>Zmienna o nazwie „{0}” już istnieje.</value>
+  </data>
+  <data name="AliasAlreadyExists" xml:space="preserve">
+    <value>Nie można utworzyć aliasu, ponieważ alias o nazwie „{0}” już istnieje.</value>
+  </data>
+  <data name="CmdletProviderAlreadyExists" xml:space="preserve">
+    <value>Nie można zarejestrować dostawcy poleceń cmdlet, ponieważ dostawca o nazwie „{0}” już istnieje.</value>
+  </data>
+  <data name="MustBeFileSystemPath" xml:space="preserve">
+    <value>Ścieżka nie jest ścieżką systemu plików.</value>
+  </data>
+  <data name="GlobalScopeCannotRemove" xml:space="preserve">
+    <value>Nie można usunąć zakresu globalnego.</value>
+  </data>
+  <data name="ScopeIDExceedsAvailableScopes" xml:space="preserve">
+    <value>Numer zakresu „{0}” przekracza liczbę aktywnych zakresów.</value>
+  </data>
+  <data name="OnlyAbleToComparePSDriveInfo" xml:space="preserve">
+    <value>Nie można porównać obiektu PSDriveInfo. Wystąpienie PSDriveInfo można porównać tylko z innym wystąpieniem PSDriveInfo.</value>
+  </data>
+  <data name="OutputStreamingNotEnabled" xml:space="preserve">
+    <value>Dostawca poleceń cmdlet nie może przesłać wyników strumieniowo, ponieważ nie określono polecenia cmdlet, przez które można przesłać wynik strumieniowo.</value>
+  </data>
+  <data name="ErrorStreamingNotEnabled" xml:space="preserve">
+    <value>Dostawca poleceń cmdlet nie może przesłać wyników strumieniowo, ponieważ nie określono polecenia cmdlet, przez które można przesłać błąd strumieniowo.</value>
+  </data>
+  <data name="HomePathNotSet" xml:space="preserve">
+    <value>Lokalizacja główna tego dostawcy nie jest ustawiona. Aby ustawić lokalizację główną, wywołaj „(get-psprovider '{0}').Home = 'path'”.</value>
+  </data>
+  <data name="NotProviderQualifiedPath" xml:space="preserve">
+    <value>Ścieżka ma niepoprawny format. Ścieżki dostawców muszą zawierać identyfikator dostawcy, po którym występuje „::”, a następnie ścieżka właściwa dla dostawcy.</value>
+  </data>
+  <data name="MovePropertyDestinationResolveToSingle" xml:space="preserve">
+    <value>Nie można przenieść elementu, ponieważ ścieżka docelowa może wskazywać tylko jedną ścieżkę.</value>
+  </data>
+  <data name="MoveItemSourceAndDestinationNotSameProvider" xml:space="preserve">
+    <value>Nie można przenieść elementu, ponieważ ścieżki źródłowa i docelowa nie zostały rozpoznane jako należące do tego samego dostawcy.</value>
+  </data>
+  <data name="MoveItemPathMultipleDestinationNotContainer" xml:space="preserve">
+    <value>Nie można przenieść elementu, ponieważ ścieżka źródłowa wskazuje jeden lub więcej elementów, a ścieżka docelowa nie jest kontenerem. Sprawdź, czy ścieżka docelowa jest kontenerem, i spróbuj ponownie.</value>
+  </data>
+  <data name="MoveItemOneDestination" xml:space="preserve">
+    <value>Nie można przenieść elementu, ponieważ miejsce docelowe zostało rozpoznane jako wiele ścieżek. Podaj ścieżkę docelową, która prowadzi do jednego miejsca docelowego, i spróbuj ponownie.</value>
+  </data>
+  <data name="CopyContainerItemToLeafError" xml:space="preserve">
+    <value>Nie można skopiować kontenera do istniejącego elementu końcowego.</value>
+  </data>
+  <data name="CopyContainerToContainerWithoutRecurseOrContainer" xml:space="preserve">
+    <value>Nie można skopiować kontenera do innego kontenera. Nie określono parametru -Recurse ani -Container.</value>
+  </data>
+  <data name="CopyItemSourceAndDestinationNotSameProvider" xml:space="preserve">
+    <value>Ścieżka źródłowa i docelowa nie wskazują na tego samego dostawcę.</value>
+  </data>
+  <data name="RenameMultipleItemError" xml:space="preserve">
+    <value>Nie można zmienić nazwy elementu, ponieważ ścieżka została rozpoznana jako wiele elementów. Jednocześnie można zmienić nazwę tylko jednego elementu.</value>
+  </data>
+  <data name="ProviderImplementationInconsistent" xml:space="preserve">
+    <value>Nie można użyć dostawcy „{0}” do rozwiązania ścieżki „{1}” z powodu błędu w dostawcy.</value>
+  </data>
+  <data name="IContentCmdletProvider_NotSupported" xml:space="preserve">
+    <value>Nie można użyć interfejsu. Ten dostawca nie wdraża interfejsu IContentCmdletProvider.</value>
+  </data>
+  <data name="IPropertyCmdletProvider_NotSupported" xml:space="preserve">
+    <value>Nie można użyć interfejsu. Ten dostawca nie obsługuje interfejsu IPropertyCmdletProvider.</value>
+  </data>
+  <data name="IDynamicPropertyCmdletProvider_NotSupported" xml:space="preserve">
+    <value>Nie można użyć interfejsu. Ten dostawca nie wdraża interfejsu IDynamicPropertyCmdletProvider.</value>
+  </data>
+  <data name="NavigationCmdletProvider_NotSupported" xml:space="preserve">
+    <value>Metody NavigationCmdletProvider nie są obsługiwane przez tego dostawcę.</value>
+  </data>
+  <data name="ContainerCmdletProvider_NotSupported" xml:space="preserve">
+    <value>Metody dostawcy nie zostały przetworzone. Metody ContainerCmdletProvider nie są obsługiwane przez tego dostawcę.</value>
+  </data>
+  <data name="ItemCmdletProvider_NotSupported" xml:space="preserve">
+    <value>Nie można wywołać metod. Metody ItemCmdletProvider nie są obsługiwane przez tego dostawcę.</value>
+  </data>
+  <data name="DriveCmdletProvider_NotSupported" xml:space="preserve">
+    <value>Metody DriveCmdletProvider nie są obsługiwane przez tego dostawcę.</value>
+  </data>
+  <data name="CmdletProvider_NotSupported" xml:space="preserve">
+    <value>Operacja dostawcy została zatrzymana, ponieważ ten dostawca nie obsługuje tej operacji.</value>
+  </data>
+  <data name="CmdletProvider_NotSupportedRecursionDepth" xml:space="preserve">
+    <value>Operacja dostawcy została zatrzymana, ponieważ ten dostawca nie obsługuje parametru „Depth”.</value>
+  </data>
+  <data name="IContent_Seek_NotSupported" xml:space="preserve">
+    <value>Nie można wywołać metody. Metoda wyszukiwania zawartości nie jest obsługiwana przez tego dostawcę.</value>
+  </data>
+  <data name="IContent_Clear_NotSupported" xml:space="preserve">
+    <value>Nie można wykonać operacji ClearContent. Ten dostawca nie obsługuje operacji ClearContent.</value>
+  </data>
+  <data name="Credentials_NotSupported" xml:space="preserve">
+    <value>Dostawca nie obsługuje używania poświadczeń. Spróbuj ponownie bez podawania poświadczeń.</value>
+  </data>
+  <data name="FileSystemProviderCredentials_NotSupported" xml:space="preserve">
+    <value>Dostawca systemu plików obsługuje poświadczenia tylko w poleceniu cmdlet New-PSDrive. Spróbuj ponownie bez podawania poświadczeń.</value>
+  </data>
+  <data name="Transactions_NotSupported" xml:space="preserve">
+    <value>Dostawca nie obsługuje transakcji. Wykonaj operację ponownie bez parametru -UseTransaction.</value>
+  </data>
+  <data name="Filter_NotSupported" xml:space="preserve">
+    <value>Nie można wywołać metody. Dostawca nie obsługuje używania filtrów.</value>
+  </data>
+  <data name="NewDriveCredentials_NotSupported" xml:space="preserve">
+    <value>Nie można utworzyć dysku. Dostawca nie obsługuje używania poświadczeń.</value>
+  </data>
+  <data name="NewItemAlreadyExists" xml:space="preserve">
+    <value>Element w ścieżce „{0}” już istnieje.</value>
+  </data>
+  <data name="CopyItemDoesntExist" xml:space="preserve">
+    <value>Nie można skopiować elementu. Element na ścieżce „{0}” nie istnieje.</value>
+  </data>
+  <data name="RenameItemDoesntExist" xml:space="preserve">
+    <value>Element na ścieżce „{0}” nie istnieje.</value>
+  </data>
+  <data name="AliasDriveDescription" xml:space="preserve">
+    <value>Dysk zawierający widok aliasów przechowywanych w stanie sesji</value>
+  </data>
+  <data name="EnvironmentDriveDescription" xml:space="preserve">
+    <value>Dysk zawierający widok zmiennych środowiskowych procesu</value>
+  </data>
+  <data name="FunctionDriveDescription" xml:space="preserve">
+    <value>Dysk zawierający widok funkcji przechowywanych w stanie sesji</value>
+  </data>
+  <data name="VariableDriveDescription" xml:space="preserve">
+    <value>Dysk zawierający widok zmiennych przechowywanych w stanie sesji</value>
+  </data>
+  <data name="TempDriveDescription" xml:space="preserve">
+    <value>Dysk mapowany do ścieżki katalogu tymczasowego bieżącego użytkownika</value>
+  </data>
+  <data name="NewLinkTargetNotSpecified" xml:space="preserve">
+    <value>Nie można utworzyć łącza „{0}”, ponieważ nie określono wartości docelowej.</value>
+  </data>
+  <data name="DollarNullDescription" xml:space="preserve">
+    <value>Odwołania do zmiennej null zawsze zwracają wartość null. Przypisania nie mają żadnego efektu.</value>
+  </data>
+  <data name="MaxHistoryCountDescription" xml:space="preserve">
+    <value>Maksymalna liczba obiektów historii przechowywanych w sesji</value>
+  </data>
+  <data name="CannotRenameFunction" xml:space="preserve">
+    <value>Nie można zmienić nazwy funkcji, ponieważ funkcja {0} jest tylko do odczytu lub stała.</value>
+  </data>
+  <data name="CannotRenameAlias" xml:space="preserve">
+    <value>Nie można zmienić nazwy aliasu, ponieważ alias {0} jest tylko do odczytu lub stały.</value>
+  </data>
+  <data name="CannotRenameVariable" xml:space="preserve">
+    <value>Nie można zmienić nazwy zmiennej, ponieważ zmienna {0} jest tylko do odczytu lub stała.</value>
+  </data>
+  <data name="VariableOptionsNotSettable" xml:space="preserve">
+    <value>Nie można ustawić opcji dla zmiennej lokalnej {0}. Użyj polecenia New-Variable, aby utworzyć zmienną, dla której można ustawiać opcje.</value>
+  </data>
+  <data name="CmdletIsReadOnly" xml:space="preserve">
+    <value>Polecenie cmdlet {0} nie może zostać zmodyfikowane ponieważ jest tylko do odczytu.</value>
+  </data>
+  <data name="VariableNotRemovableRare" xml:space="preserve">
+    <value>Nie można usunąć zmiennej {0}, ponieważ została zoptymalizowana i nie można jej usunąć. Spróbuj użyć polecenia cmdlet Remove-Variable (bez aliasów) albo polecenia dot-source, którego używasz do usunięcia zmiennych.</value>
+  </data>
+  <data name="VariableNotWritableRare" xml:space="preserve">
+    <value>Nie można zastąpić zmiennej {0}, ponieważ została zoptymalizowana. Spróbuj użyć polecenia cmdlet -New-Variable lub Set-Variable (bez aliasów) albo polecenia dot-source, którego używasz do ustawienia zmiennych.</value>
+  </data>
+  <data name="GetContent_TailAndHeadCannotCoexist" xml:space="preserve">
+    <value>Parametrów {0} i {1} nie można używać razem. Określ tylko jeden parametr.</value>
+  </data>
+  <data name="GetContent_TailNotSupported" xml:space="preserve">
+    <value>Parametr Tail jest obecnie obsługiwany tylko przez dostawcę FileSystem.</value>
+  </data>
+  <data name="AliasWithCommandNameAlreadyExists" xml:space="preserve">
+    <value>Nie można utworzyć aliasu, ponieważ polecenie o nazwie „{0}” i typie polecenia „{1}” już istnieje.</value>
+  </data>
+  <data name="CanNotRun" xml:space="preserve">
+    <value>Nie można uruchomić oprogramowania. Odmowa uprawnień.</value>
+  </data>
+  <data name="CopyItemFromSessionToSession" xml:space="preserve">
+    <value>Elementy „-{0}” i „-{1}” wykluczają się wzajemnie i nie można ich podać jednocześnie.</value>
+  </data>
+  <data name="CopyItemRemotelyPathIsNotAbsolute" xml:space="preserve">
+    <value>Ścieżka „{0}” jest nieprawidłowa. W operacjach kopiowania zdalnego są obsługiwane tylko ścieżki bezwzględne.</value>
+  </data>
+  <data name="CopyItemValidateRemotePath" xml:space="preserve">
+    <value>Nie można zweryfikować ścieżki zdalnej „{0}”.</value>
+  </data>
+  <data name="CopyItemSessionProperties" xml:space="preserve">
+    <value>Nie można wykonać operacji, ponieważ sesja {0} jest ustawiona na wartość {1}.</value>
+  </data>
+  <data name="CopyItemRemotelyPathIsNullOrEmpty" xml:space="preserve">
+    <value>Parametr „{0}” nie może mieć wartości null ani być pusty.</value>
+  </data>
+  <data name="WDACSessionStateVarLogTitle" xml:space="preserve">
+    <value>Zmienne stanu sesji</value>
+  </data>
+  <data name="WDACSessionStateVarLogMessage" xml:space="preserve">
+    <value>Zmiana zakresu zmiennej „{0}” na wartość AllScope lub utworzenie takiej zmiennej będzie blokowane w trybie ConstrainedLanguage.</value>
+  </data>
+</root>

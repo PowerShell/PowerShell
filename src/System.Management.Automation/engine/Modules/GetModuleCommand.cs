@@ -297,29 +297,17 @@ namespace Microsoft.PowerShell.Commands
         #region IDisposable Members
 
         /// <summary>
-        /// Releases resources associated with this object.
+        /// Release all resources.
         /// </summary>
         public void Dispose()
-        {
-            this.Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Releases resources associated with this object.
-        /// </summary>
-        private void Dispose(bool disposing)
         {
             if (_disposed)
             {
                 return;
             }
 
-            if (disposing)
-            {
-                _cancellationTokenSource.Dispose();
-            }
-
+            _cancellationTokenSource.Dispose();
+            
             _disposed = true;
         }
 

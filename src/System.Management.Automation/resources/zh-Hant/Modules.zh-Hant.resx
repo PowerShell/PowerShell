@@ -1,0 +1,687 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ModuleNotFound" xml:space="preserve">
+    <value>未載入指定的模組 '{0}'，因為在任何模組目錄中都找不到有效的模組檔案。</value>
+  </data>
+  <data name="ModuleWithVersionNotFound" xml:space="preserve">
+    <value>未載入版本為 '{0}' 的指定模組 '{1}'，因為在任何模組目錄中都找不到有效的模組檔案。</value>
+  </data>
+  <data name="MaximumVersionFormatIncorrect" xml:space="preserve">
+    <value>指定的 MaximumVersion '{0}' 不正確。如果您使用 '*'，MaximumVersion 只支援一個 '*'，而且一律應放在 MaximumVersion 的結尾。</value>
+  </data>
+  <data name="MaximumVersionNotFound" xml:space="preserve">
+    <value>未載入 MaximumVersion '{1}' 的指定模組 '{0}'，因為在任何模組目錄中都找不到有效的模組檔案。</value>
+  </data>
+  <data name="MinimumVersionAndMaximumVersionNotFound" xml:space="preserve">
+    <value>未載入具有 MinimumVersion '{1}' 和 MaximumVersion '{2}' 的指定模組 '{0}'，因為在任何模組目錄中都找不到有效的模組檔案。</value>
+  </data>
+  <data name="MinimumVersionAndMaximumVersionInvalidRange" xml:space="preserve">
+    <value>MinimumVersion '{0}' 不應大於 MaximumVersion '{1}'。</value>
+  </data>
+  <data name="ModuleAssemblyFound" xml:space="preserve">
+    <value>未載入組件 '{0}'，因為找不到該名稱的組件。請確認組件名稱，然後再試一次。</value>
+  </data>
+  <data name="ManifestMemberNotFound" xml:space="preserve">
+    <value>模組資訊清單 '{2}' 的欄位 '{1}' 中列出的待處理模組 '{0}' 未處理，因為在任何模組目錄中都找不到有效的模組。</value>
+  </data>
+  <data name="CantUseAsCustomObjectWithBinaryModule" xml:space="preserve">
+    <value>沒有傳回模組 '{0}' 的自訂物件，因為 -AsCustomObject 參數只能與指令碼模組搭配使用。</value>
+  </data>
+  <data name="InvalidModuleManifest" xml:space="preserve">
+    <value>無法處理模組資訊清單 '{0}'，因為它不是有效的 PowerShell 模組資訊清單檔。請移除不允許的元素: {1}</value>
+  </data>
+  <data name="EmptyModuleManifest" xml:space="preserve">
+    <value>處理模組資訊清單檔 '{0}' 時，未產生有效的資訊清單物件。請更新檔案，使其包含有效的 PowerShell 模組資訊清單。您可以使用 New-ModuleManifest Cmdlet 建立有效的資訊清單。</value>
+  </data>
+  <data name="InvalidModuleManifestMember" xml:space="preserve">
+    <value>無法匯入 '{0}' 模組，因為其資訊清單包含一或多個無效的成員。有效的資訊清單成員為 ({1})。請移除無效的成員 ({2})，然後再次嘗試匯入模組。</value>
+  </data>
+  <data name="InvalidModuleSpecificationMember" xml:space="preserve">
+    <value>描述模組的雜湊表包含一或多個無效的成員。有效的成員為 ({0})。請移除無效的成員 ({1})，然後再試一次。</value>
+  </data>
+  <data name="ModuleTooDeeplyNested" xml:space="preserve">
+    <value>無法載入模組 '{0}'，因為已超過模組巢狀限制。模組最多只能巢狀到 {1} 層。請評估並變更載入模組的順序，以避免超過巢狀限制，然後再次嘗試執行您的指令碼。</value>
+  </data>
+  <data name="ModuleManifestMissingModuleVersion" xml:space="preserve">
+    <value>模組資訊清單中沒有成員 'ModuleVersion'。此成員必須存在，且值必須是格式為 'n.n.n.n' 的版本號碼。請將遺漏的成員新增至檔案 '{0}'。</value>
+  </data>
+  <data name="ModuleManifestInvalidValue" xml:space="preserve">
+    <value>模組資訊清單檔 '{2}' 中的 '{0}' 成員無效: {1}</value>
+  </data>
+  <data name="ModuleManifestInsufficientModuleVersion" xml:space="preserve">
+    <value>模組 '{1}' 的版本 '{0}' 不符合所需的最低版本 '{2}'。請確認版本號碼受支援，然後再次嘗試載入模組。</value>
+  </data>
+  <data name="ModuleManifestInsufficientPowerShellVersion" xml:space="preserve">
+    <value>此電腦上的 PowerShell 版本為 '{0}'。模組 '{1}' 需要至少 PowerShell 版本 '{2}' 才能執行。請確認您已安裝所需的最低版本 PowerShell，然後再試一次。</value>
+  </data>
+  <data name="ModuleManifestNestedModulesCantGoWithModuleToProcess" xml:space="preserve">
+    <value>如果 'ModuleToProcess' 成員是二進位模組，則無法使用模組資訊清單成員 'NestedModules'。請編輯位於 '{0}' 的模組資訊清單檔，然後再試一次。</value>
+  </data>
+  <data name="ModuleManifestInvalidManifestMember" xml:space="preserve">
+    <value>模組資訊清單中的成員 '{0}' 無效: {1}。請確認已在 '{2}' 檔案中為此欄位指定有效值。</value>
+  </data>
+  <data name="InvalidModuleManifestPath" xml:space="preserve">
+    <value>模組資訊清單路徑 '{0}' 無效。Path 引數的值必須解析為副檔名為 '.psd1' 的單一檔案。請將 Path 引數的值變更為指向有效的 psd1 檔案，然後再試一次。</value>
+  </data>
+  <data name="InvalidModuleManifestVersion" xml:space="preserve">
+    <value>模組資訊清單 '{0}' 中的 ModuleVersion 索引鍵指定了模組版本 '{1}'，但這與 '{2}' 的版本資料夾名稱不符。請變更 ModuleVersion 索引鍵的值，使其與版本資料夾名稱一致。</value>
+  </data>
+  <data name="InvalidNestedModuleinModuleManifest" xml:space="preserve">
+    <value>模組資訊清單 '{1}' 中指定的 NestedModule 項目 '{0}' 無效。請使用有效值更新此項目，然後再試一次。</value>
+  </data>
+  <data name="InvalidRequiredAssembliesInModuleManifest" xml:space="preserve">
+    <value>模組資訊清單 '{1}' 中指定的 RequiredAssemblies 項目 '{0}' 無效。請使用有效值更新此項目，然後再試一次。</value>
+  </data>
+  <data name="InvalidFilePathinModuleManifest" xml:space="preserve">
+    <value>模組資訊清單 '{1}' 中指定的 FileList 項目 '{0}' 無效。請使用有效值更新此項目，然後再試一次。</value>
+  </data>
+  <data name="InvalidRequiredModulesinModuleManifest" xml:space="preserve">
+    <value>模組資訊清單 '{1}' 中指定的 RequiredModules 項目 '{0}' 無效。請使用有效值更新此項目，然後再試一次。</value>
+  </data>
+  <data name="InvalidModuleListinModuleManifest" xml:space="preserve">
+    <value>模組資訊清單 '{1}' 中指定的 ModuleList 項目 '{0}' 無效。請使用有效值更新此項目，然後再試一次。</value>
+  </data>
+  <data name="InvalidPowerShellVersionInModuleManifest" xml:space="preserve">
+    <value>模組資訊清單 '{0}' 使用了 CompatiblePSEditions 索引鍵，但此索引鍵只支援 PowerShell '5.1' 或更新版本。請將 PowerShellVersion 索引鍵的值更新為 '5.1' 或更新版本，然後再試一次。</value>
+  </data>
+  <data name="DuplicateEntriesInCompatiblePSEditions" xml:space="preserve">
+    <value>CompatiblePSEditions 的指定值 '{0}' 包含重複的 PowerShell 版本名稱。請移除重複的 PowerShell 版本名稱，然後再試一次。</value>
+  </data>
+  <data name="ModuleVersionEqualsToVersionFolder" xml:space="preserve">
+    <value>ModuleVersion 索引鍵中指定的版本等於版本資料夾名稱。</value>
+  </data>
+  <data name="SkippingInvalidModuleVersionFolder" xml:space="preserve">
+    <value>正在略過模組 {1} 下的版本資料夾 {0}，因為其中沒有有效的模組資訊清單檔。</value>
+  </data>
+  <data name="RequiredModuleMissingModuleName" xml:space="preserve">
+    <value>描述此模組的雜湊表中不存在 'ModuleName' 成員。</value>
+  </data>
+  <data name="RequiredModuleMissingModuleVersion" xml:space="preserve">
+    <value>描述此模組的雜湊表中沒有 'ModuleVersion'、'MaximumVersion' 和 'RequiredVersion' 成員。這三個成員中必須有一個存在，並以 'n.n.n.n' 格式指派版本號碼。</value>
+  </data>
+  <data name="RequiredModuleNotLoaded" xml:space="preserve">
+    <value>未載入必要模組 '{1}'。請載入該模組，或從檔案 '{0}' 中的 'RequiredModules' 移除該模組。</value>
+  </data>
+  <data name="RequiredModuleNotLoadedWrongGuid" xml:space="preserve">
+    <value>未載入具有 GUID '{1}' 的必要模組 '{2}'。請載入該模組，或從檔案 '{0}' 中的 'RequiredModules' 移除該模組。</value>
+  </data>
+  <data name="RequiredModuleNotLoadedWrongVersion" xml:space="preserve">
+    <value>未載入版本為 '{2}' 的必要模組 '{1}'。請載入該模組，或從檔案 '{0}' 中的 'RequiredModules' 移除該模組。</value>
+  </data>
+  <data name="RequiredModuleNotLoadedWrongMaximumVersion" xml:space="preserve">
+    <value>未載入具有 MaximumVersion '{2}' 的必要模組 '{1}'。請載入該模組，或從檔案 '{0}' 中的 'RequiredModules' 移除該模組。</value>
+  </data>
+  <data name="RequiredModuleNotLoadedWrongMinimumVersionAndMaximumVersion" xml:space="preserve">
+    <value>未載入具有 MaximumVersion '{2}' 和 MaximumVersion '{3}' 的必要模組 '{1}'。請載入該模組，或從檔案 '{0}' 中的 'RequiredModules' 移除該模組。</value>
+  </data>
+  <data name="RequiredModuleNotFoundModuleVersion" xml:space="preserve">
+    <value>找不到符合 ModuleVersion '{1}' 的模組 '{0}。</value>
+  </data>
+  <data name="RequiredModuleNotFoundRequiredVersion" xml:space="preserve">
+    <value>找不到符合 RequiredVersion '{1}' 的模組 '{0}'。</value>
+  </data>
+  <data name="RequiredModuleNotFoundMaximumVersion" xml:space="preserve">
+    <value>找不到符合 MaximumVersion '{1}' 的模組 '{0}'。</value>
+  </data>
+  <data name="RequiredModuleNotFoundModuleAndMaximumVersion" xml:space="preserve">
+    <value>找不到符合 ModuleVersion '{1}' 和 MaximumVersion '{2}' 的模組 '{0}。</value>
+  </data>
+  <data name="RequiredModuleNotFoundWithoutVersion" xml:space="preserve">
+    <value>找不到模組 '{0}'。</value>
+  </data>
+  <data name="NoModulesRemoved" xml:space="preserve">
+    <value>未移除任何模組。請確認要移除的模組規格正確，且這些模組存在於 Runspace 中。</value>
+  </data>
+  <data name="UnableToRemoveModuleMember" xml:space="preserve">
+    <value>無法移除從模組 '{1}' 匯入的 '{0}' 成員，原因如下: {2}</value>
+  </data>
+  <data name="ModuleIsReadOnly" xml:space="preserve">
+    <value>無法移除模組 '{0}'，因為它是唯讀的。若要移除唯讀模組，請在命令中加入 Force 參數。</value>
+  </data>
+  <data name="ModuleIsConstant" xml:space="preserve">
+    <value>無法移除模組 '{0}'，因為它標記為 'constant'。標記為 'constant' 的模組無法移除。</value>
+  </data>
+  <data name="ModuleIsRequired" xml:space="preserve">
+    <value>無法移除模組 '{0}'，因為 '{1}' 需要它。若要移除該模組，請在命令中加入 Force 參數。</value>
+  </data>
+  <data name="CanOnlyBeUsedFromWithinAModule" xml:space="preserve">
+    <value>只能從模組內部呼叫 Export-ModuleMember Cmdlet。</value>
+  </data>
+  <data name="InvalidModuleExtension" xml:space="preserve">
+    <value>副檔名 '{0}' 不是有效的模組副檔名。支援的模組副檔名為 '.dll'、'.ps1'、'.psm1'、'.psd1' 和 '.cdxml'。請更正副檔名，然後再次嘗試新增檔案 '{1}'。</value>
+  </data>
+  <data name="InvalidOperationOnBinaryModule" xml:space="preserve">
+    <value>無法在二進位模組上執行此作業。它只能在指令碼模組上執行。</value>
+  </data>
+  <data name="ScriptsToProcessIncorrectExtension" xml:space="preserve">
+    <value>不允許檔案 '{0}'，因為它沒有副檔名 '.ps1'。</value>
+  </data>
+  <data name="DefaultCompanyName" xml:space="preserve">
+    <value>未知</value>
+  </data>
+  <data name="DefaultCopyrightMessage" xml:space="preserve">
+    <value>(c) {0}。著作權所有，並保留一切權利。</value>
+  </data>
+  <data name="RemovingImportedFunction" xml:space="preserve">
+    <value>正在移除已匯入的 "{0}" 函式。</value>
+  </data>
+  <data name="RemovingImportedAlias" xml:space="preserve">
+    <value>正在移除已匯入的 "{0}" 別名。</value>
+  </data>
+  <data name="RemovingImportedVariable" xml:space="preserve">
+    <value>正在移除已匯入的 "{0}" 變數。</value>
+  </data>
+  <data name="LoadingModule" xml:space="preserve">
+    <value>正在從路徑 '{0}' 載入模組。</value>
+  </data>
+  <data name="LoadingFile" xml:space="preserve">
+    <value>正在從路徑 '{1}' 載入 '{0}'。</value>
+  </data>
+  <data name="DottingScriptFile" xml:space="preserve">
+    <value>正在點執行指令檔 '{0}'。</value>
+  </data>
+  <data name="ImportingFunction" xml:space="preserve">
+    <value>正在匯入函式 '{0}'。</value>
+  </data>
+  <data name="ImportingCmdlet" xml:space="preserve">
+    <value>正在匯入 Cmdlet '{0}'。</value>
+  </data>
+  <data name="ImportingAlias" xml:space="preserve">
+    <value>正在匯入別名 '{0}'。</value>
+  </data>
+  <data name="ImportingVariable" xml:space="preserve">
+    <value>正在匯入變數 '{0}'。</value>
+  </data>
+  <data name="ExportingCmdlet" xml:space="preserve">
+    <value>正在匯出 Cmdlet '{0}'。</value>
+  </data>
+  <data name="ExportingFunction" xml:space="preserve">
+    <value>正在匯出函式 '{0}'。</value>
+  </data>
+  <data name="ExportingAlias" xml:space="preserve">
+    <value>正在匯出別名 '{0}'。</value>
+  </data>
+  <data name="ExportingVariable" xml:space="preserve">
+    <value>正在匯出變數 '{0}'。</value>
+  </data>
+  <data name="ImportingNonStandardVerb" xml:space="preserve">
+    <value>某些從模組 '{0}' 匯入的命令名稱包含未核准的動詞，這可能會降低命令的可探索性。若要找出使用未核准動詞的命令，請使用 Verbose 參數再次執行 Import-Module 命令。如需核准動詞的清單，請輸入 Get-Verb。</value>
+  </data>
+  <data name="ImportingNonStandardVerbVerbose" xml:space="preserve">
+    <value>已匯入模組 '{1}' 中的 '{0}' 命令，但因為其名稱未包含核准的動詞，可能較難找到。如需核准動詞的清單，請輸入 Get-Verb。</value>
+  </data>
+  <data name="ImportingNonStandardVerbVerboseSuggestion" xml:space="preserve">
+    <value>已匯入模組 '{2}' 中的 '{0}' 命令，但因為其名稱未包含核准的動詞，可能較難找到。建議的替代動詞為 "{1}"。</value>
+  </data>
+  <data name="ImportingNonStandardNoun" xml:space="preserve">
+    <value>某些匯入的命令名稱包含下列一或多個限制字元: # , ( ) {{ }} [ ] &amp; - / \ $ ^ ; : " ' &lt; &gt; | ? @ ` * % + = ~</value>
+  </data>
+  <data name="ImportingNonStandardNounVerbose" xml:space="preserve">
+    <value>模組 '{1}' 中的命令名稱 '{0}' 包含下列一或多個限制字元: # , ( ) {{ }} [ ] &amp; - / \ $ ^ ; : " ' &lt; &gt; | ? @ ` * % + = ~</value>
+  </data>
+  <data name="CreatingModuleManifestFile" xml:space="preserve">
+    <value>正在建立 "{0}" 模組資訊清單檔。</value>
+  </data>
+  <data name="ConfirmRemoveModule" xml:space="preserve">
+    <value>{0} (路徑: '{1}')</value>
+  </data>
+  <data name="InvalidProcessorArchitecture" xml:space="preserve">
+    <value>目前的處理器結構為: {0}。模組 '{1}' 需要下列結構: {2}。</value>
+  </data>
+  <data name="InvalidPowerShellHostName" xml:space="preserve">
+    <value>目前 PowerShell 主機的名稱為: '{0}'。模組 '{1}' 需要下列 PowerShell 主機: '{2}'。</value>
+  </data>
+  <data name="InvalidPowerShellHostVersion" xml:space="preserve">
+    <value>目前的 PowerShell 主機為: '{0}'（版本 {1}）。模組 '{2}' 需要至少 PowerShell 主機版本 '{3}' 才能執行。</value>
+  </data>
+  <data name="ManifestHeaderLine1" xml:space="preserve">
+    <value>模組 '{0}' 的模組資訊清單</value>
+  </data>
+  <data name="ManifestHeaderLine2" xml:space="preserve">
+    <value>產生者: {0}</value>
+  </data>
+  <data name="ManifestHeaderLine3" xml:space="preserve">
+    <value>產生於: {0}</value>
+  </data>
+  <data name="RootModule" xml:space="preserve">
+    <value>與此資訊清單相關聯的指令碼模組或二進位模組檔案。</value>
+  </data>
+  <data name="NestedModules" xml:space="preserve">
+    <value>要匯入為 RootModule/ModuleToProcess 中指定模組之巢狀模組的模組</value>
+  </data>
+  <data name="GUID" xml:space="preserve">
+    <value>用於唯一識別此模組的識別碼</value>
+  </data>
+  <data name="Author" xml:space="preserve">
+    <value>此模組的作者</value>
+  </data>
+  <data name="CompanyName" xml:space="preserve">
+    <value>此模組的公司或廠商</value>
+  </data>
+  <data name="Copyright" xml:space="preserve">
+    <value>此模組的著作權聲明</value>
+  </data>
+  <data name="ModuleVersion" xml:space="preserve">
+    <value>此模組的版本號碼。</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>此模組所提供功能的描述</value>
+  </data>
+  <data name="PowerShellVersion" xml:space="preserve">
+    <value>此模組所需的最低 PowerShell 引擎版本</value>
+  </data>
+  <data name="CLRVersion" xml:space="preserve">
+    <value>此模組所需的通用語言執行平台 (CLR) 最低版本。{0}</value>
+  </data>
+  <data name="RequiredModules" xml:space="preserve">
+    <value>匯入此模組之前，必須先匯入全域環境的模組</value>
+  </data>
+  <data name="ScriptsToProcess" xml:space="preserve">
+    <value>匯入此模組之前，會在呼叫者環境中執行的指令碼檔案 (.ps1)。</value>
+  </data>
+  <data name="TypesToProcess" xml:space="preserve">
+    <value>匯入此模組時要載入的類型檔案 (.ps1xml)</value>
+  </data>
+  <data name="FormatsToProcess" xml:space="preserve">
+    <value>匯入此模組時要載入的格式檔案 (.ps1xml)</value>
+  </data>
+  <data name="RequiredAssemblies" xml:space="preserve">
+    <value>匯入此模組前必須載入的組件</value>
+  </data>
+  <data name="FileList" xml:space="preserve">
+    <value>此模組所封裝的所有檔案清單</value>
+  </data>
+  <data name="PrivateData" xml:space="preserve">
+    <value>要傳遞至 RootModule/ModuleToProcess 中指定模組的私人資料。這也可能包含 PSData 雜湊表，其中含有 PowerShell 使用的其他模組中繼資料。</value>
+  </data>
+  <data name="Tags" xml:space="preserve">
+    <value>套用至此模組的標籤。這些項目有助於在線上資源庫中探索模組。</value>
+  </data>
+  <data name="ProjectUri" xml:space="preserve">
+    <value>此專案主要網站的 URL。</value>
+  </data>
+  <data name="LicenseUri" xml:space="preserve">
+    <value>此模組授權的 URL。</value>
+  </data>
+  <data name="IconUri" xml:space="preserve">
+    <value>代表此模組的圖示 URL。</value>
+  </data>
+  <data name="ReleaseNotes" xml:space="preserve">
+    <value>此模組的 ReleaseNotes</value>
+  </data>
+  <data name="Prerelease" xml:space="preserve">
+    <value>此模組的預先發行版字串</value>
+  </data>
+  <data name="RequireLicenseAcceptance" xml:space="preserve">
+    <value>表示此模組是否需要使用者明確接受才能安裝/更新/儲存的旗標</value>
+  </data>
+  <data name="ExternalModuleDependencies" xml:space="preserve">
+    <value>此模組的外部相依模組</value>
+  </data>
+  <data name="EndOfManifestHashTable" xml:space="preserve">
+    <value>{0} 雜湊表結尾</value>
+  </data>
+  <data name="PrivateDataValueTypeShouldBeHashTableError" xml:space="preserve">
+    <value>PrivateData 參數值必須是雜湊表，才能使用下列參數值建立模組資訊清單: Tags、ProjectUri、LicenseUri、IconUri 或 ReleaseNotes。請移除 Tags、ProjectUri、LicenseUri、IconUri 或 ReleaseNotes 參數值，或將 PrivateData 的內容包裝在雜湊表中。</value>
+  </data>
+  <data name="PrivateDataValueTypeShouldBeHashTableWarning" xml:space="preserve">
+    <value>PrivateData 應定義為雜湊表，但這個模組資訊清單將其定義為物件。請考慮將 PrivateData 的內容包裝在雜湊表中。這樣您之後就能將 Tags、ProjectUri、LicenseUri、IconUri 和 ReleaseNotes 屬性新增到模組資訊清單中。</value>
+  </data>
+  <data name="InvalidParameterValue" xml:space="preserve">
+    <value>指定的值 '{0}' 無效，請使用有效的值再試一次。</value>
+  </data>
+  <data name="FunctionsToExport" xml:space="preserve">
+    <value>若要從此模組匯出的函式，為了達到最佳效能，請勿使用萬用字元，也不要刪除該項目。如果沒有要匯出的函式，則請使用空陣列。</value>
+  </data>
+  <data name="AliasesToExport" xml:space="preserve">
+    <value>若要從此模組匯出的別名，為了達到最佳效能，請勿使用萬用字元，也不要刪除該項目。如果沒有要匯出的別名，則請使用空陣列。</value>
+  </data>
+  <data name="CmdletsToExport" xml:space="preserve">
+    <value>若要從此模組匯出的 Cmdlet，為了達到最佳效能，請勿使用萬用字元，也不要刪除該項目。如果沒有要匯出的 Cmdlet，則請使用空陣列。</value>
+  </data>
+  <data name="VariablesToExport" xml:space="preserve">
+    <value>要從此模組匯出的變數</value>
+  </data>
+  <data name="DscResourcesToExport" xml:space="preserve">
+    <value>要從此模組匯出的 DSC 資源</value>
+  </data>
+  <data name="CompatiblePSEditions" xml:space="preserve">
+    <value>支援的 PSEditions</value>
+  </data>
+  <data name="ProcessorArchitecture" xml:space="preserve">
+    <value>此模組需要的處理器結構為 (None、X86、Amd64)</value>
+  </data>
+  <data name="ModuleList" xml:space="preserve">
+    <value>此模組所封裝的所有模組清單</value>
+  </data>
+  <data name="DotNetFrameworkVersion" xml:space="preserve">
+    <value>此模組所需的最低 Microsoft .NET Framework 版本。{0}</value>
+  </data>
+  <data name="PowerShellHostName" xml:space="preserve">
+    <value>此模組所需的 PowerShell 主機名稱</value>
+  </data>
+  <data name="PowerShellHostVersion" xml:space="preserve">
+    <value>此模組所需的最低 PowerShell 主機版本</value>
+  </data>
+  <data name="HelpInfoURI" xml:space="preserve">
+    <value>此模組的 HelpInfo URI</value>
+  </data>
+  <data name="ModuleDriveInUse" xml:space="preserve">
+    <value>因為 {0} 模組在目前的 PowerShell 工作階段中提供 PSDrive，所以沒有移除任何模組。請變更目前的 PSDrive 提供者，然後再次嘗試移除模組。</value>
+  </data>
+  <data name="ImportModuleNoClobberForCmdlet" xml:space="preserve">
+    <value>未匯入 Cmdlet '{0}'，因為目前範圍中有成員具有相同名稱。</value>
+  </data>
+  <data name="ImportModuleNoClobberForAlias" xml:space="preserve">
+    <value>未匯入別名 '{0}'，因為目前範圍中有成員具有相同名稱。</value>
+  </data>
+  <data name="ImportModuleNoClobberForFunction" xml:space="preserve">
+    <value>未匯入函式 '{0}'，因為目前範圍中有成員具有相同名稱。</value>
+  </data>
+  <data name="ImportModuleNoClobberForVariable" xml:space="preserve">
+    <value>未匯入變數 '{0}'，因為目前範圍中有成員具有相同名稱。</value>
+  </data>
+  <data name="WildCardNotAllowedInModuleToProcessAndInNestedModules" xml:space="preserve">
+    <value>模組資訊清單 '{0}' 中的成員 'ModuleToProcess'、'RootModule' 或 'NestedModules' 不允許使用萬用字元。</value>
+  </data>
+  <data name="CoreModuleCannotBeRemoved" xml:space="preserve">
+    <value>模組 '{0}' 是 PowerShell 的核心模組。若要移除核心模組，請在命令中加入 Force 參數。</value>
+  </data>
+  <data name="ModuleManifestCannotContainBothModuleToProcessAndRootModule" xml:space="preserve">
+    <value>模組資訊清單不能同時包含 'ModuleToProcess' 和 'RootModule' 成員。請變更模組資訊清單檔，移除位於 '{0}' 的其中一個成員，然後再試一次。</value>
+  </data>
+  <data name="ModuleToProcessFieldDeprecated" xml:space="preserve">
+    <value>模組資訊清單成員 'ModuleToProcess' 已棄用。請改為使用 'RootModule' 成員。</value>
+  </data>
+  <data name="DefaultCommandPrefix" xml:space="preserve">
+    <value>從此模組匯出之命令的預設前置詞。您可以使用 Import-Module -Prefix 覆寫預設前置詞。</value>
+  </data>
+  <data name="GlobalAndScopeParameterCannotBeSpecifiedTogether" xml:space="preserve">
+    <value>無法同時指定 'Global' 和 'Scope' 參數。請移除其中一個參數，然後嘗試再次執行該指令。</value>
+  </data>
+  <data name="RequiredModulesCyclicDependency" xml:space="preserve">
+    <value>未載入必要模組 '{0}'。模組 '{0}' 在其模組資訊清單 '{2}' 中的 requiredModule '{1}' 指向循環相依性。</value>
+  </data>
+  <data name="RequiredModuleNotFound" xml:space="preserve">
+    <value>未載入必要的模組 '{0}'，因為在任何模組目錄中都找不到有效的模組檔案。</value>
+  </data>
+  <data name="MixedModuleOverCimSessionWarning" xml:space="preserve">
+    <value>無法透過 CimSession 匯入模組 {0} 中的某些命令。若要取得所有命令，請確認遠端伺服器已啟用 PowerShell 遠端管理，然後嘗試在 Import-Module Cmdlet 中加入 PSSession 參數。</value>
+  </data>
+  <data name="WinCompatModuleWarning" xml:space="preserve">
+    <value>模組 {1} 已使用 {0} 遠端處理工作階段載入 Windows PowerShell; 請注意，此模組中所有命令的輸入和輸出都會是還原序列化的物件。如果您想將此模組載入 PowerShell，請使用 'Import-Module -SkipEditionCheck' 語法。</value>
+  </data>
+  <data name="WinCompatRequredVersionError" xml:space="preserve">
+    <value>偵測到 Windows PowerShell 版本 {0}。若要使用 Windows PowerShell 相容性功能載入模組，則需要 Windows PowerShell 5.1。請從 https://aka.ms/WMF5Download 安裝 Windows Management Framework (WMF) 5.1 以啟用此功能。</value>
+  </data>
+  <data name="WinCompatModuleInDenyList" xml:space="preserve">
+    <value>PowerShell 設定檔中的 'WindowsPowerShellCompatibilityModuleDenyList' 設定已封鎖使用 Windows PowerShell 相容性功能載入模組 '{0}'。</value>
+  </data>
+  <data name="PsModuleOverCimSessionError" xml:space="preserve">
+    <value>無法透過 CimSession 匯入模組 {0}。請嘗試使用 Import-Module Cmdlet 的 PSSession 參數。</value>
+  </data>
+  <data name="InvalidProcessorArchitectureInManifest" xml:space="preserve">
+    <value>不支援處理器結構值 {0}。請再次執行 New-ModuleManifest 命令，並指定下列其中一個支援的處理器結構列舉值: None、MSIL、X86、Amd64、Arm</value>
+  </data>
+  <data name="RemoteDiscoveryWorksOnlyInListAvailableMode" xml:space="preserve">
+    <value>在遠端電腦上執行 Get-Module Cmdlet 只能列出可用的模組。請將 ListAvailable 參數加入您的命令，然後再試一次。</value>
+  </data>
+  <data name="ModuleLoadedAsASnapin" xml:space="preserve">
+    <value>未匯入 '{0}' 模組，因為已先匯入 '{0}' 嵌入式管理單元。</value>
+  </data>
+  <data name="WildCardNotAllowedInRequiredAssemblies" xml:space="preserve">
+    <value>模組資訊清單 '{0}' 中的成員 'RequiredAssemblies' 不允許使用萬用字元。</value>
+  </data>
+  <data name="CmdletizationDoesSupportRexportingNestedModules" xml:space="preserve">
+    <value>{1} 中 {0} 索引鍵的值為 {2}，且模組具有巢狀模組。當 CDXML 檔案是根模組時，Import-Module 命令會失敗，因為無法匯出巢狀模組中的命令。請將 CDXML 檔案移到 NestedModules 索引鍵，然後再次嘗試命令。</value>
+    <comment>{0} is equal to either ModuleToProcess or RootModule
+{1} is a placeholder for a file path to psd1 file
+{2} is a placeholder for a file path to cdxml file</comment>
+  </data>
+  <data name="RemoteDiscoveryRemotePsrpCommandFailed" xml:space="preserve">
+    <value>遠端命令失敗: {0}: {{0}}</value>
+  </data>
+  <data name="RemoteDiscoveryFailedToGenerateProxyForRemoteModule" xml:space="preserve">
+    <value>無法為遠端模組 '{0}' 產生 Proxy。{{0}}</value>
+  </data>
+  <data name="RemoteDiscoveryFailedToProcessRemoteModule" xml:space="preserve">
+    <value>無法處理遠端模組 {0}。{1}</value>
+  </data>
+  <data name="RemoteDiscoveryFailureFromDiscoveryProvider" xml:space="preserve">
+    <value>無法從遠端 CimSession 接收模組資料。{0}</value>
+  </data>
+  <data name="RequiredModuleNotFoundWrongGuidVersion" xml:space="preserve">
+    <value>未載入具有 GUID '{1}' 及版本 '{2}' 的必要模組 '{0}'，因為在任何模組目錄中都找不到有效的模組檔案。</value>
+  </data>
+  <data name="RemoteDiscoveryProviderNotFound" xml:space="preserve">
+    <value>在 CIM 伺服器上找不到用於模組探索的 CIM 提供者。{0}</value>
+    <comment>{0} is a placeholder for a more detailed error message</comment>
+  </data>
+  <data name="CannotDetectNetFrameworkVersion" xml:space="preserve">
+    <value>無法驗證 Microsoft .NET Framework 版本 {0}，因為它不在允許的版本清單中。</value>
+  </data>
+  <data name="ScriptAnalysisModule" xml:space="preserve">
+    <value>正在分析 {0}。</value>
+    <comment>{0} should not be localized, is used to contain a file path.</comment>
+  </data>
+  <data name="ScriptAnalysisPreparing" xml:space="preserve">
+    <value>正在準備模組以供首次使用。</value>
+  </data>
+  <data name="DeterminingAvailableModules" xml:space="preserve">
+    <value>正在搜尋可用的模組</value>
+  </data>
+  <data name="SearchingUncShare" xml:space="preserve">
+    <value>正在搜尋 UNC 共用 {0}。</value>
+    <comment>{0} should not be localized, is used to contain a file path.</comment>
+  </data>
+  <data name="RemoteDiscoveryWorksOnlyForUnQualifiedNames" xml:space="preserve">
+    <value>對遠端電腦執行 Get-Module cmdlet 只能用於不包含路徑的模組名稱。Name 參數中的元素 '{0}' 會解析為路徑。請更新 Name 參數，移除路徑元素，然後再試一次。</value>
+  </data>
+  <data name="ModuleDiscoveryForLoadedModulesWorksOnlyForUnQualifiedNames" xml:space="preserve">
+    <value>對於包含路徑的模組名稱，不支援在未使用 ListAvailable 參數的情況下執行 Get-Module Cmdlet。Name 參數中的元素 '{0}' 會解析為路徑。請更新 Name 參數，移除路徑元素，然後再試一次。</value>
+  </data>
+  <data name="ModuleNotFoundForGetModule" xml:space="preserve">
+    <value>找不到指定的模組 '{0}'。請更新 Name 參數，使其指向有效路徑，然後再試一次。</value>
+  </data>
+  <data name="PopulatingRepositorySourceLocation" xml:space="preserve">
+    <value>正在填入模組 {0} 的 RepositorySourceLocation 屬性。</value>
+  </data>
+  <data name="ManifestMemberNotValid" xml:space="preserve">
+    <value>未處理模組資訊清單 '{0}' 的欄位 '{1}' 中列出的要處理模組 '{2}'。 {3}</value>
+  </data>
+  <data name="PrerequisiteForDesktopEditionOnly" xml:space="preserve">
+    <value>此必要條件僅適用於 PowerShell Desktop 版本。</value>
+  </data>
+  <data name="PSEditionNotSupported" xml:space="preserve">
+    <value>模組 '{0}' 不支援目前的 PowerShell 版本 '{1}'。其支援的版本為 '{2}'。請使用 'Import-Module -SkipEditionCheck' 忽略此模組的相容性。</value>
+  </data>
+  <data name="ImplicitWinCompatDisabled" xml:space="preserve">
+    <value>模組 '{0}' 支援 PowerShell 版本 '{1}'，因為設定檔已停用 Windows 相容性功能，所以無法隱含載入。請使用 'Import-Module -UseWindowsPowerShell' 以 Windows PowerShell 載入此模組，或使用 'Import-Module -SkipEditionCheck' 嘗試以目前的 PowerShell 載入此模組。</value>
+  </data>
+  <data name="ExperimentalFeatureNameMissingOrEmpty" xml:space="preserve">
+    <value>應為模組資訊清單中宣告的實驗性功能指定非空白字串值。</value>
+  </data>
+  <data name="InvalidExperimentalFeatureName" xml:space="preserve">
+    <value>找到一或多個無效的實驗性功能名稱: {0}。模組實驗性功能名稱應遵循此慣例: 'ModuleName.FeatureName'。</value>
+  </data>
+  <data name="SkipEditionCheckNotSupportedWithoutListAvailable" xml:space="preserve">
+    <value>必須搭配 -ListAvailable 切換參數，才能使用 -SkipEditionCheck 切換參數。</value>
+  </data>
+  <data name="ImportPSFileNotAllowedInConstrainedLanguage" xml:space="preserve">
+    <value>在 ConstrainedLanguage 模式中，不允許將 *.ps1 檔案匯入為模組。</value>
+  </data>
+  <data name="MismatchedLanguageModes" xml:space="preserve">
+    <value>載入指令碼模組 {0} 時發生錯誤，因為其語言模式與模組資訊清單不同。資訊清單語言模式為 {1}，而模組語言模式為 {2}。請確定所有模組檔案都已簽署，或已納入應用程式允許清單設定中。</value>
+  </data>
+  <data name="CannotUseDotSourceWithWildCardFunctionExport" xml:space="preserve">
+    <value>此模組在使用萬用字元匯出函式時，會使用 dot-source 運算子，而在系統啟用應用程式驗證強制執行時，這是不允許的。</value>
+  </data>
+  <data name="CannotExportMembersAccrossLanguageBoundaries" xml:space="preserve">
+    <value>無法從語言模式與執行中工作階段不同的模組匯出模組成員。</value>
+  </data>
+  <data name="CannotCreateModuleWithScriptBlock" xml:space="preserve">
+    <value>當工作階段處於 ConstrainedLanguage 模式時，無法建立新模組。</value>
+  </data>
+  <data name="CannotFindCoreCompatibleBuiltInModule" xml:space="preserve">
+    <value>找不到與 'Core' 版本相容的內建模組 '{0}'。請確認 PowerShell 內建模組可供使用。它們通常隨 PowerShell 套件一起提供，位於 $PSHOME 模組路徑下，而且是 PowerShell 正常運作所需。</value>
+  </data>
+  <data name="WDACExportModuleCommandLogTitle" xml:space="preserve">
+    <value>Export-ModuleMember Cmdlet</value>
+  </data>
+  <data name="WDACExportModuleCommandLogMessage" xml:space="preserve">
+    <value>在限制語言模式中匯出模組成員將會失敗，因為模組 '{0}' 的語言模式 '{1}' 與目前的工作階段 '{2}' 的語言模式不同。</value>
+  </data>
+  <data name="WDACImplicitFunctionExportLogTitle" xml:space="preserve">
+    <value>模組隱含函式匯出</value>
+  </data>
+  <data name="WDACImplicitFunctionExportLogMessage" xml:space="preserve">
+    <value>模組 '{0}' 的隱含函式匯出將會遭到拒絕，因為它是受信任的 (以完整語言模式執行)，但工作階段不是受信任的 (以限制語言模式執行)。最佳做法是一律以完整名稱個別匯出模組函式。</value>
+  </data>
+  <data name="WDACScriptFileImportLogTitle" xml:space="preserve">
+    <value>正在將指令檔匯入為模組</value>
+  </data>
+  <data name="WDACScriptFileImportLogMessage" xml:space="preserve">
+    <value>在 ConstrainedLanguage 模式中，不允許將指令碼檔案 '{0}' 匯入為模組。</value>
+  </data>
+  <data name="WDACModuleDotSourceLogTitle" xml:space="preserve">
+    <value>模組包含 Dot-Source 運算子</value>
+  </data>
+  <data name="WDACModuleDotSourceLogMessage" xml:space="preserve">
+    <value>模組 '{0}' 的匯入在限制語言模式中將會失敗，因為它使用萬用字元匯出函式，同時也使用 dot-source 運算子。</value>
+  </data>
+  <data name="WDACModuleFnExportWithNestedModulesLogTitle" xml:space="preserve">
+    <value>"模組匯出函式</value>
+  </data>
+  <data name="WDACModuleFnExportWithNestedModulesLogMessage" xml:space="preserve">
+    <value>模組 '{0}' 使用名稱萬用字元匯出函式。在限制語言模式下執行時，任何巢狀模組函式名稱都會移除。</value>
+  </data>
+  <data name="WDACNewModuleCommandLogTitle" xml:space="preserve">
+    <value>"New-Module Cmdlet</value>
+  </data>
+  <data name="WDACNewModuleCommandLogMessage" xml:space="preserve">
+    <value>來自未受信任的限制語言工作階段的新模組，將無法提供 FullLanguage 指令碼區塊。</value>
+  </data>
+  <data name="WDACMismatchedLanguageModesTitle" xml:space="preserve">
+    <value>"模組語言模式不相符</value>
+  </data>
+  <data name="WDACMismatchedLanguageModesMessage" xml:space="preserve">
+    <value>正在載入的相依模組與父模組的語言模式不同。在限制語言模式中將不允許此動作。</value>
+  </data>
+</root>

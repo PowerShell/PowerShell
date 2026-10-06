@@ -1,0 +1,315 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CounterNotALogFile" xml:space="preserve">
+    <value>{0} dosyasının beklenen dosya adı uzantısı yok. Yol parametresini kullanırken yalnızca .blg, .csv veya .tsv dosyalarını belirtin.</value>
+  </data>
+  <data name="CounterApiError" xml:space="preserve">
+    <value>İç performans sayacı API çağrısı başarısız oldu. Hata: {0:x8}.</value>
+  </data>
+  <data name="LogProviderOrPathNeeded" xml:space="preserve">
+    <value>En az bir Günlük, Sağlayıcı veya Yol anahtar-değer çifti belirtmelisiniz.</value>
+  </data>
+  <data name="NoMatchingProvidersFound" xml:space="preserve">
+    <value>{0} bilgisayarında “{1}” ile eşleşen bir olay sağlayıcısı yok.</value>
+  </data>
+  <data name="NullNotAllowedInHashtable" xml:space="preserve">
+    <value>{0} karma tablo anahtarında null değerle karşılaşıldı. Null değerlere izin verilmez.</value>
+  </data>
+  <data name="QueryTrace" xml:space="preserve">
+    <value>Yapılandırılmış sorgu oluşturuldu:
+{0}.</value>
+  </data>
+  <data name="ProviderLogLink" xml:space="preserve">
+    <value>{0} sağlayıcısı, etkinlikleri {1} günlüğüne yazar.</value>
+  </data>
+  <data name="CounterInvalidDateRange" xml:space="preserve">
+    <value>StartTime parametresinin değeri, EndTime parametresinin değerinden küçük olmalıdır.</value>
+  </data>
+  <data name="NoMatchingLogsFound" xml:space="preserve">
+    <value>{0} bilgisayarında "{1}" ile eşleşen bir olay günlüğü yok.</value>
+  </data>
+  <data name="Vendor" xml:space="preserve">
+    <value>Microsoft</value>
+  </data>
+  <data name="CounterCircularNoMaxSize" xml:space="preserve">
+    <value>Circular parametresi, MaxSize parametresi de belirtilmedikçe yoksayılır.</value>
+  </data>
+  <data name="FileOpenFailed" xml:space="preserve">
+    <value>{0} dosyası yazmak için açılamıyor.</value>
+  </data>
+  <data name="KeywordLongExpected" xml:space="preserve">
+    <value>Anahtar sözcük için belirtilen '{0}' değeri geçersiz.</value>
+  </data>
+  <data name="CounterExportSampleNotInInitialSet" xml:space="preserve">
+    <value>{0} performans sayacı, ilk örnek kümesinin parçası olmadığı için {1} dosyasına dışarı aktarılamaz.</value>
+  </data>
+  <data name="NoMatchingEventsFound" xml:space="preserve">
+    <value>Belirtilen seçim ölçütleriyle eşleşen etkinlik bulunamadı.</value>
+  </data>
+  <data name="CounterPathTranslationFailed" xml:space="preserve">
+    <value>Bu komutun varsayılan değerleri başarısız oldu. Hata: {0:x8}.</value>
+  </data>
+  <data name="CounterNoMixedLogTypes" xml:space="preserve">
+    <value>Aynı komutta farklı türlerde performans günlük dosyalarını içeri aktaramazsınız.  Yol parametresinde yalnızca bir dosya türü belirtin.</value>
+  </data>
+  <data name="NotAFileSystemPath" xml:space="preserve">
+    <value>{0} yolu geçerli bir günlük dosyası yolu gibi görünmüyor. Geçerli bir dosya sistemi yolu belirtin.</value>
+  </data>
+  <data name="EventIdNotSpecified" xml:space="preserve">
+    <value>Geçerli bir Event Id belirtilmelidir.</value>
+  </data>
+  <data name="ProviderMetadataUnavailable" xml:space="preserve">
+    <value>{0} sağlayıcısı hakkında bilgi alınamadı. Hata: {1}.</value>
+  </data>
+  <data name="SpecifyOldestForLog" xml:space="preserve">
+    <value>Analitik veya hata ayıklama günlüğü olduğu için {0} olay günlüğü yalnızca ileri kronolojik sırayla okunabilir. {0} olay günlüğündeki etkinlikleri görmek için komutta Oldest parametresini kullanın.</value>
+  </data>
+  <data name="ExportDestPathAmbiguous" xml:space="preserve">
+    <value>Aşağıdaki dışarı aktarma hedef yolu belirsiz: {0}.</value>
+  </data>
+  <data name="CounterPathIsInvalid" xml:space="preserve">
+    <value>{0} performans sayacı yolu geçersiz.</value>
+  </data>
+  <data name="CounterSampleDataInvalid" xml:space="preserve">
+    <value>Performans sayacı örneklerinden birindeki veri geçersiz. Her PerformanceCounterSample nesnesi için Status özelliğini görüntüleyerek geçerli veri içerdiğinden emin olun.</value>
+  </data>
+  <data name="PayloadMismatch" xml:space="preserve">
+    <value>Sağlanan yük, {0} olayının için tanımlanan şablonla eşleşmiyor.
+Tanımlanan şablon şu şekildedir:
+{1}</value>
+  </data>
+  <data name="NoMatchingCounterSetsFound" xml:space="preserve">
+    <value>{0} bilgisayarında aşağıdakilerle eşleşen hiçbir performans sayacı kümesi bulunamadı: {1}.</value>
+  </data>
+  <data name="CounterPathsInFilesInvalid" xml:space="preserve">
+    <value>Dosyalarda geçerli sayaç yolu bulunamadı.</value>
+  </data>
+  <data name="FileCreateFailed" xml:space="preserve">
+    <value>{0} dosyası oluşturulamadı. Yolun geçerli olduğunu doğrulayın.</value>
+  </data>
+  <data name="NoCounterSetsOnComputer" xml:space="preserve">
+    <value>{0} bilgisayarında hiçbir performans sayacı kümesi bulunamadı: hata {1:x8}. {0} bilgisayarının var olduğunu, bulunabilir olduğunu ve o bilgisayardaki performans sayacı verilerini görüntülemek için yeterli ayrıcalıklara sahip olduğunuzu doğrulayın.</value>
+  </data>
+  <data name="IncorrectEventId" xml:space="preserve">
+    <value>Sağlayıcı {1} için kimliği {0} olan tanımlı bir olay olmadığından olay yazılamıyor.  Lütfen olay kimliğini düzeltin ve yeniden deneyin.</value>
+  </data>
+  <data name="InvalidContext" xml:space="preserve">
+    <value>{0} Bağlam anahtar-değer çifti geçerli bir SID veya NT hesap adı değil.</value>
+  </data>
+  <data name="IncorrectEventVersion" xml:space="preserve">
+    <value>Belirtilen {0} sürümü, {1} olayı için {2} sağlayıcısında tanımlı olmadığından olay yazılamıyor.  Lütfen sürümü düzeltin ve yeniden deneyin.</value>
+  </data>
+  <data name="Counter32FileLimit" xml:space="preserve">
+    <value>Her komutta en fazla 32 .blg sayaç günlük dosyasını içeri aktaramazsınız.</value>
+  </data>
+  <data name="SpecifiedProvidersDontWriteToLog" xml:space="preserve">
+    <value>Belirtilen sağlayıcılar {0} günlüğüne olay yazmaz. Bu günlük yoksayılacak.</value>
+  </data>
+  <data name="InvalidSIDFormat" xml:space="preserve">
+    <value>Aşağıdaki değer geçerli bir güvenlik tanımlayıcısı (sıd) biçiminde değil: {0}. S-1-5-32-544 gibi geçerli bir SID girin.</value>
+  </data>
+  <data name="NoProviderFound" xml:space="preserve">
+    <value>{0} adlı sağlayıcı bulunamadı.</value>
+  </data>
+  <data name="CounterSetEnumAccessDenied" xml:space="preserve">
+    <value>Erişim reddedildiği için {0} performans sayacı kümesi hakkında bilgi alınamıyor.</value>
+  </data>
+  <data name="VersionNotSpecified" xml:space="preserve">
+    <value>Sağlayıcı {1} için kimliği {0} olan birden çok olay tanımlandığından olay yazılamıyor.  Lütfen olay için bir sürüm sağlayın ve yeniden deneyin.</value>
+  </data>
+  <data name="SpecifyOldestForEtlEvt" xml:space="preserve">
+    <value>{0} olay günlüğü dosyası yalnızca ileri kronolojik sırada okunabilir; çünkü bu bir .etl veya .evt dosyasıdır. {0} olay günlüğündeki etkinlikleri görmek için komutta Oldest parametresini kullanın.</value>
+  </data>
+  <data name="ProviderNotSpecified" xml:space="preserve">
+    <value>Sağlayıcı adı belirtilmelidir.</value>
+  </data>
+  <data name="NotALogFile" xml:space="preserve">
+    <value>{0} dosyası geçerli bir günlük dosyası gibi görünmüyor. Yalnızca .evtx, .etl veya .evt dosyalarını Path parametresinin değeri olarak belirtin.</value>
+  </data>
+  <data name="CounterPathInvalidOrNotInFile" xml:space="preserve">
+    <value>{0} performans sayacı yolu ya geçerli değil ya da aşağıdaki dosyalarda yok: {1}.</value>
+  </data>
+  <data name="Timestamp" xml:space="preserve">
+    <value>Zaman damgası</value>
+  </data>
+  <data name="DateTimeExpected" xml:space="preserve">
+    <value>Belirtilen değer geçerli bir Tarih/Saat biçiminde değil: {0}.</value>
+  </data>
+  <data name="LogInfoUnavailable" xml:space="preserve">
+    <value>‘{0}' günlüğüne erişmek için PowerShell'i yükseltilmiş kullanıcı haklarıyla başlatın.  Hata: {1}</value>
+  </data>
+  <data name="LogInfoNoAccess" xml:space="preserve">
+    <value>Günlük: '{0}' için erişim reddedildi.</value>
+  </data>
+  <data name="SuggestElevation" xml:space="preserve">
+    <value>Windows PowerShell'i yükseltilmiş kullanıcı haklarıyla başlatın.</value>
+  </data>
+  <data name="NoEventMessage" xml:space="preserve">
+    <value>Olay iletisi metni alınamıyor.</value>
+  </data>
+  <data name="CounterFileExists" xml:space="preserve">
+    <value>{0} dosyası zaten var. Bu dosyanın üzerine yazmak için Export-Counter komutunda Force parametresini kullanın.</value>
+  </data>
+  <data name="CounterContinuousOrMaxSamples" xml:space="preserve">
+    <value>Continuous parametresi ve MaxSamples parametresi aynı komutta kullanılamaz.</value>
+  </data>
+  <data name="ExportCtrWin7Required" xml:space="preserve">
+    <value>Bu cmdlet yalnızca Microsoft Windows 7 ve üzeri sürümlerde çalıştırılabilir.</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Bu Windows PowerShell ek bileşeni, Windows Eventing ve Performans Sayacı cmdlet'lerini içerir.</value>
+  </data>
+  <data name="NoMatchingCounterSetsInFile" xml:space="preserve">
+    <value>{0} dosyalarında aşağıdakilerle eşleşen hiçbir performans sayacı kümesi bulunamadı: {1}.</value>
+  </data>
+  <data name="LogsAndProvidersDontOverlap" xml:space="preserve">
+    <value>Belirtilen sağlayıcılar, belirtilen günlüklerin hiçbirine etkinlik yazmaz.</value>
+  </data>
+  <data name="CookedValues" xml:space="preserve">
+    <value>İşlenmiş Değerler</value>
+  </data>
+  <data name="Counter1FileLimit" xml:space="preserve">
+    <value>Her komutta birden fazla virgülle ayrılmış (.csv) veya sekmeyle ayrılmış (.tsv) performans sayacı dosyasını içeri aktaramazsınız.</value>
+  </data>
+  <data name="LogCountLimitExceeded" xml:space="preserve">
+    <value>Günlük sayısı ({0}), Windows Event log API sınırını ({1}) aşıyor. Daha az günlük adı döndürecek şekilde filtreyi ayarlayın.</value>
+  </data>
+  <data name="ListLogParamHelp" xml:space="preserve">
+    <value>Olay günlüklerini belirtir. Joker karakterlere izin verilir.</value>
+  </data>
+  <data name="GetLogParamHelp" xml:space="preserve">
+    <value>Bu cmdlet'in olay aldığı olay günlüklerini belirtir. Joker karakterlere izin verilir.</value>
+  </data>
+  <data name="ListProviderParamHelp" xml:space="preserve">
+    <value>Bu cmdlet'in aldığı olay günlüğü sağlayıcılarını belirtir.</value>
+  </data>
+  <data name="GetProviderParamHelp" xml:space="preserve">
+    <value>Bu cmdlet'in olay günlüğü sağlayıcılarını belirtir.</value>
+  </data>
+  <data name="PathParamHelp" xml:space="preserve">
+    <value>Bu cmdlet'in olayları aldığı olay günlüğü dosyalarının yolunu belirtir.</value>
+  </data>
+  <data name="MaxEventsParamHelp" xml:space="preserve">
+    <value>Belirtilen maksimum etkinlik sayısını belirtir.</value>
+  </data>
+  <data name="ComputerNameParamHelp" xml:space="preserve">
+    <value>Bu cmdlet'in veri aldığı bilgisayarın adını belirtir.</value>
+  </data>
+</root>

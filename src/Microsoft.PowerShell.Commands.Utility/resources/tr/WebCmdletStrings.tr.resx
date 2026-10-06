@@ -1,0 +1,252 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AccessDenied" xml:space="preserve">
+    <value>'{0}' yoluna erişim reddedildi.</value>
+  </data>
+  <data name="AllowUnencryptedAuthenticationRequired" xml:space="preserve">
+    <value>Cmdlet, düz metin gizli bilgileri şifrelenmemiş bağlantılar üzerinden koruyamaz. Düz metin gizli bilgileri şifrelenmemiş ağlar üzerinden göndermeye yönelik bu uyarıyı durdurmak için, AllowUnencryptedAuthentication parametresini belirterek komutu yeniden verin.</value>
+  </data>
+  <data name="AuthenticationConflict" xml:space="preserve">
+    <value>Çakışan aşağıdaki parametreler belirtildiği için cmdlet çalıştırılamıyor: Authentication ve UseDefaultCredentials. Authentication, Default Credentials'ı desteklemez. Authentication veya UseDefaultCredentials belirtin, ardından yeniden deneyin.</value>
+  </data>
+  <data name="AuthenticationCredentialNotSupplied" xml:space="preserve">
+    <value>Aşağıdaki parametre belirtilmediği için cmdlet çalıştırılamıyor: Credential. Sağlanan Authentication türü bir Credential gerektirir. Önce Kimlik Bilgisi belirtin, ardından yeniden deneyin.</value>
+  </data>
+  <data name="AuthenticationTokenNotSupplied" xml:space="preserve">
+    <value>Aşağıdaki parametre belirtilmediği için cmdlet çalıştırılamıyor: Token. Belirtilen Authentication türü bir Token gerektirir. Token belirtin, ardından yeniden deneyin.</value>
+  </data>
+  <data name="AuthenticationTokenConflict" xml:space="preserve">
+    <value>Çakışan aşağıdaki parametreler belirtildiği için cmdlet çalıştırılamıyor: Kimlik bilgisi ve Belirteç. Kimlik Bilgisi veya Belirteç belirtin, ardından yeniden deneyin.</value>
+  </data>
+  <data name="BodyConflict" xml:space="preserve">
+    <value>Çakışan aşağıdaki parametreler belirtildiği için cmdlet çalıştırılamıyor: Body ve InFile. Gövde veya Infile belirtin, ardından yeniden deneyin.  </value>
+  </data>
+  <data name="BodyFormConflict" xml:space="preserve">
+    <value>Çakışan aşağıdaki parametreler belirtildiği için cmdlet çalıştırılamıyor: Body ve Form. Body veya Form belirtin, ardından yeniden deneyin.  </value>
+  </data>
+  <data name="FormInFileConflict" xml:space="preserve">
+    <value>Cmdlet, aşağıdaki çakışan parametreler belirtildiği için çalıştırılamıyor: InFile ve Form. InFile veya Form belirtin, ardından yeniden deneyin.  </value>
+  </data>
+  <data name="ContentTypeException" xml:space="preserve">
+    <value>Cmdlet, -ContentType parametresi geçerli bir Content-Type üst bilgi olmadığı için çalıştırılamıyor. -ContentType için geçerli bir Content-Type belirtin, ardından yeniden deneyin. Üst bilgi doğrulamasını durdurmak için -SkipHeaderValidation parametresini sağlayın.</value>
+  </data>
+  <data name="CredentialConflict" xml:space="preserve">
+    <value>Cmdlet, aşağıdaki çakışan parametreler belirtildiği için çalıştırılamıyor: Credential ve UseDefaultCredentials. Credential veya UseDefaultCredentials belirtin, ardından yeniden deneyin.</value>
+  </data>
+  <data name="DirectoryPathSpecified" xml:space="preserve">
+    <value>Yol '{0}' bir dizine çözümleniyor. Dosya adı içeren bir yol belirtin ve ardından komutu yeniden deneyin.</value>
+  </data>
+  <data name="EmptyKeyInJsonString" xml:space="preserve">
+    <value>Sağlanan JSON, adı boş bir dize olan bir özellik içeriyor; bu yalnızca -AsHashTable anahtarı kullanılarak desteklenir.</value>
+  </data>
+  <data name="DuplicateKeysInJsonString" xml:space="preserve">
+    <value>JSON dizesinden dönüştürülen sözlük, yinelenen '{0}' anahtarını içerdiği için JSON dizesi dönüştürülemiyor.</value>
+  </data>
+  <data name="IEDomNotSupported" xml:space="preserve">
+    <value>Yanıt içeriği, Internet Explorer altyapısı kullanılamadığı veya Internet Explorer'ın ilk çalıştırma yapılandırması tamamlanmadığı için ayrıştırılamıyor. UseBasicParsing parametresini belirtin ve yeniden deneyin. </value>
+  </data>
+  <data name="InsecureRedirection" xml:space="preserve">
+    <value>Varsayılan olarak güvensiz bir yeniden yönlendirme izlenemez. -AllowInsecureRedirect anahtarını belirterek komutu yeniden verin. </value>
+  </data>
+  <data name="KeysWithDifferentCasingInJsonString" xml:space="preserve">
+    <value>JSON dizesi, farklı büyük/küçük harf kullanımına sahip anahtarlar içerdiği için dönüştürülemiyor. Lütfen bunun yerine -AsHashTable anahtarını kullanın. Var olan anahtar '{0}' içine eklenmeye çalışılan anahtar '{1}' idi.</value>
+  </data>
+  <data name="MaximumRedirectionCountExceeded" xml:space="preserve">
+    <value>Maksimum yönlendirme sayısı aşıldı. İzin verilen yönlendirme sayısını artırmak için, -MaximumRedirection parametresine daha yüksek bir değer sağlayın.</value>
+  </data>
+  <data name="MultiplePathsResolved" xml:space="preserve">
+    <value>‘{0}' yolu birden çok yola çözümlenebilir.</value>
+  </data>
+  <data name="NonStringKeyInDictionary" xml:space="preserve">
+    <value>‘{0}' türü, bir sözlüğün serileştirilmesi veya seri durumundan çıkarılması için desteklenmiyor. Anahtarlar dize olmalıdır.</value>
+  </data>
+  <data name="NoPathResolved" xml:space="preserve">
+    <value>‘{0}' yolu bir dosyaya çözümlenemiyor.</value>
+  </data>
+  <data name="NotFilesystemPath" xml:space="preserve">
+    <value>Yol '{0}' bir dosya sistemi yolu değil. Lütfen dosya sistemindeki bir dosyanın yolunu belirtin.</value>
+  </data>
+  <data name="OutFileMissing" xml:space="preserve">
+    <value>Cmdlet, aşağıdaki parametre belirtilmediği için çalıştırılamıyor: OutFile. {0} parametresini kullanırken geçerli bir OutFile parametre değeri belirtin, ardından yeniden deneyin.</value>
+  </data>
+  <data name="OutFileWritingSkipped" xml:space="preserve">
+    <value>Uzak dosya, OutFile ile aynı boyutta olduğu için dosya yeniden indirilmeyecek: {0}</value>
+  </data>
+  <data name="ProxyCredentialConflict" xml:space="preserve">
+    <value>Çakışan aşağıdaki parametreler belirtildiği için cmdlet çalıştırılamıyor: ProxyCredential ve ProxyUseDefaultCredentials. ProxyCredential veya ProxyUseDefaultCredentials belirtin, ardından yeniden deneyin.</value>
+  </data>
+  <data name="ProxyUriNotSupplied" xml:space="preserve">
+    <value>Aşağıdaki parametre belirtilmediği için cmdlet çalıştırılamıyor: Proxy. ProxyCredential veya proxyusedefaultcredentials parametrelerini kullanırken proxy parametresi için geçerli bir proxy URI'si sağlayın, ardından yeniden deneyin.</value>
+  </data>
+  <data name="ReadResponseComplete" xml:space="preserve">
+    <value>Web yanıt akışının okunması tamamlandı. İndirilen bayt miktarı: {0}</value>
+  </data>
+  <data name="ReadResponseProgressActivity" xml:space="preserve">
+    <value>Web yanıt akışı okunuyor</value>
+  </data>
+  <data name="ReadResponseProgressStatus" xml:space="preserve">
+    <value>İndirilen: {0} / {1}</value>
+  </data>
+  <data name="ResumeNotFilePath" xml:space="preserve">
+    <value>Sürdürme anahtarı yalnızca OutFile bir dosyayı hedefliyorsa kullanılabilir, ancak bir dizine çözümleniyor: {0}.</value>
+  </data>
+  <data name="SessionConflict" xml:space="preserve">
+    <value>Cmdlet, aşağıdaki çakışan parametreler belirtildiği için çalıştırılamıyor: Session ve SessionVariable. Session veya SessionVariable belirtin, ardından yeniden deneyin.</value>
+  </data>
+  <data name="ThumbprintNotFound" xml:space="preserve">
+    <value>Sertifikalar alınamıyor çünkü parmak izi geçersiz. Parmak izini doğrulayın ve yeniden deneyin. </value>
+  </data>
+  <data name="WriteRequestComplete" xml:space="preserve">
+    <value>Web isteği tamamlandı. (İşlenen bayt sayısı: {0})</value>
+  </data>
+  <data name="WriteRequestCancelled" xml:space="preserve">
+    <value>Web isteği iptal edildi. (İşlenen bayt sayısı: {0})</value>
+  </data>
+  <data name="WriteRequestProgressActivity" xml:space="preserve">
+    <value>Web isteği durumu</value>
+  </data>
+  <data name="WriteRequestProgressStatus" xml:space="preserve">
+    <value>İndirilen: {0} / {1}</value>
+  </data>
+  <data name="JsonDeserializationFailed" xml:space="preserve">
+    <value>JSON'dan dönüştürme şu hatayla başarısız oldu: {0}</value>
+  </data>
+  <data name="ResponseStatusCodeFailure" xml:space="preserve">
+    <value>Yanıt durum kodu, başarı durumu göstermiyor: {0} ({1}).</value>
+  </data>
+  <data name="FollowingRelLinkVerboseMsg" xml:space="preserve">
+    <value>İlgili bağlantıyı {0} izleyen</value>
+  </data>
+  <data name="WebMethodResumeFailedVerboseMsg" xml:space="preserve">
+    <value>Uzak sunucu, indirmeyi sürdüremeyeceğini belirtti. Yerel dosyanın üzerine yazılacak.</value>
+  </data>
+  <data name="WebResponseNoSizeVerboseMsg" xml:space="preserve">
+    <value>HTTP/{0} türünde, boyutu bilinmeyen {1} içerik türüne sahip yanıt alındı</value>
+  </data>
+  <data name="RetryVerboseMsg" xml:space="preserve">
+    <value>{0} saniyelik aralıktan sonra yeniden deneniyor. Önceki denemenin durum kodu: {1}</value>
+  </data>
+  <data name="JsonMaxDepthReached" xml:space="preserve">
+    <value>Serileştirme, {0} olarak ayarlanan derinliği aştığı için ortaya çıkan JSON kesildi.</value>
+  </data>
+  <data name="WebSessionConnectionRecreated" xml:space="preserve">
+    <value>WebSession özellikleri istekler arasında değiştirildiğinden, oturumdaki tüm HTTP bağlantıları yeniden oluşturuluyor.</value>
+  </data>
+</root>

@@ -59,8 +59,8 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -205,26 +205,34 @@
   </data>
   <data name="ZoomIn1Shortcut" xml:space="preserve">
     <value>Ctrl+Add</value>
+    <comment>{StrContains="Ctrl+Add"}</comment>
   </data>
   <data name="ZoomIn2Shortcut" xml:space="preserve">
     <value>Ctrl+Shift+Add</value>
+    <comment>{StrContains="Ctrl+Shift+Add"}</comment>
   </data>
   <data name="ZoomIn3Shortcut" xml:space="preserve">
     <value>Ctrl+Plus</value>
+    <comment>{StrContains="Ctrl+Plus"}</comment>
   </data>
   <data name="ZoomIn4Shortcut" xml:space="preserve">
     <value>Ctrl+Shift+Plus</value>
+    <comment>{StrContains="Ctrl+Shift+Plus"}</comment>
   </data>
   <data name="ZoomOut1Shortcut" xml:space="preserve">
     <value>Ctrl+Subtract</value>
+    <comment>{StrContains="Ctrl+Subtract"}</comment>
   </data>
   <data name="ZoomOut2Shortcut" xml:space="preserve">
     <value>Ctrl+Shift+Subtract</value>
+    <comment>{StrContains="Ctrl+Shift+Subtract"}</comment>
   </data>
   <data name="ZoomOut3Shortcut" xml:space="preserve">
     <value>Ctrl+Minus</value>
+    <comment>{StrContains="Ctrl+Minus"}</comment>
   </data>
   <data name="ZoomOut4Shortcut" xml:space="preserve">
     <value>Ctrl+Shift+Minus</value>
+    <comment>{StrContains="Ctrl+Shift+Minus"}</comment>
   </data>
 </root>

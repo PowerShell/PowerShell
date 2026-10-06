@@ -1,0 +1,473 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Name" xml:space="preserve">
+    <value>名称</value>
+  </data>
+  <data name="Synopsis" xml:space="preserve">
+    <value>摘要</value>
+  </data>
+  <data name="DetailedDescription" xml:space="preserve">
+    <value>说明</value>
+  </data>
+  <data name="Syntax" xml:space="preserve">
+    <value>语法</value>
+  </data>
+  <data name="Parameters" xml:space="preserve">
+    <value>参数</value>
+  </data>
+  <data name="InputType" xml:space="preserve">
+    <value>输入</value>
+  </data>
+  <data name="ReturnType" xml:space="preserve">
+    <value>输出</value>
+  </data>
+  <data name="TerminatingErrors" xml:space="preserve">
+    <value>终止错误</value>
+  </data>
+  <data name="NonHyphenTerminatingErrors" xml:space="preserve">
+    <value>非终止错误</value>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>备注</value>
+  </data>
+  <data name="Examples" xml:space="preserve">
+    <value>示例</value>
+  </data>
+  <data name="Example" xml:space="preserve">
+    <value>示例</value>
+  </data>
+  <data name="ExampleUpperCase" xml:space="preserve">
+    <value>示例</value>
+  </data>
+  <data name="Output" xml:space="preserve">
+    <value>输出</value>
+  </data>
+  <data name="RelatedLinks" xml:space="preserve">
+    <value>相关链接</value>
+  </data>
+  <data name="ShortDescription" xml:space="preserve">
+    <value>简短说明</value>
+  </data>
+  <data name="TitleColon" xml:space="preserve">
+    <value>标题:</value>
+  </data>
+  <data name="QuestionColon" xml:space="preserve">
+    <value>问题:</value>
+  </data>
+  <data name="Answer" xml:space="preserve">
+    <value>答案</value>
+  </data>
+  <data name="TermColon" xml:space="preserve">
+    <value>期限:</value>
+  </data>
+  <data name="DefinitionColon" xml:space="preserve">
+    <value>定义:</value>
+  </data>
+  <data name="ContentColon" xml:space="preserve">
+    <value>内容:</value>
+  </data>
+  <data name="ProviderName" xml:space="preserve">
+    <value>提供程序名称</value>
+  </data>
+  <data name="BaseCmdletInformation" xml:space="preserve">
+    <value>    此 cmdlet 支持以下常见参数: Verbose、Debug、
+    ErrorAction、ErrorVariable、WarningAction、WarningVariable、
+    OutBuffer、PipelineVariable 和 OutVariable。有关详细信息，请参见
+    about_CommonParameters (https://go.microsoft.com/fwlink/?LinkID=113216)。</value>
+  </data>
+  <data name="ParameterRequired" xml:space="preserve">
+    <value>必需?                   </value>
+  </data>
+  <data name="ParameterPosition" xml:space="preserve">
+    <value>位置?                   </value>
+  </data>
+  <data name="TypeColon" xml:space="preserve">
+    <value>类型:</value>
+  </data>
+  <data name="TargetObjectTypeColon" xml:space="preserve">
+    <value>目标对象类型:  </value>
+  </data>
+  <data name="ParameterDefaultValue" xml:space="preserve">
+    <value>默认值                </value>
+  </data>
+  <data name="AcceptsPipelineInput" xml:space="preserve">
+    <value>接受管道输入?      </value>
+  </data>
+  <data name="AcceptsWildCardCharacters" xml:space="preserve">
+    <value>接受通配符? </value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>(类别: </value>
+  </data>
+  <data name="SuggestedActionColon" xml:space="preserve">
+    <value>建议的操作:</value>
+  </data>
+  <data name="VerboseHelpInfo" xml:space="preserve">
+    <value>有关详细信息，请输入:</value>
+  </data>
+  <data name="FullHelpInfo" xml:space="preserve">
+    <value>要查看技术信息，请输入:</value>
+  </data>
+  <data name="ExampleHelpInfo" xml:space="preserve">
+    <value>若要查看示例，请输入:</value>
+  </data>
+  <data name="RelatedLinksHelpInfo" xml:space="preserve">
+    <value>有关联机帮助，请输入:</value>
+  </data>
+  <data name="CommonParameters" xml:space="preserve">
+    <value>&lt;CommonParameters&gt;</value>
+  </data>
+  <data name="RemarksSection" xml:space="preserve">
+    <value>备注</value>
+  </data>
+  <data name="TrueShort" xml:space="preserve">
+    <value>true</value>
+  </data>
+  <data name="NamedParameter" xml:space="preserve">
+    <value>已命名</value>
+  </data>
+  <data name="Drives" xml:space="preserve">
+    <value>驱动器</value>
+  </data>
+  <data name="Capabilities" xml:space="preserve">
+    <value>功能</value>
+  </data>
+  <data name="Tasks" xml:space="preserve">
+    <value>任务</value>
+  </data>
+  <data name="Task" xml:space="preserve">
+    <value>任务:</value>
+  </data>
+  <data name="Filters" xml:space="preserve">
+    <value>筛选器</value>
+  </data>
+  <data name="DynamicParameters" xml:space="preserve">
+    <value>动态参数</value>
+  </data>
+  <data name="CmdletsSupported" xml:space="preserve">
+    <value>支持的 cmdlet:</value>
+  </data>
+  <data name="AliasesSection" xml:space="preserve">
+    <value>别名</value>
+  </data>
+  <data name="GetLatestHelpContent" xml:space="preserve">
+    <value>Get-Help 在这台计算机上找不到此 cmdlet 的帮助文件。它只显示部分帮助内容。
+    -- 若要下载并安装包含此 cmdlet 的模块的帮助文件，请使用 Update-Help。
+    -- 若要联机查看此 cmdlet 的帮助主题，请输入 "Get-Help {0} -Online" 或
+       转到 {1}。</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>无</value>
+  </data>
+  <data name="ParameterAliases" xml:space="preserve">
+    <value>别名                      </value>
+  </data>
+  <data name="ParameterIsDynamic" xml:space="preserve">
+    <value>动态?                    </value>
+  </data>
+  <data name="ParameterSetName" xml:space="preserve">
+    <value>参数集名称           </value>
+  </data>
+  <data name="UnableToRetrieveHelpInfoXml" xml:space="preserve">
+    <value>无法检索 UI 区域性 {0} 的 HelpInfo XML 文件。请确保模块清单中的 HelpInfoUri 属性有效，或检查网络连接，然后重试该命令。</value>
+  </data>
+  <data name="PipelineByPropertyName" xml:space="preserve">
+    <value>ByPropertyName</value>
+  </data>
+  <data name="PipelineByValue" xml:space="preserve">
+    <value>ByValue</value>
+  </data>
+  <data name="PipelineFromRemainingArguments" xml:space="preserve">
+    <value>FromRemainingArguments</value>
+  </data>
+  <data name="HelpCultureNotSupported" xml:space="preserve">
+    <value>不支持指定的区域性: {0}。请从以下列表中指定一个区域性: {{{1}}}。</value>
+  </data>
+  <data name="HelpCultureNotSupportedFallback" xml:space="preserve">
+    <value>推迟错误并尝试回退区域性，如果没有任何回退受支持，将显示为错误: 
+{0}</value>
+  </data>
+  <data name="ModuleBaseMustExist" xml:space="preserve">
+    <value>找不到 ModuleBase 目录。请验证该目录，然后重试。</value>
+  </data>
+  <data name="PathMustBeValidContainers" xml:space="preserve">
+    <value>路径 {0} 不是有效的目录。请确保目录存在，然后重试。</value>
+  </data>
+  <data name="TooManyRedirections" xml:space="preserve">
+    <value>Help URI 不能包含超过 10 次重定向。请指定有效的 Help URI。</value>
+  </data>
+  <data name="UpdateProgressActivity" xml:space="preserve">
+    <value>更新帮助</value>
+  </data>
+  <data name="UpdateProgressConnecting" xml:space="preserve">
+    <value>正在连接到帮助内容...</value>
+  </data>
+  <data name="UpdateProgressDownloading" xml:space="preserve">
+    <value>正在下载帮助内容...</value>
+  </data>
+  <data name="UpdateProgressInstalling" xml:space="preserve">
+    <value>正在安装帮助内容...</value>
+  </data>
+  <data name="UpdateProgressLocating" xml:space="preserve">
+    <value>正在查找帮助内容...</value>
+  </data>
+  <data name="AllParameterSetsName" xml:space="preserve">
+    <value>(全部)</value>
+  </data>
+  <data name="CannotMatchModulePattern" xml:space="preserve">
+    <value>找不到与以下模式匹配的 PowerShell 模块: {0}。验证模式，然后重试该命令。</value>
+  </data>
+  <data name="ModuleNotFoundWithFullyQualifiedName" xml:space="preserve">
+    <value>找不到与指定的 FullyQualifiedModule {0} 匹配的 PowerShell 模块。请验证 FullyQualifiedModule 值，然后重试该命令。</value>
+  </data>
+  <data name="HelpContentNotFound" xml:space="preserve">
+    <value>找不到帮助内容。请确保服务器可用，并且在 HelpInfo XML 中正确定义了帮助内容的位置。</value>
+  </data>
+  <data name="HelpInfoUriNotFound" xml:space="preserve">
+    <value>Update-Help 命令失败，因为指定的模块不支持可更新帮助。请使用 Get-Help -Online 或联机查找针对该模块中命令的帮助。</value>
+  </data>
+  <data name="ModuleNameNullOrEmpty" xml:space="preserve">
+    <value>以下参数不能为空或留空: Module。</value>
+  </data>
+  <data name="PathNullOrEmpty" xml:space="preserve">
+    <value>以下参数不能为空或留空: Path。</value>
+  </data>
+  <data name="UpdateHelpCompleted" xml:space="preserve">
+    <value>已成功完成 Update-Help。</value>
+  </data>
+  <data name="UnzipFailure" xml:space="preserve">
+    <value>提取帮助内容时出错。</value>
+  </data>
+  <data name="UnableToConnect" xml:space="preserve">
+    <value>无法连接到帮助内容。存储帮助内容的服务器可能不可用。请验证服务器是否可用，或等到服务器重新联机，然后重试该命令。</value>
+  </data>
+  <data name="HelpContentXmlValidationFailure" xml:space="preserve">
+    <value>指定位置处的帮助内容无效。请指定包含有效帮助内容的位置。</value>
+  </data>
+  <data name="HelpInfoXmlValidationFailure" xml:space="preserve">
+    <value>HelpInfo XML 无效。请指定有效的 HelpInfo XML。</value>
+  </data>
+  <data name="SaveHelpCompleted" xml:space="preserve">
+    <value>帮助内容已成功保存到以下位置: {0}</value>
+  </data>
+  <data name="HelpContentXsdNotFound" xml:space="preserve">
+    <value>在 {0} 中找不到帮助内容 XSD 文件。请验证 XSD 文件是否存在于指定位置上，然后重试该命令。</value>
+  </data>
+  <data name="FailedToUpdateHelpForModule" xml:space="preserve">
+    <value>未能更新模块的帮助: 
+"{0}" 
+{1}</value>
+  </data>
+  <data name="SaveProgressActivity" xml:space="preserve">
+    <value>正在保存帮助</value>
+  </data>
+  <data name="HelpContentContainsInvalidFiles" xml:space="preserve">
+    <value>帮助内容包含无效文件。仅支持 .txt 和 .xml 文件。</value>
+  </data>
+  <data name="FailedToSaveHelpForModule" xml:space="preserve">
+    <value>未能保存模块 "{0}" 的帮助: {1}</value>
+  </data>
+  <data name="FailedToSaveHelpForModuleWithCulture" xml:space="preserve">
+    <value>未能为具有 UI 区域性 {{{1}}} 的模块 "{0}" 保存帮助: {2}。
+英语-美国帮助内容可用，可以使用以下命令保存: Save-Help -UICulture en-US。</value>
+  </data>
+  <data name="FailedToUpdateHelpForModuleWithCulture" xml:space="preserve">
+    <value>未能为具有 UI 区域性 {{{1}}} 的模块 "{0}" 更新帮助: {2}。
+英语-美国帮助内容可用，可以使用以下命令安装: Update-Help -UICulture en-US。</value>
+  </data>
+  <data name="FailedToUpdateHelpWithLocaleNoUICulture" xml:space="preserve">
+    <value>当前区域性为({0})，未与任何语言关联。请考虑更改系统区域性，或使用以下命令安装英语-美国帮助内容: Update-Help -UICulture en-US。</value>
+  </data>
+  <data name="FalseShort" xml:space="preserve">
+    <value>false</value>
+  </data>
+  <data name="CannotSpecifyRecurseWithoutPath" xml:space="preserve">
+    <value>只有在指定源路径时，才能使用 -Recurse 参数。</value>
+  </data>
+  <data name="ProviderIsNotFileSystem" xml:space="preserve">
+    <value>路径 {0} 不包含 FileSystem 提供程序。请验证指定的路径是否包含 FileSystem 提供程序，然后重试该命令。</value>
+  </data>
+  <data name="SearchingForHelpContent" xml:space="preserve">
+    <value>正在搜索 {0} 帮助...</value>
+  </data>
+  <data name="CannotMatchUICulturePattern" xml:space="preserve">
+    <value>找不到与以下模式匹配的 UI 区域性: {0}。验证模式，然后重试该命令。</value>
+  </data>
+  <data name="UseForceToSaveHelp" xml:space="preserve">
+    <value>未保存模块 {0} 的帮助，因为此计算机在最近 24 小时内已运行过 Save-Help 命令。
+若要再次保存帮助，请在命令中添加 Force 参数。</value>
+  </data>
+  <data name="UseForceToUpdateHelp" xml:space="preserve">
+    <value>未更新模块 {0} 的帮助，因为此计算机在最近 24 小时内已运行过 Update-Help 命令。
+若要再次更新帮助，请在命令中添加 Force 参数。</value>
+  </data>
+  <data name="NewestContentAlreadyInstalled" xml:space="preserve">
+    <value>已安装最新的帮助文件。</value>
+  </data>
+  <data name="SuccessfullyUpdatedHelpContent" xml:space="preserve">
+    <value>{0}: {1}。区域性 {2} 版本 {3}</value>
+  </data>
+  <data name="UpdatedHelpContent" xml:space="preserve">
+    <value>更新时间 {0}</value>
+  </data>
+  <data name="InvalidHelpInfoUri" xml:space="preserve">
+    <value>模块清单中的 HelpInfoUri 键值必须解析为网站上存储帮助文件的容器或根 URL。HelpInfoUri "{0}" 未解析为容器。</value>
+  </data>
+  <data name="HelpContentMustBeInTargetNamespace" xml:space="preserve">
+    <value>帮助内容必须位于命名空间 {0} 中。</value>
+  </data>
+  <data name="GetLatestHelpContentWithoutHelpUri" xml:space="preserve">
+    <value>Get-Help 在这台计算机上找不到此 cmdlet 的帮助文件。它只显示部分帮助内容。
+    -- 若要下载并安装包含此 cmdlet 的模块的帮助文件，请使用 Update-Help。</value>
+  </data>
+  <data name="NewestContentAlreadyDownloaded" xml:space="preserve">
+    <value>已下载最新的帮助文件。</value>
+  </data>
+  <data name="SavedHelpContent" xml:space="preserve">
+    <value>已保存 {0}</value>
+  </data>
+  <data name="InvalidHelpInfoUriFormat" xml:space="preserve">
+    <value>HelpInfoURI {0} 不以 HTTP 开头。</value>
+  </data>
+  <data name="RootElementMustBeHelpItems" xml:space="preserve">
+    <value>帮助内容的根级元素必须是 "helpItems"。</value>
+  </data>
+  <data name="SaveProgressActivityForModule" xml:space="preserve">
+    <value>正在保存模块 {0} 的帮助</value>
+  </data>
+  <data name="UpdateProgressActivityForModule" xml:space="preserve">
+    <value>正在更新模块 {0} 的帮助</value>
+  </data>
+  <data name="UpdateHelpResolveUriVerbose" xml:space="preserve">
+    <value>正在解析 URI: "{0}"</value>
+  </data>
+  <data name="OnlineHelpUri" xml:space="preserve">
+    <value>帮助 URI: {0}</value>
+  </data>
+  <data name="UpdateHelpShouldProcessActionMessage" xml:space="preserve">
+    <value>{0}，当前版本: {1}，可用版本: {2}，UICulture: {3}</value>
+  </data>
+  <data name="Properties" xml:space="preserve">
+    <value>属性</value>
+  </data>
+  <data name="Methods" xml:space="preserve">
+    <value>方法</value>
+  </data>
+</root>

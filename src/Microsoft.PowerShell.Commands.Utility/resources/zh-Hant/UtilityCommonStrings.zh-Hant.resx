@@ -1,0 +1,177 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Invalidpath" xml:space="preserve">
+    <value>{2} 有一或多個無效的例外狀況。</value>
+  </data>
+  <data name="FileNotFound" xml:space="preserve">
+    <value>無法執行此命令，因為檔案路徑 '{0}' 無效。請提供有效的檔案路徑，然後執行命令。</value>
+  </data>
+  <data name="EmptyCSSUri" xml:space="preserve">
+    <value>無法執行此命令，因為 '{0}' 是空的或空白。請指定 CSSUri，然後執行命令。</value>
+  </data>
+  <data name="FileOpenError" xml:space="preserve">
+    <value>無法開啟檔案，因為目前的提供者 ({0}) 無法開啟檔案。</value>
+  </data>
+  <data name="SearchXMLPrefixNullError" xml:space="preserve">
+    <value>無法執行此命令，因為 Namespace 參數中的前置詞值為 null。請為前置詞提供有效值，然後再次執行命令。</value>
+  </data>
+  <data name="InvalidOperation" xml:space="preserve">
+    <value>無法展開依此屬性分組的物件，因為索引鍵重複。請為此屬性提供有效值，然後再試一次。</value>
+  </data>
+  <data name="NotSupported" xml:space="preserve">
+    <value>此作業系統不支援這個命令。</value>
+  </data>
+  <data name="FileReadError" xml:space="preserve">
+    <value>無法讀取檔案 '{0}': {1}</value>
+  </data>
+  <data name="FormatHexTypeNotSupported" xml:space="preserve">
+    <value>無法將類型為 '{0}' 的輸入轉換為十六進位。若要檢視其字串表示的十六進位格式，請先將它傳送至 Out-String Cmdlet，再傳送至 Format-Hex。</value>
+  </data>
+  <data name="FormatHexOnlySupportsFileSystemPaths" xml:space="preserve">
+    <value>不支援指定的路徑 '{0}'。此命令僅支援 FileSystem 提供者路徑。</value>
+  </data>
+  <data name="FormatHexPathPrefix" xml:space="preserve">
+    <value>路徑:</value>
+  </data>
+  <data name="GroupObjectWithHashTable" xml:space="preserve">
+    <value>無法執行命令，因為 AsString 參數需要您指定 AsHashtable 參數。</value>
+  </data>
+  <data name="GroupObjectSingleProperty" xml:space="preserve">
+    <value>無法執行命令，因為當 AsHashTable 參數搭配一個以上的屬性使用時，必須同時加入 AsString 參數。</value>
+  </data>
+  <data name="PathDoesNotExist" xml:space="preserve">
+    <value>找不到路徑 '{0}'，因為它不存在。</value>
+  </data>
+  <data name="PSPrefixReservedInInformationTag" xml:space="preserve">
+    <value>無法使用標記 '{0}'。'PS' 前置詞是保留的。</value>
+  </data>
+  <data name="CouldNotParseAsPowerShellDataFile" xml:space="preserve">
+    <value>無法將檔案 '{0}' 剖析為 PowerShell 資料檔案。</value>
+  </data>
+  <data name="InvalidSDDL" xml:space="preserve">
+    <value>無法從指定的 SDDL 建構安全性描述元，因為發生下列錯誤: {0}</value>
+  </data>
+  <data name="IEXWDACLogTitle" xml:space="preserve">
+    <value>Invoke-Expression Cmdlet</value>
+  </data>
+  <data name="IEXWDACLogMessage" xml:space="preserve">
+    <value>Invoke-Expression Cmdlet 指令碼區塊將會以 ConstrainedLanguage 模式執行。</value>
+  </data>
+</root>

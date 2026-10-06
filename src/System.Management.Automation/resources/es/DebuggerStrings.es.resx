@@ -1,0 +1,264 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="VariableBreakpointString" xml:space="preserve">
+    <value>Punto de interrupción variable en "${0}" (acceso de {1})</value>
+  </data>
+  <data name="VariableScriptBreakpointString" xml:space="preserve">
+    <value>Punto de interrupción variable en "{0}:${1}" (acceso de {2})</value>
+  </data>
+  <data name="LineBreakpointString" xml:space="preserve">
+    <value>Punto de interrupción de línea en "{0}:{1}"</value>
+  </data>
+  <data name="StatementBreakpointString" xml:space="preserve">
+    <value>Punto de interrupción de línea en "{0}:{1}, {2}"</value>
+  </data>
+  <data name="CommandBreakpointString" xml:space="preserve">
+    <value>Punto de interrupción de comando en "{0}"</value>
+  </data>
+  <data name="CommandScriptBreakpointString" xml:space="preserve">
+    <value>Punto de interrupción de comando en "{0}:{1}"</value>
+  </data>
+  <data name="WarningBreakpointWillNotBeHit" xml:space="preserve">
+    <value>No se alcanzará el punto de interrupción {0}</value>
+  </data>
+  <data name="StepHelp" xml:space="preserve">
+    <value> {0}, {1,-16} Un solo paso (ir a funciones, scripts, etc.)</value>
+  </data>
+  <data name="StepOverHelp" xml:space="preserve">
+    <value> {0}, {1,-16} Ir a la siguiente instrucción (paso a paso por funciones, scripts, etc.)</value>
+  </data>
+  <data name="StepOutHelp" xml:space="preserve">
+    <value> {0}, {1,-16} Salga de la función, script, etc. actual.</value>
+  </data>
+  <data name="ContinueHelp" xml:space="preserve">
+    <value> {0}, {1,-16} Continuar la operación</value>
+  </data>
+  <data name="StopHelp" xml:space="preserve">
+    <value> {0}, {1,-16} Detener la operación y salir del depurador</value>
+  </data>
+  <data name="GetStackTraceHelp" xml:space="preserve">
+    <value> {0}, Mostrar la pila de llamadas Get-PSCallStack</value>
+  </data>
+  <data name="ListHelp" xml:space="preserve">
+    <value> {0}, {1,-16} Muestre el código fuente del script actual.  </value>
+  </data>
+  <data name="AdditionalListHelp1" xml:space="preserve">
+    <value>                     Use "list" para empezar desde la línea actual, "list &lt;m&gt;"  </value>
+  </data>
+  <data name="AdditionalListHelp2" xml:space="preserve">
+    <value>                     para empezar desde la línea &lt;m&gt; y "list &lt;m&gt; &lt;n&gt;" para enumerar &lt;n&gt; </value>
+  </data>
+  <data name="AdditionalListHelp3" xml:space="preserve">
+    <value>                     líneas a partir de la línea &lt;m&gt;</value>
+  </data>
+  <data name="EnterHelp" xml:space="preserve">
+    <value> &lt;enter&gt;             Repita el último comando si fue {0}, {1} o {2}</value>
+  </data>
+  <data name="HelpCommandHelp" xml:space="preserve">
+    <value> {0}, {1,-16} muestra este mensaje de ayuda.</value>
+  </data>
+  <data name="PromptHelp" xml:space="preserve">
+    <value>Para obtener instrucciones sobre cómo personalizar la indicación del depurador, escriba "help about_prompt".</value>
+  </data>
+  <data name="SessionDoesNotSupportDebugger" xml:space="preserve">
+    <value>
+La sesión actual no admite la depuración; la operación continuará.
+
+</value>
+  </data>
+  <data name="LocationFormat" xml:space="preserve">
+    <value>{0}: línea {1}</value>
+  </data>
+  <data name="NoSourceCode" xml:space="preserve">
+    <value>No hay código fuente disponible.</value>
+  </data>
+  <data name="BadStartFormat" xml:space="preserve">
+    <value>La línea inicial debe ser un entero positivo no mayor que {0}</value>
+  </data>
+  <data name="BadCountFormat" xml:space="preserve">
+    <value>El recuento de líneas debe ser un entero positivo.</value>
+  </data>
+  <data name="NoFile" xml:space="preserve">
+    <value>&lt;No hay ningún archivo&gt;</value>
+  </data>
+  <data name="StackTraceFormat" xml:space="preserve">
+    <value>en {0}, {1}: línea {2}</value>
+  </data>
+  <data name="CannotProcessDebuggerCommandNotStopped" xml:space="preserve">
+    <value>El depurador no puede procesar comandos a menos que esté en estado Detenido.</value>
+  </data>
+  <data name="CannotSetDebuggerAction" xml:space="preserve">
+    <value>SetDebugAction no está implementado para el depurador de scripts local.</value>
+  </data>
+  <data name="CannotSetRemoteDebuggerAction" xml:space="preserve">
+    <value>El depurador no puede establecer una acción de reanudación porque el depurador de la sesión remota no está en estado Detenido.</value>
+  </data>
+  <data name="CannotStartJobDebuggingDebuggerBusy" xml:space="preserve">
+    <value>No se puede depurar el trabajo porque el depurador está ocupado actualmente.</value>
+  </data>
+  <data name="NoDebuggableJobsFound" xml:space="preserve">
+    <value>Se examinó el trabajo proporcionado y todos los trabajos secundarios, pero no se encontró ningún trabajo que pudiera depurarse.  Para depurar un trabajo o un trabajo secundario, el trabajo debe admitir la depuración y estar en estado en ejecución.</value>
+  </data>
+  <data name="CannotEnableDebuggerSteppingInvalidMode" xml:space="preserve">
+    <value>No se puede habilitar el depurador para el modo de paso porque el depurador está desactivado con el modo de depuración establecido en Ninguno.</value>
+  </data>
+  <data name="RunspaceDebuggingDebuggerBusy" xml:space="preserve">
+    <value>No se puede depurar el espacio de ejecución porque el depurador del host está ocupado actualmente.</value>
+  </data>
+  <data name="RunspaceDebuggingDebuggerIsOff" xml:space="preserve">
+    <value>No se puede depurar el espacio de ejecución. El depurador del espacio de ejecución está desactivado actualmente (DebugMode es "None").</value>
+  </data>
+  <data name="RunspaceDebuggingInvalidRunspaceState" xml:space="preserve">
+    <value>No se puede depurar un espacio de ejecución que no esté en el estado Abierto. Este espacio de ejecución está en el estado {0}.</value>
+  </data>
+  <data name="RunspaceDebuggingNoRunspaceDebugger" xml:space="preserve">
+    <value>No se puede depurar el espacio de ejecución. El espacio de ejecución {0} no tiene ningún depurador asociado.</value>
+  </data>
+  <data name="RemoteServerDebuggerAlreadyPushed" xml:space="preserve">
+    <value>El depurador ya está invalidado.</value>
+  </data>
+  <data name="RemoteServerDebuggerCannotPushSelf" xml:space="preserve">
+    <value>No se puede insertar un objeto depurador sobre sí mismo.</value>
+  </data>
+  <data name="CommandNotSupportedForRemoteUseInServerDebugger" xml:space="preserve">
+    <value>El comando {0} no se admite para uso remoto en la versión de PowerShell que se ejecuta en el espacio de ejecución remoto.</value>
+  </data>
+  <data name="NestedRunspaceDebuggerPromptProcessName" xml:space="preserve">
+    <value>Proceso</value>
+  </data>
+  <data name="DetachHelp" xml:space="preserve">
+    <value> {0}, {1,-16} Continúe la operación y desasocie el depurador.</value>
+  </data>
+  <data name="InvalidDetachCommand" xml:space="preserve">
+    <value>El comando de desasociar el depurador no está disponible.  El comando de desasociar solo se aplica al depurar trabajos y espacios de ejecución con los cmdlets Debug-Job o Debug-Runspace.</value>
+  </data>
+  <data name="InvalidRunspaceId" xml:space="preserve">
+    <value>Id. de espacio de ejecución no válido: {0}</value>
+  </data>
+  <data name="UnableToGetRunspace" xml:space="preserve">
+    <value>No se puede obtener el espacio de ejecución.</value>
+  </data>
+  <data name="BreakpointOrBreakpointListNotSpecified" xml:space="preserve">
+    <value>Se debe especificar Breakpoint o BreakpointList.</value>
+  </data>
+  <data name="BreakpointListContainedANonBreakpoint" xml:space="preserve">
+    <value>BreakpointList contenía un elemento que no era un punto de interrupción.</value>
+  </data>
+</root>

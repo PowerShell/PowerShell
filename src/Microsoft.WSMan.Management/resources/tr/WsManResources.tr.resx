@@ -1,0 +1,330 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="InvalidFileName" xml:space="preserve">
+    <value>Dosya mevcut olmadığından bu komut kullanılamıyor. Dosyanın mevcut olduğunu denetleyin ve komutunuzu çalıştırın.</value>
+  </data>
+  <data name="NewItemShouldContinueClientCertCaption" xml:space="preserve">
+    <value>Yeni bir ClientCertificate öğesi oluşturur.</value>
+  </data>
+  <data name="NotProperURI" xml:space="preserve">
+    <value>Bağlantı URI'si doğru biçimde olmadığından bu komut yürütülemiyor. Lütfen bağlantı URI'sini denetleyin ve komutunuzu yeniden çalıştırın.</value>
+  </data>
+  <data name="CredSSPContinueQuery" xml:space="preserve">
+    <value>CredSSP kimlik doğrulaması, bu bilgisayardaki kullanıcı kimlik bilgilerinin uzak bir bilgisayara gönderilmesine izin verir. Kötü amaçlı veya güvenliği ihlal edilmiş bir bilgisayara bağlanmak için CredSSP kimlik doğrulamasını kullanırsanız, o bilgisayar kullanıcı adınıza ve parolanıza erişebilir. Daha fazla bilgi için Enable-WSManCredSSP Yardım konusuna bakın.
+CredSSP kimlik doğrulamasını etkinleştirmek istiyor musunuz?</value>
+  </data>
+  <data name="NewItemShouldContinueListenerCaption" xml:space="preserve">
+    <value>Yeni bir Dinleyici öğesi oluşturur.</value>
+  </data>
+  <data name="ShouldContinueSecurityQuery" xml:space="preserve">
+    <value>Bu komut, şu WinRM eklentisindeki bir kaynağın güvenlik ayarlarını değiştirir: {0}.
+Devam etmek istiyor musunuz?</value>
+  </data>
+  <data name="SetItemWhatIfAndConfirmText" xml:space="preserve">
+    <value>Değeri "{1}" olarak güncelleştirmek için WinRM yapılandırma ayarı "{0}" üzerindeki "Set-Item"</value>
+  </data>
+  <data name="EnableCredSSPPolicyValidateError" xml:space="preserve">
+    <value>Ayar etkinleştirilemediği için bu komut yürütülemiyor.</value>
+  </data>
+  <data name="NewItemShouldContinueListenerQuery" xml:space="preserve">
+    <value>Bu komut yeni bir Dinleyici öğesi oluşturur.
+
+Devam etmek istiyor musunuz?</value>
+  </data>
+  <data name="ErrorElevationNeeded" xml:space="preserve">
+    <value>Erişim reddedildi. Bu cmdlet'i yükseltilmiş bir işlemden çalıştırmanız gerekir.</value>
+  </data>
+  <data name="DriveRootError" xml:space="preserve">
+    <value>WsMan sürücü kökü Windows işletim sisteminin bu sürümünde desteklenmediğinden bu komut kullanılamıyor.</value>
+  </data>
+  <data name="WSManServiceStartCaption" xml:space="preserve">
+    <value>WinRM Hizmetini Başlat</value>
+  </data>
+  <data name="CredSSPServerContinueQuery" xml:space="preserve">
+    <value>CredSSP kimlik doğrulaması, sunucunun uzak bir bilgisayardan kullanıcı kimlik bilgilerini kabul etmesine izin verir. Sunucuda CredSSP kimlik doğrulamasını etkinleştirirseniz, istemci bilgisayar bunları gönderirse sunucu istemci bilgisayarın kullanıcı adı ve parolasına erişebilir. Daha fazla bilgi için Enable-WSManCredSSP Yardım konusuna bakın.
+CredSSP kimlik doğrulamasını etkinleştirmek istiyor musunuz?</value>
+  </data>
+  <data name="QuickConfigContinueCaption" xml:space="preserve">
+    <value>WinRM Hızlı Yapılandırma</value>
+  </data>
+  <data name="Vendor" xml:space="preserve">
+    <value>Microsoft</value>
+  </data>
+  <data name="NoChangeValue" xml:space="preserve">
+    <value>Bu komut, bu değerler kaynak nesnesinin Birincil anahtarları veya Kapsayıcı öğeleri olduğu için giriş değerini ayarlayamaz. Giriş değerini değiştirin ve komutunuzu çalıştırın.</value>
+  </data>
+  <data name="CredSSPContinueCaption" xml:space="preserve">
+    <value>WS-Management için CredSSP Kimlik Doğrulama Yapılandırması</value>
+  </data>
+  <data name="SetItemShouldContinueCaption" xml:space="preserve">
+    <value>Öğenin değerini ayarlayın</value>
+  </data>
+  <data name="TrustedHostValueTypeError" xml:space="preserve">
+    <value>'System.Object[]', parametrenin gerektirdiği 'System.String' türüne dönüştürülemiyor. Belirtilen yöntem desteklenmiyor.</value>
+  </data>
+  <data name="CredSSPServiceNotConfigured" xml:space="preserve">
+    <value>Bu bilgisayar, kimlik bilgilerini uzak bir istemci bilgisayardan alacak şekilde yapılandırıldı.</value>
+  </data>
+  <data name="DisconnectFailure" xml:space="preserve">
+    <value>Bu komut geçerli yoldan kullanılamaz. cd\ kullanarak sağlayıcının kök yoluna gidin ve komutunuzu yeniden çalıştırın.</value>
+  </data>
+  <data name="CmdletNotAvailable" xml:space="preserve">
+    <value>Bu PowerShell cmdlet'i Windows XP ve Windows Server 2003'te kullanılamaz.</value>
+  </data>
+  <data name="NoAttributeMatch" xml:space="preserve">
+    <value>Parametre, ResourceURI üzerindeki metin olmayan bir özellikle eşleştiğinden bu komut kullanılamıyor. Giriş parametrelerini denetleyin ve komutunuzu çalıştırın.</value>
+  </data>
+  <data name="AmbiguousAuthentication" xml:space="preserve">
+    <value>{1} belirtildiğinde bir {0} belirtilemez.</value>
+  </data>
+  <data name="InvalidComputerName" xml:space="preserve">
+    <value>WinRM istemcisi işlemi tamamlayamıyor. Bilgisayar adının geçerli olup olmadığını denetleyin.</value>
+  </data>
+  <data name="CredSSPClientAndDelegateMustBeSpecified" xml:space="preserve">
+    <value>{0} parametresi, {1} parametresinin değeri {2}olduğunda zorunludur.</value>
+  </data>
+  <data name="value" xml:space="preserve">
+    <value>Parametre Değeri sağlanmadığından bu komut kullanılamıyor. Değeri yeniden denetleyin ve komutunuzu çalıştırın.</value>
+  </data>
+  <data name="ItemDoesNotExist" xml:space="preserve">
+    <value>Yol mevcut olmadığından bu komut kullanılamıyor. Yolun mevcut olduğunu denetleyin ve komutunuzu çalıştırın.</value>
+  </data>
+  <data name="ShouldContinueSecurityCaption" xml:space="preserve">
+    <value>WinRM Eklentisi için Güvenlik Yapılandırması.</value>
+  </data>
+  <data name="SetItemNotSupported" xml:space="preserve">
+    <value>Bu Sağlayıcı yolunun bu düzeyinde bu cmdlet desteklenmediğinden bu komut geçerli yolda kullanılamaz.</value>
+  </data>
+  <data name="NoDelegateFreshCred" xml:space="preserve">
+    <value>Makine, yeni kimlik bilgilerinin temsilci olarak atanmasına izin verecek şekilde yapılandırılmamış.</value>
+  </data>
+  <data name="SetItemServiceRestartWarning" xml:space="preserve">
+    <value>Yaptığınız yapılandırma değişiklikleri yalnızca WinRM hizmeti yeniden başlatıldıktan sonra etkili olur.  WinRM hizmetini yeniden başlatmak için şu komutu çalıştırın: 'Restart-Service winrm'</value>
+  </data>
+  <data name="QuickConfigContinueQuery" xml:space="preserve">
+    <value>Set-WSManQuickConfig komutunu çalıştırmak, bu bilgisayarda WinRM hizmeti aracılığıyla uzaktan yönetimi etkinleştirdiği için önemli güvenlik etkileri oluşturur.
+Bu komut:
+    1. WinRM hizmetinin çalışıp çalışmadığını denetler. WinRM hizmeti çalışmıyorsa, hizmet başlatılır.
+    2. WinRM hizmetinin başlangıç türünü otomatik olarak ayarlar.
+    Herhangi bir IP adresinde isteği kabul etmek için dinleyici oluşturur. Varsayılan olarak aktarım HTTP'dir.
+    4. WS-Management trafiği için bir güvenlik duvarı özel durumunu etkinleştirir.
+    5. Kerberos ve Negotiate hizmet kimlik doğrulamasını etkinleştirir.
+Bu bilgisayarda WinRM hizmeti aracılığıyla uzaktan yönetimi etkinleştirmek istiyor musunuz?</value>
+  </data>
+  <data name="SetItemOnRunAsPasswordNoRunAsUser" xml:space="preserve">
+    <value>RunAsUser için bir değer ayarlanmadan RunAsPassword değeri ayarlanamaz. -Path özniteliğinin değeri RunAsUser değerine eşit olacak şekilde Set-Item cmdlet'ini çağırarak PowerShell'de hem RunAsUser hem de RunAsPassword değerlerini ayarlayın.</value>
+  </data>
+  <data name="SetItemWarningForGlobalQuota" xml:space="preserve">
+    <value>Güncelleştirilmiş yapılandırma, eklenti başına kota değeri {0} değerinden büyük olan eklentilerin çalışmasını etkileyebilir. Tüm kayıtlı eklentilerin yapılandırmasını doğrulayın ve etkilenen eklentiler için eklenti başına kota değerlerini değiştirin.</value>
+  </data>
+  <data name="SetItemShouldContinueQuery" xml:space="preserve">
+    <value>Bu komut Item öğesinin değerini ayarlar.
+
+Devam etmek istiyor musunuz?</value>
+  </data>
+  <data name="DelegateFreshCred" xml:space="preserve">
+    <value>Makine, yeni kimlik bilgilerinin aşağıdaki hedeflere temsilci olarak atanmasına izin verecek şekilde yapılandırıldı:</value>
+  </data>
+  <data name="ConfigStorage" xml:space="preserve">
+    <value>WsMan Yapılandırma Depolamasının kökü.</value>
+  </data>
+  <data name="WinRMServiceError" xml:space="preserve">
+    <value>WinRM Hizmeti başlatılmadığından bu komut yürütülemiyor.</value>
+  </data>
+  <data name="InvalidPath" xml:space="preserve">
+    <value>Kök yolu mevcut olmadığından bu komut kullanılamıyor. Kök yolunu denetleyin ve komutunuzu çalıştırın.</value>
+  </data>
+  <data name="RemoveItemNotSupported" xml:space="preserve">
+    <value>Bu Sağlayıcı yolunun bu düzeyinde Remove-Item desteklenmediğinden bu komut geçerli yolda kullanılamaz.</value>
+  </data>
+  <data name="SetItemTrustedHostsWarningQuery" xml:space="preserve">
+    <value>Bu komut, WinRM istemcisinin TrustedHosts listesini değiştirir. TrustedHosts listesindeki bilgisayarların kimliği doğrulanmamış olabilir. İstemci, kimlik bilgilerini bu bilgisayarlara gönderebilir. Bu listeyi değiştirmek istediğinizden emin misiniz?</value>
+  </data>
+  <data name="SetItemRootSDDLWarningQuery" xml:space="preserve">
+    <value>Bu komut, WinRM hizmeti için RootSDDL ayarını değiştirir.  RootSDDL, kendi SDDL'sini belirtmeyen tüm WinRM güvenlikli kaynakları için varsayılan güvenlik ayarlarını depolar. SDDL'nin değiştirilmesi, birçok WinRM kaynağının güvenliğini etkileyebilir. Bu varsayılan ayarları değiştirmek istediğinizden emin misiniz?</value>
+  </data>
+  <data name="NewWSManSessionOptionCred" xml:space="preserve">
+    <value>Kimlik doğrulama algoritması Temel veya Özet olduğu için bu komut kimlik bilgileri olmadan kullanılamaz. Değer belirtmek için Credentials parametresini kullanın ve komutunuzu çalıştırın.</value>
+  </data>
+  <data name="SetItemWarnigForPPQ" xml:space="preserve">
+    <value>Güncelleştirilmiş yapılandırma yalnızca genel kota {0} değerinden küçük veya buna eşitse geçerlidir. Genel kota değerini PowerShell cmdlet'i "Get-Item {0}" ile doğrulayın.</value>
+  </data>
+  <data name="DisableCredSSPPolicyValidateError" xml:space="preserve">
+    <value>Ayar devre dışı bırakılamadığı için bu komut yürütülemiyor.</value>
+  </data>
+  <data name="ResourceURIMissingInResourceDir" xml:space="preserve">
+    <value>{1} yolunda "{0}" öğesi için değer bulunamıyor.</value>
+  </data>
+  <data name="NewWSManSessionOptionAuth" xml:space="preserve">
+    <value>Kimlik bilgileri belirtildiği için bu komut Temel veya Özet kimlik doğrulama algoritması olmadan kullanılamaz. Temel veya Özet kimlik doğrulama algoritmasını kullanın ve komutunuzu çalıştırın.</value>
+  </data>
+  <data name="SetItemGeneralSecurityCaption" xml:space="preserve">
+    <value>WinRM Güvenlik Yapılandırması.</value>
+  </data>
+  <data name="NewItemNotSupported" xml:space="preserve">
+    <value>Bu Sağlayıcı yolunun bu düzeyinde New-Item desteklenmediğinden bu komut geçerli yolda kullanılamaz.</value>
+  </data>
+  <data name="WinrmNotConfigured" xml:space="preserve">
+    <value>Yapılandırma bozuk olduğundan bu komut kullanılamıyor. Varsayılan yapılandırmayı geri yüklemek için WinRM invoke Restore WinRM/config komutunu çalıştırın</value>
+  </data>
+  <data name="InvalidValueType" xml:space="preserve">
+    <value>Parametre değeri türü geçersiz olduğundan bu komut kullanılamaz. {0} yapılandırması, {1} Türünde bir değer bekliyor. Değerin doğru olduğundan emin olun ve yeniden deneyin.</value>
+  </data>
+  <data name="WSManServiceStartQuery" xml:space="preserve">
+    <value>WinRM hizmeti şu anda başlatılmadı. Bu komutu çalıştırmak WinRM hizmetini başlatır.
+
+Devam etmek istiyor musunuz?</value>
+  </data>
+  <data name="NoResourceMatch" xml:space="preserve">
+    <value>Parametre, ResourceURI üzerindeki hiçbir özellikle eşleşmediğinden bu komut kullanılamıyor. Giriş parametrelerini denetleyin ve komutunuzu çalıştırın.</value>
+  </data>
+  <data name="CredSSPServiceConfigured" xml:space="preserve">
+    <value>Bu bilgisayar, kimlik bilgilerini uzak bir istemci bilgisayardan alacak şekilde yapılandırıldı.</value>
+  </data>
+  <data name="CredSSPRoleAndDelegateCannotBeSpecified" xml:space="preserve">
+    <value>{0} parametresi, {1} parametresinin değeri {2}olduğunda kullanılamaz. {0} parametresi yalnızca {1} parametresinin değeri {3} olduğunda kullanılabilir.</value>
+  </data>
+  <data name="SetItemServiceRestartWarningRemote" xml:space="preserve">
+    <value>Yaptığınız yapılandırma değişiklikleri yalnızca WinRM hizmeti {0} üzerinde yeniden başlatıldıktan sonra etkili olur.</value>
+  </data>
+  <data name="ConnectFailure" xml:space="preserve">
+    <value>Bu komut geçerli yoldan kullanılamaz. cd\ kullanarak sağlayıcının kök yoluna gidin ve komutunuzu yeniden çalıştırın.</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Bu PowerShell ek bileşeni, PowerShell ana bilgisayarı tarafından WSMan işlemlerini yönetmek için kullanılan cmdlet'leri (örneğin Get-WSManInstance ve Set-WSManInstance) içerir.</value>
+  </data>
+  <data name="LocalHost" xml:space="preserve">
+    <value>Bu bilgisayar her zaman bağlı olduğundan, bu komut, 'localhost' bilgisayarını kaldırmak için kullanılamaz. Başka bir bağlı bilgisayar belirtin ve komutunuzu çalıştırın.</value>
+  </data>
+  <data name="NewItemShouldContinueClientCertQuery" xml:space="preserve">
+    <value>Bu komut yeni bir ClientCertificate öğesi oluşturur.
+
+Devam etmek istiyor musunuz?</value>
+  </data>
+  <data name="ClearItemOnRunAsPassword" xml:space="preserve">
+    <value>RunAsPassword değeri kaldırılamaz. -Path özniteliğinin değeri RunAsUser değerine eşit olacak şekilde Clear-Item cmdlet'ini çağırarak PowerShell'de RunAsUser ve RunAsPassword değerlerini kaldırın.</value>
+  </data>
+  <data name="NewDriveRootDoesNotExist" xml:space="preserve">
+    <value>Belirtilen köke sahip bir sürücü oluşturulamıyor. Kök yol yok.</value>
+  </data>
+  <data name="MultipleResourceMatch" xml:space="preserve">
+    <value>Parametre, ResourceURI üzerindeki birden fazla özellikle eşleştiğinden bu komut kullanılamıyor. Giriş parametrelerini denetleyin ve komutunuzu çalıştırın.</value>
+  </data>
+</root>

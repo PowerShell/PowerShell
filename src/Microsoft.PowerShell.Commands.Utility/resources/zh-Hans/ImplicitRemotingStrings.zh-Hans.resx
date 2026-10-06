@@ -1,0 +1,216 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ErrorMalformedDataFromRemoteCommand" xml:space="preserve">
+    <value>远程 {0} 命令返回的数据为采用预期格式。</value>
+  </data>
+  <data name="ErrorRequiredRemoteCommandNotFound" xml:space="preserve">
+    <value>{0} cmdlet 要求远程会话中包含以下命令: Get-Command、Get-FormatData 和 Select-Object。可以使用以下命令，但它们不是必需的: Get-Help 和 Measure-Object。验证远程会话是否包含所需命令，然后重试。</value>
+  </data>
+  <data name="ErrorFromRemoteCommand" xml:space="preserve">
+    <value>在远程会话中运行 {0} 命令时报告了以下错误: {1}。</value>
+  </data>
+  <data name="ErrorNoResultsFromRemoteEnd" xml:space="preserve">
+    <value>在远程会话中运行 {0} 命令未返回结果。</value>
+  </data>
+  <data name="ErrorNoRunspaceForThisModule" xml:space="preserve">
+    <value>没有会话与此隐式远程处理模块关联。</value>
+  </data>
+  <data name="ErrorCouldntResolveAlias" xml:space="preserve">
+    <value>无法解析远程别名 '{0}'。</value>
+  </data>
+  <data name="ErrorSkippedNonRequestedCommand" xml:space="preserve">
+    <value>已跳过 '{0}' 命令的代理创建，因为名称与 Name 参数的值不匹配。</value>
+  </data>
+  <data name="ErrorSkippedNonRequestedTypeDefinition" xml:space="preserve">
+    <value>已跳过 '{0}' 类型的扩展类型定义，因为其名称与 FormatTypeName 参数的值不匹配。</value>
+  </data>
+  <data name="ErrorSkippedUnsafeCommandName" xml:space="preserve">
+    <value>已跳过 '{0}' 命令的代理创建，因为 PowerShell 无法验证命令名称的安全性。</value>
+  </data>
+  <data name="ErrorCommandSkippedBecauseOfShadowing" xml:space="preserve">
+    <value>已跳过以下命令的代理创建: '{0}'，因为它会遮蔽现有的本地命令。 如果要遮蔽现有本地命令，请使用 AllowClobber 参数。</value>
+  </data>
+  <data name="ErrorNoCommandsImportedBecauseOfSkipping" xml:space="preserve">
+    <value>未创建任何命令代理，因为请求的所有远程命令都会遮蔽现有的本地命令。 如果要遮蔽现有本地命令，请使用 AllowClobber 参数。</value>
+  </data>
+  <data name="ProxyModuleDescription" xml:space="preserve">
+    <value>针对 {0} 的隐式远程处理</value>
+  </data>
+  <data name="EventSourceIdentifier" xml:space="preserve">
+    <value>隐式远程处理事件(会话 ID: {0}；事件处理程序 ID: {1})</value>
+  </data>
+  <data name="ModuleHeaderTitle" xml:space="preserve">
+    <value>隐式远程处理模块</value>
+  </data>
+  <data name="ModuleHeaderDate" xml:space="preserve">
+    <value>生成时间: {0}</value>
+  </data>
+  <data name="ModuleHeaderCommand" xml:space="preserve">
+    <value>通过 {0} cmdlet</value>
+  </data>
+  <data name="ModuleHeaderCommandLine" xml:space="preserve">
+    <value>请使用以下命令行进行调用: {0}</value>
+  </data>
+  <data name="ModuleHeaderRunspaceOverrideParameter" xml:space="preserve">
+    <value>可选参数，可用于指定此代理模块在哪个会话上运行</value>
+  </data>
+  <data name="CreateNewRunspaceMessageTemplate" xml:space="preserve">
+    <value>正在为隐式远程处理 "{{0}}" 命令创建新会话...</value>
+  </data>
+  <data name="ProxyRunspaceNameTemplate" xml:space="preserve">
+    <value>位于 {{0}} 的隐式远程处理模块会话</value>
+  </data>
+  <data name="ProgressActivity" xml:space="preserve">
+    <value>正在创建隐式远程处理模块...</value>
+  </data>
+  <data name="ProgressStatusGetCommandStart" xml:space="preserve">
+    <value>正在从远程会话获取命令信息...</value>
+  </data>
+  <data name="ProgressStatusGetCommandProgress" xml:space="preserve">
+    <value>正在从远程会话获取命令信息... 已收到 {0} 条命令</value>
+  </data>
+  <data name="ProgressStatusGetFormatDataStart" xml:space="preserve">
+    <value>正在从远程会话获取格式和输出信息...</value>
+  </data>
+  <data name="ProgressStatusGetFormatDataProgress" xml:space="preserve">
+    <value>正在从远程会话获取格式和输出信息... 已收到 {0} 个对象</value>
+  </data>
+  <data name="ProgressStatusCompleted" xml:space="preserve">
+    <value>已完成。</value>
+  </data>
+  <data name="CredentialRequestTitle" xml:space="preserve">
+    <value>PowerShell 凭据请求</value>
+  </data>
+  <data name="CredentialRequestBody" xml:space="preserve">
+    <value>输入 {0} 的凭据。</value>
+  </data>
+  <data name="ProxyCredentialRequestBody" xml:space="preserve">
+    <value>输入用于以下连接的 HTTP 代理凭据: {0}</value>
+  </data>
+  <data name="WarningMismatchedImplicitRemotingHash" xml:space="preserve">
+    <value>新远程会话中可用的命令与创建隐式远程处理模块时可用的命令不同。 请考虑使用 Export-PSSession cmdlet 重新创建该模块。</value>
+  </data>
+  <data name="CertificateNeeded" xml:space="preserve">
+    <value>无法加载文件，因为此系统上已禁用脚本运行功能。请提供用于对文件进行签名的有效证书。</value>
+  </data>
+  <data name="InvalidSigningOperation" xml:space="preserve">
+    <value>无法对文件 {0} 进行签名。</value>
+  </data>
+</root>
