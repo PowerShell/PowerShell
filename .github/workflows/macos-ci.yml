@@ -59,7 +59,7 @@ jobs:
       packagingChanged: ${{ steps.filter.outputs.packagingChanged }}
     steps:
       - name: checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Change Detection
         id: filter
@@ -74,7 +74,7 @@ jobs:
     if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     steps:
       - name: checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 1000
       - name: Build
@@ -88,7 +88,7 @@ jobs:
     runs-on: macos-15-large
     steps:
       - name: checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 1000
       - name: macOS Unelevated CI
@@ -106,7 +106,7 @@ jobs:
     runs-on: macos-15-large
     steps:
       - name: checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 1000
       - name: macOS Elevated CI
@@ -124,7 +124,7 @@ jobs:
     runs-on: macos-15-large
     steps:
       - name: checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 1000
       - name: macOS Unelevated Others
@@ -142,7 +142,7 @@ jobs:
     runs-on: macos-15-large
     steps:
       - name: checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 1000
       - name: macOS Elevated Others
@@ -169,7 +169,7 @@ jobs:
       - macos-15-large
     steps:
     - name: checkout
-      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         fetch-depth: 1000
     - uses: actions/setup-dotnet@9a946fdbd5fb07b82b2f5a4466058b876ab72bb2 # v5.3.0
