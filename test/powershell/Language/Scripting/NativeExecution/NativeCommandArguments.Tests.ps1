@@ -181,6 +181,28 @@ Describe "find.exe uses legacy behavior on Windows" -Tag 'CI' {
     }
 }
 
+Describe "Stop-parsing uses legacy native argument passing" -Tag 'CI' {
+    BeforeAll {
+        $currentSetting = $PSNativeCommandArgumentPassing
+    }
+
+    AfterAll {
+        $PSNativeCommandArgumentPassing = $currentSetting
+    }
+
+    It "Preserves escaped quotes after '--%' with <argumentListValue> argument passing" -Skip:(-not $IsWindows) -TestCases @(
+        @{ argumentListValue = 'Standard' }
+        @{ argumentListValue = 'Windows' }
+    ) {
+        param($argumentListValue)
+
+        $PSNativeCommandArgumentPassing = $argumentListValue
+        $lines = @(Invoke-Expression 'testexe -echoargs --% /p:Category=\"CI,Nightly\"')
+
+        $lines | Should -BeExactly 'Arg 0 is </p:Category="CI,Nightly">'
+    }
+}
+
 foreach ( $argumentListValue in "Standard","Legacy","Windows" ) {
     $PSNativeCommandArgumentPassing = $argumentListValue
     Describe "Native Command Arguments (${PSNativeCommandArgumentPassing})" -tags "CI" {

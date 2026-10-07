@@ -1585,7 +1585,8 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="filePath"></param>
         private bool UseSpecialArgumentPassing(string filePath) =>
-            NativeParameterBinderController.ArgumentPassingStyle switch
+            (Platform.IsWindows && NativeParameterBinderController.HasVerbatimArgumentMarker)
+            || NativeParameterBinderController.ArgumentPassingStyle switch
             {
                 NativeArgumentPassingStyle.Legacy => true,
                 NativeArgumentPassingStyle.Windows => ShouldUseLegacyPassingStyle(filePath),

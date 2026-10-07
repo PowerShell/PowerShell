@@ -60,6 +60,14 @@ namespace System.Management.Automation
             }
         }
 
+        internal bool HasVerbatimArgumentMarker
+        {
+            get
+            {
+                return ((NativeCommandParameterBinder)DefaultParameterBinder).HasVerbatimArgumentMarker;
+            }
+        }
+
         /// <summary>
         /// Passes the binding directly through to the parameter binder.
         /// It does no verification against metadata.

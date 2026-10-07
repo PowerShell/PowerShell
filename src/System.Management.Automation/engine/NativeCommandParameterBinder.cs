@@ -67,6 +67,8 @@ namespace System.Management.Automation
             return null;
         }
 
+        internal bool HasVerbatimArgumentMarker { get; private set; }
+
         internal void BindParameters(Collection<CommandParameterInternal> parameters)
         {
             bool sawVerbatimArgumentMarker = false;
@@ -98,6 +100,7 @@ namespace System.Management.Automation
                     object argValue = parameter.ArgumentValue;
                     if (string.Equals("--%", argValue as string, StringComparison.OrdinalIgnoreCase))
                     {
+                        HasVerbatimArgumentMarker = true;
                         sawVerbatimArgumentMarker = true;
                         continue;
                     }
