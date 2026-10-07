@@ -388,18 +388,20 @@ Describe "Measure-Object DRT basic functionality" -Tags "CI" {
 Describe "Directly test the PSPropertyExpression type" -Tags "CI" {
     # this function is used to test the use of PSPropertyExpression
     # as a parameter in script
-    function Test-PSPropertyExpression {
-        [CmdletBinding()]
-        param (
-            [Parameter(Mandatory,Position=0)]
-            [PSPropertyExpression]
-                $pe,
-            [Parameter(ValueFromPipeline)]
-                $InputObject
-        )
-        begin { $sum = 0}
-        process { $sum += $pe.GetValues($InputObject).result }
-        end { $sum }
+    BeforeAll {
+        function Test-PSPropertyExpression {
+            [CmdletBinding()]
+            param (
+                [Parameter(Mandatory,Position=0)]
+                [PSPropertyExpression]
+                    $pe,
+                [Parameter(ValueFromPipeline)]
+                    $InputObject
+            )
+            begin { $sum = 0}
+            process { $sum += $pe.GetValues($InputObject).result }
+            end { $sum }
+        }
     }
 
     It "Test-PropertyExpression function with a wildcard property expression should sum numbers" {

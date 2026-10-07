@@ -1,14 +1,16 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Get-ItemProperty" -Tags "CI" {
-    $currentDirectory = Split-Path $PSScriptRoot -Leaf
-    $parentDirectory  = Split-Path (Join-Path -Path $PSScriptRoot -ChildPath "..") -Leaf
-    $tempDirectory = $TestDrive
-    $testprovider = (Get-Item $tempDirectory).PSDrive.Name
+    BeforeAll {
+        $currentDirectory = Split-Path $PSScriptRoot -Leaf
+        $parentDirectory  = Split-Path (Join-Path -Path $PSScriptRoot -ChildPath "..") -Leaf
+        $tempDirectory = $TestDrive
+        $testprovider = (Get-Item $tempDirectory).PSDrive.Name
 
-    $testfile = Join-Path -Path $tempDirectory -ChildPath testfile1
+        $testfile = Join-Path -Path $tempDirectory -ChildPath testfile1
 
-    New-Item $testfile -ItemType file -Force
+        New-Item $testfile -ItemType file -Force
+    }
 
     It "Should be able to be called on in the current directory" {
 	$(Get-ItemProperty $PSScriptRoot).Name | Should -BeExactly $currentDirectory

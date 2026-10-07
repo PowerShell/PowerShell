@@ -2,20 +2,11 @@
 # Licensed under the MIT License.
 
 Describe 'Clipboard cmdlet tests' -Tag CI {
-    BeforeAll {
-        $xclip = Get-Command xclip -CommandType Application -ErrorAction Ignore
+    BeforeDiscovery {
+        $clipboardTextSkip = ($IsWindows -and $env:PROCESSOR_ARCHITECTURE.Contains("arm")) -or ($IsLinux -and -not (Get-Command xclip -CommandType Application -ErrorAction Ignore))
     }
 
-    Context 'Text' {
-        BeforeAll {
-            $defaultParamValues = $PSDefaultParameterValues.Clone()
-            $PSDefaultParameterValues["it:skip"] = ($IsWindows -and $env:PROCESSOR_ARCHITECTURE.Contains("arm")) -or ($IsLinux -and $xclip -eq $null)
-        }
-
-        AfterAll {
-            $global:PSDefaultParameterValues = $defaultParamValues
-        }
-
+    Context 'Text' -Skip:$clipboardTextSkip {
         It 'Get-Clipboard returns what is in Set-Clipboard' {
             $guid = New-Guid
             Set-Clipboard -Value $guid

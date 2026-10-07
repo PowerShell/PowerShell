@@ -1,6 +1,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Get-Item" -Tags "CI" {
+    BeforeDiscovery {
+        $skipNotWindows = -not $IsWindows
+    }
     BeforeAll {
         if ( $IsWindows ) {
             $skipNotWindows = $false
@@ -52,7 +55,7 @@ Describe "Get-Item" -Tags "CI" {
         ${result}.FullName | Should -BeExactly ${item}.FullName
     }
 
-    It "Should get properties for special reparse points" -Skip:$skipNotWindows {
+    It "Should get properties for special reparse points" -Skip:(-not $IsWindows) {
         $result = Get-Item -Path $HOME/Cookies -Force
         $result.LinkType | Should -BeExactly "Junction"
         $result.Target | Should -Not -BeNullOrEmpty
@@ -123,35 +126,35 @@ Describe "Get-Item" -Tags "CI" {
             Set-Content -Path $altStreamDirectory -Stream $streamName -Value $stringData
             $null = New-Item -type directory $noAltStreamDirectory
         }
-        It "Should find an alternate stream on a file if present" -Skip:$skipNotWindows {
+        It "Should find an alternate stream on a file if present" -Skip:(-not $IsWindows) {
             $result = Get-Item $altStreamPath -Stream $streamName
             $result.Length | Should -Be ($stringData.Length + [Environment]::NewLine.Length)
             $result.Stream | Should -Be $streamName
         }
-        It "Should error if it cannot find alternate stream on an existing file" -Skip:$skipNotWindows {
+        It "Should error if it cannot find alternate stream on an existing file" -Skip:(-not $IsWindows) {
             { Get-Item $altStreamPath -Stream $absentStreamName -ErrorAction Stop } | Should -Throw -ErrorId "AlternateDataStreamNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
         }
-        It "Should find an alternate stream on a directory if present, and it should not be a container" -Skip:$skipNotWindows {
+        It "Should find an alternate stream on a directory if present, and it should not be a container" -Skip:(-not $IsWindows) {
             $result = Get-Item $altStreamDirectory -Stream $streamName
             $result.Length | Should -Be ($stringData.Length + [Environment]::NewLine.Length )
             $result.Stream | Should -Be $streamName
             $result.PSIsContainer | Should -BeExactly $false
         }
-        It "Should not find an alternate stream on a directory if not present" -Skip:$skipNotWindows {
+        It "Should not find an alternate stream on a directory if not present" -Skip:(-not $IsWindows) {
             { Get-Item $noAltStreamDirectory -Stream $absentStreamName -ErrorAction Stop } | Should -Throw -ErrorId "AlternateDataStreamNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
         }
-        It "Should find zero alt streams and not fail on a directory with a wildcard stream name if no alt streams are present" -Skip:$skipNotWindows {
+        It "Should find zero alt streams and not fail on a directory with a wildcard stream name if no alt streams are present" -Skip:(-not $IsWindows) {
             $result = Get-Item $noAltStreamDirectory -Stream * -ErrorAction Stop
             $result | Should -BeExactly $null
         }
-        It "Should return filename property correctly" -Skip:$skipNotWindows {
+        It "Should return filename property correctly" -Skip:(-not $IsWindows) {
             $result = (Get-Item -Path $altStreamPath -Stream $streamName).FileName
             $result | Should -BeExactly $altStreamPath
         }
     }
 
     Context "Registry Provider" {
-        It "Can retrieve an item from registry" -Skip:$skipNotWindows {
+        It "Can retrieve an item from registry" -Skip:(-not $IsWindows) {
             ${result} = Get-Item HKLM:/Software
             ${result} | Should -BeOfType Microsoft.Win32.RegistryKey
         }
@@ -191,7 +194,7 @@ Describe "Get-Item environment provider on Windows with accidental case-variant 
     AfterAll {
         $env:testVar = $null
     }
-    It "Reports the effective value among accidental case-variant duplicates on Windows" -Skip:$skipNotWindows {
+    It "Reports the effective value among accidental case-variant duplicates on Windows" -Skip:(-not $IsWindows) {
         if (-not (Get-Command -ErrorAction Ignore node.exe)) {
             Write-Warning "Test skipped, because prerequisite Node.js is not installed."
         } else {
@@ -216,12 +219,19 @@ Describe "Get-Item environment provider on Windows with accidental case-variant 
 }
 
 Describe 'Formatting for FileInfo objects' -Tags 'CI' {
-    BeforeAll {
-        $extensionTests = [System.Collections.Generic.List[HashTable]]::new()
-        foreach ($extension in @('.zip', '.tgz', '.tar', '.gz', '.nupkg', '.cab', '.7z', '.ps1', '.psd1', '.psm1', '.ps1xml')) {
-            $extensionTests.Add(@{extension = $extension})
-        }
-    }
+    $extensionTests = @(
+        @{extension = '.zip'}
+        @{extension = '.tgz'}
+        @{extension = '.tar'}
+        @{extension = '.gz'}
+        @{extension = '.nupkg'}
+        @{extension = '.cab'}
+        @{extension = '.7z'}
+        @{extension = '.ps1'}
+        @{extension = '.psd1'}
+        @{extension = '.psm1'}
+        @{extension = '.ps1xml'}
+    )
 
     It 'File type <extension> should have correct color' -TestCases $extensionTests {
         param($extension)
@@ -254,6 +264,14 @@ Describe 'Formatting for FileInfo objects' -Tags 'CI' {
 }
 
 Describe 'Formatting for FileInfo requiring admin' -Tags 'CI','RequireAdminOnWindows' {
+    AfterAll {
+        # Remove circular symlink before Pester 5 TestDrive cleanup to avoid infinite recursion
+        $linkPath = Join-Path -Path $TestDrive -ChildPath 'link'
+        if (Test-Path -LiteralPath $linkPath) {
+            (Get-Item -LiteralPath $linkPath).Delete()
+        }
+    }
+
     It 'Symlink should have correct color' {
         $linkPath = Join-Path -Path $TestDrive -ChildPath 'link'
         $link = New-Item -ItemType SymbolicLink -Name 'link' -Value $TestDrive -Path $TestDrive

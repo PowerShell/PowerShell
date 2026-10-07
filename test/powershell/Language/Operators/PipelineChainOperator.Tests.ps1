@@ -2,34 +2,7 @@
 # Licensed under the MIT License.
 
 Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
-    BeforeAll {
-        function Test-SuccessfulCommand
-        {
-            Write-Output "SUCCESS"
-        }
-
-        filter Test-NonTerminatingError
-        {
-            [CmdletBinding()]
-            param(
-                [Parameter(ValueFromPipeline)]
-                [object[]]
-                $input
-            )
-
-            if ($input -ne 2)
-            {
-                return $input
-            }
-
-            $exception = [System.Exception]::new("NTERROR")
-            $errorId = 'NTERROR'
-            $errorCategory = [System.Management.Automation.ErrorCategory]::NotSpecified
-
-            $errorRecord = [System.Management.Automation.ErrorRecord]::new($exception, $errorId, $errorCategory, $null)
-            $PSCmdlet.WriteError($errorRecord)
-        }
-
+    BeforeDiscovery {
         $simpleTestCases = @(
             # Two native commands
             @{ Statement = 'testexe -returncode -1 && testexe -echoargs "A"'; Output = @('-1') }
@@ -126,6 +99,36 @@ Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
         )
     }
 
+    BeforeAll {
+        function Test-SuccessfulCommand
+        {
+            Write-Output "SUCCESS"
+        }
+
+        filter Test-NonTerminatingError
+        {
+            [CmdletBinding()]
+            param(
+                [Parameter(ValueFromPipeline)]
+                [object[]]
+                $input
+            )
+
+            if ($input -ne 2)
+            {
+                return $input
+            }
+
+            $exception = [System.Exception]::new("NTERROR")
+            $errorId = 'NTERROR'
+            $errorCategory = [System.Management.Automation.ErrorCategory]::NotSpecified
+
+            $errorRecord = [System.Management.Automation.ErrorRecord]::new($exception, $errorId, $errorCategory, $null)
+            $PSCmdlet.WriteError($errorRecord)
+        }
+
+    }
+
     It "Gets the correct output with statement '<Statement>'" -TestCases $simpleTestCases {
         param($Statement, $Output)
 
@@ -168,15 +171,17 @@ Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
     }
 
     Context "File redirection with && and ||" {
-        BeforeAll {
+        BeforeDiscovery {
+            # $TestDrive unavailable during Discovery; use placeholder replaced at runtime
+            $tdPlaceholder = 'TESTDRIVE_PLACEHOLDER'
             $redirectionTestCases = @(
-                @{ Statement = "testexe -returncode 0 > '$TestDrive/1.txt' && testexe -returncode 1 > '$TestDrive/2.txt'"; Files = @{ "$TestDrive/1.txt" = '0'; "$TestDrive/2.txt" = '1' } }
-                @{ Statement = "testexe -returncode 1 > '$TestDrive/1.txt' && testexe -returncode 1 > '$TestDrive/2.txt'"; Files = @{ "$TestDrive/1.txt" = '1'; "$TestDrive/2.txt" = $null } }
-                @{ Statement = "testexe -returncode 1 > '$TestDrive/1.txt' || testexe -returncode 1 > '$TestDrive/2.txt'"; Files = @{ "$TestDrive/1.txt" = '1'; "$TestDrive/2.txt" = '1' } }
-                @{ Statement = "testexe -returncode 0 > '$TestDrive/1.txt' || testexe -returncode 1 > '$TestDrive/2.txt'"; Files = @{ "$TestDrive/1.txt" = '0'; "$TestDrive/2.txt" = $null } }
-                @{ Statement = "(testexe -returncode 0 && testexe -returncode 1) > '$TestDrive/3.txt'"; Files = @{ "$TestDrive/3.txt" = "0$([System.Environment]::NewLine)1$([System.Environment]::NewLine)" } }
-                @{ Statement = "(testexe -returncode 0 && testexe -returncode 1 > '$TestDrive/2.txt') > '$TestDrive/3.txt'"; Files = @{ "$TestDrive/2.txt" = '1'; "$TestDrive/3.txt" = '0' } }
-                @{ Statement = "(testexe -returncode 0 > '$TestDrive/1.txt' && testexe -returncode 1 > '$TestDrive/2.txt') > '$TestDrive/3.txt'"; Files = @{ "$TestDrive/1.txt" = '0'; "$TestDrive/2.txt" = '1'; "$TestDrive/3.txt" = '' } }
+                @{ Statement = "testexe -returncode 0 > '$tdPlaceholder/1.txt' && testexe -returncode 1 > '$tdPlaceholder/2.txt'"; Files = @{ "$tdPlaceholder/1.txt" = '0'; "$tdPlaceholder/2.txt" = '1' } }
+                @{ Statement = "testexe -returncode 1 > '$tdPlaceholder/1.txt' && testexe -returncode 1 > '$tdPlaceholder/2.txt'"; Files = @{ "$tdPlaceholder/1.txt" = '1'; "$tdPlaceholder/2.txt" = $null } }
+                @{ Statement = "testexe -returncode 1 > '$tdPlaceholder/1.txt' || testexe -returncode 1 > '$tdPlaceholder/2.txt'"; Files = @{ "$tdPlaceholder/1.txt" = '1'; "$tdPlaceholder/2.txt" = '1' } }
+                @{ Statement = "testexe -returncode 0 > '$tdPlaceholder/1.txt' || testexe -returncode 1 > '$tdPlaceholder/2.txt'"; Files = @{ "$tdPlaceholder/1.txt" = '0'; "$tdPlaceholder/2.txt" = $null } }
+                @{ Statement = "(testexe -returncode 0 && testexe -returncode 1) > '$tdPlaceholder/3.txt'"; Files = @{ "$tdPlaceholder/3.txt" = "0$([System.Environment]::NewLine)1$([System.Environment]::NewLine)" } }
+                @{ Statement = "(testexe -returncode 0 && testexe -returncode 1 > '$tdPlaceholder/2.txt') > '$tdPlaceholder/3.txt'"; Files = @{ "$tdPlaceholder/2.txt" = '1'; "$tdPlaceholder/3.txt" = '0' } }
+                @{ Statement = "(testexe -returncode 0 > '$tdPlaceholder/1.txt' && testexe -returncode 1 > '$tdPlaceholder/2.txt') > '$tdPlaceholder/3.txt'"; Files = @{ "$tdPlaceholder/1.txt" = '0'; "$tdPlaceholder/2.txt" = '1'; "$tdPlaceholder/3.txt" = '' } }
             )
         }
 
@@ -186,6 +191,14 @@ Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
 
         It "Handles redirection correctly with statement '<Statement>'" -TestCases $redirectionTestCases {
             param($Statement, $Files)
+
+            # Resolve TESTDRIVE_PLACEHOLDER from Discovery with actual $TestDrive
+            $Statement = $Statement.Replace('TESTDRIVE_PLACEHOLDER', $TestDrive)
+            $resolvedFiles = @{}
+            foreach ($key in $Files.get_Keys()) {
+                $resolvedFiles[$key.Replace('TESTDRIVE_PLACEHOLDER', $TestDrive)] = $Files[$key]
+            }
+            $Files = $resolvedFiles
 
             Invoke-Expression -Command $Statement
 
@@ -212,6 +225,54 @@ Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
     }
 
     Context "Pipeline chain error semantics" {
+        BeforeDiscovery {
+            $errorSemanticsCases = @(
+                # Simple error semantics
+                @{ Statement = '1,2,3 | Test-NonTerminatingError || Write-Output 4'; Output = @(1, 3, 4); NTErrors = @('NTError') }
+                @{ Statement = '1,3,4,5 | Test-PipelineTerminatingError || Write-Output 2'; Output = @(1, 3, 2); NTErrors = @('PIPELINE') }
+                @{ Statement = 'Test-FullyTerminatingError || Write-Output 2'; ThrownError = 'TERMINATE' }
+                @{ Statement = '1,2,3 | Test-NonTerminatingError -ErrorAction Stop || Write-Output 4'; ThrownError = 'NTERROR,Test-NonTerminatingError' }
+
+                # Assignment error semantics
+                @{ Statement = '$x = 1,2,3 | Test-NonTerminatingError || Write-Output 4; $x'; Output = @(1, 3, 4); NTErrors = @('NTError') }
+                @{ Statement = '$x = 1,3,4,5 | Test-PipelineTerminatingError || Write-Output 2; $x'; Output = @(1, 3, 2); NTErrors = @('PIPELINE') }
+
+                # Try/catch semantics
+                @{ Statement = 'try { Write-Output 2 && Test-FullyTerminatingError } catch {}'; Output = @(2) }
+                @{ Statement = 'try { 1,3,4,5 | Test-PipelineTerminatingError || Write-Output 2 } catch {}'; Output = @(1, 3) }
+                @{ Statement = 'try { 1,2,3 | Test-NonTerminatingError -ErrorAction Stop || Write-Output 4 } catch {}'; Output = @(1) }
+                @{ Statement = 'try { 1,2,3 | Test-NonTerminatingError || Write-Output 4 } catch {}'; Output = @(1, 3, 4); NTErrors = @('NTError') }
+                @{ Statement = 'try { $result = Write-Output 2 && Test-FullyTerminatingError } catch {}; $result'; Output = @() }
+                @{ Statement = 'try { $result = 1,3,4,5 | Test-PipelineTerminatingError || Write-Output 2 } catch {}; $result'; Output = @() }
+                @{ Statement = 'try { $result = 1,2,3 | Test-NonTerminatingError -ErrorAction Stop || Write-Output 4 } catch {}; $result'; Output = @() }
+                @{ Statement = 'try { $result = 1,2,3 | Test-NonTerminatingError || Write-Output 4 } catch {}; $result'; Output = @(1, 3, 4); NTErrors = @('NTError') }
+                @{ Statement = 'try { "Hi" && "Bye" } catch { "Nothing" }'; Output = @("Hi", "Bye") }
+                @{ Statement = 'try { "Hi" && "Bye" } catch { "Nothing" } finally { "Final" }'; Output = @("Hi", "Bye", "Final") }
+                @{ Statement = 'try { "Hi" && Test-FullyTerminatingError || "Bye" } catch { "Nothing" } finally { "Final" }'; Output = @("Hi", "Nothing", "Final") }
+
+                # Trap continue semantics
+                @{ Statement = 'trap { continue }; Write-Output 2 && Test-FullyTerminatingError'; Output = @(2) }
+                @{ Statement = 'trap { continue }; Test-FullyTerminatingError && Write-Output 2'; Output = @() }
+                @{ Statement = 'trap { continue }; Test-FullyTerminatingError || Write-Output 2'; Output = @(2) }
+                @{ Statement = 'trap { continue }; 1,3,4,5 | Test-PipelineTerminatingError || Write-Output 2'; Output = @(1,3,2) }
+                @{ Statement = 'trap { continue }; 1,2,3 | Test-NonTerminatingError -ErrorAction Stop || Write-Output 4'; Output = @(1,4) }
+                @{ Statement = 'trap { continue }; 1,2,3 | Test-NonTerminatingError || Write-Output 4'; Output = @(1,3,4); NTErrors = @('NTError') }
+                @{ Statement = 'trap { continue }; $result = Write-Output 2 && Test-FullyTerminatingError'; Output = @() }
+                @{ Statement = 'trap { continue }; $result = 1,3,4,5 | Test-PipelineTerminatingError || Write-Output 2; $result'; Output = @(1,3,2) }
+                @{ Statement = 'trap { continue }; $result = 1,2,3 | Test-NonTerminatingError -ErrorAction Stop || Write-Output 4; $result'; Output = @(1,4) }
+                @{ Statement = 'trap { continue }; $result = 1,2,3 | Test-NonTerminatingError || Write-Output 4; $result'; Output = @(1,3,4); NTErrors = @('NTError') }
+
+                # Trap break semantics
+                @{ Statement = 'trap { break }; 1,3,4,5 | Test-PipelineTerminatingError || Write-Output 2'; ThrownError = 'PIPELINE,Test-PipelineTerminatingError' }
+                @{ Statement = 'trap { break }; 1,2,3 | Test-NonTerminatingError -ErrorAction Stop || Write-Output 4'; ThrownError = 'NTERROR,Test-NonTerminatingError' }
+                @{ Statement = 'trap { break }; 1,2,3 | Test-NonTerminatingError || Write-Output 4'; Output = @(1,3,4); NTErrors = @('NTError') }
+                @{ Statement = 'trap { break }; $result = Write-Output 2 && Test-FullyTerminatingError'; ThrownError = 'TERMINATE' }
+                @{ Statement = 'trap { break }; $result = 1,3,4,5 | Test-PipelineTerminatingError || Write-Output 2; $result'; ThrownError = 'PIPELINE,Test-PipelineTerminatingError' }
+                @{ Statement = 'trap { break }; $result = 1,2,3 | Test-NonTerminatingError -ErrorAction Stop || Write-Output 4; $result'; ThrownError = 'NTERROR,Test-NonTerminatingError' }
+                @{ Statement = 'trap { break }; $result = 1,2,3 | Test-NonTerminatingError || Write-Output 4; $result'; Output = @(1,3,4); NTErrors = @('NTError') }
+            )
+        }
+
         BeforeAll {
             $pwsh = [powershell]::Create()
 
@@ -263,51 +324,6 @@ function Test-FullyTerminatingError
 }
 '@).Invoke()
 
-            $errorSemanticsCases = @(
-                # Simple error semantics
-                @{ Statement = '1,2,3 | Test-NonTerminatingError || Write-Output 4'; Output = @(1, 3, 4); NTErrors = @('NTError') }
-                @{ Statement = '1,3,4,5 | Test-PipelineTerminatingError || Write-Output 2'; Output = @(1, 3, 2); NTErrors = @('PIPELINE') }
-                @{ Statement = 'Test-FullyTerminatingError || Write-Output 2'; ThrownError = 'TERMINATE' }
-                @{ Statement = '1,2,3 | Test-NonTerminatingError -ErrorAction Stop || Write-Output 4'; ThrownError = 'NTERROR,Test-NonTerminatingError' }
-
-                # Assignment error semantics
-                @{ Statement = '$x = 1,2,3 | Test-NonTerminatingError || Write-Output 4; $x'; Output = @(1, 3, 4); NTErrors = @('NTError') }
-                @{ Statement = '$x = 1,3,4,5 | Test-PipelineTerminatingError || Write-Output 2; $x'; Output = @(1, 3, 2); NTErrors = @('PIPELINE') }
-
-                # Try/catch semantics
-                @{ Statement = 'try { Write-Output 2 && Test-FullyTerminatingError } catch {}'; Output = @(2) }
-                @{ Statement = 'try { 1,3,4,5 | Test-PipelineTerminatingError || Write-Output 2 } catch {}'; Output = @(1, 3) }
-                @{ Statement = 'try { 1,2,3 | Test-NonTerminatingError -ErrorAction Stop || Write-Output 4 } catch {}'; Output = @(1) }
-                @{ Statement = 'try { 1,2,3 | Test-NonTerminatingError || Write-Output 4 } catch {}'; Output = @(1, 3, 4); NTErrors = @('NTError') }
-                @{ Statement = 'try { $result = Write-Output 2 && Test-FullyTerminatingError } catch {}; $result'; Output = @() }
-                @{ Statement = 'try { $result = 1,3,4,5 | Test-PipelineTerminatingError || Write-Output 2 } catch {}; $result'; Output = @() }
-                @{ Statement = 'try { $result = 1,2,3 | Test-NonTerminatingError -ErrorAction Stop || Write-Output 4 } catch {}; $result'; Output = @() }
-                @{ Statement = 'try { $result = 1,2,3 | Test-NonTerminatingError || Write-Output 4 } catch {}; $result'; Output = @(1, 3, 4); NTErrors = @('NTError') }
-                @{ Statement = 'try { "Hi" && "Bye" } catch { "Nothing" }'; Output = @("Hi", "Bye") }
-                @{ Statement = 'try { "Hi" && "Bye" } catch { "Nothing" } finally { "Final" }'; Output = @("Hi", "Bye", "Final") }
-                @{ Statement = 'try { "Hi" && Test-FullyTerminatingError || "Bye" } catch { "Nothing" } finally { "Final" }'; Output = @("Hi", "Nothing", "Final") }
-
-                # Trap continue semantics
-                @{ Statement = 'trap { continue }; Write-Output 2 && Test-FullyTerminatingError'; Output = @(2) }
-                @{ Statement = 'trap { continue }; Test-FullyTerminatingError && Write-Output 2'; Output = @() }
-                @{ Statement = 'trap { continue }; Test-FullyTerminatingError || Write-Output 2'; Output = @(2) }
-                @{ Statement = 'trap { continue }; 1,3,4,5 | Test-PipelineTerminatingError || Write-Output 2'; Output = @(1,3,2) }
-                @{ Statement = 'trap { continue }; 1,2,3 | Test-NonTerminatingError -ErrorAction Stop || Write-Output 4'; Output = @(1,4) }
-                @{ Statement = 'trap { continue }; 1,2,3 | Test-NonTerminatingError || Write-Output 4'; Output = @(1,3,4); NTErrors = @('NTError') }
-                @{ Statement = 'trap { continue }; $result = Write-Output 2 && Test-FullyTerminatingError'; Output = @() }
-                @{ Statement = 'trap { continue }; $result = 1,3,4,5 | Test-PipelineTerminatingError || Write-Output 2; $result'; Output = @(1,3,2) }
-                @{ Statement = 'trap { continue }; $result = 1,2,3 | Test-NonTerminatingError -ErrorAction Stop || Write-Output 4; $result'; Output = @(1,4) }
-                @{ Statement = 'trap { continue }; $result = 1,2,3 | Test-NonTerminatingError || Write-Output 4; $result'; Output = @(1,3,4); NTErrors = @('NTError') }
-
-                # Trap break semantics
-                @{ Statement = 'trap { break }; 1,3,4,5 | Test-PipelineTerminatingError || Write-Output 2'; ThrownError = 'PIPELINE,Test-PipelineTerminatingError' }
-                @{ Statement = 'trap { break }; 1,2,3 | Test-NonTerminatingError -ErrorAction Stop || Write-Output 4'; ThrownError = 'NTERROR,Test-NonTerminatingError' }
-                @{ Statement = 'trap { break }; 1,2,3 | Test-NonTerminatingError || Write-Output 4'; Output = @(1,3,4); NTErrors = @('NTError') }
-                @{ Statement = 'trap { break }; $result = Write-Output 2 && Test-FullyTerminatingError'; ThrownError = 'TERMINATE' }
-                @{ Statement = 'trap { break }; $result = 1,3,4,5 | Test-PipelineTerminatingError || Write-Output 2; $result'; ThrownError = 'PIPELINE,Test-PipelineTerminatingError' }
-                @{ Statement = 'trap { break }; $result = 1,2,3 | Test-NonTerminatingError -ErrorAction Stop || Write-Output 4; $result'; ThrownError = 'NTERROR,Test-NonTerminatingError' }
-                @{ Statement = 'trap { break }; $result = 1,2,3 | Test-NonTerminatingError || Write-Output 4; $result'; Output = @(1,3,4); NTErrors = @('NTError') }
-            )
         }
 
         AfterEach {

@@ -3,16 +3,18 @@
 Describe 'Misc Test' -Tags "CI" {
 
     Context 'Where' {
-        class C1 {
-        [int[]] $Wheels = @(1,2,3);
-        [string] Foo() {
-            return (1..10).Where({ $PSItem -in $this.Wheels; }) -join ';'
-        }
+        BeforeAll {
+            class C1 {
+            [int[]] $Wheels = @(1,2,3);
+            [string] Foo() {
+                return (1..10).Where({ $PSItem -in $this.Wheels; }) -join ';'
+            }
 
-        [string] Bar()
-        {
-             return (1..10 | Where-Object  { $PSItem -in $this.Wheels; }) -join ';'
-        }
+            [string] Bar()
+            {
+                 return (1..10 | Where-Object  { $PSItem -in $this.Wheels; }) -join ';'
+            }
+            }
         }
         It 'Invoke Where' {
                 [C1]::new().Foo() | Should -Be "1;2;3"
@@ -23,20 +25,22 @@ Describe 'Misc Test' -Tags "CI" {
     }
 
     Context 'ForEach' {
-        class C1 {
-        [int[]] $Wheels = @(1,2,3);
-        [string] Foo() {
-            $ret=""
-            Foreach($PSItem in $this.Wheels) { $ret +="$PSItem;"}
-            return $ret
-        }
+        BeforeAll {
+            class C1 {
+            [int[]] $Wheels = @(1,2,3);
+            [string] Foo() {
+                $ret=""
+                Foreach($PSItem in $this.Wheels) { $ret +="$PSItem;"}
+                return $ret
+            }
 
-        [string] Bar()
-        {
-            $ret = ""
-            $this.Wheels | ForEach-Object { $ret += "$_;" }
-            return $ret
-        }
+            [string] Bar()
+            {
+                $ret = ""
+                $this.Wheels | ForEach-Object { $ret += "$_;" }
+                return $ret
+            }
+            }
         }
         It 'Invoke Foreach' {
                 [C1]::new().Foo() | Should -Be "1;2;3;"
@@ -47,7 +51,7 @@ Describe 'Misc Test' -Tags "CI" {
     }
 
     Context 'Class instantiation' {
-        Class C1 {
+        Class C1_Inst {
             [string] Foo() {
                 return (Get-TestText)
             }
@@ -101,7 +105,7 @@ Describe 'Misc Test' -Tags "CI" {
         }
 
         It "Create instance that is bound to a SessionState" {
-            $instance = [C1]::new()
+            $instance = [C1_Inst]::new()
             ## For a bound class instance, the execution of an instance method is
             ## done in the Runspace/SessionState the instance is bound to.
             $instance.Foo() | Should -BeExactly $ExpectedTextFromBoundInstance
@@ -109,7 +113,7 @@ Describe 'Misc Test' -Tags "CI" {
         }
 
         It "Create instance that is NOT bound to a SessionState" {
-            $instance = InstantiateInNewRunspace ([C1])
+            $instance = InstantiateInNewRunspace ([C1_Inst])
             ## For an unbound class instance, the execution of an instance method is done in
             ## the Runspace/SessionState where the call to the instance method is made.
             $instance.Foo() | Should -BeExactly $ExpectedTextFromBoundInstance

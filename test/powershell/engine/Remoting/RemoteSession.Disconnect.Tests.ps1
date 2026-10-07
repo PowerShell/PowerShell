@@ -3,7 +3,7 @@
 
 Import-Module HelpersCommon
 
-Describe "WinRM based remoting session abrupt disconnect" -Tags 'Feature','RequireAdminOnWindows' {
+Describe "WinRM based remoting session abrupt disconnect" -Tags 'Feature','RequireAdminOnWindows' -Skip:(!$IsWindows) {
 
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()

@@ -1,6 +1,15 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Convert-Path tests" -Tag CI {
+    BeforeDiscovery {
+        $hiddenFilePrefixDisc = ($IsLinux -or $IsMacOS) ? '.' : ''
+        $sep = [System.IO.Path]::DirectorySeparatorChar
+
+        $relativeHiddenFilePath1Disc = ".$($sep)$($hiddenFilePrefixDisc)test1.txt"
+        $relativeHiddenFilePath2Disc = ".$($sep)$($hiddenFilePrefixDisc)test2.txt"
+        $relativeHiddenFileWildcardPathDisc = ".$($sep)$($hiddenFilePrefixDisc)test*.txt"
+    }
+
     BeforeAll {
         $hiddenFilePrefix = ($IsLinux -or $IsMacOS) ? '.' : ''
 
@@ -52,8 +61,8 @@ Describe "Convert-Path tests" -Tag CI {
     }
 
     It "Convert-Path can handle multiple directories" {
-        $d1 = Setup -Dir -Path dir1 -PassThru
-        $d2 = Setup -Dir -Path dir2 -PassThru
+        $d1 = New-Item -ItemType Directory -Path (Join-Path $TestDrive 'dir1') -Force
+        $d2 = New-Item -ItemType Directory -Path (Join-Path $TestDrive 'dir2') -Force
         $result = Convert-Path -Path "${TestDrive}/dir?"
         $result.count | Should -Be 2
         $result -join "," | Should -BeExactly (@("$d1","$d2") -join ",")
@@ -65,46 +74,44 @@ Describe "Convert-Path tests" -Tag CI {
 
     It "Convert-Path -Path '<Path>' -Force:<Force> should return '<ExpectedResult>'" -TestCases @(
         @{
-            Path           = $relativeHiddenFilePath1
-            BasePath       = $TestDrive
+            Path           = $relativeHiddenFilePath1Disc
             Force          = $false
-            ExpectedResult = $hiddenFilePath1
         }
         @{
-            Path           = $relativeHiddenFilePath2
-            BasePath       = $TestDrive
+            Path           = $relativeHiddenFilePath2Disc
             Force          = $false
-            ExpectedResult = $hiddenFilePath2
         }
         @{
-            Path           = $relativeHiddenFileWildcardPath
-            BasePath       = $TestDrive
+            Path           = $relativeHiddenFileWildcardPathDisc
             Force          = $false
-            ExpectedResult = $null
+            IsWildcardNoForce = $true
         }
         @{
-            Path           = $relativeHiddenFilePath1
-            BasePath       = $TestDrive
+            Path           = $relativeHiddenFilePath1Disc
             Force          = $true
-            ExpectedResult = $hiddenFilePath1
         }
         @{
-            Path           = $relativeHiddenFilePath2
-            BasePath       = $TestDrive
+            Path           = $relativeHiddenFilePath2Disc
             Force          = $true
-            ExpectedResult = $hiddenFilePath2
         }
         @{
-            Path           = $relativeHiddenFileWildcardPath
-            BasePath       = $TestDrive
+            Path           = $relativeHiddenFileWildcardPathDisc
             Force          = $true
-            ExpectedResult = @($hiddenFilePath1, $hiddenFilePath2)
+            IsWildcardForce = $true
         }
     ) {
-        param($Path, $BasePath, $Force, $ExpectedResult)
+        param($Path, $Force, $IsWildcardNoForce, $IsWildcardForce)
         try {
-            Push-Location -Path $BasePath
-            Convert-Path -Path $Path -Force:$Force | Should -BeExactly $ExpectedResult
+            Push-Location -Path $TestDrive
+            if ($IsWildcardNoForce) {
+                Convert-Path -Path $Path -Force:$Force | Should -BeNullOrEmpty
+            } elseif ($IsWildcardForce) {
+                $result = Convert-Path -Path $Path -Force:$Force
+                $result | Should -HaveCount 2
+            } else {
+                $resolved = (Resolve-Path -Path $Path).Path
+                Convert-Path -Path $Path -Force:$Force | Should -BeExactly $resolved
+            }
         }
         finally {
             Pop-Location

@@ -8,9 +8,10 @@ Describe 'Test for cmdlet to support Ordered Attribute on hash literal nodes' -T
     }
 
     Context 'Select-Xml cmdlet - Namespace parameter must take IDictionary' {
-        $script:a = $null
+        BeforeAll {
+            $script:a = $null
 
-        $helpXml = @'
+            $helpXml = @'
 <?xml version="1.0" encoding="utf-8" ?>
 
 <helpItems schema="maml">
@@ -26,10 +27,11 @@ Describe 'Test for cmdlet to support Ordered Attribute on hash literal nodes' -T
 </helpItems>
 '@
 
-        { $script:a = Select-Xml -Content $helpXml -XPath "//command:name" -Namespace (
-                        [ordered]@{command="http://schemas.microsoft.com/maml/dev/command/2004/10";
-                                   maml="http://schemas.microsoft.com/maml/2004/10";
-                                   dev="http://schemas.microsoft.com/maml/dev/2004/10"})  } | Should -Not -Throw
+            { $script:a = Select-Xml -Content $helpXml -XPath "//command:name" -Namespace (
+                            [ordered]@{command="http://schemas.microsoft.com/maml/dev/command/2004/10";
+                                       maml="http://schemas.microsoft.com/maml/2004/10";
+                                       dev="http://schemas.microsoft.com/maml/dev/2004/10"})  } | Should -Not -Throw
+        }
 
         It '$a should not be $null' { $script:a | Should -Not -BeNullOrEmpty }
    }
@@ -62,11 +64,13 @@ Describe 'Test for cmdlet to support Ordered Attribute on hash literal nodes' -T
 
     Context 'Select-Object cmdlet - Property parameter (Calculated properties) must take IDictionary' {
 
-        $script:a = $null
+        BeforeAll {
+            $script:a = $null
 
-        {$script:a = Get-ChildItem | Select-Object -Property Name, (
-                    [ordered]@{Name="IsDirectory";
-                               Expression ={$_.PSIsContainer}})} | Should -Not -Throw
+            {$script:a = Get-ChildItem | Select-Object -Property Name, (
+                        [ordered]@{Name="IsDirectory";
+                                   Expression ={$_.PSIsContainer}})} | Should -Not -Throw
+        }
 
         It '$a should not be $null'  { $script:a | Should -Not -BeNullOrEmpty }
     }

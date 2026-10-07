@@ -3,7 +3,7 @@
 using namespace System.Management.Automation.Language
 
 Describe "StaticParameterBinder tests" -Tags "CI" {
-    BeforeAll {
+    BeforeDiscovery {
         $testCases = @(
             @{
                 Source = 'Get-Alias abc'
@@ -120,7 +120,7 @@ Describe "StaticParameterBinder tests" -Tags "CI" {
         )
     }
 
-    It "<Description>: '<Source>'" -TestCases $testCases {
+    It "<Description>: '<Source>'" -TestCases:$testCases {
         param ($Source, $BoundParametersCount, $ExceptionCount, $ValidateScript)
 
         $ast = [Parser]::ParseInput($Source, [ref]$null, [ref]$null)

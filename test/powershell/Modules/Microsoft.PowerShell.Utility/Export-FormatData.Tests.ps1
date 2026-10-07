@@ -38,8 +38,12 @@ Describe "Export-FormatData" -Tags "CI" {
 
     It "Works with literal path" {
         $filename = 'TestDrive:\[formats.ps1xml'
-        $fd | Export-FormatData -LiteralPath $filename
-        (Test-Path -LiteralPath $filename) | Should -BeTrue
+        try {
+            $fd | Export-FormatData -LiteralPath $filename
+            (Test-Path -LiteralPath $filename) | Should -BeTrue
+        } finally {
+            Remove-Item -LiteralPath $filename -ErrorAction SilentlyContinue
+        }
     }
 
     It "Should overwrite the destination file" {

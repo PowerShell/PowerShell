@@ -99,7 +99,7 @@ Describe "Compare-Object" -Tags "CI" {
     }
 
     It "Should be able to specify the property of two objects to compare" {
-	$actualOutput = Compare-Object -ReferenceObject $file3 -DifferenceObject $TestDrive -Property Length
+	$actualOutput = Compare-Object -ReferenceObject (Get-Item $file3) -DifferenceObject (Get-Item $TestDrive) -Property Length
 	$actualOutput[0].Length | Should -BeNullOrEmpty
 	$actualOutput[1].Length | Should -BeGreaterThan 0
 	$actualOutput[0].Length | Should -Not -Be $actualOutput[1].Length
@@ -129,9 +129,10 @@ Describe "Compare-Object" -Tags "CI" {
 }
 
 Describe "Compare-Object DRT basic functionality" -Tags "CI" {
-		if(-not ([System.Management.Automation.PSTypeName]'Employee').Type)
-		{
-			Add-Type -TypeDefinition @"
+		BeforeAll {
+    		if(-not ([System.Management.Automation.PSTypeName]'Employee').Type)
+    		{
+    			Add-Type -TypeDefinition @"
     public class Employee
     {
         public Employee(){}
@@ -181,10 +182,10 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
         }
     }
 "@
-		}
-		else
-		{
-			Add-Type -TypeDefinition @"
+    		}
+    		else
+    		{
+    			Add-Type -TypeDefinition @"
     public class EmployeeComparable : Employee, System.IComparable
     {
         public EmployeeComparable(
@@ -221,7 +222,8 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
         }
     }
 "@
-	}
+    	}
+		}
 	It "Compare-Object with 1 referenceObject and 1 differenceObject should work"{
 		$empsReference = @([EmployeeComparable]::New("john","smith",5))
 		$empsDifference = @([EmployeeComparable]::New("mary","jane",5))

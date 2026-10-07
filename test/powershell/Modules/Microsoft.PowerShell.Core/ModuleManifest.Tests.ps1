@@ -5,7 +5,7 @@
 #  - psd1 keys have values splatted to New-ModuleManifest
 #  - psm1 keys have values written to files
 #  - Other keys with hashtable values are treated as recursive module definitions
-function New-ModuleFromLayout
+function script:New-ModuleFromLayout
 {
     param(
         [Parameter(Mandatory=$true)]

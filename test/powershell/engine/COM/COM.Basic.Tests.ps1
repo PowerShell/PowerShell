@@ -1,16 +1,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe 'Basic COM Tests' -Tags "CI" {
-    BeforeAll {
-        $defaultParamValues = $PSDefaultParameterValues.Clone()
-        $PSDefaultParameterValues["it:skip"] = ![System.Management.Automation.Platform]::IsWindowsDesktop
-    }
+$script:comBasicSkip = -not [System.Management.Automation.Platform]::IsWindowsDesktop
 
-    AfterAll {
-        $global:PSDefaultParameterValues = $defaultParamValues
-    }
-
+Describe 'Basic COM Tests' -Tags "CI" -Skip:$script:comBasicSkip {
     BeforeAll {
         $null = New-Item -Path $TESTDRIVE/file1 -ItemType File
         $null = New-Item -Path $TESTDRIVE/file2 -ItemType File
@@ -107,7 +100,7 @@ Describe 'Basic COM Tests' -Tags "CI" {
 
         It "InvokeMember binder should differentiate PSObject that wraps COM object from other PSObjects" {
             if (Test-IsWindowsArm64) {
-                Set-ItResult -Pending -Because "COMException: The server process could not be started because the configured identity is incorrect. Check the username and password."
+                Set-ItResult -Inconclusive -Because "COMException: The server process could not be started because the configured identity is incorrect. Check the username and password."
             }
 
             ## InvokeMember on the member name 'Windows'
