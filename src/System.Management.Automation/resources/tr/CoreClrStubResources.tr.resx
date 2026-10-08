@@ -138,4 +138,8 @@
   <data name="UnknownErrorNumber" xml:space="preserve">
     <value>Bilinmeyen hata: "{0}".</value>
   </data>
+  <data name="TempHomeDirectoryUnsafePermission" xml:space="preserve">
+    <value>Geçici HOME dizini '{0}' zaten var ancak beklendiği gibi yalnızca kullanıcı izni yok. Farklı bir kullanıcı tarafından oluşturulmuş olabilir ve bu durum potansiyel bir güvenlik riskidir. Bu dizin kaldırılana, izinleri düzeltilene veya 'HOME' ortam değişkeni ayarlanana kadar PowerShell başlatılmaz.</value>
+    <comment>{StrContains="HOME"}</comment>
+  </data>
 </root>

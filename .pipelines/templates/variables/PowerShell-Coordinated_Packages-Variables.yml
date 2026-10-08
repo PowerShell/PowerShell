@@ -9,6 +9,7 @@ parameters:
       - 'net8'
       - 'net9'
       - 'net10'
+      - 'net11'
   - name: ReleaseTagVar
     type: string
     default: 'fromBranch'

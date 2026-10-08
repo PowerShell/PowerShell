@@ -141,11 +141,11 @@
     <comment>The format string that is used by the InnerList in the case where a whole number type is used. The {0} will be the column value.</comment>
   </data>
   <data name="NotSupportAddingToItems" xml:space="preserve">
-    <value>{0} does not support adding to the Items collection, use {1} instead.</value>
+    <value>{0}은(는) Items 컬렉션에 대한 추가를 지원하지 않습니다. 대신 {1}을(를) 사용하세요.</value>
     <comment>{StrContains="Items"}</comment>
   </data>
   <data name="ViewSetWithType" xml:space="preserve">
-    <value>If View is set to a {0}, it should have the type {1}.</value>
+    <value>View가 {0}(으)로 설정된 경우 {1} 유형이어야 합니다.</value>
     <comment>{StrContains="View"}</comment>
   </data>
 </root>

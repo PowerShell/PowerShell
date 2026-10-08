@@ -3,9 +3,45 @@ parameters:
     type: boolean
   - name: vPackName
     type: string
+  - name: IsEarlyAccess
+    type: boolean
+    default: false
+  - name: EarlyAccessFeed
+    type: string
+    default: 'net11'
+  - name: DOTNET_RUNTIME_VERSION
+    type: string
+    default: ' '
+  - name: DOTNET_SDK_VERSION
+    type: string
+    default: ' '
 
 stages:
+- stage: prep
+  displayName: 'Prepare early access .NET'
+  jobs:
+  - ${{ if eq(parameters.IsEarlyAccess, true) }}:
+    - template: /.pipelines/templates/downloadDotnetEarlyAccess.yml@self
+      parameters:
+        DotnetRuntimeVersion: ${{ parameters.DOTNET_RUNTIME_VERSION }}
+        DotnetSdkVersion: ${{ parameters.DOTNET_SDK_VERSION }}
+  - ${{ else }}:
+    - job: skip_download_dotnet_early_access
+      displayName: 'Skip early access .NET download'
+      pool:
+        type: windows
+      variables:
+      - name: ob_outputDirectory
+        value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+      - name: ob_signing_setup_enabled
+        value: false
+      - name: ob_sdl_codeSignValidation_enabled
+        value: false
+      steps:
+      - pwsh: Write-Host 'IsEarlyAccess is false; skipping early access .NET download.'
+
 - stage: BuildStage
+  dependsOn: [prep]
   jobs:
   - job: BuildJob
     pool:
@@ -41,6 +77,10 @@ stages:
       ob_createvpack_verbose: true
       ob_createvpack_packagename: '${{ parameters.vPackName }}.$(architecture)'
       ob_createvpack_description: PowerShell $(architecture) $(version)
+      IsEarlyAccess: ${{ parameters.IsEarlyAccess }}
+      EARLY_ACCESS_FEED: ${{ parameters.EarlyAccessFeed }}
+      DOTNET_RUNTIME_VERSION: ${{ parameters.DOTNET_RUNTIME_VERSION }}
+      DOTNET_SDK_VERSION: ${{ parameters.DOTNET_SDK_VERSION }}
       # Some official-build adapters force the injected validator on despite templateContext.
       # Exclude this payload from that validator; it is validated below with the tools-only policy.
       ob_sdl_codeSignValidation_excludes: '-|**\*.ps1;-|**\*.psm1;-|**\*.ps1xml;-|**\*.psd1;-|**\*.exe;-|**\*.dll'
@@ -147,13 +187,18 @@ stages:
           AnalyzeInPipeline: false # Do not upload results
           Language: csharp
 
-      - task: UseDotNet@2
-        displayName: 'Install .NET based on global.json'
-        inputs:
-          useGlobalJson: true
-          workingDirectory: $(repoRoot)
-        env:
-          ob_restore_phase: true
+      - ${{ if eq(parameters.IsEarlyAccess, true) }}:
+        - template: /.pipelines/templates/install-dotnet.yml@self
+          parameters:
+            architecture: win-x64
+      - ${{ else }}:
+        - task: UseDotNet@2
+          displayName: 'Install .NET based on global.json'
+          inputs:
+            useGlobalJson: true
+            workingDirectory: $(repoRoot)
+          env:
+            ob_restore_phase: true
 
       - pwsh: |
           # Need to set PowerShellRoot variable for obp-file-signing template
@@ -204,6 +249,8 @@ stages:
         displayName: Build Windows Universal - $(Architecture) -$(BuildConfiguration) Symbols folder
         env:
           __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+          ${{ if eq(parameters.IsEarlyAccess, true) }}:
+            VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: $(VSS_NUGET_EXTERNAL_FEED_ENDPOINTS)
           ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
 
       - task: CodeQL3000Finalize@0 # Add CodeQL Finalize task right after your 'Build' step.
