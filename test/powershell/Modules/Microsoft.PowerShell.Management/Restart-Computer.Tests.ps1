@@ -41,6 +41,23 @@ try
             }
         }
 
+        It "Should support -Comment parameter" -Skip:(!$IsWindows) {
+            $comment = "Testing comment"
+            Restart-Computer -Comment $comment -ErrorAction Stop | Should -BeNullOrEmpty
+        }
+
+        It "Should support -RestartDelaySec parameter" -Skip:(!$IsWindows) {
+            $restartDelaySec = 30
+            Restart-Computer -RestartDelaySec $restartDelaySec -ErrorAction Stop | Should -BeNullOrEmpty
+        }
+
+        It "Should support Reason types" -Skip:(!$IsWindows) {
+            $ReasonList = [System.Enum]::GetNames([Microsoft.PowerShell.Commands.ShutdownReason])
+            foreach ( $reason in $ReasonList ) {
+                Restart-Computer -Reason $reason -ErrorAction Stop | Should -BeNullOrEmpty
+            }
+        }
+
         # this requires setting a test hook, so we wrap the execution with try/finally of the
         # set operation. Internally, we want to suppress the progress, so
         # that is also wrapped in try/finally
