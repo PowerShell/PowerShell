@@ -201,6 +201,22 @@ Describe "Stop-parsing uses legacy native argument passing" -Tag 'CI' {
 
         $lines | Should -BeExactly 'Arg 0 is </p:Category="CI,Nightly">'
     }
+
+    It "Uses legacy construction for arguments before '--%' with <argumentListValue> argument passing" -Skip:(-not $IsWindows) -TestCases @(
+        @{ argumentListValue = 'Standard' }
+        @{ argumentListValue = 'Windows' }
+    ) {
+        param($argumentListValue)
+
+        $PSNativeCommandArgumentPassing = $argumentListValue
+        $lines = @(Invoke-Expression 'testexe -echoargs 1, 2 --% tail')
+
+        $lines | Should -BeExactly @(
+            'Arg 0 is <1,>'
+            'Arg 1 is <2>'
+            'Arg 2 is <tail>'
+        )
+    }
 }
 
 foreach ( $argumentListValue in "Standard","Legacy","Windows" ) {
