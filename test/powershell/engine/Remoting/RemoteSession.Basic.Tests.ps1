@@ -405,7 +405,7 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
     }
 
     It 'Remote session has up-to-date TPA list' {
-       $session = New-RemoteSession -ConfigurationName $endPoint
+        $session = New-RemoteSession -ConfigurationName $endPoint
         try {
             $tpa_remote = Invoke-Command -Session $session -ScriptBlock { [AppContext]::GetData('TRUSTED_PLATFORM_ASSEMBLIES') -split ';' | Sort-Object -Unique }
             $tpa_local = [AppContext]::GetData('TRUSTED_PLATFORM_ASSEMBLIES') -split ';' | Sort-Object -Unique
