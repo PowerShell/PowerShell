@@ -1620,7 +1620,10 @@ namespace System.Management.Automation
                             }
                             catch (Exception e) // Catch-all OK, this is a third-party callout
                             {
-                                if (e is ProviderInvocationException)
+                                if (e is ProviderInvocationException ||
+                                    (dynamicParameterCmdlet is IReportDynamicParameterBindingErrors reportErrors &&
+                                     reportErrors.ShouldReportDynamicParameterBindingErrors &&
+                                     e is ItemNotFoundException or ProviderNotFoundException or DriveNotFoundException))
                                 {
                                     throw;
                                 }

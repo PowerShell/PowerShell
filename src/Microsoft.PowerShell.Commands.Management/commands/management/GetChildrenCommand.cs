@@ -200,6 +200,9 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        internal override bool ShouldReportDynamicParameterBindingErrors =>
+            ExperimentalFeature.IsEnabled(ExperimentalFeature.PSProviderDynamicParameterBindingErrors);
+
         /// <summary>
         /// A virtual method for retrieving the dynamic parameters for a cmdlet. Derived cmdlets
         /// that require dynamic parameters should override this method and return the

@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// The base command for the core commands.
     /// </summary>
-    public abstract class CoreCommandBase : PSCmdlet, IDynamicParameters
+    public abstract class CoreCommandBase : PSCmdlet, IDynamicParameters, IReportDynamicParameterBindingErrors
     {
         #region Tracer
 
@@ -79,6 +79,11 @@ namespace Microsoft.PowerShell.Commands
         /// are none.
         /// </returns>
         internal virtual object GetDynamicParameters(CmdletProviderContext context) => null;
+
+        internal virtual bool ShouldReportDynamicParameterBindingErrors => false;
+
+        bool IReportDynamicParameterBindingErrors.ShouldReportDynamicParameterBindingErrors =>
+            ShouldReportDynamicParameterBindingErrors;
 
         /// <summary>
         /// Called by the base implementation that checks the SupportShouldProcess provider
@@ -243,15 +248,15 @@ namespace Microsoft.PowerShell.Commands
             {
                 _dynamicParameters = GetDynamicParameters(context);
             }
-            catch (ItemNotFoundException)
+            catch (ItemNotFoundException) when (!ShouldReportDynamicParameterBindingErrors)
             {
                 _dynamicParameters = null;
             }
-            catch (ProviderNotFoundException)
+            catch (ProviderNotFoundException) when (!ShouldReportDynamicParameterBindingErrors)
             {
                 _dynamicParameters = null;
             }
-            catch (DriveNotFoundException)
+            catch (DriveNotFoundException) when (!ShouldReportDynamicParameterBindingErrors)
             {
                 _dynamicParameters = null;
             }

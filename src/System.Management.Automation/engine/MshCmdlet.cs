@@ -66,6 +66,11 @@ namespace System.Management.Automation
         /// </returns>
         object? GetDynamicParameters();
     }
+
+    internal interface IReportDynamicParameterBindingErrors
+    {
+        bool ShouldReportDynamicParameterBindingErrors { get; }
+    }
 #nullable restore
 
     /// <summary>
