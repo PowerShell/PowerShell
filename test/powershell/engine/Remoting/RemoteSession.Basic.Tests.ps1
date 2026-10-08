@@ -403,4 +403,23 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
             $session | Remove-PSSession -ErrorAction Ignore
         }
     }
+
+    It 'Remote session has up-to-date TPA list' {
+        $session = New-RemoteSession -ConfigurationName $endPoint
+        try {
+            $tpa_remote = Invoke-Command -Session $session -ScriptBlock { [AppContext]::GetData('TRUSTED_PLATFORM_ASSEMBLIES') -split ';' | Sort-Object -Unique }
+            $tpa_local = [AppContext]::GetData('TRUSTED_PLATFORM_ASSEMBLIES') -split ';' | Sort-Object -Unique
+
+            # 2 DLLs are intentionally excluded from the WinRM session side.
+            $diff = Compare-Object -ReferenceObject $tpa_local -DifferenceObject $tpa_remote
+            $diff | Should -HaveCount 2
+            $diff | ForEach-Object SideIndicator | Sort-Object -Unique | Should -Be '<='
+
+            $actualDlls = $diff.InputObject | Split-Path -Leaf
+            $actualDlls | Should -Contain 'Microsoft.PowerShell.GraphicalHost.dll'
+            $actualDlls | Should -Contain 'pwsh.dll'
+        } finally {
+            $session | Remove-PSSession -ErrorAction Ignore
+        }
+    }
 }
