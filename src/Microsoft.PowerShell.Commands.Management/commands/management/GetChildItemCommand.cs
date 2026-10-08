@@ -203,11 +203,14 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets a value indicating whether provider-resolution failures should be reported while binding dynamic parameters.
         /// </summary>
-        internal override bool ShouldReportDynamicParameterBindingErrors =>
-            ExperimentalFeature.IsEnabled(ExperimentalFeature.PSProviderDynamicParameterBindingErrors);
-
         bool IReportDynamicParameterBindingErrors.ShouldReportDynamicParameterBindingErrors =>
             ShouldReportDynamicParameterBindingErrors;
+
+        /// <summary>
+        /// Gets a value indicating whether provider-resolution failures should be reported while binding dynamic parameters.
+        /// </summary>
+        internal override bool ShouldReportDynamicParameterBindingErrors =>
+            ExperimentalFeature.IsEnabled(ExperimentalFeature.PSProviderDynamicParameterBindingErrors);
 
         /// <summary>
         /// A virtual method for retrieving the dynamic parameters for a cmdlet. Derived cmdlets
