@@ -12,18 +12,18 @@ Describe "FileSystem Provider short path tests" -Tags "CI", "RequireAdminOnWindo
 
         try {
             $null = New-Item -ItemType Directory -Path $longDirectory -Force
-            & fsutil file setshortname $longDirectory 'A~1' 2>$null | Out-Null
-            if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $shortDirectory)) {
+            Start-NativeExecution -sb { & fsutil file setshortname $longDirectory 'A~1' 2>$null } -IgnoreExitcode
+            if ($LASTEXITCODE -ne 0 -or -not [IO.Directory]::Exists($shortDirectory)) {
                 Set-ItResult -Skipped -Because '8.3 short names are unavailable on this volume'
                 return
             }
 
-            Set-Content -LiteralPath $file -Value 'test'
+            [IO.File]::WriteAllText($file, 'test')
             Push-Location ([IO.Path]::GetPathRoot($TestDrive))
             $locationChanged = $true
 
             Remove-Item -LiteralPath $file -Force -ErrorAction Stop
-            $file | Should -Not -Exist
+            ([IO.File]::Exists($file)) | Should -BeFalse
         }
         finally {
             if ($locationChanged) {
@@ -31,6 +31,32 @@ Describe "FileSystem Provider short path tests" -Tags "CI", "RequireAdminOnWindo
             }
 
             Remove-Item -LiteralPath $longDirectory -Recurse -Force -ErrorAction SilentlyContinue
+        }
+    }
+
+    It "Remove-Item rejects a path component that resolves to its parent" -Skip:(!$IsWindows) {
+        $parentDirectory = Join-Path $TestDrive 'parent'
+        $childDirectory = Join-Path $parentDirectory 'child'
+        $file = Join-Path $childDirectory 'p.txt'
+        $locationChanged = $false
+
+        try {
+            $null = New-Item -ItemType Directory -Path $childDirectory -Force
+            [IO.File]::WriteAllText($file, 'test')
+            Push-Location ([IO.Path]::GetPathRoot($TestDrive))
+            $locationChanged = $true
+
+            { Remove-Item -LiteralPath (Join-Path $childDirectory '...') -Force -Recurse -ErrorAction Stop } |
+                Should -Throw -ErrorId 'Argument,Microsoft.PowerShell.Commands.RemoveItemCommand'
+            ([IO.Directory]::Exists($childDirectory)) | Should -BeTrue
+            ([IO.File]::Exists($file)) | Should -BeTrue
+        }
+        finally {
+            if ($locationChanged) {
+                Pop-Location
+            }
+
+            Remove-Item -LiteralPath $parentDirectory -Recurse -Force -ErrorAction SilentlyContinue
         }
     }
 }
