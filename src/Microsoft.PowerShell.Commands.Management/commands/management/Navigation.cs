@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// The base command for the core commands.
     /// </summary>
-    public abstract class CoreCommandBase : PSCmdlet, IDynamicParameters, IReportDynamicParameterBindingErrors
+    public abstract class CoreCommandBase : PSCmdlet, IDynamicParameters
     {
         #region Tracer
 
@@ -67,6 +67,11 @@ namespace Microsoft.PowerShell.Commands
         private bool _suppressWildcardExpansion;
 
         /// <summary>
+        /// Gets a value indicating whether dynamic parameter binding errors should be reported.
+        /// </summary>
+        internal virtual bool ShouldReportDynamicParameterBindingErrors => false;
+
+        /// <summary>
         /// A virtual method for retrieving the dynamic parameters for a cmdlet. Derived cmdlets
         /// that require dynamic parameters should override this method and return the
         /// dynamic parameter object.
@@ -79,11 +84,6 @@ namespace Microsoft.PowerShell.Commands
         /// are none.
         /// </returns>
         internal virtual object GetDynamicParameters(CmdletProviderContext context) => null;
-
-        internal virtual bool ShouldReportDynamicParameterBindingErrors => false;
-
-        bool IReportDynamicParameterBindingErrors.ShouldReportDynamicParameterBindingErrors =>
-            ShouldReportDynamicParameterBindingErrors;
 
         /// <summary>
         /// Called by the base implementation that checks the SupportShouldProcess provider
