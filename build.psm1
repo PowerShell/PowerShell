@@ -678,8 +678,9 @@ Fix steps:
     $incFileName = "powershell_$runtime.inc"
     $includeWindowsDesktopReferences = (($Options.Runtime -like 'win7-*' -or $Options.Runtime -eq 'win-arm64') -and !$ForMinimalSize) -or $Options.Runtime -eq 'fxdependent-win-desktop'
     $incFilePath = "$PSScriptRoot/src/TypeCatalogGen/$incFileName"
-    $needsWindowsDesktopReferences = $includeWindowsDesktopReferences -and (-not (Select-String -Path $incFilePath -Pattern 'Microsoft.WindowsDesktop.App.Ref' -Quiet -ErrorAction Ignore))
-    if ($TypeGen -or -not (Test-Path $incFilePath) -or $needsWindowsDesktopReferences) {
+    $hasWindowsDesktopReferences = Select-String -Path $incFilePath -Pattern 'Microsoft.WindowsDesktop.App.Ref' -Quiet -ErrorAction Ignore
+    $hasReferenceSetMismatch = $includeWindowsDesktopReferences -ne $hasWindowsDesktopReferences
+    if ($TypeGen -or -not (Test-Path $incFilePath) -or $hasReferenceSetMismatch) {
         Write-Log -message "Run TypeGen (generating CorePsTypeCatalog.cs)"
         Start-TypeGen -IncFileName $incFileName -IncludeWindowsDesktopReferences:$includeWindowsDesktopReferences
     }
