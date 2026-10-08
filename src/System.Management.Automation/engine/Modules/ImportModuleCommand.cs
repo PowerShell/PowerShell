@@ -547,7 +547,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void ImportModule_ViaAssembly(ImportModuleOptions importModuleOptions, Assembly suppliedAssembly)
         {
-            bool moduleLoaded = false;
+            PSModuleInfo alreadyLoadedModule = null;
             string moduleName = "dynamic_code_module_" + suppliedAssembly.FullName;
 
             // Loop through Module Cache to ensure that the module is not already imported.
@@ -558,12 +558,7 @@ namespace Microsoft.PowerShell.Commands
                     // If the module in the moduleTable is an assembly module without path, the moduleName is the key.
                     if (pair.Key.Equals(moduleName, StringComparison.OrdinalIgnoreCase))
                     {
-                        moduleLoaded = true;
-                        if (BasePassThru)
-                        {
-                            WriteObject(pair.Value);
-                        }
-
+                        alreadyLoadedModule = pair.Value;
                         break;
                     }
 
@@ -572,17 +567,26 @@ namespace Microsoft.PowerShell.Commands
 
                 if (pair.Value.Path.Equals(suppliedAssembly.Location, StringComparison.OrdinalIgnoreCase))
                 {
-                    moduleLoaded = true;
-                    if (BasePassThru)
-                    {
-                        WriteObject(pair.Value);
-                    }
-
+                    alreadyLoadedModule = pair.Value;
                     break;
                 }
             }
 
-            if (!moduleLoaded)
+            if (alreadyLoadedModule is not null)
+            {
+                // The assembly has already been loaded as a module but it still needs to be
+                // added to the current session state and have its members imported. This is
+                // needed when the parent module has been re-imported with -Force, as the
+                // cached binary module is no longer a nested module of the new parent.
+                AddModuleToModuleTables(Context, TargetSessionState.Internal, alreadyLoadedModule);
+                ImportModuleMembers(alreadyLoadedModule, BasePrefix, importModuleOptions);
+
+                if (BasePassThru)
+                {
+                    WriteObject(alreadyLoadedModule);
+                }
+            }
+            else
             {
                 PSModuleInfo module = LoadBinaryModule(
                     parentModule: null,
