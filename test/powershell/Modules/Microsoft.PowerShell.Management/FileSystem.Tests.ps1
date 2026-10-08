@@ -3,6 +3,38 @@
 
 Import-Module HelpersCommon
 
+Describe "FileSystem Provider short path tests" -Tags "CI", "RequireAdminOnWindows" {
+    It "Remove-Item handles a short path that expands to a shorter name" -Skip:(!$IsWindows) {
+        $longDirectory = Join-Path $TestDrive 'a'
+        $shortDirectory = Join-Path $TestDrive 'A~1'
+        $file = Join-Path $shortDirectory 'p.txt'
+        $locationChanged = $false
+
+        try {
+            $null = New-Item -ItemType Directory -Path $longDirectory -Force
+            & fsutil file setshortname $longDirectory 'A~1' 2>$null | Out-Null
+            if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $shortDirectory)) {
+                Set-ItResult -Skipped -Because '8.3 short names are unavailable on this volume'
+                return
+            }
+
+            Set-Content -LiteralPath $file -Value 'test'
+            Push-Location ([IO.Path]::GetPathRoot($TestDrive))
+            $locationChanged = $true
+
+            Remove-Item -LiteralPath $file -Force -ErrorAction Stop
+            $file | Should -Not -Exist
+        }
+        finally {
+            if ($locationChanged) {
+                Pop-Location
+            }
+
+            Remove-Item -LiteralPath $longDirectory -Recurse -Force -ErrorAction SilentlyContinue
+        }
+    }
+}
+
 Describe "Basic FileSystem Provider Tests" -Tags "CI" {
     BeforeAll {
         $testDir = "TestDir"
