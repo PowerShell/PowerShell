@@ -18,7 +18,7 @@
 <details>
 
 <summary>
-
+<p>Update to .NET SDK 11.0.100-rc.2.26504.105</p>
 <p>We thank the following contributors!</p>
 <p>@xtqqczze</p>
 
@@ -48,7 +48,7 @@
 
 <ul>
 <li>Move to the latest <code>Microsoft.PowerShell.Native</code> package and add test (#28173)</li>
-<li>Update Microsoft.PowerShell.Native package version (#28168)</li>
+<li>Update <code>Microsoft.PowerShell.Native</code> package version (#28168)</li>
 <li>Add native Azure Linux 4 RPM packaging (#28107)</li>
 <li>Bump CodeQL init and analyze actions to 4.38.2 (#28123)</li>
 <li>Bump CodeQL init and analyze actions to 4.38.1 (#28121)</li>
