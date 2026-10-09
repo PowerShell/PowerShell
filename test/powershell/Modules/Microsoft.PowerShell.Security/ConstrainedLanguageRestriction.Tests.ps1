@@ -338,11 +338,15 @@ try
                 $expectedError.FullyQualifiedErrorId | Should -BeExactly "CannotCreateComTypeConstrainedLanguage,Microsoft.PowerShell.Commands.NewObjectCommand"
             }
 
-            It "Verifies New-Object with COM types works back in full language mode again" {
+        }
 
-                $result = New-Object -ComObject ADODB.Parameter
-                $result.Direction | Should -Be 1
-            }
+    }
+
+    Describe "COM activation in full language mode" -Tags 'Feature','RequireAdminOnWindows','NotWinPE' {
+        It "Verifies New-Object with COM types works back in full language mode again" {
+
+            $result = New-Object -ComObject ADODB.Parameter
+            $result.Direction | Should -Be 1
         }
     }
 

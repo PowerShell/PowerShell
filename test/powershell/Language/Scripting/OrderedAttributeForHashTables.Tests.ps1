@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
 Describe 'Test for cmdlet to support Ordered Attribute on hash literal nodes' -Tags "CI" {
     It 'New-Object - Property Parameter Must take IDictionary' {
         $a = New-Object psobject -Property ([ordered]@{one=1;two=2})
@@ -34,32 +35,6 @@ Describe 'Test for cmdlet to support Ordered Attribute on hash literal nodes' -T
         It '$a should not be $null' { $script:a | Should -Not -BeNullOrEmpty }
    }
 
-    Context 'New-CimInstance cmdlet' {
-        BeforeAll {
-            If ($IsWindows) {
-                Get-CimInstance -ClassName Win32_Environment -Filter "name='TestCimInstance'" | Remove-CimInstance
-            }
-        }
-        AfterAll {
-            If ($IsWindows) {
-                Get-CimInstance -ClassName Win32_Environment -Filter "name='TestCimInstance'" | Remove-CimInstance
-            }
-        }
-
-        It 'Property parameter must take IDictionary' -Skip:(-not $IsWindows) {
-
-            $script:a = $null
-
-            { $script:a = New-CimInstance -ClassName Win32_Environment -Property ([ordered]@{
-                Name="TestCimInstance";
-                VariableValue="testvalu234e";
-                UserName=[System.Environment]::UserName
-            }) -ClientOnly } | Should -Not -Throw
-            $script:a | Should -Not -BeNullOrEmpty
-            $script:a.Name | Should -BeExactly "TestCimInstance"
-        }
-    }
-
     Context 'Select-Object cmdlet - Property parameter (Calculated properties) must take IDictionary' {
 
         $script:a = $null
@@ -69,5 +44,31 @@ Describe 'Test for cmdlet to support Ordered Attribute on hash literal nodes' -T
                                Expression ={$_.PSIsContainer}})} | Should -Not -Throw
 
         It '$a should not be $null'  { $script:a | Should -Not -BeNullOrEmpty }
+    }
+}
+
+Describe 'New-CimInstance cmdlet with an ordered property dictionary' -Tags "CI", "NotWinPE" {
+    BeforeAll {
+        If ($IsWindows) {
+            Get-CimInstance -ClassName Win32_Environment -Filter "name='TestCimInstance'" | Remove-CimInstance
+        }
+    }
+    AfterAll {
+        If ($IsWindows) {
+            Get-CimInstance -ClassName Win32_Environment -Filter "name='TestCimInstance'" | Remove-CimInstance
+        }
+    }
+
+    It 'Property parameter must take IDictionary' -Skip:(-not $IsWindows) {
+
+        $script:a = $null
+
+        { $script:a = New-CimInstance -ClassName Win32_Environment -Property ([ordered]@{
+            Name="TestCimInstance";
+            VariableValue="testvalu234e";
+            UserName=[System.Environment]::UserName
+        }) -ClientOnly } | Should -Not -Throw
+        $script:a | Should -Not -BeNullOrEmpty
+        $script:a.Name | Should -BeExactly "TestCimInstance"
     }
 }

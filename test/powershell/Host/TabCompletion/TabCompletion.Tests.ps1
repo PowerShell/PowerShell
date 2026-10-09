@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
 Describe "TabCompletion" -Tags CI {
     BeforeAll {
         $separator = [System.IO.Path]::DirectorySeparatorChar
@@ -1012,11 +1013,6 @@ param([ValidatePattern(
         $res.CompletionMatches[0].CompletionText | Should -BeExactly Cat
     }
 
-    It 'Should complete cim ETS member added by shortname' -Skip:(!$IsWindows -or (Test-IsWinServer2012R2) -or (Test-IsWindows2016)) {
-        $res = TabExpansion2 -inputScript '(Get-NetFirewallRule).Nam'
-        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Name'
-    }
-
     It 'Should complete variable assigned with Data statement' {
         $TestString = 'data MyDataVar {"Hello"};$MyDatav'
         $res = TabExpansion2 -inputScript $TestString
@@ -1308,7 +1304,6 @@ param([ValidatePattern(
             $exeVerbsStartingWithRunSingleQuote = $exeVerbsSingleQuote | Where-Object { $_ -like "'run*" }
             $exeVerbsDoubleQuote = GetProcessInfoVerbs -Path $exePath -DoubleQuote
             $exeVerbsStartingWithRunDoubleQuote = $exeVerbsDoubleQuote | Where-Object { $_ -like """run*" }
-            $powerShellExeWithNoExtension = 'powershell'
             $txtPath = Join-Path -Path $TestDrive -ChildPath 'test.txt'
             $txtVerbs = GetProcessInfoVerbs -Path $txtPath
             $wavPath = Join-Path -Path $TestDrive -ChildPath 'test.wav'
@@ -1328,7 +1323,6 @@ param([ValidatePattern(
             @{ TextInput = "Start-Process -FilePath $exePath -Verb run"; ExpectedVerbs = $exeVerbsStartingWithRun -join ' ' }
             @{ TextInput = "Start-Process -FilePath $exePath -Verb 'run"; ExpectedVerbs = $exeVerbsStartingWithRunSingleQuote -join ' ' }
             @{ TextInput = "Start-Process -FilePath $exePath -Verb ""run"; ExpectedVerbs = $exeVerbsStartingWithRunDoubleQuote -join ' ' }
-            @{ TextInput = "Start-Process -FilePath $powerShellExeWithNoExtension -Verb "; ExpectedVerbs = $exeVerbs -join ' ' }
             @{ TextInput = "Start-Process -FilePath $txtPath -Verb "; ExpectedVerbs = $txtVerbs -join ' ' }
             @{ TextInput = "Start-Process -FilePath $wavPath -Verb "; ExpectedVerbs = $wavVerbs -join ' ' }
             @{ TextInput = "Start-Process -FilePath $docxPath -Verb "; ExpectedVerbs = $docxVerbs -join ' ' }
@@ -2586,11 +2580,6 @@ param ($Param1)
         }
     }
 
-    It 'Should correct slashes in UNC path completion' -Skip:(!$IsWindows) {
-        $Res = TabExpansion2 -inputScript 'Get-ChildItem //localhost/c$/Windows'
-        $Res.CompletionMatches[0].CompletionText | Should -Be "'\\localhost\c$\Windows'"
-    }
-
     It 'Should keep custom drive names when completing file paths' {
         $TempDriveName = "asdf"
         $null = New-PSDrive -Name $TempDriveName -PSProvider FileSystem -Root $HOME
@@ -2782,14 +2771,6 @@ param ($Param1)
         It "Tab completion for registry" -Skip:(!$IsWindows) {
             $beforeTab = 'registry::HKEY_l'
             $afterTab = 'Registry::HKEY_LOCAL_MACHINE'
-            $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
-            $res.CompletionMatches | Should -HaveCount 1
-            $res.CompletionMatches[0].CompletionText | Should -BeExactly $afterTab
-        }
-
-        It "Tab completion for wsman provider" -Skip:(!$IsWindows) {
-            $beforeTab = 'wsman::localh'
-            $afterTab = 'WSMan::localhost'
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
             $res.CompletionMatches | Should -HaveCount 1
             $res.CompletionMatches[0].CompletionText | Should -BeExactly $afterTab
@@ -3521,45 +3502,12 @@ dir -Recurse `
         }
     }
 
-    Context "DSC tab completion tests" {
-        BeforeAll {
-            $testCases = @(
-                @{ inputStr = 'Configura'; expected = 'Configuration' }
-                @{ inputStr = '$extension = New-Object [System.Collections.Generic.List[string]]; $extension.wh'; expected = "Where(" }
-                @{ inputStr = '$extension = New-Object [System.Collections.Generic.List[string]]; $extension.fo'; expected = 'ForEach(' }
-                @{ inputStr = 'Configuration foo { node $SelectedNodes.'; expected = 'Where(' }
-                @{ inputStr = 'Configuration foo { node $SelectedNodes.fo'; expected = 'ForEach(' }
-                @{ inputStr = 'Configuration foo { node $AllNodes.'; expected = 'Where(' }
-                @{ inputStr = 'Configuration foo { node $ConfigurationData.AllNodes.'; expected = 'Where(' }
-                @{ inputStr = 'Configuration foo { node $ConfigurationData.AllNodes.fo'; expected = 'ForEach(' }
-                @{ inputStr = 'Configuration bar { File foo { Destinat'; expected = 'DestinationPath = ' }
-                @{ inputStr = 'Configuration bar { File foo { Content'; expected = 'Contents = ' }
-                @{ inputStr = 'Configuration bar { Fil'; expected = 'File' }
-                @{ inputStr = 'Configuration bar { Import-Dsc'; expected = 'Import-DscResource' }
-                @{ inputStr = 'Configuration bar { Import-DscResource -Modu'; expected = '-ModuleName' }
-                @{ inputStr = 'Configuration bar { Import-DscResource -ModuleName blah -Modu'; expected = '-ModuleVersion' }
-                @{ inputStr = 'Configuration bar { Scri'; expected = 'Script' }
-                @{ inputStr = 'configuration foo { Script ab {Get'; expected = 'GetScript = ' }
-                @{ inputStr = 'configuration foo { Script ab { '; expected = 'DependsOn = ' }
-                @{ inputStr = 'configuration foo { File ab { Attributes ='; expected = "'Archive'" }
-                @{ inputStr = "configuration foo { File ab { Attributes = "; expected = "'Archive'" }
-                @{ inputStr = "configuration foo { File ab { Attributes = ar"; expected = "Archive" }
-                @{ inputStr = "configuration foo { File ab { Attributes = 'ar"; expected = "Archive" }
-                @{ inputStr = 'configuration foo { File ab { Attributes =('; expected = "'Archive'" }
-                @{ inputStr = 'configuration foo { File ab { Attributes =( '; expected = "'Archive'" }
-                @{ inputStr = "configuration foo { File ab { Attributes =('Archive',"; expected = "'Hidden'" }
-                @{ inputStr = "configuration foo { File ab { Attributes =('Archive', "; expected = "'Hidden'" }
-                @{ inputStr = "configuration foo { File ab { Attributes =('Archive', 'Hi"; expected = "Hidden" }
-            )
-        }
-
-        It "Input '<inputStr>' should successfully complete" -TestCases $testCases -Skip:(!$IsWindows) {
+    Context "Generic collection completion tests" {
+        It "Input '<inputStr>' should successfully complete" -TestCases @(
+            @{ inputStr = '$extension = New-Object [System.Collections.Generic.List[string]]; $extension.wh'; expected = "Where(" }
+            @{ inputStr = '$extension = New-Object [System.Collections.Generic.List[string]]; $extension.fo'; expected = 'ForEach(' }
+        ) {
             param($inputStr, $expected)
-
-            if (Test-IsWindowsArm64) {
-                Set-ItResult -Pending -Because "TBD"
-            }
-
 
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
             $res.CompletionMatches.Count | Should -BeGreaterThan 0
@@ -3567,50 +3515,11 @@ dir -Recurse `
         }
     }
 
-    Context "CIM cmdlet completion tests" {
-        BeforeAll {
-            $testCases = @(
-                @{ inputStr = "Invoke-CimMethod -ClassName Win32_Process -MethodName Crea"; expected = "Create" }
-                @{ inputStr = "Get-CimInstance -ClassName Win32_Process | Invoke-CimMethod -MethodName AttachDeb"; expected = "AttachDebugger" }
-                @{ inputStr = 'Get-CimInstance Win32_Process | ?{ $_.ProcessId -eq $PID } | Get-CimAssociatedInstance -ResultClassName Win32_Co*uterSyst'; expected = "Win32_ComputerSystem" }
-                @{ inputStr = "Get-CimInstance -ClassName Win32_Environm"; expected = "Win32_Environment" }
-                @{ inputStr = "New-CimInstance -ClassName Win32_Environm"; expected = "Win32_Environment" }
-                @{ inputStr = 'New-CimInstance -ClassName Win32_Process | %{ $_.Captio'; expected = "Caption" }
-                @{ inputStr = "Invoke-CimMethod -ClassName Win32_Environm"; expected = 'Win32_Environment' }
-                @{ inputStr = "Get-CimClass -ClassName Win32_Environm"; expected = 'Win32_Environment' }
-                @{ inputStr = 'Get-CimInstance -ClassName Win32_Process | Invoke-CimMethod -MethodName SetPriorit'; expected = 'SetPriority' }
-                @{ inputStr = 'Invoke-CimMethod -Namespace root/StandardCimv2 -ClassName MSFT_NetIPAddress -MethodName Crea'; expected = 'Create' }
-                @{ inputStr = '$win32_process = Get-CimInstance -ClassName Win32_Process; $win32_process | Invoke-CimMethod -MethodName AttachDe'; expected = 'AttachDebugger' }
-                @{ inputStr = '$win32_process = Get-CimInstance -ClassName Win32_Process; Invoke-CimMethod -InputObject $win32_process -MethodName AttachDe'; expected = 'AttachDebugger' }
-                @{ inputStr = 'Get-CimInstance Win32_Process | ?{ $_.ProcessId -eq $PID } | Get-CimAssociatedInstance -ResultClassName Win32_ComputerS'; expected = 'Win32_ComputerSystem' }
-                @{ inputStr = 'Get-CimInstance -Namespace root/Interop -ClassName Win32_PowerSupplyP'; expected = 'Win32_PowerSupplyProfile' }
-                @{ inputStr = 'Get-CimInstance __NAMESP'; expected = '__NAMESPACE' }
-                @{ inputStr = 'Get-CimInstance -Namespace root/Inter'; expected = 'root/Interop' }
-                @{ inputStr = 'Get-CimInstance -Namespace root/Int*ro'; expected = 'root/Interop' }
-                @{ inputStr = 'Get-CimInstance -Namespace root/Interop/'; expected = 'root/Interop/ms_409' }
-                @{ inputStr = 'New-CimInstance -Namespace root/Inter'; expected = 'root/Interop' }
-                @{ inputStr = 'Invoke-CimMethod -Namespace root/Inter'; expected = 'root/Interop' }
-                @{ inputStr = 'Get-CimClass -Namespace root/Inter'; expected = 'root/Interop' }
-                @{ inputStr = 'Register-CimIndicationEvent -Namespace root/Inter'; expected = 'root/Interop' }
-                @{ inputStr = '[Microsoft.Management.Infrastructure.CimClass]$c = $null; $c.CimClassNam'; expected = 'CimClassName' }
-                @{ inputStr = '[Microsoft.Management.Infrastructure.CimClass]$c = $null; $c.CimClassName.Substrin'; expected = 'Substring(' }
-                @{ inputStr = 'Get-CimInstance -ClassName Win32_Process | %{ $_.ExecutableP'; expected = 'ExecutablePath' }
-                @{ inputStr = 'Get-CimInstance -ClassName Win32_Process | Invoke-CimMethod -MethodName SetPriority -Arguments @{'; expected = 'Priority' }
-                @{ inputStr = 'Get-CimInstance -ClassName Win32_Service | Invoke-CimMethod -MethodName Change -Arguments @{d'; expected = 'DesktopInteract' }
-                @{ inputStr = 'Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments @{'; expected = 'CommandLine' }
-                @{ inputStr = 'New-CimInstance Win32_Environment -Property @{'; expected = 'Caption' }
-                @{ inputStr = 'Get-CimInstance Win32_Environment | Set-CimInstance -Property @{'; expected = 'Name' }
-                @{ inputStr = 'Set-CimInstance -Namespace root/CIMV'; expected = 'root/CIMV2' }
-                @{ inputStr = 'Get-CimInstance Win32_Process -Property '; expected = 'Caption' }
-                @{ inputStr = 'Get-CimInstance Win32_Process -Property Caption,'; expected = 'Description' }
-            )
-            $FailCases = @(
-                @{ inputStr = "Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments " }
-                @{ inputStr = "New-CimInstance Win32_Process -Property " }
-            )
-        }
-
-        It "CIM cmdlet input '<inputStr>' should successfully complete" -TestCases $testCases -Skip:(!$IsWindows) {
+    Context "Static CIM type completion tests" {
+        It "CIM type input '<inputStr>' should successfully complete" -TestCases @(
+            @{ inputStr = '[Microsoft.Management.Infrastructure.CimClass]$c = $null; $c.CimClassNam'; expected = 'CimClassName' }
+            @{ inputStr = '[Microsoft.Management.Infrastructure.CimClass]$c = $null; $c.CimClassName.Substrin'; expected = 'Substring(' }
+        ) {
             param($inputStr, $expected)
 
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
@@ -3618,7 +3527,10 @@ dir -Recurse `
             $res.CompletionMatches[0].CompletionText | Should -Be $expected
         }
 
-        It "CIM cmdlet input '<inputStr>' should not successfully complete" -TestCases $FailCases -Skip:(!$IsWindows) {
+        It "CIM cmdlet input '<inputStr>' should not successfully complete" -TestCases @(
+            @{ inputStr = "Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments " }
+            @{ inputStr = "New-CimInstance Win32_Process -Property " }
+        ) -Skip:(!$IsWindows) {
             param($inputStr)
 
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
@@ -3963,7 +3875,132 @@ function MyFunction ($param1, $param2)
     }
 }
 
-Describe "TabCompletion elevated tests" -Tags CI, RequireAdminOnWindows {
+Describe 'CIM ETS member completion' -Tags CI, NotWinPE {
+    It 'Should complete cim ETS member added by shortname' -Skip:(!$IsWindows -or (Test-IsWinServer2012R2) -or (Test-IsWindows2016)) {
+        $res = TabExpansion2 -inputScript '(Get-NetFirewallRule).Nam'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Name'
+    }
+}
+
+Describe 'Start-Process -Verb completion for Windows PowerShell' -Tags CI, NotWinPE {
+    It "Should complete Verb parameter for 'powershell' without an extension" -Skip:(!([System.Management.Automation.Platform]::IsWindowsDesktop)) {
+        $textInput = 'Start-Process -FilePath powershell -Verb '
+        $exePath = Join-Path -Path $TestDrive -ChildPath 'test.exe'
+        $expectedVerbs = (New-Object -TypeName System.Diagnostics.ProcessStartInfo -ArgumentList $exePath).Verbs
+        $res = TabExpansion2 -inputScript $textInput -cursorColumn $textInput.Length
+        $completionText = $res.CompletionMatches.CompletionText | Sort-Object
+        $completionText -join ' ' | Should -BeExactly ($expectedVerbs -join ' ')
+    }
+}
+
+Describe 'UNC path completion' -Tags CI, NotWinPE {
+    It 'Should correct slashes in UNC path completion' -Skip:(!$IsWindows) {
+        $Res = TabExpansion2 -inputScript 'Get-ChildItem //localhost/c$/Windows'
+        $Res.CompletionMatches[0].CompletionText | Should -Be "'\\localhost\c$\Windows'"
+    }
+}
+
+Describe 'WSMan provider completion' -Tags CI, NotWinPE {
+    It 'Tab completion for wsman provider' -Skip:(!$IsWindows) {
+        $beforeTab = 'wsman::localh'
+        $afterTab = 'WSMan::localhost'
+        $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
+        $res.CompletionMatches | Should -HaveCount 1
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly $afterTab
+    }
+}
+
+Describe 'DSC tab completion tests' -Tags CI, NotWinPE {
+    BeforeAll {
+        $testCases = @(
+            @{ inputStr = 'Configura'; expected = 'Configuration' }
+            @{ inputStr = 'Configuration foo { node $SelectedNodes.'; expected = 'Where(' }
+            @{ inputStr = 'Configuration foo { node $SelectedNodes.fo'; expected = 'ForEach(' }
+            @{ inputStr = 'Configuration foo { node $AllNodes.'; expected = 'Where(' }
+            @{ inputStr = 'Configuration foo { node $ConfigurationData.AllNodes.'; expected = 'Where(' }
+            @{ inputStr = 'Configuration foo { node $ConfigurationData.AllNodes.fo'; expected = 'ForEach(' }
+            @{ inputStr = 'Configuration bar { File foo { Destinat'; expected = 'DestinationPath = ' }
+            @{ inputStr = 'Configuration bar { File foo { Content'; expected = 'Contents = ' }
+            @{ inputStr = 'Configuration bar { Fil'; expected = 'File' }
+            @{ inputStr = 'Configuration bar { Import-Dsc'; expected = 'Import-DscResource' }
+            @{ inputStr = 'Configuration bar { Import-DscResource -Modu'; expected = '-ModuleName' }
+            @{ inputStr = 'Configuration bar { Import-DscResource -ModuleName blah -Modu'; expected = '-ModuleVersion' }
+            @{ inputStr = 'Configuration bar { Scri'; expected = 'Script' }
+            @{ inputStr = 'configuration foo { Script ab {Get'; expected = 'GetScript = ' }
+            @{ inputStr = 'configuration foo { Script ab { '; expected = 'DependsOn = ' }
+            @{ inputStr = 'configuration foo { File ab { Attributes ='; expected = "'Archive'" }
+            @{ inputStr = "configuration foo { File ab { Attributes = "; expected = "'Archive'" }
+            @{ inputStr = "configuration foo { File ab { Attributes = ar"; expected = "Archive" }
+            @{ inputStr = "configuration foo { File ab { Attributes = 'ar"; expected = "Archive" }
+            @{ inputStr = 'configuration foo { File ab { Attributes =('; expected = "'Archive'" }
+            @{ inputStr = 'configuration foo { File ab { Attributes =( '; expected = "'Archive'" }
+            @{ inputStr = "configuration foo { File ab { Attributes =('Archive',"; expected = "'Hidden'" }
+            @{ inputStr = "configuration foo { File ab { Attributes =('Archive', "; expected = "'Hidden'" }
+            @{ inputStr = "configuration foo { File ab { Attributes =('Archive', 'Hi"; expected = "Hidden" }
+        )
+    }
+
+    It "Input '<inputStr>' should successfully complete" -TestCases $testCases -Skip:(!$IsWindows) {
+        param($inputStr, $expected)
+
+        if (Test-IsWindowsArm64) {
+            Set-ItResult -Pending -Because "TBD"
+        }
+
+
+        $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+        $res.CompletionMatches.Count | Should -BeGreaterThan 0
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly $expected
+    }
+}
+
+Describe 'CIM cmdlet completion tests' -Tags CI, NotWinPE {
+    BeforeAll {
+        $testCases = @(
+            @{ inputStr = "Invoke-CimMethod -ClassName Win32_Process -MethodName Crea"; expected = "Create" }
+            @{ inputStr = "Get-CimInstance -ClassName Win32_Process | Invoke-CimMethod -MethodName AttachDeb"; expected = "AttachDebugger" }
+            @{ inputStr = 'Get-CimInstance Win32_Process | ?{ $_.ProcessId -eq $PID } | Get-CimAssociatedInstance -ResultClassName Win32_Co*uterSyst'; expected = "Win32_ComputerSystem" }
+            @{ inputStr = "Get-CimInstance -ClassName Win32_Environm"; expected = "Win32_Environment" }
+            @{ inputStr = "New-CimInstance -ClassName Win32_Environm"; expected = "Win32_Environment" }
+            @{ inputStr = 'New-CimInstance -ClassName Win32_Process | %{ $_.Captio'; expected = "Caption" }
+            @{ inputStr = "Invoke-CimMethod -ClassName Win32_Environm"; expected = 'Win32_Environment' }
+            @{ inputStr = "Get-CimClass -ClassName Win32_Environm"; expected = 'Win32_Environment' }
+            @{ inputStr = 'Get-CimInstance -ClassName Win32_Process | Invoke-CimMethod -MethodName SetPriorit'; expected = 'SetPriority' }
+            @{ inputStr = 'Invoke-CimMethod -Namespace root/StandardCimv2 -ClassName MSFT_NetIPAddress -MethodName Crea'; expected = 'Create' }
+            @{ inputStr = '$win32_process = Get-CimInstance -ClassName Win32_Process; $win32_process | Invoke-CimMethod -MethodName AttachDe'; expected = 'AttachDebugger' }
+            @{ inputStr = '$win32_process = Get-CimInstance -ClassName Win32_Process; Invoke-CimMethod -InputObject $win32_process -MethodName AttachDe'; expected = 'AttachDebugger' }
+            @{ inputStr = 'Get-CimInstance Win32_Process | ?{ $_.ProcessId -eq $PID } | Get-CimAssociatedInstance -ResultClassName Win32_ComputerS'; expected = 'Win32_ComputerSystem' }
+            @{ inputStr = 'Get-CimInstance -Namespace root/Interop -ClassName Win32_PowerSupplyP'; expected = 'Win32_PowerSupplyProfile' }
+            @{ inputStr = 'Get-CimInstance __NAMESP'; expected = '__NAMESPACE' }
+            @{ inputStr = 'Get-CimInstance -Namespace root/Inter'; expected = 'root/Interop' }
+            @{ inputStr = 'Get-CimInstance -Namespace root/Int*ro'; expected = 'root/Interop' }
+            @{ inputStr = 'Get-CimInstance -Namespace root/Interop/'; expected = 'root/Interop/ms_409' }
+            @{ inputStr = 'New-CimInstance -Namespace root/Inter'; expected = 'root/Interop' }
+            @{ inputStr = 'Invoke-CimMethod -Namespace root/Inter'; expected = 'root/Interop' }
+            @{ inputStr = 'Get-CimClass -Namespace root/Inter'; expected = 'root/Interop' }
+            @{ inputStr = 'Register-CimIndicationEvent -Namespace root/Inter'; expected = 'root/Interop' }
+            @{ inputStr = 'Get-CimInstance -ClassName Win32_Process | %{ $_.ExecutableP'; expected = 'ExecutablePath' }
+            @{ inputStr = 'Get-CimInstance -ClassName Win32_Process | Invoke-CimMethod -MethodName SetPriority -Arguments @{'; expected = 'Priority' }
+            @{ inputStr = 'Get-CimInstance -ClassName Win32_Service | Invoke-CimMethod -MethodName Change -Arguments @{d'; expected = 'DesktopInteract' }
+            @{ inputStr = 'Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments @{'; expected = 'CommandLine' }
+            @{ inputStr = 'New-CimInstance Win32_Environment -Property @{'; expected = 'Caption' }
+            @{ inputStr = 'Get-CimInstance Win32_Environment | Set-CimInstance -Property @{'; expected = 'Name' }
+            @{ inputStr = 'Set-CimInstance -Namespace root/CIMV'; expected = 'root/CIMV2' }
+            @{ inputStr = 'Get-CimInstance Win32_Process -Property '; expected = 'Caption' }
+            @{ inputStr = 'Get-CimInstance Win32_Process -Property Caption,'; expected = 'Description' }
+        )
+    }
+
+    It "CIM cmdlet input '<inputStr>' should successfully complete" -TestCases $testCases -Skip:(!$IsWindows) {
+        param($inputStr, $expected)
+
+        $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+        $res.CompletionMatches.Count | Should -BeGreaterThan 0
+        $res.CompletionMatches[0].CompletionText | Should -Be $expected
+    }
+}
+
+Describe "TabCompletion elevated tests" -Tags CI, RequireAdminOnWindows, NotWinPE {
     It "Tab completion UNC path with spaces" -Skip:(!$IsWindows) {
         $Share = New-SmbShare -Temporary -ReadAccess (whoami.exe) -Path C:\ -Name "Test Share"
         $res = TabExpansion2 -inputScript '\\localhost\test'
@@ -3975,7 +4012,7 @@ Describe "TabCompletion elevated tests" -Tags CI, RequireAdminOnWindows {
     }
 }
 
-Describe "Tab completion tests with remote Runspace" -Tags Feature,RequireAdminOnWindows {
+Describe "Tab completion tests with remote Runspace" -Tags Feature,RequireAdminOnWindows,NotWinPE {
     BeforeAll {
         $skipTest = -not $IsWindows
         $pendingTest = $IsWindows -and (Test-IsWinWow64)
