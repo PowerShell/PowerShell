@@ -4,8 +4,12 @@
 Describe "Test-Json" -Tags "CI" {
     BeforeAll {
         $assetsPath = Join-Path $PSScriptRoot -ChildPath assets
-        $validSchemaJsonPath = Join-Path -Path $assetsPath -ChildPath valid_schema_reference.json
-        $invalidSchemaJsonPath = Join-Path -Path $assetsPath -ChildPath invalid_schema_reference.json
+        $validSchemaJsonPath = Join-Path -Path $assetsPath -ChildPath valid_schema.json
+        $validSchemaWithLocalRefJsonPath = Join-Path -Path $assetsPath -ChildPath valid_schema_references_internal.json
+        $validSchemaWithExternalFileRefJsonPath = Join-Path -Path $assetsPath -ChildPath valid_schema_references_external.json
+        $validSchemaWithExternalUriRefJsonPath = Join-Path -Path $assetsPath -ChildPath valid_schema_uri_references_external.json
+        $invalidSchemaWithExternalRefJsonPath = Join-Path -Path $assetsPath -ChildPath invalid_schema_reference.json
+        $invalidSchemaJsonPath = Join-Path -Path $assetsPath -ChildPath invalid_schema.json
         $missingSchemaJsonPath = Join-Path -Path $assetsPath -ChildPath no_such_file.json
         $missingJsonPath = Join-Path -Path $assetsPath -ChildPath no_such_file.json
 
@@ -115,6 +119,46 @@ Describe "Test-Json" -Tags "CI" {
 
     It "Json is valid against a valid schema from string" {
         Test-Json -Json $validJson -Schema $validSchemaJson | Should -BeTrue
+    }
+
+    It "Json is valid against a valid schema with local reference" {
+        Test-Json -Json $validJson -SchemaFile $validSchemaWithLocalRefJsonPath | Should -BeTrue
+    }
+
+    It "Json is invalid by default against a schema with external file reference" {
+        Test-Json -Json $validJson -SchemaFile $validSchemaWithExternalFileRefJsonPath -ErrorVariable ErrorVar -ErrorAction SilentlyContinue | Should -BeFalse
+        $ErrorVar[0].FullyQualifiedErrorId | Should -BeExactly "UnresolvedJsonSchemaRef,Microsoft.PowerShell.Commands.TestJsonCommand"
+    }
+
+    It "Json is invalid by default against a schema file with external URI reference" {
+        Test-Json -Json $validJson -SchemaFile $validSchemaWithExternalUriRefJsonPath -ErrorVariable ErrorVar -ErrorAction SilentlyContinue | Should -BeFalse
+        $ErrorVar[0].FullyQualifiedErrorId | Should -BeExactly "UnresolvedJsonSchemaRef,Microsoft.PowerShell.Commands.TestJsonCommand"
+    }
+
+    It "Json is valid, with FetchExternalReference parameter, against a schema from file with external file reference" {
+        Test-Json -Json $validJson -SchemaFile $validSchemaWithExternalFileRefJsonPath -FetchExternalReference | Should -BeTrue
+    }
+
+    It "Json is valid but unresolvable, with FetchExternalReference parameter, against a schema with external URI reference" {
+        Test-Json -Json $validJson -SchemaFile $validSchemaWithExternalUriRefJsonPath -FetchExternalReference -ErrorVariable ErrorVar -ErrorAction SilentlyContinue | Should -BeFalse
+        $ErrorVar[0].FullyQualifiedErrorId | Should -BeExactly "InvalidJsonSchema,Microsoft.PowerShell.Commands.TestJsonCommand"
+    }
+
+    It "Json is invalid, with FetchExternalReference parameter, against an invalid schema with external file reference" {
+        Test-Json -Json $validJson -SchemaFile $invalidSchemaWithExternalRefJsonPath -FetchExternalReference -ErrorVariable ErrorVar -ErrorAction SilentlyContinue | Should -BeFalse
+        $ErrorVar[0].FullyQualifiedErrorId | Should -BeExactly "InvalidJsonSchema,Microsoft.PowerShell.Commands.TestJsonCommand"
+    }
+
+    It "FetchExternalReference does not affect later invocations" {
+        Test-Json -Json $validJson -SchemaFile $validSchemaWithExternalFileRefJsonPath -FetchExternalReference | Should -BeTrue
+
+        $ErrorVar = @()
+        Test-Json -Json $validJson -SchemaFile $validSchemaWithExternalFileRefJsonPath -ErrorVariable ErrorVar -ErrorAction SilentlyContinue | Should -BeFalse
+        $ErrorVar[0].FullyQualifiedErrorId | Should -BeExactly "UnresolvedJsonSchemaRef,Microsoft.PowerShell.Commands.TestJsonCommand"
+
+        $ErrorVar = @()
+        Test-Json -Json $validJson -SchemaFile $validSchemaWithExternalUriRefJsonPath -ErrorVariable ErrorVar -ErrorAction SilentlyContinue | Should -BeFalse
+        $ErrorVar[0].FullyQualifiedErrorId | Should -BeExactly "UnresolvedJsonSchemaRef,Microsoft.PowerShell.Commands.TestJsonCommand"
     }
 
     It "Json is valid against a valid schema from file" {
