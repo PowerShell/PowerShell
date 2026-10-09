@@ -477,6 +477,9 @@ namespace System.Management.Automation.Language
         internal static readonly MethodInfo PSSetMemberBinder_SetAdaptedValue =
             typeof(PSSetMemberBinder).GetMethod(nameof(PSSetMemberBinder.SetAdaptedValue), StaticFlags);
 
+        internal static readonly MethodInfo PSSetMemberBinder_SetInstanceMemberValue =
+            typeof(PSSetMemberBinder).GetMethod(nameof(PSSetMemberBinder.SetInstanceMemberValue), StaticFlags);
+
         internal static readonly MethodInfo PSVariableAssignmentBinder_CopyInstanceMembersOfValueType =
             typeof(PSVariableAssignmentBinder).GetMethod(nameof(PSVariableAssignmentBinder.CopyInstanceMembersOfValueType), StaticFlags);
 
