@@ -18,6 +18,41 @@ try
     $defaultParamValues = $PSDefaultParameterValues.Clone()
     $PSDefaultParameterValues["it:Skip"] = !$IsWindows
 
+    Describe "Property setting in constrained language" -Tags 'Feature' {
+
+        It "rejects setting an instance script property" {
+            $obj = [System.Text.StringBuilder]::new()
+            $obj | Add-Member -MemberType NoteProperty -Name Value -Value 0
+            $obj | Add-Member -MemberType ScriptProperty -Name Test -Value { $this.Value } -SecondValue { param($value) $this.Value = $value }
+
+            try
+            {
+                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+                { $obj.Test = 1 } | Should -Throw -ErrorId "PropertySetterNotSupportedInConstrainedLanguage"
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
+            }
+        }
+
+        It "rejects setting an alias property that references a note property" {
+            $obj = [System.Text.StringBuilder]::new()
+            $obj | Add-Member -MemberType NoteProperty -Name Value -Value 0
+            $obj | Add-Member -MemberType AliasProperty -Name Alias -Value Value
+
+            try
+            {
+                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+                { $obj.Alias = 1 } | Should -Throw -ErrorId "PropertySetterNotSupportedInConstrainedLanguage"
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
+            }
+        }
+    }
+
     Describe "Help built-in function should not expose nested module private functions when run on locked down systems" -Tags 'Feature','RequireAdminOnWindows' {
 
         BeforeAll {
