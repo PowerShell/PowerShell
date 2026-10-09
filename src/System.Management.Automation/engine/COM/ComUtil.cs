@@ -331,7 +331,7 @@ namespace System.Management.Automation
                 }
 
                 bool fByRef = (ElementDescription.desc.paramdesc.wParamFlags & COM.PARAMFLAG.PARAMFLAG_FOUT) != 0;
-                parameters[i] = new ParameterInformation(type, fOptional, defaultvalue, fByRef);
+                parameters[i] = new ParameterInformation(string.Empty, type, fOptional, defaultvalue, fByRef);
             }
 
             return parameters;
