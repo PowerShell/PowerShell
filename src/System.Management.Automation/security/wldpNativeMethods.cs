@@ -69,10 +69,63 @@ namespace System.Management.Automation.Security
     /// Support class for dealing with the Windows Lockdown Policy,
     /// Device Guard, and Constrained PowerShell.
     /// </summary>
-    public sealed class SystemPolicy
+    public sealed partial class SystemPolicy
     {
         private SystemPolicy()
         {
+        }
+
+        // The S in PowerShell must be lower case to match the manifest.
+        private const string AppManifestId = "Powershell";
+
+        private static bool? s_isFileOnlyEntryEnabled;
+
+        /// <summary>
+        /// Determines if the WLDP setting "FileOnlyEntry" is enabled.
+        /// </summary>
+        internal static bool IsFileOnlyEntryEnabled()
+        {
+            if (s_isFileOnlyEntryEnabled.HasValue)
+            {
+                return s_isFileOnlyEntryEnabled.Value;
+            }
+
+            const string SettingName = "FileOnlyEntry";
+            s_isFileOnlyEntryEnabled = TestBooleanWldpSetting(SettingName);
+            return s_isFileOnlyEntryEnabled.Value;
+        }
+
+        private static bool TestBooleanWldpSetting(string settingName)
+        {
+            int hr = WldpNativeMethods.WldpGetApplicationSettingBoolean(
+                AppManifestId,
+                settingName,
+                out bool result);
+
+            PSEtwLog.LogWDACQueryEvent(
+                "WldpGetApplicationSettingBoolean",
+                settingName,
+                hr,
+                result ? 1 : 0);
+
+            if (hr is not 0)
+            {
+                result = false;
+            }
+
+            if (!result)
+            {
+                string debugValue = Environment.GetEnvironmentVariable(
+                    $"__PSLockdownPolicy_{settingName}",
+                    EnvironmentVariableTarget.Machine);
+
+                if (debugValue is "1")
+                {
+                    result = true;
+                }
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -811,8 +864,16 @@ namespace System.Management.Automation.Security
         /// <summary>
         /// Native methods for dealing with the lockdown policy.
         /// </summary>
-        internal static class WldpNativeMethods
+        internal static partial class WldpNativeMethods
         {
+            [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+            [LibraryImport("wldp.dll", StringMarshalling = StringMarshalling.Utf16)]
+            internal static partial int WldpGetApplicationSettingBoolean(
+                string id,
+                string setting,
+                [MarshalAs(UnmanagedType.Bool)]
+                out bool result);
+
             /// <summary>
             /// Returns a WLDP_EXECUTION_POLICY enum value indicating if and how a script file
             /// should be executed.
