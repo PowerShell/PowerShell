@@ -873,6 +873,47 @@ try
 
             $expectedError.FullyQualifiedErrorId | Should -BeExactly "MethodInvocationNotSupportedInConstrainedLanguage"
         }
+
+        It "Verify ForEach engine intrinsic method cannot set property values for non-core types when in constrained language mode" {
+
+            try
+            {
+                $ExecutionContext.SessionState.LanguageMode = 'ConstrainedLanguage'
+                & {
+                    @($ExecutionContext.SessionState).ForEach('LanguageMode', 'FullLanguage')
+                }
+
+                throw "No Exception!"
+            }
+            catch
+            {
+                $expectedError = $_
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
+            }
+
+            $expectedError.FullyQualifiedErrorId | Should -BeExactly "PropertySetterNotSupportedInConstrainedLanguage"
+        }
+
+        It "Verify ForEach engine intrinsic method correctly allows setting property values for core types in constrained language mode" {
+
+            $validateSet = [ValidateSet]::new('test')
+            try
+            {
+                $ExecutionContext.SessionState.LanguageMode = 'ConstrainedLanguage'
+                & {
+                    @($validateSet).ForEach('ErrorMessage', 'NewMessage')
+                }
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
+            }
+
+            $validateSet.ErrorMessage | Should -BeExactly 'NewMessage'
+        }
     }
 
     Describe "ThreadJob Constrained Language Tests" -Tags 'Feature','RequireAdminOnWindows' {
