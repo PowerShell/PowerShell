@@ -24,7 +24,7 @@ Describe "Windows platform file signatures" -Tags 'Feature' {
     }
 }
 
-Describe "Windows file content signatures" -Tags @('Feature', 'RequireAdminOnWindows') {
+Describe "Windows file content signatures" -Tags @('Feature', 'RequireAdminOnWindows', 'NotWinPE') {
     BeforeAll {
         $shouldSkip = (-not $IsWindows) -or (Test-IsWinServer2012R2)
 

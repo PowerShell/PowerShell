@@ -113,49 +113,6 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
     }
 
 
-    It "Sets securitydescriptor of service using Set-Service " {
-        Set-Service -Name $TestServiceName1 -SecurityDescriptorSddl $SecurityDescriptorSddl
-        CheckSecurityDescriptorSddl -SecurityDescriptor $SecurityDescriptorSddl -ServiceName $TestServiceName1
-    }
-
-    It "Set-Service can change '<parameter>' to '<value>'" -TestCases @(
-        @{parameter = "Description"; value = "hello"},
-        @{parameter = "DisplayName"; value = "test spooler"},
-        @{parameter = "StartupType"; value = "Disabled"},
-        @{parameter = "Status"     ; value = "running"     ; expected = "OK"}
-    ) {
-        param($parameter, $value, $expected)
-        $currentService = Get-CimInstance -ClassName Win32_Service -Filter "Name='spooler'"
-        $originalStartupType = (Get-Service -Name spooler).StartType
-        try {
-            $setServiceCommand = [Microsoft.PowerShell.Commands.SetServiceCommand]::new()
-            $setServiceCommand.Name = "Spooler"
-            $setServiceCommand.$parameter = $value
-            $setServiceCommand.Invoke()
-            $updatedService = Get-CimInstance -ClassName Win32_Service -Filter "Name='spooler'"
-            if ($expected -eq $null) {
-                $expected = $value
-            }
-            if ($parameter -eq "StartupType") {
-                $updatedService.StartMode | Should -Be $expected
-            }
-            else {
-                $updatedService.$parameter | Should -Be $expected
-            }
-        }
-        finally {
-            if ($parameter -eq "StartupType") {
-                $setServiceCommand.StartupType = $originalStartupType
-            }
-            else {
-                $setServiceCommand.$parameter = $currentService.$parameter
-            }
-            $setServiceCommand.Invoke()
-            $updatedService = Get-CimInstance -ClassName Win32_Service -Filter "Name='spooler'"
-            $updatedService.$parameter | Should -Be $currentService.$parameter
-        }
-    }
-
     It "NewServiceCommand can be used as API for '<parameter>' with '<value>'" -TestCases @(
         @{parameter = "Name"                   ; value = "bar"},
         @{parameter = "BinaryPathName"         ; value = "hello"},
@@ -210,101 +167,6 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         }
     }
 
-    It "New-Service can create a new service called '<name>'" -TestCases @(
-        @{name = "testautomatic"; startupType = "Automatic"; description = "foo" ; displayname = "one" ; securityDescriptorSddl = $null},
-        @{name = "testmanual"   ; startupType = "Manual"   ; description = "bar" ; displayname = "two" ; securityDescriptorSddl = $SecurityDescriptorSddl},
-        @{name = "testdisabled" ; startupType = "Disabled" ; description = $null ; displayname = $null ; securityDescriptorSddl = $null},
-        @{name = "testsddl"     ; startupType = "Disabled" ; description = "foo" ; displayname = $null ; securityDescriptorSddl = $SecurityDescriptorSddl}
-    ) {
-        param($name, $startupType, $description, $displayname, $securityDescriptorSddl)
-        try {
-            $parameters = @{
-                Name           = $name;
-                BinaryPathName = "$PSHOME\pwsh.exe";
-                StartupType    = $startupType;
-            }
-            if ($description) {
-                $parameters += @{description = $description}
-            }
-            if ($displayname) {
-                $parameters += @{displayname = $displayname}
-            }
-            if ($securityDescriptorSddl) {
-                $parameters += @{SecurityDescriptorSddl = $securityDescriptorSddl}
-            }
-
-            $service = New-Service @parameters
-            $service | Should -Not -BeNullOrEmpty
-            $service.displayname | Should -Be $(if($displayname){$displayname}else{$name})
-            $service.startType | Should -Be $startupType
-
-            $service = Get-CimInstance Win32_Service -Filter "name='$name'"
-            $service | Should -Not -BeNullOrEmpty
-            $service.Name | Should -Be $name
-            $service.Description | Should -Be $description
-            $expectedStartup = $(
-                switch ($startupType) {
-                    "Automatic" {"Auto"}
-                    "Manual" {"Manual"}
-                    "Disabled" {"Disabled"}
-                    default { throw "Unsupported StartupType in TestCases" }
-                }
-            )
-            $service.StartMode | Should -Be $expectedStartup
-            if ($displayname -eq $null) {
-                $service.DisplayName | Should -Be $name
-            }
-            else {
-                $service.DisplayName | Should -Be $displayname
-            }
-            if ($securityDescriptorSddl) {
-                CheckSecurityDescriptorSddl -SecurityDescriptorSddl $SecurityDescriptorSddl -ServiceName $name
-            }
-        }
-        finally {
-            $service = Get-CimInstance Win32_Service -Filter "name='$name'"
-            if ($service -ne $null) {
-                $service | Remove-CimInstance
-            }
-        }
-    }
-
-    It "Remove-Service can remove a service" {
-        try {
-            $servicename = "testremoveservice"
-            $parameters = @{
-                Name           = $servicename;
-                BinaryPathName = "$PSHOME\pwsh.exe"
-            }
-            $service = New-Service @parameters
-            $service | Should -Not -BeNullOrEmpty
-            Remove-Service -Name $servicename
-            $service = Get-Service -Name $servicename -ErrorAction SilentlyContinue
-            $service | Should -BeNullOrEmpty
-        }
-        finally {
-            Get-CimInstance Win32_Service -Filter "name='$servicename'" | Remove-CimInstance -ErrorAction SilentlyContinue
-        }
-    }
-
-    It "Remove-Service can accept a ServiceController as pipeline input" {
-        try {
-            $servicename = "testremoveservice"
-            $parameters = @{
-                Name           = $servicename;
-                BinaryPathName = "$PSHOME\pwsh.exe"
-            }
-            $service = New-Service @parameters
-            $service | Should -Not -BeNullOrEmpty
-            Get-Service -Name $servicename | Remove-Service
-            $service = Get-Service -Name $servicename -ErrorAction SilentlyContinue
-            $service | Should -BeNullOrEmpty
-        }
-        finally {
-            Get-CimInstance Win32_Service -Filter "name='$servicename'" | Remove-CimInstance -ErrorAction SilentlyContinue
-        }
-    }
-
     It "Remove-Service cannot accept a service that does not exist" {
         { Remove-Service -Name "testremoveservice" -ErrorAction 'Stop' } | Should -Throw -ErrorId "InvalidOperationException,Microsoft.PowerShell.Commands.RemoveServiceCommand"
     }
@@ -336,44 +198,6 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         }
     }
 
-    It "Set-Service can accept a ServiceController as pipeline input" {
-        try {
-            $servicename = "testsetservice"
-            $newdisplayname = "newdisplayname"
-            $parameters = @{
-                Name           = $servicename;
-                BinaryPathName = "$PSHOME\pwsh.exe"
-            }
-            $service = New-Service @parameters
-            $service | Should -Not -BeNullOrEmpty
-            Get-Service -Name $servicename | Set-Service -DisplayName $newdisplayname
-            $service = Get-Service -Name $servicename
-            $service.DisplayName | Should -BeExactly $newdisplayname
-        }
-        finally {
-            Get-CimInstance Win32_Service -Filter "name='$servicename'" | Remove-CimInstance -ErrorAction SilentlyContinue
-        }
-    }
-
-    It "Set-Service can accept a ServiceController as positional input" {
-        try {
-            $servicename = "testsetservice"
-            $newdisplayname = "newdisplayname"
-            $parameters = @{
-                Name           = $servicename;
-                BinaryPathName = "$PSHOME\pwsh.exe"
-            }
-
-            $script = { New-Service @parameters | Set-Service -DisplayName $newdisplayname }
-            { & $script } | Should -Not -Throw
-            $service = Get-Service -Name $servicename
-            $service.DisplayName | Should -BeExactly $newdisplayname
-        }
-        finally {
-            Get-CimInstance Win32_Service -Filter "name='$servicename'" | Remove-CimInstance -ErrorAction SilentlyContinue
-        }
-    }
-
     It "Using bad parameters will fail for '<name>' where '<parameter>' = '<value>'" -TestCases @(
         @{cmdlet="New-Service"; name = 'credtest'    ; parameter = "Credential" ; value = (
             [System.Management.Automation.PSCredential]::new("username",
@@ -382,8 +206,6 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
             errorid = "CouldNotNewService,Microsoft.PowerShell.Commands.NewServiceCommand"},
         @{cmdlet="New-Service"; name = 'badstarttype'; parameter = "StartupType"; value = "System";
             errorid = "CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.NewServiceCommand"},
-        @{cmdlet="New-Service"; name = 'winmgmt'     ; parameter = "DisplayName"; value = "foo";
-            errorid = "CouldNotNewService,Microsoft.PowerShell.Commands.NewServiceCommand"},
         @{cmdlet="Set-Service"; name = 'winmgmt'     ; parameter = "StartupType"; value = "Boot";
             errorid = "CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.SetServiceCommand"}
     ) {
@@ -420,6 +242,254 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
             { & $script } | Should -Not -Throw
             (Get-Service $testservicename1).Status | Should -BeExactly "Stopped"
             (Get-Service $testservicename2).Status | Should -BeExactly "Stopped"
+        }
+    }
+}
+
+Describe "Set/New/Remove-Service WinPE-incompatible tests" -Tags "Feature", "RequireAdminOnWindows", "NotWinPE" {
+    BeforeAll {
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+        if ( -not $IsWindows ) {
+            $PSDefaultParameterValues["it:skip"] = $true
+        }
+        if ($IsWindows) {
+            $SecurityDescriptorSddl = 'D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BA)(A;;CCLCSWLOCRRC;;;SU)'
+            $TestServiceName = "testservicewinpemutation"
+            $svcbinaryname = "TestService"
+            $svccmd = Get-Command $svcbinaryname
+            $svccmd | Should -Not -BeNullOrEmpty
+            $svcfullpath = $svccmd.Path
+            $testService = New-Service -BinaryPathName $svcfullpath -Name $TestServiceName
+            $testService | Should -Not -BeNullOrEmpty
+        }
+
+        Function CheckSecurityDescriptorSddl {
+            Param(
+                [Parameter(Mandatory)]
+                $SecurityDescriptorSddl,
+
+                [Parameter(Mandatory)]
+                $ServiceName
+            )
+            $Counter      = 0
+            $ExpectedSDDL = ConvertFrom-SddlString -Sddl $SecurityDescriptorSddl
+
+            # Selecting the first item in the output array as below command gives plain text output from the native sc.exe.
+            $UpdatedSDDL  = ConvertFrom-SddlString -Sddl (sc sdshow $ServiceName)[1]
+
+            $UpdatedSDDL.Owner | Should -Be $ExpectedSDDL.Owner
+            $UpdatedSDDL.Group | Should -Be $ExpectedSDDL.Group
+            $UpdatedSDDL.DiscretionaryAcl.Count | Should -Be $ExpectedSDDL.DiscretionaryAcl.Count
+            $UpdatedSDDL.DiscretionaryAcl | ForEach-Object -Process {
+                $_ | Should -Be $ExpectedSDDL.DiscretionaryAcl[$Counter]
+                $Counter++
+            }
+        }
+    }
+
+    AfterAll {
+        $global:PSDefaultParameterValues = $originalDefaultParameterValues
+        if ($IsWindows) {
+            Remove-Service $TestServiceName -ErrorAction SilentlyContinue
+        }
+    }
+
+    Context "Service mutation requiring unavailable WinPE facilities" {
+        It "Sets securitydescriptor of service using Set-Service " {
+            Set-Service -Name $TestServiceName -SecurityDescriptorSddl $SecurityDescriptorSddl
+            CheckSecurityDescriptorSddl -SecurityDescriptor $SecurityDescriptorSddl -ServiceName $TestServiceName
+        }
+
+        It "Set-Service can change '<parameter>' to '<value>'" -TestCases @(
+            @{parameter = "Description"; value = "hello"},
+            @{parameter = "DisplayName"; value = "test spooler"},
+            @{parameter = "StartupType"; value = "Disabled"},
+            @{parameter = "Status"     ; value = "running"     ; expected = "OK"}
+        ) {
+            param($parameter, $value, $expected)
+            $currentService = Get-CimInstance -ClassName Win32_Service -Filter "Name='spooler'"
+            $originalStartupType = (Get-Service -Name spooler).StartType
+            try {
+                $setServiceCommand = [Microsoft.PowerShell.Commands.SetServiceCommand]::new()
+                $setServiceCommand.Name = "Spooler"
+                $setServiceCommand.$parameter = $value
+                $setServiceCommand.Invoke()
+                $updatedService = Get-CimInstance -ClassName Win32_Service -Filter "Name='spooler'"
+                if ($expected -eq $null) {
+                    $expected = $value
+                }
+                if ($parameter -eq "StartupType") {
+                    $updatedService.StartMode | Should -Be $expected
+                }
+                else {
+                    $updatedService.$parameter | Should -Be $expected
+                }
+            }
+            finally {
+                if ($parameter -eq "StartupType") {
+                    $setServiceCommand.StartupType = $originalStartupType
+                }
+                else {
+                    $setServiceCommand.$parameter = $currentService.$parameter
+                }
+                $setServiceCommand.Invoke()
+                $updatedService = Get-CimInstance -ClassName Win32_Service -Filter "Name='spooler'"
+                $updatedService.$parameter | Should -Be $currentService.$parameter
+            }
+        }
+    }
+
+    Context "Service lifecycle verification requiring native MI" {
+        It "New-Service can create a new service called '<name>'" -TestCases @(
+            @{name = "testautomatic"; startupType = "Automatic"; description = "foo" ; displayname = "one" ; securityDescriptorSddl = $null},
+            @{name = "testmanual"   ; startupType = "Manual"   ; description = "bar" ; displayname = "two" ; securityDescriptorSddl = $SecurityDescriptorSddl},
+            @{name = "testdisabled" ; startupType = "Disabled" ; description = $null ; displayname = $null ; securityDescriptorSddl = $null},
+            @{name = "testsddl"     ; startupType = "Disabled" ; description = "foo" ; displayname = $null ; securityDescriptorSddl = $SecurityDescriptorSddl}
+        ) {
+            param($name, $startupType, $description, $displayname, $securityDescriptorSddl)
+            try {
+                $parameters = @{
+                    Name           = $name;
+                    BinaryPathName = "$PSHOME\pwsh.exe";
+                    StartupType    = $startupType;
+                }
+                if ($description) {
+                    $parameters += @{description = $description}
+                }
+                if ($displayname) {
+                    $parameters += @{displayname = $displayname}
+                }
+                if ($securityDescriptorSddl) {
+                    $parameters += @{SecurityDescriptorSddl = $securityDescriptorSddl}
+                }
+
+                $service = New-Service @parameters
+                $service | Should -Not -BeNullOrEmpty
+                $service.displayname | Should -Be $(if($displayname){$displayname}else{$name})
+                $service.startType | Should -Be $startupType
+
+                $service = Get-CimInstance Win32_Service -Filter "name='$name'"
+                $service | Should -Not -BeNullOrEmpty
+                $service.Name | Should -Be $name
+                $service.Description | Should -Be $description
+                $expectedStartup = $(
+                    switch ($startupType) {
+                        "Automatic" {"Auto"}
+                        "Manual" {"Manual"}
+                        "Disabled" {"Disabled"}
+                        default { throw "Unsupported StartupType in TestCases" }
+                    }
+                )
+                $service.StartMode | Should -Be $expectedStartup
+                if ($displayname -eq $null) {
+                    $service.DisplayName | Should -Be $name
+                }
+                else {
+                    $service.DisplayName | Should -Be $displayname
+                }
+                if ($securityDescriptorSddl) {
+                    CheckSecurityDescriptorSddl -SecurityDescriptorSddl $SecurityDescriptorSddl -ServiceName $name
+                }
+            }
+            finally {
+                $service = Get-CimInstance Win32_Service -Filter "name='$name'"
+                if ($service -ne $null) {
+                    $service | Remove-CimInstance
+                }
+            }
+        }
+
+        It "Remove-Service can remove a service" {
+            try {
+                $servicename = "testremoveservice"
+                $parameters = @{
+                    Name           = $servicename;
+                    BinaryPathName = "$PSHOME\pwsh.exe"
+                }
+                $service = New-Service @parameters
+                $service | Should -Not -BeNullOrEmpty
+                Remove-Service -Name $servicename
+                $service = Get-Service -Name $servicename -ErrorAction SilentlyContinue
+                $service | Should -BeNullOrEmpty
+            }
+            finally {
+                Get-CimInstance Win32_Service -Filter "name='$servicename'" | Remove-CimInstance -ErrorAction SilentlyContinue
+            }
+        }
+
+        It "Remove-Service can accept a ServiceController as pipeline input" {
+            try {
+                $servicename = "testremoveservice"
+                $parameters = @{
+                    Name           = $servicename;
+                    BinaryPathName = "$PSHOME\pwsh.exe"
+                }
+                $service = New-Service @parameters
+                $service | Should -Not -BeNullOrEmpty
+                Get-Service -Name $servicename | Remove-Service
+                $service = Get-Service -Name $servicename -ErrorAction SilentlyContinue
+                $service | Should -BeNullOrEmpty
+            }
+            finally {
+                Get-CimInstance Win32_Service -Filter "name='$servicename'" | Remove-CimInstance -ErrorAction SilentlyContinue
+            }
+        }
+    }
+
+    Context "Set-Service input verification requiring native MI" {
+        It "Set-Service can accept a ServiceController as pipeline input" {
+            try {
+                $servicename = "testsetservice"
+                $newdisplayname = "newdisplayname"
+                $parameters = @{
+                    Name           = $servicename;
+                    BinaryPathName = "$PSHOME\pwsh.exe"
+                }
+                $service = New-Service @parameters
+                $service | Should -Not -BeNullOrEmpty
+                Get-Service -Name $servicename | Set-Service -DisplayName $newdisplayname
+                $service = Get-Service -Name $servicename
+                $service.DisplayName | Should -BeExactly $newdisplayname
+            }
+            finally {
+                Get-CimInstance Win32_Service -Filter "name='$servicename'" | Remove-CimInstance -ErrorAction SilentlyContinue
+            }
+        }
+
+        It "Set-Service can accept a ServiceController as positional input" {
+            try {
+                $servicename = "testsetservice"
+                $newdisplayname = "newdisplayname"
+                $parameters = @{
+                    Name           = $servicename;
+                    BinaryPathName = "$PSHOME\pwsh.exe"
+                }
+
+                $script = { New-Service @parameters | Set-Service -DisplayName $newdisplayname }
+                { & $script } | Should -Not -Throw
+                $service = Get-Service -Name $servicename
+                $service.DisplayName | Should -BeExactly $newdisplayname
+            }
+            finally {
+                Get-CimInstance Win32_Service -Filter "name='$servicename'" | Remove-CimInstance -ErrorAction SilentlyContinue
+            }
+        }
+    }
+
+    Context "New-Service validation requiring the Winmgmt service" {
+        It "Using bad parameters will fail for '<name>' where '<parameter>' = '<value>'" -TestCases @(
+            @{
+                cmdlet = "New-Service"
+                name = "winmgmt"
+                parameter = "DisplayName"
+                value = "foo"
+                errorid = "CouldNotNewService,Microsoft.PowerShell.Commands.NewServiceCommand"
+            }
+        ) {
+            param($cmdlet, $name, $parameter, $value, $errorid)
+            $parameters = @{$parameter = $value; Name = $name; ErrorAction = "Stop"}
+            $parameters += @{Binary = "$PSHOME\pwsh.exe"}
+            { & $cmdlet @parameters } | Should -Throw -ErrorId $errorid
         }
     }
 }

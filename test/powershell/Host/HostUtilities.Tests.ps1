@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
 Describe "InvokeOnRunspace method argument error handling" -tags "Feature" {
 
     BeforeAll {
@@ -32,7 +33,7 @@ Describe "InvokeOnRunspace method as nested command" -tags "Feature" {
     }
 }
 
-Describe "InvokeOnRunspace method on remote runspace" -tags "Feature","RequireAdminOnWindows" {
+Describe "InvokeOnRunspace method on remote runspace" -tags "Feature","RequireAdminOnWindows","NotWinPE" {
 
     BeforeAll {
         $skipTest = (Test-IsWinWow64) -or !$IsWindows

@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
 [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidGlobalVars", "")]
 param()
 
@@ -23,7 +24,7 @@ Describe "Behavior is specific for each platform" -tags "CI" {
 
 }
 
-Describe "tests for multiple languages and extensions" -tags "CI" {
+Describe "tests for multiple languages and extensions" -tags "CI", "NotWinPE" {
     AfterAll {
         if (-not $IsWindows) {
             return

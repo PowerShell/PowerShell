@@ -61,7 +61,7 @@ if (-not $IsWindows)
     return
 }
 
-Describe "Validate Copy-Item Remotely" -Tags @('CI', 'RequireAdminOnWindows') {
+Describe "Validate Copy-Item Remotely" -Tags @('CI', 'RequireAdminOnWindows', 'NotWinPE') {
 
     # Validate a copy item operation.
     # $filePath is the source file path
@@ -676,7 +676,7 @@ Describe "Validate Copy-Item Remotely" -Tags @('CI', 'RequireAdminOnWindows') {
     }
 }
 
-Describe "Validate Copy-Item error for target sessions not in FullLanguageMode." -Tags @('Feature', 'RequireAdminOnWindows') {
+Describe "Validate Copy-Item error for target sessions not in FullLanguageMode." -Tags @('Feature', 'RequireAdminOnWindows', 'NotWinPE') {
 
     BeforeAll {
         # Keep track of the sessions.
@@ -749,50 +749,62 @@ Describe "Validate Copy-Item error for target sessions not in FullLanguageMode."
 
 Describe "Copy-Item can use Recurse and Exclude together" -Tags @('CI', 'RequireAdminOnWindows') {
 
-    Context "Local and Remote Tests" {
+    BeforeAll {
+        $null = New-Item -ItemType Directory -Path "TestDrive:\Parent\Sub"
+        $null = New-Item -Path "TestDrive:\Parent\p1.txt" -Value "test"
+        $null = New-Item -Path "TestDrive:\Parent\p2.txt" -Value "test"
+        $null = New-Item -Path "TestDrive:\Parent\s4.txt" -Value "test"
+        $null = New-Item -Path "TestDrive:\Parent\Sub\s1.txt" -Value "test"
+        $null = New-Item -Path "TestDrive:\Parent\Sub\s2.txt" -Value "test"
+        $null = New-Item -Path "TestDrive:\Parent\Sub\s3.txt" -Value "test"
+        $null = New-Item -Path "TestDrive:\Parent\Sub\p3.txt" -Value "testcl"
+    }
 
-        BeforeAll {
-            $s = New-RemoteSession
-            if (-not $s)
-            {
-                throw "Failed to create PSSession for remote copy operations."
-            }
-
-            $null = New-Item -ItemType Directory -Path "TestDrive:\Parent\Sub"
-            $null = New-Item -Path "TestDrive:\Parent\p1.txt" -Value "test"
-            $null = New-Item -Path "TestDrive:\Parent\p2.txt" -Value "test"
-            $null = New-Item -Path "TestDrive:\Parent\s4.txt" -Value "test"
-            $null = New-Item -Path "TestDrive:\Parent\Sub\s1.txt" -Value "test"
-            $null = New-Item -Path "TestDrive:\Parent\Sub\s2.txt" -Value "test"
-            $null = New-Item -Path "TestDrive:\Parent\Sub\s3.txt" -Value "test"
-            $null = New-Item -Path "TestDrive:\Parent\Sub\p3.txt" -Value "testcl"
-        }
-
+    Context "Local Tests" {
         It "can exclude files at sub directory" {
             Copy-Item -Path TestDrive:\Parent\* -Recurse -Exclude s*.txt -Destination TestDrive:\Temp -Force
             $copiedFiles = Get-ChildItem -Recurse -Path TestDrive:\Temp
             $copiedFiles.Count | Should -Be 3
         }
-
-        It "can exclude files at sub directory to a session" {
-            Copy-Item -Path TestDrive:\Parent\* -Recurse -Exclude s*.txt -Destination $TestDrive\Temp2 -Force -ToSession $s
-            $copiedFiles = Get-ChildItem -Recurse -Path TestDrive:\Temp
-            $copiedFiles.Count | Should -Be 3
-        }
-
-        It "can exclude files at sub directory from a session" {
-            Copy-Item -Path $TestDrive\Parent\* -Recurse -Exclude s*.txt -Destination TestDrive:\Temp3 -FromSession $s
-            $copiedFiles = Get-ChildItem -Recurse -Path TestDrive:\Temp2
-            $copiedFiles.Count | Should -Be 3
-        }
-
-        AfterAll {
-            Remove-PSSession -Session $s -ErrorAction SilentlyContinue
-        }
     }
 }
 
-Describe "Copy-Item remotely bug fixes" -Tags @('CI', 'RequireAdminOnWindows') {
+Describe "Copy-Item can use Recurse and Exclude with a remote session" -Tags @('CI', 'RequireAdminOnWindows', 'NotWinPE') {
+    BeforeAll {
+        $null = New-Item -ItemType Directory -Path "TestDrive:\Parent\Sub"
+        $null = New-Item -Path "TestDrive:\Parent\p1.txt" -Value "test"
+        $null = New-Item -Path "TestDrive:\Parent\p2.txt" -Value "test"
+        $null = New-Item -Path "TestDrive:\Parent\s4.txt" -Value "test"
+        $null = New-Item -Path "TestDrive:\Parent\Sub\s1.txt" -Value "test"
+        $null = New-Item -Path "TestDrive:\Parent\Sub\s2.txt" -Value "test"
+        $null = New-Item -Path "TestDrive:\Parent\Sub\s3.txt" -Value "test"
+        $null = New-Item -Path "TestDrive:\Parent\Sub\p3.txt" -Value "testcl"
+
+        $s = New-RemoteSession
+        if (-not $s)
+        {
+            throw "Failed to create PSSession for remote copy operations."
+        }
+    }
+
+    It "can exclude files at sub directory to a session" {
+        Copy-Item -Path TestDrive:\Parent\* -Recurse -Exclude s*.txt -Destination $TestDrive\Temp2 -Force -ToSession $s
+        $copiedFiles = Get-ChildItem -Recurse -Path TestDrive:\Temp2
+        $copiedFiles.Count | Should -Be 3
+    }
+
+    It "can exclude files at sub directory from a session" {
+        Copy-Item -Path $TestDrive\Parent\* -Recurse -Exclude s*.txt -Destination TestDrive:\Temp3 -FromSession $s
+        $copiedFiles = Get-ChildItem -Recurse -Path TestDrive:\Temp3
+        $copiedFiles.Count | Should -Be 3
+    }
+
+    AfterAll {
+        Remove-PSSession -Session $s -ErrorAction SilentlyContinue
+    }
+}
+
+Describe "Copy-Item remotely bug fixes" -Tags @('CI', 'RequireAdminOnWindows', 'NotWinPE') {
 
     BeforeAll {
         $s = New-RemoteSession
