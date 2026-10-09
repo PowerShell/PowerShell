@@ -26,7 +26,7 @@
 
 <ul>
 <li>Remove the redundant <code>#if UNIX</code> check from the Unix only code (#28120)</li>
-<li>Update <code>HelpersRemoting.psm1‎</code> to handle an exception better (#27903) (Thanks @xtqqczze!)</li>
+<li>Update <code>HelpersRemoting.psm1</code> to handle an exception better (#27903) (Thanks @xtqqczze!)</li>
 </ul>
 
 </details>
