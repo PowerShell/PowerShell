@@ -113,6 +113,17 @@ namespace Microsoft.PowerShell.Commands
         [ValidateSet(IgnoreCommentsOption, AllowTrailingCommasOption)]
         public string[] Options { get; set; } = Array.Empty<string>();
 
+        /// <summary>
+        /// If set, the cmdlet will retrieve external (URI, file) references in the JSON schema.
+        /// </summary>
+        [Parameter(ParameterSetName = JsonStringWithSchemaStringParameterSet)]
+        [Parameter(ParameterSetName = JsonStringWithSchemaFileParameterSet)]
+        [Parameter(ParameterSetName = JsonPathWithSchemaStringParameterSet)]
+        [Parameter(ParameterSetName = JsonPathWithSchemaFileParameterSet)]
+        [Parameter(ParameterSetName = JsonLiteralPathWithSchemaStringParameterSet)]
+        [Parameter(ParameterSetName = JsonLiteralPathWithSchemaFileParameterSet)]
+        public SwitchParameter FetchExternalReference { get; set; }
+
         #endregion
 
         #region Private Members
@@ -120,6 +131,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _isLiteralPath = false;
         private JsonSchema _jschema;
         private JsonDocumentOptions _documentOptions;
+        private EvaluationOptions _evaluationOptions;
 
         #endregion
 
@@ -128,42 +140,47 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            // By default, a JSON Schema implementation isn't supposed to automatically fetch content.
-            // Instead JsonSchema.Net has been set up with a registry so that users can pre-register
-            // any schemas they may need to resolve.
-            // However, pre-registering schemas doesn't make sense in the context of a Powershell command,
-            // and automatically fetching referenced URIs is likely the preferred behavior.  To do that,
-            // this property must be set with a method to retrieve and deserialize the content.
-            // For more information, see https://json-everything.net/json-schema#automatic-resolution
-            SchemaRegistry.Global.Fetch = static uri =>
-            {
-                try
-                {
-                    string text;
-                    switch (uri.Scheme)
-                    {
-                        case "http":
-                        case "https":
-                            {
-                                using var client = new HttpClient();
-                                text = client.GetStringAsync(uri).Result;
-                                break;
-                            }
-                        case "file":
-                            var filename = Uri.UnescapeDataString(uri.AbsolutePath);
-                            text = File.ReadAllText(filename);
-                            break;
-                        default:
-                            throw new FormatException(string.Format(TestJsonCmdletStrings.InvalidUriScheme, uri.Scheme));
-                    }
+            _evaluationOptions = new EvaluationOptions { OutputFormat = OutputFormat.Hierarchical };
 
-                    return JsonSerializer.Deserialize<JsonSchema>(text);
-                }
-                catch (Exception e)
+            if (FetchExternalReference)
+            {
+                // By default, a JSON Schema implementation isn't supposed to automatically fetch content.
+                // Instead JsonSchema.Net has been set up with a registry so that users can pre-register
+                // any schemas they may need to resolve.
+                // However, pre-registering schemas doesn't make sense in the context of a Powershell command,
+                // and automatically fetching referenced URIs is likely the preferred behavior.  To do that,
+                // this property must be set with a method to retrieve and deserialize the content.
+                // For more information, see https://json-everything.net/json-schema#automatic-resolution
+                _evaluationOptions.SchemaRegistry.Fetch = static uri =>
                 {
-                    throw new JsonSchemaReferenceResolutionException(e);
-                }
-            };
+                    try
+                    {
+                        string text;
+                        switch (uri.Scheme)
+                        {
+                            case "http":
+                            case "https":
+                                {
+                                    using var client = new HttpClient();
+                                    text = client.GetStringAsync(uri).Result;
+                                    break;
+                                }
+                            case "file":
+                                var filename = Uri.UnescapeDataString(uri.AbsolutePath);
+                                text = File.ReadAllText(filename);
+                                break;
+                            default:
+                                throw new FormatException(string.Format(TestJsonCmdletStrings.InvalidUriScheme, uri.Scheme));
+                        }
+
+                        return JsonSerializer.Deserialize<JsonSchema>(text);
+                    }
+                    catch (Exception e)
+                    {
+                        throw new JsonSchemaReferenceResolutionException(e);
+                    }
+                };
+            }
 
             string resolvedpath = string.Empty;
 
@@ -264,7 +281,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (_jschema != null)
                 {
-                    EvaluationResults evaluationResults = _jschema.Evaluate(parsedJson, new EvaluationOptions { OutputFormat = OutputFormat.List });
+                    EvaluationResults evaluationResults = _jschema.Evaluate(parsedJson, _evaluationOptions);
                     result = evaluationResults.IsValid;
                     if (!result)
                     {
@@ -286,6 +303,13 @@ namespace Microsoft.PowerShell.Commands
 
                 Exception exception = new(TestJsonCmdletStrings.InvalidJsonSchema, jsonExc);
                 WriteError(new ErrorRecord(exception, "InvalidJsonSchema", ErrorCategory.InvalidData, _jschema));
+            }
+            catch (RefResolutionException refExc)
+            {
+                result = false;
+
+                Exception exception = new(TestJsonCmdletStrings.UnresolvedJsonSchemaRef, refExc);
+                WriteError(new ErrorRecord(exception, "UnresolvedJsonSchemaRef", ErrorCategory.InvalidData, _jschema));
             }
             catch (Exception exc)
             {
