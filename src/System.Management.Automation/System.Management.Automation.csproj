@@ -48,7 +48,9 @@
   <ItemGroup>
     <!-- exclude code of source generators from compilation and IDEs (e.g. vscode and visual studio) -->
     <Compile Remove="SourceGenerators\**\*.cs" />
-    <!-- exclude the generated code for EventResource.resx, which is not directly used -->
+    <Compile Remove="gen\SourceGenerated\**\*.cs" />
+
+    <!-- exclude the generated code for EventResource.resx, which is not directly used -->    
     <Compile Remove="gen\EventResource.cs" />
 
     <EmbeddedResource Include="cimSupport\cmdletization\xml\cmdlets-over-objects.xsd" LogicalName="cmdlets-over-objects.xsd" />
