@@ -803,5 +803,17 @@ namespace PSTests.Sequential
 
             await serverTask;
         }
+
+        [SkippableTheory]
+        [InlineData(false, "a42e7cda-d03f-480c-9cc2-a4de20abb878")] // HV_GUID_PARENT (host partition)
+        [InlineData(true, "e0e16197-dd56-4a10-9195-5ee7a155a838")]  // HV_GUID_LOOPBACK (same partition)
+        public void ServerListenerUsesExpectedPartitionVmId(bool loopbackMode, string expectedVmId)
+        {
+            // The session server must listen on a specific partition (host parent, or local
+            // loopback) depending on the requested mode.
+            Guid vmId = System.Management.Automation.Remoting.RemoteSessionHyperVSocketServer.GetListenerVmId(loopbackMode);
+
+            Assert.Equal(new Guid(expectedVmId), vmId);
+        }
     }
 }
