@@ -67,8 +67,17 @@ namespace System.Management.Automation
             return null;
         }
 
+        private bool HasVerbatimArgumentMarker { get; set; }
+
         internal void BindParameters(Collection<CommandParameterInternal> parameters)
         {
+            // The stop-parsing marker requires legacy string construction on Windows.
+            // Detect it before binding so arguments that precede the marker use the
+            // same construction rules as arguments that follow it.
+            HasVerbatimArgumentMarker = Platform.IsWindows && parameters.Any(
+                parameter => parameter.ArgumentSpecified
+                    && string.Equals("--%", parameter.ArgumentValue as string, StringComparison.OrdinalIgnoreCase));
+
             bool sawVerbatimArgumentMarker = false;
             bool first = true;
             foreach (CommandParameterInternal parameter in parameters)
@@ -193,6 +202,11 @@ namespace System.Management.Automation
         {
             get
             {
+                if (HasVerbatimArgumentMarker)
+                {
+                    return NativeArgumentPassingStyle.Legacy;
+                }
+
                 try
                 {
                     var preference = LanguagePrimitives.ConvertTo<NativeArgumentPassingStyle>(
