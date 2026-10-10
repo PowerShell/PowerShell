@@ -6,11 +6,11 @@ inputs:
   timeout-sec:
     description: 'Timeout in seconds for HTTP requests'
     required: false
-    default: '30'
+    default: '20'
   maximum-retry-count:
     description: 'Maximum number of retries for failed requests'
     required: false
-    default: '2'
+    default: '3'
 
 outputs:
   total-links:

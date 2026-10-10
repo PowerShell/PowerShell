@@ -18,10 +18,10 @@
     Array of specific markdown files to verify. If provided, Path parameter is ignored.
 
 .PARAMETER TimeoutSec
-    Timeout in seconds for HTTP requests. Defaults to 30.
+    Timeout in seconds for HTTP requests. Defaults to 20.
 
 .PARAMETER MaximumRetryCount
-    Maximum number of retries for failed requests. Defaults to 2.
+    Maximum number of retries for failed requests. Defaults to 3 (4 total attempts).
 
 .PARAMETER RetryIntervalSec
     Interval in seconds between retry attempts. Defaults to 2.
@@ -41,8 +41,8 @@ param(
     [string]$Path = "Q:\src\git\powershell\docs\git",
     [Parameter(ParameterSetName = 'ByFile', Mandatory)]
     [string[]]$File = @(),
-    [int]$TimeoutSec = 30,
-    [int]$MaximumRetryCount = 2,
+    [int]$TimeoutSec = 20,
+    [int]$MaximumRetryCount = 3,
     [int]$RetryIntervalSec = 2
 )
 
@@ -103,38 +103,90 @@ function Test-HttpLink {
         [string]$Url
     )
 
-    try {
-        # Try HEAD request first (faster, doesn't download content)
-        $response = Invoke-WebRequest -Uri $Url `
-            -Method Head `
-            -TimeoutSec $TimeoutSec `
-            -MaximumRetryCount $MaximumRetryCount `
-            -RetryIntervalSec $RetryIntervalSec `
-            -UserAgent "Mozilla/5.0 (compatible; GitHubActions/1.0; +https://github.com/PowerShell/PowerShell)" `
-            -SkipHttpErrorCheck
+    $totalAttempts = $MaximumRetryCount + 1
+    $attempt = 0
+    $delay = $RetryIntervalSec
+    $lastStatusCode = 0
+    $lastError = $null
+    $userAgent = "Mozilla/5.0 (compatible; GitHubActions/1.0; +https://github.com/PowerShell/PowerShell)"
 
-        # If HEAD fails with 404 or 405, retry with GET (some servers don't support HEAD)
-        if ($response.StatusCode -eq 404 -or $response.StatusCode -eq 405) {
-            Write-Verbose "HEAD request failed with $($response.StatusCode), retrying with GET for: $Url"
+    while ($attempt -lt $totalAttempts) {
+        $attempt++
+
+        try {
+            # Try HEAD request first (faster, doesn't download content)
             $response = Invoke-WebRequest -Uri $Url `
-                -Method Get `
+                -Method Head `
                 -TimeoutSec $TimeoutSec `
-                -MaximumRetryCount $MaximumRetryCount `
-                -RetryIntervalSec $RetryIntervalSec `
-                -UserAgent "Mozilla/5.0 (compatible; GitHubActions/1.0; +https://github.com)" `
-                -SkipHttpErrorCheck
+                -MaximumRedirection 10 `
+                -UserAgent $userAgent `
+                -SkipHttpErrorCheck `
+                -ErrorAction Stop
+
+            if ($response.StatusCode -ge 200 -and $response.StatusCode -lt 400) {
+                return @{ Success = $true; StatusCode = $response.StatusCode; Attempts = $attempt }
+            }
+
+            # Some servers reject HEAD with 404/405; fall back to GET for this attempt
+            if ($response.StatusCode -eq 404 -or $response.StatusCode -eq 405) {
+                Write-Verbose "HEAD returned $($response.StatusCode) on attempt $attempt, falling back to GET for: $Url"
+                try {
+                    $response = Invoke-WebRequest -Uri $Url `
+                        -Method Get `
+                        -TimeoutSec $TimeoutSec `
+                        -MaximumRedirection 10 `
+                        -UserAgent $userAgent `
+                        -SkipHttpErrorCheck `
+                        -ErrorAction Stop
+
+                    if ($response.StatusCode -ge 200 -and $response.StatusCode -lt 400) {
+                        return @{ Success = $true; StatusCode = $response.StatusCode; Attempts = $attempt }
+                    }
+                    $lastStatusCode = $response.StatusCode
+                    $lastError = "HTTP $($response.StatusCode) (GET fallback)"
+                }
+                catch {
+                    $lastStatusCode = 0
+                    $lastError = $_.Exception.Message
+                }
+            }
+            else {
+                $lastStatusCode = $response.StatusCode
+                $lastError = "HTTP $($response.StatusCode)"
+            }
+        }
+        catch {
+            # Transport-level failure on HEAD (timeout, TLS, DNS, etc.); try GET as fallback
+            Write-Verbose "HEAD transport error on attempt $attempt for $Url`: $($_.Exception.Message)"
+            try {
+                $response = Invoke-WebRequest -Uri $Url `
+                    -Method Get `
+                    -TimeoutSec $TimeoutSec `
+                    -MaximumRedirection 10 `
+                    -UserAgent $userAgent `
+                    -SkipHttpErrorCheck `
+                    -ErrorAction Stop
+
+                if ($response.StatusCode -ge 200 -and $response.StatusCode -lt 400) {
+                    return @{ Success = $true; StatusCode = $response.StatusCode; Attempts = $attempt }
+                }
+                $lastStatusCode = $response.StatusCode
+                $lastError = "HTTP $($response.StatusCode) (GET fallback)"
+            }
+            catch {
+                $lastStatusCode = 0
+                $lastError = $_.Exception.Message
+            }
         }
 
-        if ($response.StatusCode -ge 200 -and $response.StatusCode -lt 400) {
-            return @{ Success = $true; StatusCode = $response.StatusCode }
-        }
-        else {
-            return @{ Success = $false; StatusCode = $response.StatusCode; Error = "HTTP $($response.StatusCode)" }
+        if ($attempt -lt $totalAttempts) {
+            Write-Verbose -Verbose "Attempt $attempt/$totalAttempts failed for $Url - retrying in ${delay}s..."
+            Start-Sleep -Seconds $delay
+            $delay = [Math]::Min($delay * 2, 15)
         }
     }
-    catch {
-        return @{ Success = $false; StatusCode = 0; Error = $_.Exception.Message }
-    }
+
+    return @{ Success = $false; StatusCode = $lastStatusCode; Error = $lastError; Attempts = $attempt }
 }
 
 function Test-LocalLink {
@@ -185,7 +237,8 @@ foreach ($linkGroup in $uniqueLinks) {
             $verifyResult = Test-LocalLink -Url $url -BasePath $basePath
         }
         if ($verifyResult.Success) {
-            Write-Host "✓ OK: $url" -ForegroundColor Green
+            $attemptsMsg = if ($verifyResult.Attempts -gt 1) { " (attempt $($verifyResult.Attempts))" } else { "" }
+            Write-Host "✓ OK: $url$attemptsMsg" -ForegroundColor Green
             $results.Passed++
         }
         else {
@@ -195,6 +248,7 @@ foreach ($linkGroup in $uniqueLinks) {
             else {
                 $verifyResult.Error
             }
+            $attemptsMsg = if ($verifyResult.Attempts -gt 1) { " after $($verifyResult.Attempts) attempts" } else { "" }
 
             # Determine if this status code should be ignored or treated as failure
             # Ignore: 401 (Unauthorized), 403 (Forbidden), 429 (Too Many Requests - already retried)
@@ -218,7 +272,7 @@ foreach ($linkGroup in $uniqueLinks) {
             }
 
             if ($shouldIgnore) {
-                Write-Host "⊘ IGNORED: $url - $errorMsg ($ignoreReason)" -ForegroundColor Yellow
+                Write-Host "⊘ IGNORED: $url - $errorMsg ($ignoreReason)$attemptsMsg" -ForegroundColor Yellow
                 Write-Verbose -Verbose "Ignored error details for $url - Status: $($verifyResult.StatusCode) - $ignoreReason"
                 foreach ($occurrence in $occurrences) {
                     Write-Verbose -Verbose "    Found in: $($occurrence.Path):$($occurrence.Line):$($occurrence.Column)"
@@ -226,7 +280,7 @@ foreach ($linkGroup in $uniqueLinks) {
                 $results.Skipped++
             }
             else {
-                Write-Host "✗ FAILED: $url - $errorMsg" -ForegroundColor Red
+                Write-Host "✗ FAILED: $url - $errorMsg$attemptsMsg" -ForegroundColor Red
                 foreach ($occurrence in $occurrences) {
                     Write-Host "    Found in: $($occurrence.Path):$($occurrence.Line):$($occurrence.Column)" -ForegroundColor DarkGray
                 }
