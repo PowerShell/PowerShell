@@ -1,5 +1,75 @@
 # Preview Changelog
 
+## [7.7.0-preview.6]
+
+### General Cmdlet Updates and Fixes
+
+- Honor `-Recurse` when `Get-ChildItem` uses `-Name` (#28078)
+- Fix `Resolve-Path -Relative` output for dot-prefixed names (#28087)
+- Treat `StringCollection` as a list collection with the `String` element type (#28141)
+- Fix duplicate results from `Get-Command` fuzzy matching (#28042)
+- Avoid extra SMB queries when formatting file names (#28038)
+- Use `GetCurrentPackageFamilyNameNative` API instead of path matching to detect MSIX installation (#28029)
+- Replace the deprecated `X509Certificate2` constructor with `X509CertificateLoader.LoadCertificate` (#27965)
+- Protect the fallback temporary home directory by enforcing and checking its file mode on Unix platforms (#27985)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@xtqqczze</p>
+
+</summary>
+
+<ul>
+<li>Remove the redundant <code>#if UNIX</code> check from the Unix only code (#28120)</li>
+<li>Update <code>HelpersRemoting.psm1</code> to handle an exception better (#27903) (Thanks @xtqqczze!)</li>
+</ul>
+
+</details>
+
+### Tests
+
+- Fix the `PATH` test for MSIX installed PowerShell (#28068)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+
+
+<p>Update to .NET SDK 11.0.100-rc.2.26504.105</p>
+
+<p>We thank the following contributors!</p>
+<p>@trackd</p>
+
+</summary>
+
+<ul>
+<li>Move to the latest <code>Microsoft.PowerShell.Native</code> package and add test (#28173)</li>
+<li>Update <code>Microsoft.PowerShell.Native</code> package version (#28168)</li>
+<li>Add native Azure Linux 4 RPM packaging (#28107)</li>
+<li>Bump CodeQL init and analyze actions to 4.38.2 (#28123)</li>
+<li>Bump CodeQL init and analyze actions to 4.38.1 (#28121)</li>
+<li>Localized file check-in by OneLocBuild Task: Build definition ID 13420: Build ID 2741383 (#28093)</li>
+<li>Update preview and next release tags in metadata.json (#28089) (Thanks @trackd!)</li>
+<li>Localized file check-in by OneLocBuild Task: Build definition ID 13420: Build ID 2734773 (#28060)</li>
+<li>Publish Azure Linux 4 packages to preview PMC (#28074)</li>
+<li>Bump PowerShell/compliance/.github/workflows/ready-to-merge.yml from 1.0.0 to 1.0.1 (#27338)</li>
+<li>Bump ossf/scorecard-action from 2.4.3 to 2.4.4 (#28124)</li>
+<li>Bump actions/setup-dotnet from 5.3.0 to 6.0.0 (#28056)</li>
+<li>Bump actions/checkout from 6.0.2 to 7.0.1 (#28053)</li>
+<li>Bump github/codeql-action/upload-sarif from 4.36.0 to 4.38.2 (#28126)</li>
+</ul>
+
+</details>
+
+[7.7.0-preview.6]: https://github.com/PowerShell/PowerShell/compare/v7.7.0-preview.5...v7.7.0-preview.6
+
 ## [7.7.0-preview.5]
 
 ### Engine Updates and Fixes
