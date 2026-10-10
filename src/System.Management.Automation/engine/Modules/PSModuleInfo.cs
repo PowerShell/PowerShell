@@ -78,7 +78,7 @@ namespace System.Management.Automation
         {
             if (path != null)
             {
-                string resolvedPath = ModuleCmdletBase.GetResolvedPath(path, context);
+                string resolvedPath = ModuleCmdletBase.ResolveToSingleFileSystemPath(path, context);
                 // The resolved path might be null if we're building a dynamic module and the path
                 // is just a GUID, not an actual path that can be resolved.
                 Path = resolvedPath ?? path;

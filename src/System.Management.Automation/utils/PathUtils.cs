@@ -618,7 +618,7 @@ namespace System.Management.Automation
             {
                 // Even if 'moduleNameOrPath' is a rooted path, 'ResolveRootedFilePath' may return null when the path doesn't exist yet,
                 // or when it contains wildcards but cannot be resolved to a single path.
-                string rootedPath = ModuleCmdletBase.ResolveRootedFilePath(moduleNameOrPath, cmdlet.Context);
+                string rootedPath = ModuleCmdletBase.ResolveToFileSystemPathIfRooted(moduleNameOrPath, cmdlet.Context);
                 if (string.IsNullOrEmpty(rootedPath) && moduleNameOrPath.StartsWith('.'))
                 {
                     PathInfo currentPath = cmdlet.CurrentProviderLocation(cmdlet.Context.ProviderNames.FileSystem);
