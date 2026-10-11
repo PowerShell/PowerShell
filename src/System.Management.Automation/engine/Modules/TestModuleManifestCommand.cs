@@ -190,9 +190,17 @@ namespace Microsoft.PowerShell.Commands
                             foreach (ModuleSpecification requiredModule in requiredModules)
                             {
                                 var modules = GetModule(new[] { requiredModule.Name }, all: false, refresh: true);
-                                if (modules.Count == 0)
+
+                                // The required module must also match the version constraints of the entry, if any.
+                                bool isRequiredModuleAvailable = modules.Exists(m => ModuleIntrinsics.IsModuleMatchingConstraints(
+                                    m,
+                                    requiredVersion: requiredModule.RequiredVersion,
+                                    minimumVersion: requiredModule.Version,
+                                    maximumVersion: requiredModule.MaximumVersion == null ? null : GetMaximumVersion(requiredModule.MaximumVersion)));
+
+                                if (!isRequiredModuleAvailable)
                                 {
-                                    string errorMsg = StringUtil.Format(Modules.InvalidRequiredModulesinModuleManifest, requiredModule.Name, filePath);
+                                    string errorMsg = StringUtil.Format(Modules.InvalidRequiredModulesinModuleManifest, requiredModule, filePath);
                                     var errorRecord = new ErrorRecord(new DirectoryNotFoundException(errorMsg), "Modules_InvalidRequiredModulesinModuleManifest",
                                             ErrorCategory.ObjectNotFound, _path);
                                     WriteError(errorRecord);

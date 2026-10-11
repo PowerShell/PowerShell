@@ -163,6 +163,50 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
     }
 }
 
+Describe "Test-ModuleManifest RequiredModules version tests" -tags "CI" {
+
+    BeforeAll {
+        $moduleRootPath = Join-Path $TestDrive 'RequiredModulesVersion'
+        New-Item -ItemType Directory -Path "$moduleRootPath/RequiredModuleVersionTest" -Force > $null
+        New-ModuleManifest -Path "$moduleRootPath/RequiredModuleVersionTest/RequiredModuleVersionTest.psd1" -ModuleVersion '1.5.0'
+
+        $originalPSModulePath = $env:PSModulePath
+        $env:PSModulePath = $moduleRootPath + [System.IO.Path]::PathSeparator + $env:PSModulePath
+
+        $testModulePath = Join-Path $TestDrive 'test.psd1'
+    }
+
+    AfterAll {
+        $env:PSModulePath = $originalPSModulePath
+    }
+
+    It "module manifest containing required module with unavailable version returns error: <variation>" -TestCases (
+        @{variation = "ModuleVersion higher than available"; requiredModule = @{ModuleName = 'RequiredModuleVersionTest'; ModuleVersion = '2.0'}},
+        @{variation = "RequiredVersion not available"; requiredModule = @{ModuleName = 'RequiredModuleVersionTest'; RequiredVersion = '2.0'}},
+        @{variation = "MaximumVersion lower than available"; requiredModule = @{ModuleName = 'RequiredModuleVersionTest'; MaximumVersion = '1.0'}}
+    ) {
+
+        param($requiredModule)
+
+        New-ModuleManifest -Path $testModulePath -RequiredModules $requiredModule
+        $fullyQualifiedErrorId = "Modules_InvalidRequiredModulesinModuleManifest,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
+        { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | Should -Throw -ErrorId $fullyQualifiedErrorId
+    }
+
+    It "module manifest containing required module with available version succeeds: <variation>" -TestCases (
+        @{variation = "ModuleVersion lower than available"; requiredModule = @{ModuleName = 'RequiredModuleVersionTest'; ModuleVersion = '1.0'}},
+        @{variation = "RequiredVersion available"; requiredModule = @{ModuleName = 'RequiredModuleVersionTest'; RequiredVersion = '1.5.0'}},
+        @{variation = "MaximumVersion with wildcard"; requiredModule = @{ModuleName = 'RequiredModuleVersionTest'; MaximumVersion = '1.*'}},
+        @{variation = "no version"; requiredModule = 'RequiredModuleVersionTest'}
+    ) {
+
+        param($requiredModule)
+
+        New-ModuleManifest -Path $testModulePath -RequiredModules $requiredModule
+        Test-ModuleManifest -Path $testModulePath -ErrorAction Stop | Should -BeOfType System.Management.Automation.PSModuleInfo
+    }
+}
+
 Describe "Tests for circular references in required modules" -tags "CI" {
 
     function CreateTestModules([string]$RootPath, [string[]]$ModuleNames, [bool]$AddVersion, [bool]$AddGuid, [bool]$AddCircularReference)
