@@ -661,14 +661,14 @@ foo
     }
 
     Context "Redirected standard input as commands" {
-        It "Does not write VT sequences to the output: <Arguments>" -TestCases @(
-            @{Arguments = "-noprofile -c -"}
-            @{Arguments = "-noprofile -Command -"}
-            @{Arguments = "-noprofile -File -"}
-            @{Arguments = "-noprofile"}
+        It "Does not write VT sequences to the output: <CommandLine>" -TestCases @(
+            @{CommandLine = "-noprofile -c -"}
+            @{CommandLine = "-noprofile -Command -"}
+            @{CommandLine = "-noprofile -File -"}
+            @{CommandLine = "-noprofile"}
         ) {
-            param($Arguments)
-            $si = NewProcessStartInfo $Arguments -RedirectStdIn
+            param($CommandLine)
+            $si = NewProcessStartInfo $CommandLine -RedirectStdIn
             # NO_COLOR and TERM=dumb would hide the VT sequences, so make sure neither is set
             $null = $si.Environment.Remove("NO_COLOR")
             $si.Environment["TERM"] = "xterm-256color"
