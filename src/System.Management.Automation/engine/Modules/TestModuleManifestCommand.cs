@@ -191,9 +191,10 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 var modules = GetModule(new[] { requiredModule.Name }, all: false, refresh: true);
 
-                                // The required module must also match the version constraints of the entry, if any.
+                                // The required module must also match the GUID and version constraints of the entry, if any.
                                 bool isRequiredModuleAvailable = modules.Exists(m => ModuleIntrinsics.IsModuleMatchingConstraints(
                                     m,
+                                    guid: requiredModule.Guid,
                                     requiredVersion: requiredModule.RequiredVersion,
                                     minimumVersion: requiredModule.Version,
                                     maximumVersion: requiredModule.MaximumVersion == null ? null : GetMaximumVersion(requiredModule.MaximumVersion)));
