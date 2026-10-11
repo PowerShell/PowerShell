@@ -29,6 +29,33 @@ Describe "Get-Command Feature tests" -Tag Feature {
                 $cmd.Score | Should -BeLessOrEqual 3
             }
         }
+
+        It "Should not return duplicate commands from multiple copies of a module when using -UseFuzzyMatching" {
+            # Create two discoverable copies of the same module so the duplicate-candidate scenario
+            # is reproduced consistently without relying on platform-specific installed modules.
+            $moduleRoots = 1..2 | ForEach-Object {
+                $moduleRoot = Join-Path $TestDrive "ModuleRoot$_"
+                $modulePath = Join-Path $moduleRoot "DuplicateFuzzyModule"
+                $null = New-Item -ItemType Directory -Path $modulePath
+                New-ModuleManifest -Path (Join-Path $modulePath "DuplicateFuzzyModule.psd1") `
+                    -ModuleVersion "1.0" `
+                    -CmdletsToExport "Get-FuzzyDuplicate"
+                $moduleRoot
+            }
+
+            $originalModulePath = $env:PSModulePath
+            try {
+                $env:PSModulePath = $moduleRoots -join [System.IO.Path]::PathSeparator
+                $cmds = Get-Command Get-FuzzyDuplicat -UseFuzzyMatching -FuzzyMinimumDistance 1
+            }
+            finally {
+                $env:PSModulePath = $originalModulePath
+            }
+
+            $cmds | Should -HaveCount 1
+            $cmds.Name | Should -BeExactly "Get-FuzzyDuplicate"
+            $cmds.Score | Should -Be 1
+        }
     }
 
     Context "-UseAbbreviationExpansion tests" {
