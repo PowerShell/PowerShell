@@ -56,6 +56,28 @@ Describe "PSCommand API tests" -Tag "CI" {
             }
         }
 
+        It "Does not use the defining module scope of a CommandInfo from another runspace" {
+            try {
+                $module = New-Module -Name PSCommandCrossRunspaceTest -ScriptBlock {
+                    $script:Value = 'defining runspace'
+                    function Get-ModuleScopedValue { "value=[$script:Value]" }
+                    Export-ModuleMember -Function Get-ModuleScopedValue
+                } | Import-Module -PassThru
+
+                $commandInfo = Get-Command PSCommandCrossRunspaceTest\Get-ModuleScopedValue
+                # [powershell]::Create() uses a new runspace: the module's session state belongs to this one
+                $otherShell = [powershell]::Create()
+                $result = $otherShell.AddCommand($commandInfo).Invoke()
+
+                $otherShell.Streams.Error | Should -BeNullOrEmpty
+                $result | Should -Be 'value=[]'
+            }
+            finally {
+                $otherShell.Dispose()
+                Remove-Module $module -Force
+            }
+        }
+
         It "Runs a global function added as a CommandInfo" {
             try {
                 function global:Invoke-PSCommandGlobalTest { 'global ok' }

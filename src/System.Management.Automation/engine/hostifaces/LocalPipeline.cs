@@ -942,9 +942,16 @@ namespace System.Management.Automation.Runspaces
             {
                 // Run the function in the session state it was defined in (its module), like command discovery does.
                 // Using the caller's session state breaks module-scoped ($script:) variables and private helpers.
+                // A CommandInfo captured in another (possibly disposed) runspace keeps using this runspace's
+                // engine session state: a session state must not be used with a different ExecutionContext.
+                SessionStateInternal sessionState = functionInfo.ScriptBlock.SessionStateInternal;
+                if (sessionState?.ExecutionContext != LocalRunspace.ExecutionContext)
+                {
+                    sessionState = LocalRunspace.ExecutionContext.EngineSessionState;
+                }
+
                 return new CommandProcessor(functionInfo, LocalRunspace.ExecutionContext,
-                    useLocalScope: false, fromScriptFile: false,
-                    sessionState: functionInfo.ScriptBlock.SessionStateInternal ?? LocalRunspace.ExecutionContext.EngineSessionState);
+                    useLocalScope: false, fromScriptFile: false, sessionState: sessionState);
             }
 
             ApplicationInfo applicationInfo = commandInfo as ApplicationInfo;
