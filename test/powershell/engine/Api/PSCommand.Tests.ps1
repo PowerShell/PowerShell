@@ -33,6 +33,42 @@ Describe "PSCommand API tests" -Tag "CI" {
             $result = $shell.Invoke()
             $result | Should -BeOfType System.DateTime
         }
+
+        It "Runs a module function added as a CommandInfo in its module's scope" {
+            try {
+                $module = New-Module -Name PSCommandModuleScopeTest -ScriptBlock {
+                    $script:Target = { "called with $args" }
+                    function Get-PrivateValue { 'private' }
+                    function Invoke-ModuleScoped { & $script:Target (Get-PrivateValue) }
+                    Export-ModuleMember -Function Invoke-ModuleScoped
+                } | Import-Module -PassThru
+
+                $commandInfo = Get-Command PSCommandModuleScopeTest\Invoke-ModuleScoped
+                $nestedShell = [powershell]::Create('CurrentRunspace')
+                $result = $nestedShell.AddCommand($commandInfo).Invoke()
+
+                $nestedShell.Streams.Error | Should -BeNullOrEmpty
+                $result | Should -Be 'called with private'
+            }
+            finally {
+                $nestedShell.Dispose()
+                Remove-Module $module -Force
+            }
+        }
+
+        It "Runs a global function added as a CommandInfo" {
+            try {
+                function global:Invoke-PSCommandGlobalTest { 'global ok' }
+                $nestedShell = [powershell]::Create('CurrentRunspace')
+                $result = $nestedShell.AddCommand((Get-Command Invoke-PSCommandGlobalTest)).Invoke()
+
+                $result | Should -Be 'global ok'
+            }
+            finally {
+                $nestedShell.Dispose()
+                Remove-Item function:\Invoke-PSCommandGlobalTest
+            }
+        }
     }
 
     Context "Cloning PSCommands" {

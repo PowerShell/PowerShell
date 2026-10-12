@@ -940,8 +940,11 @@ namespace System.Management.Automation.Runspaces
             IScriptCommandInfo functionInfo = commandInfo as IScriptCommandInfo;
             if (functionInfo != null)
             {
+                // Run the function in the session state it was defined in (its module), like command discovery does.
+                // Using the caller's session state breaks module-scoped ($script:) variables and private helpers.
                 return new CommandProcessor(functionInfo, LocalRunspace.ExecutionContext,
-                    useLocalScope: false, fromScriptFile: false, sessionState: LocalRunspace.ExecutionContext.EngineSessionState);
+                    useLocalScope: false, fromScriptFile: false,
+                    sessionState: functionInfo.ScriptBlock.SessionStateInternal ?? LocalRunspace.ExecutionContext.EngineSessionState);
             }
 
             ApplicationInfo applicationInfo = commandInfo as ApplicationInfo;
