@@ -19,7 +19,6 @@
 
 <summary>
 
-<p>Update to .NET SDK 11.0.100-rc.2.26504.105</p>
 <p>We thank the following contributors!</p>
 <p>@xtqqczze</p>
 
@@ -42,6 +41,7 @@
 
 <summary>
 
+<p>Update to .NET SDK 11.0.100-rc.2.26504.105</p>
 <p>We thank the following contributors!</p>
 <p>@trackd</p>
 
