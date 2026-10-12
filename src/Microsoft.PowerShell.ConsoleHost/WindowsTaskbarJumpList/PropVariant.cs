@@ -24,6 +24,16 @@ namespace Microsoft.PowerShell
         [FieldOffset(8)]
         private readonly IntPtr _ptr;
 
+        // The native PROPVARIANT is 24 bytes on 64-bit (16 bytes on 32-bit), but only the fields above are used.
+        // This instance is passed to PropVariantClear, which zeroes the whole native structure, so the managed object
+        // must be at least as large as it. Otherwise the clear overwrites the header of the next object on the managed
+        // heap, which corrupts the sync block index or hash code stored in it (this crashed the runtime for COM objects).
+        // StructLayoutAttribute.Size has no effect on the size of a managed class, so a field is needed to occupy the space.
+#pragma warning disable CS0169 // The field is never used
+        [FieldOffset(16)]
+        private readonly IntPtr _padding;
+#pragma warning restore CS0169
+
         /// <summary>
         /// Set a string value.
         /// </summary>
