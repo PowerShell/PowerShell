@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 using Microsoft.PowerShell;
 using Xunit;
@@ -40,6 +41,17 @@ namespace PSTests.Parallel
             }
 
             Assert.Fail($"Failed to allocate an object directly after a {nameof(PropVariant)} in {MaxAttempts} attempts.");
+        }
+
+        [SkippableFact]
+        public static void PropVariantHasTheSameSizeAsTheNativeStructure()
+        {
+            Skip.IfNot(Platform.IsWindowsDesktop);
+
+            // sizeof(PROPVARIANT) is 24 bytes on 64-bit and 16 bytes on 32-bit.
+            int expectedSize = IntPtr.Size == 8 ? 24 : 16;
+
+            Assert.Equal(expectedSize, Marshal.SizeOf<PropVariant>());
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
