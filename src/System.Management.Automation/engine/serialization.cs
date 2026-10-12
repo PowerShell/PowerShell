@@ -3342,6 +3342,34 @@ namespace System.Management.Automation
 
         private static readonly Lazy<CimDeserializer> s_cimDeserializer = new Lazy<CimDeserializer>(CimDeserializer.Create);
 
+        // The native MI library is not available on every platform (for example, there is no libmi on macOS).
+        // Without it CIM classes cannot be rehydrated; once that is known, skip the attempt for later objects.
+        private static volatile bool s_cimDeserializerUnavailable;
+
+        private static bool TryGetCimDeserializer(out CimDeserializer cimDeserializer)
+        {
+            cimDeserializer = null;
+            if (s_cimDeserializerUnavailable)
+            {
+                return false;
+            }
+
+            try
+            {
+                cimDeserializer = s_cimDeserializer.Value;
+                return true;
+            }
+            catch (Exception e) when (e is DllNotFoundException
+                                        or EntryPointNotFoundException
+                                        or BadImageFormatException
+                                        or TypeInitializationException
+                                        or PlatformNotSupportedException)
+            {
+                s_cimDeserializerUnavailable = true;
+                return false;
+            }
+        }
+
         private CimClass RehydrateCimClass(PSPropertyInfo classMetadataProperty)
         {
             if ((classMetadataProperty == null) || (classMetadataProperty.Value == null))
@@ -3430,12 +3458,19 @@ namespace System.Management.Automation
                     return null;
                 }
 
+                // Keep the deserialized property bag instead of failing the whole deserialization
+                // when CIM classes cannot be rehydrated on this platform.
+                if (!TryGetCimDeserializer(out CimDeserializer cimDeserializer))
+                {
+                    return null;
+                }
+
                 string miXmlString = miXmlProperty.Value.ToString();
                 byte[] miXmlBytes = Encoding.Unicode.GetBytes(miXmlString);
                 uint offset = 0;
                 try
                 {
-                    currentClass = s_cimDeserializer.Value.DeserializeClass(
+                    currentClass = cimDeserializer.DeserializeClass(
                         miXmlBytes,
                         ref offset,
                         parentClass,

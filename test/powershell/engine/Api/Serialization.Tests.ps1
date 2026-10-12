@@ -102,4 +102,17 @@ Describe "Serialization Tests" -tags "CI" {
 
         SerializeAndDeserialize($versionObject).TestScriptProperty | Should -Be $versionObject.TestScriptProperty
     }
+
+    It 'Deserializes a CIM instance whether or not its CIM class can be rehydrated' {
+        # Serialized on Windows with class metadata (__ClassMetadata/MiXml). Where the native MI library is
+        # available the object is rehydrated into a CimInstance; where it is not (e.g. macOS) the deserialized
+        # property bag must be returned instead of failing the whole deserialization.
+        $xml = Get-Content -Raw -Path (Join-Path $PSScriptRoot 'assets' 'CimInstance-Win32_TimeZone.clixml')
+
+        $result = [System.Management.Automation.PSSerializer]::Deserialize($xml)
+
+        $result.Bias | Should -Be 180
+        $result.Caption | Should -Not -BeNullOrEmpty
+        $result.PSTypeNames -match 'Win32_TimeZone' | Should -Not -BeNullOrEmpty
+    }
 }
