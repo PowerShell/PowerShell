@@ -46,7 +46,7 @@ namespace Microsoft.PowerShell
             }
 
             _vt = (ushort)VarEnum.VT_LPWSTR;
-            _value.pwszVal = Marshal.StringToCoTaskMemUni(value);
+            _value.PwszVal = Marshal.StringToCoTaskMemUni(value);
         }
 
         /// <summary>
@@ -69,19 +69,20 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// The union of the value members of the native PROPVARIANT structure.
-        /// Only the members that are needed to reproduce the native size and the members that are used are declared.
+        /// Only the members that are needed to reproduce the native size and the members that are used are declared,
+        /// and they are named after the native members, with the first letter capitalized.
         /// </summary>
         [StructLayout(LayoutKind.Explicit)]
         private struct ValueUnion
         {
             // Covers all of the pointer and (up to) 8 byte scalar members, such as pwszVal, pszVal, punkVal and hVal.
             [FieldOffset(0)]
-            public IntPtr pwszVal;
+            public IntPtr PwszVal;
 
             // The counted array members (CAUB, CAI, CALPWSTR and so on) are the largest members of the union,
             // so this is what gives the native structure its full size.
             [FieldOffset(0)]
-            public CountedArray ca;
+            public CountedArray Ca;
         }
 
         /// <summary>
@@ -90,10 +91,12 @@ namespace Microsoft.PowerShell
         [StructLayout(LayoutKind.Sequential)]
         private struct CountedArray
         {
-            public uint cElems;
+            // The cElems member of the native structure.
+            public uint CElems;
 
-            // Aligned to the pointer size, so this is at offset 8 on 64-bit and offset 4 on 32-bit.
-            public IntPtr pElems;
+            // The pElems member of the native structure, which is aligned to the pointer size,
+            // so is at offset 8 on 64-bit and offset 4 on 32-bit.
+            public IntPtr PElems;
         }
 
         private static class PropVariantNativeMethods
