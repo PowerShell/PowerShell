@@ -1249,6 +1249,22 @@ namespace System.Management.Automation.Language
         /// </exception>
         public ScriptBlock GetScriptBlock()
         {
+            ValidateForScriptBlock();
+
+            return new ScriptBlock(this, isFilter: false);
+        }
+
+        /// <summary>
+        /// Performs the post parse checks if needed and throws if the ast cannot be converted into a script block.
+        /// </summary>
+        /// <exception cref="ParseException">
+        /// Thrown if there are any semantic errors in the ast.
+        /// </exception>
+        /// <exception cref="PSInvalidOperationException">
+        /// Thrown if the ast had errors.
+        /// </exception>
+        internal void ValidateForScriptBlock()
+        {
             if (!PostParseChecksPerformed)
             {
                 Parser parser = new Parser();
@@ -1267,8 +1283,6 @@ namespace System.Management.Automation.Language
             {
                 throw new PSInvalidOperationException();
             }
-
-            return new ScriptBlock(this, isFilter: false);
         }
 
         private ScriptBlockAst GetRootScriptBlockAst()
@@ -3883,6 +3897,42 @@ namespace System.Management.Automation.Language
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Convert the ast into a script block that can be invoked.
+        /// </summary>
+        /// <remarks>
+        /// Unlike calling <see cref="ScriptBlockAst.GetScriptBlock"/> on <see cref="Body"/>, the script block
+        /// returned here includes the parameters specified after the function name and is a filter if the
+        /// filter keyword was used.
+        /// </remarks>
+        /// <returns>The compiled script block.</returns>
+        /// <exception cref="ParseException">
+        /// Thrown if there are any semantic errors in the ast.
+        /// </exception>
+        /// <exception cref="PSInvalidOperationException">
+        /// Thrown if the ast had parse errors.
+        /// </exception>
+        public ScriptBlock GetScriptBlock()
+        {
+            FunctionDefinitionAst functionDefinitionAst = this;
+            if (GetAncestorAst<ScriptBlockAst>(Parent) == null)
+            {
+                // The post parse checks must start from a root ScriptBlockAst. If this function
+                // definition is not part of a script block, i.e. it was copied or constructed
+                // manually, wrap a copy of it in one so the checks cover the whole function.
+                functionDefinitionAst = (FunctionDefinitionAst)Copy();
+                _ = new ScriptBlockAst(
+                    Extent,
+                    paramBlock: null,
+                    new StatementBlockAst(Extent, new StatementAst[] { functionDefinitionAst }, traps: null),
+                    isFilter: false);
+            }
+
+            functionDefinitionAst.Body.ValidateForScriptBlock();
+
+            return new ScriptBlock(functionDefinitionAst, functionDefinitionAst.IsFilter);
         }
 
         /// <summary>
