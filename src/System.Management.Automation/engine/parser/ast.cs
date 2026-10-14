@@ -1245,7 +1245,12 @@ namespace System.Management.Automation.Language
         /// </summary>
         /// <returns>The compiled script block.</returns>
         /// <exception cref="ParseException">
-        /// Thrown if there are any semantic errors in the ast.
+        /// Thrown if the semantic checks have not yet been performed on the ast, e.g. it was copied or constructed
+        /// manually, and performing them reports any errors.
+        /// </exception>
+        /// <exception cref="PSInvalidOperationException">
+        /// Thrown if the semantic checks were already performed on the ast, e.g. it came from the parser, and the
+        /// ast had parse or semantic errors.
         /// </exception>
         public ScriptBlock GetScriptBlock()
         {
@@ -1258,10 +1263,10 @@ namespace System.Management.Automation.Language
         /// Performs the post parse checks if needed and throws if the ast cannot be converted into a script block.
         /// </summary>
         /// <exception cref="ParseException">
-        /// Thrown if there are any semantic errors in the ast.
+        /// Thrown if the semantic checks have not yet been performed and performing them reports any errors.
         /// </exception>
         /// <exception cref="PSInvalidOperationException">
-        /// Thrown if the ast had errors.
+        /// Thrown if the semantic checks were already performed and the ast had parse or semantic errors.
         /// </exception>
         internal void ValidateForScriptBlock()
         {
@@ -3909,10 +3914,12 @@ namespace System.Management.Automation.Language
         /// </remarks>
         /// <returns>The compiled script block.</returns>
         /// <exception cref="ParseException">
-        /// Thrown if there are any semantic errors in the ast.
+        /// Thrown if the semantic checks have not yet been performed on the ast, e.g. it was copied or constructed
+        /// manually, and performing them reports any errors.
         /// </exception>
         /// <exception cref="PSInvalidOperationException">
-        /// Thrown if the ast had parse errors.
+        /// Thrown if the semantic checks were already performed on the ast, e.g. it came from the parser, and the
+        /// ast had parse or semantic errors.
         /// </exception>
         public ScriptBlock GetScriptBlock()
         {
