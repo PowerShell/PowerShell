@@ -394,6 +394,174 @@ namespace System.Management.Automation
         internal static object CompareGe(ulong lhs, ulong rhs) { return (lhs >= rhs) ? Boxed.True : Boxed.False; }
     }
 
+    internal static class Int128Ops
+    {
+        internal static object Add(Int128 lhs, Int128 rhs)
+        {
+            try
+            {
+                return checked(lhs + rhs);
+            }
+            catch (OverflowException)
+            {
+                return (double)lhs + (double)rhs;
+            }
+        }
+
+        internal static object Sub(Int128 lhs, Int128 rhs)
+        {
+            try
+            {
+                return checked(lhs - rhs);
+            }
+            catch (OverflowException)
+            {
+                return (double)lhs - (double)rhs;
+            }
+        }
+
+        internal static object Multiply(Int128 lhs, Int128 rhs)
+        {
+            try
+            {
+                return checked(lhs * rhs);
+            }
+            catch (OverflowException)
+            {
+                return (double)lhs * (double)rhs;
+            }
+        }
+
+        internal static object Divide(Int128 lhs, Int128 rhs)
+        {
+            if (rhs == 0)
+            {
+                DivideByZeroException dbze = new DivideByZeroException();
+                throw new RuntimeException(dbze.Message, dbze);
+            }
+
+            if (lhs == Int128.MinValue && rhs == -1)
+            {
+                return (double)lhs / (double)rhs;
+            }
+
+            if ((lhs % rhs) == 0)
+            {
+                return lhs / rhs;
+            }
+
+            return (double)lhs / (double)rhs;
+        }
+
+        internal static object Remainder(Int128 lhs, Int128 rhs)
+        {
+            if (rhs == 0)
+            {
+                DivideByZeroException dbze = new DivideByZeroException();
+                throw new RuntimeException(dbze.Message, dbze);
+            }
+
+            if (lhs == Int128.MinValue && rhs == -1)
+            {
+                // The CLR raises an overflow exception for these values, so the result is hard coded
+                // the same way it is for the other signed integer types.
+                return Int128.Zero;
+            }
+
+            return lhs % rhs;
+        }
+
+        internal static object CompareEq(Int128 lhs, Int128 rhs) { return (lhs == rhs) ? Boxed.True : Boxed.False; }
+
+        internal static object CompareNe(Int128 lhs, Int128 rhs) { return (lhs != rhs) ? Boxed.True : Boxed.False; }
+
+        internal static object CompareLt(Int128 lhs, Int128 rhs) { return (lhs < rhs) ? Boxed.True : Boxed.False; }
+
+        internal static object CompareLe(Int128 lhs, Int128 rhs) { return (lhs <= rhs) ? Boxed.True : Boxed.False; }
+
+        internal static object CompareGt(Int128 lhs, Int128 rhs) { return (lhs > rhs) ? Boxed.True : Boxed.False; }
+
+        internal static object CompareGe(Int128 lhs, Int128 rhs) { return (lhs >= rhs) ? Boxed.True : Boxed.False; }
+    }
+
+    internal static class UInt128Ops
+    {
+        internal static object Add(UInt128 lhs, UInt128 rhs)
+        {
+            try
+            {
+                return checked(lhs + rhs);
+            }
+            catch (OverflowException)
+            {
+                return (double)lhs + (double)rhs;
+            }
+        }
+
+        internal static object Sub(UInt128 lhs, UInt128 rhs)
+        {
+            try
+            {
+                return checked(lhs - rhs);
+            }
+            catch (OverflowException)
+            {
+                return (double)lhs - (double)rhs;
+            }
+        }
+
+        internal static object Multiply(UInt128 lhs, UInt128 rhs)
+        {
+            try
+            {
+                return checked(lhs * rhs);
+            }
+            catch (OverflowException)
+            {
+                return (double)lhs * (double)rhs;
+            }
+        }
+
+        internal static object Divide(UInt128 lhs, UInt128 rhs)
+        {
+            if (rhs == 0)
+            {
+                DivideByZeroException dbze = new DivideByZeroException();
+                throw new RuntimeException(dbze.Message, dbze);
+            }
+
+            if ((lhs % rhs) == 0)
+            {
+                return lhs / rhs;
+            }
+
+            return (double)lhs / (double)rhs;
+        }
+
+        internal static object Remainder(UInt128 lhs, UInt128 rhs)
+        {
+            if (rhs == 0)
+            {
+                DivideByZeroException dbze = new DivideByZeroException();
+                throw new RuntimeException(dbze.Message, dbze);
+            }
+
+            return lhs % rhs;
+        }
+
+        internal static object CompareEq(UInt128 lhs, UInt128 rhs) { return (lhs == rhs) ? Boxed.True : Boxed.False; }
+
+        internal static object CompareNe(UInt128 lhs, UInt128 rhs) { return (lhs != rhs) ? Boxed.True : Boxed.False; }
+
+        internal static object CompareLt(UInt128 lhs, UInt128 rhs) { return (lhs < rhs) ? Boxed.True : Boxed.False; }
+
+        internal static object CompareLe(UInt128 lhs, UInt128 rhs) { return (lhs <= rhs) ? Boxed.True : Boxed.False; }
+
+        internal static object CompareGt(UInt128 lhs, UInt128 rhs) { return (lhs > rhs) ? Boxed.True : Boxed.False; }
+
+        internal static object CompareGe(UInt128 lhs, UInt128 rhs) { return (lhs >= rhs) ? Boxed.True : Boxed.False; }
+    }
+
     internal static class DecimalOps
     {
         internal static object Add(decimal lhs, decimal rhs)
