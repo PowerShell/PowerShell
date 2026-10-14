@@ -104,7 +104,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="sourceId">Source ID to write for.</param>
         /// <param name="progressRecord">Record to write.</param>
-        public void WriteProgress(Int64 sourceId, ProgressRecord progressRecord) { }
+        public void WriteProgress(long sourceId, ProgressRecord progressRecord) { }
 
         /// <summary>
         /// Default implementation - just discards it's arguments.

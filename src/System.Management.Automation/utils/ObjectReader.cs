@@ -290,7 +290,7 @@ namespace System.Management.Automation.Internal
         /// </remarks>
         public override Collection<object> NonBlockingRead()
         {
-            return _stream.NonBlockingRead(Int32.MaxValue);
+            return _stream.NonBlockingRead(int.MaxValue);
         }
 
         /// <summary>
@@ -400,7 +400,7 @@ namespace System.Management.Automation.Internal
         /// </remarks>
         public override Collection<PSObject> NonBlockingRead()
         {
-            return MakePSObjectCollection(_stream.NonBlockingRead(Int32.MaxValue));
+            return MakePSObjectCollection(_stream.NonBlockingRead(int.MaxValue));
         }
 
         /// <summary>
@@ -553,7 +553,7 @@ namespace System.Management.Automation.Internal
         /// <remarks></remarks>
         public override Collection<TResult> NonBlockingRead()
         {
-            return NonBlockingRead(Int32.MaxValue);
+            return NonBlockingRead(int.MaxValue);
         }
 
         /// <summary>
@@ -735,7 +735,7 @@ namespace System.Management.Automation.Internal
         /// <remarks></remarks>
         public override Collection<TReturn> NonBlockingRead()
         {
-            return NonBlockingRead(Int32.MaxValue);
+            return NonBlockingRead(int.MaxValue);
         }
 
         /// <summary>

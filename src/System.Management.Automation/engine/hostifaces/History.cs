@@ -172,7 +172,7 @@ namespace Microsoft.PowerShell.Commands
             // Create history size variable. Add ValidateRangeAttribute to
             // validate the range.
             Collection<Attribute> attrs = new Collection<Attribute>();
-            attrs.Add(new ValidateRangeAttribute(1, (int)Int16.MaxValue));
+            attrs.Add(new ValidateRangeAttribute(1, (int)short.MaxValue));
             PSVariable historySizeVar = new PSVariable(SpecialVariables.HistorySize, DefaultHistorySize, ScopedItemOptions.None, attrs);
             historySizeVar.Description = SessionStateStrings.MaxHistoryCountDescription;
 
@@ -887,7 +887,7 @@ namespace Microsoft.PowerShell.Commands
         /// No of History Entries (starting from last) that are to be displayed.
         /// </summary>
         [Parameter(Position = 1)]
-        [ValidateRange(0, (int)Int16.MaxValue)]
+        [ValidateRange(0, (int)short.MaxValue)]
         public int Count
         {
             get
