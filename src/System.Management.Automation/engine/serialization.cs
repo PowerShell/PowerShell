@@ -3497,6 +3497,28 @@ namespace System.Management.Automation
 
         // NOTE: Win7 change for refid-s that span multiple xml documents: ADMIN: changelist #226414
 
+        /// <summary>
+        /// Hides the CIM metadata of an instance that could not be rehydrated.
+        /// </summary>
+        /// <remarks>
+        /// The serializer attaches __ClassMetadata and __InstanceMetadata as hidden note properties, but the
+        /// hidden flag is not part of the serialized form. Hide them again so the deserialized object shows only
+        /// the instance properties; they are kept, so serializing the object again still carries the metadata
+        /// and a receiver that can rehydrate CIM instances gets a live CimInstance.
+        /// </remarks>
+        private static PSObject HideCimMetadata(PSObject deserializedObject)
+        {
+            foreach (string metadataPropertyName in new[] { CimClassMetadataProperty, CimInstanceMetadataProperty })
+            {
+                if (deserializedObject.InstanceMembers[metadataPropertyName] is PSPropertyInfo metadataProperty)
+                {
+                    metadataProperty.IsHidden = true;
+                }
+            }
+
+            return deserializedObject;
+        }
+
         private PSObject RehydrateCimInstance(PSObject deserializedObject)
         {
             if (deserializedObject.BaseObject is not PSCustomObject)
@@ -3508,7 +3530,7 @@ namespace System.Management.Automation
             CimClass cimClass = RehydrateCimClass(classMetadataProperty);
             if (cimClass == null)
             {
-                return deserializedObject;
+                return HideCimMetadata(deserializedObject);
             }
 
             CimInstance cimInstance;
@@ -3518,7 +3540,7 @@ namespace System.Management.Automation
             }
             catch (CimException)
             {
-                return deserializedObject;
+                return HideCimMetadata(deserializedObject);
             }
 
             PSObject psoCimInstance = PSObject.AsPSObject(cimInstance);
@@ -3558,7 +3580,7 @@ namespace System.Management.Automation
 
                     if (!propertyHandledSuccessfully)
                     {
-                        return deserializedObject;
+                        return HideCimMetadata(deserializedObject);
                     }
                 }
             }
