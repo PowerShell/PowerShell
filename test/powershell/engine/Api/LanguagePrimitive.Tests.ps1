@@ -223,4 +223,37 @@ Describe "Language Primitive Tests" -Tags "CI" {
         $convertedValue = [System.Management.Automation.LanguagePrimitives]::ConvertTo($formattedNumber, [bigint])
         $convertedValue | Should -Be 1
     }
+
+    It 'Wildcard enum string matching two members lists both distinct values in the cast error' {
+        # Regression: the second conflicting match used values.GetValue(i) (outer source index) instead of
+        # values.GetValue(j) (enum member index), so the message repeated the first member as the second.
+        # LanguagePrimitives.ConvertTo(string, enum) often resolves via Enum.Parse / EnumMinimumDisambiguation
+        # first; EnumSingleTypeConverter.ConvertFrom hits the wildcard branch that contains the fix.
+        $enumTypeName = 'TestLanguagePrimitivesEnumDup.TwoMemberNoFlags'
+        if (-not ($enumTypeName -as [type])) {
+            Add-Type -TypeDefinition @'
+namespace TestLanguagePrimitivesEnumDup {
+    public enum TwoMemberNoFlags {
+        Alpha = 0,
+        Beta = 1
+    }
+}
+'@
+        }
+
+        $enumType = [TestLanguagePrimitivesEnumDup.TwoMemberNoFlags]
+        $asm = [System.Management.Automation.LanguagePrimitives].Assembly
+        $converterType = $asm.GetType('System.Management.Automation.LanguagePrimitives+EnumSingleTypeConverter')
+        $inst = [Activator]::CreateInstance($converterType, $true)
+        $ex = $null
+        try {
+            $null = $inst.ConvertFrom('*', $enumType, [cultureinfo]::InvariantCulture, $true)
+        } catch {
+            $ex = $_.Exception.GetBaseException()
+        }
+
+        $ex | Should -BeOfType [System.Management.Automation.PSInvalidCastException]
+        $ex.Message | Should -Match '\(Alpha, Beta\)'
+        $ex.Message | Should -Not -Match '\(Alpha, Alpha\)'
+    }
 }
