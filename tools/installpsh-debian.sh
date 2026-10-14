@@ -153,7 +153,7 @@ curl https://packages.microsoft.com/keys/microsoft.asc | $SUDO apt-key add -
 if [[ "${DISTRIB_ID}" = "linuxmint" ]]; then
     echo "Attempting to remap linuxmint to an appropriate ubuntu version" >&2
     LINUXMINT_VERSION=${DISTRIB_RELEASE}
-    #https://en.wikipedia.org/wiki/Linux_Mint_version_history
+    #https://en.wikipedia.org/wiki/Linux_Mint#Release_history
     case ${LINUXMINT_VERSION} in
         19*)
             DISTRIB_RELEASE=18.04
@@ -166,7 +166,7 @@ if [[ "${DISTRIB_ID}" = "linuxmint" ]]; then
         ;;
         *)
             echo "ERROR: unsupported linuxmint version (${LINUXMINT_VERSION})." >&2
-            echo "Supported versions: 19" >&2
+            echo "Supported versions: 17, 18, 19." >&2
             echo "For additional versions open an issue or pull request at: https://github.com/powershell/powershell" >&2
             exit 1
         ;;
@@ -181,7 +181,7 @@ case $DISTRIB_ID in
             ;;
             *)
                 echo "ERROR: unsupported Ubuntu version ($DISTRIB_RELEASE)." >&2
-                echo "Supported versions: 14.04, 15.10, 16.04, 16.10, 18.04, 20.04." >&2
+                echo "Supported versions: 14.04, 15.10, 16.04, 16.10, 18.04, 20.04, 22.04." >&2
                 echo "For additional versions open an issue or pull request at: https://github.com/powershell/powershell" >&2
                 exit 1
             ;;
@@ -195,7 +195,7 @@ case $DISTRIB_ID in
             ;;
             *)
                 echo "ERROR: unsupported Debian version ($DISTRIB_RELEASE)." >&2
-                echo "Supported versions: 8, 9." >&2
+                echo "Supported versions: 8, 9, 10, 11." >&2
                 echo "For additional versions open an issue or pull request at: https://github.com/powershell/powershell" >&2
                 exit 1
             ;;
