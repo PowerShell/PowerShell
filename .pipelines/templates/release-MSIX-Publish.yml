@@ -57,11 +57,6 @@ jobs:
         $jsonPath = "$(Pipeline.Workspace)\SBOutDir\PowerShellStorePackage.json"
         $json = Get-Content $jsonPath -Raw | ConvertFrom-Json
 
-        $releaseNoteVariables = @{
-          '___VERSION___' = $tagString
-          '___CHANGELOGLINK___' = $changelogLink
-        }
-
         $listingProperties = @($json.listings.PSObject.Properties)
         if ($listingProperties.Count -eq 0) {
           throw "Store listings are missing from '$jsonPath'."
@@ -69,25 +64,32 @@ jobs:
 
         foreach ($listingProperty in $listingProperties) {
           $language = $listingProperty.Name
-          $releaseNotes = $listingProperty.Value.baseListing.releaseNotes
+          $baseListing = $listingProperty.Value.baseListing
+
+          $description = $baseListing.description
+          if ([string]::IsNullOrWhiteSpace($description)) {
+            throw "Store description for '$language' is missing from '$jsonPath'."
+          }
+          if (-not $description.Contains('___VERSION___')) {
+            throw "Store description for '$language' does not contain the required placeholder '___VERSION___'."
+          }
+          $baseListing.description = $description.Replace('___VERSION___', $tagString)
+
+          $releaseNotes = $baseListing.releaseNotes
           if ([string]::IsNullOrWhiteSpace($releaseNotes)) {
             throw "Store release notes for '$language' are missing from '$jsonPath'."
           }
-
-          foreach ($placeholder in $releaseNoteVariables.Keys) {
-            if (-not $releaseNotes.Contains($placeholder)) {
-              throw "Store release notes for '$language' do not contain the required placeholder '$placeholder'."
-            }
-            $releaseNotes = $releaseNotes.Replace($placeholder, $releaseNoteVariables[$placeholder])
+          if (-not $releaseNotes.Contains('___CHANGELOGLINK___')) {
+            throw "Store release notes for '$language' do not contain the required placeholder '___CHANGELOGLINK___'."
           }
+          $baseListing.releaseNotes = $releaseNotes.Replace('___CHANGELOGLINK___', $changelogLink)
 
-          $listingProperty.Value.baseListing.releaseNotes = $releaseNotes
           Write-Verbose -Verbose "Release notes for '$language':"
-          Write-Verbose -Verbose $releaseNotes
+          Write-Verbose -Verbose $baseListing.releaseNotes
         }
 
         $json | ConvertTo-Json -Depth 100 | Set-Content $jsonPath -Encoding UTF8
-    displayName: 'Set Store Release Note Variables'
+    displayName: 'Set Store Listing Variables'
 
   - task: PowerShell@2
     condition: or(eq(variables['LTS'], 'true'), eq(variables['STABLE'], 'true'), eq(variables['PREVIEW'], 'true'))
