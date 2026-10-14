@@ -91,11 +91,10 @@ Describe "PSEventManager.AddForwardedEvent" -Tags "CI" {
             $rs.Open()
             $ps = [powershell]::Create()
             $ps.Runspace = $rs
-            $remoteRunspaceId = $ps.AddScript(@"
+            $null = $ps.AddScript(@"
 `$null = Register-EngineEvent -SourceIdentifier $sourceId -Forward
 `$null = New-Event -SourceIdentifier $sourceId -MessageData 'remote message'
-[runspace]::DefaultRunspace.InstanceId
-"@).Invoke()[0]
+"@).Invoke()
             $ps.Dispose()
 
             $timeout = [DateTime]::Now.AddSeconds(10)
@@ -105,13 +104,16 @@ Describe "PSEventManager.AddForwardedEvent" -Tags "CI" {
             $rs.Events.ReceivedEvents.Count | Should -Be 1
             $remoteEvent = $rs.Events.ReceivedEvents[0]
 
+            # The first hop stamps the event with the client side runspace and computer name.
+            $remoteEvent.RunspaceId | Should -Be $rs.InstanceId
+            $remoteEvent.ComputerName | Should -BeExactly 'localhost'
+
             $null = $ExecutionContext.Events.AddForwardedEvent($remoteEvent)
 
             $received = Wait-Event -SourceIdentifier $sourceId -Timeout 5
             $received.MessageData | Should -BeExactly 'remote message'
-            $received.ComputerName | Should -BeExactly $remoteEvent.ComputerName
-            $received.ComputerName | Should -Not -BeNullOrEmpty
-            $received.RunspaceId | Should -Be $remoteEvent.RunspaceId
+            $received.ComputerName | Should -BeExactly 'localhost'
+            $received.RunspaceId | Should -Be $rs.InstanceId
             $received.TimeGenerated | Should -Be $remoteEvent.TimeGenerated
         }
         finally {
