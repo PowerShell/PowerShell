@@ -3901,7 +3901,11 @@ namespace System.Management.Automation
 
                 if (IsScalar)
                 {
-                    resultAsList.Add(valueToConvert);
+                    // Fix for Issue #17731: Convert scalar to element type before adding to list
+                    // Previously, this directly added the value without conversion, which failed for
+                    // types like bool where the value's runtime type differs from the expected type
+                    object convertedValue = LanguagePrimitives.ConvertTo(valueToConvert, ElementType, formatProvider);
+                    resultAsList.Add(convertedValue);
                 }
                 else if (array == null)
                 {
