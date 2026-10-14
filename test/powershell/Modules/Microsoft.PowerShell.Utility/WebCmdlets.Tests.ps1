@@ -574,6 +574,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
         $Result.Output.Encoding.BodyName | Should -Be 'utf-8'
         $Result.Output.Content | Should -Match '⡌⠁⠧⠑ ⠼⠁⠒  ⡍⠜⠇⠑⠹⠰⠎ ⡣⠕⠌'
+        $Result.Output.ToString() | Should -Match '⡌⠁⠧⠑ ⠼⠁⠒  ⡍⠜⠇⠑⠹⠰⠎ ⡣⠕⠌'
     }
 
     It "Invoke-WebRequest -ContentType overwrites Content-Type from -Headers." {
