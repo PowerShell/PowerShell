@@ -6629,9 +6629,16 @@ namespace System.Management.Automation.Language
                                     {
                                         foundVerbatimArgument = true;
                                         scanning = false;
-                                        ast = new StringConstantExpressionAst(verbatimToken.Extent, verbatimToken.Value, StringConstantType.BareWord);
-                                        elements.Add(ast);
-                                        endExtent = ast.Extent;
+
+                                        // Add the element following the verbatim argument.
+                                        // If there is no argument after the verbatim argument,
+                                        // the element will be an empty string, so nothing should be added.
+                                        if (verbatimToken.Value != string.Empty)
+                                        {
+                                            ast = new StringConstantExpressionAst(verbatimToken.Extent, verbatimToken.Value, StringConstantType.BareWord);
+                                            elements.Add(ast);
+                                            endExtent = ast.Extent;
+                                        }
                                     }
 
                                     break;
