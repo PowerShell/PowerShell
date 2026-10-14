@@ -126,8 +126,7 @@ namespace Microsoft.PowerShell.Commands
                     value = ((DictionaryEntry)value).Value;
                 }
 
-                string stringValue = value as string;
-                if (stringValue == null)
+                if (value is not string stringValue)
                 {
                     // try using ETS to convert to a string.
 
