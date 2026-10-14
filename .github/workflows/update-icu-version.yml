@@ -1,0 +1,47 @@
+name: Update ICU Version Monthly
+
+on:
+  schedule:
+    - cron: '0 0 1 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-icu:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update ICU version
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+
+          FILE=tools/packaging/packaging.psm1
+          LATEST=$(curl -s https://api.github.com/repos/unicode-org/icu/releases/latest \
+            | grep -oP '"tag_name": "release-\K\d+')
+
+          sed -i -E 's/\$BuildICUVersion[[:space:]]*=[[:space:]]*[0-9]+/$BuildICUVersion = '"$LATEST"'/' "$FILE"
+
+          if git diff --quiet -- "$FILE"; then
+            echo "ICU version already up-to-date."
+            exit 0
+          fi
+
+          BRANCH_NAME="update-icu-version-$(date +%s)"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH_NAME"
+          git add "$FILE"
+          git commit -m "Update ICU version to $LATEST"
+          git push -u origin "$BRANCH_NAME"
+
+          gh pr create \
+            --title "Update ICU version to $LATEST" \
+            --body "Automated monthly ICU update" \
+            --head "$BRANCH_NAME" \
+            --base master
