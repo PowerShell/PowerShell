@@ -505,9 +505,21 @@ namespace Microsoft.PowerShell.Commands
 
                     if (TryGetEncoding(characterSet, out Encoding localEncoding))
                     {
-                        stream.Seek(0, SeekOrigin.Begin);
-                        content = StreamToString(stream, localEncoding, perReadTimeout, cancellationToken);
-                        encoding = localEncoding;
+                        // We try again to look for the meta element to test if it makes sense to change encoding
+                        // For example to change from the default encoding (UTF8) to UTF16 will make the meta element unreadable
+                        substring = localEncoding.GetString(encoding.GetBytes(match.Value));
+                        match = s_metaRegex.Match(substring);
+                        if (!match.Success)
+                        {
+                            match = s_xmlRegex.Match(substring);
+                        }
+
+                        if (match.Success && match.Groups["charset"].Value == characterSet)
+                        {
+                            stream.Seek(0, SeekOrigin.Begin);
+                            content = StreamToString(stream, localEncoding, perReadTimeout, cancellationToken);
+                            encoding = localEncoding;
+                        }
                     }
                 }
             }
