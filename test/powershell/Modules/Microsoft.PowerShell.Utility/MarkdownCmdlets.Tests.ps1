@@ -525,6 +525,15 @@ bool function()`n{`n}
                 { Show-Markdown -UseBrowser -InputObject $markdownInfo -ErrorAction Stop } | Should -Throw -ErrorId 'HtmlIsNullOrEmpty,Microsoft.PowerShell.Commands.ShowMarkdownCommand'
             }
         }
+
+        It "Can show markdown piped directly to cmdlet as array of strings" {
+            $testMarkDownPath = Join-Path -Path $TestDrive -ChildPath 'test.md'
+            Set-Content -Path $testMarkDownPath -Value "# Header`n`ntext"
+            $fileLinesArray = Get-Content -Path $testMarkDownPath
+            $result = $fileLinesArray | Show-Markdown
+            $expectedString = (ConvertFrom-Markdown -Path $testMarkDownPath -AsVT100EncodedString).VT100EncodedString
+            $result | Should -BeExactly $expectedString
+        }
     }
 
     Context "Hosted PowerShell scenario" {
