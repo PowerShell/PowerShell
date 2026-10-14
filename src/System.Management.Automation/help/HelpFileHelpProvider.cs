@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -72,7 +71,7 @@ namespace System.Management.Automation
                     continue;
 
                 // Check whether the file is already loaded
-                if (!_helpFiles.ContainsKey(file))
+                if (!_helpFiles.Contains(file))
                 {
                     try
                     {
@@ -227,7 +226,7 @@ namespace System.Management.Automation
                     continue;
 
                 // Check whether the file is already loaded
-                if (!_helpFiles.ContainsKey(file))
+                if (!_helpFiles.Contains(file))
                 {
                     try
                     {
@@ -319,7 +318,7 @@ namespace System.Management.Automation
                 helpText = tr.ReadToEnd();
             }
             // Add this file into _helpFiles hashtable to prevent it to be loaded again.
-            _helpFiles[path] = 0;
+            _helpFiles.Add(path);
             helpInfo = HelpFileHelpInfo.GetHelpInfo(name, helpText, path);
 
             AddCache(path, helpInfo);
@@ -410,7 +409,7 @@ namespace System.Management.Automation
         ///
         /// This will avoid one help file getting loaded again and again.
         /// </summary>
-        private readonly Hashtable _helpFiles = new Hashtable();
+        private readonly HashSet<string> _helpFiles = new();
 
         #endregion
     }
