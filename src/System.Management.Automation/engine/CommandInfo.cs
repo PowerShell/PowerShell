@@ -905,7 +905,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Represents dynamic types such as <see cref="System.Management.Automation.PSObject"/>,
+    /// Represents dynamic types such as <see cref="System.Management.Automation.PSCustomObject"/>,
     /// but can be used where a real type might not be available, in which case the name of the type can be used.
     /// The type encodes the members of dynamic objects in the type name.
     /// </summary>
@@ -928,7 +928,7 @@ namespace System.Management.Automation
         : base(typeName, type)
         {
             Members = membersTypes;
-            if (type != typeof(PSObject))
+            if (type != typeof(PSCustomObject))
             {
                 return;
             }
@@ -948,7 +948,7 @@ namespace System.Management.Automation
 
         private static string GetMemberTypeProjection(string typename, IList<PSMemberNameAndType> members)
         {
-            if (typename == typeof(PSObject).FullName)
+            if (typename == typeof(PSCustomObject).FullName)
             {
                 foreach (var mem in members)
                 {
