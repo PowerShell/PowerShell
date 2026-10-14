@@ -63,20 +63,7 @@ namespace System.Management.Automation
 
                 ElementDescription = new COM.ELEMDESC();
                 ElementDescriptionArrayByteOffset = i * ElementDescriptionSize;
-
-                // Disable PRefast warning for converting to int32 and converting back into intptr.
-                // Code below takes into account 32 bit vs 64 bit conversions
-#pragma warning disable 56515
-                if (IntPtr.Size == 4)
-                {
-                    ElementDescriptionPointer = (IntPtr)(ElementDescriptionArrayPtr.ToInt32() + ElementDescriptionArrayByteOffset);
-                }
-                else
-                {
-                    ElementDescriptionPointer = (IntPtr)(ElementDescriptionArrayPtr.ToInt64() + ElementDescriptionArrayByteOffset);
-                }
-#pragma warning restore 56515
-
+                ElementDescriptionPointer = ElementDescriptionArrayPtr + ElementDescriptionArrayByteOffset;
                 ElementDescription = Marshal.PtrToStructure<COM.ELEMDESC>(ElementDescriptionPointer);
 
                 string paramstring = GetStringFromTypeDesc(typeinfo, ElementDescription.tdesc);
@@ -302,21 +289,7 @@ namespace System.Management.Automation
 
                 ElementDescription = new COM.ELEMDESC();
                 ElementDescriptionArrayByteOffset = i * ElementDescriptionSize;
-                // Disable PRefast warning for converting to int32 and converting back into intptr.
-                // Code below takes into account 32 bit vs 64 bit conversions
-#pragma warning disable 56515
-
-                if (IntPtr.Size == 4)
-                {
-                    ElementDescriptionPointer = (IntPtr)(ElementDescriptionArrayPtr.ToInt32() + ElementDescriptionArrayByteOffset);
-                }
-                else
-                {
-                    ElementDescriptionPointer = (IntPtr)(ElementDescriptionArrayPtr.ToInt64() + ElementDescriptionArrayByteOffset);
-                }
-
-#pragma warning restore 56515
-
+                ElementDescriptionPointer = ElementDescriptionArrayPtr + ElementDescriptionArrayByteOffset;
                 ElementDescription = Marshal.PtrToStructure<COM.ELEMDESC>(ElementDescriptionPointer);
 
                 // get the type of parameter
