@@ -52,7 +52,76 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
     }
 
     It "using -uformat 'sStTuUVwWxXyYZ' produces the correct output" {
-        Get-Date -Date 1/1/0030 -UFormat %S%T%u%U%w%W%x%X%y%Y%% | Should -Be "0000:00:00202001/01/3000:00:00300030%"
+        Get-Date -Date 1/1/0030 -UFormat %S%T%u%U%w%W%x%X%y%Y%% | Should -Be "0000:00:002020001/01/3000:00:00300030%"
+    }
+
+    # Alternate 'week of year' test cases, generated using `date -d $date +%W` on linux
+    It "using -uformat 'W' produces the correct output (<date>:<week>)" -TestCases @(
+        @{date="1999-01-03"; week = "00"},
+        @{date="1999-01-04"; week = "01"},
+        @{date="1999-02-14"; week = "06"},
+        @{date="1999-02-15"; week = "07"},
+        @{date="1999-12-21"; week = "51"},
+        @{date="1999-12-22"; week = "51"},
+        @{date="1999-12-27"; week = "52"},
+        @{date="1999-12-28"; week = "52"},
+        @{date="1999-12-29"; week = "52"},
+        @{date="2000-01-01"; week = "00"},
+        @{date="2000-01-02"; week = "00"},
+        @{date="2000-01-03"; week = "01"},
+        @{date="2000-01-04"; week = "01"},
+        @{date="2000-12-20"; week = "51"},
+        @{date="2000-12-21"; week = "51"},
+        @{date="2000-12-25"; week = "52"},
+        @{date="2000-12-26"; week = "52"},
+        @{date="2000-12-27"; week = "52"},
+        @{date="2000-12-28"; week = "52"},
+        @{date="2001-01-01"; week = "01"},
+        @{date="2001-01-02"; week = "01"},
+        @{date="2005-12-28"; week = "52"},
+        @{date="2005-12-29"; week = "52"},
+        @{date="2006-01-01"; week = "00"},
+        @{date="2006-01-02"; week = "01"},
+        @{date="2006-10-13"; week = "41"},
+        @{date="2006-10-16"; week = "42"},
+        @{date="2012-12-28"; week = "52"},
+        @{date="2012-12-31"; week = "53"},
+        @{date="2013-01-01"; week = "00"},
+        @{date="2013-01-02"; week = "00"},
+        @{date="2023-12-29"; week = "52"},
+        @{date="2024-01-01"; week = "01"},
+        @{date="2024-12-28"; week = "52"},
+        @{date="2024-12-30"; week = "53"},
+        @{date="2024-12-31"; week = "53"},
+        @{date="2025-01-01"; week = "00"},
+        @{date="2025-01-02"; week = "00"},
+        @{date="2025-01-03"; week = "00"},
+        @{date="2025-01-04"; week = "00"},
+        @{date="2025-01-05"; week = "00"},
+        @{date="2025-01-06"; week = "01"},
+        @{date="2025-03-09"; week = "09"},
+        @{date="2025-03-10"; week = "10"},
+        @{date="2025-03-17"; week = "11"},
+        @{date="2025-03-24"; week = "12"},
+        @{date="2025-03-31"; week = "13"},
+        @{date="2025-04-07"; week = "14"},
+        @{date="2025-04-14"; week = "15"},
+        @{date="2025-10-20"; week = "42"},
+        @{date="2025-10-27"; week = "43"},
+        @{date="2025-11-03"; week = "44"},
+        @{date="2025-11-10"; week = "45"},
+        @{date="2025-11-17"; week = "46"},
+        @{date="2025-11-24"; week = "47"},
+        @{date="2025-12-01"; week = "48"},
+        @{date="2025-12-08"; week = "49"},
+        @{date="2025-12-15"; week = "50"},
+        @{date="2025-12-22"; week = "51"},
+        @{date="2025-12-29"; week = "52"},
+        @{date="2026-01-01"; week = "00"},
+        @{date="2026-01-02"; week = "00"}
+    ) {
+        param($date, $week)
+        Get-Date -Date $date -UFormat %W | Should -BeExactly $week
     }
 
     # The 'week of year' test cases is from https://en.wikipedia.org/wiki/ISO_week_date
