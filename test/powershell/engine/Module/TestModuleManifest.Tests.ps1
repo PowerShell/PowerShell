@@ -163,6 +163,53 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
     }
 }
 
+Describe "Test-ModuleManifest RequiredModules version tests" -tags "CI" {
+
+    BeforeAll {
+        $moduleRootPath = Join-Path $TestDrive 'RequiredModulesVersion'
+        New-Item -ItemType Directory -Path "$moduleRootPath/RequiredModuleVersionTest" -Force > $null
+        # The GUID is fixed so the test cases below can reference it.
+        New-ModuleManifest -Path "$moduleRootPath/RequiredModuleVersionTest/RequiredModuleVersionTest.psd1" -ModuleVersion '1.5.0' -Guid 'b0ea4b3e-f1e8-4ba5-9b3c-1c3f8a1f6d2a'
+
+        $originalPSModulePath = $env:PSModulePath
+        $env:PSModulePath = $moduleRootPath + [System.IO.Path]::PathSeparator + $env:PSModulePath
+
+        $testModulePath = Join-Path $TestDrive 'test.psd1'
+    }
+
+    AfterAll {
+        $env:PSModulePath = $originalPSModulePath
+    }
+
+    It "module manifest containing required module not matching the entry returns error: <variation>" -TestCases (
+        @{variation = "ModuleVersion higher than available"; requiredModule = @{ModuleName = 'RequiredModuleVersionTest'; ModuleVersion = '2.0'}},
+        @{variation = "RequiredVersion not available"; requiredModule = @{ModuleName = 'RequiredModuleVersionTest'; RequiredVersion = '2.0'}},
+        @{variation = "MaximumVersion lower than available"; requiredModule = @{ModuleName = 'RequiredModuleVersionTest'; MaximumVersion = '1.0'}},
+        @{variation = "GUID not matching"; requiredModule = @{ModuleName = 'RequiredModuleVersionTest'; Guid = '00000000-0000-0000-0000-000000000001'; ModuleVersion = '1.0'}}
+    ) {
+
+        param($requiredModule)
+
+        New-ModuleManifest -Path $testModulePath -RequiredModules $requiredModule
+        $fullyQualifiedErrorId = "Modules_InvalidRequiredModulesinModuleManifest,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
+        { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | Should -Throw -ErrorId $fullyQualifiedErrorId
+    }
+
+    It "module manifest containing required module matching the entry succeeds: <variation>" -TestCases (
+        @{variation = "ModuleVersion lower than available"; requiredModule = @{ModuleName = 'RequiredModuleVersionTest'; ModuleVersion = '1.0'}},
+        @{variation = "RequiredVersion available"; requiredModule = @{ModuleName = 'RequiredModuleVersionTest'; RequiredVersion = '1.5.0'}},
+        @{variation = "MaximumVersion with wildcard"; requiredModule = @{ModuleName = 'RequiredModuleVersionTest'; MaximumVersion = '1.*'}},
+        @{variation = "GUID matching"; requiredModule = @{ModuleName = 'RequiredModuleVersionTest'; Guid = 'b0ea4b3e-f1e8-4ba5-9b3c-1c3f8a1f6d2a'; ModuleVersion = '1.0'}},
+        @{variation = "no version"; requiredModule = 'RequiredModuleVersionTest'}
+    ) {
+
+        param($requiredModule)
+
+        New-ModuleManifest -Path $testModulePath -RequiredModules $requiredModule
+        Test-ModuleManifest -Path $testModulePath -ErrorAction Stop | Should -BeOfType System.Management.Automation.PSModuleInfo
+    }
+}
+
 Describe "Tests for circular references in required modules" -tags "CI" {
 
     function CreateTestModules([string]$RootPath, [string[]]$ModuleNames, [bool]$AddVersion, [bool]$AddGuid, [bool]$AddCircularReference)
