@@ -8,13 +8,16 @@ A reusable composite action that retrieves the list of files changed in a pull r
 - Optional filtering by file pattern
 - Returns files as JSON array for easy consumption
 - Filters out deleted files (only returns added, modified, or renamed files)
-- Handles up to 100 changed files per request
+- Handles all changed files (no limit)
 
 ## Usage
 
 ### Basic Usage (Pull Requests Only)
 
 ```yaml
+- name: Checkout repository
+  uses: actions/checkout@v4
+
 - name: Get changed files
   id: changed-files
   uses: "./.github/actions/infrastructure/get-changed-files"
@@ -102,7 +105,7 @@ The action supports simple filter patterns:
 
 ## Limitations
 
-- Simple filter patterns only (no complex glob or regex patterns)
+- Supports simple filter patterns: extension matching (`*.ext`) and path prefix matching. Complex glob or regex patterns are not supported.
 
 ## Pagination
 
