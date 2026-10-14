@@ -532,7 +532,6 @@ namespace System.Management.Automation.Language
         /// </summary>
         /// TODO, Changing this to an IDictionary because ReadOnlyDictionary is available only in .NET 4.5
         /// This is a temporary workaround and will be fixed later. Tracked by Win8: 354135
-        [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
         public Dictionary<string, Tuple<Token, Ast>> Flags { get; }
 
         /// <summary>
@@ -4070,7 +4069,6 @@ namespace System.Management.Automation.Language
         /// <param name="elseClause">The else clause, or null if no clause was specified.</param>
         /// <exception cref="PSArgumentNullException">If <paramref name="extent"/> is null.</exception>
         /// <exception cref="PSArgumentException">If <paramref name="clauses"/> is null or empty.</exception>
-        [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
         public IfStatementAst(IScriptExtent extent, IEnumerable<IfClause> clauses, StatementBlockAst elseClause)
             : base(extent)
         {
@@ -4094,7 +4092,6 @@ namespace System.Management.Automation.Language
         /// tests true, in which case it's statements are executed, otherwise the <see cref="ElseClause"/>, if any, is
         /// executed.  This property is never null and always has at least 1 value.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
         public ReadOnlyCollection<IfClause> Clauses { get; }
 
         /// <summary>
@@ -4809,7 +4806,6 @@ namespace System.Management.Automation.Language
         /// <exception cref="PSArgumentException">
         /// If <paramref name="default"/> and <paramref name="clauses"/> are both null or empty.
         /// </exception>
-        [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
         public SwitchStatementAst(IScriptExtent extent,
                                   string label,
                                   PipelineBaseAst condition,
@@ -4845,7 +4841,6 @@ namespace System.Management.Automation.Language
         /// A possibly empty collection of conditions and statement blocks representing the cases of the switch statement.
         /// If the collection is empty, the default clause is not null.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
         public ReadOnlyCollection<SwitchClause> Clauses { get; }
 
         /// <summary>
@@ -10137,7 +10132,6 @@ namespace System.Management.Automation.Language
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/> is null.
         /// </exception>
-        [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
         public HashtableAst(IScriptExtent extent, IEnumerable<KeyValuePair> keyValuePairs)
             : base(extent)
         {
@@ -10155,7 +10149,6 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The pairs of key names and asts for values used to construct the hash table.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
         public ReadOnlyCollection<KeyValuePair> KeyValuePairs { get; }
 
         /// <summary>
