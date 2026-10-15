@@ -194,7 +194,6 @@ namespace System.Management.Automation
         /// Ignores unescaped whitespace and comments marked with #.
         /// Valid only with RegexMatch.
         /// </summary>
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "Whitespace")]
         IgnorePatternWhitespace = 0x08,
         /// <summary>
         /// Regex multiline mode, which recognizes the start and end of lines,
