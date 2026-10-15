@@ -424,35 +424,35 @@ Describe "Json Tests" -Tags "Feature" {
 				$result."date-upperO-should-parse-as-datetime" | Should -BeOfType [DateTime]
 
 				$result."date-o-should-parse-as-string" | Should -Be "2019-12-17T06:14:06 +06:00"
-				$result."date-o-should-parse-as-string" | Should -BeOfType [String]
+				$result."date-o-should-parse-as-string" | Should -BeOfType [string]
 				$result."date-f-should-parse-as-string" | Should -Be "Monday, September 22, 2008 2:01 PM"
-				$result."date-f-should-parse-as-string" | Should -BeOfType [String]
+				$result."date-f-should-parse-as-string" | Should -BeOfType [string]
 				$result."date-g-should-parse-as-string" | Should -Be "9/22/2008 2:01 PM"
-				$result."date-g-should-parse-as-string" | Should -BeOfType [String]
+				$result."date-g-should-parse-as-string" | Should -BeOfType [string]
 				$result."date-m-should-parse-as-string" | Should -Be "September 22"
-				$result."date-m-should-parse-as-string" | Should -BeOfType [String]
+				$result."date-m-should-parse-as-string" | Should -BeOfType [string]
 				$result."date-upperM-should-parse-as-string" | Should -Be "September 22"
-				$result."date-upperM-should-parse-as-string" | Should -BeOfType [String]
+				$result."date-upperM-should-parse-as-string" | Should -BeOfType [string]
 				$result."date-t-should-parse-as-string" | Should -Be "2:01 PM"
-				$result."date-t-should-parse-as-string" | Should -BeOfType [String]
+				$result."date-t-should-parse-as-string" | Should -BeOfType [string]
 				$result."date-u-should-parse-as-string" | Should -Be "2008-09-22 14:01:54Z"
-				$result."date-u-should-parse-as-string" | Should -BeOfType [String]
+				$result."date-u-should-parse-as-string" | Should -BeOfType [string]
 				$result."date-upperD-should-parse-as-string" | Should -Be "Monday, September 22, 2008"
-				$result."date-upperD-should-parse-as-string" | Should -BeOfType [String]
+				$result."date-upperD-should-parse-as-string" | Should -BeOfType [string]
 				$result."date-upperF-should-parse-as-string" | Should -Be "Monday, September 22, 2008 2:01:54 PM"
-				$result."date-upperF-should-parse-as-string" | Should -BeOfType [String]
+				$result."date-upperF-should-parse-as-string" | Should -BeOfType [string]
 				$result."date-upperG-should-parse-as-string" | Should -Be "9/22/2008 2:01:54 PM"
-				$result."date-upperG-should-parse-as-string" | Should -BeOfType [String]
+				$result."date-upperG-should-parse-as-string" | Should -BeOfType [string]
 				$result."date-upperR-should-parse-as-string" | Should -Be "Mon, 22 Sep 2008 14:01:54 GMT"
-				$result."date-upperR-should-parse-as-string" | Should -BeOfType [String]
+				$result."date-upperR-should-parse-as-string" | Should -BeOfType [string]
 				$result."date-upperT-should-parse-as-string" | Should -Be "2:01:54 PM"
-				$result."date-upperT-should-parse-as-string" | Should -BeOfType [String]
+				$result."date-upperT-should-parse-as-string" | Should -BeOfType [string]
 				$result."date-upperU-should-parse-as-string" | Should -Be "Monday, September 22, 2008 2:01:54 PM"
-				$result."date-upperU-should-parse-as-string" | Should -BeOfType [String]
+				$result."date-upperU-should-parse-as-string" | Should -BeOfType [string]
 				$result."date-upperY-should-parse-as-string" | Should -Be "September 2008"
-				$result."date-upperY-should-parse-as-string" | Should -BeOfType [String]
+				$result."date-upperY-should-parse-as-string" | Should -BeOfType [string]
 				$result."date-y-should-parse-as-string" | Should -Be "September 2008"
-				$result."date-y-should-parse-as-string" | Should -BeOfType [String]
+				$result."date-y-should-parse-as-string" | Should -BeOfType [string]
 			}
 		}
 
@@ -506,26 +506,26 @@ Describe "Json Tests" -Tags "Feature" {
 "@
 			$result = ConvertFrom-Json $Json
 			$result."about"| Should -BeExactly "Ipsum pariatur nisi eiusmod aliquip in cupidatat. Deserunt non sit anim consectetur consectetur incididunt elit qui id proident nostrud. Consectetur pariatur et adipisicing aliquip fugiat fugiat Lorem reprehenderit laboris magna. Duis veniam irure amet ex minim eiusmod et laborum non elit. Dolor enim Lorem occaecat nisi consectetur mollit laborum anim velit et. Irure aliquip eiusmod anim proident ex ea duis deserunt aute amet adipisicing nisi nostrud. Minim ipsum fugiat consequat mollit fugiat tempor fugiat."
-			$result."about" | Should -BeOfType [String]
+			$result."about" | Should -BeOfType [string]
 			$result."address"| Should -BeExactly "931 Kings Place, Hartsville/Hartley, Federated States Of Micronesia, 9344"
-			$result."address" | Should -BeOfType [String]
+			$result."address" | Should -BeOfType [string]
 			$result."age" | Should -BeOfType [Int64]
 			$result."balance"| Should -BeExactly ",039.72"
-			$result."balance" | Should -BeOfType [String]
+			$result."balance" | Should -BeOfType [string]
 			$result."company"| Should -BeExactly "INSECTUS"
-			$result."company" | Should -BeOfType [String]
+			$result."company" | Should -BeOfType [string]
 			$result."email"| Should -BeExactly "rhodesroberson@insectus.com"
-			$result."email" | Should -BeOfType [String]
+			$result."email" | Should -BeOfType [string]
 			$result."eyeColor"| Should -BeExactly "green"
-			$result."eyeColor" | Should -BeOfType [String]
+			$result."eyeColor" | Should -BeOfType [string]
 			$result."favoriteFruit"| Should -BeExactly "banana"
-			$result."favoriteFruit" | Should -BeOfType [String]
+			$result."favoriteFruit" | Should -BeOfType [string]
 			$result."gender"| Should -BeExactly "male"
-			$result."gender" | Should -BeOfType [String]
+			$result."gender" | Should -BeOfType [string]
 			$result."greeting"| Should -BeExactly "Hello, Rhodes Roberson! You have 9 unread messages."
-			$result."greeting" | Should -BeOfType [String]
+			$result."greeting" | Should -BeOfType [string]
 			$result."guid"| Should -BeExactly "429b96a7-24e3-47de-a93b-f44a346c5ac9"
-			$result."guid" | Should -BeOfType [String]
+			$result."guid" | Should -BeOfType [string]
 			$result."index" | Should -BeOfType [Int64]
 			$result."isActive"| Should -Be False
 			$result."isActive" | Should -BeOfType [Boolean]
@@ -534,15 +534,15 @@ Describe "Json Tests" -Tags "Feature" {
 			$result."longitude"| Should -Be -47.522764
 			$result."longitude" | Should -BeOfType [Double]
 			$result."name"| Should -BeExactly "Rhodes Roberson"
-			$result."name" | Should -BeOfType [String]
+			$result."name" | Should -BeOfType [string]
 			$result."phone"| Should -BeExactly "+1 (883) 561-3999"
-			$result."phone" | Should -BeOfType [String]
+			$result."phone" | Should -BeOfType [string]
 			$result."picture"| Should -BeExactly "http://placehold.it/32x32"
-			$result."picture" | Should -BeOfType [String]
+			$result."picture" | Should -BeOfType [string]
 			$result."registered"| Should -BeExactly "2019-12-17T06:14:06 +06:00"
-			$result."registered" | Should -BeOfType [String]
+			$result."registered" | Should -BeOfType [string]
 			$result."_id"| Should -BeExactly "60dd3ea9253016932039a0a2"
-			$result."_id" | Should -BeOfType [String]
+			$result."_id" | Should -BeOfType [string]
 
 			$result.Tags | Should -BeOfType [string]
 

@@ -80,7 +80,7 @@ Class Registration {
 
 Class Component {
     [ValidateSet("nuget")]
-    [String] $Type
+    [string] $Type
     [Nuget]$Nuget
 
     [string]ToString() {
@@ -133,7 +133,7 @@ if (!$IsWindows) {
 
 function ConvertTo-SemVer {
     param(
-        [String] $Version
+        [string] $Version
     )
 
     [System.Management.Automation.SemanticVersion]$desiredVersion = [System.Management.Automation.SemanticVersion]::Empty

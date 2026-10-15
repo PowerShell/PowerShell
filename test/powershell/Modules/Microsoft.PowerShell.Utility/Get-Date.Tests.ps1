@@ -357,7 +357,7 @@ Describe "Get-Date -UFormat tests" -Tags "CI" {
 
         $amUpper1 = [System.Globalization.CultureInfo]::CurrentCulture.DateTimeFormat.AMDesignator
         $amLower1 = [System.Globalization.CultureInfo]::CurrentCulture.DateTimeFormat.AMDesignator.ToLower()
-        $timeZone1 = [String]::Format("{0:+00;-00}", [Timezone]::CurrentTimeZone.GetUtcOffset( $date1 ).Hours)
+        $timeZone1 = [string]::Format("{0:+00;-00}", [Timezone]::CurrentTimeZone.GetUtcOffset( $date1 ).Hours)
     }
 
     It "Get-Date -UFormat <format> (<result>)" -TestCases @(
