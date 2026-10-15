@@ -129,7 +129,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         /// <summary>
         /// Limits the association list size for table view.
-        /// For v1.0, table view supports only 10 properties.
+        /// For v1.1 table view supports only 30 properties.
         /// </summary>
         /// <param name="list">The list to limit.</param>
         /// <returns>The limited list.</returns>
@@ -137,7 +137,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             List<MshResolvedExpressionParameterAssociation> list)
         {
             // NOTE: this is an arbitrary number, chosen to be a sensitive default
-            const int maxCount = 10;
+            // In future we will most likely extract this from $PSStyle & most likely from $PSStyle.FormatTable.MaxColumns
+            const int maxCount = 30;
 
             if (list.Count <= maxCount)
             {
