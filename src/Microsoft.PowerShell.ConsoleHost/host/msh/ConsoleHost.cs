@@ -2650,7 +2650,8 @@ namespace Microsoft.PowerShell
                         }
 
 #if UNIX
-                        if (c.SupportsVirtualTerminal)
+                        // Commands read from stdin don't use the cursor keys, so don't write DECCKM in that case
+                        if (c.SupportsVirtualTerminal && !ui.ReadFromStdin)
                         {
                             // enable DECCKM as .NET requires cursor keys to emit VT for Console class
                             c.Write(DECCKM_ON);
@@ -2761,7 +2762,7 @@ namespace Microsoft.PowerShell
                         else
                         {
 #if UNIX
-                            if (c.SupportsVirtualTerminal)
+                            if (c.SupportsVirtualTerminal && !ui.ReadFromStdin)
                             {
                                 // disable DECCKM to standard mode as applications may not expect VT for cursor keys
                                 c.Write(DECCKM_OFF);
