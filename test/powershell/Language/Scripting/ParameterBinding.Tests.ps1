@@ -302,7 +302,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
         function get-foo
         {
             param([Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)] $a,
-                  [System.Boolean] $b)
+                  [bool] $b)
             $a
         }
 
