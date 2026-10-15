@@ -917,16 +917,37 @@ namespace System.Management.Automation
 
         internal static PSSyntheticTypeName Create(PSTypeName typename, IList<PSMemberNameAndType> membersTypes)
         {
-            var typeName = GetMemberTypeProjection(typename.Name, membersTypes);
+            var baseTypeName = GetBaseTypeName(typename.Name, membersTypes);
+            var typeName = GetMemberTypeProjection(baseTypeName, membersTypes);
             var members = new List<PSMemberNameAndType>();
             members.AddRange(membersTypes);
             members.Sort(static (c1, c2) => string.Compare(c1.Name, c2.Name, StringComparison.OrdinalIgnoreCase));
-            return new PSSyntheticTypeName(typeName, typename.Type, members);
+            return new PSSyntheticTypeName(typeName, baseTypeName, typename.Type, members);
         }
 
-        private PSSyntheticTypeName(string typeName, Type type, IList<PSMemberNameAndType> membersTypes)
+        /// <summary>
+        /// Creates the type name of an array whose elements are all of the given synthetic type.
+        /// The members of the element type are retained so that they can be recovered when the
+        /// array is enumerated again.
+        /// </summary>
+        /// <param name="elementType">The synthetic type of the array elements. Its type must be loaded.</param>
+        /// <returns>The type name of the array.</returns>
+        internal static PSSyntheticTypeName CreateArray(PSSyntheticTypeName elementType)
+        {
+            var baseTypeName = elementType.BaseTypeName + "[]";
+
+            return new PSSyntheticTypeName(
+                GetMemberTypeProjection(baseTypeName, elementType.Members),
+                baseTypeName,
+                elementType.Type.MakeArrayType(),
+                elementType.Members,
+                elementType);
+        }
+
+        private PSSyntheticTypeName(string typeName, string baseTypeName, Type type, IList<PSMemberNameAndType> membersTypes)
         : base(typeName, type)
         {
+            BaseTypeName = baseTypeName;
             Members = membersTypes;
             if (type != typeof(PSObject))
             {
@@ -944,9 +965,19 @@ namespace System.Management.Automation
             }
         }
 
+        private PSSyntheticTypeName(string typeName, string baseTypeName, Type type, IList<PSMemberNameAndType> membersTypes, PSSyntheticTypeName elementType)
+        : this(typeName, baseTypeName, type, membersTypes)
+        {
+            ElementType = elementType;
+        }
+
         private static bool IsPSTypeName(in PSMemberNameAndType member) => member.Name.Equals(nameof(PSTypeName), StringComparison.OrdinalIgnoreCase);
 
-        private static string GetMemberTypeProjection(string typename, IList<PSMemberNameAndType> members)
+        /// <summary>
+        /// Gets the name of the type that the members are projected onto. For a PSObject this is
+        /// the value of the PSTypeName member when one is present.
+        /// </summary>
+        private static string GetBaseTypeName(string typename, IList<PSMemberNameAndType> members)
         {
             if (typename == typeof(PSObject).FullName)
             {
@@ -959,7 +990,12 @@ namespace System.Management.Automation
                 }
             }
 
-            var builder = new StringBuilder(typename, members.Count * 7);
+            return typename;
+        }
+
+        private static string GetMemberTypeProjection(string baseTypeName, IList<PSMemberNameAndType> members)
+        {
+            var builder = new StringBuilder(baseTypeName, members.Count * 7);
             builder.Append('#');
             foreach (var m in members.OrderBy(static m => m.Name))
             {
@@ -974,6 +1010,19 @@ namespace System.Management.Automation
         }
 
         public IList<PSMemberNameAndType> Members { get; }
+
+        /// <summary>
+        /// Gets the name of the type without the member projection. A type name can itself contain
+        /// '#', for example "CimInstance#root/cimv2/Win32_Process", so the projection cannot be
+        /// reliably removed from the flattened name again once it has been added.
+        /// </summary>
+        internal string BaseTypeName { get; }
+
+        /// <summary>
+        /// Gets the synthetic type of the elements when this type name represents an array of
+        /// synthetic objects, or null when it represents a single object.
+        /// </summary>
+        internal PSSyntheticTypeName ElementType { get; }
     }
 
 #nullable enable
