@@ -257,6 +257,89 @@ Describe "Import-Module for Binary Modules" -Tags 'CI' {
         $location | Should -Be $assemblyLocation
     }
 
+    It "PS should export cmdlets and aliases from a module that nested an imported assembly on re-import with -Force using <Name>" -TestCases @(
+        @{ Name = 'Assembly.LoadFrom' }
+        @{ Name = 'AssemblyLoadContext' }
+    ) {
+        param ($Name)
+
+        if ($Name -eq 'AssemblyLoadContext') {
+            # Reuse the already loaded assembly so the re-import gets the same Assembly instance
+            $loadScript = @'
+$asm = ('ReimportAsm.TestReimportAsmCmdletCommand' -as [type]).Assembly
+if (-not $asm) {
+    $alc = [System.Runtime.Loader.AssemblyLoadContext]::new('ReimportAsm')
+    $asm = $alc.LoadFromAssemblyPath("$PSScriptRoot/ReimportAsm.dll")
+}
+'@
+        }
+        else {
+            $loadScript = '$asm = [System.Reflection.Assembly]::LoadFrom("$PSScriptRoot/ReimportAsm.dll")'
+        }
+
+        $moduleDir = Join-Path $TESTDRIVE $Name ReimportAsm
+        New-Item -Path $moduleDir -ItemType Directory -Force | Out-Null
+
+        Add-Type -OutputAssembly (Join-Path $moduleDir ReimportAsm.dll) -TypeDefinition @'
+using System.Management.Automation;
+
+namespace ReimportAsm
+{
+    [Cmdlet(VerbsDiagnostic.Test, "ReimportAsmCmdlet")]
+    [Alias("Test-ReimportAsmAlias")]
+    public class TestReimportAsmCmdletCommand : PSCmdlet
+    {
+        protected override void ProcessRecord()
+        {
+            WriteObject("ReimportAsm");
+        }
+    }
+}
+'@
+
+        Set-Content -Path (Join-Path $moduleDir ReimportAsm.psm1) -Value @"
+$loadScript
+Import-Module -Assembly `$asm
+"@
+        $manifestParams = @{
+            Path = Join-Path $moduleDir ReimportAsm.psd1
+            RootModule = 'ReimportAsm.psm1'
+            CmdletsToExport = 'Test-ReimportAsmCmdlet'
+            AliasesToExport = 'Test-ReimportAsmAlias'
+            FunctionsToExport = @()
+            VariablesToExport = @()
+        }
+        New-ModuleManifest @manifestParams
+
+        try {
+            $job = Start-Job -ScriptBlock {
+                1..2 | ForEach-Object {
+                    $module = Import-Module -Name $using:moduleDir -Force -PassThru
+                    [PSCustomObject]@{
+                        Cmdlets = [string[]]$module.ExportedCmdlets.Keys
+                        Aliases = [string[]]$module.ExportedAliases.Keys
+                        NestedModuleCount = $module.NestedModules.Count
+                        CmdletOutput = $(try { Test-ReimportAsmCmdlet } catch { $_.FullyQualifiedErrorId })
+                        AliasOutput = $(try { Test-ReimportAsmAlias } catch { $_.FullyQualifiedErrorId })
+                    }
+                }
+            }
+            $results = $job | Wait-Job -Timeout 60 | Receive-Job
+        }
+        finally {
+            $job | Remove-Job -Force -ErrorAction Ignore
+        }
+
+        $results.Count | Should -Be 2
+        foreach ($result in $results) {
+            $result.Cmdlets | Should -Be 'Test-ReimportAsmCmdlet'
+            $result.Aliases | Should -Be 'Test-ReimportAsmAlias'
+            $result.NestedModuleCount | Should -Be 1
+            $result.CmdletOutput | Should -BeExactly 'ReimportAsm'
+            $result.AliasOutput | Should -BeExactly 'ReimportAsm'
+        }
+    }
+
     It 'Should load from ModuleBase path before looking up in GAC' -Skip:(-not $IsWindows) {
         $module = Get-Module PSScheduledJob -ListAvailable -SkipEditionCheck
         $moduleBasePath = Split-Path $module.Path
