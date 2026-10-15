@@ -121,7 +121,7 @@
       "https://github.com/advisories/GHSA-mmjf-rqrv-855v"
     ],
     "Justification": "",
-    "TimestampUtc": "2026-08-08T02:42:35.4810370Z"
+    "TimestampUtc": "2026-08-08T02:42:35.481037Z"
   },
   {
     "ChangeType": "NonSecurity",
@@ -135,5 +135,102 @@
     "AdvisoryUrls": [],
     "Justification": "Required by System.Security.Cryptography.Xml 10.0.10 dependency constraint '[10.0.10, )'.",
     "TimestampUtc": "2026-08-08T02:42:35.4946389Z"
+  },
+  {
+    "ChangeType": "Security",
+    "Branch": "release/v7.6.7",
+    "PackageId": "System.Security.Cryptography.Pkcs",
+    "FromVersion": "10.0.10",
+    "ToVersion": "10.0.13",
+    "VulnerabilityId": [
+      "GHSA-2FMV-RV2C-59X7",
+      "GHSA-846F-F764-76MX"
+    ],
+    "Severity": [
+      "High",
+      "Moderate"
+    ],
+    "VulnerableRanges": [
+      "[10.0.0, 10.0.12]"
+    ],
+    "AdvisoryUrls": [
+      "https://github.com/advisories/GHSA-2fmv-rv2c-59x7",
+      "https://github.com/advisories/GHSA-846f-f764-76mx"
+    ],
+    "Justification": "",
+    "TimestampUtc": "2026-10-15T20:47:53.6897267Z"
+  },
+  {
+    "ChangeType": "Security",
+    "Branch": "release/v7.6.7",
+    "PackageId": "System.Security.Cryptography.Xml",
+    "FromVersion": "10.0.10",
+    "ToVersion": "10.0.13",
+    "VulnerabilityId": [
+      "GHSA-7HQP-7C5M-4VQ6",
+      "GHSA-C399-9853-6JMJ",
+      "GHSA-R955-8Q5J-3H83"
+    ],
+    "Severity": [
+      "High"
+    ],
+    "VulnerableRanges": [
+      "[10.0.0, 10.0.12]"
+    ],
+    "AdvisoryUrls": [
+      "https://github.com/advisories/GHSA-7hqp-7c5m-4vq6",
+      "https://github.com/advisories/GHSA-c399-9853-6jmj",
+      "https://github.com/advisories/GHSA-r955-8q5j-3h83"
+    ],
+    "Justification": "",
+    "TimestampUtc": "2026-10-15T20:47:53.7020243Z"
+  },
+  {
+    "ChangeType": "Security",
+    "Branch": "release/v7.6.7",
+    "PackageId": "System.Security.Cryptography.Pkcs",
+    "FromVersion": "10.0.5",
+    "ToVersion": "10.0.13",
+    "VulnerabilityId": [
+      "GHSA-846F-F764-76MX",
+      "GHSA-2FMV-RV2C-59X7"
+    ],
+    "Severity": [
+      "High",
+      "Moderate"
+    ],
+    "VulnerableRanges": [
+      "[10.0.0, 10.0.12]"
+    ],
+    "AdvisoryUrls": [
+      "https://github.com/advisories/GHSA-846f-f764-76mx",
+      "https://github.com/advisories/GHSA-2fmv-rv2c-59x7"
+    ],
+    "Justification": null,
+    "TimestampUtc": "2026-10-15T20:47:53.7021127Z"
+  },
+  {
+    "ChangeType": "Security",
+    "Branch": "release/v7.6.7",
+    "PackageId": "System.Security.Cryptography.Pkcs",
+    "FromVersion": "9.0.14",
+    "ToVersion": "9.0.21",
+    "VulnerabilityId": [
+      "GHSA-846F-F764-76MX",
+      "GHSA-2FMV-RV2C-59X7"
+    ],
+    "Severity": [
+      "High",
+      "Moderate"
+    ],
+    "VulnerableRanges": [
+      "[9.0.0, 9.0.20]"
+    ],
+    "AdvisoryUrls": [
+      "https://github.com/advisories/GHSA-846f-f764-76mx",
+      "https://github.com/advisories/GHSA-2fmv-rv2c-59x7"
+    ],
+    "Justification": null,
+    "TimestampUtc": "2026-10-15T20:47:53.7021735Z"
   }
 ]

@@ -8,14 +8,17 @@
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.15.8" />
     <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.15.8" />
-    <PackageReference Include="Microsoft.Diagnostics.NETCore.Client" Version="0.2.661903" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.21" />
+    <PackageReference Include="Microsoft.Diagnostics.NETCore.Client" Version="0.2.750501" />
     <PackageReference Include="Microsoft.Diagnostics.Tracing.TraceEvent" Version="3.1.30" />
     <PackageReference Include="Microsoft.NETCore.Platforms" Version="1.1.2" />
-    <PackageReference Include="System.CodeDom" Version="9.0.14" />
-    <PackageReference Include="System.Collections.Immutable" Version="9.0.14" />
-    <PackageReference Include="System.Management" Version="9.0.14" />
-    <PackageReference Include="System.Reflection.Metadata" Version="9.0.14" />
-    <PackageReference Include="System.Text.Json" Version="9.0.14" />
+    <PackageReference Include="System.CodeDom" Version="9.0.21" />
+    <PackageReference Include="System.Collections.Immutable" Version="9.0.21" />
+    <PackageReference Include="System.IO.Pipelines" Version="9.0.21" />
+    <PackageReference Include="System.Management" Version="9.0.21" />
+    <PackageReference Include="System.Reflection.Metadata" Version="9.0.21" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.21" />
+    <PackageReference Include="System.Text.Json" Version="9.0.21" />
   </ItemGroup>
 
   <ItemGroup>
