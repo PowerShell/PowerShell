@@ -225,6 +225,9 @@
   <data name="FullHelpInfo" xml:space="preserve">
     <value>For technical information, type: </value>
   </data>
+  <data name="ParameterHelpInfo" xml:space="preserve">
+    <value>For parameter help, type: </value>
+  </data>
   <data name="ExampleHelpInfo" xml:space="preserve">
     <value>To see the examples, type: </value>
   </data>

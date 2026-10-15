@@ -121,6 +121,37 @@ Describe "Validate that get-help works for CurrentUserScope" -Tags @('CI') {
             $output = Get-Help Import-Module -Parameter NoClobber | Out-String
             $output | Should -Match "Accept pipeline input\?.*\n\s+Aliases\s+NoOverwrite.*\n\s+Accept wildcard characters\?.*"
         }
+
+        It "Validate 'Remarks' recommends parameter help" {
+            ## The auto-generated REMARKS section should recommend 'Get-Help <cmdlet> -Parameter <parametername>'.
+            $output = Get-Help Import-Module | Out-String
+            $output | Should -Match 'For parameter help, type: "Get-Help Import-Module -Parameter <parametername>"'
+
+            $output = Get-Help Import-Module -Detailed | Out-String
+            $output | Should -Match 'For parameter help, type: "Get-Help Import-Module -Parameter <parametername>"'
+        }
+    }
+}
+
+Describe "Parameter help recommendations for non-command views" -Tags @('CI') {
+    It "Does not recommend parameter help for <TypeName>" -TestCases @(
+        @{ TypeName = 'DscResourceHelpInfo' }
+        @{ TypeName = 'DscResourceHelpInfo#DetailedView' }
+        @{ TypeName = 'DscResourceHelpInfo#FullView' }
+        @{ TypeName = 'PSClassHelpInfo' }
+        @{ TypeName = 'PSClassHelpInfo#DetailedView' }
+        @{ TypeName = 'PSClassHelpInfo#FullView' }
+    ) {
+        param($TypeName)
+
+        $help = [pscustomobject]@{
+            PSTypeName = $TypeName
+            Name = 'TestHelp'
+            Details = @{ Name = 'TestHelp' }
+        }
+        $output = $help | Out-String -Width 200
+        $output | Should -Match 'Get-Help TestHelp -Full'
+        $output | Should -Not -Match '-Parameter'
     }
 }
 
