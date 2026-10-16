@@ -5346,6 +5346,7 @@ namespace System.Management.Automation.Language
                 case TokenKind.AndAnd:
                 case TokenKind.OrOr:
                 case TokenKind.Ampersand:
+                case TokenKind.AmpersandExclaim:
                 case TokenKind.Variable:
                 case TokenKind.SplattedVariable:
                 case TokenKind.HereStringExpandable:
@@ -5849,6 +5850,7 @@ namespace System.Management.Automation.Language
             Token currentChainOperatorToken = null;
             Token nextToken = null;
             bool background = false;
+            bool backgroundThreadJob = false;
             while (true)
             {
                 // Look for the next pipeline in the chain,
@@ -5938,6 +5940,24 @@ namespace System.Management.Automation.Language
                         background = true;
                         goto default;
 
+                    // ThreadJob background operator
+                    case TokenKind.AmpersandExclaim:
+                        SkipToken();
+                        nextToken = PeekToken();
+
+                        switch (nextToken.Kind)
+                        {
+                            case TokenKind.AndAnd:
+                            case TokenKind.OrOr:
+                                SkipToken();
+                                ReportError(nextToken.Extent, nameof(ParserStrings.BackgroundOperatorInPipelineChain), ParserStrings.BackgroundOperatorInPipelineChain);
+                                return new ErrorStatementAst(ExtentOf(currentPipelineChain ?? nextPipeline, nextToken.Extent));
+                        }
+
+                        background = true;
+                        backgroundThreadJob = true;
+                        goto default;
+
                     // No more chain operators -- return
                     default:
                         // If we haven't seen a chain yet, pass through the pipeline
@@ -5951,15 +5971,18 @@ namespace System.Management.Automation.Language
 
                             // Set background on the pipeline AST
                             nextPipeline.Background = true;
+                            nextPipeline.BackgroundThreadJob = backgroundThreadJob;
                             return nextPipeline;
                         }
 
-                        return new PipelineChainAst(
+                        var chainAst = new PipelineChainAst(
                             ExtentOf(currentPipelineChain.Extent, nextPipeline.Extent),
                             currentPipelineChain,
                             nextPipeline,
                             currentChainOperatorToken.Kind,
                             background);
+                        chainAst.BackgroundThreadJob = backgroundThreadJob;
+                        return chainAst;
                 }
 
                 // Assemble the new chain statement AST
@@ -6008,6 +6031,7 @@ namespace System.Management.Automation.Language
             Token nextToken = null;
             bool scanning = true;
             bool background = false;
+            bool backgroundThreadJob = false;
             ExpressionAst expr = startExpression;
             while (scanning)
             {
@@ -6125,6 +6149,20 @@ namespace System.Management.Automation.Language
                         background = true;
                         break;
 
+                    case TokenKind.AmpersandExclaim:
+                        if (!allowBackground)
+                        {
+                            // Handled by invoking rule
+                            scanning = false;
+                            continue;
+                        }
+
+                        SkipToken();
+                        scanning = false;
+                        background = true;
+                        backgroundThreadJob = true;
+                        break;
+
                     case TokenKind.Pipe:
                         SkipToken();
                         SkipNewlines();
@@ -6156,7 +6194,12 @@ namespace System.Management.Automation.Language
                 return null;
             }
 
-            return new PipelineAst(ExtentOf(startExtent, pipelineElements[pipelineElements.Count - 1]), pipelineElements, background);
+            var pipeline = new PipelineAst(ExtentOf(startExtent, pipelineElements[pipelineElements.Count - 1]), pipelineElements, background);
+            if (backgroundThreadJob)
+            {
+                pipeline.BackgroundThreadJob = true;
+            }
+            return pipeline;
         }
 
         private RedirectionAst RedirectionRule(RedirectionToken redirectionToken, RedirectionAst[] redirections, ref IScriptExtent extent)
@@ -6316,6 +6359,7 @@ namespace System.Management.Automation.Language
                     case TokenKind.AndAnd:
                     case TokenKind.OrOr:
                     case TokenKind.Ampersand:
+                    case TokenKind.AmpersandExclaim:
                     case TokenKind.MinusMinus:
                     case TokenKind.Comma:
                         UngetToken(token);
@@ -6520,6 +6564,7 @@ namespace System.Management.Automation.Language
                         case TokenKind.AndAnd:
                         case TokenKind.OrOr:
                         case TokenKind.Ampersand:
+                        case TokenKind.AmpersandExclaim:
                             UngetToken(token);
                             scanning = false;
                             continue;
