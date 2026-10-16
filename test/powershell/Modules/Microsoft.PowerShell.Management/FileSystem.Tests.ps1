@@ -1680,7 +1680,7 @@ Describe "UNC paths" -Tags 'CI' {
     }
 }
 
-Describe "Remove-Item UnAuthorized Access" -Tags "CI", "RequireAdminOnWindows" {
+Describe "Remove-Item UnAuthorized Access" -Tags "CI", "RequireAdminOnWindows", "NotWinPE" {
     BeforeAll {
         if ($IsWindows) {
             $folder = Join-Path $TestDrive "UnAuthFolder"
@@ -1738,7 +1738,7 @@ Describe "Verify sub-directory creation under root" -Tag 'CI','RequireSudoOnUnix
     }
 }
 
-Describe "Windows admin tests" -Tag 'RequireAdminOnWindows' {
+Describe "Windows admin tests" -Tag 'RequireAdminOnWindows', 'NotWinPE' {
     It "Verify Move-Item for directory across drives on Windows" -Skip:(!$IsWindows) {
         try {
             # find first available drive letter, unfortunately need to use both function: and Win32_LogicalDisk to cover

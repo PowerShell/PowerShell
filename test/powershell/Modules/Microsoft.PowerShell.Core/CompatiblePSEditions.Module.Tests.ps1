@@ -246,7 +246,7 @@ Describe "Get-Module with CompatiblePSEditions-checked paths" -Tag "CI" {
     }
 }
 
-Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
+Describe "Import-Module from CompatiblePSEditions-checked paths using WinCompat" -Tag "CI", "NotWinPE" {
     BeforeAll {
         $successCases = @(
             @{ Editions = "Core","Desktop"; ModuleName = "BothModule"; Result = $true },
@@ -298,24 +298,10 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
             Restore-ModulePath
         }
 
-        It "Successfully imports compatible modules from the module path with PSEdition <Editions>" -TestCases $successCases -Skip:(-not $IsWindows) {
-            param($Editions, $ModuleName, $Result)
-
-            Import-Module $ModuleName -Force
-            & "Test-$ModuleName" | Should -Be $Result
-        }
-
         It "Successfully imports incompatible modules from the module path with PSEdition <Editions> using WinCompat" -TestCases $failCases -Skip:(-not $IsWindows) {
             param($Editions, $ModuleName, $Result)
 
             Import-Module $ModuleName -Force -ErrorAction 'Stop'
-            & "Test-$ModuleName" | Should -Be $Result
-        }
-
-        It "Imports an incompatible module from the module path with -SkipEditionCheck with PSEdition <Editions>" -TestCases ($successCases + $failCases) -Skip:(-not $IsWindows) {
-            param($Editions, $ModuleName, $Result)
-
-            Import-Module $ModuleName -SkipEditionCheck -Force
             & "Test-$ModuleName" | Should -Be $Result
         }
 
@@ -388,30 +374,12 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
     }
 
     Context "Imports from absolute path" {
-        It "Successfully imports compatible modules from an absolute path with PSEdition <Editions>" -TestCases $successCases -Skip:(-not $IsWindows) {
-            param($Editions, $ModuleName, $Result)
-
-            $path = Join-Path -Path $basePath -ChildPath $ModuleName
-
-            Import-Module $path -Force
-            & "Test-$ModuleName" | Should -Be $Result
-        }
-
         It "Successfully imports incompatible modules from an absolute path with PSEdition <Editions> using WinCompat" -TestCases $failCases -Skip:(-not $IsWindows) {
             param($Editions, $ModuleName, $Result)
 
             $path = Join-Path -Path $basePath -ChildPath $ModuleName
 
             Import-Module $path -Force -ErrorAction 'Stop'
-            & "Test-$ModuleName" | Should -Be $Result
-        }
-
-        It "Imports an incompatible module from an absolute path with -SkipEditionCheck with PSEdition <Editions>" -TestCases ($successCases + $failCases) -Skip:(-not $IsWindows) {
-            param($Editions, $ModuleName, $Result)
-
-            $path = Join-Path -Path $basePath -ChildPath $ModuleName
-
-            Import-Module $path -SkipEditionCheck -Force
             & "Test-$ModuleName" | Should -Be $Result
         }
 
@@ -434,16 +402,97 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
             Restore-ModulePath
         }
 
-        It "Successfully auto-imports compatible modules from the module path with PSEdition <Editions>" -TestCases $successCases -Skip:(-not $IsWindows) {
-            param($Editions, $ModuleName, $Result)
-
-            & "Test-$ModuleName" | Should -Be $Result
-        }
-
         It "Successfully auto-imports incompatible modules from the module path with PSEdition <Editions> using WinCompat" -TestCases $failCases -Skip:(-not $IsWindows) {
             param($Editions, $ModuleName, $Result)
 
             & "Test-${ModuleName}PSEdition" | Should -Be 'Desktop'
+        }
+    }
+}
+
+Describe "Import-Module from CompatiblePSEditions-checked paths locally" -Tag "CI" {
+    BeforeAll {
+        $successCases = @(
+            @{ Editions = "Core","Desktop"; ModuleName = "BothModule"; Result = $true },
+            @{ Editions = "Core"; ModuleName = "CoreModule"; Result = $true }
+        )
+
+        $failCases = @(
+            @{ Editions = "Desktop"; ModuleName = "DesktopModule"; Result = $true },
+            @{ Editions = $null; ModuleName = "NeitherModule"; Result = $true }
+        )
+
+        $basePath = Join-Path $TestDrive "EditionCompatibleModules"
+        New-TestModules -TestCases $successCases -BaseDir $basePath
+        New-TestModules -TestCases $failCases -BaseDir $basePath
+        $allModules = ($successCases + $failCases).ModuleName
+
+        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("TestWindowsPowerShellPSHomeLocation", $basePath)
+    }
+
+    AfterAll {
+        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("TestWindowsPowerShellPSHomeLocation", $null)
+    }
+
+    AfterEach {
+        Get-Module $allModules | Remove-Module -Force
+    }
+
+    Context "Imports from module path" {
+        BeforeAll {
+            Add-ModulePath $basePath
+        }
+
+        AfterAll {
+            Restore-ModulePath
+        }
+
+        It "Successfully imports compatible modules from the module path with PSEdition <Editions>" -TestCases $successCases -Skip:(-not $IsWindows) {
+            param($Editions, $ModuleName, $Result)
+
+            Import-Module $ModuleName -Force
+            & "Test-$ModuleName" | Should -Be $Result
+        }
+
+        It "Imports an incompatible module from the module path with -SkipEditionCheck with PSEdition <Editions>" -TestCases ($successCases + $failCases) -Skip:(-not $IsWindows) {
+            param($Editions, $ModuleName, $Result)
+
+            Import-Module $ModuleName -SkipEditionCheck -Force
+            & "Test-$ModuleName" | Should -Be $Result
+        }
+    }
+
+    Context "Imports from absolute path" {
+        It "Successfully imports compatible modules from an absolute path with PSEdition <Editions>" -TestCases $successCases -Skip:(-not $IsWindows) {
+            param($Editions, $ModuleName, $Result)
+
+            $path = Join-Path -Path $basePath -ChildPath $ModuleName
+            Import-Module $path -Force
+            & "Test-$ModuleName" | Should -Be $Result
+        }
+
+        It "Imports an incompatible module from an absolute path with -SkipEditionCheck with PSEdition <Editions>" -TestCases ($successCases + $failCases) -Skip:(-not $IsWindows) {
+            param($Editions, $ModuleName, $Result)
+
+            $path = Join-Path -Path $basePath -ChildPath $ModuleName
+            Import-Module $path -SkipEditionCheck -Force
+            & "Test-$ModuleName" | Should -Be $Result
+        }
+    }
+
+    Context "Imports using CommandDiscovery\ModuleAutoload" {
+        BeforeAll {
+            Add-ModulePath $basePath
+        }
+
+        AfterAll {
+            Restore-ModulePath
+        }
+
+        It "Successfully auto-imports compatible modules from the module path with PSEdition <Editions>" -TestCases $successCases -Skip:(-not $IsWindows) {
+            param($Editions, $ModuleName, $Result)
+
+            & "Test-$ModuleName" | Should -Be $Result
         }
     }
 }
@@ -474,7 +523,7 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
         }
     }
 
-    Context "Tests that ErrorAction/WarningAction have effect when Import-Module with WinCompat is used" {
+    Context "WinCompat import actions handled before Windows PowerShell starts" {
         BeforeAll {
             $pwsh = "$PSHOME/pwsh"
             Add-ModulePath $basePath
@@ -482,18 +531,6 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
 
         AfterAll {
             Restore-ModulePath
-        }
-
-        It "Verify that Error is generated with default ErrorAction" {
-            $LogPath = Join-Path $TestDrive (New-Guid).ToString()
-            & $pwsh -NoProfile -NonInteractive -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName" *> $LogPath
-            $LogPath | Should -FileContentMatch 'divide by zero'
-        }
-
-        It "Verify that Warning is generated with default WarningAction" {
-            $LogPath = Join-Path $TestDrive (New-Guid).ToString()
-            & $pwsh -NoProfile -NonInteractive -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName;Get-Error" *> $LogPath
-            $LogPath | Should -FileContentMatch 'loaded in Windows PowerShell' -Because (Get-Content $LogPath)
         }
 
         It "Verify that Error is Not generated with -ErrorAction Ignore" {
@@ -523,17 +560,9 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
             & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`'); Test-$ModuleName2" *> $LogPath
             $LogPath | Should -FileContentMatch 'not recognized as a name of a cmdlet'
         }
-
-        It "Successfully auto-imports incompatible module during CommandDiscovery\ModuleAutoload if implicit WinCompat is Enabled in config" {
-            $LogPath = Join-Path $TestDrive (New-Guid).ToString()
-            $ConfigPath = Join-Path $TestDrive 'powershell.config.json'
-            '{"DisableImplicitWinCompat" : "False","Microsoft.PowerShell:ExecutionPolicy": "RemoteSigned"}' | Out-File -Force $ConfigPath
-            & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`'); Test-$ModuleName2" *> $LogPath
-            $LogPath | Should -FileContentMatch 'True'
-        }
     }
 
-    Context "Tests around Windows PowerShell Compatibility module deny list" {
+    Context "WinCompat deny list checks handled before Windows PowerShell starts" {
         BeforeAll {
             $pwsh = "$PSHOME/pwsh"
             Add-ModulePath $basePath
@@ -542,16 +571,6 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
 
         AfterAll {
             Restore-ModulePath
-        }
-
-        It "Successfully imports incompatible module when DenyList is not specified in powershell.config.json" {
-            '{"Microsoft.PowerShell:ExecutionPolicy": "RemoteSigned"}' | Out-File -Force $ConfigPath
-            & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName2 -WarningAction Ignore;Test-${ModuleName2}PSEdition" | Should -Be 'Desktop'
-        }
-
-        It "Successfully imports incompatible module when DenyList is empty" {
-            '{"Microsoft.PowerShell:ExecutionPolicy": "RemoteSigned","WindowsPowerShellCompatibilityModuleDenyList": []}' | Out-File -Force $ConfigPath
-            & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName2 -WarningAction Ignore;Test-${ModuleName2}PSEdition" | Should -Be 'Desktop'
         }
 
         It "Blocks DenyList module import by Import-Module <ModuleName> -UseWindowsPowerShell" {
@@ -573,6 +592,84 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
         }
     }
 
+}
+
+Describe "Additional tests for Import-Module requiring WinCompat" -Tag "Feature", "NotWinPE" {
+    BeforeAll {
+        if ( ! $IsWindows ) {
+            Push-DefaultParameterValueStack @{ "it:skip" = $true }
+            return
+        }
+
+        $ModuleName = "DesktopModule"
+        $ModuleName2 = "DesktopModule2"
+        $basePath = Join-Path $TestDrive "WinCompatModules"
+        $allModules = @($ModuleName, $ModuleName2)
+        Remove-Item -Path $basePath -Recurse -ErrorAction SilentlyContinue
+        New-EditionCompatibleModule -ModuleName $ModuleName -CompatiblePSEditions "Desktop" -Dir $basePath -ErrorGenerationCode '1/0;'
+        New-EditionCompatibleModule -ModuleName $ModuleName2 -CompatiblePSEditions "Desktop" -Dir $basePath
+    }
+
+    AfterAll {
+        if ( ! $IsWindows ) {
+            Pop-DefaultParameterValueStack
+            return
+        }
+    }
+
+    Context "WinCompat import actions requiring Windows PowerShell" {
+        BeforeAll {
+            $pwsh = "$PSHOME/pwsh"
+            Add-ModulePath $basePath
+        }
+
+        AfterAll {
+            Restore-ModulePath
+        }
+
+        It "Verify that Error is generated with default ErrorAction" {
+            $LogPath = Join-Path $TestDrive (New-Guid).ToString()
+            & $pwsh -NoProfile -NonInteractive -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName" *> $LogPath
+            $LogPath | Should -FileContentMatch 'divide by zero'
+        }
+
+        It "Verify that Warning is generated with default WarningAction" {
+            $LogPath = Join-Path $TestDrive (New-Guid).ToString()
+            & $pwsh -NoProfile -NonInteractive -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName;Get-Error" *> $LogPath
+            $LogPath | Should -FileContentMatch 'loaded in Windows PowerShell' -Because (Get-Content $LogPath)
+        }
+
+        It "Successfully auto-imports incompatible module during CommandDiscovery\ModuleAutoload if implicit WinCompat is Enabled in config" {
+            $LogPath = Join-Path $TestDrive (New-Guid).ToString()
+            $ConfigPath = Join-Path $TestDrive 'powershell.config.json'
+            '{"DisableImplicitWinCompat" : "False","Microsoft.PowerShell:ExecutionPolicy": "RemoteSigned"}' | Out-File -Force $ConfigPath
+            & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`'); Test-$ModuleName2" *> $LogPath
+            $LogPath | Should -FileContentMatch 'True'
+        }
+    }
+
+    Context "WinCompat module deny list imports requiring Windows PowerShell" {
+        BeforeAll {
+            $pwsh = "$PSHOME/pwsh"
+            Add-ModulePath $basePath
+            $ConfigPath = Join-Path $TestDrive 'powershell.config.json'
+        }
+
+        AfterAll {
+            Restore-ModulePath
+        }
+
+        It "Successfully imports incompatible module when DenyList is not specified in powershell.config.json" {
+            '{"Microsoft.PowerShell:ExecutionPolicy": "RemoteSigned"}' | Out-File -Force $ConfigPath
+            & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName2 -WarningAction Ignore;Test-${ModuleName2}PSEdition" | Should -Be 'Desktop'
+        }
+
+        It "Successfully imports incompatible module when DenyList is empty" {
+            '{"Microsoft.PowerShell:ExecutionPolicy": "RemoteSigned","WindowsPowerShellCompatibilityModuleDenyList": []}' | Out-File -Force $ConfigPath
+            & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName2 -WarningAction Ignore;Test-${ModuleName2}PSEdition" | Should -Be 'Desktop'
+        }
+    }
+
     Context "Tests around Windows PowerShell Compatibility NoClobber module list" {
         BeforeAll {
             $pwsh = "$PSHOME/pwsh"
@@ -585,7 +682,6 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
         }
 
         It "NoClobber WinCompat import works for an engine module through command discovery" {
-
             ConvertFrom-String -InputObject '1,2,3' -Delimiter ',' | Out-Null
             $modules = Get-Module -Name Microsoft.PowerShell.Utility
             $modules.Count | Should -Be 2
@@ -594,40 +690,29 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
 
             $proxyModule.ExportedCommands.Keys | Should -Contain "ConvertFrom-String"
             $proxyModule.ExportedCommands.Keys | Should -Not -Contain "Get-Date"
-
             $coreModule.ExportedCommands.Keys | Should -Contain "Get-Date"
             $coreModule.ExportedCommands.Keys | Should -Not -Contain "ConvertFrom-String"
-
             $proxyModule | Remove-Module -Force
         }
 
         It "NoClobber WinCompat import works for an engine module through -UseWindowsPowerShell parameter" {
-
-            # pre-test cleanup
             Get-Module -Name Microsoft.PowerShell.Management | Remove-Module
-            Import-Module -Name Microsoft.PowerShell.Management # import the one that comes with PSCore
-
+            Import-Module -Name Microsoft.PowerShell.Management
             Import-Module Microsoft.PowerShell.Management -UseWindowsPowerShell
-
             $modules = Get-Module -Name Microsoft.PowerShell.Management
-
             $modules.Count | Should -Be 2
             $proxyModule = $modules | Where-Object {$_.ModuleType -eq 'Script'}
             $coreModule = $modules | Where-Object {$_.ModuleType -eq 'Manifest'}
 
             $proxyModule.ExportedCommands.Keys | Should -Contain "Get-WmiObject"
             $proxyModule.ExportedCommands.Keys | Should -Not -Contain "Get-Item"
-
             $coreModule.ExportedCommands.Keys | Should -Contain "Get-Item"
             $coreModule.ExportedCommands.Keys | Should -Not -Contain "Get-WmiObject"
-
             $proxyModule | Remove-Module -Force
         }
 
         It "NoClobber WinCompat import works with ModuleSpecifications" {
-
             Import-Module -UseWindowsPowerShell -FullyQualifiedName @{ModuleName='Microsoft.PowerShell.Utility';ModuleVersion='0.0'}
-
             $modules = Get-Module -Name Microsoft.PowerShell.Utility
             $modules.Count | Should -Be 2
             $proxyModule = $modules | Where-Object {$_.ModuleType -eq 'Script'}
@@ -635,10 +720,8 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
 
             $proxyModule.ExportedCommands.Keys | Should -Contain "ConvertFrom-String"
             $proxyModule.ExportedCommands.Keys | Should -Not -Contain "Get-Date"
-
             $coreModule.ExportedCommands.Keys | Should -Contain "Get-Date"
             $coreModule.ExportedCommands.Keys | Should -Not -Contain "ConvertFrom-String"
-
             $proxyModule | Remove-Module -Force
         }
 
@@ -656,14 +739,8 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
             $targetModuleFolder = Join-Path $TestDrive "TempWinCompatModuleFolder"
             Copy-Item -Path "$basePath\$ModuleName2" -Destination "$targetModuleFolder\$ModuleName2" -Recurse -Force
             $env:PSModulePath = $targetModuleFolder + [System.IO.Path]::PathSeparator + $env:PSModulePath
-
             $psm1 = Get-ChildItem -Recurse -Path $targetModuleFolder -Filter "$ModuleName2.psm1"
             "function Test-$ModuleName2 { `$PSVersionTable.PSEdition }" | Out-File -FilePath $psm1.FullName -Force
-
-            # Now Core version of the module has 1 function: Test-$ModuleName2 (returns 'Core')
-            # and WinPS version of the module has 2 functions: Test-$ModuleName2 (returns '$true'), Test-${ModuleName2}PSEdition (returns 'Desktop')
-            # when NoClobber WinCompat import is working Test-$ModuleName2 should return 'Core'
-
             '{"Microsoft.PowerShell:ExecutionPolicy": "RemoteSigned", "WindowsPowerShellCompatibilityNoClobberModuleList": ["' + $ModuleName2 + '"]}' | Out-File -Force $ConfigPath
             & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Test-${ModuleName2}PSEdition;Test-$ModuleName2" | Should -Be @('Desktop','Core')
         }
@@ -678,18 +755,11 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
                 throw 'Neither the "PersistentMemory" module nor the "RemoteDesktop" module is available. Please check and use a desktop-edition module that is under the System32 module path.'
             }
 
-            ## The 'Desktop' edition module 'PersistentMemory' (available on Windows Client) or 'RemoteDesktop' (available on Windows Server) should not be imported twice.
             $ConfigPath = Join-Path $TestDrive 'powershell.config.json'
 @"
 {"Microsoft.PowerShell:ExecutionPolicy": "RemoteSigned", "WindowsPowerShellCompatibilityNoClobberModuleList": ["$desktopModuleToUse"]}
 "@ | Out-File -Force $ConfigPath
             $env:PSModulePath = $null
-
-            ## The desktop-edition module is listed in the no-clobber list, so we will first try loading a core-edition
-            ## compatible version of the module before loading the remote one. The 'system32' module path will be skipped
-            ## in this attempt, which is by-design.
-            ## If we don't skip the 'system32' module path in this loading attempt, the desktop-edition module will be
-            ## imported twice as a remote module, and then 'Remove-Module' won't close the WinCompat session.
             $script = @"
 Import-Module $desktopModuleToUse -UseWindowsPowerShell -WarningAction Ignore
 Get-Module $desktopModuleToUse | ForEach-Object { `$_.ModuleType.ToString() }
@@ -725,11 +795,9 @@ Remove-Module $desktopModuleToUse
         }
 
         It 'WinCompat process does not inherit PowerShell-Core-specific paths' {
-            # these paths were copied from test\powershell\engine\Module\ModulePath.Tests.ps1
             $pscoreUserPath = Join-Path -Path $HOME -ChildPath "Documents\PowerShell\Modules"
             $pscoreSharedPath = Join-Path -Path $env:ProgramFiles -ChildPath "PowerShell\Modules"
             $pscoreSystemPath = Join-Path -Path $PSHOME -ChildPath 'Modules'
-
             $pscorePaths = $env:psmodulepath
             $pscorePaths | Should -BeLike "*$pscoreUserPath*"
             $pscorePaths | Should -BeLike "*$pscoreSharedPath*"
@@ -781,7 +849,7 @@ Describe "PSModulePath changes interacting with other PowerShell processes" -Tag
         }
     }
 
-    Context "System32 module path prepended to PSModulePath" {
+    Context "PowerShell with System32 module path prepended" {
         BeforeAll {
             if (-not $IsWindows)
             {
@@ -798,15 +866,6 @@ Describe "PSModulePath changes interacting with other PowerShell processes" -Tag
             Restore-ModulePath
         }
 
-        It "Allows Windows PowerShell subprocesses to call `$PSHOME modules still" {
-            $errors = powershell.exe -Command "Get-ChildItem" 2>&1 | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] }
-            $errors | Should -Be $null
-        }
-
-        It "Allows Windows PowerShell subprocesses to load WinPS version of `$PSHOME modules" {
-            powershell.exe -Command "Get-ChildItem | Out-Null;(Get-Module Microsoft.PowerShell.Management).Path" | Should -BeLike "*system32*"
-        }
-
         It "Allows PowerShell subprocesses to call core modules" {
             $errors = & $pwsh -Command "Get-ChildItem" 2>&1 | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] }
             $errors | Should -Be $null
@@ -820,6 +879,35 @@ Describe "PSModulePath changes interacting with other PowerShell processes" -Tag
         }
 
         $sys32ModPathCount | Should -Be 1
+    }
+}
+
+Describe "PSModulePath changes interacting with Windows PowerShell" -Tag "Feature", "NotWinPE" {
+    BeforeAll {
+        if ( ! $IsWindows ) {
+            Push-DefaultParameterValueStack @{  "it:skip" = $true }
+            return
+        }
+
+        Add-ModulePath (Join-Path $env:windir "System32\WindowsPowerShell\v1.0\Modules") -Prepend
+    }
+
+    AfterAll {
+        if ( ! $IsWindows ) {
+            Pop-DefaultParameterValueStack
+            return
+        }
+
+        Restore-ModulePath
+    }
+
+    It "Allows Windows PowerShell subprocesses to call `$PSHOME modules still" {
+        $errors = powershell.exe -Command "Get-ChildItem" 2>&1 | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] }
+        $errors | Should -Be $null
+    }
+
+    It "Allows Windows PowerShell subprocesses to load WinPS version of `$PSHOME modules" {
+        powershell.exe -Command "Get-ChildItem | Out-Null;(Get-Module Microsoft.PowerShell.Management).Path" | Should -BeLike "*system32*"
     }
 }
 
@@ -1126,7 +1214,7 @@ Describe "Get-Module nested module behaviour with Edition checking" -Tag "Featur
     }
 }
 
-Describe "Import-Module nested module behaviour with Edition checking" -Tag "Feature" {
+Describe "Import-Module nested module behaviour requiring WinCompat" -Tag "Feature", "NotWinPE" {
     BeforeAll {
         $testConditions = @{
             SkipEditionCheck = @($true, $false)
@@ -1150,6 +1238,13 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
             }
             $testCases = $list
         }
+
+        $system32TestCases = @($testCases | Where-Object {
+            (-not $_.SkipEditionCheck) -and ($_.UseWindowsPowerShell -or (-not ($_.MarkedEdition -contains "Core")))
+        })
+        $modulePathTestCases = @($testCases | Where-Object {
+            (-not $_.SkipEditionCheck) -and $_.UseWindowsPowerShell
+        })
 
         # Define nested script module
         $scriptModuleName = "NestedScriptModule"
@@ -1202,7 +1297,7 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
             Restore-ModulePath
         }
 
-        It "Import-Module when SkipEditionCheck: <SkipEditionCheck>, using root module: <UseRootModule>, using absolute path: <UseAbsolutePath>, CompatiblePSEditions: <MarkedEdition>, UseWindowsPowerShell: <UseWindowsPowerShell>" -TestCases $testCases -Skip:(-not $IsWindows) {
+        It "Import-Module when SkipEditionCheck: <SkipEditionCheck>, using root module: <UseRootModule>, using absolute path: <UseAbsolutePath>, CompatiblePSEditions: <MarkedEdition>, UseWindowsPowerShell: <UseWindowsPowerShell>" -TestCases $system32TestCases -Skip:(-not $IsWindows) {
             param([bool]$SkipEditionCheck, [bool]$UseRootModule, [bool]$UseAbsolutePath, [string[]]$MarkedEdition, [bool]$UseWindowsPowerShell)
 
             New-TestNestedModule `
@@ -1331,7 +1426,7 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
             Restore-ModulePath
         }
 
-        It "Import-Module when SkipEditionCheck: <SkipEditionCheck>, using root module: <UseRootModule>, using absolute path: <UseAbsolutePath>, CompatiblePSEditions: <MarkedEdition>, UseWindowsPowerShell: <UseWindowsPowerShell>" -TestCases $testCases {
+        It "Import-Module when SkipEditionCheck: <SkipEditionCheck>, using root module: <UseRootModule>, using absolute path: <UseAbsolutePath>, CompatiblePSEditions: <MarkedEdition>, UseWindowsPowerShell: <UseWindowsPowerShell>" -TestCases $modulePathTestCases {
             param([bool]$SkipEditionCheck, [bool]$UseRootModule, [bool]$UseAbsolutePath, [string[]]$MarkedEdition, [bool]$UseWindowsPowerShell)
 
             if ($UseWindowsPowerShell -and (-not $IsWindows))
@@ -1410,7 +1505,186 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
     }
 }
 
-Describe "WinCompat importing should check availablity of built-in modules" -Tag "CI" {
+Describe "Import-Module nested module behaviour without WinCompat" -Tag "Feature" {
+    BeforeAll {
+        $testConditions = @{
+            SkipEditionCheck = @($true, $false)
+            UseRootModule = @($true, $false)
+            UseAbsolutePath = @($true, $false)
+            MarkedEdition = @($null, "Desktop", "Core", @("Desktop","Core"))
+            UseWindowsPowerShell = @($true, $false)
+        }
+
+        $testCases = @(@{})
+        foreach ($condition in $testConditions.Keys)
+        {
+            $list = [System.Collections.Generic.List[hashtable]]::new()
+            foreach ($obj in $testCases)
+            {
+                foreach ($value in $testConditions[$condition])
+                {
+                    $list.Add($obj + @{ $condition = $value })
+                }
+            }
+            $testCases = $list
+        }
+
+        $system32TestCases = @($testCases | Where-Object {
+            $_.SkipEditionCheck -or ((-not $_.UseWindowsPowerShell) -and ($_.MarkedEdition -contains "Core"))
+        })
+        $modulePathTestCases = @($testCases | Where-Object {
+            $_.SkipEditionCheck -or (-not $_.UseWindowsPowerShell)
+        })
+
+        $scriptModuleName = "NestedScriptModule"
+        $scriptModuleFile = "$scriptModuleName.psm1"
+        $scriptModuleContent = 'function Test-ScriptModule { return $true } function Test-ScriptModulePSEdition { $PSVersionTable.PSEdition }'
+
+        $rootModuleName = "RootModule"
+        $rootModuleFile = "$rootModuleName.psm1"
+        $rootModuleContent = 'function Test-RootModule { Test-ScriptModule } function Test-RootModulePSEdition { Test-ScriptModulePSEdition }'
+
+        $compatibleDir = "Compatible"
+        $incompatibleDir = "Incompatible"
+        $compatiblePath = Join-Path $TestDrive $compatibleDir
+        $incompatiblePath = Join-Path $TestDrive $incompatibleDir
+
+        foreach ($basePath in $compatiblePath,$incompatiblePath)
+        {
+            New-Item -Path $basePath -ItemType Directory
+        }
+
+        Get-Module | Where-Object {$_.PrivateData.ImplicitRemoting} | Remove-Module -Force
+    }
+
+    Context "Modules ON the System32 test path" {
+        BeforeAll {
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("TestWindowsPowerShellPSHomeLocation", $incompatiblePath)
+        }
+
+        AfterAll {
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("TestWindowsPowerShellPSHomeLocation", $null)
+        }
+
+        BeforeEach {
+            $guid = New-Guid
+            $containingDir = Join-Path $TestDrive $incompatibleDir $guid
+            $moduleName = "CpseTestModule"
+            $moduleBase = Join-Path $containingDir $moduleName
+            New-Item -Path $moduleBase -ItemType Directory
+            Add-ModulePath $containingDir
+        }
+
+        AfterEach {
+            Get-Module $moduleName | Remove-Module -Force
+            Restore-ModulePath
+        }
+
+        It "Import-Module when SkipEditionCheck: <SkipEditionCheck>, using root module: <UseRootModule>, using absolute path: <UseAbsolutePath>, CompatiblePSEditions: <MarkedEdition>, UseWindowsPowerShell: <UseWindowsPowerShell>" -TestCases $system32TestCases -Skip:(-not $IsWindows) {
+            param([bool]$SkipEditionCheck, [bool]$UseRootModule, [bool]$UseAbsolutePath, [string[]]$MarkedEdition, [bool]$UseWindowsPowerShell)
+
+            New-TestNestedModule `
+                -ModuleBase $moduleBase `
+                -ScriptModuleFilename $scriptModuleFile `
+                -ScriptModuleContent $scriptModuleContent `
+                -RootModuleFilename $rootModuleFile `
+                -RootModuleContent $rootModuleContent `
+                -CompatiblePSEditions $MarkedEdition `
+                -UseRootModule $UseRootModule `
+                -UseAbsolutePath $UseAbsolutePath
+
+            $moduleToImport = if ($UseAbsolutePath) { $moduleBase } else { $moduleName }
+            if ($SkipEditionCheck -and $UseWindowsPowerShell)
+            {
+                { Import-Module $moduleToImport -SkipEditionCheck -UseWindowsPowerShell } | Should -Throw -ErrorId "AmbiguousParameterSet"
+                return
+            }
+
+            if ($SkipEditionCheck)
+            {
+                Import-Module $moduleToImport -SkipEditionCheck
+            }
+            else
+            {
+                Import-Module $moduleToImport
+            }
+
+            if ($UseRootModule)
+            {
+                Test-RootModule | Should -BeTrue
+                { Test-ScriptModule } | Should -Throw -ErrorId "CommandNotFoundException"
+                return
+            }
+
+            Test-ScriptModule | Should -BeTrue
+            { Test-RootModule } | Should -Throw -ErrorId "CommandNotFoundException"
+        }
+    }
+
+    Context "Modules OFF the System32 module path" {
+        BeforeEach {
+            $guid = New-Guid
+            $containingDir = Join-Path $TestDrive $compatibleDir $guid
+            $moduleName = "CpseTestModule"
+            $moduleBase = Join-Path $containingDir $moduleName
+            New-Item -Path $moduleBase -ItemType Directory
+            Add-ModulePath $containingDir
+        }
+
+        AfterEach {
+            Get-Module $moduleName | Remove-Module -Force
+            Restore-ModulePath
+        }
+
+        It "Import-Module when SkipEditionCheck: <SkipEditionCheck>, using root module: <UseRootModule>, using absolute path: <UseAbsolutePath>, CompatiblePSEditions: <MarkedEdition>, UseWindowsPowerShell: <UseWindowsPowerShell>" -TestCases $modulePathTestCases {
+            param([bool]$SkipEditionCheck, [bool]$UseRootModule, [bool]$UseAbsolutePath, [string[]]$MarkedEdition, [bool]$UseWindowsPowerShell)
+
+            if ($UseWindowsPowerShell -and (-not $IsWindows))
+            {
+                Set-ItResult -Skipped -Because 'UseWindowsPowerShell parameter is supported only on Windows'
+                return
+            }
+
+            New-TestNestedModule `
+                -ModuleBase $moduleBase `
+                -ScriptModuleFilename $scriptModuleFile `
+                -ScriptModuleContent $scriptModuleContent `
+                -RootModuleFilename $rootModuleFile `
+                -RootModuleContent $rootModuleContent `
+                -CompatiblePSEditions $MarkedEdition `
+                -UseRootModule $UseRootModule `
+                -UseAbsolutePath $UseAbsolutePath
+
+            $moduleToImport = if ($UseAbsolutePath) { $moduleBase } else { $moduleName }
+            if ($SkipEditionCheck -and $UseWindowsPowerShell)
+            {
+                { Import-Module $moduleToImport -SkipEditionCheck -UseWindowsPowerShell } | Should -Throw -ErrorId "AmbiguousParameterSet"
+                return
+            }
+
+            if ($SkipEditionCheck)
+            {
+                Import-Module $moduleToImport -SkipEditionCheck
+            }
+            else
+            {
+                Import-Module $moduleToImport
+            }
+
+            if ($UseRootModule)
+            {
+                Test-RootModule | Should -BeTrue
+                { Test-ScriptModule } | Should -Throw -ErrorId "CommandNotFoundException"
+                return
+            }
+
+            Test-ScriptModule | Should -BeTrue
+            { Test-RootModule } | Should -Throw -ErrorId "CommandNotFoundException"
+        }
+    }
+}
+
+Describe "WinCompat importing should check availablity of built-in modules" -Tag "CI", "NotWinPE" {
     BeforeAll {
         if (-not $IsWindows ) {
             Push-DefaultParameterValueStack @{  "it:skip" = $true }
@@ -1533,7 +1807,10 @@ Describe "WinCompat importing should check availablity of built-in modules" -Tag
         $result[5] | Should -BeExactly 'CFS'
     }
 
-    It 'ErrorAction should be used for cmdlet' {
+}
+
+Describe "WinCompat command error handling" -Tag "CI" {
+    It 'ErrorAction should be used for cmdlet' -Skip:(-not $IsWindows) {
         try {
             $out = Invoke-Expression 'get-AppLockerFileInformation NoSuch.exe -ErrorAction Stop; "after"'
         }
