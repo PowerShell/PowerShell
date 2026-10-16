@@ -1,0 +1,35 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="CodeCoverage" />
+    <BuildType Name="Debug" />
+    <BuildType Name="Linux" />
+    <BuildType Name="Release" />
+  </Configurations>
+  <Project Path="src/Microsoft.Management.Infrastructure.CimCmdlets/Microsoft.Management.Infrastructure.CimCmdlets.csproj">
+    <BuildType Solution="CodeCoverage|*" Project="Release" />
+    <BuildType Solution="Linux|*" Project="Release" />
+  </Project>
+  <Project Path="src/Microsoft.PowerShell.Commands.Diagnostics/Microsoft.PowerShell.Commands.Diagnostics.csproj" />
+  <Project Path="src/Microsoft.PowerShell.Commands.Management/Microsoft.PowerShell.Commands.Management.csproj" />
+  <Project Path="src/Microsoft.PowerShell.Commands.Utility/Microsoft.PowerShell.Commands.Utility.csproj" />
+  <Project Path="src/Microsoft.PowerShell.ConsoleHost/Microsoft.PowerShell.ConsoleHost.csproj" />
+  <Project Path="src/Microsoft.PowerShell.CoreCLR.Eventing/Microsoft.PowerShell.CoreCLR.Eventing.csproj" />
+  <Project Path="src/Microsoft.PowerShell.SDK/Microsoft.PowerShell.SDK.csproj">
+    <BuildType Solution="CodeCoverage|*" Project="Release" />
+    <BuildType Solution="Linux|*" Project="Release" />
+  </Project>
+  <Project Path="src/Microsoft.PowerShell.Security/Microsoft.PowerShell.Security.csproj" />
+  <Project Path="src/Microsoft.WSMan.Management/Microsoft.WSMan.Management.csproj" />
+  <Project Path="src/Microsoft.WSMan.Runtime/Microsoft.WSMan.Runtime.csproj" />
+  <Project Path="src/powershell-unix/powershell-unix.csproj" />
+  <Project Path="src/powershell-win-core/powershell-win-core.csproj">
+    <BuildType Solution="Linux|*" Project="Release" />
+  </Project>
+  <Project Path="src/System.Management.Automation/SourceGenerators/PSVersionInfoGenerator/PSVersionInfoGenerator.csproj">
+    <BuildType Project="?" />
+    <Platform Project="?" />
+    <Build Project="false" />
+  </Project>
+  <Project Path="src/System.Management.Automation/System.Management.Automation.csproj" />
+  <Project Path="test/xUnit/xUnit.tests.csproj" />
+</Solution>
