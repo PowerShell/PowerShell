@@ -348,6 +348,9 @@
   <data name="VariableNotWritable" xml:space="preserve">
     <value>Cannot overwrite variable {0} because it is read-only or constant.</value>
   </data>
+  <data name="VariableNotWritableUseSetPSContentPath" xml:space="preserve">
+    <value>Cannot overwrite variable {0} because it is read-only. Use Set-PSContentPath to change this value.</value>
+  </data>
   <data name="VariableIsPrivate" xml:space="preserve">
     <value>Cannot access the variable '${0}' because it is a private variable.</value>
   </data>

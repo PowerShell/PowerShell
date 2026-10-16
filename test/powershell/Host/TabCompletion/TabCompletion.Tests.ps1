@@ -3647,12 +3647,8 @@ dir -Recurse `
     Context "Tab completion help test" {
         BeforeAll {
             New-Item -ItemType File (Join-Path ${TESTDRIVE} "pwsh.xml")
-            if ($IsWindows) {
-                $userHelpRoot = Join-Path $HOME "Documents/PowerShell/Help/"
-            } else {
-                $userModulesRoot = [System.Management.Automation.Platform]::SelectProductNameForDirectory([System.Management.Automation.Platform+XDG_Type]::USER_MODULES)
-                $userHelpRoot = Join-Path $userModulesRoot -ChildPath ".." -AdditionalChildPath "Help"
-            }
+            $contentPath = (Get-PSContentPath).FullName
+            $userHelpRoot = Join-Path $contentPath "Help"
         }
 
         It 'Should complete about help topic' {
