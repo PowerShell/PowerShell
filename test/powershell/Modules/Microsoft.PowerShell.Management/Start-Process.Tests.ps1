@@ -22,7 +22,7 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
             $pingParam = "-n 2 localhost"
         }
         elseif ($IsLinux -Or $IsMacOS) {
-            $pingParam = "-c 2 localhost"
+            $pingParam = @("-c", "2", "localhost")
         }
     }
 
