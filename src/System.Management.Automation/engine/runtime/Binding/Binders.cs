@@ -4687,14 +4687,24 @@ namespace System.Management.Automation.Language
             }
 
             Expression[] indexExprs = new Expression[paramLength];
+            // DataRow and DataRowView indexers accept object values but validate them against their column type.
+            // Unwrap PowerShell's wrapper so their internal type checks see the underlying .NET value.
+            bool unwrapValue = setter.DeclaringType == typeof(DataRow) || setter.DeclaringType == typeof(DataRowView);
             for (int i = 0; i < paramLength; ++i)
             {
                 var parameterType = setterParams[i].ParameterType;
                 var argument = (i == paramLength - 1) ? value : indexes[i];
 
-                indexExprs[i] = parameterType.IsByRefLike
-                    ? PSConvertBinder.ConvertToByRefLikeTypeViaCasting(argument, parameterType)
-                    : PSGetIndexBinder.ConvertIndex(argument, parameterType);
+                if (unwrapValue && i == paramLength - 1 && parameterType == typeof(object) && argument.LimitType == typeof(PSObject))
+                {
+                    indexExprs[i] = Expression.Call(CachedReflectionInfo.PSObject_Base, argument.Expression.Cast(typeof(PSObject)));
+                }
+                else
+                {
+                    indexExprs[i] = parameterType.IsByRefLike
+                        ? PSConvertBinder.ConvertToByRefLikeTypeViaCasting(argument, parameterType)
+                        : PSGetIndexBinder.ConvertIndex(argument, parameterType);
+                }
 
                 if (indexExprs[i] == null)
                 {
