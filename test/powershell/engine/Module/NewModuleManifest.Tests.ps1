@@ -118,6 +118,27 @@ Describe "New-ModuleManifest tests" -tags "CI" {
         { New-ModuleManifest -Path $manifestPath -ProjectUri $testUri -LicenseUri $testUri -IconUri $testUri } | Should -Throw -ErrorId "System.InvalidOperationException,Microsoft.PowerShell.Commands.NewModuleManifestCommand"
     }
 
+    It "Throws an error if PSData is specified in PrivateData hashtable" {
+        { New-ModuleManifest -Path $manifestPath -PrivateData @{ PSData = @{ Custom = 'val' } } } | Should -Throw -ErrorId "PSDataNotAllowedInPrivateData,Microsoft.PowerShell.Commands.NewModuleManifestCommand"
+    }
+
+    It "Serializes nested hashtables, arrays, and primitive values in PrivateData" {
+        $privateData = @{
+            MyKey = @{
+                NestedKey = 'NestedVal'
+                NestedNumber = 42
+                NestedBool = $true
+            }
+            MyList = @('a', 'b')
+        }
+        New-ModuleManifest -Path $manifestPath -PrivateData $privateData
+        $manifest = Test-ModuleManifest -Path $manifestPath
+        $manifest.PrivateData.MyKey.NestedKey | Should -BeExactly 'NestedVal'
+        $manifest.PrivateData.MyKey.NestedNumber | Should -BeExactly 42
+        $manifest.PrivateData.MyKey.NestedBool | Should -BeExactly $true
+        $manifest.PrivateData.MyList | Should -BeExactly @('a', 'b')
+    }
+
     # We skip the test on Unix-s because there Roslyn compilation works in another way.
     It "New-ModuleManifest works with assembly architecture: <moduleArch>" -Skip:(!$IsWindows) -TestCases @(
         # All values from [System.Reflection.ProcessorArchitecture]
