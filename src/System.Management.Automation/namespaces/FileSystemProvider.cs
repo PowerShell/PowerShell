@@ -5704,10 +5704,19 @@ namespace Microsoft.PowerShell.Commands
                     if (fsinfo != null)
                     {
                         // This might happen if you've passed a child name of two or more dots,
-                        // which the .NET APIs treat as the parent directory
+                        // which the .NET APIs treat as the parent directory. Do not use a length
+                        // comparison alone here: resolving an 8.3 short name can also make the
+                        // path shorter without changing its parent directory.
                         if (fsinfo.FullName.Length < currentPath.Length)
                         {
-                            throw PSTraceSource.NewArgumentException("path", FileSystemProviderStrings.ItemDoesNotExist, currentPath);
+                            var parentInfo = GetFileSystemInfo(GetParentPath(currentPath, null), out bool _);
+                            if (string.Equals(
+                                fsinfo.FullName.TrimEnd(StringLiterals.DefaultPathSeparator),
+                                parentInfo?.FullName.TrimEnd(StringLiterals.DefaultPathSeparator),
+                                StringComparison.OrdinalIgnoreCase))
+                            {
+                                throw PSTraceSource.NewArgumentException("path", FileSystemProviderStrings.ItemDoesNotExist, currentPath);
+                            }
                         }
 
                         // Expand the short file name
