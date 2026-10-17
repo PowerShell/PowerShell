@@ -240,4 +240,7 @@
   <data name="PrimaryRunspaceAlreadySet" xml:space="preserve">
     <value>The static PrimaryRunspace property can only be set once, and has already been set.</value>
   </data>
+  <data name="ShouldCloseOnPopNotRemote" xml:space="preserve">
+    <value>Only a remote runspace can be marked to close when it is popped.</value>
+  </data>
 </root>
