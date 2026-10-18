@@ -1118,6 +1118,52 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        private const int MaxSerializationDepth = 20;
+
+        private sealed class ReferenceEqualityComparer : IEqualityComparer<object>
+        {
+            internal static readonly ReferenceEqualityComparer Instance = new ReferenceEqualityComparer();
+
+            bool IEqualityComparer<object>.Equals(object x, object y) => object.ReferenceEquals(x, y);
+
+            int IEqualityComparer<object>.GetHashCode(object obj) => System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(obj);
+        }
+
+        private static string FormatKey(object key)
+        {
+            string keyStr = key?.ToString() ?? string.Empty;
+            if (IsValidIdentifier(keyStr))
+            {
+                return keyStr;
+            }
+
+            return QuoteName(keyStr);
+        }
+
+        private static bool IsValidIdentifier(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return false;
+            }
+
+            if (!char.IsLetter(name[0]) && name[0] != '_')
+            {
+                return false;
+            }
+
+            for (int i = 1; i < name.Length; i++)
+            {
+                char c = name[i];
+                if (!char.IsLetterOrDigit(c) && c != '_')
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         /// <summary>
         /// Serializes an arbitrary value to its PowerShell data file literal representation.
         /// Handles strings, booleans, numbers, arrays, and nested hashtables.
@@ -1128,29 +1174,52 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The PowerShell literal string for the value.</returns>
         private static string SerializeValue(object value, string currentIndent, StreamWriter streamWriter)
         {
+            return SerializeValue(value, currentIndent, streamWriter, depth: 0, visited: null);
+        }
+
+        private static string SerializeValue(object value, string currentIndent, StreamWriter streamWriter, int depth, HashSet<object> visited)
+        {
             if (value == null)
             {
                 return "$null";
             }
 
+            if (depth > MaxSerializationDepth)
+            {
+                throw new InvalidOperationException("Maximum serialization depth exceeded or cyclic structure detected in PrivateData.");
+            }
+
             if (value is Hashtable ht)
             {
-                var sb = new StringBuilder();
-                string innerIndent = currentIndent + "    ";
-                sb.Append("@{");
-                sb.Append(streamWriter.NewLine);
-                foreach (DictionaryEntry entry in ht)
+                visited ??= new HashSet<object>(ReferenceEqualityComparer.Instance);
+                if (!visited.Add(ht))
                 {
-                    sb.Append(innerIndent);
-                    sb.Append(entry.Key);
-                    sb.Append(" = ");
-                    sb.Append(SerializeValue(entry.Value, innerIndent, streamWriter));
-                    sb.Append(streamWriter.NewLine);
+                    throw new InvalidOperationException("Circular reference detected in PrivateData hashtable.");
                 }
 
-                sb.Append(currentIndent);
-                sb.Append('}');
-                return sb.ToString();
+                try
+                {
+                    var sb = new StringBuilder();
+                    string innerIndent = currentIndent + "    ";
+                    sb.Append("@{");
+                    sb.Append(streamWriter.NewLine);
+                    foreach (DictionaryEntry entry in ht)
+                    {
+                        sb.Append(innerIndent);
+                        sb.Append(FormatKey(entry.Key));
+                        sb.Append(" = ");
+                        sb.Append(SerializeValue(entry.Value, innerIndent, streamWriter, depth + 1, visited));
+                        sb.Append(streamWriter.NewLine);
+                    }
+
+                    sb.Append(currentIndent);
+                    sb.Append('}');
+                    return sb.ToString();
+                }
+                finally
+                {
+                    visited.Remove(ht);
+                }
             }
 
             if (value is bool b)
@@ -1160,25 +1229,40 @@ namespace Microsoft.PowerShell.Commands
 
             if (value is Array arr)
             {
-                var sb = new StringBuilder();
-                sb.Append("@(");
-                bool first = true;
-                foreach (object item in arr)
+                visited ??= new HashSet<object>(ReferenceEqualityComparer.Instance);
+                if (!visited.Add(arr))
                 {
-                    if (!first)
-                    {
-                        sb.Append(", ");
-                    }
-
-                    sb.Append(SerializeValue(item, currentIndent, streamWriter));
-                    first = false;
+                    throw new InvalidOperationException("Circular reference detected in PrivateData array.");
                 }
 
-                sb.Append(')');
-                return sb.ToString();
+                try
+                {
+                    var sb = new StringBuilder();
+                    sb.Append("@(");
+                    bool first = true;
+                    foreach (object item in arr)
+                    {
+                        if (!first)
+                        {
+                            sb.Append(", ");
+                        }
+
+                        sb.Append(SerializeValue(item, currentIndent, streamWriter, depth + 1, visited));
+                        first = false;
+                    }
+
+                    sb.Append(')');
+                    return sb.ToString();
+                }
+                finally
+                {
+                    visited.Remove(arr);
+                }
             }
 
-            if (value is int || value is long || value is double || value is float || value is decimal)
+            if (value is byte || value is sbyte || value is short || value is ushort ||
+                value is int || value is uint || value is long || value is ulong ||
+                value is float || value is double || value is decimal)
             {
                 return Convert.ToString(value, CultureInfo.InvariantCulture);
             }
@@ -1277,7 +1361,7 @@ namespace Microsoft.PowerShell.Commands
 
                     foreach (DictionaryEntry entry in privateDataHashTable)
                     {
-                        result.Append(ManifestFragment(entry.Key.ToString(), entry.Key.ToString(), SerializeValue(entry.Value, _indent, streamWriter), streamWriter));
+                        result.Append(ManifestFragment(FormatKey(entry.Key), entry.Key.ToString(), SerializeValue(entry.Value, _indent, streamWriter), streamWriter));
                     }
                 }
 
