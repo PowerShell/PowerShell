@@ -321,4 +321,35 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
 
         $transcriptMinHeaderLength | Should -BeLessThan $transcriptLength
     }
+
+    It "Transcription should prefix recorded output with a timestamp when 'IncludeTimeStamp' parameter is used" {
+        $message = "TimeStampTestMessage"
+        $script = {
+            Start-Transcript -Path $transcriptFilePath -IncludeTimeStamp
+            Write-Host -Message $message
+            Write-Host -Message "$message second`n$message third"
+            Stop-Transcript
+        }
+
+        & $script
+
+        $transcriptFilePath | Should -Exist
+        $content = Get-Content $transcriptFilePath
+        ($content | Where-Object { $_ -match "^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} .*$message" }).Count | Should -Be 3
+    }
+
+    It "Transcription should not prefix recorded output with a timestamp by default" {
+        $message = "NoTimeStampTestMessage"
+        $script = {
+            Start-Transcript -Path $transcriptFilePath
+            Write-Host -Message $message
+            Stop-Transcript
+        }
+
+        & $script
+
+        $transcriptFilePath | Should -Exist
+        $transcriptFilePath | Should -FileContentMatch $message
+        (Get-Content $transcriptFilePath | Where-Object { $_ -match "^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} " }).Count | Should -Be 0
+    }
 }

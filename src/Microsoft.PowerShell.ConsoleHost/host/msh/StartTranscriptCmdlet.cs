@@ -151,6 +151,16 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Gets or sets whether to prefix each transcribed line of command
+        /// input and output with a timestamp.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter IncludeTimeStamp
+        {
+            get; set;
+        }
+
+        /// <summary>
         /// Starts the transcription.
         /// </summary>
         protected override void BeginProcessing()
@@ -234,7 +244,7 @@ namespace Microsoft.PowerShell.Commands
 
                 System.Management.Automation.Remoting.PSSenderInfo psSenderInfo =
                     this.SessionState.PSVariable.GetValue("PSSenderInfo") as System.Management.Automation.Remoting.PSSenderInfo;
-                Host.UI.StartTranscribing(effectiveFilePath, psSenderInfo, IncludeInvocationHeader.ToBool(), UseMinimalHeader.IsPresent);
+                Host.UI.StartTranscribing(effectiveFilePath, psSenderInfo, IncludeInvocationHeader.ToBool(), UseMinimalHeader.IsPresent, IncludeTimeStamp.IsPresent);
 
                 // ch.StartTranscribing(effectiveFilePath, Append);
 

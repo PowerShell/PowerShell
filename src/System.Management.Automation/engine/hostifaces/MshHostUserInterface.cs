@@ -447,11 +447,11 @@ namespace System.Management.Automation.Host
                                     transcript.OutputToLog.Add("**********************");
                                 }
 
-                                transcript.OutputToLog.Add(TranscriptionData.PromptText + commandText);
+                                transcript.AddOutput(TranscriptionData.PromptText + commandText);
                             }
                             else
                             {
-                                transcript.OutputToLog.Add(">> " + commandText);
+                                transcript.AddOutput(">> " + commandText);
                             }
                         }
                     }
@@ -588,11 +588,12 @@ namespace System.Management.Automation.Host
             }
         }
 
-        internal void StartTranscribing(string path, System.Management.Automation.Remoting.PSSenderInfo senderInfo, bool includeInvocationHeader, bool useMinimalHeader)
+        internal void StartTranscribing(string path, System.Management.Automation.Remoting.PSSenderInfo senderInfo, bool includeInvocationHeader, bool useMinimalHeader, bool includeTimeStamp)
         {
             TranscriptionOption transcript = new TranscriptionOption();
             transcript.Path = path;
             transcript.IncludeInvocationHeader = includeInvocationHeader;
+            transcript.IncludeTimeStamp = includeTimeStamp;
             TranscriptionData.Transcripts.Add(transcript);
 
             LogTranscriptHeader(senderInfo, transcript, useMinimalHeader);
@@ -773,7 +774,7 @@ namespace System.Management.Automation.Host
                         {
                             lock (transcript.OutputToLog)
                             {
-                                transcript.OutputToLog.Add(resultText);
+                                transcript.AddOutput(resultText);
                             }
                         }
                     }
@@ -1238,6 +1239,45 @@ namespace System.Management.Automation.Host
         /// transcript output.
         /// </summary>
         internal bool IncludeInvocationHeader { get; set; }
+
+        /// <summary>
+        /// Whether to prefix each transcribed line of command input and
+        /// output with the time at which it was transcribed.
+        /// </summary>
+        internal bool IncludeTimeStamp { get; set; }
+
+        /// <summary>
+        /// The format used for the timestamp prefix, i.e. '2024-08-23 11:04:52 '.
+        /// </summary>
+        private const string TimeStampFormat = "yyyy-MM-dd HH:mm:ss";
+
+        private static readonly string[] s_newLineSeparators = { "\r\n", "\n", "\r" };
+
+        /// <summary>
+        /// Adds output to be logged to this transcript. When <see cref="IncludeTimeStamp"/>
+        /// is set, each non-empty line of the output is prefixed with the current time.
+        /// </summary>
+        /// <param name="text">The text to be logged.</param>
+        internal void AddOutput(string text)
+        {
+            if (!IncludeTimeStamp || string.IsNullOrEmpty(text))
+            {
+                OutputToLog.Add(text);
+                return;
+            }
+
+            string timeStamp = DateTime.Now.ToString(TimeStampFormat, CultureInfo.InvariantCulture);
+            string[] lines = text.Split(s_newLineSeparators, StringSplitOptions.None);
+            for (int i = 0; i < lines.Length; i++)
+            {
+                if (lines[i].Length > 0)
+                {
+                    lines[i] = string.Concat(timeStamp, " ", lines[i]);
+                }
+            }
+
+            OutputToLog.Add(string.Join(Environment.NewLine, lines));
+        }
 
         /// <summary>
         /// Logs buffered content to disk. We use this instead of File.AppendAllLines
