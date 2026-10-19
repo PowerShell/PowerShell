@@ -146,7 +146,10 @@ namespace Microsoft.PowerShell.Commands
                         case "https":
                             {
                                 using var client = new HttpClient();
-                                text = client.GetStringAsync(uri).Result;
+                                using var request = new HttpRequestMessage(HttpMethod.Get, uri);
+                                using var response = client.Send(request);
+                                response.EnsureSuccessStatusCode();
+                                text = response.Content.ReadAsString();
                                 break;
                             }
                         case "file":
