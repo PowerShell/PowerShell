@@ -70,15 +70,23 @@ jobs:
           if ([string]::IsNullOrWhiteSpace($description)) {
             throw "Store description for '$language' is missing from '$jsonPath'."
           }
-          if (-not $description.Contains('___VERSION___')) {
-            throw "Store description for '$language' does not contain the required placeholder '___VERSION___'."
-          }
-          $baseListing.description = $description.Replace('___VERSION___', $tagString)
 
           $releaseNotes = $baseListing.releaseNotes
           if ([string]::IsNullOrWhiteSpace($releaseNotes)) {
             throw "Store release notes for '$language' are missing from '$jsonPath'."
           }
+
+          # Localized listings may retain the version in release notes until localization propagates the en-US change.
+          if ($description.Contains('___VERSION___')) {
+            $baseListing.description = $description.Replace('___VERSION___', $tagString)
+          }
+          elseif ($releaseNotes.Contains('___VERSION___')) {
+            $releaseNotes = $releaseNotes.Replace('___VERSION___', $tagString)
+          }
+          else {
+            throw "Store listing for '$language' does not contain the required placeholder '___VERSION___'."
+          }
+
           if (-not $releaseNotes.Contains('___CHANGELOGLINK___')) {
             throw "Store release notes for '$language' do not contain the required placeholder '___CHANGELOGLINK___'."
           }
