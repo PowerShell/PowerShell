@@ -132,4 +132,7 @@
   <data name="InvalidUriScheme" xml:space="preserve">
     <value>Schéma identifikátoru URI {0} není podporováno. Povoleny jsou pouze identifikátory URI protokolu HTTP(S) a místního systému souborů.</value>
   </data>
+  <data name="UnresolvedJsonSchemaRef" xml:space="preserve">
+    <value>The JSON schema contains a reference that could not be resolved. External schema references are not supported by default, use the 'FetchExternalReference' parameter to enable it.</value>
+  </data>
 </root>
