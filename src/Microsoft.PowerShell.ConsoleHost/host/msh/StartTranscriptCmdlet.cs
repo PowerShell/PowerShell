@@ -152,7 +152,12 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Gets or sets whether to prefix each transcribed line of command
-        /// input and output with a timestamp.
+        /// input and output with the time at which it was recorded to the
+        /// transcript. Standalone native command output on Windows is captured
+        /// from the console buffer only after the process exits, so all lines
+        /// of such output receive the completion time of the command. Piping
+        /// or redirecting native command output records each line as it is
+        /// produced.
         /// </summary>
         [Parameter]
         public SwitchParameter IncludeTimeStamp

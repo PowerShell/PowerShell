@@ -175,6 +175,24 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $transcriptFilePath | Should -FileContentMatch $machineName
     }
 
+    It "Transcription should prefix native command output with a timestamp when 'IncludeTimeStamp' parameter is used" {
+        # The native command output is piped so that it is transcribed through the
+        # regular output stream. Standalone native command output is only captured by
+        # screen scraping when a physical console is available, which is not guaranteed
+        # in test environments.
+        $script = {
+            Start-Transcript -Path $transcriptFilePath -IncludeTimeStamp
+            hostname | ForEach-Object { Write-Host -Message $_ }
+            Stop-Transcript
+        }
+
+        & $script
+
+        $transcriptFilePath | Should -Exist
+        $machineName = [System.Environment]::MachineName
+        (Get-Content $transcriptFilePath | Where-Object { $_ -match "^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} .*$machineName" }).Count | Should -BeGreaterThan 0
+    }
+
     It "Transcription should record Write-Information output when InformationAction is set to Continue" {
         [String]$message = New-Guid
         $script = {

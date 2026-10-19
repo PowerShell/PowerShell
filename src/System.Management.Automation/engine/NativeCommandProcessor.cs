@@ -1138,6 +1138,12 @@ namespace System.Management.Automation
                             bufferText.Append(lineContents.ToString().TrimEnd(Utils.Separators.SpaceOrTab));
                         }
 
+                        // Screen-scraped output is only available after the process exits, and the
+                        // console buffer does not track when each row was written. When transcript
+                        // timestamps are enabled (Start-Transcript -IncludeTimeStamp), all lines of
+                        // this block are therefore recorded with the completion time of the command.
+                        // Per-line production times can only be captured when the native command
+                        // output is piped or redirected, which streams each line as it is produced.
                         this.Command.Context.InternalHost.UI.TranscribeResult(bufferText.ToString());
                     }
 
