@@ -209,6 +209,66 @@ Describe "Set-Variable" -Tags "CI" {
                 $var.Value | Should -Be 1
                 $var.Description | Should -BeExactly "original"
                 $var.Options | Should -BeExactly "None"
+                $setError.FullyQualifiedErrorId | Should -BeExactly "VariableCannotBeMadeConstant,Microsoft.PowerShell.Commands.SetVariableCommand"
+            }
+        }
+
+        It "Force updates a ReadOnly value before restoring its original options" {
+            & {
+                New-Variable -Name x -Value 1 -Option ReadOnly -Description "original"
+                $result = Set-Variable -Name x -Value 2 -Force -Description "changed" -PassThru -ErrorAction Stop
+
+                $result.Value | Should -Be 2
+                $result.Description | Should -BeExactly "changed"
+                $result.Options | Should -BeExactly "ReadOnly"
+            }
+        }
+
+        It "Force preserves ReadOnly when value validation fails" {
+            & {
+                [ValidateRange(0, 10)] $x = 1
+                Set-Variable -Name x -Option ReadOnly
+                { Set-Variable -Name x -Value 20 -Force -Scope 1 -ErrorAction Stop } | Should -Throw -ErrorId "ValidateSetFailure,Microsoft.PowerShell.Commands.SetVariableCommand"
+
+                $var = Get-Variable -Name x
+                $var.Value | Should -Be 1
+                $var.Options | Should -BeExactly "ReadOnly"
+            }
+        }
+
+        It "Force can explicitly remove ReadOnly while updating the value" {
+            & {
+                New-Variable -Name x -Value 1 -Option ReadOnly
+                Set-Variable -Name x -Value 2 -Force -Option None -ErrorAction Stop
+
+                $var = Get-Variable -Name x
+                $var.Value | Should -Be 2
+                $var.Options | Should -BeExactly "None"
+            }
+        }
+
+        It "Force restores the original options when an AllScope change fails" {
+            & {
+                New-Variable -Name x -Value 1 -Option ReadOnly, AllScope -Description "original"
+                Set-Variable -Name x -Value 2 -Force -Option None -Description "changed" -ErrorVariable setError -ErrorAction SilentlyContinue
+
+                $var = Get-Variable -Name x
+                $var.Value | Should -Be 1
+                $var.Description | Should -BeExactly "original"
+                $var.Options | Should -BeExactly "ReadOnly, AllScope"
+                $setError.FullyQualifiedErrorId | Should -BeExactly "VariableAllScopeOptionCannotBeRemoved,Microsoft.PowerShell.Commands.SetVariableCommand"
+                Remove-Variable -Name x -Force
+            }
+        }
+
+        It "A requested ReadOnly option is applied after updating a writable value" {
+            & {
+                New-Variable -Name x -Value 1
+                Set-Variable -Name x -Value 2 -Option ReadOnly -ErrorAction Stop
+
+                $var = Get-Variable -Name x
+                $var.Value | Should -Be 2
+                $var.Options | Should -BeExactly "ReadOnly"
             }
         }
     }
