@@ -1534,17 +1534,39 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $result.Output.RawContent | Should -Match ([regex]::Escape('Content-Length: 2'))
         }
 
-        It "Verifies Invoke-WebRequest ToString preserves non-ASCII characters when charset is declared" {
+        It "Verifies Invoke-WebRequest ToString preserves non-ASCII characters for <ContentType>" -TestCases @(
+            @{ ContentType = 'text/plain; charset=utf-8' }
+            @{ ContentType = 'text/plain' }
+        ) {
+            param($ContentType)
             $query = @{
-                contenttype = 'text/plain; charset=utf-8'
+                contenttype = $ContentType
                 body        = 'café'
             }
             $uri = Get-WebListenerUrl -Test 'Response' -Query $query
             $response = ExecuteWebRequest -Uri $uri -UseBasicParsing
 
             $response.Error | Should -BeNullOrEmpty
-            # ToString() should preserve the non-ASCII 'é' instead of replacing it with '?'.
-            $response.Output.ToString() | Should -Match 'café'
+            $response.Output.ToString() | Should -BeExactly 'café'
+            $response.Output.RawContent | Should -Match "café$"
+        }
+
+        It "Verifies Invoke-WebRequest preserves the binary visual view for <ContentType>" -TestCases @(
+            @{ ContentType = 'application/octet-stream' }
+            @{ ContentType = 'application/octet-stream; charset=utf-8' }
+        ) {
+            param($ContentType)
+            $query = @{
+                contenttype = $ContentType
+                body        = 'café'
+            }
+            $uri = Get-WebListenerUrl -Test 'Response' -Query $query
+            $response = ExecuteWebRequest -Uri $uri -UseBasicParsing
+
+            $response.Error | Should -BeNullOrEmpty
+            $response.Output | Should -BeOfType Microsoft.PowerShell.Commands.WebResponseObject
+            $response.Output.ToString() | Should -BeExactly 'caf??'
+            $response.Output.RawContent.EndsWith('caf??') | Should -BeTrue
         }
 
         It "Verifies Invoke-WebRequest Supports Multiple response headers with same name" {

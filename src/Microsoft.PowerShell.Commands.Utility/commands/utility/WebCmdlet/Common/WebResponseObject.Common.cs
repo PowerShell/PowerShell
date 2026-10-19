@@ -184,11 +184,14 @@ namespace Microsoft.PowerShell.Commands
                 return string.Empty;
             }
 
-            // Decode using the response's character set when available so non-ASCII
-            // content is preserved. Fall back to UTF-8, which is a safe superset of
-            // ASCII and the default encoding used elsewhere in the web cmdlets.
-            string? characterSet = WebResponseHelper.GetCharacterSet(BaseResponse);
-            StreamHelper.TryGetEncoding(characterSet, out Encoding encoding);
+            // Preserve the ASCII visual view for binary responses. For text, use
+            // the declared character set or the web cmdlets' default UTF-8 encoding.
+            Encoding encoding = Encoding.ASCII;
+            if (WebResponseHelper.IsText(BaseResponse))
+            {
+                string? characterSet = WebResponseHelper.GetCharacterSet(BaseResponse);
+                StreamHelper.TryGetEncoding(characterSet, out encoding);
+            }
 
             char[] stringContent = encoding.GetChars(Content);
             for (int counter = 0; counter < stringContent.Length; counter++)
