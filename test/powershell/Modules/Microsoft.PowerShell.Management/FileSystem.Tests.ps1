@@ -713,8 +713,11 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             }
 
             if ($IsWindows) {
-                $format = [System.IO.DriveInfo]::new([System.IO.Path]::GetPathRoot($root)).DriveFormat
-                $format | Should -Not -BeIn @('NTFS', 'ReFS')
+                # Resolve the volume at the fixture path, including directory-mounted volumes.
+                # DriveInfo(GetPathRoot(...)) would instead inspect the host drive.
+                $volume = Get-Volume -FilePath ((Resolve-Path -LiteralPath $root).ProviderPath) -ErrorAction Stop
+                $volume | Should -Not -BeNullOrEmpty
+                $volume.FileSystem | Should -BeIn @('FAT32', 'exFAT')
             }
 
             $fixture = New-Item -ItemType Directory -Path (Join-Path $root ([guid]::NewGuid().ToString()))
