@@ -703,15 +703,44 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             Test-Path $junctionToDir | Should -BeTrue
         }
 
-        It "New-Item junction fails with clear error on non-Windows and leaves no item behind" -Skip:$IsWindows {
-            $targetDir = New-Item -ItemType Directory -Path "$TestDrive/target"
-            $junctionPath = "$TestDrive/junction"
-            { New-Item -ItemType Junction -Path $junctionPath -Target $targetDir.FullName -ErrorAction Stop } |
-                Should -Throw -ErrorId "JunctionNotSupported,Microsoft.PowerShell.Commands.NewItemCommand"
+        It "New-Item junction rejects an unsupported file system without changing existing data" {
+            # Never provision or format a volume here. Windows jobs may opt in with an existing,
+            # disposable FAT32/exFAT test root; Unix uses the actual TestDrive filesystem.
+            $root = if ($IsWindows) { $env:POWERSHELL_JUNCTION_UNSUPPORTED_TEST_ROOT } else { $TestDrive }
+            if (-not $root) {
+                Set-TestInconclusive -Message 'An existing unsupported Windows test volume is required'
+                return
+            }
 
-            # The early-return on non-Windows must not create a directory or leave any filesystem
-            # artefact at the requested path.
-            Test-Path -LiteralPath $junctionPath | Should -BeFalse
+            if ($IsWindows) {
+                $format = [System.IO.DriveInfo]::new([System.IO.Path]::GetPathRoot($root)).DriveFormat
+                $format | Should -Not -BeIn @('NTFS', 'ReFS')
+            }
+
+            $fixture = New-Item -ItemType Directory -Path (Join-Path $root ([guid]::NewGuid().ToString()))
+            try {
+                $targetDir = New-Item -ItemType Directory -Path (Join-Path $TestDrive 'junction-target')
+                $junctionPath = Join-Path $fixture.FullName 'junction'
+                $failure = { New-Item -ItemType Junction -Path $junctionPath -Target $targetDir.FullName -ErrorAction Stop } |
+                    Should -Throw -ErrorId "JunctionNotSupported,Microsoft.PowerShell.Commands.NewItemCommand" -PassThru
+                $failure.Exception.Message | Should -Match 'NTFS and ReFS'
+                $failure.Exception | Should -BeOfType System.PlatformNotSupportedException
+                Test-Path -LiteralPath $junctionPath | Should -BeFalse
+
+                New-Item -ItemType Directory -Path $junctionPath > $null
+                $sentinel = Join-Path $junctionPath 'keep.txt'
+                Set-Content -LiteralPath $sentinel -Value 'preserve me' -NoNewline
+                { New-Item -ItemType Junction -Path $junctionPath -Target $targetDir.FullName -Force -ErrorAction Stop } |
+                    Should -Throw -ErrorId "JunctionNotSupported,Microsoft.PowerShell.Commands.NewItemCommand"
+                Get-Content -LiteralPath $sentinel -Raw | Should -BeExactly 'preserve me'
+
+                $whatIfPath = Join-Path $fixture.FullName 'whatif'
+                { New-Item -ItemType Junction -Path $whatIfPath -Target $targetDir.FullName -WhatIf -ErrorAction Stop } |
+                    Should -Not -Throw
+                Test-Path -LiteralPath $whatIfPath | Should -BeFalse
+            } finally {
+                Remove-Item -LiteralPath $fixture.FullName -Recurse -Force
+            }
         }
 
         It 'New-Item fails creating junction with relative path' -Skip:(!$IsWindows) {
