@@ -13,7 +13,7 @@ namespace PSTests.Parallel
     {
         private const string ReleaseTag = "7.6.7";
 
-        private static readonly string[] s_templateNames = new[]
+        private static readonly string[] TemplateNames = new[]
         {
             nameof(ManagedEntranceStrings.StableUpdateNotificationMessage),
             nameof(ManagedEntranceStrings.LTSUpdateNotificationMessage),
@@ -21,14 +21,14 @@ namespace PSTests.Parallel
         };
 
         // Keep in sync with the localized resources under src/Microsoft.PowerShell.ConsoleHost/resources.
-        private static readonly string[] s_localizedCultures = new[]
+        private static readonly string[] LocalizedCultures = new[]
         {
             "cs", "de", "es", "fr", "it", "ja", "ko", "pl", "pt-BR", "ru", "tr", "zh-Hans", "zh-Hant",
         };
 
         public static IEnumerable<object[]> NeutralTemplates()
         {
-            foreach (string templateName in s_templateNames)
+            foreach (string templateName in TemplateNames)
             {
                 yield return new object[] { templateName };
             }
@@ -36,9 +36,9 @@ namespace PSTests.Parallel
 
         public static IEnumerable<object[]> LocalizedTemplates()
         {
-            foreach (string cultureName in s_localizedCultures)
+            foreach (string cultureName in LocalizedCultures)
             {
-                foreach (string templateName in s_templateNames)
+                foreach (string templateName in TemplateNames)
                 {
                     yield return new object[] { cultureName, templateName };
                 }
