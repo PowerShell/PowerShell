@@ -111,40 +111,52 @@ namespace Microsoft.PowerShell
                         ? ManagedEntranceStrings.StableUpdateNotificationMessage
                         : ManagedEntranceStrings.PreviewUpdateNotificationMessage;
 
-                string notificationColor = string.Empty;
-                string resetColor = string.Empty;
-
-                string line2Padding = string.Empty;
-                string line3Padding = string.Empty;
-
-                // We calculate how much whitespace we need to make it look nice
-                if (hostUI.SupportsVirtualTerminal)
-                {
-                    // Swaps foreground and background colors.
-                    notificationColor = "\x1B[7m";
-                    resetColor = "\x1B[0m";
-
-                    // The first line is usually the longest, but localized templates may have a longer
-                    // second or third line. Clamp the padding so it can't go negative and crash the host
-                    // over a cosmetic alignment mismatch.
-                    int line1Length = notificationMsgTemplate.IndexOf('\n');
-                    int line2Length = notificationMsgTemplate.IndexOf('\n', line1Length + 1);
-                    int line3Length = notificationMsgTemplate.IndexOf('\n', line2Length + 1);
-                    line3Length -= line2Length + 1;
-                    line2Length -= line1Length + 1;
-
-                    line2Padding = line2Padding.PadRight(
-                        Math.Max(0, line1Length - line2Length + releaseTag.Length));
-                    // 3 represents the extra placeholder in the template
-                    line3Padding = line3Padding.PadRight(
-                        Math.Max(0, line1Length - line3Length + 3));
-                }
-
-                string notificationMsg = string.Format(CultureInfo.CurrentCulture, notificationMsgTemplate, releaseTag, notificationColor, resetColor, line2Padding, line3Padding);
+                string notificationMsg = FormatUpdateNotification(notificationMsgTemplate, releaseTag, hostUI.SupportsVirtualTerminal);
 
                 hostUI.WriteLine();
                 hostUI.WriteLine(notificationMsg);
             }
+        }
+
+        /// <summary>
+        /// Formats the update notification message from the given template.
+        /// </summary>
+        /// <param name="notificationMsgTemplate">The three-line notification message template.</param>
+        /// <param name="releaseTag">The version of the new release.</param>
+        /// <param name="supportsVirtualTerminal">Whether to highlight the message and pad the shorter lines to the width of the first line.</param>
+        /// <returns>The formatted notification message.</returns>
+        internal static string FormatUpdateNotification(string notificationMsgTemplate, string releaseTag, bool supportsVirtualTerminal)
+        {
+            string notificationColor = string.Empty;
+            string resetColor = string.Empty;
+
+            string line2Padding = string.Empty;
+            string line3Padding = string.Empty;
+
+            // We calculate how much whitespace we need to make it look nice
+            if (supportsVirtualTerminal)
+            {
+                // Swaps foreground and background colors.
+                notificationColor = "\x1B[7m";
+                resetColor = "\x1B[0m";
+
+                // The first line is usually the longest, but localized templates may have a longer
+                // second or third line. Clamp the padding so it can't go negative and crash the host
+                // over a cosmetic alignment mismatch.
+                int line1Length = notificationMsgTemplate.IndexOf('\n');
+                int line2Length = notificationMsgTemplate.IndexOf('\n', line1Length + 1);
+                int line3Length = notificationMsgTemplate.IndexOf('\n', line2Length + 1);
+                line3Length -= line2Length + 1;
+                line2Length -= line1Length + 1;
+
+                line2Padding = line2Padding.PadRight(
+                    Math.Max(0, line1Length - line2Length + releaseTag.Length));
+                // 3 represents the extra placeholder in the template
+                line3Padding = line3Padding.PadRight(
+                    Math.Max(0, line1Length - line3Length + 3));
+            }
+
+            return string.Format(CultureInfo.CurrentCulture, notificationMsgTemplate, releaseTag, notificationColor, resetColor, line2Padding, line3Padding);
         }
 
         internal static async Task CheckForUpdates()
