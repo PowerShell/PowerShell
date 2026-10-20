@@ -1,6 +1,7 @@
 {
   "ExperimentalFeatures": {
     "ExpTest.FeatureOne": [ "test/powershell/engine/ExperimentalFeature/ExperimentalFeature.Basic.Tests.ps1" ],
+    "PSProviderDynamicParameterBindingErrors": [ "test/powershell/Modules/Microsoft.PowerShell.Management/Get-ChildItem.PSProviderDynamicParameterBindingErrors.Tests.ps1" ],
     "PSSerializeJSONLongEnumAsNumber": [ "test/powershell/Modules/Microsoft.PowerShell.Utility/ConvertTo-Json.PSSerializeJSONLongEnumAsNumber.Tests.ps1" ]
   }
 }

@@ -66,6 +66,17 @@ namespace System.Management.Automation
         /// </returns>
         object? GetDynamicParameters();
     }
+
+    /// <summary>
+    /// Exposes whether exceptions raised while binding dynamic parameters should be reported.
+    /// </summary>
+    internal interface IReportDynamicParameterBindingErrors
+    {
+        /// <summary>
+        /// Gets a value indicating whether dynamic parameter binding errors should be reported.
+        /// </summary>
+        bool ShouldReportDynamicParameterBindingErrors { get; }
+    }
 #nullable restore
 
     /// <summary>

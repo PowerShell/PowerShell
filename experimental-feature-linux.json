@@ -3,6 +3,7 @@
   "PSLoadAssemblyFromNativeCode",
   "PSNativeWindowsTildeExpansion",
   "PSProfileDSCResource",
+  "PSProviderDynamicParameterBindingErrors",
   "PSSerializeJSONLongEnumAsNumber",
   "PSRedirectToVariable",
   "PSSubsystemPluginModel"
