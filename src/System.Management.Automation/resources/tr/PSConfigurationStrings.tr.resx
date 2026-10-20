@@ -120,4 +120,10 @@
   <data name="CanNotConfigurationFile" xml:space="preserve">
     <value>PowerShell, bir güvenlik sorunu nedeniyle çalışmayı durdurdu: Yapılandırma dosyası okunamıyor: {0}</value>
   </data>
+  <data name="CanNotReadConfigurationFile" xml:space="preserve">
+    <value>PowerShell yapılandırma dosyası '{0}' okunamıyor: {1}. Varsayılan ayarlara geri dönülüyor.</value>
+  </data>
+  <data name="CanNotReadConfigurationValue" xml:space="preserve">
+    <value>Ayar '{0}' '{1}' PowerShell yapılandırma dosyasından okunamıyor: {2}. Bu ayar için varsayılana geri dönülüyor.</value>
+  </data>
 </root>

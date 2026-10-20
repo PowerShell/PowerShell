@@ -475,6 +475,27 @@ namespace System.Management.Automation
 
             return string.Empty;
         }
+
+        private static string s_packageFamilyName;
+        private static bool? s_isMSIXInstallation;
+
+        /// <summary>
+        /// Determine whether the current process has package (MSIX) identity, caching the result
+        /// so the native API is only called once.
+        /// </summary>
+        /// <param name="packageFamilyName">Receives the package family name when the process has package identity; otherwise null.</param>
+        /// <returns>True if the current process has package (MSIX) identity; otherwise false.</returns>
+        internal static bool IsMSIXInstallation(out string packageFamilyName)
+        {
+            if (s_isMSIXInstallation is null)
+            {
+                s_packageFamilyName = Interop.Windows.GetCurrentPackageFamilyName();
+                s_isMSIXInstallation = s_packageFamilyName is not null;
+            }
+
+            packageFamilyName = s_packageFamilyName;
+            return s_isMSIXInstallation.Value;
+        }
 #endif
 
         internal static string DefaultPowerShellAppBase => GetApplicationBase(DefaultPowerShellShellID);

@@ -3,10 +3,13 @@
     "type": "object",
     "properties": {
         "name": {
-            "$ref": "valid_schema_definitions.json#/definitions/name"
+            "type":"string"
         },
         "hobbies": {
-            "$ref": "valid_schema_definitions.json#/definitions/hobbies"
+            "type":"array",
+            "items":{
+                "type":"string"
+            }
         }
     }
 }
