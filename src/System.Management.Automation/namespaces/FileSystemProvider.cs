@@ -8094,6 +8094,13 @@ namespace Microsoft.PowerShell.Commands
             // The final component is replaced when -Force is used. Resolve its parent through
             // a handle so mounted folders (and parents reached through links) use their own volume.
             string parent = Path.GetDirectoryName(Path.GetFullPath(path));
+            if (parent is null)
+            {
+                // A drive or UNC share root cannot be replaced with a junction.
+                // Reject it before -Force can remove any existing data.
+                throw new IOException(path);
+            }
+
             while (true)
             {
                 try

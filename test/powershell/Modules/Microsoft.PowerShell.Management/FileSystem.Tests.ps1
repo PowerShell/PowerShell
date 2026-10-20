@@ -703,6 +703,23 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             Test-Path $junctionToDir | Should -BeTrue
         }
 
+        It "New-Item junction volume query rejects roots before mutation" -Skip:(-Not $IsWindows) {
+            # Invoke the pre-mutation helper: never attempt -Force against a real volume root.
+            $type = [System.Management.Automation.PSObject].Assembly.GetType('Microsoft.PowerShell.Commands.InternalSymbolicLinkLinkCodeMethods', $true)
+            $method = $type.GetMethod('SupportsJunctions', [System.Reflection.BindingFlags]'Static,NonPublic')
+            foreach ($root in @([System.IO.Path]::GetPathRoot($TestDrive), '\\server\share\')) {
+                $failure = $null
+                try {
+                    $method.Invoke($null, @($root))
+                } catch {
+                    $failure = $_.Exception
+                    while ($failure.InnerException) { $failure = $failure.InnerException }
+                }
+
+                $failure | Should -BeOfType System.IO.IOException
+            }
+        }
+
         It "New-Item junction rejects an unsupported file system without changing existing data" {
             # Never provision or format a volume here. Windows jobs may opt in with an existing,
             # disposable FAT32/exFAT test root; Unix uses the actual TestDrive filesystem.
