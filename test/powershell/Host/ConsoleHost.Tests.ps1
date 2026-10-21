@@ -891,10 +891,6 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
             $inputPath  = "Temp:\StartupBannerTest-Input.txt"
             "exit" > $inputPath
 
-            # Not testing update notification banner text here
-            $oldPowerShellUpdateCheck = $env:POWERSHELL_UPDATECHECK
-            $env:POWERSHELL_UPDATECHECK = "Off"
-
             # Set TERM to "dumb" to avoid DECCKM codes in the output
             $oldTERM = $env:TERM
             $env:TERM = "dumb"
@@ -915,7 +911,6 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
         }
         AfterAll {
             $env:TERM = $oldTERM
-            $env:POWERSHELL_UPDATECHECK = $oldPowerShellUpdateCheck
 
             Remove-Item $inputPath -Force -ErrorAction Ignore
             Remove-Item $outputPath -Force -ErrorAction Ignore

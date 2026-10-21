@@ -307,12 +307,6 @@ namespace Microsoft.PowerShell
                 if (LoadPSReadline())
                 {
                     ProfileOptimization.StartProfile("StartupProfileData-Interactive");
-
-                    if (UpdatesNotification.CanNotifyUpdates)
-                    {
-                        // Start a task in the background to check for the update release.
-                        _ = UpdatesNotification.CheckForUpdates();
-                    }
                 }
                 else
                 {
