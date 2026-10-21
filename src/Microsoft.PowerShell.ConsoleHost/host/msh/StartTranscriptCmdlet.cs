@@ -169,11 +169,11 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets a .NET custom date and time format string used for the
-        /// timestamp prefix on transcribed lines, for example 'HH:mm:ss' or
-        /// 'dddd, yyyy-MM-dd'. The default format is 'yyyy-MM-dd HH:mm:ss'.
-        /// Specifying this parameter enables timestamps, so -IncludeTimeStamp
-        /// does not need to be supplied as well.
+        /// Gets or sets a .NET standard or custom date and time format string
+        /// used for the timestamp prefix on transcribed lines, for example
+        /// 'HH:mm:ss', 'o' or 'dddd, yyyy-MM-dd'. The default format is
+        /// 'yyyy-MM-dd HH:mm:ss'. Specifying this parameter enables timestamps,
+        /// so -IncludeTimeStamp does not need to be supplied as well.
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]

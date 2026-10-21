@@ -399,7 +399,22 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         (Get-Content $transcriptFilePath | Where-Object { $_ -match "^\d{4}/\d{2}/\d{2} .*$message" }).Count | Should -BeGreaterThan 0
     }
 
+    It "Transcription should support standard .NET date and time format strings for 'TimeStampFormat'" {
+        $message = "StandardFormatTestMessage"
+        $script = {
+            Start-Transcript -Path $transcriptFilePath -TimeStampFormat "s"
+            Write-Host -Message $message
+            Stop-Transcript
+        }
+
+        & $script
+
+        $transcriptFilePath | Should -Exist
+        (Get-Content $transcriptFilePath | Where-Object { $_ -match "^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2} .*$message" }).Count | Should -BeGreaterThan 0
+    }
+
     It "Should reject an invalid 'TimeStampFormat'" {
         { Start-Transcript -Path $transcriptFilePath -IncludeTimeStamp -TimeStampFormat "yyyy 'unterminated" } | Should -Throw -ErrorId "InvalidTimeStampFormat,Microsoft.PowerShell.Commands.StartTranscriptCommand"
+        { Start-Transcript -Path $transcriptFilePath -IncludeTimeStamp -TimeStampFormat "q" } | Should -Throw -ErrorId "InvalidTimeStampFormat,Microsoft.PowerShell.Commands.StartTranscriptCommand"
     }
 }
