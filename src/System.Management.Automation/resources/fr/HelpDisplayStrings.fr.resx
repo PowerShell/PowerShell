@@ -347,7 +347,7 @@
     <value>Le paramètre suivant ne doit pas être nul ou vide : Module.</value>
   </data>
   <data name="ModuleNameTooLong" xml:space="preserve">
-    <value>The module name exceeds the maximum supported length of {1} characters (actual length: {0}).</value>
+    <value>Le nom du module dépasse la longueur maximale prise en charge de {1} caractères (longueur réelle : {0}).</value>
   </data>
   <data name="PathNullOrEmpty" xml:space="preserve">
     <value>Le paramètre suivant ne doit pas être nul ou vide : Chemin.</value>
