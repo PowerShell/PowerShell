@@ -133,6 +133,6 @@
     <value>不支援 URI 配置 '{0}'。只允許 HTTP(S) 和本機檔案系統 URI。</value>
   </data>
   <data name="UnresolvedJsonSchemaRef" xml:space="preserve">
-    <value>The JSON schema contains a reference that could not be resolved. External schema references are not supported by default, use the 'FetchExternalReference' parameter to enable it.</value>
+    <value>JSON 結構描述包含無法解析的參考。預設不支援外部結構描述參考，請使用 'FetchExternalReference' 參數加以啟用。</value>
   </data>
 </root>

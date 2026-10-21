@@ -347,7 +347,7 @@
     <value>El siguiente parámetro no debe ser null ni estar vacío: Module.</value>
   </data>
   <data name="ModuleNameTooLong" xml:space="preserve">
-    <value>The module name exceeds the maximum supported length of {1} characters (actual length: {0}).</value>
+    <value>El nombre del módulo supera la longitud máxima admitida de {1} caracteres (longitud real: {0}).</value>
   </data>
   <data name="PathNullOrEmpty" xml:space="preserve">
     <value>El siguiente parámetro no debe ser null ni estar vacío: Path.</value>

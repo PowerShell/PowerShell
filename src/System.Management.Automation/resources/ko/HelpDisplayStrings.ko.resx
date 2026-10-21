@@ -347,7 +347,7 @@
     <value>다음 매개 변수는 null이거나 비워 둘 수 없습니다. Module.</value>
   </data>
   <data name="ModuleNameTooLong" xml:space="preserve">
-    <value>The module name exceeds the maximum supported length of {1} characters (actual length: {0}).</value>
+    <value>모듈 이름이 지원되는 최대 길이인 {1}자(실제 길이: {0})를 초과합니다.</value>
   </data>
   <data name="PathNullOrEmpty" xml:space="preserve">
     <value>다음 매개 변수는 null이거나 비워 둘 수 없습니다. Path.</value>
