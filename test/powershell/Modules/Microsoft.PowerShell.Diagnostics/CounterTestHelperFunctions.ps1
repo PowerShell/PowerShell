@@ -214,6 +214,9 @@ function TranslateCounterPath
     {
         $counterHelper = New-Object -TypeName "TestCounterHelper" -ArgumentList (, $counters)
         $rv = $counterHelper.TranslateCounterPath($path)
+        if ([string]::IsNullOrEmpty($rv)) {
+            return $path
+        }
 
         # if our original path had no machine name,
         # we don't want one on our translated path

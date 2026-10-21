@@ -857,31 +857,6 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
         }
     }
 
-    Context "ApartmentState WPF tests" -Tag Slow {
-
-        It "WPF requires STA and will work" -Skip:(!$IsWindows -or [System.Management.Automation.Platform]::IsNanoServer) {
-            Set-ItResult -Pending -Because "Disabled due to issue - https://github.com/dotnet/wpf/issues/11651 in .NET 11 Preview 5"
-
-            Add-Type -AssemblyName presentationframework
-
-            $xaml = [xml]@"
-            <Window
-                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                x:Name="Window" Title="Initial Window" WindowStartupLocation = "CenterScreen"
-                Width = "400" Height = "300" ShowInTaskbar = "True">
-            </Window>
-"@
-
-            $reader = [System.Xml.XmlNodeReader]::new($xaml)
-            $Window = [System.Windows.Markup.XamlReader]::Load($reader)
-            # This will throw an exception if MTA
-            { $Window.Show() } | Should -Not -Throw
-            $Window.Close()
-        }
-
-    }
-
     Context "ApartmentState tests" {
 
         It "Default apartment state for main thread is STA" -Skip:(!$IsWindows -or [System.Management.Automation.Platform]::IsNanoServer) {
@@ -998,6 +973,30 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
         $out = pwsh -nologo -noprofile -executionpolicy NonExistingExecutionPolicy -c 'exit 0' 2>&1
         $out | Should -Not -BeNullOrEmpty
         $LASTEXITCODE | Should -Be $ExitCodeBadCommandLineParameter
+    }
+}
+
+Describe "ApartmentState WPF tests" -Tag Feature,Slow,NotMinSize {
+
+    It "WPF requires STA and will work" -Skip:(!$IsWindows -or [System.Management.Automation.Platform]::IsNanoServer) {
+        Set-ItResult -Pending -Because "Disabled due to issue - https://github.com/dotnet/wpf/issues/11651 in .NET 11 Preview 5"
+
+        Add-Type -AssemblyName presentationframework
+
+        $xaml = [xml]@"
+        <Window
+            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+            x:Name="Window" Title="Initial Window" WindowStartupLocation = "CenterScreen"
+            Width = "400" Height = "300" ShowInTaskbar = "True">
+        </Window>
+"@
+
+        $reader = [System.Xml.XmlNodeReader]::new($xaml)
+        $Window = [System.Windows.Markup.XamlReader]::Load($reader)
+        # This will throw an exception if MTA
+        { $Window.Show() } | Should -Not -Throw
+        $Window.Close()
     }
 }
 

@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe "Get-HotFix Tests" -Tag CI {
+Describe "Get-HotFix Tests" -Tag CI,NotWinPE {
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
 
