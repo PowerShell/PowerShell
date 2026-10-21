@@ -118,18 +118,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="RenamingMultipleResults" xml:space="preserve">
-    <value>Cannot rename multiple results.</value>
+    <value>Не удается переименовать несколько результатов.</value>
   </data>
   <data name="PropertyNotFound" xml:space="preserve">
-    <value>Property "{0}" cannot be found.</value>
+    <value>Не удается найти свойство "{0}".</value>
   </data>
   <data name="MutlipleExpandProperties" xml:space="preserve">
-    <value>Multiple properties cannot be expanded.</value>
+    <value>Не удается развернуть несколько свойств.</value>
   </data>
   <data name="AlreadyExistingProperty" xml:space="preserve">
-    <value>The property cannot be processed because the property "{0}" already exists.</value>
+    <value>Не удается обработать свойство, так как свойство "{0}" уже существует.</value>
   </data>
   <data name="EmptyScriptBlockAndNoName" xml:space="preserve">
-    <value>A property is an empty script block and does not provide a name.</value>
+    <value>Свойство является пустым блоком сценария и не предоставляет имя.</value>
   </data>
 </root>

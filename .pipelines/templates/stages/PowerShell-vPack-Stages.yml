@@ -3,13 +3,57 @@ parameters:
     type: boolean
   - name: vPackName
     type: string
+  - name: IsEarlyAccess
+    type: boolean
+    default: false
+  - name: EarlyAccessFeed
+    type: string
+    default: 'net11'
+  - name: DOTNET_RUNTIME_VERSION
+    type: string
+    default: ' '
+  - name: DOTNET_SDK_VERSION
+    type: string
+    default: ' '
 
 stages:
+- stage: prep
+  displayName: 'Prepare early access .NET'
+  jobs:
+  - ${{ if eq(parameters.IsEarlyAccess, true) }}:
+    - template: /.pipelines/templates/downloadDotnetEarlyAccess.yml@self
+      parameters:
+        DotnetRuntimeVersion: ${{ parameters.DOTNET_RUNTIME_VERSION }}
+        DotnetSdkVersion: ${{ parameters.DOTNET_SDK_VERSION }}
+  - ${{ else }}:
+    - job: skip_download_dotnet_early_access
+      displayName: 'Skip early access .NET download'
+      pool:
+        type: windows
+      variables:
+      - name: ob_outputDirectory
+        value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+      - name: ob_signing_setup_enabled
+        value: false
+      - name: ob_sdl_codeSignValidation_enabled
+        value: false
+      steps:
+      - pwsh: Write-Host 'IsEarlyAccess is false; skipping early access .NET download.'
+
 - stage: BuildStage
+  dependsOn: [prep]
   jobs:
   - job: BuildJob
     pool:
       type: windows
+
+    templateContext:
+      sdl:
+        codeSignValidation:
+          enabled: false
+          justificationForDisabling: >-
+            This job validates the signed payload with the repository-managed
+            tools-only policy.
 
     strategy:
       matrix:
@@ -33,6 +77,13 @@ stages:
       ob_createvpack_verbose: true
       ob_createvpack_packagename: '${{ parameters.vPackName }}.$(architecture)'
       ob_createvpack_description: PowerShell $(architecture) $(version)
+      IsEarlyAccess: ${{ parameters.IsEarlyAccess }}
+      EARLY_ACCESS_FEED: ${{ parameters.EarlyAccessFeed }}
+      DOTNET_RUNTIME_VERSION: ${{ parameters.DOTNET_RUNTIME_VERSION }}
+      DOTNET_SDK_VERSION: ${{ parameters.DOTNET_SDK_VERSION }}
+      # Some official-build adapters force the injected validator on despite templateContext.
+      # Exclude this payload from that validator; it is validated below with the tools-only policy.
+      ob_sdl_codeSignValidation_excludes: '-|**\*.ps1;-|**\*.psm1;-|**\*.ps1xml;-|**\*.psd1;-|**\*.exe;-|**\*.dll'
       # I think the variables reload after we transition back to the host so this works. 🤷‍♂️
       ob_createvpack_majorVer: $(pwshMajorVersion)
       ob_createvpack_minorVer: $(pwshMinorVersion)
@@ -136,13 +187,18 @@ stages:
           AnalyzeInPipeline: false # Do not upload results
           Language: csharp
 
-      - task: UseDotNet@2
-        displayName: 'Install .NET based on global.json'
-        inputs:
-          useGlobalJson: true
-          workingDirectory: $(repoRoot)
-        env:
-          ob_restore_phase: true
+      - ${{ if eq(parameters.IsEarlyAccess, true) }}:
+        - template: /.pipelines/templates/install-dotnet.yml@self
+          parameters:
+            architecture: win-x64
+      - ${{ else }}:
+        - task: UseDotNet@2
+          displayName: 'Install .NET based on global.json'
+          inputs:
+            useGlobalJson: true
+            workingDirectory: $(repoRoot)
+          env:
+            ob_restore_phase: true
 
       - pwsh: |
           # Need to set PowerShellRoot variable for obp-file-signing template
@@ -193,6 +249,8 @@ stages:
         displayName: Build Windows Universal - $(Architecture) -$(BuildConfiguration) Symbols folder
         env:
           __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+          ${{ if eq(parameters.IsEarlyAccess, true) }}:
+            VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: $(VSS_NUGET_EXTERNAL_FEED_ENDPOINTS)
           ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
 
       - task: CodeQL3000Finalize@0 # Add CodeQL Finalize task right after your 'Build' step.
@@ -209,8 +267,69 @@ stages:
         parameters:
           binPath: '$(Pipeline.Workspace)/Symbols_$(Architecture)'
           SigningProfile: $(windows_build_tools_cert_id)
+          ThirdPartySigningProfile: $(windows_build_tools_cert_id)
+          SignAllBinariesWithThirdPartyProfile: true
           OfficialBuild: false
           vPackScenario: true
+
+      # obp-file-signing.yml signs only the scripts and manifests selected for normal PowerShell
+      # packages. The validation below intentionally covers every potentially signed file in the
+      # vPack, so overwrite every matching signature with the tools certificate first.
+      - task: onebranch.pipeline.signing@1
+        displayName: Sign all vPack files with Windows build tools certificate
+        inputs:
+          command: sign
+          signing_profile: $(windows_build_tools_cert_id)
+          files_to_sign: '**\*.ps1;**\*.psm1;**\*.ps1xml;**\*.psd1;**\*.exe;**\*.dll'
+          search_root: $(ob_outputDirectory)
+
+      # The injected CodeSign validation is disabled for this job, so validate the signed payload
+      # here against the repository policy, which allows only the Windows build tools certificate.
+      - task: securedevelopmentteam.vss-secure-development-tools.build-task-codesignvalidation.CodeSign@1
+        displayName: Validate signed files with PowerShell CodeSign policy
+        inputs:
+          Path: $(ob_outputDirectory)
+          PolicyType: Custom
+          PolicyFile: $(Build.SourcesDirectory)\.config\codesignpolicy.xml
+          MaxThreads: 16
+          FailIfNoTargetsFound: true
+          ExcludePassesFromLog: false
+          Targets: '**\*.ps1;**\*.psm1;**\*.ps1xml;**\*.psd1;**\*.exe;**\*.dll'
+
+      - pwsh: |
+          $codesignResultsRoot = Join-Path '$(Pipeline.Workspace)' '.gdn\.r\codesign'
+          if (-not (Test-Path -LiteralPath $codesignResultsRoot -PathType Container)) {
+              throw "CodeSign Validation did not produce its expected results directory: $codesignResultsRoot"
+          }
+
+          $sarifFile = Get-ChildItem -LiteralPath $codesignResultsRoot -Recurse -File -Filter 'Phalanx.Plugins.CodeSignValidation.dll.sarif' |
+              Sort-Object -Property LastWriteTimeUtc -Descending |
+              Select-Object -First 1
+          if (-not $sarifFile) {
+              throw "CodeSign Validation did not produce its expected SARIF file under: $codesignResultsRoot"
+          }
+
+          $sarif = Get-Content -LiteralPath $sarifFile.FullName -Raw | ConvertFrom-Json -Depth 100
+          $failures = @(
+              foreach ($run in $sarif.runs) {
+                  foreach ($result in $run.results) {
+                      if ($result.ruleId -ne 'CodeSign.MatchingPolicy') {
+                          $result
+                      }
+                  }
+              }
+          )
+
+          if ($failures.Count -gt 0) {
+              $failures |
+                  ForEach-Object {
+                      Write-Host "##vso[task.logissue type=error]$($_.ruleId): $($_.locations.physicalLocation.artifactLocation.uri -join ', ') - $($_.message.text)"
+                  }
+              throw "CodeSign Validation found $($failures.Count) policy violation(s)."
+          }
+
+          Write-Verbose -Verbose 'All signed files matched the PowerShell CodeSign policy.'
+        displayName: Check PowerShell CodeSign validation results
 
       ### END OF BUILD ###
 

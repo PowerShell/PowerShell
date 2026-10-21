@@ -118,6 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NoEntriesFound" xml:space="preserve">
-    <value>Cannot find the requested hotfix on the '{0}' computer. Verify the input and run the command again.</value>
+    <value>'{0}' 컴퓨터에서 요청한 핫픽스를 찾을 수 없습니다. 입력을 확인한 다음 명령을 다시 실행하세요.</value>
   </data>
 </root>

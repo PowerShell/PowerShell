@@ -752,6 +752,11 @@
           "SourceFile": "src\\Microsoft.WSMan.Management\\resources\\WsManResources.resx",
           "CopyOption": "LangIDOnPathAndName",
           "OutputPath": "src\\Microsoft.WSMan.Management\\resources\\"
+        },
+        {
+          "SourceFile": ".pipelines\\store\\PDPs\\PDP\\en-US\\PDP.xml",
+          "CopyOption": "LangIDOnPath",
+          "OutputPath": ".pipelines\\store\\PDPs\\PDP\\"
         }
       ]
     }

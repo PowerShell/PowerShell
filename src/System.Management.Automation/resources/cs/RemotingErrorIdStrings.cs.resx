@@ -549,7 +549,7 @@
     <value>Parametr {0} nelze zadat, pokud je zadán parametr {1}.</value>
   </data>
   <data name="WildCardErrorFilePathParameter" xml:space="preserve">
-    <value>Wildcard characters are not supported for the FilePath parameter. Specify a path without wildcard characters.</value>
+    <value>Pro parametr FilePath nejsou podporovány zástupné znaky. Zadejte cestu bez zástupných znaků.</value>
   </data>
   <data name="FilePathNotFromFileSystemProvider" xml:space="preserve">
     <value>Cesta zadaná jako hodnota parametru FilePath nepochází od zprostředkovatele FileSystem.</value>
@@ -612,7 +612,7 @@
     <value>Při použití následujícího typu přístupu k proxy serveru nelze zadat přihlašovací údaje proxy serveru: {0}. Buď zadejte jiný typ přístupu, nebo nezadávejte přihlašovací údaje proxy serveru.</value>
   </data>
   <data name="WrongSessionOptionValue" xml:space="preserve">
-    <value>A {0} value must be specified for session option {1}.</value>
+    <value>Pro možnost relace {1} je nutné zadat hodnotu {0}.</value>
   </data>
   <data name="PushedRunspaceMustBeOpen" xml:space="preserve">
     <value>Relace musí být otevřená.</value>
@@ -636,7 +636,7 @@
     <value>Enter-PSSession nelze spustit z vnořené výzvy.</value>
   </data>
   <data name="WsmanMaxRedirectionCountVariableDescription" xml:space="preserve">
-    <value>The maximum number of WS-Man URI redirections to allow while connecting to a remote computer</value>
+    <value>Maximální počet přesměrování identifikátoru URI WS-Man, která se mají povolit při připojování ke vzdálenému počítači.</value>
   </data>
   <data name="PSDefaultSessionOptionDescription" xml:space="preserve">
     <value>Výchozí možnosti relace pro nové vzdálené relace</value>
@@ -846,7 +846,7 @@ Všimněte si, že Start-Job se záměrně nepodporuje ve scénářích, ve kter
     <value>Parametry Wait a Keep nelze použít společně ve stejném příkazu.</value>
   </data>
   <data name="WriteEventsCannotBeUsedWithoutWait" xml:space="preserve">
-    <value>The WriteEvents parameter cannot be used without the Wait parameter.</value>
+    <value>Parametr WriteEvents nelze použít bez parametru Wait.</value>
   </data>
   <data name="PowerShellVersionNotSupported" xml:space="preserve">
     <value>Správa verzí koncového bodu vzdálené komunikace PowerShellu se v PowerShellu 7+ nepodporuje.</value>
@@ -933,17 +933,17 @@ Všimněte si, že Start-Job se záměrně nepodporuje ve scénářích, ve kter
     <value>Příkaz nemůže najít relaci PSSession s názvem {0}.</value>
   </data>
   <data name="WinPERemotingNotSupported" xml:space="preserve">
-    <value>PowerShell remoting is not supported in the Windows Preinstallation Environment (WinPE).</value>
+    <value>Vzdálená komunikace PowerShellu není podporována v Předinstalačním prostředí systému Windows (Windows PE).</value>
   </data>
   <data name="WinRMRequiresRestart" xml:space="preserve">
-    <value>Changes made by {0} cannot take effect until the WinRM service is restarted.</value>
+    <value>Změny provedené {0} se projeví až po restartování služby WinRM.</value>
   </data>
   <data name="WinRMRestartWarning" xml:space="preserve">
-    <value>{0} may need to restart the WinRM service if a configuration using this name has recently been unregistered, certain system data structures may still be cached. In that case, a restart of WinRM may be required.
-All WinRM sessions connected to PowerShell session configurations, such as Microsoft.PowerShell and session configurations that are created with the Register-PSSessionConfiguration cmdlet, are disconnected.</value>
+    <value>Pokud byla konfigurace s tímto názvem nedávno zrušena, může být potřeba restartovat službu WinRM {0}, protože některé systémové datové struktury můžou být stále uložené v mezipaměti. V takovém případě může být nutné restartovat službu WinRM.
+Všechny relace WinRM připojené ke konfiguracím relací PowerShellu, jako je Microsoft.PowerShell, a ke konfiguracím relací vytvořeným pomocí rutiny Register-PSSessionConfiguration budou odpojeny.</value>
   </data>
   <data name="WinRMForceRestartWarning" xml:space="preserve">
-    <value>You are running in a remote session and have selected the Force option which means the WinRM service may restart.If the WinRM service restarts then this remote session will be terminated and you will need to create a new session to continue</value>
+    <value>Používáte vzdálenou relaci a vybrali jste možnost Vynutit, což znamená, že se služba WinRM může restartovat. Pokud se služba WinRM restartuje, tato vzdálená relace se ukončí a budete muset vytvořit novou relaci, abyste mohli pokračovat.</value>
   </data>
   <data name="JobSourceAdapterCannotSaveNullJob" xml:space="preserve">
     <value>Při pokusu o uložení identifikátorů měla úloha hodnotu null. Zadejte úlohu, aby bylo možné uložit její identifikátory.</value>
@@ -1145,7 +1145,7 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
     <value>Při analýze konfiguračního souboru {0} došlo k chybě s následující zprávou: {1}</value>
   </data>
   <data name="WriteJobInResultsCannotBeUsedWithoutWait" xml:space="preserve">
-    <value>The -WriteJobInResults parameter cannot be used without the -Wait parameter</value>
+    <value>Parametr -WriteJobInResults nelze použít bez parametru -Wait.</value>
   </data>
   <data name="DISCPathsMustBeAbsolute" xml:space="preserve">
     <value>Člen {0} není absolutní cesta {1}. Změňte člena na absolutní cestu v souboru {2}.</value>
@@ -1465,52 +1465,52 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
     <value>Zadaná vstupní data nejsou platná. Podporována jsou pouze vstupní data typu {0}.</value>
   </data>
   <data name="WSManPluginInvalidInputStream" xml:space="preserve">
-    <value>The supplied input stream is not valid. Only {0} is supported as input stream.</value>
+    <value>Zadaný vstupní datový proud není platný. Jako vstupní datový proud se podporuje pouze {0}.</value>
   </data>
   <data name="WSManPluginInvalidOutputStream" xml:space="preserve">
-    <value>The supplied output stream set is not valid. Only {0} is supported as output stream.</value>
+    <value>Zadaná sada výstupních datových proudů není platná. Jako výstupní datový proud se podporuje pouze {0}.</value>
   </data>
   <data name="WSManPluginInvalidSenderDetails" xml:space="preserve">
     <value>Zadaná hodnota WSMAN_SENDER_DETAILS není platná. Nelze zpracovat WSMAN_SENDER_DETAILS s hodnotou null.</value>
   </data>
   <data name="WSManPluginInvalidShellContext" xml:space="preserve">
-    <value>The supplied shell context is not valid.</value>
+    <value>Zadaný kontext prostředí není platný.</value>
   </data>
   <data name="WSManPluginManagedException" xml:space="preserve">
     <value>{0}</value>
   </data>
   <data name="WSManPluginNullInvalidInput" xml:space="preserve">
-    <value>NULL value is not allowed for {0} with the plugin method {1}.</value>
+    <value>Hodnota NULL není povolena pro {0} s metodou modulu plug-in {1}.</value>
   </data>
   <data name="WSManPluginNullInvalidStreamSet" xml:space="preserve">
-    <value>NULL value is not allowed for input stream and output stream sets. {0} and {1} are the supported input and output streams.</value>
+    <value>Hodnota NULL není povolena pro sady vstupních a výstupních streamů. {0} a {1} jsou podporované vstupní a výstupní streamy.</value>
   </data>
   <data name="WSManPluginNullPluginContext" xml:space="preserve">
-    <value>NULL value is not allowed for {0} with the plugin method {1}.</value>
+    <value>Hodnota NULL není povolena pro {0} s metodou modulu plug-in {1}.</value>
   </data>
   <data name="WSManPluginNullShellContext" xml:space="preserve">
-    <value>NULL value is not allowed for {0} with the plugin method {1}.</value>
+    <value>Hodnota NULL není povolena pro {0} s metodou modulu plug-in {1}.</value>
   </data>
   <data name="WSManPluginOperationClose" xml:space="preserve">
-    <value>PowerShell plugin operation is shutting down. This may happen if the hosting service or application is shutting down.</value>
+    <value>Operace modulu plug-in PowerShellu se ukončuje. K tomu může dojít, pokud se hostitelská služba nebo aplikace vypíná.</value>
   </data>
   <data name="WSManPluginOptionNotUnderstood" xml:space="preserve">
-    <value>PowerShell plugin does not understand the option {0}. Make sure the client is compatible with the build {1} and the protocol version {2} of PowerShell.</value>
+    <value>Modul plug-in PowerShellu nerozpoznal možnost {0}. Ujistěte se, že je klient kompatibilní se sestavením {1} a verzí {2} protokolu PowerShellu.</value>
   </data>
   <data name="WSManPluginProtocolVersionNotFound" xml:space="preserve">
     <value>Od klienta je očekávána možnost s názvem {0}. Ujistěte se, že je klient kompatibilní se sestavením {1} a verzí {2} protokolu PowerShellu.</value>
   </data>
   <data name="WSManPluginProtocolVersionNotMatch" xml:space="preserve">
-    <value>&lt;PSProtocolVersionError ServerProtocolVersion="{0}" ServerBuildVersion="{1}"&gt;Powershell plugin does not support the protocol version {2} requested by client.&lt;/PSProtocolVersionError&gt;</value>
+    <value>&lt;PSProtocolVersionError ServerProtocolVersion="{0}" ServerBuildVersion="{1}"&gt;Modul plug-in PowerShell nepodporuje verzi protokolu {2} požadovanou klientem.&lt;/PSProtocolVersionError&gt;</value>
   </data>
   <data name="WSManPluginReportContextFailed" xml:space="preserve">
-    <value>Powershell plugin encountered a fatal error while reporting context to WSMan service.</value>
+    <value>Modul plug-in PowerShellu zaznamenal závažnou chybu při hlášení kontextu službě WSMan.</value>
   </data>
   <data name="WSManPluginSessionCreationFailed" xml:space="preserve">
     <value>Nelze vytvořit relaci na spravovaném serveru.</value>
   </data>
   <data name="WSManPluginShutdownRegistrationFailed" xml:space="preserve">
-    <value>Powershell plugin encountered a fatal error registering a wait handle for shutdown notification.</value>
+    <value>Modul plug-in PowerShellu zaznamenal závažnou chybu při registraci obslužné rutiny čekání na oznámení o vypnutí.</value>
   </data>
   <data name="ServerDriverRemoteHostAlreadyPushed" xml:space="preserve">
     <value>Nelze zadat prostředí Runspace, protože prostředí Runspace je již v této relaci použito.</value>
@@ -1662,7 +1662,7 @@ Proces klienta SSH se ukončil dříve, než bylo možné navázat připojení.<
     <value>PowerShell 6+ nepodporuje WOW64. Binární soubor musí odpovídat architektuře procesoru.</value>
   </data>
   <data name="WowComponentNotPresent" xml:space="preserve">
-    <value>The "{0}" executable file was not found. Verify that the WOW64 feature is installed.</value>
+    <value>Spustitelný soubor {0} nebyl nalezen. Ověřte, že je nainstalovaná funkce WOW64.</value>
   </data>
   <data name="UnableToInstallPlugin" xml:space="preserve">
     <value>Nelze nainstalovat modul plug-in {0} do adresáře {1}.</value>
@@ -1703,7 +1703,7 @@ Proces klienta SSH se ukončil dříve, než bylo možné navázat připojení.<
     <value>Výjimka vzdáleného ladicího programu: {0}, chybová zpráva: {1}</value>
   </data>
   <data name="WindowsPowerShellNotPresent" xml:space="preserve">
-    <value>Unable to create Windows PowerShell process because Windows PowerShell could not be found on this machine.</value>
+    <value>Proces Windows PowerShellu nelze vytvořit, protože na tomto počítači nebyl Windows PowerShell nalezen.</value>
   </data>
   <data name="InvalidPSSessionArgument" xml:space="preserve">
     <value>Argument prostředí Runspace, které se má vytvořit, musí být objekt RemoteRunspace, který není null.</value>

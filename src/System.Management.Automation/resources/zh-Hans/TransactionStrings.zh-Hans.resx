@@ -118,57 +118,57 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NoTransactionActive" xml:space="preserve">
-    <value>Cannot use transaction. No transaction is active.</value>
+    <value>无法使用事务。没有活动的事务。</value>
   </data>
   <data name="NoTransactionActiveForCommit" xml:space="preserve">
-    <value>Cannot commit transaction. No transaction is active.</value>
+    <value>无法提交事务。没有活动的事务。</value>
   </data>
   <data name="NoTransactionActiveForRollback" xml:space="preserve">
-    <value>Cannot roll back the transaction, because there is no active transaction.</value>
+    <value>由于没有活动事务，因此无法回滚事务。</value>
   </data>
   <data name="CommittedTransactionForRollback" xml:space="preserve">
-    <value>Cannot roll back transaction. The transaction has already been committed.</value>
+    <value>无法回滚事务。事务已提交。</value>
   </data>
   <data name="CommittedTransactionForCommit" xml:space="preserve">
-    <value>Cannot commit transaction. The transaction has already been committed.</value>
+    <value>无法提交事务。事务已提交。</value>
   </data>
   <data name="TransactionRolledBackForCommit" xml:space="preserve">
-    <value>Cannot commit transaction. The transaction has been rolled back or has timed out.</value>
+    <value>无法提交事务。事务已回滚或已超时。</value>
   </data>
   <data name="TransactionRolledBackForRollback" xml:space="preserve">
-    <value>Cannot roll back transaction. The transaction has already been rolled back or has timed out.</value>
+    <value>无法回滚事务。事务已回滚或超时。</value>
   </data>
   <data name="NoTransactionForActivation" xml:space="preserve">
-    <value>Cannot set active transaction. No transaction has been created.</value>
+    <value>无法设置活动事务。尚未创建任何事务。</value>
   </data>
   <data name="NoTransactionForActivationBecauseRollback" xml:space="preserve">
-    <value>Cannot set active transaction. The active transaction has been rolled back or has timed out.</value>
+    <value>无法设置活动事务。活动事务已回滚或已超时。</value>
   </data>
   <data name="NoTransactionAvailable" xml:space="preserve">
-    <value>This cmdlet requires an active transaction. The current transaction has already been committed or rolled back.</value>
+    <value>此 cmdlet 需要一个活动事务。当前事务已提交或已回滚。</value>
   </data>
   <data name="CmdletRequiresUseTx" xml:space="preserve">
-    <value>This cmdlet requires a transaction. Run the command again with the -UseTransaction parameter.</value>
+    <value>此 cmdlet 需要一个事务。使用 -UseTransaction 参数再次运行该命令。</value>
   </data>
   <data name="NoTransactionStarted" xml:space="preserve">
-    <value>Cannot use transaction. No transaction has been started.</value>
+    <value>无法使用事务。尚未启动任何事务。</value>
   </data>
   <data name="NoTransactionStartedFromCommit" xml:space="preserve">
-    <value>Cannot use transaction. The transaction has been committed.</value>
+    <value>无法使用事务。事务已提交。</value>
   </data>
   <data name="NoTransactionStartedFromRollback" xml:space="preserve">
-    <value>Cannot use transaction. The transaction has been rolled back or has timed out.</value>
+    <value>无法使用事务。事务已回滚或已超时。</value>
   </data>
   <data name="TransactionTimedOut" xml:space="preserve">
-    <value>Cannot use transaction. The transaction has timed out.</value>
+    <value>无法使用事务。事务已超时。</value>
   </data>
   <data name="BaseTransactionNotSet" xml:space="preserve">
-    <value>The base transaction has not been set.</value>
+    <value>尚未设置基本事务。</value>
   </data>
   <data name="BaseTransactionNotActive" xml:space="preserve">
-    <value>The base transaction is not active.</value>
+    <value>基本事务未处于活动状态。</value>
   </data>
   <data name="BaseTransactionMustBeFirst" xml:space="preserve">
-    <value>The base transaction cannot be set after other transactions have been created.</value>
+    <value>创建其他事务后，无法设置基本事务。</value>
   </data>
 </root>

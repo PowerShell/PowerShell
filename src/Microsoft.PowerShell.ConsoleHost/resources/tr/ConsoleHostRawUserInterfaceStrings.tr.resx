@@ -118,60 +118,60 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CoordinateOutOfBufferErrorTemplate" xml:space="preserve">
-    <value>Cannot process the operation because the supplied coordinate is not valid. Specify a coordinate within the buffer area of {0}.</value>
+    <value>İşlem gerçekleştirilemiyor çünkü sağlanan koordinat geçersiz. Arabelleğin {0} alanı içinde bir koordinat belirtin.</value>
   </data>
   <data name="InvalidBufferSizeError" xml:space="preserve">
-    <value>Cannot set the buffer size because the size specified is too large or too small.</value>
+    <value>Belirtilen boyut çok büyük ya da çok küçük olduğundan arabellek boyutu ayarlanamıyor.</value>
   </data>
   <data name="InvalidConsoleColorError" xml:space="preserve">
-    <value>Cannot set the console color because the value specified is not valid. Specify a valid color as defined by the System.ConsoleColor type.</value>
+    <value>Belirtilen değer geçerli olmadığından konsol rengi ayarlanmadı. System.ConsoleColor türü tarafından tanımlanan geçerli bir renk belirtin.</value>
   </data>
   <data name="InvalidCursorSizeError" xml:space="preserve">
-    <value>Cannot process CursorSize because the cursor size specified is not valid.</value>
+    <value>Belirtilen imleç boyutu geçerli olmadığından CursorSize işlenemedi.</value>
   </data>
   <data name="InvalidReadKeyOptionsError" xml:space="preserve">
-    <value>Cannot read key options. To read options, set one or both of the following: IncludeKeyDown, IncludeKeyUp.</value>
+    <value>Anahtar seçenekleri okunamıyor. Seçenekleri okumak için aşağıdakilerden birini veya her ikisini ayarlayın: IncludeKeyDown, IncludeKeyUp.</value>
   </data>
   <data name="InvalidRegionErrorTemplate" xml:space="preserve">
-    <value>{0} should be greater than or equal to {1}.</value>
+    <value>{0}, {1} değerinden büyük veya ona eşit olmalıdır.</value>
   </data>
   <data name="InvalidXWindowPositionError" xml:space="preserve">
-    <value>Cannot use the specified Window X (column) position because it extends past the width of the screen buffer. Specify another X position, starting with 0 as the left most column of the buffer.</value>
+    <value>Belirtilen Window X (sütun) konumu kullanılamaz çünkü ekran arabelleğinin genişliğini aşıyor. 0'dan başlayarak, arabelleğin en sol sütunu olacak şekilde başka bir X konumu belirtin.</value>
   </data>
   <data name="InvalidYWindowPositionError" xml:space="preserve">
-    <value>Cannot use the specified Window Y (row) position because it extends past the height of the screen buffer. Specify another Y position, starting with 0 as the top-most row of the buffer.</value>
+    <value>Belirtilen Pencere Y (satır) konumu, ekran arabelleğinin yüksekliğini geçediğinden bu konum kullanılamıyor. Arabelleğin en üst satırı olarak 0 ile başlayarak başka bir Y konumu belirtin.</value>
   </data>
   <data name="WindowWidthTooSmallError" xml:space="preserve">
-    <value>Window width cannot be less than 1.</value>
+    <value>Pencere genişliği 1'den küçük olamaz.</value>
   </data>
   <data name="WindowHeightTooSmallError" xml:space="preserve">
-    <value>Window height must be at least 1.</value>
+    <value>Pencere yüksekliği en az 1 olmalıdır.</value>
   </data>
   <data name="WindowWidthLargerThanBufferError" xml:space="preserve">
-    <value>Window cannot be wider than the screen buffer.</value>
+    <value>Pencere ekran arabelleğinden daha geniş olamaz.</value>
   </data>
   <data name="WindowHeightLargerThanBufferError" xml:space="preserve">
-    <value>Window cannot be taller than the screen buffer.</value>
+    <value>Pencere, ekran arabelleğinden daha uzun olamaz.</value>
   </data>
   <data name="WindowWidthTooLargeErrorTemplate" xml:space="preserve">
-    <value>Window cannot be wider than {0}.</value>
+    <value>Pencere {0} değerinden daha geniş olamaz.</value>
   </data>
   <data name="WindowHeightTooLargeErrorTemplate" xml:space="preserve">
-    <value>Window cannot be taller than {0}.</value>
+    <value>Pencere {0} değerinden daha uzun olamaz.</value>
   </data>
   <data name="WindowTooNarrowError" xml:space="preserve">
-    <value>Window size is too narrow.</value>
+    <value>Pencere boyutu çok dar.</value>
   </data>
   <data name="WindowTooShortError" xml:space="preserve">
-    <value>Window size is too short.</value>
+    <value>Pencere boyutu çok kısa.</value>
   </data>
   <data name="WindowTitleTooShortError" xml:space="preserve">
-    <value>Window title cannot be empty.</value>
+    <value>Pencere başlığı boş olamaz.</value>
   </data>
   <data name="WindowTitleTooLongErrorTemplate" xml:space="preserve">
-    <value>Window title cannot be longer than {0} characters.</value>
+    <value>Pencere başlığı {0} karakterden daha uzun olamaz.</value>
   </data>
   <data name="WindowTitleElevatedPrefix" xml:space="preserve">
-    <value>Administrator: </value>
+    <value>Yönetici: </value>
   </data>
 </root>

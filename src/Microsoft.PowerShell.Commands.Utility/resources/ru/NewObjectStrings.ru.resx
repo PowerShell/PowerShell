@@ -118,45 +118,45 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CannotFindAppropriateCtor" xml:space="preserve">
-    <value>A constructor was not found. Cannot find an appropriate constructor for type {0}.</value>
+    <value>Конструктор не найден. Не удается найти подходящий конструктор для типа {0}.</value>
   </data>
   <data name="TypeNotFound" xml:space="preserve">
-    <value>Cannot find type [{0}]: verify that the assembly containing this type is loaded.</value>
+    <value>Не удается найти тип [{0}]: убедитесь, что сборка, содержащая этот тип, загружена.</value>
   </data>
   <data name="CannotLoadComObjectType" xml:space="preserve">
-    <value>Cannot load COM type {0}.</value>
+    <value>Не удается загрузить тип COM {0}.</value>
   </data>
   <data name="ComInteropLoaded" xml:space="preserve">
-    <value>The object written to the pipeline is an instance of the type "{0}" from the component's primary interoperability assembly. If this type exposes different members than the IDispatch members, scripts that are written to work with this object might not work if the primary interoperability assembly is not installed.</value>
+    <value>Объект, записанный в конвейер, является экземпляром типа "{0}" из основной сборки взаимодействия компонента. Если этот тип предоставляет не элементы IDispatch, а другие элементы, то скрипты, написанные для работы с этим объектом, могут не работать, если основная сборка взаимодействия не установлена.</value>
   </data>
   <data name="MemberNotFound" xml:space="preserve">
-    <value>The member "{1}" was not found for the specified {2} object.</value>
+    <value>Элемент "{1}" не найден для указанного объекта {2}.</value>
   </data>
   <data name="InvalidValue" xml:space="preserve">
-    <value>The value supplied is not valid, or the property is read-only. Change the value, and then try again.</value>
+    <value>Указанное значение недопустимо, или свойство доступно только для чтения. Измените значение и повторите попытку.</value>
   </data>
   <data name="CannotInstantiateWinRTType" xml:space="preserve">
-    <value>Creating instances of attribute and delegated Windows RT types is not supported.</value>
+    <value>Создание экземпляров атрибутов и делегированных типов Windows RT не поддерживается.</value>
   </data>
   <data name="CannotInstantiateBoxedByRefLikeType" xml:space="preserve">
-    <value>Cannot create instances of the ByRef-like type "{0}". ByRef-like types are not supported in PowerShell.</value>
+    <value>Не удается создать экземпляры подобного ByRef типа "{0}". Типы, подобные ByRef, не поддерживаются в PowerShell.</value>
   </data>
   <data name="CannotCreateTypeConstrainedLanguage" xml:space="preserve">
-    <value>Cannot create type. Only core types are supported in this language mode.</value>
+    <value>Не удается создать тип. В этом языковом режиме поддерживаются только основные типы.</value>
   </data>
   <data name="CannotCreateTypeLanguageMode" xml:space="preserve">
-    <value>Cannot create type. Only core types are supported in {0} language mode on a policy locked down machine.</value>
+    <value>Не удается создать тип. В языковом режиме {0} на компьютере, заблокированном политикой, поддерживаются только основные типы.</value>
   </data>
   <data name="TypeWDACLogTitle" xml:space="preserve">
-    <value>New-Object Cmdlet Type Creation</value>
+    <value>Создание типа с помощью командлета New-Object</value>
   </data>
   <data name="TypeWDACLogMessage" xml:space="preserve">
-    <value>The type '{0}' will not be created in ConstrainedLanguage mode.</value>
+    <value>Тип "{0}" не будет создан в режиме ConstrainedLanguage.</value>
   </data>
   <data name="ComWDACLogTitle" xml:space="preserve">
-    <value>New-Object Cmdlet COM Object Creation</value>
+    <value>Создание COM-объекта с помощью командлета New-Object</value>
   </data>
   <data name="ComWDACLogMessage" xml:space="preserve">
-    <value>The COM object '{0}' will not be created in ConstrainedLanguage mode.</value>
+    <value>Объект COM "{0}" не будет создан в режиме ConstrainedLanguage.</value>
   </data>
 </root>

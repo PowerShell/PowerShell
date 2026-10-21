@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ActionButtons_Button_Cancel" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Cancelar</value>
   </data>
   <data name="ActionButtons_Button_Copy" xml:space="preserve">
-    <value>Co_py</value>
+    <value>Co_piar</value>
   </data>
   <data name="ActionButtons_Button_Run" xml:space="preserve">
     <value>_Run</value>
@@ -130,29 +130,29 @@
     <value>Todas</value>
   </data>
   <data name="AllModulesControl_Label_Modules" xml:space="preserve">
-    <value>Modules:</value>
+    <value>Módulos:</value>
   </data>
   <data name="CmdletControl_Button_GetHelp" xml:space="preserve">
     <value> ? </value>
   </data>
   <data name="CmdletControl_Button_ToolTip_Help" xml:space="preserve">
-    <value>Help</value>
+    <value>Ayuda</value>
   </data>
   <data name="CmdletControl_Header_CommonParameters" xml:space="preserve">
-    <value>Common Parameters</value>
+    <value>Parámetros comunes</value>
   </data>
   <data name="CmdletControl_Header_Errors" xml:space="preserve">
-    <value>Errors</value>
+    <value>Errores</value>
   </data>
   <data name="DetailsParameterTitleFormat" xml:space="preserve">
-    <value>Parameters for "{0}":</value>
+    <value>Parámetros para "{0}":</value>
   </data>
   <data name="CmdletTooltipFormat" xml:space="preserve">
-    <value>Name: {0}
-Module: {1} ({2})</value>
+    <value>Nombre: {0}
+Módulo: {1} ({2})</value>
   </data>
   <data name="EndProcessingErrorMessage" xml:space="preserve">
-    <value>The following errors occurred running the command:
+    <value>Se produjeron los siguientes errores al ejecutar el comando:
 {0}</value>
   </data>
   <data name="MandatoryLabelSegment" xml:space="preserve">
@@ -168,31 +168,31 @@ Module: {1} ({2})</value>
     <comment>This is a label for a control, hence the colon. {0} is a parameter name</comment>
   </data>
   <data name="ShowModuleControl_Label_Name" xml:space="preserve">
-    <value>Name:</value>
+    <value>Nombre:</value>
   </data>
   <data name="ActionButtons_Button_Ok" xml:space="preserve">
-    <value>OK</value>
+    <value>Aceptar</value>
   </data>
   <data name="MultiParameter_Button_Browse" xml:space="preserve">
     <value>...</value>
   </data>
   <data name="CommandNameAutomationName" xml:space="preserve">
-    <value>Command Name</value>
+    <value>Nombre de comando</value>
   </data>
   <data name="ModulesAutomationName" xml:space="preserve">
-    <value>Modules</value>
+    <value>Módulos</value>
   </data>
   <data name="NoModuleName" xml:space="preserve">
-    <value>&lt;No module name&gt;</value>
+    <value>&lt;No hay nombre de módulo&gt;</value>
   </data>
   <data name="SelectMultipleValuesForParameterFormat" xml:space="preserve">
-    <value>Select multiple values for "{0}"</value>
+    <value>Seleccionar varios valores para "{0}"</value>
   </data>
   <data name="CanReceiveValueFromPipeline" xml:space="preserve">
-    <value>Can receive value from pipeline</value>
+    <value>Puede recibir valor de la canalización</value>
   </data>
   <data name="CommonToAllParameterSets" xml:space="preserve">
-    <value>Common to all parameter sets</value>
+    <value>Común a todos los conjuntos de parámetros</value>
   </data>
   <data name="Mandatory" xml:space="preserve">
     <value>Obligatorio</value>
@@ -201,39 +201,39 @@ Module: {1} ({2})</value>
     <value>Opcional</value>
   </data>
   <data name="PositionFormat" xml:space="preserve">
-    <value>Position: {0}</value>
+    <value>Posición: {0}</value>
   </data>
   <data name="TypeFormat" xml:space="preserve">
-    <value>Type: {0}</value>
+    <value>Tipo: {0}</value>
   </data>
   <data name="Imported" xml:space="preserve">
-    <value>Imported</value>
+    <value>Importado</value>
   </data>
   <data name="NotImported" xml:space="preserve">
-    <value>Not Imported</value>
+    <value>Sin importar</value>
   </data>
   <data name="ImportModuleButtonText" xml:space="preserve">
-    <value>Show Details</value>
+    <value>Mostrar detalles</value>
   </data>
   <data name="ImportModuleFailedFormat" xml:space="preserve">
-    <value>Failed to import the module required by command "{0}". Module name: "{1}". Error message: "{2}".</value>
+    <value>No se pudo importar el módulo requerido por el comando "{0}". Nombre del módulo: "{1}". Mensaje de error: "{2}".</value>
   </data>
   <data name="NotImportedFormat" xml:space="preserve">
-    <value>To import the "{0}" module and its cmdlets, including "{1}", click {2}.</value>
+    <value>Para importar el módulo "{0}" y sus cmdlets, incluido "{1}", haga clic en {2}.</value>
   </data>
   <data name="ShowCommandError" xml:space="preserve">
-    <value>Show Command - Error</value>
+    <value>Mostrar comando: error</value>
   </data>
   <data name="PleaseWaitMessage" xml:space="preserve">
-    <value>Please Wait...</value>
+    <value>Espere...</value>
   </data>
   <data name="ShowModuleControl_RefreshButton" xml:space="preserve">
-    <value>Refresh</value>
+    <value>Actualizar</value>
   </data>
   <data name="NoParameters" xml:space="preserve">
-    <value>There are no parameters.</value>
+    <value>No hay ningún parámetro.</value>
   </data>
   <data name="RefreshShowCommandTooltipFormat" xml:space="preserve">
-    <value>Click after using "{0}" to see the new commands</value>
+    <value>Haga clic después de usar "{0}" para ver los nuevos comandos</value>
   </data>
 </root>

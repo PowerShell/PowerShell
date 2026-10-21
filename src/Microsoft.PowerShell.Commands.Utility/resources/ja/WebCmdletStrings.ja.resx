@@ -121,132 +121,132 @@
     <value>パス '{0}' へのアクセスが拒否されました。</value>
   </data>
   <data name="AllowUnencryptedAuthenticationRequired" xml:space="preserve">
-    <value>The cmdlet cannot protect plain text secrets sent over unencrypted connections. To suppress this warning and send plain text secrets over unencrypted networks, reissue the command specifying the AllowUnencryptedAuthentication parameter.</value>
+    <value>このコマンドレットは、暗号化されていない接続経由で送信されるプレーン テキスト シークレットを保護できません。この警告を抑制し、暗号化されていないネットワーク経由でプレーン テキスト シークレットを送信するには、AllowUnencryptedAuthentication パラメーターを指定してコマンドを再実行します。</value>
   </data>
   <data name="AuthenticationConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Authentication and UseDefaultCredentials. Authentication does not support Default Credentials. Specify either Authentication or UseDefaultCredentials, then retry.</value>
+    <value>次の競合するパラメーターが指定されているため、コマンドレットを実行できません: Authentication と UseDefaultCredentials。Authentication は、Default Credentials をサポートしていません。Authentication または UseDefaultCredentials のいずれかを指定してから、再試行してください。</value>
   </data>
   <data name="AuthenticationCredentialNotSupplied" xml:space="preserve">
-    <value>The cmdlet cannot run because the following parameter is not specified: Credential. The supplied Authentication type requires a Credential. Specify Credential, then retry.</value>
+    <value>次のパラメーターが指定されていないため、コマンドレットを実行できません: Credential。指定された認証の種類には Credential が必要です。資格情報を指定してから、再試行してください。</value>
   </data>
   <data name="AuthenticationTokenNotSupplied" xml:space="preserve">
-    <value>The cmdlet cannot run because the following parameter is not specified: Token. The supplied Authentication type requires a Token. Specify Token, then retry.</value>
+    <value>次のパラメーターが指定されていないため、コマンドレットを実行できません: Token。指定された認証の種類には Token が必要です。Token を指定してから、再試行してください。</value>
   </data>
   <data name="AuthenticationTokenConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Credential and Token. Specify either Credential or Token, then retry.</value>
+    <value>次の競合するパラメーターが指定されているため、コマンドレットを実行できません: Credeital と Token。Credential または Token を指定してから、再試行してください。</value>
   </data>
   <data name="BodyConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Body and InFile. Specify either Body or Infile, then retry.  </value>
+    <value>次の競合するパラメーターが指定されているため、コマンドレットを実行できません: Body と InFile。Body または Infile のいずれかを指定してから、再試行してください。 </value>
   </data>
   <data name="BodyFormConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Body and Form. Specify either Body or Form, then retry.  </value>
+    <value>次の競合するパラメーターが指定されているため、コマンドレットを実行できません: Body と Form。Body または Form のいずれかを指定してから、再試行してください。 </value>
   </data>
   <data name="FormInFileConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: InFile and Form. Specify either InFile or Form, then retry.  </value>
+    <value>次の競合するパラメーターが指定されているため、コマンドレットを実行できません: InFile と Form。InFile または Form のいずれかを指定してから、再試行してください。 </value>
   </data>
   <data name="ContentTypeException" xml:space="preserve">
-    <value>The cmdlet cannot run because the -ContentType parameter is not a valid Content-Type header. Specify a valid Content-Type for -ContentType, then retry. To suppress header validation, supply the -SkipHeaderValidation parameter.</value>
+    <value>-ContentType パラメーターが有効な Content-Type ヘッダーではないため、コマンドレットを実行できません。-ContentType に有効な Content-Type を指定してから、再試行してください。ヘッダーの検証を抑制するには、-SkipHeaderValidation パラメーターを指定します。</value>
   </data>
   <data name="CredentialConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Credential and UseDefaultCredentials. Specify either Credential or UseDefaultCredentials, then retry.</value>
+    <value>次の競合するパラメーターが指定されているため、コマンドレットを実行できません: Credeital と UseDefaultCredentials。Credential または UseDefaultCredentials のいずれかを指定してから、再試行してください。</value>
   </data>
   <data name="DirectoryPathSpecified" xml:space="preserve">
-    <value>Path '{0}' resolves to a directory. Specify a path including a file name, and then retry the command.</value>
+    <value>パス '{0}' はディレクトリに解決されます。ファイル名を含むパスを指定してから、コマンドを再試行してください。</value>
   </data>
   <data name="EmptyKeyInJsonString" xml:space="preserve">
-    <value>The provided JSON includes a property whose name is an empty string, this is only supported using the -AsHashTable switch.</value>
+    <value>指定された JSON には、名前が空の文字列であるプロパティが含まれています。これは -AsHashTable スイッチを使用してのみサポートされます。</value>
   </data>
   <data name="DuplicateKeysInJsonString" xml:space="preserve">
-    <value>Cannot convert the JSON string because a dictionary that was converted from the string contains the duplicated key '{0}'.</value>
+    <value>文字列から変換されたディクショナリに重複するキー '{0}' が含まれているため、JSON 文字列を変換できません。</value>
   </data>
   <data name="IEDomNotSupported" xml:space="preserve">
-    <value>The response content cannot be parsed because the Internet Explorer engine is not available, or Internet Explorer's first-launch configuration is not complete. Specify the UseBasicParsing parameter and try again. </value>
+    <value>Internet Explorer エンジンが使用できないか、Internet Explorer の初回起動構成が完了していないため、応答コンテンツを解析できません。UseBasicParsing パラメーターを指定して、もう一度やり直してください。</value>
   </data>
   <data name="InsecureRedirection" xml:space="preserve">
-    <value>Cannot follow an insecure redirection by default. Reissue the command specifying the -AllowInsecureRedirect switch. </value>
+    <value>既定では、安全でないリダイレクトに従うことはできません。-AllowInsecureRedirect スイッチを指定してコマンドを再実行します。</value>
   </data>
   <data name="KeysWithDifferentCasingInJsonString" xml:space="preserve">
-    <value>Cannot convert the JSON string because it contains keys with different casing. Please use the -AsHashTable switch instead. The key that was attempted to be added to the existing key '{0}' was '{1}'.</value>
+    <value>大文字と小文字が異なるキーが含まれているため、JSON 文字列を変換できません。代わりに -AsHashTable スイッチを使用してください。既存のキー '{0}' に追加しようとしたキーは '{1}' でした。</value>
   </data>
   <data name="MaximumRedirectionCountExceeded" xml:space="preserve">
-    <value>The maximum redirection count has been exceeded. To increase the number of redirections allowed, supply a higher value to the -MaximumRedirection parameter.</value>
+    <value>リダイレクトの最大数を超えました。許可されるリダイレクトの数を増やすには、-MaximumRedirection パラメーターにより大きい値を指定します。</value>
   </data>
   <data name="MultiplePathsResolved" xml:space="preserve">
-    <value>Path '{0}' can be resolved to multiple paths.</value>
+    <value>パス '{0}' は複数のパスに解決できます。</value>
   </data>
   <data name="NonStringKeyInDictionary" xml:space="preserve">
-    <value>The type '{0}' is not supported for serialization or deserialization of a dictionary. Keys must be strings.</value>
+    <value>型 '{0}' は、ディクショナリのシリアル化または逆シリアル化ではサポートされていません。キーは文字列である必要があります。</value>
   </data>
   <data name="NoPathResolved" xml:space="preserve">
-    <value>Path '{0}' cannot be resolved to a file.</value>
+    <value>パス '{0}' をファイルに解決できません。</value>
   </data>
   <data name="NotFilesystemPath" xml:space="preserve">
-    <value>Path '{0}' is not a file system path. Please specify the path to a file in the file system.</value>
+    <value>パス '{0}' はファイル システム パスではありません。ファイル システム内のファイルへのパスを指定してください。</value>
   </data>
   <data name="OutFileMissing" xml:space="preserve">
-    <value>The cmdlet cannot run because the following parameter is missing: OutFile. Provide a valid OutFile parameter value when using the {0} parameter, then retry.</value>
+    <value>次のパラメーターがないため、コマンドレットを実行できません: OutFile。{0} パラメーターを使用する場合は、有効な OutFile パラメーター値を指定してから、再試行してください。</value>
   </data>
   <data name="OutFileWritingSkipped" xml:space="preserve">
-    <value>The file will not be re-downloaded because the remote file is the same size as the OutFile: {0}</value>
+    <value>リモート ファイルが OutFile: {0} と同じサイズであるため、ファイルは再ダウンロードされません</value>
   </data>
   <data name="ProxyCredentialConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: ProxyCredential and ProxyUseDefaultCredentials. Specify either ProxyCredential or ProxyUseDefaultCredentials, then retry.</value>
+    <value>次の競合するパラメーターが指定されているため、コマンドレットを実行できません: ProxyCredential と ProxyUseDefaultCredentials。ProxyCredential または ProxyUseDefaultCredentials のいずれかを指定してから、再試行してください。</value>
   </data>
   <data name="ProxyUriNotSupplied" xml:space="preserve">
-    <value>The cmdlet cannot run because the following parameter is missing: Proxy. Provide a valid proxy URI for the Proxy parameter when using the ProxyCredential or ProxyUseDefaultCredentials parameters, then retry.</value>
+    <value>次のパラメーターがないため、コマンドレットを実行できません: Proxy。ProxyCredential パラメーターまたは ProxyUseDefaultCredentials パラメーターを使用する場合は、Proxy パラメーターの有効なプロキシ URI を指定してから、再試行してください。</value>
   </data>
   <data name="ReadResponseComplete" xml:space="preserve">
-    <value>Reading web response stream completed. Bytes downloaded: {0}</value>
+    <value>Web 応答ストリームの読み取りが完了しました。ダウンロード済みのバイト数: {0}</value>
   </data>
   <data name="ReadResponseProgressActivity" xml:space="preserve">
-    <value>Reading web response stream</value>
+    <value>Web 応答ストリームを読み取っています</value>
   </data>
   <data name="ReadResponseProgressStatus" xml:space="preserve">
-    <value>Downloaded: {0} of {1}</value>
+    <value>ダウンロード済み: {0}/{1}</value>
   </data>
   <data name="ResumeNotFilePath" xml:space="preserve">
-    <value>The Resume switch can only be used if OutFile targets a file but it resolves to a directory: {0}.</value>
+    <value>Resume スイッチは、OutFile がファイルをターゲットにしているが、ディレクトリに解決される場合にのみ使用できます: {0}。</value>
   </data>
   <data name="SessionConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Session and SessionVariable. Specify either Session or SessionVariable, then retry.</value>
+    <value>次の競合するパラメーターが指定されているため、コマンドレットを実行できません: Session と SessionVariable。Session または SessionVariable のいずれかを指定してから、再試行してください。</value>
   </data>
   <data name="ThumbprintNotFound" xml:space="preserve">
-    <value>Unable to retrieve certificates because the thumbprint is not valid. Verify the thumbprint and retry. </value>
+    <value>拇印が無効なため、証明書を取得できません。拇印を確認してから再試行してください。</value>
   </data>
   <data name="WriteRequestComplete" xml:space="preserve">
-    <value>Web request completed. (Number of bytes processed: {0})</value>
+    <value>Web 要求が完了しました。(処理されたバイト数: {0})</value>
   </data>
   <data name="WriteRequestCancelled" xml:space="preserve">
-    <value>Web request cancelled. (Number of bytes processed: {0})</value>
+    <value>Web 要求がキャンセルされました。(処理されたバイト数: {0})</value>
   </data>
   <data name="WriteRequestProgressActivity" xml:space="preserve">
-    <value>Web request status</value>
+    <value>Web 要求の状態</value>
   </data>
   <data name="WriteRequestProgressStatus" xml:space="preserve">
-    <value>Downloaded: {0} of {1}</value>
+    <value>ダウンロード済み: {0}/{1}</value>
   </data>
   <data name="JsonDeserializationFailed" xml:space="preserve">
-    <value>Conversion from JSON failed with error: {0}</value>
+    <value>JSON からの変換が次のエラーで失敗しました: {0}</value>
   </data>
   <data name="ResponseStatusCodeFailure" xml:space="preserve">
-    <value>Response status code does not indicate success: {0} ({1}).</value>
+    <value>応答の状態コードは成功を示しません: {0} ({1})。</value>
   </data>
   <data name="FollowingRelLinkVerboseMsg" xml:space="preserve">
-    <value>Following rel link {0}</value>
+    <value>次の rel リンク {0}</value>
   </data>
   <data name="WebMethodResumeFailedVerboseMsg" xml:space="preserve">
-    <value>The remote server indicated it could not resume downloading. The local file will be overwritten.</value>
+    <value>リモート サーバーからダウンロードを再開できなかったことが示されました。ローカル ファイルが上書きされます。</value>
   </data>
   <data name="WebResponseNoSizeVerboseMsg" xml:space="preserve">
-    <value>Received HTTP/{0} response of content type {1} of unknown size</value>
+    <value>不明なサイズのコンテンツ タイプ {1} の HTTP/{0} 応答を受信しました</value>
   </data>
   <data name="RetryVerboseMsg" xml:space="preserve">
-    <value>Retrying after interval of {0} seconds. Status code for previous attempt: {1}</value>
+    <value>{0} 秒のサイクル期間後に再試行しています。前回の試行の状態コード: {1}</value>
   </data>
   <data name="JsonMaxDepthReached" xml:space="preserve">
-    <value>Resulting JSON is truncated as serialization has exceeded the set depth of {0}.</value>
+    <value>シリアル化が {0} の設定された深さを超えたので、結果の JSON は切り捨てられます。</value>
   </data>
   <data name="WebSessionConnectionRecreated" xml:space="preserve">
-    <value>The WebSession properties were changed between requests forcing all HTTP connections in the session to be recreated.</value>
+    <value>WebSession プロパティは、セッション内のすべての HTTP 接続を再作成する要求間で変更されました。</value>
   </data>
 </root>

@@ -118,30 +118,30 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="IncorrectValueForCommandParameter" xml:space="preserve">
-    <value>ScriptBlock should only be specified as a value of the Command parameter.</value>
+    <value>ScriptBlock by měl být zadaný jen jako hodnota parametru Command.</value>
   </data>
   <data name="NoValueForCommandParameter" xml:space="preserve">
-    <value>No value was specified for the Command parameter.</value>
+    <value>Pro parametr Command nebyla zadána žádná hodnota.</value>
   </data>
   <data name="IncorrectValueForFormatParameter" xml:space="preserve">
-    <value>A value that is not valid ({6}) was specified for the {7} parameter. Valid values are Text and Xml.</value>
+    <value>Neplatná hodnota ({6}) byla zadána pro parametr {7}. Platné hodnoty jsou Text a Xml.</value>
   </data>
   <data name="NoValueForInputFormatParameter" xml:space="preserve">
-    <value>No value was specified for the InputFormat parameter. Valid values are Text and Xml.</value>
+    <value>Pro parametr InputFormat nebyla zadána žádná hodnota. Platné hodnoty jsou Text a Xml.</value>
   </data>
   <data name="NoValueForOutputFormatParameter" xml:space="preserve">
-    <value>No value was specified for the OutputFormat parameter. Valid values are text and XML.</value>
+    <value>Pro parametr OutputFormat nebyla zadána žádná hodnota. Platné hodnoty jsou text a XML.</value>
   </data>
   <data name="StringValueExpectedForFormatParameter" xml:space="preserve">
-    <value>The {6} parameter requires a string value.</value>
+    <value>Parametr {6} vyžaduje řetězcovou hodnotu.</value>
   </data>
   <data name="NoValuesSpecifiedForArgs" xml:space="preserve">
-    <value>No value was specified for the Args parameter.</value>
+    <value>Pro parametr Args nebyla zadána žádná hodnota.</value>
   </data>
   <data name="ParameterSpecifiedAlready" xml:space="preserve">
-    <value>The {6} parameter was already specified.</value>
+    <value>Parametr {6} už byl zadaný.</value>
   </data>
   <data name="CliXmlError" xml:space="preserve">
-    <value>Cannot process the XML from the '{0}' stream of '{1}': {2}</value>
+    <value>XML z proudu {0} objektu {1} nejde zpracovat: {2}</value>
   </data>
 </root>

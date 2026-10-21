@@ -118,303 +118,303 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Add" xml:space="preserve">
-    <value>Adds a resource to a container, or attaches an item to another item</value>
+    <value>将资源添加到容器，或将某一项附加到另一个项</value>
   </data>
   <data name="Approve" xml:space="preserve">
-    <value>Confirms or agrees to the status of a resource or process</value>
+    <value>确认或同意资源或进程的状态</value>
   </data>
   <data name="Assert" xml:space="preserve">
-    <value>Affirms the state of a resource</value>
+    <value>确认资源的状态</value>
   </data>
   <data name="Backup" xml:space="preserve">
-    <value>Stores data by replicating it</value>
+    <value>通过复制数据来存储数据</value>
   </data>
   <data name="Block" xml:space="preserve">
-    <value>Restricts access to a resource</value>
+    <value>限制对资源的访问</value>
   </data>
   <data name="Build" xml:space="preserve">
-    <value>Creates an artifact (usually a binary or document) out of some set of input files (usually source code or declarative documents)</value>
+    <value>根据某一组输入文件(通常是源代码或声明性文件)创建项目(通常是二进制文件或文档)</value>
   </data>
   <data name="Checkpoint" xml:space="preserve">
-    <value>Creates a snapshot of the current state of the data or of its configuration</value>
+    <value>创建数据当前状态的快照或数据配置的快照</value>
   </data>
   <data name="Clear" xml:space="preserve">
-    <value>Removes all the resources from a container but does not delete the container</value>
+    <value>从容器中删除所有资源，但不删除容器</value>
   </data>
   <data name="Close" xml:space="preserve">
-    <value>Changes the state of a resource to make it inaccessible, unavailable, or unusable</value>
+    <value>更改资源的状态，使其不可访问、不适用或不可用</value>
   </data>
   <data name="Compare" xml:space="preserve">
-    <value>Evaluates the data from one resource against the data from another resource</value>
+    <value>根据某一资源中的数据评估另一资源中的数据</value>
   </data>
   <data name="Complete" xml:space="preserve">
-    <value>Concludes an operation</value>
+    <value>结束操作</value>
   </data>
   <data name="Compress" xml:space="preserve">
-    <value>Compacts the data of a resource</value>
+    <value>压缩资源的数据</value>
   </data>
   <data name="Confirm" xml:space="preserve">
-    <value>Acknowledges, verifies, or validates the state of a resource or process</value>
+    <value>确认、证实或验证资源或进程的状态</value>
   </data>
   <data name="Connect" xml:space="preserve">
-    <value>Creates a link between a source and a destination</value>
+    <value>在源和目标之间创建链接</value>
   </data>
   <data name="Convert" xml:space="preserve">
-    <value>Changes the data from one representation to another when the cmdlet supports bidirectional conversion or when the cmdlet supports conversion between multiple data types</value>
+    <value>Cmdlet 支持双向转换或支持多种数据类型之间的转换时，将数据从一种表示形式更改为另一种表示形式</value>
   </data>
   <data name="ConvertFrom" xml:space="preserve">
-    <value>Converts one primary type of input (the cmdlet noun indicates the input) to one or more supported output types</value>
+    <value>将一种主要的输入类型(cmdlet 名词表示输入)转换为一种或多种受支持的输出类型</value>
   </data>
   <data name="ConvertTo" xml:space="preserve">
-    <value>Converts from one or more types of input to a primary output type (the cmdlet noun indicates the output type)</value>
+    <value>从一种或多种类型的输入转换为主要的输出类型(cmdlet 名词表示输出类型)</value>
   </data>
   <data name="Copy" xml:space="preserve">
-    <value>Copies a resource to another name or to another container</value>
+    <value>将资源复制到另一个名称或另一个容器</value>
   </data>
   <data name="Debug" xml:space="preserve">
-    <value>Examines a resource to diagnose operational problems</value>
+    <value>检查资源以诊断操作问题</value>
   </data>
   <data name="Deny" xml:space="preserve">
-    <value>Refuses, objects, blocks, or opposes the state of a resource or process</value>
+    <value>拒绝、反对、阻止或抵制资源或进程的状态</value>
   </data>
   <data name="Deploy" xml:space="preserve">
-    <value>Sends an application, website, or solution to a remote target[s] in such a way that a consumer of that solution can access it after deployment is complete</value>
+    <value>将应用程序、网站或解决方案发送到远程目标，以便解决方案的使用者可以在部署完成后对其进行访问</value>
   </data>
   <data name="Disable" xml:space="preserve">
-    <value>Configures a resource to an unavailable or inactive state</value>
+    <value>将资源配置为不可用或非活动状态</value>
   </data>
   <data name="Disconnect" xml:space="preserve">
-    <value>Breaks the link between a source and a destination</value>
+    <value>断开源和目标之间的链接</value>
   </data>
   <data name="Dismount" xml:space="preserve">
-    <value>Detaches a named entity from a location</value>
+    <value>从相应位置拆离命名实体</value>
   </data>
   <data name="Edit" xml:space="preserve">
-    <value>Modifies existing data by adding or removing content</value>
+    <value>通过添加或删除内容来修改现有数据</value>
   </data>
   <data name="Enable" xml:space="preserve">
-    <value>Configures a resource to an available or active state</value>
+    <value>将资源配置为可用或活动状态</value>
   </data>
   <data name="Enter" xml:space="preserve">
-    <value>Specifies an action that allows the user to move into a resource</value>
+    <value>指定可让用户移动到资源中的操作</value>
   </data>
   <data name="Exit" xml:space="preserve">
-    <value>Sets the current environment or context to the most recently used context</value>
+    <value>将当前环境或上下文设置为最近使用的上下文</value>
   </data>
   <data name="Expand" xml:space="preserve">
-    <value>Restores the data of a resource that has been compressed to its original state</value>
+    <value>将已压缩的资源的数据还原到其初始状态</value>
   </data>
   <data name="Export" xml:space="preserve">
-    <value>Encapsulates the primary input into a persistent data store, such as a file, or into an interchange format</value>
+    <value>将主要输入封装到永久性数据存储(例如文件)，或封装为交换格式</value>
   </data>
   <data name="Find" xml:space="preserve">
-    <value>Looks for an object in a container that is unknown, implied, optional, or specified</value>
+    <value>在容器中查找未知、隐含、可选或指定的对象</value>
   </data>
   <data name="Format" xml:space="preserve">
-    <value>Arranges objects in a specified form or layout</value>
+    <value>以指定的形式或布局排列对象</value>
   </data>
   <data name="Get" xml:space="preserve">
-    <value>Specifies an action that retrieves a resource</value>
+    <value>指定可检索资源的操作</value>
   </data>
   <data name="Grant" xml:space="preserve">
-    <value>Allows access to a resource</value>
+    <value>允许对资源的访问</value>
   </data>
   <data name="Group" xml:space="preserve">
-    <value>Arranges or associates one or more resources</value>
+    <value>排列或关联一种或多种资源</value>
   </data>
   <data name="Hide" xml:space="preserve">
-    <value>Makes a resource undetectable</value>
+    <value>使资源不可检测</value>
   </data>
   <data name="Import" xml:space="preserve">
-    <value>Creates a resource from data that is stored in a persistent data store (such as a file) or in an interchange format</value>
+    <value>使用永久性数据存储(例如文件)中存储的或以交换格式存储的数据创建资源</value>
   </data>
   <data name="Initialize" xml:space="preserve">
-    <value>Prepares a resource for use, and sets it to a default state</value>
+    <value>准备要使用的资源，并将其设置为默认状态</value>
   </data>
   <data name="Install" xml:space="preserve">
-    <value>Places a resource in a location, and optionally initializes it</value>
+    <value>将资源置于某个位置，并根据需要对其进行初始化</value>
   </data>
   <data name="Invoke" xml:space="preserve">
-    <value>Performs an action, such as running a command or a method</value>
+    <value>执行操作，例如运行命令或方法</value>
   </data>
   <data name="Join" xml:space="preserve">
-    <value>Combines resources into one resource</value>
+    <value>将多种资源合并为一种</value>
   </data>
   <data name="Limit" xml:space="preserve">
-    <value>Applies constraints to a resource</value>
+    <value>对资源应用约束</value>
   </data>
   <data name="Lock" xml:space="preserve">
-    <value>Secures a resource</value>
+    <value>保护资源</value>
   </data>
   <data name="Measure" xml:space="preserve">
-    <value>Identifies resources that are consumed by a specified operation, or retrieves statistics about a resource</value>
+    <value>识别指定操作使用的资源，或检索关于资源的统计信息</value>
   </data>
   <data name="Merge" xml:space="preserve">
-    <value>Creates a single resource from multiple resources</value>
+    <value>根据多个资源创建一个资源</value>
   </data>
   <data name="Mount" xml:space="preserve">
-    <value>Attaches a named entity to a location</value>
+    <value>将命名实体附加到某一位置</value>
   </data>
   <data name="Move" xml:space="preserve">
-    <value>Moves a resource from one location to another</value>
+    <value>将资源从一个位置移动到另一个位置</value>
   </data>
   <data name="New" xml:space="preserve">
-    <value>Creates a resource</value>
+    <value>创建资源</value>
   </data>
   <data name="Open" xml:space="preserve">
-    <value>Changes the state of a resource to make it accessible, available, or usable</value>
+    <value>更改资源的状态，使其可访问、适用或可用</value>
   </data>
   <data name="Optimize" xml:space="preserve">
-    <value>Increases the effectiveness of a resource</value>
+    <value>提高资源的有效性</value>
   </data>
   <data name="Out" xml:space="preserve">
-    <value>Sends data out of the environment</value>
+    <value>将数据发送到环境之外</value>
   </data>
   <data name="Ping" xml:space="preserve">
-    <value>Use the Test verb</value>
+    <value>使用 Test 谓词</value>
   </data>
   <data name="Pop" xml:space="preserve">
-    <value>Removes an item from the top of a stack</value>
+    <value>从堆栈顶部删除某一项</value>
   </data>
   <data name="Protect" xml:space="preserve">
-    <value>Safeguards a resource from attack or loss</value>
+    <value>保护资源，以免受攻击或损失</value>
   </data>
   <data name="Publish" xml:space="preserve">
-    <value>Makes a resource available to others</value>
+    <value>使资源可供他人使用</value>
   </data>
   <data name="Push" xml:space="preserve">
-    <value>Adds an item to the top of a stack</value>
+    <value>将项添加到堆栈顶部</value>
   </data>
   <data name="Read" xml:space="preserve">
-    <value>Acquires information from a source</value>
+    <value>从源获取信息</value>
   </data>
   <data name="Receive" xml:space="preserve">
-    <value>Accepts information sent from a source</value>
+    <value>接受从源发送的信息</value>
   </data>
   <data name="Redo" xml:space="preserve">
-    <value>Resets a resource to the state that was undone</value>
+    <value>将资源重置为撤消的状态</value>
   </data>
   <data name="Register" xml:space="preserve">
-    <value>Creates an entry for a resource in a repository such as a database</value>
+    <value>为存储库(例如数据库)中的资源创建一个条目</value>
   </data>
   <data name="Remove" xml:space="preserve">
-    <value>Deletes a resource from a container</value>
+    <value>从容器中删除资源</value>
   </data>
   <data name="Rename" xml:space="preserve">
-    <value>Changes the name of a resource</value>
+    <value>更改资源的名称</value>
   </data>
   <data name="Repair" xml:space="preserve">
-    <value>Restores a resource to a usable condition</value>
+    <value>将资源还原为可用状态</value>
   </data>
   <data name="Request" xml:space="preserve">
-    <value>Asks for a resource or asks for permissions</value>
+    <value>请求提供资源或请求权限</value>
   </data>
   <data name="Reset" xml:space="preserve">
-    <value>Sets a resource back to its original state</value>
+    <value>将资源设置回其初始状态</value>
   </data>
   <data name="Resize" xml:space="preserve">
-    <value>Changes the size of a resource</value>
+    <value>更改资源大小</value>
   </data>
   <data name="Resolve" xml:space="preserve">
-    <value>Maps a shorthand representation of a resource to a more complete representation</value>
+    <value>将资源的简写表示映射为更完整的表示形式</value>
   </data>
   <data name="Restart" xml:space="preserve">
-    <value>Stops an operation and then starts it again</value>
+    <value>停止操作，然后再次启动</value>
   </data>
   <data name="Restore" xml:space="preserve">
-    <value>Sets a resource to a predefined state, such as a state set by Checkpoint</value>
+    <value>将资源设置为预定义状态，例如 Checkpoint 设置的状态</value>
   </data>
   <data name="Resume" xml:space="preserve">
-    <value>Starts an operation that has been suspended</value>
+    <value>启动已挂起的操作</value>
   </data>
   <data name="Revoke" xml:space="preserve">
-    <value>Specifies an action that does not allow access to a resource</value>
+    <value>指定不允许访问资源的操作</value>
   </data>
   <data name="Save" xml:space="preserve">
-    <value>Preserves data to avoid loss</value>
+    <value>保留数据以免丢失</value>
   </data>
   <data name="Search" xml:space="preserve">
-    <value>Creates a reference to a resource in a container</value>
+    <value>创建对容器中资源的引用</value>
   </data>
   <data name="Select" xml:space="preserve">
-    <value>Locates a resource in a container</value>
+    <value>查找容器中的资源</value>
   </data>
   <data name="Send" xml:space="preserve">
-    <value>Delivers information to a destination</value>
+    <value>将信息传递到目标</value>
   </data>
   <data name="Set" xml:space="preserve">
-    <value>Replaces data on an existing resource or creates a resource that contains some data</value>
+    <value>替换现有资源上的数据或创建包含某些数据的资源</value>
   </data>
   <data name="Show" xml:space="preserve">
-    <value>Makes a resource visible to the user</value>
+    <value>使资源对用户可见</value>
   </data>
   <data name="Sync" xml:space="preserve">
-    <value>Assures that two or more resources are in the same state</value>
+    <value>确保两种及以上的资源处于相同状态</value>
   </data>
   <data name="Skip" xml:space="preserve">
-    <value>Bypasses one or more resources or points in a sequence</value>
+    <value>绕过序列中的一个或多个资源或点</value>
   </data>
   <data name="Split" xml:space="preserve">
-    <value>Separates parts of a resource</value>
+    <value>分离资源的各个部分</value>
   </data>
   <data name="Start" xml:space="preserve">
-    <value>Initiates an operation</value>
+    <value>启动操作</value>
   </data>
   <data name="Step" xml:space="preserve">
-    <value>Moves to the next point or resource in a sequence</value>
+    <value>移动到序列中的下一个点或资源</value>
   </data>
   <data name="Stop" xml:space="preserve">
-    <value>Discontinues an activity</value>
+    <value>停止活动</value>
   </data>
   <data name="Submit" xml:space="preserve">
-    <value>Presents a resource for approval</value>
+    <value>提交资源以供审批</value>
   </data>
   <data name="Suspend" xml:space="preserve">
-    <value>Pauses an activity</value>
+    <value>暂停活动</value>
   </data>
   <data name="Switch" xml:space="preserve">
-    <value>Specifies an action that alternates between two resources, such as to change between two locations, responsibilities, or states</value>
+    <value>指定在两种资源之间切换的操作，例如在两个位置、职责或状态之间进行切换</value>
   </data>
   <data name="Test" xml:space="preserve">
-    <value>Verifies the operation or consistency of a resource</value>
+    <value>验证资源的操作或一致性</value>
   </data>
   <data name="Trace" xml:space="preserve">
-    <value>Tracks the activities of a resource</value>
+    <value>跟踪资源的活动</value>
   </data>
   <data name="Unblock" xml:space="preserve">
-    <value>Removes restrictions to a resource</value>
+    <value>删除对资源的限制</value>
   </data>
   <data name="Undo" xml:space="preserve">
-    <value>Sets a resource to its previous state</value>
+    <value>将资源设置为其以前的状态</value>
   </data>
   <data name="Uninstall" xml:space="preserve">
-    <value>Removes a resource from an indicated location</value>
+    <value>从指示的位置删除资源</value>
   </data>
   <data name="Unlock" xml:space="preserve">
-    <value>Releases a resource that was locked</value>
+    <value>释放锁定的资源</value>
   </data>
   <data name="Unprotect" xml:space="preserve">
-    <value>Removes safeguards from a resource that were added to prevent it from attack or loss</value>
+    <value>从资源中删除为免受攻击或损失而添加的保护措施</value>
   </data>
   <data name="Unpublish" xml:space="preserve">
-    <value>Makes a resource unavailable to others</value>
+    <value>使资源不可供他人使用</value>
   </data>
   <data name="Unregister" xml:space="preserve">
-    <value>Removes the entry for a resource from a repository</value>
+    <value>从存储库中删除资源的条目</value>
   </data>
   <data name="Update" xml:space="preserve">
-    <value>Brings a resource up-to-date to maintain its state, accuracy, conformance, or compliance</value>
+    <value>将资源更新为最新内容，以保持其状态、准确性、一致性或合规性</value>
   </data>
   <data name="Use" xml:space="preserve">
-    <value>Uses or includes a resource to do something</value>
+    <value>使用或添加资源以执行某些操作</value>
   </data>
   <data name="Wait" xml:space="preserve">
-    <value>Pauses an operation until a specified event occurs</value>
+    <value>暂停操作，直到指定的事件发生</value>
   </data>
   <data name="Watch" xml:space="preserve">
-    <value>Continually inspects or monitors a resource for changes</value>
+    <value>持续检查或监视资源是否发生更改</value>
   </data>
   <data name="Write" xml:space="preserve">
-    <value>Adds information to a target</value>
+    <value>向目标添加信息</value>
   </data>
 </root>

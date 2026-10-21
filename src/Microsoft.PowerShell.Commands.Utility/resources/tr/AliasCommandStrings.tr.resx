@@ -118,54 +118,54 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="SetAliasAction" xml:space="preserve">
-    <value>Set Alias</value>
+    <value>Diğer ad ayarla</value>
   </data>
   <data name="SetAliasTarget" xml:space="preserve">
-    <value>Name: {0} Value: {1}</value>
+    <value>Ad: {0} Değer: {1}</value>
   </data>
   <data name="NewAliasAction" xml:space="preserve">
-    <value>New Alias</value>
+    <value>Yeni Diğer Ad</value>
   </data>
   <data name="NewAliasTarget" xml:space="preserve">
-    <value>Name: {0} Value: {1}</value>
+    <value>Ad: {0} Değer: {1}</value>
   </data>
   <data name="ImportAliasAction" xml:space="preserve">
-    <value>Import Alias</value>
+    <value>İçeri aktarma Diğer Adı</value>
   </data>
   <data name="ImportAliasTarget" xml:space="preserve">
-    <value>Name: {0} Value: {1}</value>
+    <value>Ad: {0} Değer: {1}</value>
   </data>
   <data name="ExportAliasFileOpenFailed" xml:space="preserve">
-    <value>Cannot open file {0} to export the alias. {1}</value>
+    <value>Diğer adı dışarı aktarmak için {0} dosyası açılamıyor. {1}</value>
   </data>
   <data name="ExportAliasHeaderTitle" xml:space="preserve">
-    <value>Alias File</value>
+    <value>Diğer ad Dosyası</value>
   </data>
   <data name="ExportAliasHeaderUser" xml:space="preserve">
-    <value>Exported by : {0}</value>
+    <value>Dışarı aktaran: {0}</value>
   </data>
   <data name="ExportAliasHeaderDate" xml:space="preserve">
-    <value>Date/Time : {0:F}</value>
+    <value>Tarih/Saat : {0:F}</value>
   </data>
   <data name="ExportAliasHeaderMachine" xml:space="preserve">
-    <value>Computer : {0}</value>
+    <value>Bilgisayar: {0}</value>
   </data>
   <data name="ImportAliasFromFileSystemOnly" xml:space="preserve">
-    <value>Cannot import the alias because the specified path '{0}' referred to a '{1}' provider path. Change the value of the Path parameter to a file system path.</value>
+    <value>Belirtilen yol '{0}' bir '{1}' sağlayıcı yoluna başvurduğu için diğer ad içeri aktarılamıyor. Path parametresinin değerini bir dosya sistemi yoluna değiştirin.</value>
   </data>
   <data name="ImportAliasPathResolvedToMultiple" xml:space="preserve">
-    <value>Cannot import alias because path '{0}' contains wildcard characters that resolve to multiple paths. Aliases can be imported from only one file. Change the value of the Path parameter to a path that resolves to a single file.</value>
+    <value>Yol '{0}' joker karakterler içerdiğinden ve bunlar birden çok yola çözümlendiğinden diğer ad içeri aktarılamıyor. Diğer adlar yalnızca bir dosyadan içeri aktarılabilir. Path parametresinin değerini tek bir dosyaya çözümlenen bir yola değiştirin.</value>
   </data>
   <data name="ImportAliasFileOpenFailed" xml:space="preserve">
-    <value>Cannot open file {0} to import the alias. {1}</value>
+    <value>Diğer adı içeri aktarmak için {0} dosyası açılamıyor. {1}</value>
   </data>
   <data name="ImportAliasFileInvalidFormat" xml:space="preserve">
-    <value>Cannot import an alias. Line number {1} in the file '{0}' is not a properly-formatted, comma-separated values (CSV) line for aliases. Change the line to contain four values separated by commas. If the value text itself contains a comma, then the value must be contained in quotation marks.</value>
+    <value>Bir diğer ad içeri aktarılamıyor. “{0}” dosyasındaki {1} numaralı satır, diğer adlar için düzgün biçimlendirilmiş bir virgülle ayrılmış değerler (CSV) satırı değil. Satırı virgülle ayrılmış dört değer içerecek şekilde değiştirin. Değer metninin kendisi bir virgül içeriyorsa, değer tırnak işaretleri içine alınmalıdır.</value>
   </data>
   <data name="ImportAliasOptionsError" xml:space="preserve">
-    <value>Cannot import the alias because line number {1} in the file '{0}' contains an option that is not recognized for aliases. Change the file to contain valid options.</value>
+    <value>“{0}” dosyasındaki {1} numaralı satır, diğer adlar için tanınmayan bir seçenek içerdiğinden diğer ad içeri aktarılamıyor. Dosyayı geçerli seçenekler içerecek şekilde değiştirin.</value>
   </data>
   <data name="NoAliasFound" xml:space="preserve">
-    <value>This command cannot find a matching alias because an alias with the {0} '{1}' does not exist.</value>
+    <value>Bu komut eşleşen bir diğer ad bulamıyor çünkü “{0}” “{1}” değerine sahip bir diğer ad yok.</value>
   </data>
 </root>

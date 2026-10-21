@@ -111,6 +111,7 @@ jobs:
     displayName: 'Build Linux - $(Runtime)'
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+      VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: $(VSS_NUGET_EXTERNAL_FEED_ENDPOINTS)
       ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
 
   - task: CodeQL3000Finalize@0 # Add CodeQL Finalize task right after your 'Build' step.

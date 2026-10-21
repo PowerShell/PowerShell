@@ -118,42 +118,42 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="WrongMemberCount" xml:space="preserve">
-    <value>To add a member, only one member type can be specified. The member types specified are: "{0}"</value>
+    <value>Chcete-li přidat člen, lze zadat pouze jeden typ členu. Zadané typy členů jsou: {0}</value>
   </data>
   <data name="CannotAddMemberType" xml:space="preserve">
-    <value>Cannot add a member with type "{0}". Specify a different type for the MemberTypes parameter.</value>
+    <value>Nelze přidat člen s typem {0}. Pro parametr MemberTypes zadejte jiný typ.</value>
   </data>
   <data name="Value2ShouldNotBeSpecified" xml:space="preserve">
-    <value>The SecondValue parameter is not necessary for a member of type "{0}", and should not be specified. Do not specify the SecondValue parameter when you add members of this type.</value>
+    <value>Parametr SecondValue není pro člen typu {0} vyžadován a neměl by být zadán. Při přidávání členů tohoto typu parametr SecondValue nezadávejte.</value>
   </data>
   <data name="Value1Prompt" xml:space="preserve">
-    <value>The Value parameter is required for a member of type "{0}". Specify the Value parameter when adding members of this type.</value>
+    <value>Pro členy typu {0} je parametr Value povinný. Při přidávání členů tohoto typu zadejte parametr Value.</value>
   </data>
   <data name="Value1AndValue2AreNotBothNull" xml:space="preserve">
-    <value>Both Value and SecondValue parameters should not be null for a member of type "{0}". Specify a non-null value for one of the two parameters.</value>
+    <value>Pro člen typu {0} nesmí mít oba parametry Value a SecondValue hodnotu null. Zadejte pro jeden z těchto dvou parametrů hodnotu, která není null.</value>
   </data>
   <data name="MemberAlreadyExists" xml:space="preserve">
-    <value>Cannot add a member with the name "{0}" because a member with that name already exists. To overwrite the member anyway, add the Force parameter to your command.</value>
+    <value>Člen s názvem {0} se nedá přidat, protože člen s tímto názvem již existuje. Pokud chcete člen přesto přepsat, přidejte do příkazu parametr Force.</value>
   </data>
   <data name="CannotRemoveTypeDataMember" xml:space="preserve">
-    <value>Cannot force the member with name "{0}" and type "{1}" to be added. A member with that name and type already exists, and the existing member is not an instance extension.</value>
+    <value>Nelze vynutit přidání členu s názvem {0} a typem {1}. Člen s tímto názvem a typem již existuje a stávající člen není rozšířením instance.</value>
   </data>
   <data name="AliasReferenceShouldNotBeNullOrEmpty" xml:space="preserve">
-    <value>The member referenced by this alias should not be null or empty.</value>
+    <value>Člen, na který tento alias odkazuje, nesmí být null ani prázdný.</value>
   </data>
   <data name="Value1ShouldNotBeNull" xml:space="preserve">
-    <value>The Value parameter should not be null for a member of type "{0}". Specify a non-null value for the Value parameter when adding members of this type.</value>
+    <value>Parametr Value nesmí být pro člen typu {0} null. Při přidávání členů tohoto typu zadejte pro parametr Value hodnotu, která není null.</value>
   </data>
   <data name="Value2ShouldNotBeNull" xml:space="preserve">
-    <value>The SecondValue parameter should not be null for a member of type "{0}". Specify a non-null value for the SecondValue parameter when adding members of this type.</value>
+    <value>Parametr SecondValue nesmí být pro člen typu {0} null. Při přidávání členů tohoto typu zadejte pro parametr SecondValue hodnotu, která není null.</value>
   </data>
   <data name="InvalidValueForNotePropertyName" xml:space="preserve">
-    <value>The parameter NotePropertyName cannot take values that could be converted to the type {0}. To define the name of a member with those values, use Add-Member, and specify the member type.</value>
+    <value>Parametr NotePropertyName nesmí obsahovat hodnoty, které lze převést na typ {0}. Chcete-li s těmito hodnotami definovat název členu, použijte Add-Member a zadejte typ členu.</value>
   </data>
   <data name="NotePropertyNameShouldNotBeNull" xml:space="preserve">
-    <value>The name for a NoteProperty member should not be null or an empty string.</value>
+    <value>Název členu NoteProperty nesmí být null ani prázdný řetězec.</value>
   </data>
   <data name="TypeNameShouldNotBeEmpty" xml:space="preserve">
-    <value>The TypeName parameter should not be null, empty, or contain only white spaces.</value>
+    <value>Parametr TypeName nesmí být null, prázdný ani obsahovat pouze prázdné znaky.</value>
   </data>
 </root>

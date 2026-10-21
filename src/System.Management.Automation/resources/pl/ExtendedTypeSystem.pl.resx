@@ -118,289 +118,289 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MemberAlreadyPresent" xml:space="preserve">
-    <value>The member "{0}" is already present.</value>
+    <value>Element członkowski „{0}” już istnieje.</value>
   </data>
   <data name="MemberAlreadyPresentFromTypesXml" xml:space="preserve">
-    <value>The member "{0}" is already present from the extended type data file.</value>
+    <value>Element członkowski „{0}” jest już obecny w pliku danych typów rozszerzonych.</value>
   </data>
   <data name="MemberNotPresent" xml:space="preserve">
-    <value>The member "{0}" is not present.</value>
+    <value>Element członkowski „{0}” nie istnieje.</value>
   </data>
   <data name="ExceptionWhenSetting" xml:space="preserve">
-    <value>Exception setting "{0}": "{1}"</value>
+    <value>Wyjątek podczas ustawiania „{0}”: „{1}”</value>
   </data>
   <data name="ExceptionWhenGetting" xml:space="preserve">
-    <value>Exception getting "{0}": "{1}"</value>
+    <value>Wyjątek podczas pobierania „{0}”: „{1}”</value>
   </data>
   <data name="EnumerationException" xml:space="preserve">
-    <value>The following exception occurred while trying to enumerate the collection: "{0}".</value>
+    <value>Podczas próby wyliczenia kolekcji wystąpił następujący wyjątek: „{0}”.</value>
   </data>
   <data name="AccessMemberOutsidePSObject" xml:space="preserve">
-    <value>Cannot access member "{0}" outside of a PSObject.</value>
+    <value>Nie można uzyskać dostępu do elementu członkowskiego „{0}” poza obiektem PSObject.</value>
   </data>
   <data name="ChangeStaticMember" xml:space="preserve">
-    <value>Cannot change the member created from the type configuration: "{0}".</value>
+    <value>Nie można zmienić elementu członkowskiego utworzonego na podstawie konfiguracji typu: „{0}”.</value>
   </data>
   <data name="ReservedMemberName" xml:space="preserve">
-    <value>The member name "{0}" is reserved.</value>
+    <value>Nazwa elementu członkowskiego „{0}” jest zastrzeżona.</value>
   </data>
   <data name="CannotChangeReservedMember" xml:space="preserve">
-    <value>"{0}" cannot be changed.</value>
+    <value>„{0}” nie można zmienić.</value>
   </data>
   <data name="MethodInvocationException" xml:space="preserve">
-    <value>Exception calling "{0}" with "{1}" argument(s): "{2}"</value>
+    <value>Wyjątek podczas wywoływania „{0}” z argumentami „{1}”: „{2}”</value>
   </data>
   <data name="CopyToInvocationException" xml:space="preserve">
-    <value>An exception was thrown when trying to call "{0}" to extract the contents of an object of type "{1}": "{2}"</value>
+    <value>Zgłoszono wyjątek podczas próby wywołania „{0}” w celu wyodrębnienia zawartości obiektu typu „{1}”: „{2}”</value>
   </data>
   <data name="MethodArgumentCountException" xml:space="preserve">
-    <value>Cannot find an overload for "{0}" and the argument count: "{1}".</value>
+    <value>Nie można znaleźć przeciążenia dla „{0}” i liczby argumentów: „{1}”.</value>
   </data>
   <data name="MethodGenericArgumentCountException" xml:space="preserve">
-    <value>Could not find a suitable generic method overload for "{0}" with "{1}" type parameters, and the argument count: "{2}".</value>
+    <value>Nie można znaleźć odpowiedniego przeciążenia metody ogólnej dla „{0}” z liczbą parametrów typu „{1}” i liczbą argumentów: „{2}”.</value>
   </data>
   <data name="MethodAmbiguousException" xml:space="preserve">
-    <value>Multiple ambiguous overloads found for "{0}" and the argument count: "{1}".</value>
+    <value>Znaleziono wiele niejednoznacznych przeciążeń dla „{0}” i liczbę argumentów: „{1}”.</value>
   </data>
   <data name="MethodArgumentConversionException" xml:space="preserve">
-    <value>Cannot convert argument "{0}", with value: "{1}", for "{2}" to type "{3}": "{4}"</value>
+    <value>Nie można przekonwertować argumentu „{0}” o wartości „{1}” dla „{2}” na typ „{3}”: „{4}”</value>
   </data>
   <data name="GetWithoutGetterException" xml:space="preserve">
-    <value>Get accessor for property "{0}" is unavailable.</value>
+    <value>Metoda pobierająca właściwość „{0}” jest niedostępna.</value>
   </data>
   <data name="SetWithoutSetterException" xml:space="preserve">
-    <value>Set accessor for property "{0}" is unavailable.</value>
+    <value>Ustawianie metody dostępu dla właściwości „{0}” jest niedostępne.</value>
   </data>
   <data name="CodePropertySetterFormat" xml:space="preserve">
-    <value>The setter method should be public, void, static, and have two parameters. The first parameter should be of the type PSObject. A second parameter is required if a getter method is also available, and should have the same type as the return type for the getter method.</value>
+    <value>Metoda ustawiająca powinna być publiczna, zwracać void, być statyczna i mieć dwa parametry. Pierwszy parametr powinien mieć typ PSObject. Drugi parametr jest wymagany, jeśli dostępna jest też metoda pobierająca, i powinien mieć ten sam typ co typ zwracany przez metodę pobierającą.</value>
   </data>
   <data name="CodePropertyGetterFormat" xml:space="preserve">
-    <value>The getter method should be public, not void, static, and have one parameter of the type PSObject.</value>
+    <value>Metoda pobierająca powinna być publiczna, nie zwracać wartości void, być statyczna i przyjmować jeden parametr typu PSObject.</value>
   </data>
   <data name="CodePropertyGetterAndSetterNull" xml:space="preserve">
-    <value>CodeProperty should use a getter or setter method.</value>
+    <value>Właściwość CodeProperty powinna używać metody pobierającej lub ustawiającej.</value>
   </data>
   <data name="CodeMethodMethodFormat" xml:space="preserve">
-    <value>Cannot create a code method because of the method format. The method should be public, static, and have one parameter of type PSObject.</value>
+    <value>Nie można utworzyć metody kodu z powodu formatu metody. Metoda powinna być publiczna, statyczna i mieć jeden parametr typu PSObject.</value>
   </data>
   <data name="CycleInAlias" xml:space="preserve">
-    <value>The alias with name "{0}" contains a cycle.</value>
+    <value>Alias o nazwie „{0}” zawiera cykl.</value>
   </data>
   <data name="InvalidCastException" xml:space="preserve">
-    <value>Cannot convert the "{0}" value of type "{1}" to type "{2}".</value>
+    <value>Nie można przekonwertować wartości „{0}” typu „{1}” na typ „{2}”.</value>
   </data>
   <data name="InvalidCastExceptionWithoutValue" xml:space="preserve">
-    <value>Cannot convert the value of type "{0}" to type "{1}".</value>
+    <value>Nie można przekonwertować wartości typu „{0}” na typ „{1}”.</value>
   </data>
   <data name="InvalidCastExceptionWithInnerException" xml:space="preserve">
-    <value>Cannot convert value "{0}" to type "{1}". Error: "{2}"</value>
+    <value>Nie można przekonwertować wartości „{0}” na typ „{1}”. Błąd: „{2}”</value>
   </data>
   <data name="InvalidCastExceptionEnumerationNoFlagAndComma" xml:space="preserve">
-    <value>Cannot convert value "{0}" to type "{1}" because no commas are allowed for this enumeration.</value>
+    <value>Nie można przekonwertować wartości „{0}” na typ „{1}”, ponieważ w tym wyliczeniu nie są dozwolone przecinki.</value>
   </data>
   <data name="InvalidCastExceptionEnumerationNoValue" xml:space="preserve">
-    <value>Cannot convert value "{0}" to type "{1}" due to enumeration values that are not valid. Specify one of the following enumeration values and try again. The possible enumeration values are "{2}".</value>
+    <value>Nie można przekonwertować wartości „{0}” na typ „{1}” z powodu nieprawidłowych wartości wyliczenia. Określ jedną z następujących wartości wyliczenia i spróbuj ponownie. Możliwe wartości wyliczenia to „{2}”.</value>
   </data>
   <data name="InvalidCastExceptionEnumerationNull" xml:space="preserve">
-    <value>Cannot convert null to type "{0}" due to enumeration values that are not valid. Specify one of the following enumeration values and try again. The possible enumeration values are "{1}".</value>
+    <value>Nie można przekonwertować wartości null na typ „{0}”, ponieważ wartości wyliczenia są nieprawidłowe. Określ jedną z następujących wartości wyliczenia i spróbuj ponownie. Możliwe wartości wyliczenia to „{1}”.</value>
   </data>
   <data name="InvalidCastFromNull" xml:space="preserve">
-    <value>Cannot convert null to type "{0}".</value>
+    <value>Nie można przekonwertować wartości null na typ „{0}”.</value>
   </data>
   <data name="InvalidCastExceptionNoStringForConversion" xml:space="preserve">
-    <value>Cannot convert value to type "{0}".  Error: "{1}"</value>
+    <value>Nie można przekonwertować wartości na typ „{0}”.  Błąd: „{1}”</value>
   </data>
   <data name="InvalidCastCannotRetrieveString" xml:space="preserve">
-    <value>Cannot convert value to type System.String.</value>
+    <value>Nie można przekonwertować wartości na typ System.String.</value>
   </data>
   <data name="ReferenceTypeExpected" xml:space="preserve">
-    <value>Reference type is expected in argument.</value>
+    <value>Oczekiwano typu referencyjnego w argumencie.</value>
   </data>
   <data name="NotIcomparable" xml:space="preserve">
-    <value>Cannot compare "{0}" because it is not IComparable.</value>
+    <value>Nie można porównać „{0}”, ponieważ nie implementuje interfejsu IComparable.</value>
   </data>
   <data name="ComparisonFailure" xml:space="preserve">
-    <value>Could not compare "{0}" to "{1}". Error: "{2}"</value>
+    <value>Nie można porównać „{0}” z „{1}”. Błąd: „{2}”</value>
   </data>
   <data name="NotTheSameTypeOrNotIcomparable" xml:space="preserve">
-    <value>Cannot compare "{0}" to "{1}" because the objects are not the same type or the object "{0}" does not implement "{2}".</value>
+    <value>Nie można porównać „{0}” z „{1}”, ponieważ obiekty nie są tego samego typu lub obiekt „{0}” nie implementuje „{2}”.</value>
   </data>
   <data name="InvalidCastExceptionEnumerationMoreThanOneValue" xml:space="preserve">
-    <value>Cannot convert value "{0}" to type "{1}" because at least two matches were found ({2}, {3}) and only one match is allowed for this enumeration.</value>
+    <value>Nie można przekonwertować wartości „{0}” na typ „{1}”, ponieważ znaleziono co najmniej dwa dopasowania ({2}, {3}), a dla tego wyliczenia dozwolone jest tylko jedno dopasowanie.</value>
   </data>
   <data name="InvalidCastExceptionForBooleanArgumentValue" xml:space="preserve">
-    <value>Cannot convert value "{0}" to type "{1}". Boolean parameters accept only Boolean values and numbers, such as $True, $False, 1 or 0.</value>
+    <value>Nie można przekonwertować wartości „{0}” na typ „{1}”. Parametry logiczne akceptują tylko wartości logiczne i liczby, takie jak $True, $False, 1 lub 0.</value>
   </data>
   <data name="WriteOnlyProperty" xml:space="preserve">
-    <value>Cannot get property value because "{0}" is a write-only property.</value>
+    <value>Nie można pobrać wartości właściwości, ponieważ „{0}” jest właściwością tylko do zapisu.</value>
   </data>
   <data name="ReadOnlyProperty" xml:space="preserve">
-    <value>"{0}" is a ReadOnly property.</value>
+    <value>„{0}” jest właściwością ReadOnly.</value>
   </data>
   <data name="XmlNodeSetShouldBeAString" xml:space="preserve">
-    <value>Cannot set "{0}" because only strings can be used as values to set XmlNode properties.</value>
+    <value>Nie można ustawić „{0}”, ponieważ jako wartości właściwości XmlNode można używać tylko ciągów.</value>
   </data>
   <data name="XmlNodeSetRestrictions" xml:space="preserve">
-    <value>Cannot set "{0}" because only unique attributes or unique non-attributed leaf nodes can be set.</value>
+    <value>Nie można ustawić „{0}”, ponieważ można ustawić tylko unikatowe atrybuty lub unikatowe nieatrybutowe węzły liściowe.</value>
   </data>
   <data name="CannotAddPropertyOrMethod" xml:space="preserve">
-    <value>A PSProperty or PSMethod object cannot be added to this collection.</value>
+    <value>Nie można dodać obiektu PSProperty ani PSMethod do tej kolekcji.</value>
   </data>
   <data name="TypesXmlError" xml:space="preserve">
-    <value>The following error occurred while loading the extended type data file: {0}</value>
+    <value>Podczas ładowania pliku danych typu rozszerzonego wystąpił następujący błąd: {0}</value>
   </data>
   <data name="ToStringException" xml:space="preserve">
-    <value>The following exception occurred while retrieving the string: "{0}"</value>
+    <value>Wystąpił następujący wyjątek podczas pobierania ciągu: „{0}”</value>
   </data>
   <data name="NotAClsCompliantFieldProperty" xml:space="preserve">
-    <value>The field or property: "{0}" for type: "{1}" differs only in letter casing from the field or property: "{2}". The type must be Common Language Specification (CLS) compliant.</value>
+    <value>Pole lub właściwość: „{0}” dla typu: „{1}” różni się od pola lub właściwości: „{2}” tylko wielkością liter. Typ musi być zgodny ze specyfikacją Common Language Specification (CLS).</value>
   </data>
   <data name="ExceptionRetrievingTypeNameHierarchy" xml:space="preserve">
-    <value>The following exception occurred while retrieving the type name hierarchy: "{0}".</value>
+    <value>Wystąpił następujący wyjątek podczas pobierania hierarchii nazw typów: „{0}”.</value>
   </data>
   <data name="ExceptionGettingMember" xml:space="preserve">
-    <value>The following exception occurred while retrieving member "{1}": "{0}"</value>
+    <value>Wystąpił następujący wyjątek podczas pobierania elementu członkowskiego „{1}”: „{0}”</value>
   </data>
   <data name="ExceptionGettingMembers" xml:space="preserve">
-    <value>The following exception occurred while retrieving members: "{0}"</value>
+    <value>Wystąpił następujący wyjątek podczas pobierania elementów członkowskich: „{0}”</value>
   </data>
   <data name="ExceptionRetrievingPropertyReadState" xml:space="preserve">
-    <value>The following exception occurred while retrieving the read state for property "{1}": "{0}"</value>
+    <value>Wystąpił następujący wyjątek podczas pobierania stanu odczytu dla właściwości „{1}”: „{0}”</value>
   </data>
   <data name="ExceptionRetrievingPropertyWriteState" xml:space="preserve">
-    <value>The following exception occurred while retrieving the write state for property "{1}": "{0}"</value>
+    <value>Wystąpił następujący wyjątek podczas pobierania stanu zapisu dla właściwości „{1}”: „{0}”</value>
   </data>
   <data name="ExceptionRetrievingPropertyType" xml:space="preserve">
-    <value>The following exception occurred while retrieving the type for property "{1}": "{0}"</value>
+    <value>Wystąpił następujący wyjątek podczas pobierania typu właściwości „{1}”: „{0}”</value>
   </data>
   <data name="ExceptionRetrievingPropertyString" xml:space="preserve">
-    <value>The following exception occurred while retrieving the string representation for property "{1}" : "{0}"</value>
+    <value>Podczas pobierania reprezentacji ciągu dla właściwości „{1}” wystąpił następujący wyjątek: „{0}”</value>
   </data>
   <data name="ExceptionRetrievingPropertyAttributes" xml:space="preserve">
-    <value>The following exception occurred while retrieving the attributes for property "{1}": "{0}"</value>
+    <value>Wystąpił następujący wyjątek podczas pobierania atrybutów właściwości „{1}”: „{0}”</value>
   </data>
   <data name="ExceptionRetrievingMethodDefinitions" xml:space="preserve">
-    <value>The following exception occurred while retrieving the definitions for method "{1}": "{0}"</value>
+    <value>Wystąpił następujący wyjątek podczas pobierania definicji dla metody „{1}”: „{0}”</value>
   </data>
   <data name="ExceptionRetrievingMethodString" xml:space="preserve">
-    <value>The following exception occurred while retrieving the string representation for method "{1}": "{0}"</value>
+    <value>Wystąpił następujący wyjątek podczas pobierania reprezentacji ciągu dla metody „{1}”: „{0}”</value>
   </data>
   <data name="ExceptionRetrievingParameterizedPropertytype" xml:space="preserve">
-    <value>The following exception occurred while retrieving the type for parameterized property "{1}": "{0}"</value>
+    <value>Wystąpił następujący wyjątek podczas pobierania typu właściwości sparametryzowanej „{1}”: „{0}”</value>
   </data>
   <data name="ExceptionRetrievingParameterizedPropertyReadState" xml:space="preserve">
-    <value>The following exception occurred while retrieving the read state for parameterized property "{1}": "{0}"</value>
+    <value>Podczas pobierania stanu odczytu dla właściwości sparametryzowanej „{1}” wystąpił następujący wyjątek: „{0}”</value>
   </data>
   <data name="ExceptionRetrievingParameterizedPropertyWriteState" xml:space="preserve">
-    <value>The following exception occurred while retrieving the write state for parameterized property "{1}": "{0}"</value>
+    <value>Wystąpił następujący wyjątek podczas pobierania stanu zapisu dla właściwości sparametryzowanej „{1}”: „{0}”</value>
   </data>
   <data name="ExceptionRetrievingParameterizedPropertyDefinitions" xml:space="preserve">
-    <value>The following exception occurred while retrieving the definitions for parameterized property "{1}": "{0}"</value>
+    <value>Wystąpił następujący wyjątek podczas pobierania definicji właściwości sparametryzowanej „{1}”: „{0}”</value>
   </data>
   <data name="ExceptionRetrievingParameterizedPropertyString" xml:space="preserve">
-    <value>The following exception occurred while retrieving the string representation for parameterized property "{1}": "{0}"</value>
+    <value>Wystąpił następujący wyjątek podczas pobierania reprezentacji ciągu dla właściwości sparametryzowanej „{1}”: „{0}”</value>
   </data>
   <data name="CannotSetValueForMemberType" xml:space="preserve">
-    <value>Cannot set the Value property for PSMemberInfo object of type "{0}".</value>
+    <value>Nie można ustawić właściwości Value dla obiektu PSMemberInfo typu „{0}”.</value>
   </data>
   <data name="NonRefArgumentToRefParameter" xml:space="preserve">
-    <value>Argument: '{0}' should be a {1}. Use {2}.</value>
+    <value>Argument: „{0}” powinien być {1}. Użyj {2}.</value>
   </data>
   <data name="RefArgumentToNonRefParameter" xml:space="preserve">
-    <value>Argument: '{0}' should not be a {1}. Do not use {2}.</value>
+    <value>Argument : „{0}” nie powinien być {1}. Nie używaj {2}.</value>
   </data>
   <data name="PropertyNotFoundInTypeDescriptor" xml:space="preserve">
     <value>Właściwość "{0}" nie została znaleziona.</value>
   </data>
   <data name="InvalidComponent" xml:space="preserve">
-    <value>Cannot get or set the property value. The "{0}" argument should be of type "{1}" or "{2}".</value>
+    <value>Nie można pobrać lub ustawić wartości właściwości. Argument „{0}” powinien być typu „{1}” lub „{2}”.</value>
   </data>
   <data name="CannotSetNonManagementObject" xml:space="preserve">
-    <value>Cannot set the value for property "{0}" because the object has type "{1}" instead of "{2}".</value>
+    <value>Nie można ustawić wartości właściwości „{0}”, ponieważ obiekt ma typ „{1}” zamiast „{2}”.</value>
   </data>
   <data name="WMIMethodInvocationException" xml:space="preserve">
-    <value>Exception calling "{0}" : "{1}"</value>
+    <value>Wyjątek podczas wywoływania „{0}” : „{1}”</value>
   </data>
   <data name="InvalidWMIClassPath" xml:space="preserve">
-    <value>{0} is not a valid class path.</value>
+    <value>{0} nie jest prawidłową ścieżką klasy.</value>
   </data>
   <data name="InvalidWMIPath" xml:space="preserve">
     <value>{0} nie jest prawidłową ścieżką.</value>
   </data>
   <data name="PropertyIsSettableError" xml:space="preserve">
-    <value>The adapter cannot determine whether property "{0}" can be changed.</value>
+    <value>Adapter nie może określić, czy można zmienić właściwość „{0}”.</value>
   </data>
   <data name="PropertyIsGettableError" xml:space="preserve">
-    <value>The adapter cannot determine whether property "{0}" is gettable.</value>
+    <value>Adapter nie może określić, czy właściwość „{0}” umożliwia pobranie wartości.</value>
   </data>
   <data name="PropertyGetError" xml:space="preserve">
-    <value>The adapter cannot get the value of property "{0}".</value>
+    <value>Adapter nie może pobrać wartości właściwości „{0}”.</value>
   </data>
   <data name="PropertySetError" xml:space="preserve">
-    <value>The adapter cannot set the value of property "{0}".</value>
+    <value>Adapter nie może ustawić wartości właściwości „{0}”.</value>
   </data>
   <data name="PropertyTypeError" xml:space="preserve">
-    <value>The adapter cannot get the type of property "{0}".</value>
+    <value>Adapter nie może pobrać typu właściwości „{0}”.</value>
   </data>
   <data name="GetTypeNameHierarchyError" xml:space="preserve">
-    <value>The adapter cannot get the type hierarchy of "{0}".</value>
+    <value>Adapter nie może pobrać hierarchii typów dla „{0}”.</value>
   </data>
   <data name="GetProperties" xml:space="preserve">
-    <value>The adapter cannot get the properties of "{0}".</value>
+    <value>Adapter nie może pobrać właściwości „{0}”.</value>
   </data>
   <data name="GetProperty" xml:space="preserve">
-    <value>The adapter cannot get property "{0}" for "{1}".</value>
+    <value>Adapter nie może pobrać właściwości „{0}” dla „{1}”.</value>
   </data>
   <data name="NullReturnValueError" xml:space="preserve">
-    <value>"{0}" returned a null value.</value>
+    <value>„{0}” zwróciła wartość null.</value>
   </data>
   <data name="PropertyNotFound" xml:space="preserve">
-    <value>The property '{0}' was not found for the '{1}' object. The settable properties are: {2}.</value>
+    <value>Nie znaleziono właściwości „{0}” dla obiektu „{1}”. Właściwości, które można ustawić, to: {2}.</value>
   </data>
   <data name="NoSettableProperty" xml:space="preserve">
-    <value>The property '{0}' was not found for the '{1}' object. There is no settable property available.</value>
+    <value>Nie znaleziono właściwości „{0}” dla obiektu „{1}”. Brak dostępnej właściwości settable.</value>
   </data>
   <data name="ObjectCreationError" xml:space="preserve">
-    <value>Cannot create object of type "{0}". {1}</value>
+    <value>Nie można utworzyć obiektu typu „{0}”. {1}</value>
   </data>
   <data name="CannotInvokeStaticMethodOnUninstantiatedGenericType" xml:space="preserve">
-    <value>Cannot invoke static methods or access static properties on the open generic type {0}.  Specify the type parameters and retry.  For example, instead of [System.Collections.Generic.HashSet``1]::CreateSetComparer() use [System.Collections.Generic.HashSet[int]]::CreateSetComparer().</value>
+    <value>Nie można wywoływać metod statycznych ani uzyskiwać dostępu do właściwości statycznych w otwartym typie generycznym {0}.  Określ parametry typu i spróbuj ponownie.  Na przykład zamiast [System.Collections.Generic.HashSet``1]::CreateSetComparer() użyj [System.Collections.Generic.HashSet[int]]::CreateSetComparer().</value>
     <comment>Error message shown when somebody tries to access a property or invoke a static method on an uninstantiated generic type:
 PS&gt; [System.Collections.Generic.Comparer``1]::get_Default()
 
 {0} is a placeholder for a type name (for example: System.Collections.Generic.Comparer`1)</comment>
   </data>
   <data name="ExceptionConstructingAttribute" xml:space="preserve">
-    <value>The following exception occurred while constructing the attribute "{1}": "{0}"</value>
+    <value>Wystąpił następujący wyjątek podczas konstruowania atrybutu „{1}”: „{0}”</value>
   </data>
   <data name="CannotConvertValueToStringArray" xml:space="preserve">
-    <value>The value "{0}" cannot be converted to a string array.</value>
+    <value>Nie można przekonwertować wartości „{0}” na tablicę ciągów.</value>
   </data>
   <data name="InvalidCastExceptionNonCoreType" xml:space="preserve">
-    <value>Cannot convert value to type "{0}". Only core types are supported in this language mode.</value>
+    <value>Nie można przekonwertować wartości na typ „{0}”. W tym trybie języka są obsługiwane tylko typy podstawowe.</value>
   </data>
   <data name="InvalidCastToByRefLikeType" xml:space="preserve">
-    <value>Cannot convert to the ByRef-like type "{0}". ByRef-like types are not supported in PowerShell.</value>
+    <value>Nie można przekonwertować na typ „{0}” typu ByRef. Typy podobne do ByRef nie są obsługiwane w programie PowerShell.</value>
   </data>
   <data name="CannotAccessByRefLikePropertyOrField" xml:space="preserve">
-    <value>Cannot get or set the property or field "{0}" of the ByRef-like type "{1}". ByRef-like types are not supported in PowerShell.</value>
+    <value>Nie można pobrać ani ustawić właściwości lub pola „{0}” typu podobnego do ByRef „{1}”. Typy podobne do ByRef nie są obsługiwane w programie PowerShell.</value>
   </data>
   <data name="CannotCallMethodWithByRefLikeReturnType" xml:space="preserve">
-    <value>Cannot invoke the method "{0}" of the ByRef-like return type "{1}". ByRef-like types are not supported in PowerShell.</value>
+    <value>Nie można wywołać metody „{0}” zwracającej typ podobny do ByRef „{1}”. Typy podobne do ByRef nie są obsługiwane w programie PowerShell.</value>
   </data>
   <data name="CannotInstantiateBoxedByRefLikeType" xml:space="preserve">
-    <value>Cannot create an instance of the ByRef-like type "{0}". ByRef-like types are not supported in PowerShell.</value>
+    <value>Nie można utworzyć wystąpienia typu podobnego do ByRef „{0}”. Typy podobne do ByRef nie są obsługiwane w programie PowerShell.</value>
   </data>
   <data name="WDACHashTypeLogTitle" xml:space="preserve">
-    <value>Extended Type System Hashtable Conversion</value>
+    <value>Konwersja tabeli skrótów systemu typów rozszerzonych</value>
   </data>
   <data name="WDACHashTypeLogMessage" xml:space="preserve">
-    <value>Type conversion from HashTable to '{0}' will not be allowed in ConstrainedLanguage mode.</value>
+    <value>Konwersja typu z wartości HashTable na „{0}” nie będzie dozwolona w trybie ConstrainedLanguage.</value>
   </data>
   <data name="WDACTypeConversionLogTitle" xml:space="preserve">
-    <value>Extended Type System Hashtable Conversion</value>
+    <value>Konwersja tabeli skrótów systemu typów rozszerzonych</value>
   </data>
   <data name="WDACTypeConversionLogMessage" xml:space="preserve">
-    <value>Type conversion from '{0}' to '{1}' will not be allowed in ConstrainedLanguage mode.</value>
+    <value>Konwersja typu z „{0}” na „{1}” nie będzie dozwolona w trybie ConstrainedLanguage.</value>
   </data>
 </root>

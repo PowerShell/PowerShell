@@ -127,7 +127,7 @@
     <value>DeviceError: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="InvalidArgument" xml:space="preserve">
-    <value>InvalidArgument: ({1}:{2}) [{0}], {3}</value>
+    <value>InvalidArgument: ({1}:{2}) [{0}], {3}I</value>
   </data>
   <data name="InvalidData" xml:space="preserve">
     <value>InvalidData: ({1}:{2}) [{0}], {3}</value>

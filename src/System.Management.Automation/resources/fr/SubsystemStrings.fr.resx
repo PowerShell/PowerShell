@@ -118,42 +118,42 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MultipleRegistrationNotAllowed" xml:space="preserve">
-    <value>The subsystem '{0}' does not allow more than one implementation to be registered.</value>
+    <value>Le sous-système « {0} » n’autorise pas l’inscription de plusieurs implémentations.</value>
   </data>
   <data name="ImplementationAlreadyRegistered" xml:space="preserve">
-    <value>The implementation with Id '{0}' was already registered for the subsystem '{1}'.</value>
+    <value>L’implémentation avec l’ID « {0} » était déjà inscrite pour le sous-système « {1} ».</value>
   </data>
   <data name="UnregistrationNotAllowed" xml:space="preserve">
-    <value>The subsystem '{0}' does not allow the unregistration of an implementation.</value>
+    <value>Le sous-système « {0} » n’autorise pas la désinscription d’une implémentation.</value>
   </data>
   <data name="NoImplementationRegistered" xml:space="preserve">
-    <value>No implementation was registered for the subsystem '{0}'.</value>
+    <value>Aucune implémentation n’a été inscrite pour le sous-système « {0} ».</value>
   </data>
   <data name="ImplementationNotFound" xml:space="preserve">
-    <value>A registered implementation with the Id '{0}' was not found.</value>
+    <value>Aucune implémentation enregistrée avec l’ID « {0} » n’a été trouvée.</value>
   </data>
   <data name="SubsystemTypeUnknown" xml:space="preserve">
-    <value>The specified subsystem type '{0}' is unknown.</value>
+    <value>Le type de sous-système spécifié « {0} » est inconnu.</value>
   </data>
   <data name="MustUseConcreteSubsystemType" xml:space="preserve">
-    <value>You must specify a concrete subsystem type instead of the base interface 'ISubsystem'.</value>
+    <value>Vous devez spécifier un type de sous-système concret au lieu de l’interface de base « ISubsystem ».</value>
   </data>
   <data name="SubsystemKindUnknown" xml:space="preserve">
-    <value>The specified subsystem kind '{0}' is unknown.</value>
+    <value>Le genre de sous-système spécifié « {0} » est inconnu.</value>
   </data>
   <data name="ConcreteSubsystemNotImplemented" xml:space="preserve">
-    <value>For the target subsystem kind '{0}', the specified subsystem instance needs to implement the corresponding concrete interface or abstract class '{1}'.</value>
+    <value>Pour le type de sous-système cible « {0} », l’instance de sous-système spécifiée doit implémenter l’interface concrète ou la classe abstraite correspondante « {1} ».</value>
   </data>
   <data name="InvalidSubsystemInfo" xml:space="preserve">
-    <value>The declared metadata for subsystem kind '{0}' is invalid. A subsystem that requires cmdlets or functions to be defined cannot allow multiple registrations because that would result in one implementation overwriting the commands defined by another implementation.</value>
+    <value>Les métadonnées déclarées pour le type de sous-système « {0}» ne sont pas valides. Un sous-système qui requiert la définition de cmdlets ou de fonctions ne peut pas autoriser plusieurs inscriptions, car cela entraînerait le remplacement par une implémentation des commandes définies par une autre implémentation.</value>
   </data>
   <data name="EmptyImplementationId" xml:space="preserve">
-    <value>The 'Id' property of an implementation for the subsystem '{0}' cannot be an empty GUID.</value>
+    <value>La propriété « Id » d’une implémentation du sous-système « {0} » ne peut pas être un GUID vide.</value>
   </data>
   <data name="NullOrEmptyImplementationName" xml:space="preserve">
-    <value>The 'Name' property of an implementation for the subsystem '{0}' cannot be null or an empty string.</value>
+    <value>La propriété « Nom » d’une implémentation pour le sous-système « {0} » ne peut pas avoir une valeur nulle ni être une chaîne vide.</value>
   </data>
   <data name="NullOrEmptyImplementationDescription" xml:space="preserve">
-    <value>The 'Description' property of an implementation for the subsystem '{0}' cannot be null or an empty string.</value>
+    <value>La propriété « Description » d’une implémentation pour le sous-système « {0} » ne peut pas avoir une valeur nulle ni être une chaîne vide.</value>
   </data>
 </root>

@@ -745,8 +745,8 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
     }
 
     Context "PATH environment variable" {
-        It "`$PSHOME should be in front so that pwsh.exe starts current running PowerShell" {
-            & $powershell -v | Should -Match $PSVersionTable.GitCommitId
+        It "Running 'pwsh' should start the currently running PowerShell" {
+            pwsh -v | Should -Match $PSVersionTable.GitCommitId
         }
 
         It "powershell starts if PATH is not set" -Skip:($IsWindows) {
@@ -920,10 +920,6 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
             $inputPath  = "Temp:\StartupBannerTest-Input.txt"
             "exit" > $inputPath
 
-            # Not testing update notification banner text here
-            $oldPowerShellUpdateCheck = $env:POWERSHELL_UPDATECHECK
-            $env:POWERSHELL_UPDATECHECK = "Off"
-
             # Set TERM to "dumb" to avoid DECCKM codes in the output
             $oldTERM = $env:TERM
             $env:TERM = "dumb"
@@ -944,7 +940,6 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
         }
         AfterAll {
             $env:TERM = $oldTERM
-            $env:POWERSHELL_UPDATECHECK = $oldPowerShellUpdateCheck
 
             Remove-Item $inputPath -Force -ErrorAction Ignore
             Remove-Item $outputPath -Force -ErrorAction Ignore
@@ -1190,11 +1185,23 @@ Describe 'Pwsh startup and PATH' -Tag CI {
         $version | Should -BeExactly "PowerShell $($PSVersionTable.GitCommitId)"
     }
 
-    It 'pwsh starts even if PATH is not defined' {
+    It 'pwsh updates PATH correctly even if PATH is not defined' {
         $pwsh = Join-Path -Path $PSHOME -ChildPath "pwsh"
         Remove-Item Env:\PATH
         $path = & $pwsh -noprofile -command '$env:PATH'
-        $path | Should -BeExactly ($PSHOME + [System.IO.Path]::PathSeparator)
+
+        $ExpectedPath = $PSHOME
+        if ($PSHOME.StartsWith("$env:ProgramFiles\WindowsApps\Microsoft.PowerShell")) {
+            # MSIX installed PowerShell uses the stable path instead of PSHOME.
+            $ExpectedPath = $PSHOME.Replace($env:ProgramFiles, "$env:LOCALAPPDATA\Microsoft")
+
+            # Remove the version-specific part from the expected path.
+            $version = $PSVersionTable.PSVersion
+            $verStrRegex = "$($version.Major)\.$($version.Minor)\.$($version.Build).+__"
+            $ExpectedPath = $ExpectedPath -replace $verStrRegex, ''
+        }
+
+        $path | Should -BeExactly ($ExpectedPath + [System.IO.Path]::PathSeparator)
     }
 }
 

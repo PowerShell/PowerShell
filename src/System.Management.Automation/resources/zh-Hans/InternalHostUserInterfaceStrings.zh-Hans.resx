@@ -118,106 +118,106 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="WriteDebugLineStoppedError" xml:space="preserve">
-    <value>WriteDebug stopped because the value of the DebugPreference variable was 'Stop'.</value>
+    <value>由于 DebugPreference 变量的值为 "Stop"，WriteDebug 已停止。</value>
   </data>
   <data name="UnsupportedPreferenceError" xml:space="preserve">
-    <value>The value {0} is not a supported ActionPreference value.</value>
+    <value>值 {0} 不是受支持的 ActionPreference 值。</value>
   </data>
   <data name="PromptEmptyDescriptionsError" xml:space="preserve">
-    <value>The "{0}" parameter must contain at least one value.</value>
+    <value>"{0}" 参数必须至少包含一个值。</value>
   </data>
   <data name="ShouldContinueYesLabel" xml:space="preserve">
-    <value>&amp;Yes</value>
+    <value>是(&amp;Y)</value>
   </data>
   <data name="ShouldContinueYesHelp" xml:space="preserve">
-    <value>Continue.</value>
+    <value>继续。</value>
   </data>
   <data name="ShouldContinueYesToAllLabel" xml:space="preserve">
-    <value>Yes to &amp;All</value>
+    <value>全为是(&amp;A)</value>
   </data>
   <data name="ShouldContinueYesToAllHelp" xml:space="preserve">
-    <value>Continue, and do not ask again whether to continue in this session.</value>
+    <value>继续，并且不要再询问是否在此会话中继续。</value>
   </data>
   <data name="ShouldContinueNoLabel" xml:space="preserve">
-    <value>&amp;No</value>
+    <value>否(&amp;N)</value>
   </data>
   <data name="ShouldContinueNoHelp" xml:space="preserve">
-    <value>End the operation with an error.</value>
+    <value>结束操作是出错。</value>
   </data>
   <data name="ShouldContinueNoToAllLabel" xml:space="preserve">
-    <value>No to A&amp;ll</value>
+    <value>全为否(&amp;L)</value>
   </data>
   <data name="ShouldContinueNoToAllHelp" xml:space="preserve">
-    <value>End the operation with an error. Do not request to resume operation for this session.</value>
+    <value>结束操作是出错。请勿请求恢复此会话中的操作。</value>
   </data>
   <data name="ShouldContinueSuspendLabel" xml:space="preserve">
-    <value>&amp;Suspend</value>
+    <value>暂停(&amp;S)</value>
   </data>
   <data name="ShouldContinueSuspendHelp" xml:space="preserve">
-    <value>Pause the current operation and enter a command prompt. Type "exit" to resume the paused operation.</value>
+    <value>暂停当前操作并进入命令提示符。键入 "exit" 以恢复已暂停的操作。</value>
   </data>
   <data name="ShouldContinuePromptMessage" xml:space="preserve">
-    <value>Continue with this operation?</value>
+    <value>继续执行此操作?</value>
   </data>
   <data name="DefaultChoice" xml:space="preserve">
-    <value>(default is "{0}")</value>
+    <value>(默认值为“{0}”)</value>
   </data>
   <data name="DefaultChoicesForMultipleChoices" xml:space="preserve">
-    <value>(default choices are {0})</value>
+    <value>(默认选项为 {0})</value>
   </data>
   <data name="ChoiceMessage" xml:space="preserve">
-    <value>Choice[{0}]: </value>
+    <value>Choice[{0}]:</value>
   </data>
   <data name="EmptyChoicesError" xml:space="preserve">
-    <value>"{0}" should have at least one element.</value>
+    <value>“{0}”应包含至少一个元素。</value>
   </data>
   <data name="InvalidDefaultChoiceForMultipleSelection" xml:space="preserve">
-    <value>"{0}" must be a valid index into "{1}". "{2}" is not a valid index.</value>
+    <value>“{0}”必须是“{1}”的有效索引。“{2}”不是有效索引。</value>
   </data>
   <data name="InvalidChoiceHotKeyError" xml:space="preserve">
-    <value>Cannot process the hot key because a question mark ("?") cannot be used as a hot key.</value>
+    <value>无法处理热键，因为问号("?")不能用作热键。</value>
   </data>
   <data name="VerboseFormatString" xml:space="preserve">
-    <value>VERBOSE: {0}</value>
+    <value>详细信息: {0}</value>
   </data>
   <data name="WarningFormatString" xml:space="preserve">
-    <value>WARNING: {0}</value>
+    <value>警告: {0}</value>
   </data>
   <data name="DebugFormatString" xml:space="preserve">
-    <value>DEBUG: {0}</value>
+    <value>调试: {0}</value>
   </data>
   <data name="HostNotTranscribing" xml:space="preserve">
-    <value>The host is not currently transcribing.</value>
+    <value>主机当前未在进行转录。</value>
   </data>
   <data name="CommandStartTime" xml:space="preserve">
-    <value>Command start time: {0}</value>
+    <value>命令开始时间: {0}</value>
   </data>
   <data name="TranscriptPrologue" xml:space="preserve">
     <value>**********************
-PowerShell transcript start
-Start time: {0:yyyyMMddHHmmss}
-Username: {1}
-RunAs User: {2}
-Configuration Name: {3}
-Machine: {4} ({5})
-Host Application: {6}
-Process ID: {7}
+PowerShell 记录开始
+开始时间: {0:yyyyMMddHHmmss}
+用户名: {1}
+RunAs 用户: {2}
+配置名称: {3}
+计算机: {4} ({5})
+主机应用程序: {6}
+进程 ID: {7}
 {8}
 **********************</value>
   </data>
   <data name="MinimalTranscriptPrologue" xml:space="preserve">
     <value>**********************
-PowerShell transcript start
-Start time: {0:yyyyMMddHHmmss}
+PowerShell 记录开始
+开始时间: {0:yyyyMMddHHmmss}
 **********************</value>
   </data>
   <data name="TranscriptEpilogue" xml:space="preserve">
     <value>**********************
-PowerShell transcript end
-End time: {0:yyyyMMddHHmmss}
+PowerShell 记录结束
+结束时间: {0:yyyyMMddHHmmss}
 **********************</value>
   </data>
   <data name="InvalidTranscriptFilePath" xml:space="preserve">
-    <value>File path {0} resolves to a directory.</value>
+    <value>文件路径 "{0}" 解析为目录。</value>
   </data>
 </root>

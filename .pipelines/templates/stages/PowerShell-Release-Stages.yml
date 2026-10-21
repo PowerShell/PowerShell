@@ -41,6 +41,9 @@ stages:
       displayName: 'Skip early access .NET download'
       pool:
         type: windows
+      variables:
+      - name: ob_outputDirectory
+        value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
       steps:
       - pwsh: Write-Host 'IsEarlyAccess is false; skipping early access .NET download.'
 - stage: validateSdk
@@ -68,6 +71,7 @@ stages:
       IsEarlyAccess: ${{ parameters.IsEarlyAccess }}
       DOTNET_RUNTIME_VERSION: ${{ parameters.DOTNET_RUNTIME_VERSION }}
       DOTNET_SDK_VERSION: ${{ parameters.DOTNET_SDK_VERSION }}
+      EarlyAccessFeed: ${{ parameters.EarlyAccessFeed }}
       dotnetArch: 'osx-x64'
 
   - template: /.pipelines/templates/release-validate-sdk.yml@self
@@ -79,6 +83,7 @@ stages:
       IsEarlyAccess: ${{ parameters.IsEarlyAccess }}
       DOTNET_RUNTIME_VERSION: ${{ parameters.DOTNET_RUNTIME_VERSION }}
       DOTNET_SDK_VERSION: ${{ parameters.DOTNET_SDK_VERSION }}
+      EarlyAccessFeed: ${{ parameters.EarlyAccessFeed }}
       dotnetArch: 'linux-x64'
 
 - stage: gbltool

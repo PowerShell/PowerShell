@@ -118,25 +118,25 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ExecutionPolicyOverridden" xml:space="preserve">
-    <value>PowerShell updated your execution policy successfully, but the setting is overridden by a policy defined at a more specific scope.  Due to the override, your shell will retain its current effective execution policy of {0}. Type "Get-ExecutionPolicy -List" to view your execution policy settings. For more information please see "Get-Help Set-ExecutionPolicy".</value>
+    <value>PowerShell a correctement mis à jour votre stratégie d’exécution, mais le paramètre est remplacé par une stratégie définie dans une étendue plus spécifique.  En raison de ce remplacement, votre interpréteur de commandes conservera sa stratégie d’exécution effective actuelle de {0}. Tapez « Get-ExecutionPolicy -List » pour afficher vos paramètres de stratégie d’exécution. Pour découvrir plus d’informations, veuillez consultez « Get-Help Set-ExecutionPolicy ».</value>
   </data>
   <data name="ExecutionPolicyOverriddenRecommendedAction" xml:space="preserve">
-    <value>Contact your system administrator.</value>
+    <value>Contactez l’administrateur système.</value>
   </data>
   <data name="ListAndScopeSpecified" xml:space="preserve">
-    <value>Cannot get execution policy. Specify only the List or Scope parameters.</value>
+    <value>Nous ne pouvons pas obtenir une stratégie d’exécution. Spécifiez uniquement les paramètres List ou Scope.</value>
   </data>
   <data name="CantSetGroupPolicy" xml:space="preserve">
-    <value>Cannot set execution policy. Execution policies at the MachinePolicy or UserPolicy scopes must be set through Group Policy.</value>
+    <value>Nous ne pouvons pas définir de stratégie d’exécution. Vous devez définir les stratégies d’exécution aux étendues MachinePolicy ou UserPolicy via la stratégie de groupe.</value>
   </data>
   <data name="SetExecutionPolicyCaption" xml:space="preserve">
-    <value>Execution Policy Change</value>
+    <value>Stratégie d’exécution à utiliser</value>
   </data>
   <data name="SetExecutionPolicyQuery" xml:space="preserve">
-    <value>The execution policy helps protect you from scripts that you do not trust. Changing the execution policy might expose you to the security risks described in the about_Execution_Policies help topic at https://go.microsoft.com/fwlink/?LinkID=135170. Do you want to change the execution policy?</value>
+    <value>La stratégie d’exécution vous permet de vous protéger contre les scripts auxquels vous ne faites pas confiance. Il est possible que la modification de la stratégie d’exécution vous expose aux risques de sécurité décrits dans la rubrique d’Aide about_Execution_Policies à l’adresse https://go.microsoft.com/fwlink/?LinkID=135170. Voulez-vous modifier la stratégie d’exécution ?</value>
   </data>
   <data name="SetExecutionPolicyAccessDeniedError" xml:space="preserve">
     <value>{0}
-To change the execution policy for the default (LocalMachine) scope, start PowerShell with the "Run as administrator" option. To change the execution policy for the current user, run "Set-ExecutionPolicy -Scope CurrentUser".</value>
+Si vous souhaitez modifier la stratégie d’exécution associée à l’étendue par défaut (LocalMachine), lancez PowerShell avec l’option « Exécuter en tant qu’administrateur ». Pour modifier la stratégie d’exécution de l’utilisateur actuel, exécutez « Set-ExecutionPolicy -Scope CurrentUser ».</value>
   </data>
 </root>

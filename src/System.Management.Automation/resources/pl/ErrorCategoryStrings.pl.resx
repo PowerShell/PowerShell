@@ -121,10 +121,10 @@
     <value>CloseError: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="DeadlockDetected" xml:space="preserve">
-    <value>Deadlock detected: ({1}:{2}) [{0}], {3}</value>
+    <value>Wykryto zakleszczenie: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="DeviceError" xml:space="preserve">
-    <value>DeviceError: ({1}:{2}) [{0}], {3}</value>
+    <value>Błąd urządzenia: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="InvalidArgument" xml:space="preserve">
     <value>InvalidArgument: ({1}:{2}) [{0}], {3}</value>
@@ -163,7 +163,7 @@
     <value>OperationTimeout: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="ParserError" xml:space="preserve">
-    <value>ParserError: ({1}:{2}) [{0}], {3}</value>
+    <value>Błąd analizatora: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="PermissionDenied" xml:space="preserve">
     <value>PermissionDenied: ({1}:{2}) [{0}], {3}</value>
@@ -181,7 +181,7 @@
     <value>ResourceUnavailable: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="SyntaxError" xml:space="preserve">
-    <value>SyntaxError: ({1}:{2}) [{0}], {3}</value>
+    <value>Błąd składni: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="WriteError" xml:space="preserve">
     <value>WriteError: ({1}:{2}) [{0}], {3}</value>
@@ -214,6 +214,6 @@
     <value>NotSpecified: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="InvalidErrorCategory" xml:space="preserve">
-    <value>Unrecognized error category {4}: ({1}:{2}) [{0}], {3}</value>
+    <value>Nierozpoznana kategoria błędu {4}: ({1}:{2}) [{0}], {3}</value>
   </data>
 </root>

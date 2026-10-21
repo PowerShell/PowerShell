@@ -118,6 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ParameterRequiresCommand" xml:space="preserve">
-    <value>A command is required to add a parameter. A command must be added to {0} before adding a parameter.</value>
+    <value>需要命令才能新增參數。新增參數之前，必須先將命令新增至 {0}。</value>
   </data>
 </root>

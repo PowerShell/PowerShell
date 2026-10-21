@@ -118,540 +118,540 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InvalidProviderInfo" xml:space="preserve">
-    <value>Cannot process the returned information because the information returned from the provider's Start method was for a different provider than the one passed.</value>
+    <value>プロバイダーの Start メソッドから返された情報が、渡されたプロバイダーとは異なるプロバイダーに対して返されたため、返された情報を処理できません。</value>
   </data>
   <data name="InvalidProviderInfoNull" xml:space="preserve">
-    <value>Cannot process the returned information because the information returned from the provider's Start method was null.</value>
+    <value>プロバイダーの Start メソッドから返された情報が null 値のため、返された情報を処理できません。</value>
   </data>
   <data name="GetItemProviderException" xml:space="preserve">
-    <value>Attempting to perform the GetItem operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>'{0}' プロバイダーで GetItems 操作を実行しようとしましたが、パス '{1}' に対して失敗しました。{2}</value>
   </data>
   <data name="GetItemDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the GetItem operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>GetItem 操作の動的パラメーターは、パス '{1}' の '{0}' プロバイダーから取得できません。{2}</value>
   </data>
   <data name="SetItemProviderException" xml:space="preserve">
-    <value>Attempting to perform the SetItem operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>'{0}' プロバイダーで SetItems 操作を実行しようとしましたが、パス '{1}' に対して失敗しました。{2}</value>
   </data>
   <data name="SetItemDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the SetItem operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>SetItem 操作の動的パラメーターは、パス '{1}' の '{0}' プロバイダーから取得できません。{2}</value>
   </data>
   <data name="ClearItemProviderException" xml:space="preserve">
-    <value>Attempting to perform the ClearItem operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>'{0}' プロバイダーで ClearItem 操作を実行しようとしましたが、パス '{1}' に対して失敗しました。{2}</value>
   </data>
   <data name="InvokeDefaultActionProviderException" xml:space="preserve">
-    <value>Attempting to perform the InvokeDefaultAction operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>'{0}' プロバイダーで InvokeDefaultAction 操作を実行しようとしましたが、パス '{1}' に対して失敗しました。{2}</value>
   </data>
   <data name="InvokeDefaultActionDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the InvokeDefaultAction operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>InvokeDefaultAction 操作の動的パラメーターは、パス '{1}' の '{0}' プロバイダーから取得できません。{2}</value>
   </data>
   <data name="ItemExistsProviderException" xml:space="preserve">
-    <value>Attempting to perform the ItemExists operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>'{0}' プロバイダーで Exists 操作を実行しようとしましたが、パス '{1}' に対して失敗しました。{2}</value>
   </data>
   <data name="ItemExistsDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the ItemExists operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>ItemExists 操作の動的パラメーターは、パス '{1}' の '{0}' プロバイダーから取得できません。{2}</value>
   </data>
   <data name="IsValidPathProviderException" xml:space="preserve">
-    <value>Attempting to perform the IsValidPath operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>'{0}' プロバイダーで IsValidPath 操作を実行しようとしましたが、パス '{1}' に対して失敗しました。{2}</value>
   </data>
   <data name="IsItemContainerProviderException" xml:space="preserve">
-    <value>Attempting to perform the IsItemContainer operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>'{0}' プロバイダーで IsItemContainer 操作を実行しようとしましたが、パス '{1}' に対して失敗しました。{2}</value>
   </data>
   <data name="RemoveItemProviderException" xml:space="preserve">
-    <value>Attempting to perform the RemoveItem operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>'{0}' プロバイダーで RemoveItem 操作を実行しようとしましたが、パス '{1}' に対して失敗しました。{2}</value>
   </data>
   <data name="GetChildrenProviderException" xml:space="preserve">
-    <value>Attempting to perform the GetChildItems operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>'{0}' プロバイダーで GetChildItems 操作を実行しようとしましたが、パス '{1}' に対して失敗しました。{2}</value>
   </data>
   <data name="GetChildrenDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the GetChildItems operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>GetChildItems 操作の動的パラメーターは、パス '{1}' の '{0}' プロバイダーから取得できません。{2}</value>
   </data>
   <data name="GetChildNamesProviderException" xml:space="preserve">
-    <value>Attempting to perform the GetChildNames operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>'{0}' プロバイダーで GetChildNames 操作を実行しようとしましたが、パス '{1}' に対して失敗しました。{2}</value>
   </data>
   <data name="GetChildNamesDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the GetChildNames operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>GetChildNames 操作の動的パラメーターは、パス '{1}' の '{0}' プロバイダーから取得できません。{2}</value>
   </data>
   <data name="RenameItemProviderException" xml:space="preserve">
-    <value>Attempting to perform the RenameItem operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>'{0}' プロバイダーで RenameItem 操作を実行しようとしましたが、パス '{1}' に対して失敗しました。{2}</value>
   </data>
   <data name="RenameItemDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the RenameItem operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>RenameItem 操作の動的パラメーターは、パス '{1}' の '{0}' プロバイダーから取得できません。{2}</value>
   </data>
   <data name="NewItemProviderException" xml:space="preserve">
-    <value>Attempting to perform the NewItem operation on the '{0}' provider failed for the path '{1}'. {2}</value>
+    <value>'{0}' プロバイダーで NewItem 操作を実行しようとしましたが、パス '{1}' に対して失敗しました。{2}</value>
   </data>
   <data name="NewItemDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the NewItem operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>NewItem 操作の動的パラメーターは、パス '{1}' の '{0}' プロバイダーから取得できません。{2}</value>
   </data>
   <data name="HasChildItemsProviderException" xml:space="preserve">
-    <value>Attempting to perform the HasChildItems operation on the '{0}' provider failed for the path '{1}'. {2}</value>
+    <value>'{0}' プロバイダーで HasChildItems 操作を実行しようとしましたが、パス '{1}' に対して失敗しました。{2}</value>
   </data>
   <data name="CopyItemProviderException" xml:space="preserve">
-    <value>Attempting to perform the CopyItem operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>'{0}' プロバイダーで CopyItem 操作を実行しようとしましたが、パス '{1}' に対して失敗しました。{2}</value>
   </data>
   <data name="CopyItemDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the CopyItem operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>CopyItem 操作の動的パラメーターは、パス '{1}' の '{0}' プロバイダーから取得できません。{2}</value>
   </data>
   <data name="GetParentPathProviderException" xml:space="preserve">
-    <value>Attempting to perform the GetParentPath operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>'{0}' プロバイダーで GetParentPath 操作を実行しようとしましたが、パス '{1}' に対して失敗しました。{2}</value>
   </data>
   <data name="NormalizeRelativePathProviderException" xml:space="preserve">
-    <value>Attempting to perform the NormalizeRelativePath operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>'{0}' プロバイダーで NormalizeRelativePath 操作を実行しようとしましたが、パス '{1}' に対して失敗しました。{2}</value>
   </data>
   <data name="MakePathProviderException" xml:space="preserve">
-    <value>Attempting to perform the MakePath operation operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>'{0}' プロバイダーで MakePath 操作を実行しようとしましたが、パス '{1}' に対して失敗しました。{2}</value>
   </data>
   <data name="GetChildNameProviderException" xml:space="preserve">
-    <value>Attempting to perform the GetChildName operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>'{0}' プロバイダーで GetChildName 操作を実行しようとしましたが、パス '{1}' に対して失敗しました。{2}</value>
   </data>
   <data name="MoveItemProviderException" xml:space="preserve">
-    <value>Attempting to perform the MoveItem operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>'{0}' プロバイダーで MoveItem 操作を実行しようとしましたが、パス '{1}' に対して失敗しました。{2}</value>
   </data>
   <data name="MoveItemDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the MoveItem operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>MoveItem 操作の動的パラメーターは、パス '{1}' の '{0}' プロバイダーから取得できません。{2}</value>
   </data>
   <data name="GetPropertyProviderException" xml:space="preserve">
-    <value>Attempting to perform the GetProperty operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>'{0}' プロバイダーで GetProperty 操作を実行しようとしましたが、パス '{1}' に対して失敗しました。{2}</value>
   </data>
   <data name="GetPropertyDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the GetProperty operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>GetProperty 操作の動的パラメーターは、パス '{1}' の '{0}' プロバイダーから取得できません。{2}</value>
   </data>
   <data name="SetPropertyProviderException" xml:space="preserve">
-    <value>Attempting to perform the SetProperty operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>'{0}' プロバイダーで SetProperty 操作を実行しようとしましたが、パス '{1}' に対して失敗しました。{2}</value>
   </data>
   <data name="SetPropertyDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the SetProperty operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>SetProperty 操作の動的パラメーターは、パス '{1}' の '{0}' プロバイダーから取得できません。{2}</value>
   </data>
   <data name="ClearPropertyProviderException" xml:space="preserve">
-    <value>Attempting to perform the ClearProperty operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>'{0}' プロバイダーで ClearProperty 操作を実行しようとしましたが、パス '{1}' に対して失敗しました。{2}</value>
   </data>
   <data name="ClearPropertyDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the ClearProperty operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>ClearProperty 操作の動的パラメーターは、パス '{1}' の '{0}' プロバイダーから取得できません。{2}</value>
   </data>
   <data name="NewPropertyProviderException" xml:space="preserve">
-    <value>Attempting to perform the NewProperty operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>'{0}' プロバイダーで NewProperty 操作を実行しようとしましたが、パス '{1}' に対して失敗しました。{2}</value>
   </data>
   <data name="NewPropertyDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the NewProperty operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>NewProperty 操作の動的パラメーターは、パス '{1}' の '{0}' プロバイダーから取得できません。{2}</value>
   </data>
   <data name="RemovePropertyProviderException" xml:space="preserve">
-    <value>Attempting to perform the RemoveProperty operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>'{0}' プロバイダーで RemoveProperty 操作を実行しようとしましたが、パス '{1}' に対して失敗しました。{2}</value>
   </data>
   <data name="RemovePropertyDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the RemoveProperty operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>RemoveProperty 操作の動的パラメーターは、パス '{1}' の '{0}' プロバイダーから取得できません。{2}</value>
   </data>
   <data name="CopyPropertyProviderException" xml:space="preserve">
-    <value>Attempting to perform the CopyProperty operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>'{0}' プロバイダーで CopyProperty 操作を実行しようとしましたが、パス '{1}' に対して失敗しました。{2}</value>
   </data>
   <data name="CopyPropertyDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the CopyProperty operation cannot be retrieved for the '{0}' provider for path '{1}'. {2}</value>
+    <value>パス '{1}' の '{0}' プロバイダーに対して CopyProperty 操作の動的パラメーターを取得できません。{2}</value>
   </data>
   <data name="MovePropertyProviderException" xml:space="preserve">
-    <value>Attempting to perform the MoveProperty operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>'{0}' プロバイダーで MoveProperty 操作を実行しようとしましたが、パス '{1}' に対して失敗しました。{2}</value>
   </data>
   <data name="MovePropertyDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the MoveProperty operation cannot be retrieved for the '{0}' provider for path '{1}'. {2}</value>
+    <value>パス '{1}' の '{0}' プロバイダーに対して MoveProperty 操作の動的パラメーターを取得できません。{2}</value>
   </data>
   <data name="RenamePropertyProviderException" xml:space="preserve">
-    <value>Attempting to perform the RenameProperty operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>'{0}' プロバイダーで RenameProperty 操作を実行しようとしましたが、パス '{1}' に対して失敗しました。{2}</value>
   </data>
   <data name="RenamePropertyDynamicParametersProviderException" xml:space="preserve">
-    <value>Dynamic parameters for RenameProperty cannot be retrieved for the '{0}' provider for path '{1}'. {2}</value>
+    <value>パス '{1}' の '{0}' プロバイダーの RenameProperty の動的パラメーターを取得できません。 {2}</value>
   </data>
   <data name="GetContentReaderProviderException" xml:space="preserve">
-    <value>Content reader cannot be retrieved for the '{0}' provider for the path '{1}'. {2}</value>
+    <value>パス '{1}' の '{0}' プロバイダーのコンテンツ リーダーを取得できません。{2}</value>
   </data>
   <data name="GetContentReaderDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the GetContentReader operation cannot be retrieved for the '{0}' provider for path '{1}'. {2}</value>
+    <value>パス '{1}' の '{0}' プロバイダーに対して GetContentReader 操作の動的パラメーターを取得できません。{2}</value>
   </data>
   <data name="GetContentWriterProviderException" xml:space="preserve">
-    <value>Content writer cannot be retrieved for the '{0}' provider for the path '{1}'. {2}</value>
+    <value>パス '{1}' の '{0}' プロバイダーのコンテンツ ライターを取得できません。{2}</value>
   </data>
   <data name="GetContentWriterDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the GetContentWriter operation cannot be retrieved for the '{0}' provider for path '{1}'. {2}</value>
+    <value>パス '{1}' の '{0}' プロバイダーに対して GetContentWriter 操作の動的パラメーターを取得できません。{2}</value>
   </data>
   <data name="GetContainerContentException" xml:space="preserve">
-    <value>Unable to get content because it is a directory: '{0}'. Please use 'Get-ChildItem' instead.</value>
+    <value>ディレクトリであるため、コンテンツを取得できません: '{0}'。代わりに 'Get-ChildItem' を使用してください。</value>
   </data>
   <data name="WriteContainerContentException" xml:space="preserve">
-    <value>Unable to write content because it is a directory: '{0}'.</value>
+    <value>ディレクトリであるため、コンテンツを書き込めません: '{0}'。</value>
   </data>
   <data name="LocationUndoStackIsEmpty" xml:space="preserve">
-    <value>There is no location history left to navigate backwards.</value>
+    <value>後ろに進む場所の履歴は残っていません。</value>
   </data>
   <data name="LocationRedoStackIsEmpty" xml:space="preserve">
-    <value>There is no location history left to navigate forwards.</value>
+    <value>前に進む場所の履歴は残っていません。</value>
   </data>
   <data name="BoundedStackIsEmpty" xml:space="preserve">
-    <value>The BoundedStack is empty.</value>
+    <value>BoundedStack が空です。</value>
   </data>
   <data name="ClearContentProviderException" xml:space="preserve">
-    <value>Attempting to perform the ClearContent operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>'{0}' プロバイダーで ClearContent 操作を実行しようとしましたが、パス '{1}' に対して失敗しました。{2}</value>
   </data>
   <data name="ClearDirectoryContent" xml:space="preserve">
-    <value>Unable to clear content of '{0}' because it is a directory. Clear-Content is only supported on files.</value>
+    <value>'{0}' はディレクトリであるため、その内容をクリアできません。Clear-Content はファイルでのみサポートされます。</value>
   </data>
   <data name="ClearContentDynamicParametersProviderException" xml:space="preserve">
-    <value>The dynamic parameters for the ClearContent operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>
+    <value>ClearContent 操作の動的パラメーターは、パス '{1}' の '{0}' プロバイダーから取得できません。{2}</value>
   </data>
   <data name="GetSecurityDescriptorProviderException" xml:space="preserve">
-    <value>Attempting to perform the GetSecurityDescriptor operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>'{0}' プロバイダーで GetSecurityDescriptor 操作を実行しようとしましたが、パス '{1}' に対して失敗しました。{2}</value>
   </data>
   <data name="SetSecurityDescriptorProviderException" xml:space="preserve">
-    <value>Attempting to perform the SetSecurityDescriptor operation on the '{0}' provider failed for path '{1}'. {2}</value>
+    <value>'{0}' プロバイダーで SetSecurityDescriptor 操作を実行しようとしましたが、パス '{1}' に対して失敗しました。{2}</value>
   </data>
   <data name="ProviderStartException" xml:space="preserve">
-    <value>Attempting to perform the Start operation on the '{0}' provider failed. {1}</value>
+    <value>'{0}' プロバイダーで開始操作を実行できませんでした。{1}</value>
   </data>
   <data name="InitializeDefaultDrivesException" xml:space="preserve">
-    <value>Attempting to perform the InitializeDefaultDrives operation on the '{0}' provider failed.</value>
+    <value>'{0}' プロバイダーで InitializeDefaultDrives 操作を実行できませんでした。</value>
   </data>
   <data name="NewDriveProviderException" xml:space="preserve">
-    <value>Attempting to perform the NewDrive operation on the '{0}' provider failed for the drive with root '{1}'. {2}</value>
+    <value>'{0}' プロバイダーで NewDrive 操作を実行しようとしましたが、ルート '{1}' のドライブに対して失敗しました。{2}</value>
   </data>
   <data name="NewDriveDynamicParametersProviderException" xml:space="preserve">
-    <value>Dynamic parameters for NewDrive cannot be retrieved for the '{0}' provider. {1}</value>
+    <value>'{0}' プロバイダーの NewDrive の動的パラメーターを取得できません。{1}</value>
   </data>
   <data name="RemoveDriveProviderException" xml:space="preserve">
-    <value>The invocation of RemoveDrive on the '{0}' provider failed. {1}</value>
+    <value>'{0}' プロバイダーでの RemoveDrive の呼び出しに失敗しました。{1}</value>
   </data>
   <data name="DriveRemovalPreventedByProvider" xml:space="preserve">
-    <value>Drive '{0}' cannot be removed because the provider '{1}' prevented it.</value>
+    <value>ドライブ '{0}' を削除できません。プロバイダー '{1}' によって防止されました。</value>
   </data>
   <data name="NormalizeRelativePathOutsideBase" xml:space="preserve">
-    <value>The path '{0}' referred to an item that was outside the base '{1}'.</value>
+    <value>パス '{0}' は、ベース '{1}' の外側にある項目を参照しました。</value>
   </data>
   <data name="ProviderSeekError" xml:space="preserve">
-    <value>The invocation of Seek on the '{0}' provider's content writer failed for path '{1}'. {2}</value>
+    <value>'{0}' プロバイダーのコンテンツ ライターで Seek の呼び出しがパス '{1}' に対して失敗しました。{2}</value>
   </data>
   <data name="ProviderContentCloseError" xml:space="preserve">
-    <value>The invocation of Close on the '{0}' provider's content reader or writer failed for path '{1}'. {2}</value>
+    <value>'{0}' プロバイダーのコンテンツ リーダーまたはライターで Close を呼び出せませんでした。パス '{1}' に対して失敗しました。{2}</value>
   </data>
   <data name="ProviderContentReadError" xml:space="preserve">
-    <value>The invocation of Read on the '{0}' provider's content reader failed for path '{1}'. {2}</value>
+    <value>'{0}' プロバイダーのコンテンツ リーダーで Read の呼び出しがパス '{1}' に失敗しました。{2}</value>
   </data>
   <data name="ProviderContentWriteError" xml:space="preserve">
-    <value>The invocation of Write on the '{0}' provider's content writer failed for path '{1}'. {2}</value>
+    <value>'{0}' プロバイダーのコンテンツ ライターで Write の呼び出しがパス '{1}' に対して失敗しました。{2}</value>
   </data>
   <data name="ProviderCannotBeUsedAsVariable" xml:space="preserve">
-    <value>The provider '{0}' cannot be used to get or set data using the variable syntax. {2}</value>
+    <value>プロバイダー '{0}' を使用して、変数構文を使用してデータを取得または設定することはできません。{2}</value>
   </data>
   <data name="ProviderVariableSyntaxInvalid" xml:space="preserve">
-    <value>The variable syntax cannot be used to get or set data in the provider. {2}</value>
+    <value>プロバイダーを使用して、変数構文を使用してデータを取得または設定することはできません。{2}</value>
   </data>
   <data name="AliasNotWritable" xml:space="preserve">
-    <value>Alias is not writeable because alias {0} is read-only or constant and cannot be written to.</value>
+    <value>エイリアス {0} は読み取り専用または定数であり、書き込むことができないため、エイリアスは書き込み可能ではありません。</value>
   </data>
   <data name="FunctionNotWritable" xml:space="preserve">
-    <value>Cannot write to function {0} because it is read-only or constant.</value>
+    <value>読み取り専用または定数であるため、関数 {0} に書き込めません。</value>
   </data>
   <data name="VariableNotWritable" xml:space="preserve">
-    <value>Cannot overwrite variable {0} because it is read-only or constant.</value>
+    <value>変数 {0} は読み取り専用または定数であるため、上書きできません。</value>
   </data>
   <data name="VariableIsPrivate" xml:space="preserve">
-    <value>Cannot access the variable '${0}' because it is a private variable.</value>
+    <value>変数 '${0}' はプライベート変数であるため、アクセスできません。</value>
   </data>
   <data name="NamedCommandIsPrivate" xml:space="preserve">
-    <value>Cannot access the command '{0}' because it is a private command.</value>
+    <value>非公開コマンドであるため、コマンド '{0}' にアクセスできません。</value>
   </data>
   <data name="CommandIsPrivate" xml:space="preserve">
-    <value>Cannot access the command because it is a private command.</value>
+    <value>プライベート コマンドであるため、コマンドにアクセスできません。</value>
   </data>
   <data name="ResourceIsPrivate" xml:space="preserve">
-    <value>Cannot access the session state resource because it is a private resource. </value>
+    <value>セッション状態リソースは非公開リソースであるため、アクセスできません。</value>
   </data>
   <data name="AliasNotRemovable" xml:space="preserve">
-    <value>Alias was not removed because alias {0} is constant or read-only.</value>
+    <value>エイリアス {0} が定数または読み取り専用であるため、エイリアスは削除されませんでした。</value>
   </data>
   <data name="FunctionNotRemovable" xml:space="preserve">
-    <value>Cannot remove function {0} because it is constant.</value>
+    <value>関数 {0} は定数であるため、削除できません。</value>
   </data>
   <data name="VariableNotRemovable" xml:space="preserve">
-    <value>Cannot remove variable {0} because it is constant or read-only. If the variable is read-only, try the operation again specifying the Force option.</value>
+    <value>変数 {0} は定数または読み取り専用であるため、削除できません。変数が読み取り専用の場合は、Force オプションを指定して操作を再試行してください。</value>
   </data>
   <data name="AliasIsConstant" xml:space="preserve">
-    <value>Alias {0} cannot be modified because it is constant.</value>
+    <value>エイリアス {0} は定数のため変更できません。</value>
   </data>
   <data name="AliasIsReadOnly" xml:space="preserve">
-    <value>Alias {0} cannot be modified because it is read-only.</value>
+    <value>エイリアス {0} は読み取り専用のため変更できません。</value>
   </data>
   <data name="FunctionIsConstant" xml:space="preserve">
-    <value>Cannot modify function {0} because it is constant.</value>
+    <value>関数 {0} は定数であるため、変更できません。</value>
   </data>
   <data name="FunctionIsReadOnly" xml:space="preserve">
-    <value>Cannot modify function {0} because it is read-only.</value>
+    <value>関数 {0} は読み取り専用のため、変更できません。</value>
   </data>
   <data name="AliasCannotBeMadeConstant" xml:space="preserve">
-    <value>Alias {0} cannot be made constant after it has been created. Aliases can only be made constant at creation time.</value>
+    <value>エイリアス {0} は、作成後に定数にすることはできません。エイリアスは作成時にのみ定数にできます。</value>
   </data>
   <data name="FunctionCannotBeMadeConstant" xml:space="preserve">
-    <value>Existing function {0} cannot be made constant. Functions can be made constant only at creation time.</value>
+    <value>既存の関数 {0} を定数にすることはできません。関数は、作成時にのみ定数にすることができます。</value>
   </data>
   <data name="VariableCannotBeMadeConstant" xml:space="preserve">
-    <value>Existing variable {0} cannot be made constant. Variables can be made constant only at creation time.</value>
+    <value>既存の変数 {0} を定数にすることはできません。変数は、作成時にのみ定数にすることができます。</value>
   </data>
   <data name="AliasAllScopeOptionCannotBeRemoved" xml:space="preserve">
-    <value>The AllScope option cannot be removed from the alias '{0}'.</value>
+    <value>AllScope オプションをエイリアス '{0}' から削除することはできません。</value>
   </data>
   <data name="FunctionAllScopeOptionCannotBeRemoved" xml:space="preserve">
-    <value>The AllScope option cannot be removed from the function '{0}'.</value>
+    <value>AllScope オプションを関数 '{0}' から削除することはできません。</value>
   </data>
   <data name="VariableAllScopeOptionCannotBeRemoved" xml:space="preserve">
-    <value>The AllScope option cannot be removed from the variable '{0}'.</value>
+    <value>AllScope オプションを変数 '{0}' から削除することはできません。</value>
   </data>
   <data name="ScopedFunctionMustHaveName" xml:space="preserve">
-    <value>The function definition '{0}' contained a scope qualifier but no function name.</value>
+    <value>関数定義 '{0}' にスコープ修飾子が含まれていましたが、関数名が含まれていませんでした。</value>
   </data>
   <data name="RemoveDrivesBeforeRemovingProvider" xml:space="preserve">
-    <value>Cannot remove provider {0}. All drives associated with provider {0} must be removed before provider {0} can be removed.</value>
+    <value>プロバイダー {0} を削除できません。プロバイダー {0} を削除する前に、プロバイダー {0} に関連付けられているすべてのドライブを削除する必要があります。</value>
   </data>
   <data name="DriveNameIllegalCharacters" xml:space="preserve">
-    <value>Cannot process the drive name because the drive name contains one or more of the following characters that are not valid: ; ~ / \ . :</value>
+    <value>ドライブ名に無効な次の文字が 1 つ以上含まれているため、ドライブ名を処理できません: ;~ / \ .:</value>
   </data>
   <data name="NewDriveProviderFailed" xml:space="preserve">
-    <value>New drive creation failed because the provider does not allow the creation of the new drive.</value>
+    <value>プロバイダーが新しいドライブの作成を許可していないため、新しいドライブの作成に失敗しました。</value>
   </data>
   <data name="StackNameResolvedToMultiple" xml:space="preserve">
-    <value>The provided value '{0}' resolved to more than one location stack.</value>
+    <value>指定された値 '{0}' は複数の場所スタックに解決されました。</value>
   </data>
   <data name="StackNotFound" xml:space="preserve">
-    <value>Cannot find location stack '{0}'. It does not exist or it is not a container.</value>
+    <value>場所スタック '{0}' が見つかりません。存在しないか、コンテナーではありません。</value>
   </data>
   <data name="PathNotFound" xml:space="preserve">
     <value>パス '{0}' は存在しないため、見つかりません。</value>
   </data>
   <data name="AliasNotFound" xml:space="preserve">
-    <value>Cannot find alias because alias '{0}' does not exist.</value>
+    <value>エイリアス '{0}' が存在しないため、エイリアスが見つかりません。</value>
   </data>
   <data name="PathResolvedToMultiple" xml:space="preserve">
-    <value>Cannot set the location because path '{0}' resolved to multiple containers. You can only set the location to a single container at a time.</value>
+    <value>パス '{0}' が複数のコンテナーに解決されたため、場所を設定できません。一度に設定できるコンテナーは 1 つだけです。</value>
   </data>
   <data name="VariablePathResolvedToMultiple" xml:space="preserve">
-    <value>Cannot process variable because variable path '{0}' resolved to multiple items. You can get or set the variable value only one item at a time.</value>
+    <value>変数パス '{0}' が複数の項目に解決されたため、変数を処理できません。変数値は、一度に 1 つの項目のみを取得または設定できます。</value>
   </data>
   <data name="DriveNotFound" xml:space="preserve">
-    <value>Cannot find drive. A drive with the name '{0}' does not exist.</value>
+    <value>ドライブが見つかりません。'{0}' という名前のドライブは存在しません。</value>
   </data>
   <data name="ProviderNotFound" xml:space="preserve">
-    <value>Cannot find a provider with the name '{0}'.</value>
+    <value>'{0}' という名前のプロバイダーが見つかりません。</value>
   </data>
   <data name="ProviderNotFoundBadFormat" xml:space="preserve">
-    <value>Cannot find a provider with the name '{0}'. The name is not in the proper format. A provider name can only be alphanumeric characters, or a PowerShell snap-in name that is followed by a single '\', followed by alphanumeric characters.</value>
+    <value>'{0}' という名前のプロバイダーが見つかりません。名前の形式が正しくありません。プロバイダー名には、英数字、または 1 つの '\' の後に英数字が続く PowerShell スナップイン名のみを指定できます。</value>
   </data>
   <data name="ProviderNameAmbiguous" xml:space="preserve">
-    <value>'{0}' resolved to more than one provider name. Possible matches include:{1}.</value>
+    <value>'{0}' が複数のプロバイダー名に解決されました。一致の可能性は次のとおりです:{1}。</value>
   </data>
   <data name="ProviderNotFoundInAssembly" xml:space="preserve">
-    <value>An error occurred attempting to create an instance of the provider. The provider type name of '{0}' could not be found in the assembly.</value>
+    <value>プロバイダーのインスタンスの作成でエラーが発生しました。'{0}' のプロバイダー型名がアセンブリに見つかりませんでした。</value>
   </data>
   <data name="ProviderNameNotValid" xml:space="preserve">
-    <value>The specified provider name '{0}' cannot be used because it contains one or more of the following characters that are not valid: \ [ ] ? * :</value>
+    <value>無効な次の文字が 1 つ以上含まれているため、指定されたプロバイダー名 '{0}' を使用できません: \ [ ] ?* :</value>
   </data>
   <data name="ProviderCtorException" xml:space="preserve">
-    <value>An error occurred attempting to create an instance of the provider '{0}'. {1} </value>
+    <value>プロバイダー '{0}' のインスタンスの作成中にエラーが発生しました。{1}</value>
   </data>
   <data name="VariableNotFound" xml:space="preserve">
-    <value>Cannot find a variable with the name '{0}'.</value>
+    <value>'{0}' という名前の変数が見つかりません。</value>
   </data>
   <data name="TraceSourceNotFound" xml:space="preserve">
-    <value>Cannot find a trace source with the name '{0}'.</value>
+    <value>'{0}' という名前のトレース ソースが見つかりません。</value>
   </data>
   <data name="DriveAlreadyExists" xml:space="preserve">
-    <value>A drive with the name '{0}' already exists.</value>
+    <value>'{0}' という名前のドライブは既に存在します。</value>
   </data>
   <data name="VariableAlreadyExists" xml:space="preserve">
-    <value>A variable with name '{0}' already exists.</value>
+    <value>名前 '{0}' の変数は既に存在します。</value>
   </data>
   <data name="AliasAlreadyExists" xml:space="preserve">
-    <value>The alias is not allowed, because an alias with the name '{0}' already exists.</value>
+    <value>'{0}' という名前のエイリアスが既に存在するため、エイリアスは使用できません。</value>
   </data>
   <data name="CmdletProviderAlreadyExists" xml:space="preserve">
-    <value>Cannot register the cmdlet provider because a cmdlet provider with the name '{0}' already exists.</value>
+    <value>'{0}' という名前のコマンドレット プロバイダーが既に存在するため、コマンドレット プロバイダーを登録できません。</value>
   </data>
   <data name="MustBeFileSystemPath" xml:space="preserve">
-    <value>The path does not refer to a file system path.</value>
+    <value>パスはファイル システム パスを参照していません。</value>
   </data>
   <data name="GlobalScopeCannotRemove" xml:space="preserve">
-    <value>Global scope cannot be removed.</value>
+    <value>グローバル スコープを削除できません。</value>
   </data>
   <data name="ScopeIDExceedsAvailableScopes" xml:space="preserve">
-    <value>The scope number '{0}' exceeds the number of active scopes.</value>
+    <value>スコープ番号 '{0}' がアクティブなスコープの数を超えています。</value>
   </data>
   <data name="OnlyAbleToComparePSDriveInfo" xml:space="preserve">
-    <value>Cannot compare PSDriveInfo. A PSDriveInfo instance can be compared only to another PSDriveInfo instance.</value>
+    <value>PSDriveInfo を比較できません。PSDriveInfo インスタンスは、別の PSDriveInfo インスタンスとのみ比較できます。</value>
   </data>
   <data name="OutputStreamingNotEnabled" xml:space="preserve">
-    <value>The cmdlet provider cannot stream the results because no cmdlet was specified through which to stream the output.</value>
+    <value>コマンドレット プロバイダーは、出力のストリーミングに使用するコマンドレットが指定されていないため、結果をストリームできません。</value>
   </data>
   <data name="ErrorStreamingNotEnabled" xml:space="preserve">
-    <value>The cmdlet provider cannot stream the results because no cmdlet was specified through which to stream the error.</value>
+    <value>コマンドレット プロバイダーは、エラーのストリーミングに使用するコマンドレットが指定されていないため、結果をストリームできません。</value>
   </data>
   <data name="HomePathNotSet" xml:space="preserve">
-    <value>Home location for this provider is not set. To set the home location, call "(get-psprovider '{0}').Home = 'path'".</value>
+    <value>このプロバイダーのホームの場所が設定されていません。ホームの場所を設定するには、"(get-psprovider'{0}') を呼び出します。ホーム = 'path'"。</value>
   </data>
   <data name="NotProviderQualifiedPath" xml:space="preserve">
-    <value>The path is not in the correct format. Provider paths must contain a provider Id, followed by "::", followed by a provider specific path.</value>
+    <value>パスが不適切な形式です。プロバイダー パスには、プロバイダー ID と "::" の後にプロバイダー固有のパスが含まれている必要があります。</value>
   </data>
   <data name="MovePropertyDestinationResolveToSingle" xml:space="preserve">
-    <value>Cannot move the item because the destination path can resolve only to a single path.</value>
+    <value>移動先のパスは 1 つのパスにのみ解決できるため、項目を移動できません。</value>
   </data>
   <data name="MoveItemSourceAndDestinationNotSameProvider" xml:space="preserve">
-    <value>Cannot move the item because the source and destination paths did not resolve to the same provider.</value>
+    <value>ソース パスと宛先パスが同じプロバイダーに解決されなかったため、項目を移動できません。</value>
   </data>
   <data name="MoveItemPathMultipleDestinationNotContainer" xml:space="preserve">
-    <value>Cannot move the item because the source path points to one or more items and the destination path is not a container. Validate that the destination path is a container and try again.</value>
+    <value>ソース パスが 1 つ以上の項目を指しており、宛先パスがコンテナーではないため、項目を移動できません。宛先パスがコンテナーであることを確認してから、もう一度やり直してください。</value>
   </data>
   <data name="MoveItemOneDestination" xml:space="preserve">
-    <value>Cannot move the item because the destination resolved to multiple paths. Specify a destination path that resolves to a single destination and try again.</value>
+    <value>宛先が複数のパスに解決されたため、項目を移動できません。1 つの宛先に解決される宛先パスを指定してから、もう一度お試しください。</value>
   </data>
   <data name="CopyContainerItemToLeafError" xml:space="preserve">
-    <value>Container cannot be copied onto existing leaf item.</value>
+    <value>コンテナーを既存のリーフ項目にコピーすることはできません。</value>
   </data>
   <data name="CopyContainerToContainerWithoutRecurseOrContainer" xml:space="preserve">
-    <value>Container cannot be copied to another container. The -Recurse or -Container parameter is not specified.</value>
+    <value>コンテナーを別のコンテナーにコピーすることはできません。-Recurse パラメーターまたは -Container パラメーターが指定されていません。</value>
   </data>
   <data name="CopyItemSourceAndDestinationNotSameProvider" xml:space="preserve">
-    <value>Source and destination path did not resolve to the same provider.</value>
+    <value>ソース パスと宛先パスが同じプロバイダーに解決されませんでした。</value>
   </data>
   <data name="RenameMultipleItemError" xml:space="preserve">
-    <value>Cannot rename item because the path resolved to multiple items. Only one item can be renamed at a time.</value>
+    <value>パスが複数の項目に解決されたため、項目の名前を変更できません。一度に名前を変更できる項目は 1 つだけです。</value>
   </data>
   <data name="ProviderImplementationInconsistent" xml:space="preserve">
-    <value>The provider '{0}' cannot be used to resolve the path '{1}' because of an error in the provider.</value>
+    <value>プロバイダーでエラーが発生したため、プロバイダー '{0}' を使用してパス '{1}' を解決することはできません。</value>
   </data>
   <data name="IContentCmdletProvider_NotSupported" xml:space="preserve">
-    <value>Cannot use interface. The IContentCmdletProvider interface is not implemented by this provider.</value>
+    <value>インターフェイスを使用できません。IContentCmdletProvider インターフェイスは、このプロバイダーによって実装されていません。</value>
   </data>
   <data name="IPropertyCmdletProvider_NotSupported" xml:space="preserve">
-    <value>Cannot use interface. The IPropertyCmdletProvider interface is not supported by this provider.</value>
+    <value>インターフェイスを使用できません。IPropertyCmdletProvider インターフェイスは、このプロバイダーではサポートされていません。</value>
   </data>
   <data name="IDynamicPropertyCmdletProvider_NotSupported" xml:space="preserve">
-    <value>Cannot use interface. The IDynamicPropertyCmdletProvider interface is not implemented by this provider.</value>
+    <value>インターフェイスを使用できません。IDynamicPropertyCmdletProvider インターフェイスは、このプロバイダーによって実装されていません。</value>
   </data>
   <data name="NavigationCmdletProvider_NotSupported" xml:space="preserve">
-    <value>The NavigationCmdletProvider methods are not supported by this provider.</value>
+    <value>NavigationCmdletProvider メソッドは、このプロバイダーではサポートされていません。</value>
   </data>
   <data name="ContainerCmdletProvider_NotSupported" xml:space="preserve">
-    <value>Provider methods not processed. The ContainerCmdletProvider methods are not supported by this provider.</value>
+    <value>プロバイダー メソッドが処理されませんでした。ContainerCmdletProvider メソッドは、このプロバイダーではサポートされていません。</value>
   </data>
   <data name="ItemCmdletProvider_NotSupported" xml:space="preserve">
-    <value>Cannot call methods. The ItemCmdletProvider methods are not supported by this provider.</value>
+    <value>メソッドを呼び出せません。ItemCmdletProvider メソッドは、このプロバイダーではサポートされていません。</value>
   </data>
   <data name="DriveCmdletProvider_NotSupported" xml:space="preserve">
-    <value>DriveCmdletProvider methods are not supported by this provider.</value>
+    <value>DriveCmdletProvider メソッドは、このプロバイダーではサポートされていません。</value>
   </data>
   <data name="CmdletProvider_NotSupported" xml:space="preserve">
-    <value>Provider operation stopped because the provider does not support this operation.</value>
+    <value>プロバイダーがこの操作をサポートしていないため、プロバイダー操作が停止しました。</value>
   </data>
   <data name="CmdletProvider_NotSupportedRecursionDepth" xml:space="preserve">
-    <value>Provider operation stopped because the provider does not support the 'Depth' parameter.</value>
+    <value>プロバイダーが 'Depth' パラメーターをサポートしていないため、プロバイダー操作が停止しました。</value>
   </data>
   <data name="IContent_Seek_NotSupported" xml:space="preserve">
-    <value>Cannot call method. The content Seek method is not supported by this provider.</value>
+    <value>メソッドを呼び出すことはできません。コンテンツ シーク メソッドは、このプロバイダーではサポートされていません。</value>
   </data>
   <data name="IContent_Clear_NotSupported" xml:space="preserve">
-    <value>Cannot perform the ClearContent operation. The ClearContent operation is not supported by this provider.</value>
+    <value>ClearContent 操作を実行できません。ClearContent 操作は、このプロバイダーではサポートされていません。</value>
   </data>
   <data name="Credentials_NotSupported" xml:space="preserve">
-    <value>The provider does not support the use of credentials. Perform the operation again without specifying credentials.</value>
+    <value>プロバイダーは資格情報の使用をサポートしていません。資格情報を指定せずに操作をもう一度実行してください。</value>
   </data>
   <data name="FileSystemProviderCredentials_NotSupported" xml:space="preserve">
-    <value>The FileSystem provider supports credentials only on the New-PSDrive cmdlet. Perform the operation again without specifying credentials.</value>
+    <value>FileSystem プロバイダーは、New-PSDrive コマンドレットでのみ資格情報をサポートします。資格情報を指定せずに操作をもう一度実行してください。</value>
   </data>
   <data name="Transactions_NotSupported" xml:space="preserve">
-    <value>The provider does not support transactions. Perform the operation again without the -UseTransaction parameter.</value>
+    <value>プロバイダーはトランザクションをサポートしていません。-UseTransaction パラメーターを指定せずに操作をもう一度実行します。</value>
   </data>
   <data name="Filter_NotSupported" xml:space="preserve">
-    <value>Cannot call method. The provider does not support the use of filters.</value>
+    <value>メソッドを呼び出すことはできません。プロバイダーはフィルターの使用をサポートしていません。</value>
   </data>
   <data name="NewDriveCredentials_NotSupported" xml:space="preserve">
-    <value>Cannot create drive. The provider does not support the use of credentials.</value>
+    <value>ドライブを作成できません。プロバイダーは資格情報の使用をサポートしていません。</value>
   </data>
   <data name="NewItemAlreadyExists" xml:space="preserve">
-    <value>The item at path '{0}' already exists.</value>
+    <value>パス '{0}' の項目は既に存在します。</value>
   </data>
   <data name="CopyItemDoesntExist" xml:space="preserve">
-    <value>Cannot copy item. Item at the path '{0}' does not exist.</value>
+    <value>項目をコピーできません。パス '{0}' の項目が存在しません。</value>
   </data>
   <data name="RenameItemDoesntExist" xml:space="preserve">
-    <value>The item at the path '{0}' does not exist.</value>
+    <value>パス '{0}' の項目が存在しません。</value>
   </data>
   <data name="AliasDriveDescription" xml:space="preserve">
-    <value>Drive that contains a view of the aliases stored in a session state</value>
+    <value>セッション状態に格納されているエイリアスのビューを含むドライブ</value>
   </data>
   <data name="EnvironmentDriveDescription" xml:space="preserve">
-    <value>Drive that contains a view of the environment variables for the process</value>
+    <value>プロセスの環境変数のビューを含むドライブ</value>
   </data>
   <data name="FunctionDriveDescription" xml:space="preserve">
-    <value>Drive that contains a view of the functions stored in a session state</value>
+    <value>セッション状態に格納されている関数のビューを含むドライブ</value>
   </data>
   <data name="VariableDriveDescription" xml:space="preserve">
-    <value>Drive that contains a view of those variables stored in a session state</value>
+    <value>セッション状態に格納されているそれらの変数のビューを含むドライブ</value>
   </data>
   <data name="TempDriveDescription" xml:space="preserve">
-    <value>Drive that maps to the temporary directory path for the current user</value>
+    <value>現在のユーザーの一時ディレクトリ パスにマップされるドライブ</value>
   </data>
   <data name="NewLinkTargetNotSpecified" xml:space="preserve">
-    <value>Link '{0}' cannot be created because the target Value was not specified.</value>
+    <value>ターゲット値が指定されていないため、リンク '{0}' を作成できません。</value>
   </data>
   <data name="DollarNullDescription" xml:space="preserve">
-    <value>References to the null variable always return the null value. Assignments have no effect.</value>
+    <value>null 変数への参照は、常に null 値を返します。割り当ては無効です。</value>
   </data>
   <data name="MaxHistoryCountDescription" xml:space="preserve">
-    <value>Maximum number of history objects to retain in a session</value>
+    <value>セッションで保持する履歴オブジェクトの最大数</value>
   </data>
   <data name="CannotRenameFunction" xml:space="preserve">
-    <value>Cannot rename function because function {0} is read-only or constant.</value>
+    <value>関数 {0} が読み取り専用または定数であるため、関数の名前を変更できません。</value>
   </data>
   <data name="CannotRenameAlias" xml:space="preserve">
-    <value>Cannot rename alias because alias {0} is read-only or constant.</value>
+    <value>エイリアスの名前を変更できません。エイリアス {0} は読み取り専用または定数です。</value>
   </data>
   <data name="CannotRenameVariable" xml:space="preserve">
-    <value>Cannot rename variable because variable {0} is read-only or constant.</value>
+    <value>変数 {0} が読み取り専用または定数であるため、変数の名前を変更できません。</value>
   </data>
   <data name="VariableOptionsNotSettable" xml:space="preserve">
-    <value>Cannot set options on the local variable {0}. Use New-Variable to create a variable that allows options to be set.</value>
+    <value>ローカル変数 {0} にオプションを設定できません。New-Variable を使用して、オプションを設定できる変数を作成してください。</value>
   </data>
   <data name="CmdletIsReadOnly" xml:space="preserve">
-    <value>Cmdlet {0} cannot be modified because it is read-only.</value>
+    <value>コマンドレット {0} は読み取り専用のため変更できません。</value>
   </data>
   <data name="VariableNotRemovableRare" xml:space="preserve">
-    <value>Cannot remove variable {0} because the variable has been optimized and is not removable. Try using the Remove-Variable cmdlet (without any aliases), or dot-sourcing the command that you are using to remove the variable.</value>
+    <value>変数が最適化されており、削除できないため、変数 {0} を削除できません。Remove-Variable コマンドレット (エイリアスなし) を使用するか、変数を削除するために使用しているコマンドをドットソース化してみてください。</value>
   </data>
   <data name="VariableNotWritableRare" xml:space="preserve">
-    <value>Cannot overwrite variable {0} because the variable has been optimized. Try using the New-Variable or Set-Variable cmdlet (without any aliases), or dot-source the command that you are using to set the variable.</value>
+    <value>変数が最適化されているため、変数 {0} を上書きできません。New-Variable コマンドレットまたは Set-Variable コマンドレット (エイリアスなし) を使用するか、変数の設定に使用しているコマンドをドットソースで指定します。</value>
   </data>
   <data name="GetContent_TailAndHeadCannotCoexist" xml:space="preserve">
-    <value>The parameters {0} and {1} cannot be used together. Please specify only one parameter.</value>
+    <value>{0} パラメーターと {1} パラメーターを一緒に使用することはできません。パラメーターを 1 つだけ指定してください。</value>
   </data>
   <data name="GetContent_TailNotSupported" xml:space="preserve">
-    <value>The Tail parameter currently is supported only for the FileSystem provider.</value>
+    <value>Tail パラメーターは現在、FileSystem プロバイダーでのみサポートされています。</value>
   </data>
   <data name="AliasWithCommandNameAlreadyExists" xml:space="preserve">
-    <value>The alias is not allowed, because a command with the name '{0}' and command type '{1}' already exists.</value>
+    <value>'{0}' という名前のコマンドとコマンドの種類 '{1}' が既に存在するため、エイリアスは使用できません。</value>
   </data>
   <data name="CanNotRun" xml:space="preserve">
-    <value>Cannot run software. Permission is denied.</value>
+    <value>ソフトウェアを実行できません。アクセス許可が拒否されました。</value>
   </data>
   <data name="CopyItemFromSessionToSession" xml:space="preserve">
-    <value>'-{0}' and '-{1}' are mutually exclusive and cannot be specified at the same time.</value>
+    <value>'-{0}' と '-{1}' は相互に排他的であり、同時に指定することはできません。</value>
   </data>
   <data name="CopyItemRemotelyPathIsNotAbsolute" xml:space="preserve">
-    <value>The path '{0}' is not valid. Only absolute paths are supported on remote copy operations.</value>
+    <value>パス '{0}' が無効です。リモート コピー操作では、絶対パスのみがサポートされます。</value>
   </data>
   <data name="CopyItemValidateRemotePath" xml:space="preserve">
-    <value>Cannot validate remote path '{0}'.</value>
+    <value>リモート パス '{0}' を検証できません。</value>
   </data>
   <data name="CopyItemSessionProperties" xml:space="preserve">
-    <value>Cannot perform operation because the session {0} is set to {1}.</value>
+    <value>セッション {0} が {1} に設定されているため、操作を実行できません。</value>
   </data>
   <data name="CopyItemRemotelyPathIsNullOrEmpty" xml:space="preserve">
-    <value>'{0}' parameter cannot be null or empty.</value>
+    <value>'{0}' パラメーターを null 値や空にすることはできません。</value>
   </data>
   <data name="WDACSessionStateVarLogTitle" xml:space="preserve">
-    <value>Session State Variables</value>
+    <value>セッション状態変数</value>
   </data>
   <data name="WDACSessionStateVarLogMessage" xml:space="preserve">
-    <value>Changing or creating the variable '{0}' scope to AllScope will be prevented in ConstrainedLanguage mode.</value>
+    <value>変数 '{0}' スコープを AllScope に変更または作成することは、ConstrainedLanguage モードでは禁止されます。</value>
   </data>
 </root>

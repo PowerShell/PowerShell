@@ -118,6 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NoEntriesFound" xml:space="preserve">
-    <value>Cannot find the requested hotfix on the '{0}' computer. Verify the input and run the command again.</value>
+    <value>在 '{0}' 電腦上找不到要求的 Hotfix。驗證輸入，然後再次執行命令。</value>
   </data>
 </root>

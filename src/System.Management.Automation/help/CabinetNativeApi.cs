@@ -251,6 +251,17 @@ namespace System.Management.Automation.Internal
             {
                 return new IntPtr(-1);
             }
+            catch (Exception e) when (e is UnauthorizedAccessException ||
+                                       e is ArgumentException ||
+                                       e is NotSupportedException ||
+                                       e is System.Security.SecurityException)
+            {
+                // FdiOpen is used both as a reverse-P/Invoke callback (invoked by the native
+                // FDI engine) and as a direct call from FdiNotify to create the destination file.
+                // In either path it must never throw across native FDI frames; return -1 to
+                // signal open failure, matching the IOException handler above.
+                return new IntPtr(-1);
+            }
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
@@ -315,17 +326,26 @@ namespace System.Management.Automation.Internal
 
         internal static int FdiClose(IntPtr fp)
         {
-            GCHandle handle = GCHandle.FromIntPtr(fp);
-            FileStream stream = (FileStream)handle.Target;
-
-            if (stream == null)
+            if (fp == IntPtr.Zero || fp == new IntPtr(-1))
             {
                 return -1;
             }
-            else
+
+            GCHandle handle = GCHandle.FromIntPtr(fp);
+            try
             {
+                FileStream stream = (FileStream)handle.Target;
+                if (stream == null)
+                {
+                    return -1;
+                }
+
                 stream.Dispose();
                 return 0;
+            }
+            catch (IOException)
+            {
+                return -1;
             }
         }
 
@@ -354,6 +374,70 @@ namespace System.Management.Automation.Internal
         [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal delegate IntPtr FdiNotifyDelegate(FdiNotificationType fdint, FdiNotification fdin);
 
+        /// <summary>
+        /// Validates that the extraction path is within the intended help directory.
+        /// Ensures proper handling of absolute paths, UNC paths, and relative path components.
+        /// </summary>
+        /// <param name="helpDirectory">The intended help directory for extraction.</param>
+        /// <param name="entryPath">The path from the CAB entry.</param>
+        /// <returns>The validated absolute file path.</returns>
+        /// <exception cref="InvalidOperationException">Thrown when path validation fails.</exception>
+        private static string ValidateExtractionPath(string helpDirectory, string entryPath)
+        {
+            // Reject empty CAB entry names that would otherwise resolve to the help directory root.
+            if (string.IsNullOrEmpty(entryPath))
+            {
+                throw new InvalidOperationException(
+                    $"CAB entry contains an empty path: '{entryPath}'");
+            }
+
+            // Reject absolute paths, UNC paths, or rooted paths in CAB entries
+            if (Path.IsPathRooted(entryPath))
+            {
+                throw new InvalidOperationException(
+                    $"CAB entry contains an invalid rooted path: {entryPath}");
+            }
+
+            // Reject paths containing a colon to block Windows Alternate Data Streams (e.g. "file.txt:payload").
+            // Path.IsPathRooted and Path.GetFullPath do not reject these on .NET Core.
+            if (entryPath.Contains(':'))
+            {
+                throw new InvalidOperationException(
+                    $"CAB entry contains an invalid path with a colon: {entryPath}");
+            }
+
+            // Get the canonical (absolute) help directory path with trailing separator
+            // The trailing separator is needed to prevent false positive matches where a directory
+            // name is a prefix of another (e.g., "/path/help" matching "/path/help-backup/file.txt")
+            string canonicalHelpDir = Path.GetFullPath(helpDirectory);
+            if (!canonicalHelpDir.EndsWith(Path.DirectorySeparatorChar.ToString()))
+            {
+                canonicalHelpDir += Path.DirectorySeparatorChar;
+            }
+
+            // Combine and resolve the full extraction path
+            string candidatePath = Path.Combine(helpDirectory, entryPath);
+            string resolvedPath = Path.GetFullPath(candidatePath);
+
+            // Ensure resolved path starts with the canonical help directory.
+            // OrdinalIgnoreCase is intentional: NTFS on Windows is case-insensitive, so two paths that
+            // differ only in case refer to the same file and must be treated as equivalent here.
+            if (!resolvedPath.StartsWith(canonicalHelpDir, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidOperationException(
+                    $"CAB entry path is invalid. Entry '{entryPath}' would extract to '{resolvedPath}' which is outside the intended directory '{canonicalHelpDir}'");
+            }
+
+            // Reject entries that resolve exactly to the help directory root (e.g. empty entries).
+            if (resolvedPath.Length <= canonicalHelpDir.Length)
+            {
+                throw new InvalidOperationException(
+                    $"CAB entry '{entryPath}' resolves to the help directory root '{canonicalHelpDir}'");
+            }
+
+            return resolvedPath;
+        }
+
         // Handles FDI notification
         internal static IntPtr FdiNotify(FdiNotificationType fdint, FdiNotification fdin)
         {
@@ -361,61 +445,116 @@ namespace System.Management.Automation.Internal
             {
                 case FdiNotificationType.FdintCOPY_FILE:
                     {
-                        // TODO: Should I catch exceptions for the new functions?
+                        // Get the intended help directory
+                        string helpDirectory = Marshal.PtrToStringAnsi(fdin.pv);
+                        string absoluteFilePath;
 
-                        // Copy target directory
-                        string destPath = Marshal.PtrToStringAnsi(fdin.pv);
+                        try
+                        {
+                            // fdin.psz1 should contain a relative path from the CAB entry
+                            absoluteFilePath = ValidateExtractionPath(helpDirectory, fdin.psz1);
+                            // Create all intermediate directories if necessary
+                            string directoryPath = Path.GetDirectoryName(absoluteFilePath);
+                            Directory.CreateDirectory(directoryPath);
+                        }
+                        catch (Exception e) when (e is InvalidOperationException ||
+                                                    e is ArgumentNullException ||
+                                                    e is ArgumentException ||
+                                                    e is NotSupportedException ||
+                                                    e is PathTooLongException ||
+                                                    e is System.Security.SecurityException ||
+                                                    e is IOException ||
+                                                    e is UnauthorizedAccessException)
+                        {
+                            // Path validation failed or directory could not be created - reject this CAB entry
+                            return new IntPtr(-1);
+                        }
 
-                        // Split the path to a filename and path
-                        string fileName = Path.GetFileName(fdin.psz1);
-                        string remainingPsz1Path = Path.GetDirectoryName(fdin.psz1);
-                        destPath = Path.Combine(destPath, remainingPsz1Path);
-
-                        Directory.CreateDirectory(destPath); // Creates all intermediate directories if necessary.
-
-                        // Create the file
-                        string absoluteFilePath = Path.Combine(destPath, fileName);
-                        return CabinetNativeApi.FdiOpen(absoluteFilePath, (int)OpFlags.Create, (int)(PermissionMode.Read | PermissionMode.Write)); // TODO: OK to ignore _O_SEQUENTIAL, WrOnly, and _O_BINARY?
+                        // Note: OpFlags.Create and PermissionMode.Read|Write are sufficient for CAB extraction.
+                        // The cabinet.dll API doesn't require _O_SEQUENTIAL, _O_WRONLY, or _O_BINARY flags.
+                        return CabinetNativeApi.FdiOpen(absoluteFilePath, (int)OpFlags.Create, (int)(PermissionMode.Read | PermissionMode.Write));
                     }
                 case FdiNotificationType.FdintCLOSE_FILE_INFO:
                     {
                         // Close the file
-                        CabinetNativeApi.FdiClose(fdin.hf);
+                        int closeResult = CabinetNativeApi.FdiClose(fdin.hf);
 
-                        // Set the file attributes
-                        string destPath = Marshal.PtrToStringAnsi(fdin.pv);
-                        string absoluteFilePath = Path.Combine(destPath, fdin.psz1);
-
-                        IntPtr hFile = PlatformInvokes.CreateFile(
-                            absoluteFilePath,
-                            PlatformInvokes.FileDesiredAccess.GenericRead | PlatformInvokes.FileDesiredAccess.GenericWrite,
-                            PlatformInvokes.FileShareMode.Read,
-                            IntPtr.Zero,
-                            PlatformInvokes.FileCreationDisposition.OpenExisting,
-                            PlatformInvokes.FileAttributes.Normal,
-                            IntPtr.Zero);
-
-                        if (hFile != IntPtr.Zero)
+                        // FDI's FNFDINOTIFY contract uses FALSE (0) to signal a CLOSE_FILE_INFO
+                        // failure. A non-zero FdiClose result here means the final flush/Dispose
+                        // failed (e.g. disk-full / I/O error), leaving a truncated file on disk;
+                        // abort this entry rather than reporting a corrupt extraction as success.
+                        if (closeResult != 0)
                         {
-                            PlatformInvokes.FILETIME ftFile = new PlatformInvokes.FILETIME();
-                            if (PlatformInvokes.DosDateTimeToFileTime(fdin.date, fdin.time, ftFile))
-                            {
-                                PlatformInvokes.FILETIME ftLocal = new PlatformInvokes.FILETIME();
-                                if (PlatformInvokes.LocalFileTimeToFileTime(ftFile, ftLocal))
-                                {
-                                    PlatformInvokes.SetFileTime(hFile, ftLocal, null, ftLocal);
-                                }
-                            }
-
-                            PlatformInvokes.CloseHandle(hFile);
+                            return IntPtr.Zero;
                         }
 
-                        PlatformInvokes.SetFileAttributesW(
-                            absoluteFilePath,
-                            (PlatformInvokes.FileAttributes)fdin.attribs & (PlatformInvokes.FileAttributes.ReadOnly | PlatformInvokes.FileAttributes.Hidden | PlatformInvokes.FileAttributes.System | PlatformInvokes.FileAttributes.Archive));
+                        // Get the intended help directory
+                        string helpDirectory = Marshal.PtrToStringAnsi(fdin.pv);
+                        string absoluteFilePath;
+
+                        try
+                        {
+                            absoluteFilePath = ValidateExtractionPath(helpDirectory, fdin.psz1);
+                        }
+                        catch (Exception e) when (e is InvalidOperationException ||
+                                                    e is ArgumentNullException ||
+                                                    e is ArgumentException ||
+                                                    e is NotSupportedException ||
+                                                    e is PathTooLongException ||
+                                                    e is System.Security.SecurityException)
+                        {
+                            // Path validation failed - reject this CAB entry
+                            return new IntPtr(0);
+                        }
+
+                        try
+                        {
+                            IntPtr hFile = PlatformInvokes.CreateFile(
+                                absoluteFilePath,
+                                PlatformInvokes.FileDesiredAccess.GenericRead | PlatformInvokes.FileDesiredAccess.GenericWrite,
+                                PlatformInvokes.FileShareMode.Read,
+                                IntPtr.Zero,
+                                PlatformInvokes.FileCreationDisposition.OpenExisting,
+                                PlatformInvokes.FileAttributes.Normal,
+                                IntPtr.Zero);
+
+                            // CreateFile returns INVALID_HANDLE_VALUE (-1) on failure, not Zero.
+                            bool validHandle = hFile != IntPtr.Zero && hFile != new IntPtr(-1);
+
+                            if (validHandle)
+                            {
+                                PlatformInvokes.FILETIME ftFile = new PlatformInvokes.FILETIME();
+                                if (PlatformInvokes.DosDateTimeToFileTime(fdin.date, fdin.time, ftFile))
+                                {
+                                    PlatformInvokes.FILETIME ftLocal = new PlatformInvokes.FILETIME();
+                                    if (PlatformInvokes.LocalFileTimeToFileTime(ftFile, ftLocal))
+                                    {
+                                        PlatformInvokes.SetFileTime(hFile, ftLocal, null, ftLocal);
+                                    }
+                                }
+
+                                PlatformInvokes.CloseHandle(hFile);
+                            }
+
+                            PlatformInvokes.SetFileAttributesW(
+                                absoluteFilePath,
+                                (PlatformInvokes.FileAttributes)fdin.attribs & (PlatformInvokes.FileAttributes.ReadOnly | PlatformInvokes.FileAttributes.Hidden | PlatformInvokes.FileAttributes.System | PlatformInvokes.FileAttributes.Archive));
+
+                        }
+                        catch (Exception e) when (e is IOException ||
+                                    e is UnauthorizedAccessException ||
+                                    e is System.Security.SecurityException)
+                        {
+                            return new IntPtr(0);
+                        }
 
                         // Call notification function
                         return new IntPtr(1);
+                    }
+                case FdiNotificationType.FdintNEXT_CABINET:
+                    {
+                        // Update-Help content is always a single self-contained cabinet.
+                        return new IntPtr(-1);
                     }
             }
 

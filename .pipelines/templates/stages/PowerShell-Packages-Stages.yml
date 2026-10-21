@@ -38,6 +38,9 @@ stages:
       displayName: 'Skip early access .NET setup'
       pool:
         type: windows
+      variables:
+      - name: ob_outputDirectory
+        value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
       steps:
       - pwsh: Write-Host 'IsEarlyAccess is false; skipping early access .NET setup.'
 - stage: mac_package
@@ -47,10 +50,12 @@ stages:
   - template: /.pipelines/templates/mac-package-build.yml@self
     parameters:
       buildArchitecture: x64
+      OfficialBuild: ${{ parameters.OfficialBuild }}
 
   - template: /.pipelines/templates/mac-package-build.yml@self
     parameters:
       buildArchitecture: arm64
+      OfficialBuild: ${{ parameters.OfficialBuild }}
 
 - stage: windows_package_build
   displayName: 'Win Pkg (unsigned)'

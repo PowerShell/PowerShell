@@ -118,42 +118,42 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="FileSmallerThan4Bytes" xml:space="preserve">
-    <value>Cannot digitally sign file because file {0} is smaller than 4 bytes in size. Files must be at least 4 bytes in order to be digitally signed.</value>
+    <value>파일 {0}의 크기가 4바이트보다 작아 파일에 디지털 서명을 할 수 없습니다. 디지털 서명을 하려면 Files가 최소 4바이트여야 합니다.</value>
   </data>
   <data name="OperationNotSupportedOnPath" xml:space="preserve">
-    <value>Cannot perform the operation because it is not supported on the object found in path {0}.</value>
+    <value>경로 {0}에서 찾은 개체는 지원되지 않으므로 작업을 수행할 수 없습니다.</value>
   </data>
   <data name="GetMethodNotFound" xml:space="preserve">
-    <value>Cannot get the ACL because the necessary method, GetSecurityDescriptor, does not exist.</value>
+    <value>필요한 메서드인 GetSecurityDescriptor가 없으므로 ACL을 가져올 수 없습니다.</value>
   </data>
   <data name="SetMethodNotFound" xml:space="preserve">
-    <value>Cannot set the ACL because the method that it needs to invoke, SetSecurityDescriptor, does not exist.</value>
+    <value>호출해야 하는 메서드인 SetSecurityDescriptor가 없으므로 ACL을 설정할 수 없습니다.</value>
   </data>
   <data name="MethodInvokeFail" xml:space="preserve">
-    <value>Could not perform operation because an exception was thrown during method invoke.</value>
+    <value>메서드를 호출하는 동안 예외가 발생하여 작업을 수행할 수 없습니다.</value>
   </data>
   <data name="GetSaclWithCapIdFail" xml:space="preserve">
-    <value>Could not create a SACL with the specified central access policy.</value>
+    <value>지정된 중앙 액세스 정책으로 SACL을 만들 수 없습니다.</value>
   </data>
   <data name="GetEmptySaclFail" xml:space="preserve">
-    <value>Could not create an empty SACL.</value>
+    <value>빈 SACL을 만들 수 없습니다.</value>
   </data>
   <data name="GetTokenWithEnabledPrivilegeFail" xml:space="preserve">
-    <value>Could not enable SeSecurityPrivilege.</value>
+    <value>SeSecurityPrivilege를 사용하도록 설정할 수 없습니다.</value>
   </data>
   <data name="SetCentralAccessPolicyFail" xml:space="preserve">
-    <value>Could not set central access policy.</value>
+    <value>중앙 액세스 정책을 설정할 수 없습니다.</value>
   </data>
   <data name="InvalidCentralAccessPolicyParameters" xml:space="preserve">
-    <value>ClearCentralAccessPolicy and CentralAccessPolicy parameters cannot be used at the same time.</value>
+    <value>ClearCentralAccessPolicy와 CentralAccessPolicy 매개 변수는 동시에 사용할 수 없습니다.</value>
   </data>
   <data name="InvalidCentralAccessPolicyIdentifier" xml:space="preserve">
-    <value>Central Access Policy identifier or name is not valid. If specifying an identifier, it must begin with S-1-17. If specifying a name, the policy must be applied on the target machine.</value>
+    <value>중앙 액세스 정책 식별자 또는 이름이 올바르지 않습니다. 식별자를 지정하는 경우 S-1-17로 시작해야 합니다. 이름을 지정하는 경우 대상 컴퓨터에 정책이 적용되어 있어야 합니다.</value>
   </data>
   <data name="PromptForCredential_DefaultCaption" xml:space="preserve">
-    <value>PowerShell credential request</value>
+    <value>PowerShell 자격 증명 요청</value>
   </data>
   <data name="PromptForCredential_DefaultMessage" xml:space="preserve">
-    <value>Enter your credentials.</value>
+    <value>자격 증명을 입력합니다.</value>
   </data>
 </root>

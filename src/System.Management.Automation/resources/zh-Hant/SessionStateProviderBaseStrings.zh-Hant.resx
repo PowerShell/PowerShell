@@ -118,39 +118,39 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="SetItemAction" xml:space="preserve">
-    <value>Set Item</value>
+    <value>設定項目</value>
   </data>
   <data name="SetItemResourceTemplate" xml:space="preserve">
-    <value>Item: {0} Value: {1}</value>
+    <value>項目: {0} 值: {1}</value>
   </data>
   <data name="ClearItemAction" xml:space="preserve">
-    <value>Clear Item</value>
+    <value>清除項目</value>
   </data>
   <data name="ClearItemResourceTemplate" xml:space="preserve">
-    <value>Item: {0}</value>
+    <value>項目: {0}</value>
   </data>
   <data name="RemoveItemAction" xml:space="preserve">
-    <value>Remove Item</value>
+    <value>移除項目</value>
   </data>
   <data name="RemoveItemResourceTemplate" xml:space="preserve">
-    <value>Item: {0}</value>
+    <value>項目: {0}</value>
   </data>
   <data name="NewItemAction" xml:space="preserve">
-    <value>New Item</value>
+    <value>新增項目</value>
   </data>
   <data name="NewItemResourceTemplate" xml:space="preserve">
-    <value>Item: {0} Type: {1} Value: {2}</value>
+    <value>項目: {0} 類型: {1} 值: {2}</value>
   </data>
   <data name="CopyItemAction" xml:space="preserve">
-    <value>Copy Item</value>
+    <value>複製項目</value>
   </data>
   <data name="CopyItemResourceTemplate" xml:space="preserve">
-    <value>Item: {0} Destination: {1}</value>
+    <value>項目: {0} 目的地: {1}</value>
   </data>
   <data name="RenameItemAction" xml:space="preserve">
-    <value>Rename Item</value>
+    <value>重新命名項目</value>
   </data>
   <data name="RenameItemResourceTemplate" xml:space="preserve">
-    <value>Item: {0} NewName: {1}</value>
+    <value>項目: {0} NewName: {1}</value>
   </data>
 </root>

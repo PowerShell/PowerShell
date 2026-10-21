@@ -118,42 +118,42 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="WrongMemberCount" xml:space="preserve">
-    <value>To add a member, only one member type can be specified. The member types specified are: "{0}"</value>
+    <value>メンバーを追加するには、1 つのメンバー型のみを指定できます。指定されたメンバー型は "{0}" です</value>
   </data>
   <data name="CannotAddMemberType" xml:space="preserve">
-    <value>Cannot add a member with type "{0}". Specify a different type for the MemberTypes parameter.</value>
+    <value>型が "{0}" のメンバーを追加できません。MemberTypes パラメーターに別の型を指定します。</value>
   </data>
   <data name="Value2ShouldNotBeSpecified" xml:space="preserve">
-    <value>The SecondValue parameter is not necessary for a member of type "{0}", and should not be specified. Do not specify the SecondValue parameter when you add members of this type.</value>
+    <value>SecondValue パラメーターは、型 "{0}" のメンバーには必要ありません。指定しないでください。この型のメンバーを追加するときは、SecondValue パラメーターを指定しないでください。</value>
   </data>
   <data name="Value1Prompt" xml:space="preserve">
-    <value>The Value parameter is required for a member of type "{0}". Specify the Value parameter when adding members of this type.</value>
+    <value>型 "{0}" のメンバーには Value パラメーターが必要です。この型のメンバーを追加するときは、Value パラメーターを指定します。</value>
   </data>
   <data name="Value1AndValue2AreNotBothNull" xml:space="preserve">
-    <value>Both Value and SecondValue parameters should not be null for a member of type "{0}". Specify a non-null value for one of the two parameters.</value>
+    <value>型 "{0}" のメンバーの Value パラメーターと SecondValue パラメーターの両方を null 値にすることはできません。2 つのパラメーターのいずれかに null 値以外の値を指定します。</value>
   </data>
   <data name="MemberAlreadyExists" xml:space="preserve">
-    <value>Cannot add a member with the name "{0}" because a member with that name already exists. To overwrite the member anyway, add the Force parameter to your command.</value>
+    <value>"{0}" という名前のメンバーは既に存在するため、追加できません。メンバーを上書きするには、Force パラメーターをコマンドに追加します。</value>
   </data>
   <data name="CannotRemoveTypeDataMember" xml:space="preserve">
-    <value>Cannot force the member with name "{0}" and type "{1}" to be added. A member with that name and type already exists, and the existing member is not an instance extension.</value>
+    <value>名前が "{0}"、型 ”{1}” のメンバーを強制的に追加できません。その名前と型のメンバーは既に存在し、既存のメンバーはインスタンス拡張機能ではありません。</value>
   </data>
   <data name="AliasReferenceShouldNotBeNullOrEmpty" xml:space="preserve">
-    <value>The member referenced by this alias should not be null or empty.</value>
+    <value>このエイリアスによって参照されるメンバーを null または空にすることはできません。</value>
   </data>
   <data name="Value1ShouldNotBeNull" xml:space="preserve">
-    <value>The Value parameter should not be null for a member of type "{0}". Specify a non-null value for the Value parameter when adding members of this type.</value>
+    <value>型 "{0}" のメンバーの Value パラメーターを null 値にすることはできません。この型のメンバーを追加するときに、Value パラメーターに null 値以外の値を指定します。</value>
   </data>
   <data name="Value2ShouldNotBeNull" xml:space="preserve">
-    <value>The SecondValue parameter should not be null for a member of type "{0}". Specify a non-null value for the SecondValue parameter when adding members of this type.</value>
+    <value>型 "{0}" のメンバーに対して SecondValue パラメーターを null 値にすることはできません。この型のメンバーを追加するときは、SecondValue パラメーターに null 値以外の値を指定します。</value>
   </data>
   <data name="InvalidValueForNotePropertyName" xml:space="preserve">
-    <value>The parameter NotePropertyName cannot take values that could be converted to the type {0}. To define the name of a member with those values, use Add-Member, and specify the member type.</value>
+    <value>パラメーター NotePropertyName は、型 {0} に変換できる値を受け取ることはできません。これらの値を持つメンバーの名前を定義するには、Add-Member を使用し、メンバーの種類を指定します。</value>
   </data>
   <data name="NotePropertyNameShouldNotBeNull" xml:space="preserve">
-    <value>The name for a NoteProperty member should not be null or an empty string.</value>
+    <value>NoteProperty メンバーの名前を null 値または空の文字列にすることはできません。</value>
   </data>
   <data name="TypeNameShouldNotBeEmpty" xml:space="preserve">
-    <value>The TypeName parameter should not be null, empty, or contain only white spaces.</value>
+    <value>TypeName パラメーターには、null 値、空、または空白のみを含めることはできません。</value>
   </data>
 </root>

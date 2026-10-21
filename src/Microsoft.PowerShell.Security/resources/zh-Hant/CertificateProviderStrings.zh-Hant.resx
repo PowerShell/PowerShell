@@ -118,72 +118,72 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CertProvidername" xml:space="preserve">
-    <value>X509 Certificate Provider</value>
+    <value>X509 憑證提供者</value>
   </data>
   <data name="CertificateNotFound" xml:space="preserve">
-    <value>Cannot find the X509 certificate at path {0}.</value>
+    <value>在路徑 {0} 找不到 X509 憑證。</value>
   </data>
   <data name="CertificateStoreNotFound" xml:space="preserve">
-    <value>Cannot find the X509 certificate store at path {0}.</value>
+    <value>在路徑 {0} 找不到 X509 憑證存放區。</value>
   </data>
   <data name="CertificateStoreLocationNotFound" xml:space="preserve">
-    <value>Cannot find the certificate store because the specified X509 store location {0} is not valid.</value>
+    <value>找不到憑證存放區，因為指定的 X509 存放區位置 {0} 無效。</value>
   </data>
   <data name="InvalidPath" xml:space="preserve">
-    <value>Cannot process the path because path {0} is not a valid certificate provider path.</value>
+    <value>無法處理路徑，因為路徑 {0} 不是有效的憑證提供者路徑。</value>
   </data>
   <data name="Action_Move" xml:space="preserve">
-    <value>Move certificate</value>
+    <value>移動憑證</value>
   </data>
   <data name="Action_Remove" xml:space="preserve">
-    <value>Remove certificate</value>
+    <value>移除憑證</value>
   </data>
   <data name="Action_RemoveAndDeleteKey" xml:space="preserve">
-    <value>Remove certificate and its private key.</value>
+    <value>移除憑證及其私密金鑰。</value>
   </data>
   <data name="Action_Invoke" xml:space="preserve">
-    <value>Invoke Certificate Manager</value>
+    <value>叫用 [憑證管理員]</value>
   </data>
   <data name="MoveItemTemplate" xml:space="preserve">
-      <value>Item: {0} Destination: {1} </value>
+      <value>項目: {0} 目的地: {1}</value>
   </data>
   <data name="CannotMoveContainer" xml:space="preserve">
-      <value>You cannot move a certificate container. </value>
+      <value>您無法移動憑證容器。</value>
   </data>
   <data name="CannotMoveCrossContext" xml:space="preserve">
-      <value>You cannot move a certificate from user store to or from machine. </value>
+      <value>您無法將憑證從使用者存放區移至或移出電腦。</value>
   </data>
   <data name="CannotMoveToSameStore" xml:space="preserve">
-    <value>You cannot move a certificate to the same store. </value>
+    <value>您無法將憑證移至相同的存放區。</value>
   </data>
   <data name="CannotCreateItem" xml:space="preserve">
-    <value>You cannot create an item other than certificate store. </value>
+    <value>您無法建立憑證存放區以外的項目。</value>
   </data>
   <data name="CannotCreateUserStore" xml:space="preserve">
-    <value>Creating certificate stores under CurrentUser is not supported. </value>
+    <value>不支援在 CurrentUser 下建立憑證存放區。</value>
   </data>
   <data name="CannotDeleteUserStore" xml:space="preserve">
-    <value>Deleting certificate stores under CurrentUser is not supported. </value>
+    <value>不支援在 CurrentUser 下刪除憑證存放區。</value>
   </data>
   <data name="InvalidDestStore" xml:space="preserve">
-    <value>The destination is not a valid store. </value>
+    <value>目的地不是有效的存放區。</value>
   </data>
   <data name="RemoveItemTemplate" xml:space="preserve">
-    <value>Item: {0} </value>
+    <value>項目: {0}</value>
   </data>
   <data name="RemoveStoreTemplate" xml:space="preserve">
-    <value>The store {0} is a built-in system store and cannot be deleted.</value>
+    <value>存放區 {0} 是內建的系統存放區，因此無法刪除。</value>
   </data>
   <data name="CannotRemoveContainer" xml:space="preserve">
-    <value>You cannot remove a certificate container. </value>
+    <value>您無法移除憑證容器。</value>
   </data>
   <data name="VerboseNoPrivateKey" xml:space="preserve">
-    <value>Private key skipped. The certificate has no private key association. </value>
+    <value>已跳過私密金鑰。此憑證沒有私密金鑰關聯。</value>
   </data>
   <data name="UINotAllowed" xml:space="preserve">
-    <value>The operation is on user root store and UI is not allowed. </value>
+    <value>此作業在使用者根存放區上進行，因此不允許 UI。</value>
   </data>
   <data name="RemoteErrorMessage" xml:space="preserve">
-    <value>. The following error may be a result of user credentials required on the remote machine. See Enable-WSManCredSSP Cmdlet help on how to enable and use CredSSP for delegation with PowerShell remoting. </value>
+    <value>。下列錯誤可能是遠端電腦需要使用者認證所導致。請參閱 Enable-WSManCredSSP Cmdlet 說明，了解如何透過 PowerShell 遠端功能啟用及使用 CredSSP 進行委派。</value>
   </data>
 </root>

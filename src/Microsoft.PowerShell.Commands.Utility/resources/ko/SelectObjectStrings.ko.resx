@@ -118,18 +118,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="RenamingMultipleResults" xml:space="preserve">
-    <value>Cannot rename multiple results.</value>
+    <value>여러 결과의 이름을 바꿀 수 없습니다.</value>
   </data>
   <data name="PropertyNotFound" xml:space="preserve">
-    <value>Property "{0}" cannot be found.</value>
+    <value>속성 "{0}"을(를) 찾을 수 없습니다.</value>
   </data>
   <data name="MutlipleExpandProperties" xml:space="preserve">
-    <value>Multiple properties cannot be expanded.</value>
+    <value>여러 속성을 확장할 수 없습니다.</value>
   </data>
   <data name="AlreadyExistingProperty" xml:space="preserve">
-    <value>The property cannot be processed because the property "{0}" already exists.</value>
+    <value>속성 "{0}"이(가) 이미 있어서 이 속성을 처리할 수 없습니다.</value>
   </data>
   <data name="EmptyScriptBlockAndNoName" xml:space="preserve">
-    <value>A property is an empty script block and does not provide a name.</value>
+    <value>이 속성은 빈 스크립트 블록이며 이름을 제공하지 않습니다.</value>
   </data>
 </root>

@@ -118,150 +118,150 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MetadataMemberInitialization" xml:space="preserve">
-    <value>Cannot initialize attributes for "{0}": "{1}"</value>
+    <value>"{0}" の属性を初期化できません: "{1}"</value>
   </data>
   <data name="ValidateRangeElementType" xml:space="preserve">
-    <value>The argument cannot be validated because its type "{0}" is not the same type ({1}) as the maximum and minimum limits of the parameter. Make sure the argument is of type {1} and then try the command again.</value>
+    <value>引数の型 "{0}" がパラメーターの最大および最小制限と同じ型 ({1}) ではないため、引数を検証できません。引数の型が {1} であることを確認してから、コマンドを再試行してください。</value>
   </data>
   <data name="ValidateRangePositiveFailure" xml:space="preserve">
-    <value>The argument "{0}" cannot be validated because its value is not greater than zero.</value>
+    <value>引数 "{0}" の値が 0 以下であるため、検証できません。</value>
   </data>
   <data name="ValidateRangeNonNegativeFailure" xml:space="preserve">
-    <value>The argument "{0}" cannot be validated because its value is not greater than or equal to zero.</value>
+    <value>引数 "{0}" の値が 0 以上でないため、検証できません。</value>
   </data>
   <data name="ValidateRangeNegativeFailure" xml:space="preserve">
-    <value>The argument "{0}" cannot be validated because its value is not less than zero.</value>
+    <value>引数 "{0}" の値が 0 以下でないため、検証できません。</value>
   </data>
   <data name="ValidateRangeNonPositiveFailure" xml:space="preserve">
-    <value>The argument "{0}" cannot be validated because its value is not less than or equal to zero.</value>
+    <value>引数 "{0}" の値が 0 以下でないため、検証できません。</value>
   </data>
   <data name="ValidateRangeMinRangeMaxRangeType" xml:space="preserve">
-    <value>The specified minimum range ({0}) cannot be accepted because it is not the same type as the specified maximum range ({1}). Update the ValidateRange attribute for the parameter.</value>
+    <value>指定された最小範囲 ({0}) は、指定された最大範囲 ({1}) と同じ型ではないため、受け入れられません。パラメーターの ValidateRange 属性を更新してください。</value>
   </data>
   <data name="ValidateRangeNotIComparable" xml:space="preserve">
-    <value>Cannot accept the MaxRange and MinRange parameter types. Both parameters must be objects that implement an IComparable interface.</value>
+    <value>MaxRange および MinRange パラメーター型を受け入れることはできません。どちらのパラメーターも、IComparable インターフェイスを実装するオブジェクトである必要があります。</value>
   </data>
   <data name="ValidateRangeMaxRangeSmallerThanMinRange" xml:space="preserve">
-    <value>The specified maximum range cannot be accepted because it is less than the specified minimum range. Update the ValidateRange attribute for the parameter.</value>
+    <value>指定された最大範囲は、指定された最小範囲より小さいため受け入れられません。パラメーターの ValidateRange 属性を更新してください。</value>
   </data>
   <data name="ValidateRangeGreaterThanMaxRangeFailure" xml:space="preserve">
-    <value>The {0} argument is greater than the maximum allowed range of {1}. Supply an argument that is less than or equal to {1} and then try the command again.</value>
+    <value>{0} 引数が {1}の最大許容範囲を超えています。{1} 以下の引数を指定してから、コマンドを再試行してください。</value>
   </data>
   <data name="ValidateRangeSmallerThanMinRangeFailure" xml:space="preserve">
-    <value>The {0} argument is less than the minimum allowed range of {1}. Supply an argument that is greater than or equal to {1} and then try the command again.</value>
+    <value>{0} 引数が {1}の最小許容範囲を下回っています。{1} 以上の引数を指定してから、コマンドを再試行してください。</value>
   </data>
   <data name="ValidatePatternFailure" xml:space="preserve">
-    <value>The argument "{0}" does not match the "{1}" pattern. Supply an argument that matches "{1}" and try the command again.</value>
+    <value>引数 "{0}" が "{1}" パターンと一致しません。"{1}" と一致する引数を指定して、コマンドを再試行してください。</value>
   </data>
   <data name="ValidateCountNotInArray" xml:space="preserve">
-    <value>The ValidateCount attribute cannot be applied to a non-array parameter. Either remove the attribute from the parameter or make the parameter an array parameter.</value>
+    <value>ValidateCount 属性を配列以外のパラメーターに適用することはできません。パラメーターから属性を削除するか、パラメーターを配列パラメーターにしてください。</value>
   </data>
   <data name="ValidateCountExactFailure" xml:space="preserve">
-    <value>The parameter requires exactly {0} value(s) - {1} value(s) were provided.</value>
+    <value>パラメーターには正確に {0} 個の値が必要ですが、{1} 個の値が指定されました。</value>
   </data>
   <data name="ValidateCountMinMaxFailure" xml:space="preserve">
-    <value>The parameter requires at least {0} value(s) and no more than {1} value(s) - {2} value(s) were provided.</value>
+    <value>パラメーターには少なくとも {0} 個の値が必要であり、{1} 個以下である必要があります。{2} 個の値が指定されました。</value>
   </data>
   <data name="ValidateCountMaxLengthSmallerThanMinLength" xml:space="preserve">
-    <value>The specified maximum number of arguments for a parameter is fewer than the specified minimum number of arguments. Update the ValidateCount attribute for the parameter.</value>
+    <value>パラメーターに指定された引数の最大数が、指定された引数の最小数より少なくなっています。パラメーターの ValidateCount 属性を更新してください。</value>
   </data>
   <data name="ValidateLengthMaxLengthSmallerThanMinLength" xml:space="preserve">
-    <value>The specified maximum character length of the argument is shorter than the specified minimum argument character length. Update the ValidateLength attribute for the parameter.</value>
+    <value>引数の指定された最大文字数が、指定された最小引数文字の長さよりも短くなっています。パラメーターの ValidateLength 属性を更新してください。</value>
   </data>
   <data name="ValidateLengthNotString" xml:space="preserve">
-    <value>The ValidateLength attribute cannot be applied to a parameter that is not a string or string[] parameter. Make the parameter a string or string[] parameter.</value>
+    <value>ValidateLength 属性は、文字列または string[] パラメーターではないパラメーターには適用できません。パラメーターを文字列または string[] パラメーターにしてください。</value>
   </data>
   <data name="ValidateLengthMinLengthFailure" xml:space="preserve">
-    <value>The character length ({1}) of the argument is too short. Specify an argument with a length that is greater than or equal to "{0}", and then try the command again.</value>
+    <value>引数の文字の長さ ({1}) が短すぎます。長さが "{0}" 以上の引数を指定してから、コマンドを再試行してください。</value>
   </data>
   <data name="ValidateLengthMaxLengthFailure" xml:space="preserve">
-    <value>The character length ({1}) of the argument is too long. Specify an argument with a length that is shorter than or equal to "{0}", and then try the command again.</value>
+    <value>引数の文字数 ({1}) が長すぎます。長さが "{0}" 以下の引数を指定してから、コマンドを再試行してください。</value>
   </data>
   <data name="ValidateSetFailure" xml:space="preserve">
-    <value>The argument "{0}" does not belong to the set "{1}" specified by the ValidateSet attribute. Supply an argument that is in the set and then try the command again.</value>
+    <value>引数 "{0}" は ValidateSet 属性で指定されたセット "{1}" に属していません。セットでに属する引数を指定してから、コマンドを再試行してください。</value>
   </data>
   <data name="ValidateSetGeneratedValidValuesListIsNull" xml:space="preserve">
-    <value>Valid values generator return a null value.</value>
+    <value>有効な値ジェネレーターは null 値を返します。</value>
   </data>
   <data name="ValidateFailureResult" xml:space="preserve">
-    <value>"{0}" failed on property "{1}" {2}</value>
+    <value>プロパティ "{1}" で "{0}" が失敗しました {2}</value>
   </data>
   <data name="ParsingTooManyParameterSets" xml:space="preserve">
-    <value>Cannot get or run the command. The maximum number of parameter sets for this command has been exceeded.</value>
+    <value>コマンドを取得または実行できません。このコマンドのパラメーター セットの最大数を超えました。</value>
   </data>
   <data name="ArgumentTransformationArgumentsShouldBeStrings" xml:space="preserve">
-    <value>Cannot process the argument because the argument value is not a string. The values of parameter arguments that have the ArgumentTransformationAttribute specified should be strings.</value>
+    <value>引数の値が文字列ではないため、引数を処理できません。ArgumentTransformationAttribute が指定されているパラメーター引数の値は文字列である必要があります。</value>
   </data>
   <data name="InvalidValueFailure" xml:space="preserve">
-    <value>The variable cannot be validated because the value {1} is not a valid value for the {0} variable.</value>
+    <value>値 {1} が {0} 変数の有効な値ではないため、変数を検証できません。</value>
   </data>
   <data name="InvalidMetadataForCurrentValue" xml:space="preserve">
-    <value>The attribute cannot be added because variable {0} with value {1} would no longer be valid.</value>
+    <value>値が {1} の変数 {0} が無効になるため、属性を追加できません。</value>
   </data>
   <data name="ValidateNotNullFailure" xml:space="preserve">
-    <value>The argument is null. Provide a valid value for the argument, and then try running the command again.</value>
+    <value>引数が null です。引数に有効な値を指定してから、コマンドを再実行してください。</value>
   </data>
   <data name="ValidateNotNullCollectionFailure" xml:space="preserve">
-    <value>The argument has a null value, or an element of the argument collection contains a null value. Provide a collection that does not contain any null values, and then try the command again.</value>
+    <value>引数に null 値が含まれているか、引数コレクションの要素に null 値が含まれています。null 値を含まないコレクションを指定してから、コマンドを再試行してください。</value>
   </data>
   <data name="ValidateNotNullOrEmptyFailure" xml:space="preserve">
-    <value>The argument is null or empty. Provide an argument that is not null or empty, and then try the command again.</value>
+    <value>引数が null か空です。null または空でない引数を指定して、コマンドを再度実行してください。</value>
   </data>
   <data name="ValidateNotNullOrEmptyCollectionFailure" xml:space="preserve">
-    <value>The argument is null, empty, or an element of the argument collection contains a null value. Supply a collection that does not contain any null values and then try the command again.</value>
+    <value>引数が null または空であるか、引数コレクションの要素に null 値が含まれています。null 値を含まないコレクションを指定してから、コマンドを再試行してください。</value>
   </data>
   <data name="ValidateNotNullOrWhiteSpaceFailure" xml:space="preserve">
-    <value>The argument is null, empty, or consists of only white-space characters. Provide an argument that contains non white-space characters, and then try the command again.</value>
+    <value>引数が null、空、または空白文字のみで構成されています。空白文字以外の文字を含む引数を指定してから、コマンドを再試行してください。</value>
   </data>
   <data name="ValidateNotNullOrWhiteSpaceCollectionFailure" xml:space="preserve">
-    <value>An element of the argument collection is null, empty, or consists of only white-space characters. Supply a collection that does not contain any those values and then try the command again.</value>
+    <value>引数コレクションの要素が null、空、または空白文字のみで構成されています。これらの値を含まないコレクションを指定してから、コマンドを再試行してください。</value>
   </data>
   <data name="ParameterNameAlreadyExistsForCommand" xml:space="preserve">
-    <value>A parameter with the name '{0}' was defined multiple times for the command.</value>
+    <value>'{0}' という名前のパラメーターがコマンドに対して複数回定義されました。</value>
   </data>
   <data name="AliasParameterNameAlreadyExistsForCommand" xml:space="preserve">
-    <value>The parameter alias cannot be specified because an alias with the name '{0}' was already defined multiple times for the command.</value>
+    <value>'{0}' という名前のエイリアスがコマンドに対して既に複数回定義されているため、パラメーター エイリアスを指定できません。</value>
   </data>
   <data name="ParameterNameConflictsWithAlias" xml:space="preserve">
-    <value>The parameter '{0}' cannot be specified because it conflicts with the parameter alias of the same name for parameter '{1}'.</value>
+    <value>パラメーター '{0}' は、パラメーター '{1}' の同じ名前のパラメーター エイリアスと競合しているため、指定できません。</value>
   </data>
   <data name="ValidateScriptFailure" xml:space="preserve">
-    <value>The "{1}" validation script for the argument with value "{0}" did not return a result of True. Determine why the validation script failed, and then try the command again.</value>
+    <value>値が "{0}" の引数の "{1}" 検証スクリプトは True の結果を返しませんでした。検証スクリプトが失敗した理由を特定してから、コマンドを再試行してください。</value>
   </data>
   <data name="ValidateVersionFailure" xml:space="preserve">
-    <value>The "{0}" argument does not contain a valid PowerShell version. Supply a valid version number and then try the command again.</value>
+    <value>"{0}" 引数に有効な PowerShell バージョンが含まれていません。有効なバージョン番号を指定してから、コマンドを再試行してください。</value>
   </data>
   <data name="ValidateVariableName" xml:space="preserve">
-    <value>Cannot validate argument '{0}' because it is not a valid variable name.</value>
+    <value>引数 '{0}' は有効な変数名ではないため、検証できません。</value>
   </data>
   <data name="JobDefinitionMustDeriveFromIJobConverter" xml:space="preserve">
-    <value>The job conversion type must derive from IAstToScriptBlockConverter.</value>
+    <value>ジョブ変換の型は、IAstToScriptBlockConverter から派生する必要があります。</value>
   </data>
   <data name="ValidateDrivePathArgNotString" xml:space="preserve">
-    <value>The path argument is invalid. Supply a path argument that is a string type.</value>
+    <value>path 引数が無効です。文字列型の path 引数を指定してください。</value>
   </data>
   <data name="ValidateDrivePathFailure" xml:space="preserve">
-    <value>The path argument drive {0} does not belong to the set of approved drives: {1}. Supply a path argument with an approved drive.</value>
+    <value>パス引数ドライブ {0} は、承認済みドライブのセット: {1} に属していません。承認済みドライブにパス引数を指定してください。</value>
   </data>
   <data name="ValidateDrivePathInvalidChar" xml:space="preserve">
-    <value>The path argument contains invalid characters.</value>
+    <value>path 引数に無効な文字が含まれています。</value>
   </data>
   <data name="ValidateDrivePathNoRoot" xml:space="preserve">
-    <value>The path argument has no root drive.  Supply a full path argument with a root drive.</value>
+    <value>path 引数にルート ドライブがありません。 ルート ドライブを含む完全なパスを指定してください。</value>
   </data>
   <data name="ArgumentNullOrEmpty" xml:space="preserve">
-    <value>The argument value for the parameter '{0}' cannot be null or an empty string.</value>
+    <value>パラメーター '{0}' の引数値を null または空の文字列にすることはできません。</value>
   </data>
   <data name="InvalidEnumArgument" xml:space="preserve">
-    <value>The Enum member '{0}' is not a valid value for the parameter '{1}'. Specify one of the following members and try again: {2}.</value>
+    <value>Enum メンバー '{0}' は、パラメーター '{1}' の有効な値ではありません。次のいずれかのメンバーを指定して、もう一度お試しください: {2}。</value>
   </data>
   <data name="ValidateTrustedDataFailure" xml:space="preserve">
-    <value>Cannot process input. The argument "{0}" is not trusted.</value>
+    <value>入力を処理できません。引数 "{0}" は信頼されていません。</value>
   </data>
   <data name="WDACParameterArgNotTrustedLogTitle" xml:space="preserve">
-    <value>ValidateTrustedData Attribute Check Failure</value>
+    <value>ValidateTrustedData 属性チェック エラー</value>
   </data>
   <data name="WDACParameterArgNotTrustedMessage" xml:space="preserve">
-    <value>The parameter argument '{0}' is not trusted and will fail the ValidateTrustedData parameter attribute check in Constrained Language mode.</value>
+    <value>パラメーター引数 '{0}' は信頼されていないため、制約言語モードでの ValidateTrustedData パラメーター属性のチェックに失敗します。</value>
   </data>
 </root>

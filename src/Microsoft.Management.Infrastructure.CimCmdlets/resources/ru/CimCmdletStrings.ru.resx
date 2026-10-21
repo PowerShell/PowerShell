@@ -118,23 +118,23 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CimOperationCompleted" xml:space="preserve">
-    <value>Operation '{0}' complete.</value>
+    <value>Операция "{0}" завершена.</value>
     <comment>{0} is a placeholder for operation name. (i.e, GetCimInstance)</comment>
   </data>
   <data name="CimOperationNameCreateInstance" xml:space="preserve">
-    <value>Create CimInstance</value>
+    <value>Создать CimInstance</value>
   </data>
   <data name="CimOperationNameDeleteInstance" xml:space="preserve">
-    <value>Delete CimInstance</value>
+    <value>Удалить CimInstance</value>
   </data>
   <data name="CimOperationNameEnumerateAssociatedInstances" xml:space="preserve">
-    <value>Enumerate Associated CimInstances</value>
+    <value>Перечислить связанные CimInstances</value>
   </data>
   <data name="CimOperationNameEnumerateClasses" xml:space="preserve">
-    <value>Enumerate CimClasses</value>
+    <value>Перечислить CimClasses</value>
   </data>
   <data name="CimOperationNameEnumerateInstances" xml:space="preserve">
-    <value>Enumerate CimInstances</value>
+    <value>Перечислить CimInstances</value>
   </data>
   <data name="CimOperationNameGetClass" xml:space="preserve">
     <value>Get CimClass</value>
@@ -143,86 +143,86 @@
     <value>Get CimInstance</value>
   </data>
   <data name="CimOperationNameInvokeMethod" xml:space="preserve">
-    <value>Invoke CimMethod</value>
+    <value>Вызвать CimMethod</value>
   </data>
   <data name="CimOperationNameModifyInstance" xml:space="preserve">
-    <value>Modify CimInstance</value>
+    <value>Изменить CimInstance</value>
   </data>
   <data name="CimOperationNameQueryInstances" xml:space="preserve">
-    <value>Query CimInstances</value>
+    <value>Запрос CimInstances</value>
   </data>
   <data name="CimOperationNameSubscribeIndication" xml:space="preserve">
-    <value>Subscribe CimIndication</value>
+    <value>Подписаться на CimIndication</value>
   </data>
   <data name="CimOperationStart" xml:space="preserve">
-    <value>Perform operation '{0}' with following parameters, '{1}'.</value>
+    <value>Выполните операцию "{0}" со следующими параметрами: "{1}".</value>
     <comment>{0} is a placeholder for operation name; {1} is a placeholder for parameters value</comment>
   </data>
   <data name="ConflictParameterWasSet" xml:space="preserve">
-    <value>Parameter '{0}' cannot be used with the parameter '{1}'.</value>
+    <value>Параметр "{0}" нельзя использовать с параметром "{1}".</value>
     <comment>{0} is a placeholder for parameter name; {1} is a placeholder for another parameter name;</comment>
   </data>
   <data name="CouldNotFindCimsessionObject" xml:space="preserve">
-    <value>Could not find CimSession with the given {0} = {1}</value>
+    <value>Не удалось найти CimSession с заданным условием {0} = {1}</value>
     <comment>{0} is a placeholder for property name; {1} is a placeholder for property value.</comment>
   </data>
   <data name="CouldNotFindPropertyFromGivenClass" xml:space="preserve">
-    <value>Could not find the following properties from the given class {0}: {1}.</value>
+    <value>Не удалось найти следующие свойства в указанном классе {0}: {1}.</value>
     <comment>{0} is a placeholder for class name; {1} is a placeholder for list of property names.</comment>
   </data>
   <data name="CouldNotModifyReadonlyProperty" xml:space="preserve">
-    <value>Could not modify readonly property '{0}' of object '{1}'.</value>
+    <value>Не удалось изменить доступное только для чтения свойство "{0}" объекта "{1}".</value>
     <comment>{0} is a placeholder for propertyname; {1} is a placeholder for object string.</comment>
   </data>
   <data name="DefaultStatusDescription" xml:space="preserve">
-    <value>Default status description.</value>
+    <value>Описание статуса по умолчанию.</value>
     <comment>N/A</comment>
   </data>
   <data name="DidNotResolveFile" xml:space="preserve">
-    <value>Cannot perform operation because the wildcard path {0} did not resolve to a file.</value>
+    <value>Не удается выполнить операцию, так как путь с подстановочными знаками {0} не сопоставлен с файлом.</value>
     <comment>{0} is a placeholder for a path</comment>
   </data>
   <data name="InvalidAuthenticationTypeWithNullCredential" xml:space="preserve">
-    <value>Authentication type '{0}' is invalid without credential. Only following authentication type are allowed without credential, '{1}', '{2}', '{3}', or '{4}'.</value>
+    <value>Тип проверки подлинности "{0}" недействителен без учетных данных. Без указания учетных данных допускаются только следующие типы проверки подлинности: "{1}", "{2}", "{3}" или "{4}".</value>
     <comment>{0} is a placeholder for authentication type. {1}-{4} are placeholders for authentication types.</comment>
   </data>
   <data name="InvalidMethod" xml:space="preserve">
-    <value>Can not find method '{0}' in class '{1}'.</value>
+    <value>Не удается найти метод "{0}" в классе "{1}".</value>
     <comment>{0} is a placeholder for method name. {1} is a placeholders for class name.</comment>
   </data>
   <data name="InvalidMethodParameter" xml:space="preserve">
-    <value>Can not find Parameter '{0}' in method '{1}' of class '{2}'.</value>
+    <value>Не удается найти параметр "{0}" в методе "{1}" класса "{2}".</value>
     <comment>{0} is a placeholder for parameter name; {1} is a placeholder for method name; {2} is a placeholder for class name.</comment>
   </data>
   <data name="InvalidOperation" xml:space="preserve">
-    <value>Invalid operation. Current cmdlet already have operation created.</value>
+    <value>Недействительная операция. Для текущего командлета уже создана операция.</value>
     <comment>N/A</comment>
   </data>
   <data name="InvalidParameterValue" xml:space="preserve">
-    <value>Argument '{0}' contains characters that are not allowed in parameter '{1}'. Supply an argument that is valid and then try the command again.</value>
+    <value>Аргумент "{0}" содержит символы, недопустимые в параметре "{1}". Укажите допустимый аргумент, а затем повторите выполнение команды.</value>
     <comment>{0} stand for argument value, {1} stand for parameter name.</comment>
   </data>
   <data name="MultipleFilesNotSupported" xml:space="preserve">
-    <value>Cannot perform operation because the path resolved to more than one file. This command cannot operate on multiple files.</value>
+    <value>Операция не может быть выполнена, так как путь указывает более чем на один файл. Эта команда не может выполняться с несколькими файлами.</value>
   </data>
   <data name="NullArgument" xml:space="preserve">
-    <value>Argument '{0}' can not be null.</value>
+    <value>Аргумент "{0}" не может иметь значение "null".</value>
     <comment>N/A</comment>
   </data>
   <data name="OperationInProgress" xml:space="preserve">
-    <value>CimSession proxy object already have operation in progress.</value>
+    <value>Для объекта-прокси CimSession уже выполняется операция.</value>
     <comment>N/A</comment>
   </data>
   <data name="ReadWriteFileNotFileSystemProvider" xml:space="preserve">
-    <value>Cannot open file because the current provider ({0}) cannot open a file.</value>
+    <value>Не удалось открыть файл, поскольку текущий поставщик ({0}) не может открывать файлы.</value>
     <comment>{0} is a placeholder for PowerShell filesystem-like provider name (i.e. registry provider)</comment>
   </data>
   <data name="UnableToAddPropertyToInstance" xml:space="preserve">
-    <value>Unable to add property '{0}' to input object '{1}'. The class schema does not contain the property.</value>
+    <value>Не удается добавить свойство "{0}" во входной объект "{1}". Схема класса не содержит это свойство.</value>
     <comment>{0} stand for property name, {1} stand for cim instance path.</comment>
   </data>
   <data name="UnableToResolveParameterSetName" xml:space="preserve">
-    <value>Unable to resolve the parameter set name.</value>
+    <value>Не удалось сопоставить имя набора параметров.</value>
     <comment>N/A</comment>
   </data>
 </root>

@@ -118,9 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="UpdateNotSupportedForConfigurationCategory" xml:space="preserve">
-    <value>The update is not supported for the runspace configuration category {0}. </value>
+    <value>Runspace 設定類別 {0} 不支援更新。</value>
   </data>
   <data name="UpdateAssemblyErrors" xml:space="preserve">
-    <value>The following errors occurred when updating the assembly list for the runspace: {0}.</value>
+    <value>更新 Runspace 的組件清單時，發生下列錯誤: {0}。</value>
   </data>
 </root>

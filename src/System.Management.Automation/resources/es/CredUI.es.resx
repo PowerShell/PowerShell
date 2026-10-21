@@ -118,21 +118,21 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="PromptForCredential_DefaultCaption" xml:space="preserve">
-    <value>PowerShell credential request </value>
+    <value>Solicitud de credenciales de PowerShell </value>
   </data>
   <data name="PromptForCredential_DefaultMessage" xml:space="preserve">
-    <value>Enter your credentials. </value>
+    <value>Escriba sus credenciales. </value>
   </data>
   <data name="PromptForCredential_DefaultTarget" xml:space="preserve">
-    <value>Enter your credentials.</value>
+    <value>Escriba sus credenciales.</value>
   </data>
   <data name="PromptForCredential_InvalidCaption" xml:space="preserve">
-    <value>The maximum length of the caption is {0} characters.</value>
+    <value>La longitud máxima del título son {0} caracteres.</value>
   </data>
   <data name="PromptForCredential_InvalidMessage" xml:space="preserve">
-    <value>The maximum length of the message is {0} characters.</value>
+    <value>La longitud máxima del mensaje es de {0}caracteres.</value>
   </data>
   <data name="PromptForCredential_InvalidUserName" xml:space="preserve">
-    <value>The maximum length of the UserName value is {0} characters.</value>
+    <value>La longitud máxima del valor UserName es de {0} caracteres.</value>
   </data>
 </root>

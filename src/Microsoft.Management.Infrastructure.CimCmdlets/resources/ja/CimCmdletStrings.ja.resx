@@ -118,111 +118,111 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CimOperationCompleted" xml:space="preserve">
-    <value>Operation '{0}' complete.</value>
+    <value>操作 '{0}' が完了しました。</value>
     <comment>{0} is a placeholder for operation name. (i.e, GetCimInstance)</comment>
   </data>
   <data name="CimOperationNameCreateInstance" xml:space="preserve">
-    <value>Create CimInstance</value>
+    <value>CimInstance の作成</value>
   </data>
   <data name="CimOperationNameDeleteInstance" xml:space="preserve">
-    <value>Delete CimInstance</value>
+    <value>CimInstance の削除</value>
   </data>
   <data name="CimOperationNameEnumerateAssociatedInstances" xml:space="preserve">
-    <value>Enumerate Associated CimInstances</value>
+    <value>関連付けられた CimInstance の列挙</value>
   </data>
   <data name="CimOperationNameEnumerateClasses" xml:space="preserve">
-    <value>Enumerate CimClasses</value>
+    <value>CimClasses の列挙</value>
   </data>
   <data name="CimOperationNameEnumerateInstances" xml:space="preserve">
-    <value>Enumerate CimInstances</value>
+    <value>CimInstance の列挙</value>
   </data>
   <data name="CimOperationNameGetClass" xml:space="preserve">
-    <value>Get CimClass</value>
+    <value>CimClass の取得</value>
   </data>
   <data name="CimOperationNameGetInstance" xml:space="preserve">
-    <value>Get CimInstance</value>
+    <value>CimInstance の取得</value>
   </data>
   <data name="CimOperationNameInvokeMethod" xml:space="preserve">
-    <value>Invoke CimMethod</value>
+    <value>CimMethod の呼び出し</value>
   </data>
   <data name="CimOperationNameModifyInstance" xml:space="preserve">
-    <value>Modify CimInstance</value>
+    <value>CimInstance の変更</value>
   </data>
   <data name="CimOperationNameQueryInstances" xml:space="preserve">
-    <value>Query CimInstances</value>
+    <value>CimInstance に対してクエリを実行</value>
   </data>
   <data name="CimOperationNameSubscribeIndication" xml:space="preserve">
-    <value>Subscribe CimIndication</value>
+    <value>CimIndication のサブスクライブ</value>
   </data>
   <data name="CimOperationStart" xml:space="preserve">
-    <value>Perform operation '{0}' with following parameters, '{1}'.</value>
+    <value>次のパラメーターを使用して操作 '{0}' を実行します: '{1}'。</value>
     <comment>{0} is a placeholder for operation name; {1} is a placeholder for parameters value</comment>
   </data>
   <data name="ConflictParameterWasSet" xml:space="preserve">
-    <value>Parameter '{0}' cannot be used with the parameter '{1}'.</value>
+    <value>パラメーター '{0}' は、パラメーター '{1}' と共に使用することはできません。</value>
     <comment>{0} is a placeholder for parameter name; {1} is a placeholder for another parameter name;</comment>
   </data>
   <data name="CouldNotFindCimsessionObject" xml:space="preserve">
-    <value>Could not find CimSession with the given {0} = {1}</value>
+    <value>指定された {0} = {1} の CimSession が見つかりませんでした</value>
     <comment>{0} is a placeholder for property name; {1} is a placeholder for property value.</comment>
   </data>
   <data name="CouldNotFindPropertyFromGivenClass" xml:space="preserve">
-    <value>Could not find the following properties from the given class {0}: {1}.</value>
+    <value>指定されたクラス {0} に次のプロパティが見つかりませんでした: {1}。</value>
     <comment>{0} is a placeholder for class name; {1} is a placeholder for list of property names.</comment>
   </data>
   <data name="CouldNotModifyReadonlyProperty" xml:space="preserve">
-    <value>Could not modify readonly property '{0}' of object '{1}'.</value>
+    <value>オブジェクト '{1}' の読み取り専用プロパティ '{0}' を変更できませんでした。</value>
     <comment>{0} is a placeholder for propertyname; {1} is a placeholder for object string.</comment>
   </data>
   <data name="DefaultStatusDescription" xml:space="preserve">
-    <value>Default status description.</value>
+    <value>既定の状態の説明。</value>
     <comment>N/A</comment>
   </data>
   <data name="DidNotResolveFile" xml:space="preserve">
-    <value>Cannot perform operation because the wildcard path {0} did not resolve to a file.</value>
+    <value>ワイルドカード パス {0} がファイルに解決されなかったため、操作を実行できません。</value>
     <comment>{0} is a placeholder for a path</comment>
   </data>
   <data name="InvalidAuthenticationTypeWithNullCredential" xml:space="preserve">
-    <value>Authentication type '{0}' is invalid without credential. Only following authentication type are allowed without credential, '{1}', '{2}', '{3}', or '{4}'.</value>
+    <value>認証の種類 '{0}' は、資格情報がないと無効です。資格情報なしで使用できるのは次の認証の種類のみです: '{1}'、'{2}'、'{3}'、または '{4}'。</value>
     <comment>{0} is a placeholder for authentication type. {1}-{4} are placeholders for authentication types.</comment>
   </data>
   <data name="InvalidMethod" xml:space="preserve">
-    <value>Can not find method '{0}' in class '{1}'.</value>
+    <value>クラス '{1}' にメソッド '{0}' が見つかりません。</value>
     <comment>{0} is a placeholder for method name. {1} is a placeholders for class name.</comment>
   </data>
   <data name="InvalidMethodParameter" xml:space="preserve">
-    <value>Can not find Parameter '{0}' in method '{1}' of class '{2}'.</value>
+    <value>クラス '{2}' のメソッド '{1}' にパラメーター '{0}' が見つかりません。</value>
     <comment>{0} is a placeholder for parameter name; {1} is a placeholder for method name; {2} is a placeholder for class name.</comment>
   </data>
   <data name="InvalidOperation" xml:space="preserve">
-    <value>Invalid operation. Current cmdlet already have operation created.</value>
+    <value>無効な操作です。現在のコマンドレットには、既に操作が作成されています。</value>
     <comment>N/A</comment>
   </data>
   <data name="InvalidParameterValue" xml:space="preserve">
-    <value>Argument '{0}' contains characters that are not allowed in parameter '{1}'. Supply an argument that is valid and then try the command again.</value>
+    <value>引数 '{0}' には、パラメーター '{1}' で使用できない文字が含まれています。有効な引数を指定して、コマンドを再試行してください。</value>
     <comment>{0} stand for argument value, {1} stand for parameter name.</comment>
   </data>
   <data name="MultipleFilesNotSupported" xml:space="preserve">
-    <value>Cannot perform operation because the path resolved to more than one file. This command cannot operate on multiple files.</value>
+    <value>パスが複数のファイルに解決されたため、操作を実行できません。このコマンドは、複数のファイルに対して操作することはできません。</value>
   </data>
   <data name="NullArgument" xml:space="preserve">
-    <value>Argument '{0}' can not be null.</value>
+    <value>引数 '{0}' を null 値にすることはできません。</value>
     <comment>N/A</comment>
   </data>
   <data name="OperationInProgress" xml:space="preserve">
-    <value>CimSession proxy object already have operation in progress.</value>
+    <value>CimSession プロキシ オブジェクトでは、既に操作が処理中です。</value>
     <comment>N/A</comment>
   </data>
   <data name="ReadWriteFileNotFileSystemProvider" xml:space="preserve">
-    <value>Cannot open file because the current provider ({0}) cannot open a file.</value>
+    <value>現在のプロバイダー ({0}) がファイルを開くことができないため、ファイルを開けません。</value>
     <comment>{0} is a placeholder for PowerShell filesystem-like provider name (i.e. registry provider)</comment>
   </data>
   <data name="UnableToAddPropertyToInstance" xml:space="preserve">
-    <value>Unable to add property '{0}' to input object '{1}'. The class schema does not contain the property.</value>
+    <value>プロパティ '{0}' を入力オブジェクト '{1}' に追加できません。クラス スキーマにプロパティが含まれていません。</value>
     <comment>{0} stand for property name, {1} stand for cim instance path.</comment>
   </data>
   <data name="UnableToResolveParameterSetName" xml:space="preserve">
-    <value>Unable to resolve the parameter set name.</value>
+    <value>パラメーター セット名を解決できません。</value>
     <comment>N/A</comment>
   </data>
 </root>

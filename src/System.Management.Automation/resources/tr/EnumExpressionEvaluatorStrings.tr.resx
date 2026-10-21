@@ -118,31 +118,31 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="EmptyInputString" xml:space="preserve">
-    <value>The input expression must not be empty. Specify at least one identifier name in each input expression. </value>
+    <value>Giriş dil ifadesi boş olamaz. Her giriş dil ifadesinde en az bir tanımlayıcı adı belirtin. </value>
   </data>
   <data name="EmptyTokenString" xml:space="preserve">
-    <value>Unable to match an empty identifier name to a valid enumerator name. Specify one of the following enumerator names and retry: {0}.</value>
+    <value>Boş bir tanımlayıcı adı, geçerli bir numaralandırıcı adına eşlenemiyor. Aşağıdaki numaralandırıcı adlarından birini belirtin ve yeniden deneyin: {0}.</value>
   </data>
   <data name="InvalidGenericType" xml:space="preserve">
-    <value>The generic type specified for the expression must represent an enum. Specify a valid enum type. </value>
+    <value>İfade için belirtilen genel tür bir sabit listesini temsil etmelidir. Geçerli bir sabit listesi türü belirtin. </value>
   </data>
   <data name="MultipleEnumNameMatch" xml:space="preserve">
-    <value>The identifier name {0} cannot be processed because it is either too similar or identical to the following enumerator names: {1}. Use a more specific identifier name.</value>
+    <value>{0} tanımlayıcı adı, şu sabit listesi üyesi adlarına çok benzer veya onlarla aynı olduğu için işlenemiyor: {1}. Daha belirgin bir tanımlayıcı adı kullanın.</value>
   </data>
   <data name="NoEnumNameMatch" xml:space="preserve">
-    <value>Unable to match the identifier name {0} to a valid enumerator name. Specify one of the following enumerator names and try again:
+    <value>Tanımlayıcı adı {0}, geçerli bir numaralandırıcı adına eşlenemiyor. Aşağıdaki numaralandırıcı adlarından birini belirtin ve yeniden deneyin:
 {1}</value>
   </data>
   <data name="NoIdentifierGroupingAllowed" xml:space="preserve">
-    <value>Use of parentheses is not valid in the expression because identifier grouping is not allowed. Try removing the parentheses, or if a subexpression is enclosed, try expanding the expression.</value>
+    <value>Parantez kullanımı, tanımlayıcı gruplandırmasına izin verilmediği için bu dil ifadesinde geçersizdir. Parantezleri kaldırmayı deneyin; ya da bir alt ifade kapsanmışsa, dil ifadesini genişletmeyi deneyin.</value>
   </data>
   <data name="SyntaxErrorBinaryOperatorExpected" xml:space="preserve">
-    <value>Unable to parse the expression due to an unexpected token. Only an OR (,) operator or AND (+) operator is expected after an identifier name.</value>
+    <value>Beklenmeyen bir belirteç nedeniyle dil ifadesi ayrıştırılamıyor. Bir tanımlayıcı adından sonra yalnızca bir YADA (,) işleci veya VE (+) işleci bekleniyor.</value>
   </data>
   <data name="SyntaxErrorIdentifierExpected" xml:space="preserve">
-    <value>Unable to parse the expression due to an unexpected token after a NOT (!) operator. An identifier name is expected after a NOT (!) operator.</value>
+    <value>Beklenmeyen bir DEĞİL (!) işleci sonrasında dil ifadesi ayrıştırılamıyor. DEĞİL (!) işleci sonrasında bir tanımlayıcı adı bekleniyor.</value>
   </data>
   <data name="SyntaxErrorUnexpectedBinaryOperator" xml:space="preserve">
-    <value>Unable to parse the expression due to an unexpected token. An identifier name or a NOT (!) operator is expected at the start of the expression, or after an OR (,) operator or an AND (+) operator. Also, an expression must not end with an OR (,), AND (+) or NOT (!) operator.</value>
+    <value>Beklenmeyen bir belirteç nedeniyle dil ifadesi ayrıştırılamıyor. Bir tanımlayıcı adı ya da bir DEĞİL (!) işleci, dil ifadesinin başında veya bir yada (,) işleci ya da bir VE (+) işleci sonrasında bekleniyor. Ayrıca, bir dil ifadesi YADA (,) işleci, VE (+) işleci veya değil (!) işleci ile sonlanmamalıdır.</value>
   </data>
 </root>

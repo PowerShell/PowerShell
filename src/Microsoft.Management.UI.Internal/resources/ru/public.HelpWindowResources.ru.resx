@@ -121,74 +121,74 @@
     <value>Отмена</value>
   </data>
   <data name="CaseSensitiveTitle" xml:space="preserve">
-    <value>Match Case</value>
+    <value>Учитывать регистр</value>
   </data>
   <data name="CommonParameters" xml:space="preserve">
-    <value>CommonParameters</value>
+    <value>Общие параметры</value>
     <comment>Name of a group of parameters common to all cmdlets</comment>
   </data>
   <data name="DescriptionTitle" xml:space="preserve">
     <value>Описание</value>
   </data>
   <data name="ExamplesTitle" xml:space="preserve">
-    <value>Examples</value>
+    <value>Примеры</value>
   </data>
   <data name="FindText" xml:space="preserve">
-    <value>_Find:</value>
+    <value>_Найти:</value>
   </data>
   <data name="HelpSectionsTitle" xml:space="preserve">
-    <value>Help Sections</value>
+    <value>Разделы справки</value>
   </data>
   <data name="HelpTitleFormat" xml:space="preserve">
-    <value>{0} Help</value>
+    <value>{0}: справка</value>
   </data>
   <data name="InputsTitle" xml:space="preserve">
-    <value>Inputs</value>
+    <value>Входные данные</value>
   </data>
   <data name="LinkTextFormat" xml:space="preserve">
     <value>{0} {1}</value>
   </data>
   <data name="MethodsTitle" xml:space="preserve">
-    <value>Methods</value>
+    <value>Методы</value>
   </data>
   <data name="NextText" xml:space="preserve">
-    <value>_Next</value>
+    <value>_Далее</value>
   </data>
   <data name="NoMatches" xml:space="preserve">
-    <value>No matches found</value>
+    <value>Совпадений не найдено</value>
   </data>
   <data name="NotesTitle" xml:space="preserve">
-    <value>Notes</value>
+    <value>Заметки</value>
   </data>
   <data name="OKText" xml:space="preserve">
     <value>ОК</value>
   </data>
   <data name="OneMatch" xml:space="preserve">
-    <value>1 match</value>
+    <value>1 совпадение</value>
   </data>
   <data name="OutputsTitle" xml:space="preserve">
-    <value>Outputs</value>
+    <value>Выходные данные</value>
   </data>
   <data name="ParameterAcceptWildcard" xml:space="preserve">
-    <value>Accept wildcard characters?</value>
+    <value>Принимать символы-шаблоны?</value>
   </data>
   <data name="ParameterDefaultValue" xml:space="preserve">
-    <value>Default value</value>
+    <value>Значение по умолчанию</value>
   </data>
   <data name="ParameterPipelineInput" xml:space="preserve">
-    <value>Accept pipeline input?</value>
+    <value>Принимать входные данные конвейера?</value>
   </data>
   <data name="ParameterPosition" xml:space="preserve">
-    <value>Position?</value>
+    <value>Позиция?</value>
   </data>
   <data name="ParameterRequired" xml:space="preserve">
-    <value>Required?</value>
+    <value>Обязательно?</value>
   </data>
   <data name="ParametersTitle" xml:space="preserve">
-    <value>Parameters</value>
+    <value>Параметры</value>
   </data>
   <data name="PreviousText" xml:space="preserve">
-    <value>_Previous</value>
+    <value>_Назад</value>
   </data>
   <data name="PropertiesTitle" xml:space="preserve">
     <value>Свойства</value>
@@ -197,34 +197,34 @@
     <value>RelatedLinks</value>
   </data>
   <data name="RemarksTitle" xml:space="preserve">
-    <value>Remarks</value>
+    <value>Примечания</value>
   </data>
   <data name="SearchOptionsTitle" xml:space="preserve">
-    <value>Search Options</value>
+    <value>Параметры поиска</value>
   </data>
   <data name="SettingsText" xml:space="preserve">
     <value>Параметры</value>
   </data>
   <data name="SomeMatchesFormat" xml:space="preserve">
-    <value>{0} matches</value>
+    <value>Совпадения: {0}</value>
   </data>
   <data name="SynopsisTitle" xml:space="preserve">
-    <value>Synopsis</value>
+    <value>Описание</value>
   </data>
   <data name="SyntaxTitle" xml:space="preserve">
-    <value>Syntax</value>
+    <value>Синтаксис</value>
   </data>
   <data name="Title" xml:space="preserve">
-    <value>Help for {0}</value>
+    <value>Справка для {0}</value>
     <comment>{0} is the name of a cmdlet</comment>
   </data>
   <data name="WholeWordTitle" xml:space="preserve">
-    <value>Whole Word</value>
+    <value>Слово целиком</value>
   </data>
   <data name="ZoomLabelTextFormat" xml:space="preserve">
-    <value>{0}%</value>
+    <value>{0} %</value>
   </data>
   <data name="ZoomSlider" xml:space="preserve">
-    <value>Zoom</value>
+    <value>Масштаб</value>
   </data>
 </root>

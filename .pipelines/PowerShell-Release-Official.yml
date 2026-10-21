@@ -36,6 +36,7 @@ parameters: # parameters are shown up in ADO UI in a build queue time
       - 'net8'
       - 'net9'
       - 'net10'
+      - 'net11'
   - name: IsEarlyAccess
     type: boolean
     default: false

@@ -118,31 +118,31 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="EmptyInputString" xml:space="preserve">
-    <value>The input expression must not be empty. Specify at least one identifier name in each input expression. </value>
+    <value>Wyrażenie wejściowe nie może być puste. Określ co najmniej jedną nazwę identyfikatora w każdym wyrażeniu wejściowym. </value>
   </data>
   <data name="EmptyTokenString" xml:space="preserve">
-    <value>Unable to match an empty identifier name to a valid enumerator name. Specify one of the following enumerator names and retry: {0}.</value>
+    <value>Nie można dopasować pustej nazwy identyfikatora do prawidłowej nazwy modułu wyliczającego. Określ jedną z następujących nazw modułu wyliczającego i ponów próbę: {0}.</value>
   </data>
   <data name="InvalidGenericType" xml:space="preserve">
-    <value>The generic type specified for the expression must represent an enum. Specify a valid enum type. </value>
+    <value>Typ ogólny określony dla wyrażenia musi reprezentować wyliczenie. Określ prawidłowy wyliczany typ danych. </value>
   </data>
   <data name="MultipleEnumNameMatch" xml:space="preserve">
-    <value>The identifier name {0} cannot be processed because it is either too similar or identical to the following enumerator names: {1}. Use a more specific identifier name.</value>
+    <value>Nie można przetworzyć nazwy {0} identyfikatora, ponieważ jest ona zbyt podobna lub identyczna z następującymi nazwami modułu wyliczającego: {1}. Użyj bardziej charakterystycznej nazwy identyfikatora.</value>
   </data>
   <data name="NoEnumNameMatch" xml:space="preserve">
-    <value>Unable to match the identifier name {0} to a valid enumerator name. Specify one of the following enumerator names and try again:
+    <value>Nie można dopasować nazwy {0} identyfikatora do prawidłowej nazwy modułu wyliczającego. Określ jedną z następujących nazw modułu wyliczającego i spróbuj ponownie:
 {1}</value>
   </data>
   <data name="NoIdentifierGroupingAllowed" xml:space="preserve">
-    <value>Use of parentheses is not valid in the expression because identifier grouping is not allowed. Try removing the parentheses, or if a subexpression is enclosed, try expanding the expression.</value>
+    <value>Użycie nawiasów jest nieprawidłowe w wyrażeniu, ponieważ grupowanie identyfikatorów jest niedozwolone. Spróbuj usunąć nawiasy lub jeśli podwyrażenie jest ujęte, rozszerz wyrażenie.</value>
   </data>
   <data name="SyntaxErrorBinaryOperatorExpected" xml:space="preserve">
-    <value>Unable to parse the expression due to an unexpected token. Only an OR (,) operator or AND (+) operator is expected after an identifier name.</value>
+    <value>Nie można przeanalizować wyrażenia z powodu nieoczekiwanego tokenu. Po nazwie identyfikatora jest oczekiwany tylko operator OR (,) lub AND (+).</value>
   </data>
   <data name="SyntaxErrorIdentifierExpected" xml:space="preserve">
-    <value>Unable to parse the expression due to an unexpected token after a NOT (!) operator. An identifier name is expected after a NOT (!) operator.</value>
+    <value>Nie można przeanalizować wyrażenia z powodu nieoczekiwanego tokenu po operatorze NOT (!). Oczekiwano nazwy identyfikatora po operatorze NOT (!).</value>
   </data>
   <data name="SyntaxErrorUnexpectedBinaryOperator" xml:space="preserve">
-    <value>Unable to parse the expression due to an unexpected token. An identifier name or a NOT (!) operator is expected at the start of the expression, or after an OR (,) operator or an AND (+) operator. Also, an expression must not end with an OR (,), AND (+) or NOT (!) operator.</value>
+    <value>Nie można przeanalizować wyrażenia z powodu nieoczekiwanego tokenu. Na początku wyrażenia oczekiwano nazwy identyfikatora lub operatora NOT (!), operatora OR (,) lub operatora AND (+). Ponadto wyrażenie nie może kończyć się operatorem OR (,), AND (+) ani NOT (!).</value>
   </data>
 </root>

@@ -121,132 +121,132 @@
     <value>Přístup k cestě {0} se zamítl.</value>
   </data>
   <data name="AllowUnencryptedAuthenticationRequired" xml:space="preserve">
-    <value>The cmdlet cannot protect plain text secrets sent over unencrypted connections. To suppress this warning and send plain text secrets over unencrypted networks, reissue the command specifying the AllowUnencryptedAuthentication parameter.</value>
+    <value>Rutina nemůže chránit tajné kódy ve formátu prostého textu odesílané přes nešifrovaná připojení. Pokud chcete potlačit toto upozornění a odesílat tajné kódy ve formátu prostého textu přes nešifrované sítě, zadejte příkaz znovu s parametrem AllowUnencryptedAuthentication.</value>
   </data>
   <data name="AuthenticationConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Authentication and UseDefaultCredentials. Authentication does not support Default Credentials. Specify either Authentication or UseDefaultCredentials, then retry.</value>
+    <value>Rutinu nelze spustit, protože jsou zadány následující konfliktní parametry: Authentication a UseDefaultCredentials. Authentication nepodporuje výchozí přihlašovací údaje. Zadejte buď Authentication, nebo UseDefaultCredentials a zkuste to znovu.</value>
   </data>
   <data name="AuthenticationCredentialNotSupplied" xml:space="preserve">
-    <value>The cmdlet cannot run because the following parameter is not specified: Credential. The supplied Authentication type requires a Credential. Specify Credential, then retry.</value>
+    <value>Rutinu nelze spustit, protože není zadán následující parametr: Credential. Zadaný typ Authentication vyžaduje Credential. Zadejte Credential a zkuste to znovu.</value>
   </data>
   <data name="AuthenticationTokenNotSupplied" xml:space="preserve">
-    <value>The cmdlet cannot run because the following parameter is not specified: Token. The supplied Authentication type requires a Token. Specify Token, then retry.</value>
+    <value>Rutinu nelze spustit, protože není zadán následující parametr: Token. Zadaný typ Authentication vyžaduje Token. Zadejte Token a potom to zkuste znovu.</value>
   </data>
   <data name="AuthenticationTokenConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Credential and Token. Specify either Credential or Token, then retry.</value>
+    <value>Rutinu nelze spustit, protože jsou zadány následující konfliktní parametry: Credential a Token. Zadejte buď Credential, nebo Token a zkuste to znovu.</value>
   </data>
   <data name="BodyConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Body and InFile. Specify either Body or Infile, then retry.  </value>
+    <value>Rutinu nelze spustit, protože jsou zadány následující konfliktní parametry: Body a InFile. Zadejte buď Body, nebo InFile a zkuste to znovu.  </value>
   </data>
   <data name="BodyFormConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Body and Form. Specify either Body or Form, then retry.  </value>
+    <value>Rutinu nelze spustit, protože jsou zadány následující konfliktní parametry: Body a Form. Zadejte buď Body, nebo Form a potom to zkuste znovu.  </value>
   </data>
   <data name="FormInFileConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: InFile and Form. Specify either InFile or Form, then retry.  </value>
+    <value>Rutinu nelze spustit, protože jsou zadány následující konfliktní parametry: InFile a Form. Zadejte buď InFile, nebo Form a zkuste to znovu.  </value>
   </data>
   <data name="ContentTypeException" xml:space="preserve">
-    <value>The cmdlet cannot run because the -ContentType parameter is not a valid Content-Type header. Specify a valid Content-Type for -ContentType, then retry. To suppress header validation, supply the -SkipHeaderValidation parameter.</value>
+    <value>Rutinu nelze spustit, protože parametr -ContentType není platným záhlavím Content-Type. Zadejte platnou hodnotu Content-Type pro parametr -ContentType a zkuste to znovu. Pokud chcete potlačit ověřování hlaviček, zadejte parametr -SkipHeaderValidation.</value>
   </data>
   <data name="CredentialConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Credential and UseDefaultCredentials. Specify either Credential or UseDefaultCredentials, then retry.</value>
+    <value>Rutinu nelze spustit, protože jsou zadány následující konfliktní parametry: Credential a UseDefaultCredentials. Zadejte buď Credential, nebo UseDefaultCredentials a zkuste to znovu.</value>
   </data>
   <data name="DirectoryPathSpecified" xml:space="preserve">
-    <value>Path '{0}' resolves to a directory. Specify a path including a file name, and then retry the command.</value>
+    <value>Cesta {0} se překládá na adresář. Zadejte cestu včetně názvu souboru a potom příkaz opakujte.</value>
   </data>
   <data name="EmptyKeyInJsonString" xml:space="preserve">
-    <value>The provided JSON includes a property whose name is an empty string, this is only supported using the -AsHashTable switch.</value>
+    <value>Zadaný kód JSON obsahuje vlastnost, jejíž název je prázdný řetězec. To je podporováno pouze při použití přepínače -AsHashTable.</value>
   </data>
   <data name="DuplicateKeysInJsonString" xml:space="preserve">
-    <value>Cannot convert the JSON string because a dictionary that was converted from the string contains the duplicated key '{0}'.</value>
+    <value>Řetězec JSON nelze převést, protože slovník převedený z tohoto řetězce obsahuje duplicitní klíč {0}.</value>
   </data>
   <data name="IEDomNotSupported" xml:space="preserve">
-    <value>The response content cannot be parsed because the Internet Explorer engine is not available, or Internet Explorer's first-launch configuration is not complete. Specify the UseBasicParsing parameter and try again. </value>
+    <value>Obsah odpovědi nelze analyzovat, protože modul Internet Exploreru není k dispozici nebo nebyla dokončena konfigurace Internet Exploreru při prvním spuštění. Zadejte parametr UseBasicParsing a zkuste to znovu. </value>
   </data>
   <data name="InsecureRedirection" xml:space="preserve">
-    <value>Cannot follow an insecure redirection by default. Reissue the command specifying the -AllowInsecureRedirect switch. </value>
+    <value>Ve výchozím nastavení nelze pokračovat přes nezabezpečené přesměrování. Zadejte příkaz znovu s přepínačem -AllowInsecureRedirect. </value>
   </data>
   <data name="KeysWithDifferentCasingInJsonString" xml:space="preserve">
-    <value>Cannot convert the JSON string because it contains keys with different casing. Please use the -AsHashTable switch instead. The key that was attempted to be added to the existing key '{0}' was '{1}'.</value>
+    <value>Řetězec JSON nelze převést, protože obsahuje klíče s různou velikostí písmen. Místo toho použijte přepínač -AsHashTable. Klíč, který se systém pokusil přidat k existujícímu klíči {0}, byl {1}.</value>
   </data>
   <data name="MaximumRedirectionCountExceeded" xml:space="preserve">
-    <value>The maximum redirection count has been exceeded. To increase the number of redirections allowed, supply a higher value to the -MaximumRedirection parameter.</value>
+    <value>Byl překročen maximální počet přesměrování. Pokud chcete zvýšit povolený počet přesměrování, zadejte pro parametr -MaximumRedirection vyšší hodnotu.</value>
   </data>
   <data name="MultiplePathsResolved" xml:space="preserve">
-    <value>Path '{0}' can be resolved to multiple paths.</value>
+    <value>Cestu {0} lze přeložit na více cest.</value>
   </data>
   <data name="NonStringKeyInDictionary" xml:space="preserve">
-    <value>The type '{0}' is not supported for serialization or deserialization of a dictionary. Keys must be strings.</value>
+    <value>Typ {0} není podporován pro serializaci nebo deserializaci slovníku. Klíče musí být řetězce.</value>
   </data>
   <data name="NoPathResolved" xml:space="preserve">
-    <value>Path '{0}' cannot be resolved to a file.</value>
+    <value>Cestu {0} nelze přeložit na soubor.</value>
   </data>
   <data name="NotFilesystemPath" xml:space="preserve">
-    <value>Path '{0}' is not a file system path. Please specify the path to a file in the file system.</value>
+    <value>Cesta {0} není cestou systému souborů. Zadejte cestu k souboru v systému souborů.</value>
   </data>
   <data name="OutFileMissing" xml:space="preserve">
-    <value>The cmdlet cannot run because the following parameter is missing: OutFile. Provide a valid OutFile parameter value when using the {0} parameter, then retry.</value>
+    <value>Rutinu nelze spustit, protože chybí následující parametr: OutFile. Při použití parametru {0} zadejte platnou hodnotu parametru OutFile a zkuste to znovu.</value>
   </data>
   <data name="OutFileWritingSkipped" xml:space="preserve">
-    <value>The file will not be re-downloaded because the remote file is the same size as the OutFile: {0}</value>
+    <value>Soubor se znovu nestáhne, protože vzdálený soubor má stejnou velikost jako OutFile: {0}.</value>
   </data>
   <data name="ProxyCredentialConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: ProxyCredential and ProxyUseDefaultCredentials. Specify either ProxyCredential or ProxyUseDefaultCredentials, then retry.</value>
+    <value>Rutinu nelze spustit, protože jsou zadány následující konfliktní parametry: ProxyCredential a ProxyUseDefaultCredentials. Zadejte buď ProxyCredential, nebo ProxyUseDefaultCredentials a zkuste to znovu.</value>
   </data>
   <data name="ProxyUriNotSupplied" xml:space="preserve">
-    <value>The cmdlet cannot run because the following parameter is missing: Proxy. Provide a valid proxy URI for the Proxy parameter when using the ProxyCredential or ProxyUseDefaultCredentials parameters, then retry.</value>
+    <value>Rutinu nelze spustit, protože chybí následující parametr: Proxy. Při použití parametrů ProxyCredential nebo ProxyUseDefaultCredentials zadejte pro parametr Proxy platný identifikátor URI proxy serveru a zkuste to znovu.</value>
   </data>
   <data name="ReadResponseComplete" xml:space="preserve">
-    <value>Reading web response stream completed. Bytes downloaded: {0}</value>
+    <value>Čtení streamu webové odpovědi bylo dokončeno. Stažené bajty: {0}</value>
   </data>
   <data name="ReadResponseProgressActivity" xml:space="preserve">
-    <value>Reading web response stream</value>
+    <value>Čtení streamu webových odpovědí</value>
   </data>
   <data name="ReadResponseProgressStatus" xml:space="preserve">
-    <value>Downloaded: {0} of {1}</value>
+    <value>Staženo: {0} z(e) {1}</value>
   </data>
   <data name="ResumeNotFilePath" xml:space="preserve">
-    <value>The Resume switch can only be used if OutFile targets a file but it resolves to a directory: {0}.</value>
+    <value>Přepínač Resume lze použít pouze v případě, že OutFile odkazuje na soubor, ale výsledkem je adresář: {0}.</value>
   </data>
   <data name="SessionConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Session and SessionVariable. Specify either Session or SessionVariable, then retry.</value>
+    <value>Rutinu nelze spustit, protože jsou zadány následující konfliktní parametry: Session a SessionVariable. Zadejte buď Session, nebo SessionVariable a zkuste to znovu.</value>
   </data>
   <data name="ThumbprintNotFound" xml:space="preserve">
-    <value>Unable to retrieve certificates because the thumbprint is not valid. Verify the thumbprint and retry. </value>
+    <value>Certifikáty nelze načíst, protože kryptografický otisk není platný. Ověřte kryptografický otisk a zkuste to znovu. </value>
   </data>
   <data name="WriteRequestComplete" xml:space="preserve">
-    <value>Web request completed. (Number of bytes processed: {0})</value>
+    <value>Webový požadavek byl dokončen. (Počet zpracovaných bajtů: {0})</value>
   </data>
   <data name="WriteRequestCancelled" xml:space="preserve">
-    <value>Web request cancelled. (Number of bytes processed: {0})</value>
+    <value>Webový požadavek byl zrušen. (Počet zpracovaných bajtů: {0})</value>
   </data>
   <data name="WriteRequestProgressActivity" xml:space="preserve">
-    <value>Web request status</value>
+    <value>Stav webového požadavku</value>
   </data>
   <data name="WriteRequestProgressStatus" xml:space="preserve">
-    <value>Downloaded: {0} of {1}</value>
+    <value>Staženo: {0} z(e) {1}</value>
   </data>
   <data name="JsonDeserializationFailed" xml:space="preserve">
-    <value>Conversion from JSON failed with error: {0}</value>
+    <value>Převod z formátu JSON selhal s chybou: {0}.</value>
   </data>
   <data name="ResponseStatusCodeFailure" xml:space="preserve">
-    <value>Response status code does not indicate success: {0} ({1}).</value>
+    <value>Kód stavu odpovědi neoznačuje úspěch: {0} ({1}).</value>
   </data>
   <data name="FollowingRelLinkVerboseMsg" xml:space="preserve">
-    <value>Following rel link {0}</value>
+    <value>Následuje relativní odkaz {0}.</value>
   </data>
   <data name="WebMethodResumeFailedVerboseMsg" xml:space="preserve">
-    <value>The remote server indicated it could not resume downloading. The local file will be overwritten.</value>
+    <value>Vzdálený server oznámil, že stahování nelze obnovit. Místní soubor bude přepsán.</value>
   </data>
   <data name="WebResponseNoSizeVerboseMsg" xml:space="preserve">
-    <value>Received HTTP/{0} response of content type {1} of unknown size</value>
+    <value>Byla přijata odpověď HTTP/{0} s typem obsahu {1} neznámé velikosti.</value>
   </data>
   <data name="RetryVerboseMsg" xml:space="preserve">
-    <value>Retrying after interval of {0} seconds. Status code for previous attempt: {1}</value>
+    <value>Další pokus proběhne po {0} sekundách. Stavový kód předchozího pokusu: {1}</value>
   </data>
   <data name="JsonMaxDepthReached" xml:space="preserve">
-    <value>Resulting JSON is truncated as serialization has exceeded the set depth of {0}.</value>
+    <value>Výsledný kód JSON je zkrácen, protože serializace překročila nastavenou hloubku {0}.</value>
   </data>
   <data name="WebSessionConnectionRecreated" xml:space="preserve">
-    <value>The WebSession properties were changed between requests forcing all HTTP connections in the session to be recreated.</value>
+    <value>Vlastnosti WebSession se mezi požadavky změnily, což vynutilo opětovné vytvoření všech připojení HTTP v relaci.</value>
   </data>
 </root>

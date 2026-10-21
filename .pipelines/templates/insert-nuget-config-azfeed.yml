@@ -27,8 +27,8 @@ steps:
       }
       else
       {
-        Write-Verbose -Verbose "Running: Switch-PSNugetConfig -Source EarlyAccess"
-        Switch-PSNugetConfig -Source EarlyAccess
+        Write-Verbose -Verbose "Running: Switch-PSNugetConfig -Source EarlyAccess (using Azure DevOps feed credentials from pipeline variables)"
+        Switch-PSNugetConfig -Source EarlyAccess -UserName '$(AzDevopsFeedUserNameKVPAT)' -ClearTextPAT '$(powershellPackageReadPat)'
       }
 
       if(-not (Test-Path $configPath))
@@ -46,17 +46,19 @@ steps:
     NugetConfigDir: ${{ parameters.repoRoot }}/src/Modules
     ob_restore_phase: ${{ parameters.ob_restore_phase }}
 
-- task: AzurePowerShell@5
+- task: AzureCLI@2
   inputs:
     azureSubscription: powershell-net-early-access
-    azurePowerShellVersion: LatestVersion
-    ScriptType: InlineScript
-    pwsh: true
-    inline: |
+    scriptType: pscore
+    scriptLocation: inlineScript
+    inlineScript: |
       Write-Verbose -Verbose "Getting an Azure DevOps access token"
       # Microsoft's well-known Entra resource ID for the Azure DevOps token audience.
       $azureDevOpsResourceUrl = '499b84ac-1321-427f-aa17-267ca6975798'
-      $azt = (Get-AzAccessToken -ResourceUrl $azureDevOpsResourceUrl).Token | ConvertFrom-SecureString -AsPlainText
+      $azt = az account get-access-token --resource $azureDevOpsResourceUrl --query accessToken --output tsv
+      if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($azt)) {
+        throw "Failed to get an Azure DevOps access token."
+      }
 
       Write-Host "##vso[task.setsecret]$azt"
       Write-Verbose -Verbose "Setting up Azure Artifacts Credential Provider token"
@@ -66,9 +68,10 @@ steps:
             'net8' { 'https://pkgs.dev.azure.com/powershell-rel/PowerShell/_packaging/powershell-net-8-early-access/nuget/v3/index.json' }
             'net9' { 'https://pkgs.dev.azure.com/powershell-rel/PowerShell/_packaging/powershell-net-9-early-access/nuget/v3/index.json' }
             'net10' { 'https://pkgs.dev.azure.com/powershell-rel/PowerShell/_packaging/powershell-net-10-early-access/nuget/v3/index.json' }
+            'net11' { 'https://pkgs.dev.azure.com/powershell-rel/PowerShell/_packaging/powershell-net-11-early-access/nuget/v3/index.json' }
             default { throw "Unknown early access feed URL: $earlyAccessFeed" }
         }
-      $galleryRepoUri = 'https://www.powershellgallery.com/api/v2'
+      $powerShellRepoUri = 'https://pkgs.dev.azure.com/powershell/PowerShell/_packaging/PowerShell/nuget/v3/index.json'
 
       Write-Verbose -Verbose "ADORepoUri == $ADORepoUri"
 
@@ -76,6 +79,11 @@ steps:
       {
         $endpointCredsObj = @{ endpointCredentials = @(
           @{ endpoint = $ADORepoUri; password = $azt }
+          @{
+            endpoint = $powerShellRepoUri
+            username = '$(AzDevopsFeedUserNameKVPAT)'
+            password = '$(powershellPackageReadPat)'
+          }
         )}
         $VSS_NUGET_EXTERNAL_FEED_ENDPOINTS = $endpointCredsObj | ConvertTo-Json -Compress
 

@@ -118,102 +118,102 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CloseError" xml:space="preserve">
-    <value>CloseError: ({1}:{2}) [{0}], {3}</value>
+    <value>Error al cerrar: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="DeadlockDetected" xml:space="preserve">
-    <value>Deadlock detected: ({1}:{2}) [{0}], {3}</value>
+    <value>Interbloqueo detectado: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="DeviceError" xml:space="preserve">
-    <value>DeviceError: ({1}:{2}) [{0}], {3}</value>
+    <value>Error del dispositivo: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="InvalidArgument" xml:space="preserve">
-    <value>InvalidArgument: ({1}:{2}) [{0}], {3}</value>
+    <value>Argumento no válido: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="InvalidData" xml:space="preserve">
-    <value>InvalidData: ({1}:{2}) [{0}], {3}</value>
+    <value>Datos no válidos: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="InvalidOperation" xml:space="preserve">
-    <value>InvalidOperation: ({1}:{2}) [{0}], {3}</value>
+    <value>Operación no válida: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="InvalidResult" xml:space="preserve">
-    <value>InvalidResult: ({1}:{2}) [{0}], {3}</value>
+    <value>Resultado no válido: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="InvalidType" xml:space="preserve">
-    <value>InvalidType: ({1}:{2}) [{0}], {3}</value>
+    <value>Tipo no válido: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="MetadataError" xml:space="preserve">
-    <value>MetadataError: ({1}:{2}) [{0}], {3}</value>
+    <value>Error de metadatos: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="NotImplemented" xml:space="preserve">
-    <value>NotImplemented: ({1}:{2}) [{0}], {3}</value>
+    <value>No implementado: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="NotInstalled" xml:space="preserve">
-    <value>NotInstalled: ({1}:{2}) [{0}], {3}</value>
+    <value>No instalado: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="ObjectNotFound" xml:space="preserve">
-    <value>ObjectNotFound: ({1}:{2}) [{0}], {3}</value>
+    <value>Objeto no encontrado: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="OpenError" xml:space="preserve">
-    <value>OpenError: ({1}:{2}) [{0}], {3}</value>
+    <value>Error al abrir: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="OperationStopped" xml:space="preserve">
-    <value>OperationStopped: ({1}:{2}) [{0}], {3}</value>
+    <value>Operación detenida: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="OperationTimeout" xml:space="preserve">
-    <value>OperationTimeout: ({1}:{2}) [{0}], {3}</value>
+    <value>Tiempo de espera de la operación agotado: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="ParserError" xml:space="preserve">
-    <value>ParserError: ({1}:{2}) [{0}], {3}</value>
+    <value>Error del analizador: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="PermissionDenied" xml:space="preserve">
-    <value>PermissionDenied: ({1}:{2}) [{0}], {3}</value>
+    <value>Permiso denegado: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="ReadError" xml:space="preserve">
-    <value>ReadError: ({1}:{2}) [{0}], {3}</value>
+    <value>Error de lectura: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="ResourceBusy" xml:space="preserve">
-    <value>ResourceBusy: ({1}:{2}) [{0}], {3}</value>
+    <value>Recurso ocupado: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="ResourceExists" xml:space="preserve">
-    <value>ResourceExists: ({1}:{2}) [{0}], {3}</value>
+    <value>El recurso ya existe: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="ResourceUnavailable" xml:space="preserve">
-    <value>ResourceUnavailable: ({1}:{2}) [{0}], {3}</value>
+    <value>Recurso no disponible: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="SyntaxError" xml:space="preserve">
-    <value>SyntaxError: ({1}:{2}) [{0}], {3}</value>
+    <value>Error de sintaxis: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="WriteError" xml:space="preserve">
-    <value>WriteError: ({1}:{2}) [{0}], {3}</value>
+    <value>Error de escritura: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="FromStdErr" xml:space="preserve">
-    <value>FromStdErr: ({1}:{2}) [{0}], {3}</value>
+    <value>Desde StdErr: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="SecurityError" xml:space="preserve">
-    <value>SecurityError: ({1}:{2}) [{0}], {3}</value>
+    <value>Error de seguridad: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="ProtocolError" xml:space="preserve">
-    <value>ProtocolError: ({1}:{2}) [{0}], {3}</value>
+    <value>Error de protocolo: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="ConnectionError" xml:space="preserve">
-    <value>ConnectionError: ({1}:{2}) [{0}], {3}</value>
+    <value>Error de conexión: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="AuthenticationError" xml:space="preserve">
-    <value>AuthenticationError: ({1}:{2}) [{0}], {3}</value>
+    <value>Error de autenticación: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="LimitsExceeded" xml:space="preserve">
-    <value>LimitsExceeded: ({1}:{2}) [{0}], {3}</value>
+    <value>Se superaron los límites: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="QuotaExceeded" xml:space="preserve">
-    <value>QuotaExceeded: ({1}:{2}) [{0}], {3}</value>
+    <value>Se superó la cuota: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="NotEnabled" xml:space="preserve">
-    <value>NotEnabled: ({1}:{2}) [{0}], {3}</value>
+    <value>No habilitado: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="NotSpecified" xml:space="preserve">
-    <value>NotSpecified: ({1}:{2}) [{0}], {3}</value>
+    <value>No especificado: ({1}:{2}) [{0}], {3}</value>
   </data>
   <data name="InvalidErrorCategory" xml:space="preserve">
-    <value>Unrecognized error category {4}: ({1}:{2}) [{0}], {3}</value>
+    <value>Categoría de error no reconocida {4}: ({1}:{2}) [{0}], {3}</value>
   </data>
 </root>

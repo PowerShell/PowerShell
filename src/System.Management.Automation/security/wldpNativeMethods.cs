@@ -97,35 +97,52 @@ namespace System.Management.Automation.Security
 
         private static bool TestBooleanWldpSetting(string settingName)
         {
-            int hr = WldpNativeMethods.WldpGetApplicationSettingBoolean(
-                AppManifestId,
-                settingName,
-                out bool result);
+            bool result = SafeWldpGetApplicationSettingBoolean(settingName);
 
-            PSEtwLog.LogWDACQueryEvent(
-                "WldpGetApplicationSettingBoolean",
-                settingName,
-                hr,
-                result ? 1 : 0);
-
-            if (hr is not 0)
+            if (result)
             {
-                result = false;
+                return true;
             }
 
-            if (!result)
-            {
-                string debugValue = Environment.GetEnvironmentVariable(
-                    $"__PSLockdownPolicy_{settingName}",
-                    EnvironmentVariableTarget.Machine);
+            string debugValue = Environment.GetEnvironmentVariable(
+                $"__PSLockdownPolicy_{settingName}",
+                EnvironmentVariableTarget.Machine);
 
-                if (debugValue is "1")
-                {
-                    result = true;
-                }
+            if (debugValue is "1")
+            {
+                result = true;
             }
 
             return result;
+        }
+
+        private static bool SafeWldpGetApplicationSettingBoolean(string settingName)
+        {
+            try
+            {
+                int hr = WldpNativeMethods.WldpGetApplicationSettingBoolean(
+                    AppManifestId,
+                    settingName,
+                    out bool result);
+
+                PSEtwLog.LogWDACQueryEvent(
+                    "WldpGetApplicationSettingBoolean",
+                    settingName,
+                    hr,
+                    result ? 1 : 0);
+
+                return hr is 0 && result;
+            }
+            catch (Exception ex) when (ex is DllNotFoundException or EntryPointNotFoundException)
+            {
+                PSEtwLog.LogWDACQueryEvent(
+                    "WldpGetApplicationSettingBoolean_Failed",
+                    settingName,
+                    ex.HResult,
+                    0);
+
+                return false;
+            }
         }
 
         /// <summary>

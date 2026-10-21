@@ -118,42 +118,42 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AlreadyCompiledandLoaded" xml:space="preserve">
-    <value>The source code was already compiled and loaded.</value>
+    <value>Il codice sorgente è già stato compilato e caricato.</value>
   </data>
   <data name="FileExtensionNotSupported" xml:space="preserve">
-    <value>Cannot add type. The "{0}" extension is not supported.</value>
+    <value>Non è possibile aggiungere il tipo. L'estensione "{0}" non è supportata.</value>
   </data>
   <data name="MultipleExtensionsNotSupported" xml:space="preserve">
-    <value>Cannot add type. Input files must all have the same file extension.</value>
+    <value>Non è possibile aggiungere il tipo. Tutti i file di input devono avere la stessa estensione.</value>
   </data>
   <data name="AssemblyNotFound" xml:space="preserve">
-    <value>Cannot add type. The assembly '{0}' could not be found.</value>
+    <value>Non è possibile aggiungere il tipo. Non è possibile trovare l'assembly '{0}'.</value>
   </data>
   <data name="TypeAlreadyExists" xml:space="preserve">
-    <value>Cannot add type. The type name '{0}' already exists.</value>
+    <value>Non è possibile aggiungere il tipo. Il nome del tipo '{0}' esiste già.</value>
   </data>
   <data name="OutputAssemblyDidNotResolve" xml:space="preserve">
-    <value>Cannot set output assembly. The path {0} did not resolve to a single file.</value>
+    <value>Non è possibile impostare l'assembly di output. Il percorso {0} non è stato risolto in un singolo file.</value>
   </data>
   <data name="CompilerErrors" xml:space="preserve">
-    <value>Cannot add type. Compilation errors occurred.</value>
+    <value>Non è possibile aggiungere il tipo. Si sono verificati errori di compilazione.</value>
   </data>
   <data name="OutputTypeRequiresOutputAssembly" xml:space="preserve">
-    <value>Cannot add type. The OutputType parameter requires that the OutputAssembly parameter be specified.</value>
+    <value>Non è possibile aggiungere il tipo. Per il parametro OutputType è necessario specificare il parametro OutputAssembly.</value>
   </data>
   <data name="CannotDefineNewType" xml:space="preserve">
-    <value>Cannot add type. Definition of new types is not supported in this language mode.</value>
+    <value>Non è possibile aggiungere il tipo. La definizione de nuovi tipi non è supportata in questa modalità di linguaggio.</value>
   </data>
   <data name="ReferenceAssemblyIgnored" xml:space="preserve">
-    <value>The specified reference assembly '{0}' is unnecessary and ignored.</value>
+    <value>L'assembly di riferimento '{0}' specificato non è necessario e viene ignorato.</value>
   </data>
   <data name="AssemblyTypeNotSupported" xml:space="preserve">
-    <value>Both the assembly types 'ConsoleApplication' and 'WindowsApplication' are not currently supported.</value>
+    <value>Entrambi i tipi di assembly 'ConsoleApplication' e 'WindowsApplication' non sono attualmente supportati.</value>
   </data>
   <data name="AddTypeLogTitle" xml:space="preserve">
     <value>Add-Type Cmdlet</value>
   </data>
   <data name="AddTypeLogMessage" xml:space="preserve">
-    <value>Add-Type cmdlet will not be allowed in ConstrainedLanguage mode.</value>
+    <value>Il cmdlet Add-Type non sarà consentito in modalità ConstrainedLanguage.</value>
   </data>
 </root>

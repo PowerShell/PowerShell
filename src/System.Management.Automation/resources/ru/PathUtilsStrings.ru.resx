@@ -118,31 +118,31 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Utf7EncodingObsolete" xml:space="preserve">
-    <value>Encoding 'UTF-7' is obsolete, please use UTF-8.</value>
+    <value>Кодирование "UTF-7" устарело. Используйте UTF-8.</value>
   </data>
   <data name="UtilityFileExistsNoClobber" xml:space="preserve">
-    <value>File {0} already exists and {1} was specified.</value>
+    <value>Файл {0} уже существует, и указан {1}.</value>
   </data>
   <data name="OutFile_ReadWriteFileNotFileSystemProvider" xml:space="preserve">
-    <value>Cannot open file because the current provider ({0}) cannot open a file.</value>
+    <value>Невозможно открыть файл, поскольку текущий поставщик ({0}) не может открывать файлы.</value>
   </data>
   <data name="OutFile_MultipleFilesNotSupported" xml:space="preserve">
-    <value>Cannot perform operation because the path resolved to more than one file. This command cannot operate on multiple files.</value>
+    <value>Невозможно выполнить операцию, так как путь разрешается в несколько файлов. Эта команда не может работать с несколькими файлами.</value>
   </data>
   <data name="OutFile_DidNotResolveFile" xml:space="preserve">
-    <value>Cannot perform operation because the wildcard path {0} did not resolve to a file.</value>
+    <value>Невозможно выполнить операцию, так как путь с подстановочными знаками {0} не разрешен в файл.</value>
   </data>
   <data name="OutFile_WriteToFileEncodingUnknown" xml:space="preserve">
-    <value>Unknown encoding {0}; valid values are {1}.</value>
+    <value>Неизвестное кодирование {0}; допустимые значения — {1}.</value>
   </data>
   <data name="ExportPSSession_ErrorDirectoryExists" xml:space="preserve">
-    <value>The directory '{0}' already exists.  Use the -Force parameter if you want to overwrite the directory and files within the directory.</value>
+    <value>Каталог "{0}" уже существует.  Используйте параметр Force, если хотите перезаписать каталог и файлы в нем.</value>
   </data>
   <data name="ExportPSSession_ErrorModuleNameOrPath" xml:space="preserve">
-    <value>The user module path does not exist, and hence a module folder cannot be created for the provided module name '{0}'.</value>
+    <value>Путь к пользовательскому модулю не существует, поэтому невозможно создать папку модуля для указанного имени модуля "{0}".</value>
   </data>
   <data name="ExportPSSession_CannotCreateOutputDirectory" xml:space="preserve">
-    <value>Cannot create the module {0} due to the following: {1}. Use a different argument for the -OutputModule parameter and retry.</value>
+    <value>Не удается создать модуль {0} по следующей причине: {1}. Используйте другой аргумент для параметра -OutputModule и повторите попытку.</value>
     <comment>{StrContains="OutputModule"}
 {0} is a placeholder for the name of a directory
 {1} is a placeholder for an error message from the inner exception
@@ -161,6 +161,6 @@ At line:1 char:1
     </comment>
   </data>
   <data name="ExportPSSession_ScriptGeneratorVersionMismatch" xml:space="preserve">
-    <value>The module cannot be loaded because it has been generated with an incompatible version of the {0} cmdlet. Generate the module with the {0} cmdlet from the current session, and try loading the module again.</value>
+    <value>Не удается загрузить модуль, так как он был создан с помощью несовместимой версии командлета {0}. Создайте модуль с помощью командлета {0} из текущего сеанса и попробуйте загрузить модуль еще раз.</value>
   </data>
 </root>

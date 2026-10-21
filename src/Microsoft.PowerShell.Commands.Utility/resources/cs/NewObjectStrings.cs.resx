@@ -118,45 +118,45 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CannotFindAppropriateCtor" xml:space="preserve">
-    <value>A constructor was not found. Cannot find an appropriate constructor for type {0}.</value>
+    <value>Konstruktor nebyl nalezen. Nelze najít odpovídající konstruktor pro typ {0}.</value>
   </data>
   <data name="TypeNotFound" xml:space="preserve">
-    <value>Cannot find type [{0}]: verify that the assembly containing this type is loaded.</value>
+    <value>Nelze najít typ [{0}]: Ověřte, že je načteno sestavení obsahující tento typ.</value>
   </data>
   <data name="CannotLoadComObjectType" xml:space="preserve">
-    <value>Cannot load COM type {0}.</value>
+    <value>Nelze načíst typ modelu COM {0}.</value>
   </data>
   <data name="ComInteropLoaded" xml:space="preserve">
-    <value>The object written to the pipeline is an instance of the type "{0}" from the component's primary interoperability assembly. If this type exposes different members than the IDispatch members, scripts that are written to work with this object might not work if the primary interoperability assembly is not installed.</value>
+    <value>Objekt zapsaný do kanálu je instancí typu {0} z primárního sestavení komponenty pro interoperabilitu. Pokud tento typ zpřístupňuje jiné členy než členy IDispatch, skripty napsané pro práci s tímto objektem nemusí fungovat, pokud není nainstalováno primární sestavení pro interoperabilitu.</value>
   </data>
   <data name="MemberNotFound" xml:space="preserve">
-    <value>The member "{1}" was not found for the specified {2} object.</value>
+    <value>Člen {1} nebyl pro zadaný objekt {2} nalezen.</value>
   </data>
   <data name="InvalidValue" xml:space="preserve">
-    <value>The value supplied is not valid, or the property is read-only. Change the value, and then try again.</value>
+    <value>Zadaná hodnota není platná nebo je vlastnost jen pro čtení. Změňte hodnotu a zkuste to znovu.</value>
   </data>
   <data name="CannotInstantiateWinRTType" xml:space="preserve">
-    <value>Creating instances of attribute and delegated Windows RT types is not supported.</value>
+    <value>Vytváření instancí atributů a delegovaných typů Windows RT není podporováno.</value>
   </data>
   <data name="CannotInstantiateBoxedByRefLikeType" xml:space="preserve">
-    <value>Cannot create instances of the ByRef-like type "{0}". ByRef-like types are not supported in PowerShell.</value>
+    <value>Nelze vytvořit instance typu podobného ByRef {0}. PowerShell nepodporuje typy podobné ByRef.</value>
   </data>
   <data name="CannotCreateTypeConstrainedLanguage" xml:space="preserve">
-    <value>Cannot create type. Only core types are supported in this language mode.</value>
+    <value>Typ nelze vytvořit. V tomto jazykovém režimu se podporují jen základní typy.</value>
   </data>
   <data name="CannotCreateTypeLanguageMode" xml:space="preserve">
-    <value>Cannot create type. Only core types are supported in {0} language mode on a policy locked down machine.</value>
+    <value>Typ nelze vytvořit. V počítači uzamčeném zásadou jsou v jazykovém režimu {0} podporovány pouze základní typy.</value>
   </data>
   <data name="TypeWDACLogTitle" xml:space="preserve">
-    <value>New-Object Cmdlet Type Creation</value>
+    <value>Vytvoření typu rutiny New-Object</value>
   </data>
   <data name="TypeWDACLogMessage" xml:space="preserve">
-    <value>The type '{0}' will not be created in ConstrainedLanguage mode.</value>
+    <value>Typ {0} nebude vytvořen v režimu ConstrainedLanguage.</value>
   </data>
   <data name="ComWDACLogTitle" xml:space="preserve">
-    <value>New-Object Cmdlet COM Object Creation</value>
+    <value>Vytvoření objektu COM rutiny New-Object</value>
   </data>
   <data name="ComWDACLogMessage" xml:space="preserve">
-    <value>The COM object '{0}' will not be created in ConstrainedLanguage mode.</value>
+    <value>Objekt COM {0} nebude vytvořen v režimu ConstrainedLanguage.</value>
   </data>
 </root>

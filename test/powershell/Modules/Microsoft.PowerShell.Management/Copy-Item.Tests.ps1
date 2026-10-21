@@ -2,6 +2,17 @@
 # Licensed under the MIT License.
 
 Describe "Validate Copy-Item locally" -Tags "CI" {
+    BeforeAll {
+        $canRemoteNameCausePathTraversalMethod = [Microsoft.PowerShell.Commands.FileSystemProvider].GetMethod(
+            'CanRemoteNameCausePathTraversal',
+            [System.Reflection.BindingFlags]::NonPublic -bor [System.Reflection.BindingFlags]::Static)
+
+        function CanRemoteNameCausePathTraversal {
+            param ([string]$name)
+            return $canRemoteNameCausePathTraversalMethod.Invoke($null, @($name))
+        }
+    }
+
     It "Copy-Item has non-terminating error if destination is in use" -Skip:(!$IsWindows) {
         Copy-Item -Path $env:windir\system32\cmd.exe -Destination TestDrive:\
         $cmd = Start-Process -FilePath TestDrive:\cmd.exe -PassThru
@@ -12,25 +23,45 @@ Describe "Validate Copy-Item locally" -Tags "CI" {
             $cmd | Stop-Process
         }
     }
+
+    It "Validate remote name <Name> for path traversal" -TestCases @(
+        @{ Name = "evil.txt"; CanTraverse = $false }
+        @{ Name = "my.file.name"; CanTraverse = $false }
+        @{ Name = "Zone.Identifier"; CanTraverse = $false }
+        @{ Name = "has space.txt"; CanTraverse = $false }
+        @{ Name = "COM10"; CanTraverse = $false }
+
+        @{ Name = ".."; CanTraverse = $true }
+        @{ Name = "."; CanTraverse = $true }
+        @{ Name = "..\..\evil.txt"; CanTraverse = $true }
+        @{ Name = "a\b"; CanTraverse = $true }
+        @{ Name = "a/b"; CanTraverse = $true }
+        @{ Name = "\evil"; CanTraverse = $true }
+        @{ Name = "C:\evil"; CanTraverse = $true }
+        @{ Name = "..\"; CanTraverse = $true }
+
+        ## The char ':' is not allowed on Windows, but allowed on Unix platforms.
+        @{ Name = "x:evil"; CanTraverse = $isWindows }
+        @{ Name = ":bad"; CanTraverse = $isWindows }
+    ) {
+        param(
+            [string]$Name,
+            [bool]$CanTraverse
+        )
+
+        CanRemoteNameCausePathTraversal $Name | Should -Be $CanTraverse
+    }
 }
 
 # This is a Pester test suite to validate Copy-Item remotely using a remote session.
-
-# If PS Remoting is not available, do not run the suite.
-function ShouldRun
+# We cannot create a PS Remoting session on non-Windows, so do not run the suite on those platforms.
+if (-not $IsWindows)
 {
-    if ( $IsCoreCLR ) { return $false }
-    $result = Invoke-Command -ComputerName . -ScriptBlock {1} -ErrorAction SilentlyContinue
-    return ($result -eq 1)
-}
-
-if (-not (ShouldRun))
-{
-    Write-Host "PS Remoting is not available, skipping tests..." -ForegroundColor Cyan
+    Write-Host "The 'HelpersRemoting' module works on Windows only, skipping remote tests for Copy-Item ..." -ForegroundColor Cyan
     return
 }
 
-Describe "Validate Copy-Item Remotely" -Tags "CI" {
+Describe "Validate Copy-Item Remotely" -Tags @('CI', 'RequireAdminOnWindows') {
 
     # Validate a copy item operation.
     # $filePath is the source file path
@@ -83,7 +114,7 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
     }
 
     BeforeAll {
-        $s = New-PSSession -ComputerName . -ErrorAction SilentlyContinue
+        $s = New-RemoteSession
         if (-not $s)
         {
             throw "Failed to create PSSession for remote copy operations."
@@ -495,18 +526,9 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
         }
 
         It "Copy-Item parameters -FromSession and -ToSession are mutually exclusive." {
-            try
-            {
-                $s1 = New-PSSession -ComputerName . -ErrorAction SilentlyContinue
-                $s1 | Should -Not -BeNullOrEmpty
-                $filePath = CreateTestFile
-                $destinationFolderPath = GetDestinationFolderPath
-                { Copy-Item -Path $filePath -Destination $destinationFolderPath -FromSession $s -ToSession $s1 -ErrorAction Stop } | Should -Throw -ErrorId "InvalidInput,Microsoft.PowerShell.Commands.CopyItemCommand"
-            }
-            finally
-            {
-                Remove-PSSession -Session $s1 -ErrorAction SilentlyContinue
-            }
+            $filePath = CreateTestFile
+            $destinationFolderPath = GetDestinationFolderPath
+            { Copy-Item -Path $filePath -Destination $destinationFolderPath -FromSession $s -ToSession $s -ErrorAction Stop } | Should -Throw -ErrorId "InvalidInput,Microsoft.PowerShell.Commands.CopyItemCommand"
         }
     }
 
@@ -570,7 +592,7 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
             }
             else
             {
-                It "Copy-Item ToSession -Destination '$path' throws $expectedFullyQualifiedErrorId" {
+                It "Copy-Item ToSession -Destination '$destination' throws $expectedFullyQualifiedErrorId" {
                     { Copy-Item -Path $path -ToSession $s -Destination $destination -ErrorAction Stop } |
                         Should -Throw -ErrorId $expectedFullyQualifiedErrorId
                 }
@@ -654,9 +676,13 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
     }
 }
 
-Describe "Validate Copy-Item error for target sessions not in FullLanguageMode." -Tags "Feature" {
+Describe "Validate Copy-Item error for target sessions not in FullLanguageMode." -Tags @('Feature', 'RequireAdminOnWindows') {
 
     BeforeAll {
+        # Keep track of the sessions.
+        $testSessions = @{}
+        # Keep track of the session names to be unregistered.
+        $sessionToUnregister = @()
 
         $testDirectory = "TestDrive:\"
 
@@ -670,12 +696,6 @@ Describe "Validate Copy-Item error for target sessions not in FullLanguageMode."
         $testFilePath = Join-Path $source "testfile.txt"
         "File test content" | Out-File $testFilePath -Force
 
-        # Keep track of the sessions.
-        $testSessions = @{}
-
-        # Keep track of the session names to be unregistered.
-        $sessionToUnregister = @()
-
         $languageModes = @("ConstrainedLanguage", "NoLanguage", "RestrictedLanguage")
         $id = (Get-Random).ToString()
 
@@ -688,8 +708,8 @@ Describe "Validate Copy-Item error for target sessions not in FullLanguageMode."
             # Create the session.
             Write-Host "Creating pssession with '$languageMode' ..."
             New-PSSessionConfigurationFile -Path $configFilePath -SessionType Default -LanguageMode $languageMode
-            Register-PSSessionConfiguration -Name $sessionName -Path $configFilePath -Force | Out-Null
-            $testSession = New-PSSession -ConfigurationName $sessionName
+            Register-PSSessionConfiguration -Name $sessionName -Path $configFilePath -Force -ErrorAction Stop | Out-Null
+            $testSession = New-RemoteSession -ConfigurationName $sessionName
 
             # Validate that the session is opened.
             $testSession.State | Should -Be "Opened"
@@ -703,7 +723,6 @@ Describe "Validate Copy-Item error for target sessions not in FullLanguageMode."
     }
 
     AfterAll {
-
         $testSessions.Values | Remove-PSSession -ErrorAction SilentlyContinue
 
         $sessionToUnregister | ForEach-Object {
@@ -728,12 +747,12 @@ Describe "Validate Copy-Item error for target sessions not in FullLanguageMode."
     }
 }
 
-Describe "Copy-Item can use Recurse and Exclude together" -Tags "Feature" {
+Describe "Copy-Item can use Recurse and Exclude together" -Tags @('CI', 'RequireAdminOnWindows') {
 
     Context "Local and Remote Tests" {
 
         BeforeAll {
-            $s = New-PSSession -ComputerName . -ErrorAction SilentlyContinue
+            $s = New-RemoteSession
             if (-not $s)
             {
                 throw "Failed to create PSSession for remote copy operations."
@@ -773,10 +792,10 @@ Describe "Copy-Item can use Recurse and Exclude together" -Tags "Feature" {
     }
 }
 
-Describe "Copy-Item remotely bug fixes" -Tags "Feature" {
+Describe "Copy-Item remotely bug fixes" -Tags @('CI', 'RequireAdminOnWindows') {
 
     BeforeAll {
-        $s = New-PSSession -ComputerName . -ErrorAction SilentlyContinue
+        $s = New-RemoteSession
         if (-not $s)
         {
             throw "Failed to create PSSession for remote copy operations."

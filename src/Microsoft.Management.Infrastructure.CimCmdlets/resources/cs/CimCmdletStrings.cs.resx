@@ -118,111 +118,111 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CimOperationCompleted" xml:space="preserve">
-    <value>Operation '{0}' complete.</value>
+    <value>Operace{0} byla dokončena.</value>
     <comment>{0} is a placeholder for operation name. (i.e, GetCimInstance)</comment>
   </data>
   <data name="CimOperationNameCreateInstance" xml:space="preserve">
-    <value>Create CimInstance</value>
+    <value>Vytvořit CimInstance</value>
   </data>
   <data name="CimOperationNameDeleteInstance" xml:space="preserve">
-    <value>Delete CimInstance</value>
+    <value>Odstranit CimInstance</value>
   </data>
   <data name="CimOperationNameEnumerateAssociatedInstances" xml:space="preserve">
-    <value>Enumerate Associated CimInstances</value>
+    <value>Vytvořit výčet přidružených instancí CimInstances</value>
   </data>
   <data name="CimOperationNameEnumerateClasses" xml:space="preserve">
-    <value>Enumerate CimClasses</value>
+    <value>Výčet CimClasses</value>
   </data>
   <data name="CimOperationNameEnumerateInstances" xml:space="preserve">
-    <value>Enumerate CimInstances</value>
+    <value>Výčet CimInstances</value>
   </data>
   <data name="CimOperationNameGetClass" xml:space="preserve">
-    <value>Get CimClass</value>
+    <value>Získat CimClass</value>
   </data>
   <data name="CimOperationNameGetInstance" xml:space="preserve">
-    <value>Get CimInstance</value>
+    <value>Získat CimInstance</value>
   </data>
   <data name="CimOperationNameInvokeMethod" xml:space="preserve">
-    <value>Invoke CimMethod</value>
+    <value>Vyvolat CimMethod</value>
   </data>
   <data name="CimOperationNameModifyInstance" xml:space="preserve">
-    <value>Modify CimInstance</value>
+    <value>Upravit CimInstance</value>
   </data>
   <data name="CimOperationNameQueryInstances" xml:space="preserve">
-    <value>Query CimInstances</value>
+    <value>Dotaz na CimInstances</value>
   </data>
   <data name="CimOperationNameSubscribeIndication" xml:space="preserve">
-    <value>Subscribe CimIndication</value>
+    <value>Přihlásit k odběru CimIndication</value>
   </data>
   <data name="CimOperationStart" xml:space="preserve">
-    <value>Perform operation '{0}' with following parameters, '{1}'.</value>
+    <value>Proveďte operaci {0} s následujícími parametry: {1}.</value>
     <comment>{0} is a placeholder for operation name; {1} is a placeholder for parameters value</comment>
   </data>
   <data name="ConflictParameterWasSet" xml:space="preserve">
-    <value>Parameter '{0}' cannot be used with the parameter '{1}'.</value>
+    <value>Parametr {0} nelze použít společně s parametrem {1}.</value>
     <comment>{0} is a placeholder for parameter name; {1} is a placeholder for another parameter name;</comment>
   </data>
   <data name="CouldNotFindCimsessionObject" xml:space="preserve">
-    <value>Could not find CimSession with the given {0} = {1}</value>
+    <value>Nepodařilo se najít objekt CimSession s hodnotou {0} = {1}.</value>
     <comment>{0} is a placeholder for property name; {1} is a placeholder for property value.</comment>
   </data>
   <data name="CouldNotFindPropertyFromGivenClass" xml:space="preserve">
-    <value>Could not find the following properties from the given class {0}: {1}.</value>
+    <value>V zadané třídě {0} se nepodařilo najít následující vlastnosti: {1}.</value>
     <comment>{0} is a placeholder for class name; {1} is a placeholder for list of property names.</comment>
   </data>
   <data name="CouldNotModifyReadonlyProperty" xml:space="preserve">
-    <value>Could not modify readonly property '{0}' of object '{1}'.</value>
+    <value>Nepodařilo se změnit vlastnost {0} objektu {1}, která je jen pro čtení.</value>
     <comment>{0} is a placeholder for propertyname; {1} is a placeholder for object string.</comment>
   </data>
   <data name="DefaultStatusDescription" xml:space="preserve">
-    <value>Default status description.</value>
+    <value>Popis stavu platby</value>
     <comment>N/A</comment>
   </data>
   <data name="DidNotResolveFile" xml:space="preserve">
-    <value>Cannot perform operation because the wildcard path {0} did not resolve to a file.</value>
+    <value>Operaci nelze provést, protože cesta se zástupnými znaky {0} nebyla přeložena na soubor.</value>
     <comment>{0} is a placeholder for a path</comment>
   </data>
   <data name="InvalidAuthenticationTypeWithNullCredential" xml:space="preserve">
-    <value>Authentication type '{0}' is invalid without credential. Only following authentication type are allowed without credential, '{1}', '{2}', '{3}', or '{4}'.</value>
+    <value>Typ ověřování {0} není bez přihlašovacích údajů platný. Bez přihlašovacích údajů jsou povoleny pouze následující typy ověřování: {1}, {2}, {3} nebo {4}.</value>
     <comment>{0} is a placeholder for authentication type. {1}-{4} are placeholders for authentication types.</comment>
   </data>
   <data name="InvalidMethod" xml:space="preserve">
-    <value>Can not find method '{0}' in class '{1}'.</value>
+    <value>Ve třídě {1} se nepodařilo najít metodu {0}.</value>
     <comment>{0} is a placeholder for method name. {1} is a placeholders for class name.</comment>
   </data>
   <data name="InvalidMethodParameter" xml:space="preserve">
-    <value>Can not find Parameter '{0}' in method '{1}' of class '{2}'.</value>
+    <value>Ve třídě {2} se nepodařilo najít parametr {0} v metodě {1}.</value>
     <comment>{0} is a placeholder for parameter name; {1} is a placeholder for method name; {2} is a placeholder for class name.</comment>
   </data>
   <data name="InvalidOperation" xml:space="preserve">
-    <value>Invalid operation. Current cmdlet already have operation created.</value>
+    <value>Neplatná operace. Aktuální rutina již má vytvořenou operaci.</value>
     <comment>N/A</comment>
   </data>
   <data name="InvalidParameterValue" xml:space="preserve">
-    <value>Argument '{0}' contains characters that are not allowed in parameter '{1}'. Supply an argument that is valid and then try the command again.</value>
+    <value>Argument {0} obsahuje znaky, které nejsou v parametru {1} povoleny. Zadejte platný argument a pak příkaz spusťte znovu.</value>
     <comment>{0} stand for argument value, {1} stand for parameter name.</comment>
   </data>
   <data name="MultipleFilesNotSupported" xml:space="preserve">
-    <value>Cannot perform operation because the path resolved to more than one file. This command cannot operate on multiple files.</value>
+    <value>Operaci nelze provést, protože cesta byla přeložena na více než jeden soubor. Tento příkaz nemůže pracovat s více soubory.</value>
   </data>
   <data name="NullArgument" xml:space="preserve">
-    <value>Argument '{0}' can not be null.</value>
+    <value>Argument {0} nemůže mít hodnotu null.</value>
     <comment>N/A</comment>
   </data>
   <data name="OperationInProgress" xml:space="preserve">
-    <value>CimSession proxy object already have operation in progress.</value>
+    <value>Objekt proxy CimSession již provádí operaci.</value>
     <comment>N/A</comment>
   </data>
   <data name="ReadWriteFileNotFileSystemProvider" xml:space="preserve">
-    <value>Cannot open file because the current provider ({0}) cannot open a file.</value>
+    <value>Soubor nejde otevřít, protože aktuální poskytovatel ({0}) nemůže otevřít soubor.</value>
     <comment>{0} is a placeholder for PowerShell filesystem-like provider name (i.e. registry provider)</comment>
   </data>
   <data name="UnableToAddPropertyToInstance" xml:space="preserve">
-    <value>Unable to add property '{0}' to input object '{1}'. The class schema does not contain the property.</value>
+    <value>Do vstupního objektu {1} nelze přidat vlastnost {0}. Schéma třídy neobsahuje tuto vlastnost.</value>
     <comment>{0} stand for property name, {1} stand for cim instance path.</comment>
   </data>
   <data name="UnableToResolveParameterSetName" xml:space="preserve">
-    <value>Unable to resolve the parameter set name.</value>
+    <value>Název sady parametrů se nepodařilo přeložit.</value>
     <comment>N/A</comment>
   </data>
 </root>

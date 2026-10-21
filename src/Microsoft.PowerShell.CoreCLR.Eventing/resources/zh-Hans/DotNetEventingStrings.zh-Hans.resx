@@ -118,18 +118,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ArgumentOutOfRange_NeedNonNegNum" xml:space="preserve">
-    <value>Non negative number is required.</value>
+    <value>需要非负数。</value>
   </data>
   <data name="ArgumentOutOfRange_NeedValidId" xml:space="preserve">
-    <value>The ID parameter must be in the range {0} through {1}.</value>
+    <value>ID 参数必须处于 {0} 到 {1} 的范围内。</value>
   </data>
   <data name="ArgumentOutOfRange_MaxArgExceeded" xml:space="preserve">
-    <value>The total number of parameters must not exceed {0}.</value>
+    <value>参数的总数不能超过 {0}。</value>
   </data>
   <data name="ArgumentOutOfRange_MaxStringsExceeded" xml:space="preserve">
-    <value>The number of String parameters must not exceed {0}.</value>
+    <value>字符串参数的数量不能超过 {0}。</value>
   </data>
   <data name="Argument_NeedNonemptyDelimiter" xml:space="preserve">
-    <value>Delimiter cannot be an empty string.</value>
+    <value>分隔符不能为空字符串。</value>
   </data>
 </root>

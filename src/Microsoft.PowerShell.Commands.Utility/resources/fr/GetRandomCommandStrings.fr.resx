@@ -118,12 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MaxMustBeGreaterThanZeroApi" xml:space="preserve">
-    <value>'maxValue' must be greater than zero.</value>
+    <value>'maxValue' doit être supérieur à zéro.</value>
   </data>
   <data name="MinGreaterThanOrEqualMax" xml:space="preserve">
-    <value>The Minimum value ({0}) cannot be greater than or equal to the Maximum value ({1}).</value>
+    <value>La valeur minimale ({0}) ne peut pas être supérieure ou égale à la valeur maximale ({1}).</value>
   </data>
   <data name="MinGreaterThanOrEqualMaxApi" xml:space="preserve">
-    <value>'minValue' cannot be greater than maxValue.</value>
+    <value>'minValue' ne peut pas être supérieur à maxValue.</value>
   </data>
 </root>

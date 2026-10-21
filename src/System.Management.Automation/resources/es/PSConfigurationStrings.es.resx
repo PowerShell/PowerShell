@@ -118,6 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CanNotConfigurationFile" xml:space="preserve">
-    <value>PowerShell has stopped working because of a security issue: Cannot read the configuration file: {0}</value>
+    <value>PowerShell ha dejado de funcionar debido a un problema de seguridad: no se puede leer el archivo de configuración: {0}</value>
+  </data>
+  <data name="CanNotReadConfigurationFile" xml:space="preserve">
+    <value>No se puede leer el archivo de configuración de PowerShell '{0}': {1}. Revirtiendo a la configuración predeterminada.</value>
+  </data>
+  <data name="CanNotReadConfigurationValue" xml:space="preserve">
+    <value>No se puede leer la configuración '{0}' del archivo de configuración de PowerShell '{1}': {2}. Revirtiendo al valor predeterminado para esta configuración.</value>
   </data>
 </root>

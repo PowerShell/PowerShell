@@ -54,12 +54,28 @@ jobs:
       parameters:
         repoRoot: '$(repoRoot)'
 
-    - task: UseDotNet@2
-      displayName: 'Use .NET Core sdk'
-      inputs:
-        useGlobalJson: true
-        packageType: 'sdk'
-        workingDirectory: $(Build.SourcesDirectory)"
+    - template: ../install-dotnet.yml
+      parameters:
+        architecture: win-x64
+
+    - pwsh: |
+        $sdkVersion = $env:DOTNET_SDK_VERSION
+        if ([string]::IsNullOrWhiteSpace($sdkVersion)) {
+          throw 'DOTNET_SDK_VERSION must be specified for an early access build.'
+        }
+
+        $sdkVersion = $sdkVersion.Trim()
+        $globalJsonPath = Join-Path '$(repoRoot)' 'global.json'
+        $globalJson = Get-Content -Path $globalJsonPath -Raw | ConvertFrom-Json
+        $globalJson.sdk.version = $sdkVersion
+        $globalJson | ConvertTo-Json -Depth 10 | Set-Content -Path $globalJsonPath
+
+        Write-Verbose -Verbose "Updated global.json to use .NET SDK $sdkVersion."
+      displayName: Select early access .NET SDK
+      condition: eq(variables['ISEARLYACCESS'], 'true')
+      env:
+        DOTNET_SDK_VERSION: $(DOTNET_SDK_VERSION)
+        ob_restore_phase: true
 
     - pwsh: |
         Import-Module .\build.psm1 -force
@@ -70,12 +86,17 @@ jobs:
       displayName: Install dotnet-symbol
       workingDirectory: '$(repoRoot)'
       retryCountOnTaskFailure: 2
+      env:
+        ob_restore_phase: true
+        VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: $(VSS_NUGET_EXTERNAL_FEED_ENDPOINTS)
 
     - task: CodeQL3000Init@0 # Add CodeQL Init task right before your 'Build' step.
       displayName: 🔏 CodeQL 3000 Init
       condition: eq(variables['CODEQL_ENABLED'], 'true')
       inputs:
         Language: csharp
+      env:
+        ob_restore_phase: true
 
     - pwsh: |
         Import-Module .\build.psm1 -force
@@ -98,6 +119,9 @@ jobs:
         Copy-Item -Path "$OutputFolder\*" -Destination $Destination -Recurse -Verbose
       workingDirectory: '$(repoRoot)'
       displayName: 'Build PowerShell Source'
+      env:
+        ob_restore_phase: true
+        VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: $(VSS_NUGET_EXTERNAL_FEED_ENDPOINTS)
 
     - pwsh: |
         # Only keep windows runtimes
@@ -120,10 +144,14 @@ jobs:
         Write-Host
       workingDirectory: '$(repoRoot)'
       displayName: 'Remove unused runtimes'
+      env:
+        ob_restore_phase: true
 
     - task: CodeQL3000Finalize@0 # Add CodeQL Finalize task right after your 'Build' step.
       displayName: 🔏 CodeQL 3000 Finalize
       condition: eq(variables['CODEQL_ENABLED'], 'true')
+      env:
+        ob_restore_phase: true
 
     - pwsh: |
         Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose

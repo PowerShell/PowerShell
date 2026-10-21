@@ -118,6 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="WriteErrorException" xml:space="preserve">
-    <value>"The Write-Error cmdlet reported an error."</value>
+    <value>"Il cmdlet Write-Error ha segnalato un errore".</value>
   </data>
 </root>

@@ -118,36 +118,36 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="BadMonadVersion" xml:space="preserve">
-    <value>Incorrect PowerShell version {0}. PowerShell version {1} is supported on this computer.</value>
+    <value>PowerShell 버전 {0}이(가) 잘못되었습니다. 이 컴퓨터에서는 PowerShell 버전 {1}이(가) 지원됩니다.</value>
   </data>
   <data name="ConsoleLoadFailure" xml:space="preserve">
-    <value>The following errors occurred when loading console {0}: {1}</value>
+    <value>콘솔 {0}을(를) 로드하는 동안 다음 오류가 발생했습니다. {1}</value>
   </data>
   <data name="PSSnapInLoadFailure" xml:space="preserve">
-    <value>Cannot load PowerShell snap-in {0} because of the following error: {1}</value>
+    <value>다음 오류 때문에 PowerShell 스냅인 {0}을(를) 로드할 수 없습니다. {1}</value>
   </data>
   <data name="PSSnapInLoadWarning" xml:space="preserve">
-    <value>PowerShell snap-in "{0}" loaded with the following warnings: {1}</value>
+    <value>PowerShell 스냅인 "{0}"이(가) 로드되었지만 다음 경고가 발생했습니다. {1}</value>
   </data>
   <data name="PSSnapInAssemblyNameMismatch" xml:space="preserve">
-    <value>The PowerShell snap-in module {0} does not have the required PowerShell snap-in strong name {1}.</value>
+    <value>PowerShell 스냅인 모듈 {0}에 필요한 PowerShell 스냅인 강력한 이름 {1}이(가) 없습니다.</value>
   </data>
   <data name="PSSnapInDuplicateCmdlets" xml:space="preserve">
-    <value>The cmdlet '{0}' should not occur more than once in PowerShell snap-in '{1}'.</value>
+    <value>cmdlet '{0}'은(는) PowerShell 스냅인 '{1}'에 두 번 이상 있으면 안 됩니다.</value>
   </data>
   <data name="PSSnapInDuplicateProviders" xml:space="preserve">
-    <value>PowerShell provider '{0}' should not occur more than once in PowerShell snap-in '{1}'.</value>
+    <value>PowerShell 공급자 '{0}'은(는) PowerShell 스냅인 '{1}'에 두 번 이상 있으면 안 됩니다.</value>
   </data>
   <data name="AddPSSnapInBadMonadVersion" xml:space="preserve">
-    <value>PowerShell {0} is not supported in the current console. PowerShell {1} is supported in the current console.</value>
+    <value>PowerShell {0}은(는) 현재 콘솔에서 지원되지 않습니다. PowerShell {1}은(는) 현재 콘솔에서 지원됩니다.</value>
   </data>
   <data name="FileExistsNoClobber" xml:space="preserve">
-    <value>File {0} already exists and {1} was specified.</value>
+    <value>파일 {0}이(가) 이미 존재하며 {1}이(가) 지정되었습니다.</value>
   </data>
   <data name="ConfigurationFileDoesNotExist" xml:space="preserve">
-    <value>The provided configuration file '{0}' does not exist.</value>
+    <value>제공된 구성 파일 '{0}'이(가) 없습니다.</value>
   </data>
   <data name="NotConfigurationFile" xml:space="preserve">
-    <value>The provided configuration file '{0}' must have a .pssc file extension.</value>
+    <value>제공된 구성 파일 '{0}'에는 .pssc 파일 확장명이 있어야 합니다.</value>
   </data>
 </root>

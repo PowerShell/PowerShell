@@ -118,31 +118,21 @@ namespace Microsoft.PowerShell
                 throw new ConsoleHostStartupException(ConsoleHostStrings.ShellCannotBeStartedWithConfigConflict);
             }
 
-            // Put PSHOME in front of PATH so that calling `pwsh` within `pwsh` always starts the same running version.
+            // Put pwsh executable home in front of PATH so that calling `pwsh` within `pwsh` always starts the same running version.
+            string psExeHome = GetPSExecutableHome();
             string path = Environment.GetEnvironmentVariable("PATH");
-            string pshome = Utils.DefaultPowerShellAppBase;
-            string dotnetToolsPathSegment = $"{Path.DirectorySeparatorChar}.store{Path.DirectorySeparatorChar}powershell{Path.DirectorySeparatorChar}";
 
-            int index = pshome.IndexOf(dotnetToolsPathSegment, StringComparison.Ordinal);
-            if (index > 0)
-            {
-                // We're running PowerShell global tool. In this case the real entry executable should be the 'pwsh'
-                // or 'pwsh.exe' within the tool folder which should be the path right before the '\.store', not what
-                // PSHome is pointing to.
-                pshome = pshome[0..index];
-            }
-
-            pshome += Path.PathSeparator;
+            psExeHome += Path.PathSeparator;
 
             // To not impact startup perf, we don't remove duplicates, but we avoid adding a duplicate to the front
             // we also don't handle the edge case where PATH only contains $PSHOME
             if (string.IsNullOrEmpty(path))
             {
-                Environment.SetEnvironmentVariable("PATH", pshome);
+                Environment.SetEnvironmentVariable("PATH", psExeHome);
             }
-            else if (!path.StartsWith(pshome, StringComparison.Ordinal))
+            else if (!path.StartsWith(psExeHome, StringComparison.Ordinal))
             {
-                Environment.SetEnvironmentVariable("PATH", pshome + path);
+                Environment.SetEnvironmentVariable("PATH", psExeHome + path);
             }
 
             try
@@ -317,12 +307,6 @@ namespace Microsoft.PowerShell
                 if (LoadPSReadline())
                 {
                     ProfileOptimization.StartProfile("StartupProfileData-Interactive");
-
-                    if (UpdatesNotification.CanNotifyUpdates)
-                    {
-                        // Start a task in the background to check for the update release.
-                        _ = UpdatesNotification.CheckForUpdates();
-                    }
                 }
                 else
                 {
@@ -382,6 +366,64 @@ namespace Microsoft.PowerShell
         }
 
         private static readonly CommandLineParameterParser s_cpp = new CommandLineParameterParser();
+
+        private static string GetPSExecutableHome()
+        {
+#if UNIX
+            const string pwshName = "pwsh";
+            const string dotnetToolPathSegment = "/.store/powershell/";
+            const StringComparison procNameCompType = StringComparison.Ordinal;
+#else
+            const string pwshName = "pwsh.exe";
+            const string dotnetToolPathSegment = @"\.store\powershell\";
+            const StringComparison procNameCompType = StringComparison.OrdinalIgnoreCase;
+#endif
+
+            string psExePath = Environment.ProcessPath;
+            string psExeHome = Path.GetDirectoryName(psExePath);
+            string processName = Path.GetFileName(psExePath);
+
+            // Use 'Environment.ProcessPath' if it points to 'pwsh.exe' or 'pwsh'. The 'ProcessPath' on Windows
+            // could be any case as it depends on the `lpCommandLine` argument passed to `CreateProcess`, so we
+            // compare with 'OrdinalIgnoreCase' on Windows.
+            if (pwshName.Equals(processName, procNameCompType))
+            {
+#if !UNIX
+                // When running from an MSIX package, 'psExeHome' points to the MSIX package folder under "Program Files".
+                //
+                // That path contains a version string and will change with every update. Prepending that path to the PATH
+                // environment variable caused a problem for CMake-based build systems: CMake cached the path to 'pwsh.exe'
+                // when running for the first time from the MSIX PowerShell. That cached path became invalid after the MSIX
+                // PowerShell was updated, which broke CMake.
+                //
+                // So, instead of using the "Program Files" package folder path, we need to use the stable path that contains
+                // the execution alias for the specific MSIX package, e.g. use "%LOCALAPPDATA%\Microsoft\WindowsApps\Microsoft.PowerShell_8wekyb3d8bbwe"
+                // instead of "%ProgramFiles%\WindowsApps\Microsoft.PowerShell_7.x.x.0_x64__8wekyb3d8bbwe".
+                if (Utils.IsMSIXInstallation(out string packageFamilyName))
+                {
+                    string localAppDataDir = Environment.GetFolderPath(
+                        Environment.SpecialFolder.LocalApplicationData,
+                        Environment.SpecialFolderOption.DoNotVerify);
+
+                    psExeHome = $"{localAppDataDir}\\Microsoft\\WindowsApps\\{packageFamilyName}";
+                }
+#endif
+                return psExeHome;
+            }
+
+            psExeHome = Utils.DefaultPowerShellAppBase;
+
+            int index = psExeHome.IndexOf(dotnetToolPathSegment, StringComparison.Ordinal);
+            if (index > 0)
+            {
+                // We're running PowerShell dotnet tool. In this case the real entry executable should be the 'pwsh'
+                // or 'pwsh.exe' within the tool folder which should be the path right before the '\.store', because
+                // the pwsh executable under $PSHOME is an x86-64 binary that won't work on non-x86/64 platforms.
+                return psExeHome[0..index];
+            }
+
+            return psExeHome;
+        }
 
 #if UNIX
         /// <summary>

@@ -118,57 +118,57 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NoTransactionActive" xml:space="preserve">
-    <value>Cannot use transaction. No transaction is active.</value>
+    <value>Transakci nelze použít. Žádná transakce není aktivní.</value>
   </data>
   <data name="NoTransactionActiveForCommit" xml:space="preserve">
-    <value>Cannot commit transaction. No transaction is active.</value>
+    <value>Transakci nelze potvrdit. Žádná transakce není aktivní.</value>
   </data>
   <data name="NoTransactionActiveForRollback" xml:space="preserve">
-    <value>Cannot roll back the transaction, because there is no active transaction.</value>
+    <value>Transakci nelze vrátit zpět, protože není aktivní žádná transakce.</value>
   </data>
   <data name="CommittedTransactionForRollback" xml:space="preserve">
-    <value>Cannot roll back transaction. The transaction has already been committed.</value>
+    <value>Transakci nelze vrátit zpět. Transakce již byla potvrzena.</value>
   </data>
   <data name="CommittedTransactionForCommit" xml:space="preserve">
-    <value>Cannot commit transaction. The transaction has already been committed.</value>
+    <value>Transakci nelze potvrdit. Transakce již byla potvrzena.</value>
   </data>
   <data name="TransactionRolledBackForCommit" xml:space="preserve">
-    <value>Cannot commit transaction. The transaction has been rolled back or has timed out.</value>
+    <value>Transakci nelze potvrdit. Transakce byla vrácena zpět nebo vypršel časový limit.</value>
   </data>
   <data name="TransactionRolledBackForRollback" xml:space="preserve">
-    <value>Cannot roll back transaction. The transaction has already been rolled back or has timed out.</value>
+    <value>Transakci nelze vrátit zpět. Transakce již byla vrácena zpět nebo vypršel časový limit.</value>
   </data>
   <data name="NoTransactionForActivation" xml:space="preserve">
-    <value>Cannot set active transaction. No transaction has been created.</value>
+    <value>Nelze nastavit aktivní transakci. Nebyla vytvořena žádná transakce.</value>
   </data>
   <data name="NoTransactionForActivationBecauseRollback" xml:space="preserve">
-    <value>Cannot set active transaction. The active transaction has been rolled back or has timed out.</value>
+    <value>Nelze nastavit aktivní transakci. Aktivní transakce byla vrácena zpět nebo vypršel časový limit.</value>
   </data>
   <data name="NoTransactionAvailable" xml:space="preserve">
-    <value>This cmdlet requires an active transaction. The current transaction has already been committed or rolled back.</value>
+    <value>Tato rutina vyžaduje aktivní transakci. Aktuální transakce již byla potvrzena nebo vrácena zpět.</value>
   </data>
   <data name="CmdletRequiresUseTx" xml:space="preserve">
-    <value>This cmdlet requires a transaction. Run the command again with the -UseTransaction parameter.</value>
+    <value>Tato rutina vyžaduje transakci. Spusťte příkaz znovu s parametrem -UseTransaction.</value>
   </data>
   <data name="NoTransactionStarted" xml:space="preserve">
-    <value>Cannot use transaction. No transaction has been started.</value>
+    <value>Transakci nelze použít. Nebyla spuštěna žádná transakce.</value>
   </data>
   <data name="NoTransactionStartedFromCommit" xml:space="preserve">
-    <value>Cannot use transaction. The transaction has been committed.</value>
+    <value>Transakci nelze použít. Transakce byla potvrzena.</value>
   </data>
   <data name="NoTransactionStartedFromRollback" xml:space="preserve">
-    <value>Cannot use transaction. The transaction has been rolled back or has timed out.</value>
+    <value>Transakci nelze použít. Transakce byla vrácena zpět nebo vypršel časový limit.</value>
   </data>
   <data name="TransactionTimedOut" xml:space="preserve">
-    <value>Cannot use transaction. The transaction has timed out.</value>
+    <value>Transakci nelze použít. Vypršel časový limit transakce.</value>
   </data>
   <data name="BaseTransactionNotSet" xml:space="preserve">
-    <value>The base transaction has not been set.</value>
+    <value>Základní transakce nebyla nastavena.</value>
   </data>
   <data name="BaseTransactionNotActive" xml:space="preserve">
-    <value>The base transaction is not active.</value>
+    <value>Základní transakce není aktivní.</value>
   </data>
   <data name="BaseTransactionMustBeFirst" xml:space="preserve">
-    <value>The base transaction cannot be set after other transactions have been created.</value>
+    <value>Základní transakci nelze nastavit po vytvoření jiných transakcí.</value>
   </data>
 </root>
