@@ -1143,7 +1143,9 @@ namespace System.Management.Automation
                         // timestamps are enabled (Start-Transcript -IncludeTimeStamp), all lines of
                         // this block are therefore recorded with the completion time of the command.
                         // Per-line production times can only be captured when the native command
-                        // output is piped or redirected, which streams each line as it is produced.
+                        // output is piped into a PowerShell command (e.g. 'native.exe | Out-Host'),
+                        // which streams each line through the pipeline as it is produced. Redirecting
+                        // native output directly to a file bypasses transcription entirely.
                         this.Command.Context.InternalHost.UI.TranscribeResult(bufferText.ToString());
                     }
 

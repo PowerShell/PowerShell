@@ -156,8 +156,9 @@ namespace Microsoft.PowerShell.Commands
         /// transcript. Standalone native command output on Windows is captured
         /// from the console buffer only after the process exits, so all lines
         /// of such output receive the completion time of the command. Piping
-        /// or redirecting native command output records each line as it is
-        /// produced.
+        /// native command output into a PowerShell command (for example,
+        /// 'native.exe | Out-Host') records each line as it is produced, while
+        /// redirecting it directly to a file bypasses transcription.
         /// </summary>
         [Parameter]
         public SwitchParameter IncludeTimeStamp
