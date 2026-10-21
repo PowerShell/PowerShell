@@ -588,12 +588,13 @@ namespace System.Management.Automation.Host
             }
         }
 
-        internal void StartTranscribing(string path, System.Management.Automation.Remoting.PSSenderInfo senderInfo, bool includeInvocationHeader, bool useMinimalHeader, bool includeTimeStamp)
+        internal void StartTranscribing(string path, System.Management.Automation.Remoting.PSSenderInfo senderInfo, bool includeInvocationHeader, bool useMinimalHeader, bool includeTimeStamp, string timeStampFormat)
         {
             TranscriptionOption transcript = new TranscriptionOption();
             transcript.Path = path;
             transcript.IncludeInvocationHeader = includeInvocationHeader;
             transcript.IncludeTimeStamp = includeTimeStamp;
+            transcript.TimeStampFormat = timeStampFormat;
             TranscriptionData.Transcripts.Add(transcript);
 
             LogTranscriptHeader(senderInfo, transcript, useMinimalHeader);
@@ -1247,9 +1248,15 @@ namespace System.Management.Automation.Host
         internal bool IncludeTimeStamp { get; set; }
 
         /// <summary>
-        /// The format used for the timestamp prefix, i.e. '2024-08-23 11:04:52 '.
+        /// The custom format used for the timestamp prefix. When null, the
+        /// default <see cref="DefaultTimeStampFormat"/> is used.
         /// </summary>
-        private const string TimeStampFormat = "yyyy-MM-dd HH:mm:ss";
+        internal string TimeStampFormat { get; set; }
+
+        /// <summary>
+        /// The default format used for the timestamp prefix, i.e. '2024-08-23 11:04:52 '.
+        /// </summary>
+        internal const string DefaultTimeStampFormat = "yyyy-MM-dd HH:mm:ss";
 
         private static readonly string[] s_newLineSeparators = { "\r\n", "\n", "\r" };
 
@@ -1266,7 +1273,7 @@ namespace System.Management.Automation.Host
                 return;
             }
 
-            string timeStamp = DateTime.Now.ToString(TimeStampFormat, CultureInfo.InvariantCulture);
+            string timeStamp = DateTime.Now.ToString(TimeStampFormat ?? DefaultTimeStampFormat, CultureInfo.InvariantCulture);
             string[] lines = text.Split(s_newLineSeparators, StringSplitOptions.None);
             for (int i = 0; i < lines.Length; i++)
             {

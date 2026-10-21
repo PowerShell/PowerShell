@@ -141,4 +141,7 @@
   <data name="ErrorStoppingTranscript" xml:space="preserve">
     <value>An error occurred stopping transcription: {0}</value>
   </data>
+  <data name="InvalidTimeStampFormat" xml:space="preserve">
+    <value>"{0}" is not a valid date and time format string for the TimeStampFormat parameter. See https://learn.microsoft.com/dotnet/standard/base-types/custom-date-and-time-format-strings for the supported format specifiers.</value>
+  </data>
 </root>
