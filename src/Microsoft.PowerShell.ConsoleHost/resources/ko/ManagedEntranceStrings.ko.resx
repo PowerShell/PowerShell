@@ -132,24 +132,6 @@
   <data name="ShellBannerRLMode" xml:space="preserve">
     <value>[제한된 언어 모드]</value>
   </data>
-  <data name="PreviewUpdateNotificationMessage" xml:space="preserve">
-    <value>  {1} 새 PowerShell 미리 보기 릴리스(v{0} {2}
-  {1} )를 사용할 수 있습니다. 지금 업그레이드하거나 다음 링크에서 릴리스 페이지를 확인하세요.{3}{2}
-  {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
-</value>
-  </data>
-  <data name="StableUpdateNotificationMessage" xml:space="preserve">
-    <value>  {1} 새 PowerShell 안정 릴리스(v{0} {2}
-  {1} )를 사용할 수 있습니다. 지금 업그레이드하거나 다음 링크에서 릴리스 페이지를 확인하세요.{3}{2}
-  {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
-</value>
-  </data>
-  <data name="LTSUpdateNotificationMessage" xml:space="preserve">
-    <value>  {1} 새 PowerShell LTS 릴리스(v{0} {2}
-  {1} )를 사용할 수 있습니다. 지금 업그레이드하거나 다음 링크에서 릴리스 페이지를 확인하세요.{3}{2}
-  {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
-</value>
-  </data>
   <data name="UsageHelp" xml:space="preserve">
     <value>사용법: pwsh[.exe] [-Login] [[-File] &lt;filePath&gt; [args]]
                   [-Command { - | &lt;script-block&gt; [-args &lt;arg-array&gt;]
