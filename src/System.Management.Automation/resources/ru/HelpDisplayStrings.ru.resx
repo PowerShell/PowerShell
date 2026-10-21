@@ -347,7 +347,7 @@
     <value>Следующий параметр не должен быть пустым или иметь значение null: Модуль.</value>
   </data>
   <data name="ModuleNameTooLong" xml:space="preserve">
-    <value>The module name exceeds the maximum supported length of {1} characters (actual length: {0}).</value>
+    <value>Имя модуля превышает максимальную поддерживаемую длину в {1} символов (фактическая длина: {0}).</value>
   </data>
   <data name="PathNullOrEmpty" xml:space="preserve">
     <value>Следующий параметр не должен быть пустым или иметь значение null: Путь.</value>
