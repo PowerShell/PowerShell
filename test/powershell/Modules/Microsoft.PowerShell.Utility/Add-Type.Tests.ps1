@@ -261,6 +261,17 @@ public class AttributeTest$guid : PSCmdlet
         { Add-Type -TypeDefinition "Hello" -OutputType $outputType } | Should -Throw -ErrorId 'AssemblyTypeNotSupported,Microsoft.PowerShell.Commands.AddTypeCommand'
     }
 
+    It "Can compile against WindowsBase by short name" -Skip:(!$IsWindows) {
+        $code = @"
+public class WindowsBaseReference$guid : System.Windows.DependencyObject
+{
+}
+"@
+
+        $types = Add-Type -TypeDefinition $code -ReferencedAssemblies WindowsBase -PassThru
+        $types.Name | Should -BeExactly "WindowsBaseReference$guid"
+    }
+
     It "Can run with the same C# code simultaneously from multiple Runspaces" {
         $script = {
             $source = 'public class BasicTest {}'

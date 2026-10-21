@@ -676,9 +676,13 @@ Fix steps:
     }
 
     $incFileName = "powershell_$runtime.inc"
-    if ($TypeGen -or -not (Test-Path "$PSScriptRoot/src/TypeCatalogGen/$incFileName")) {
+    $includeWindowsDesktopReferences = (($Options.Runtime -like 'win7-*' -or $Options.Runtime -eq 'win-arm64') -and !$ForMinimalSize) -or $Options.Runtime -eq 'fxdependent-win-desktop'
+    $incFilePath = "$PSScriptRoot/src/TypeCatalogGen/$incFileName"
+    $hasWindowsDesktopReferences = Select-String -Path $incFilePath -Pattern 'Microsoft.WindowsDesktop.App.Ref' -Quiet -ErrorAction Ignore
+    $hasReferenceSetMismatch = $includeWindowsDesktopReferences -ne $hasWindowsDesktopReferences
+    if ($TypeGen -or -not (Test-Path $incFilePath) -or $hasReferenceSetMismatch) {
         Write-Log -message "Run TypeGen (generating CorePsTypeCatalog.cs)"
-        Start-TypeGen -IncFileName $incFileName
+        Start-TypeGen -IncFileName $incFileName -IncludeWindowsDesktopReferences:$includeWindowsDesktopReferences
     }
 
     # Get the folder path where pwsh.exe is located.
@@ -770,7 +774,15 @@ Fix steps:
     Write-LogGroupStart -Title "Publish Reference Assemblies"
     try {
         Push-Location "$PSScriptRoot/src/TypeCatalogGen"
-        $refAssemblies = Get-Content -Path $incFileName | Where-Object { $_ -like "*microsoft.netcore.app*" } | ForEach-Object { $_.TrimEnd(';') }
+        $referencePackNames = @('Microsoft.NETCore.App.Ref')
+        if ($includeWindowsDesktopReferences) {
+            $referencePackNames += 'Microsoft.WindowsDesktop.App.Ref'
+        }
+
+        $refAssemblies = Get-Content -Path $incFileName | Where-Object {
+            $referenceAssemblyPath = $_.TrimEnd(';')
+            $referencePackNames | Where-Object { $referenceAssemblyPath -like "*$_*" }
+        } | ForEach-Object { $_.TrimEnd(';') }
         $refDestFolder = Join-Path -Path $publishPath -ChildPath "ref"
 
         if (Test-Path $refDestFolder -PathType Container) {
@@ -3245,12 +3257,15 @@ function Start-TypeGen
         runtime to allow simultaneous builds on Windows and WSL.
     .PARAMETER IncFileName
         Name of the .inc file listing dependent assemblies. Defaults to 'powershell.inc'.
+    .PARAMETER IncludeWindowsDesktopReferences
+        Adds WindowsDesktop reference assemblies when generating a Windows Desktop type catalog.
     #>
     [CmdletBinding()]
     param
     (
         [ValidateNotNullOrEmpty()]
-        $IncFileName = 'powershell.inc'
+        $IncFileName = 'powershell.inc',
+        [switch]$IncludeWindowsDesktopReferences
     )
 
     # Add .NET CLI tools to PATH
@@ -3259,7 +3274,12 @@ function Start-TypeGen
     Push-Location "$PSScriptRoot/src/Microsoft.PowerShell.SDK"
     try {
         $ps_inc_file = "$PSScriptRoot/src/TypeCatalogGen/$IncFileName"
-        Start-NativeExecution { dotnet msbuild .\Microsoft.PowerShell.SDK.csproj /t:_GetDependencies "/property:DesignTimeBuild=true;_DependencyFile=$ps_inc_file" /nologo }
+        $msbuildProperties = "DesignTimeBuild=true;_DependencyFile=$ps_inc_file"
+        if ($IncludeWindowsDesktopReferences) {
+            $msbuildProperties += ';IncludeWindowsDesktopReferences=true'
+        }
+
+        Start-NativeExecution { dotnet msbuild .\Microsoft.PowerShell.SDK.csproj /t:_GetDependencies "/property:$msbuildProperties" /nologo }
     } finally {
         Pop-Location
     }
