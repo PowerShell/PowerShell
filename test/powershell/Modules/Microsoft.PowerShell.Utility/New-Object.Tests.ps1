@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
 Describe "New-Object" -Tags "CI" {
     It "Support 'ComObject' parameter on platforms" {
         if ($IsLinux -or $IsMacOS ) {
@@ -137,6 +138,12 @@ try
     $PSDefaultParameterValues["it:skip"] = ![System.Management.Automation.Platform]::IsWindowsDesktop
 
     Describe "New-Object COM functionality" -Tags "CI" {
+        It "Should fail with correct error when creating a COM object that dose not exist" {
+            {New-Object -ComObject 'doesnotexist'} | Should -Throw -ErrorId 'NoCOMClassIdentified,Microsoft.PowerShell.Commands.NewObjectCommand'
+        }
+    }
+
+    Describe "Windows Update COM objects" -Tags "CI", "NotWinPE" {
         $testCases = @(
             @{
                 Name   = 'Microsoft.Update.AutoUpdate'
@@ -155,10 +162,6 @@ try
             $comObject = New-Object -ComObject $name
             $comObject.$Property | Should -Not -BeNullOrEmpty
             $comObject.$Property | Should -BeOfType $Type
-        }
-
-        It "Should fail with correct error when creating a COM object that dose not exist" {
-            {New-Object -ComObject 'doesnotexist'} | Should -Throw -ErrorId 'NoCOMClassIdentified,Microsoft.PowerShell.Commands.NewObjectCommand'
         }
     }
 }

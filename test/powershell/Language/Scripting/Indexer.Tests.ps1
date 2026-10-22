@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
 Describe 'Tests for indexers' -Tags "CI" {
     It 'Indexer in dictionary' {
 
@@ -11,19 +12,6 @@ Describe 'Tests for indexers' -Tags "CI" {
         $hashtable = @{ "Hello"="There" }
         $hashtable["Hello There"] | Should -BeNullOrEmpty
         }
-
-    It 'CimClass implements an indexer' -Skip:(-not $IsWindows)  {
-
-        $service = Get-CimClass -ClassName Win32_Service
-
-        $service.CimClassProperties["DisplayName"].Name | Should -BeExactly 'DisplayName'
-    }
-
-    It 'Accessing a Indexed property of a CimClass that does not exist should return $null' -Skip:(-not $IsWindows) {
-
-        $service = Get-CimClass -ClassName Win32_Service
-        $service.CimClassProperties["Hello There"] | Should -BeNullOrEmpty
-    }
 
     It 'ITuple implementations can be indexed' {
         $tuple = [Tuple]::Create(10, 'Hello')
@@ -39,5 +27,20 @@ Describe 'Tests for indexers' -Tags "CI" {
     It 'Index of -1 should return the last item for ITuple objects' {
         $tuple = [Tuple]::Create(10, 'Hello')
         $tuple[-1] | Should -BeExactly 'Hello'
+    }
+}
+
+Describe 'CIM class indexers' -Tags "CI", "NotWinPE" {
+    It 'CimClass implements an indexer' -Skip:(-not $IsWindows)  {
+
+        $service = Get-CimClass -ClassName Win32_Service
+
+        $service.CimClassProperties["DisplayName"].Name | Should -BeExactly 'DisplayName'
+    }
+
+    It 'Accessing a Indexed property of a CimClass that does not exist should return $null' -Skip:(-not $IsWindows) {
+
+        $service = Get-CimClass -ClassName Win32_Service
+        $service.CimClassProperties["Hello There"] | Should -BeNullOrEmpty
     }
 }

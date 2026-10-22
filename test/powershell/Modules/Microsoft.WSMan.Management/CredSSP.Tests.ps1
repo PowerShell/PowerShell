@@ -3,7 +3,7 @@
 
 Import-Module HelpersCommon
 
-Describe "CredSSP cmdlet tests" -Tags 'Feature','RequireAdminOnWindows' {
+Describe "CredSSP cmdlet tests" -Tags 'Feature','RequireAdminOnWindows','NotWinPE' {
 
     BeforeAll {
         $powershell = Join-Path $PSHOME "pwsh"
@@ -104,7 +104,7 @@ Describe "CredSSP cmdlet tests" -Tags 'Feature','RequireAdminOnWindows' {
     }
 }
 
-Describe "CredSSP cmdlet error cases tests" -Tags 'Feature' {
+Describe "CredSSP cmdlet error cases tests" -Tags 'Feature','NotWinPE' {
 
     It "Error returned if runas non-admin: <cmdline>" -Skip:(!$IsWindows) -TestCases @(
         @{cmdline = "Enable-WSManCredSSP -Role Server -Force"; cmd = "EnableWSManCredSSPCommand"},

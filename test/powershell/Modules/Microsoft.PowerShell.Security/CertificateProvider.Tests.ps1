@@ -78,7 +78,7 @@ Describe "Certificate Provider tests" -Tags "CI" {
     }
 }
 
-Describe "Certificate Provider tests" -Tags "Feature" {
+Describe "Certificate Provider tests" -Tags "Feature", "NotWinPE" {
     BeforeAll{
         if($IsWindows)
         {

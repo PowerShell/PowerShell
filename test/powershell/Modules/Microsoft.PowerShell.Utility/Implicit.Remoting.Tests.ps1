@@ -10,7 +10,7 @@ $PSDefaultParameterValues["it:skip"] = $skipTest
 
 try
 {
-    Describe "Implicit remoting and CIM cmdlets with AllSigned and Restricted policy" -tags "Feature","RequireAdminOnWindows" {
+    Describe "Implicit remoting and CIM cmdlets with AllSigned and Restricted policy" -tags "Feature","RequireAdminOnWindows","NotWinPE" {
 
         BeforeAll {
 
@@ -91,7 +91,7 @@ try
         }
     }
 
-    Describe "Tests Import-PSSession cmdlet works with types unavailable on the client" -tags "Feature","RequireAdminOnWindows" {
+    Describe "Tests Import-PSSession cmdlet works with types unavailable on the client" -tags "Feature","RequireAdminOnWindows","NotWinPE" {
 
         BeforeAll {
 
@@ -136,7 +136,7 @@ try
         }
     }
 
-    Describe "Cmdlet help from remote session" -tags "Feature","RequireAdminOnWindows" {
+    Describe "Cmdlet help from remote session" -tags "Feature","RequireAdminOnWindows","NotWinPE" {
 
         BeforeAll {
 
@@ -162,7 +162,7 @@ try
 	}
     }
 
-    Describe "Import-PSSession Cmdlet error handling" -tags "Feature","RequireAdminOnWindows" {
+    Describe "Import-PSSession Cmdlet error handling" -tags "Feature","RequireAdminOnWindows","NotWinPE" {
 
         BeforeAll {
 
@@ -286,7 +286,7 @@ try
         }
     }
 
-    Describe "Tests Export-PSSession" -tags "Feature","RequireAdminOnWindows" {
+    Describe "Tests Export-PSSession" -tags "Feature","RequireAdminOnWindows","NotWinPE" {
 
         BeforeAll {
 
@@ -364,7 +364,7 @@ try
         }
     }
 
-    Describe "Proxy module is usable when the original runspace is no longer around" -tags "Feature","RequireAdminOnWindows" {
+    Describe "Proxy module is usable when the original runspace is no longer around" -tags "Feature","RequireAdminOnWindows","NotWinPE" {
         BeforeAll {
             if ($skipTest) { return }
 
@@ -483,7 +483,7 @@ try
         }
     }
 
-    Describe "Import-PSSession with FormatAndTypes" -tags "Feature","RequireAdminOnWindows" {
+    Describe "Import-PSSession with FormatAndTypes" -tags "Feature","RequireAdminOnWindows","NotWinPE" {
 
         BeforeAll {
             if ($skipTest) { return }
@@ -717,7 +717,7 @@ try
         }
     }
 
-    Describe "Import-PSSession functional tests" -tags "Feature","RequireAdminOnWindows" {
+    Describe "Import-PSSession functional tests" -tags "Feature","RequireAdminOnWindows","NotWinPE" {
 
         BeforeAll {
             if ($skipTest) { return }
@@ -818,7 +818,7 @@ try
         }
     }
 
-    Describe "Implicit remoting parameter binding" -tags "Feature","RequireAdminOnWindows" {
+    Describe "Implicit remoting parameter binding" -tags "Feature","RequireAdminOnWindows","NotWinPE" {
 
         BeforeAll {
             if ($skipTest) { return }
@@ -1415,7 +1415,7 @@ try
         }
     }
 
-    Describe "Implicit remoting on restricted ISS" -tags "Feature","RequireAdminOnWindows","Slow" {
+    Describe "Implicit remoting on restricted ISS" -tags "Feature","RequireAdminOnWindows","Slow","NotWinPE" {
 
         BeforeAll {
             if ($skipTest) { return }
@@ -1531,7 +1531,7 @@ try
         }
     }
 
-    Describe "Implicit remoting tests" -tags "Feature","RequireAdminOnWindows" {
+    Describe "Implicit remoting tests" -tags "Feature","RequireAdminOnWindows","NotWinPE" {
 
         BeforeAll {
             if ($skipTest) { return }
@@ -1878,7 +1878,7 @@ try
         }
     }
 
-    Describe "Export-PSSession function" -tags "Feature","RequireAdminOnWindows" {
+    Describe "Export-PSSession function" -tags "Feature","RequireAdminOnWindows","NotWinPE" {
         BeforeAll {
             if ($skipTest) { return }
 
@@ -1921,7 +1921,7 @@ try
         }
     }
 
-    Describe "Implicit remoting with disconnected session" -tags "Feature","RequireAdminOnWindows" {
+    Describe "Implicit remoting with disconnected session" -tags "Feature","RequireAdminOnWindows","NotWinPE" {
         BeforeAll {
             if ($skipTest) { return }
 
@@ -1966,7 +1966,7 @@ try
         }
     }
 
-    Describe "Select-Object with implicit remoting" -tags "Feature","RequireAdminOnWindows" {
+    Describe "Select-Object with implicit remoting" -tags "Feature","RequireAdminOnWindows","NotWinPE" {
         BeforeAll {
             if ($skipTest) { return }
 
@@ -1990,7 +1990,7 @@ try
         }
     }
 
-    Describe "Get-FormatData used in Export-PSSession should work on DL targets" -tags "Feature","RequireAdminOnWindows" {
+    Describe "Get-FormatData used in Export-PSSession should work on DL targets" -tags "Feature","RequireAdminOnWindows","NotWinPE" {
         BeforeAll {
             # Skip tests for CoreCLR for now
             # Skip tests if .NET 2.0 and PS 2.0 are not installed on the machine
@@ -2029,7 +2029,7 @@ try
         }
     }
 
-    Describe "GetCommand locally and remotely" -tags "Feature","RequireAdminOnWindows" {
+    Describe "GetCommand locally and remotely" -tags "Feature","RequireAdminOnWindows","NotWinPE" {
 
         BeforeAll {
             if ($skipTest) { return }
@@ -2048,7 +2048,7 @@ try
         }
     }
 
-    Describe "Import-PSSession on Restricted Session" -tags "Feature","RequireAdminOnWindows","Slow" {
+    Describe "Import-PSSession on Restricted Session" -tags "Feature","RequireAdminOnWindows","Slow","NotWinPE" {
 
         BeforeAll {
             if ($skipTest) { return }

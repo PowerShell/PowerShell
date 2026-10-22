@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
 Describe "Get-ChildItem" -Tags "CI" {
 
     Context 'FileSystem provider' {
@@ -296,32 +297,6 @@ Describe "Get-ChildItem" -Tags "CI" {
             $barFiles.Count | Should -Be 2
         }
 
-        It 'Works with Windows volume paths' -Skip:(!$IsWindows) {
-            $winPath = $env:windir
-            if (! $winPath) {
-                Set-ItResult -Skipped -Because "windir is null"
-                return
-            }
-
-            $driveLetter = $winPath[0]
-            $winPartialPath = $winPath.SubString(3) # skip the drive letter, colon, and backslash
-            Write-Verbose -Verbose "Partial path is '$winPartialPath'"
-            $volume = (Get-Volume -DriveLetter $driveLetter).Path
-            if (! $volume) {
-                Set-ItResult -Skipped -Because "Get-Volume returned no volume for system drive '$driveLetter'"
-                return
-            }
-
-            $items = Get-ChildItem -LiteralPath "${volume}${winPartialPath}"
-            Write-Verbose -Verbose "Trying files in '${volume}${winPartialPath}'"
-            if ($items.Count -eq 0) {
-                Write-Verbose -Verbose "`$items is null!!"
-            }
-
-            $items[0].Parent.FullName | Should -BeExactly "${volume}${winPartialPath}"
-            $items | Should -HaveCount (Get-ChildItem $winPath).Count
-        }
-
         It 'Works with Windows pipes' -Skip:(!$IsWindows) {
             $out = pwsh -noprofile -custompipename myTestPipe { Get-ChildItem \\.\pipe\myTestPipe }
             $out.Name | Should -BeExactly 'myTestPipe'
@@ -345,6 +320,35 @@ Describe "Get-ChildItem" -Tags "CI" {
                 Get-ChildItem env: | Where-Object {$_.Name -eq '__foodbar'} | Remove-Item -ErrorAction SilentlyContinue
             }
         }
+
+    }
+}
+
+Describe 'Get-ChildItem with Windows volume paths' -Tags 'CI', 'NotWinPE' {
+    It 'Works with Windows volume paths' -Skip:(!$IsWindows) {
+        $winPath = $env:windir
+        if (! $winPath) {
+            Set-ItResult -Skipped -Because "windir is null"
+            return
+        }
+
+        $driveLetter = $winPath[0]
+        $winPartialPath = $winPath.SubString(3) # skip the drive letter, colon, and backslash
+        Write-Verbose -Verbose "Partial path is '$winPartialPath'"
+        $volume = (Get-Volume -DriveLetter $driveLetter).Path
+        if (! $volume) {
+            Set-ItResult -Skipped -Because "Get-Volume returned no volume for system drive '$driveLetter'"
+            return
+        }
+
+        $items = Get-ChildItem -LiteralPath "${volume}${winPartialPath}"
+        Write-Verbose -Verbose "Trying files in '${volume}${winPartialPath}'"
+        if ($items.Count -eq 0) {
+            Write-Verbose -Verbose "`$items is null!!"
+        }
+
+        $items[0].Parent.FullName | Should -BeExactly "${volume}${winPartialPath}"
+        $items | Should -HaveCount (Get-ChildItem $winPath).Count
     }
 }
 

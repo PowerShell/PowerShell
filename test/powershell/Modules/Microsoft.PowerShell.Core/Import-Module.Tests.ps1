@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
 Describe "Import-Module" -Tags "CI" {
     $moduleName = "Microsoft.PowerShell.Security"
     BeforeAll {
@@ -112,7 +113,7 @@ Describe "Import-Module with ScriptsToProcess" -Tags "CI" {
     }
 }
 
-Describe "Import-Module for Binary Modules in GAC" -Tags 'Feature' {
+Describe "Import-Module for Binary Modules in GAC" -Tags 'Feature', 'NotWinPE' {
     Context "Modules are not loaded from GAC" {
         It "Load PSScheduledJob from Windows Powershell Modules folder should fail" -Skip:(-not $IsWindows) {
             # NOTE:
