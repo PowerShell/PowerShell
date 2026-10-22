@@ -118,6 +118,43 @@ Describe "New-ModuleManifest tests" -tags "CI" {
         { New-ModuleManifest -Path $manifestPath -ProjectUri $testUri -LicenseUri $testUri -IconUri $testUri } | Should -Throw -ErrorId "System.InvalidOperationException,Microsoft.PowerShell.Commands.NewModuleManifestCommand"
     }
 
+    It "Throws an error if PSData is specified in PrivateData hashtable" {
+        { New-ModuleManifest -Path $manifestPath -PrivateData @{ PSData = @{ Custom = 'val' } } } | Should -Throw -ErrorId "PSDataNotAllowedInPrivateData,Microsoft.PowerShell.Commands.NewModuleManifestCommand"
+    }
+
+    It "Serializes nested hashtables, arrays, and primitive values in PrivateData" {
+        $privateData = @{
+            MyKey = @{
+                NestedKey = 'NestedVal'
+                NestedNumber = 42
+                NestedBool = $true
+                'nested-kebab-key' = 'kebab'
+            }
+            'top-hyphen-key' = 'hyphen'
+            MyList = @('a', 'b')
+            ByteVal = [byte]255
+            ShortVal = [short]100
+            UlongVal = [ulong]1000000
+        }
+        New-ModuleManifest -Path $manifestPath -PrivateData $privateData
+        $manifest = Test-ModuleManifest -Path $manifestPath
+        $manifest.PrivateData.MyKey.NestedKey | Should -BeExactly 'NestedVal'
+        $manifest.PrivateData.MyKey.NestedNumber | Should -BeExactly 42
+        $manifest.PrivateData.MyKey.NestedBool | Should -BeExactly $true
+        $manifest.PrivateData.MyKey.'nested-kebab-key' | Should -BeExactly 'kebab'
+        $manifest.PrivateData.'top-hyphen-key' | Should -BeExactly 'hyphen'
+        $manifest.PrivateData.MyList | Should -BeExactly @('a', 'b')
+        $manifest.PrivateData.ByteVal | Should -BeExactly 255
+        $manifest.PrivateData.ShortVal | Should -BeExactly 100
+        $manifest.PrivateData.UlongVal | Should -BeExactly 1000000
+    }
+
+    It "Throws an error if circular reference is present in PrivateData hashtable" {
+        $circularHt = @{}
+        $circularHt['Self'] = $circularHt
+        { New-ModuleManifest -Path $manifestPath -PrivateData $circularHt } | Should -Throw -ErrorId "System.InvalidOperationException,Microsoft.PowerShell.Commands.NewModuleManifestCommand"
+    }
+
     # We skip the test on Unix-s because there Roslyn compilation works in another way.
     It "New-ModuleManifest works with assembly architecture: <moduleArch>" -Skip:(!$IsWindows) -TestCases @(
         # All values from [System.Reflection.ProcessorArchitecture]
