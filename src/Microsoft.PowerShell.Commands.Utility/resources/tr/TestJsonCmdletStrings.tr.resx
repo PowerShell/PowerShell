@@ -133,6 +133,6 @@
     <value>'{0}' URI düzeni desteklenmiyor. Yalnızca HTTP(S) ve yerel dosya sistemi URI'lerine izin verilir.</value>
   </data>
   <data name="UnresolvedJsonSchemaRef" xml:space="preserve">
-    <value>The JSON schema contains a reference that could not be resolved. External schema references are not supported by default, use the 'FetchExternalReference' parameter to enable it.</value>
+    <value>JSON şeması çözümlenemeyen bir başvuru içeriyor. Dış şema başvuruları varsayılan olarak desteklenmez; bunları etkinleştirmek için 'FetchExternalReference' parametresini kullanın.</value>
   </data>
 </root>
