@@ -2489,30 +2489,40 @@ namespace System.Management.Automation
             // save the foreground window since allocating a console window might remove focus from it
             IntPtr savedForeground = Interop.Windows.GetForegroundWindow();
 
-            // Since there is no console window, allocate and then hide it...
-            // Suppress the PreFAST warning about not using Marshal.GetLastWin32Error() to
-            // get the error code.
-            Interop.Windows.AllocConsole();
-            hwnd = Interop.Windows.GetConsoleWindow();
+            // Try AllocConsoleWithOptions with NoWindow mode first to avoid the flash
+            // that the AllocConsole() + ShowWindow(SW_HIDE) pattern causes.
+            bool allocated = Interop.Windows.TryAllocConsoleNoWindow();
 
-            bool returnValue;
-            if (hwnd == nint.Zero)
+            if (!allocated)
             {
-                returnValue = false;
-            }
-            else
-            {
-                returnValue = true;
+                // Fallback for older Windows: allocate and then hide.
+                Interop.Windows.AllocConsole();
+                hwnd = Interop.Windows.GetConsoleWindow();
+                if (hwnd == nint.Zero)
+                {
+                    // AllocConsole() can still move focus even when no console window
+                    // handle comes back, so restore it before bailing out.
+                    RestoreForegroundWindow(savedForeground);
+                    return false;
+                }
+
                 Interop.Windows.ShowWindow(hwnd, Interop.Windows.SW_HIDE);
-                AlwaysCaptureApplicationIO = true;
             }
 
-            if (savedForeground != nint.Zero && Interop.Windows.GetForegroundWindow() != savedForeground)
+            AlwaysCaptureApplicationIO = true;
+
+            RestoreForegroundWindow(savedForeground);
+
+            return true;
+
+            // Restore foreground window if focus changed during console allocation.
+            static void RestoreForegroundWindow(IntPtr previousForeground)
             {
-                Interop.Windows.SetForegroundWindow(savedForeground);
+                if (previousForeground != nint.Zero && Interop.Windows.GetForegroundWindow() != previousForeground)
+                {
+                    Interop.Windows.SetForegroundWindow(previousForeground);
+                }
             }
-
-            return returnValue;
 #endif
         }
     }
