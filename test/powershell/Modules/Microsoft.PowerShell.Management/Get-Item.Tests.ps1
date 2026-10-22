@@ -265,7 +265,7 @@ Describe 'Formatting for FileInfo objects' -Tags 'CI' {
     }
 
     It 'Executable extension comparison should be case-insensitive' -Skip:(!$IsWindows) {
-        $exePath = Join-Path -Path $TestDrive -ChildPath 'myExe.EXE'
+        $exePath = Join-Path -Path $TestDrive -ChildPath 'uppercaseExe.EXE'
         $exe = New-Item -ItemType File -Path $exePath
 
         $exe.NameString | Should -BeExactly "$($PSStyle.FileInfo.Executable + $exe.Name + $PSStyle.Reset)"
