@@ -1823,7 +1823,11 @@ try
 
             It "Bad verb alias causes no error or warning" {
                 try {
-                    $ps = [powershell]::Create().AddCommand("Import-PSSession", $true).AddParameter("Session", $session).AddParameter("CommandName", "BadVerb-Variable")
+                    $ps = [powershell]::Create().
+                        AddCommand("Import-PSSession", $true).
+                        AddParameter("Session", $session).
+                        AddParameter("CommandName", "BadVerb-Variable").
+                        AddParameter("AllowClobber")
                     $module = $ps.Invoke() | Select-Object -First 1
 
                     $ps.Streams.Error.Count | Should -Be 0
@@ -2075,6 +2079,61 @@ try
             }
 
             $errorVariable | Should -BeNullOrEmpty
+        }
+    }
+
+    Describe "Import-PSSession resolved command of an alias" -tags "Feature","RequireAdminOnWindows" {
+
+        BeforeAll {
+            if ($skipTest) { return }
+            $session = New-RemoteSession
+
+            # Define a remote function
+            Invoke-Command -Session $session { function MyFunction { "Remote!" } Set-Alias SafeAlias -Value MyFunction }
+            # Define an alias to 'Get-Help', which is in the skip-list of the remote session configuration.
+            Invoke-Command -Session $session { Set-Alias -Name myhelp -Value Get-Help }
+        }
+
+        AfterAll {
+            if ($skipTest) { return }
+            if ($null -ne $session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
+        }
+
+        It "When '-AllowClobber' is false, shadowing command cannot be bypassed using an alias to it" -Skip:$skipTest {
+            function MyFunction { "Local!" }
+
+            { Import-PSSession -Session $session -CommandName SafeAlias -AllowClobber:$false -DisableNameChecking } | Should -Throw -ErrorId "ErrorNoCommandsImportedBecauseOfSkipping,Microsoft.PowerShell.Commands.ImportPSSessionCommand"
+            MyFunction | Should -BeExactly "Local!"
+        }
+
+        It "Command in server skip-list cannot be bypassed using an alias to it" -Skip:$skipTest {
+            try {
+                $m = Import-PSSession -Session $session -CommandName myhelp -AllowClobber
+                $m.ExportedCommands.Count | Should -Be 0
+                { myhelp } | Should -Throw -ErrorId "CommandNotFoundException"
+            }
+            finally {
+                if ($null -ne $m) {
+                    Remove-Module $m -Force -ErrorAction SilentlyContinue
+                    Remove-Item $m.ModuleBase -Recurse -Force -ErrorAction SilentlyContinue
+                }
+            }
+        }
+
+        It "Server skip-list check should be skipped for the resolved command of an alias when '-Prefix' is specified" -Skip:$skipTest {
+            try {
+                $m = Import-PSSession -Session $session -CommandName myhelp -AllowClobber -Prefix "Remote"
+                $m.ExportedCommands.Count | Should -Be 2
+                $exportedCommands = Get-Command -Module $m -All | ForEach-Object Name
+                $exportedCommands | Should -Contain "Remotemyhelp"
+                $exportedCommands | Should -Contain "Get-RemoteHelp"
+            }
+            finally {
+                if ($null -ne $m) {
+                    Remove-Module $m -Force -ErrorAction SilentlyContinue
+                    Remove-Item $m.ModuleBase -Recurse -Force -ErrorAction SilentlyContinue
+                }
+            }
         }
     }
 }
