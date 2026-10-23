@@ -1345,6 +1345,29 @@ namespace System.Management.Automation.Runspaces
         public abstract void ConnectAsync();
 
         /// <summary>
+        /// Marks the remote runspace to be closed when it is popped from a host that
+        /// implements <see cref="System.Management.Automation.Host.IHostSupportsInteractiveSession"/>.
+        /// </summary>
+        /// <remarks>
+        /// This should only be used when the caller owns the runspace and nothing else will use it
+        /// after it has been popped, for example a runspace created just for an interactive session.
+        /// The runspace is closed when the pop is initiated by the remote session, like when
+        /// <c>Exit-PSSession</c> or <c>exit</c> is run in the pushed runspace.
+        /// </remarks>
+        /// <exception cref="InvalidOperationException">
+        /// The runspace is not a remote runspace.
+        /// </exception>
+        public void SetShouldCloseOnPop()
+        {
+            if (this is not RemoteRunspace remoteRunspace)
+            {
+                throw new InvalidOperationException(RunspaceStrings.ShouldCloseOnPopNotRemote);
+            }
+
+            remoteRunspace.ShouldCloseOnPop = true;
+        }
+
+        /// <summary>
         /// Creates a PipeLine object in the disconnected state for the currently disconnected
         /// remote running command associated with this runspace.
         /// </summary>
