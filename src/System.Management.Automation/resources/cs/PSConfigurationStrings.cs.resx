@@ -121,9 +121,9 @@
     <value>PowerShell přestal fungovat kvůli problému se zabezpečením: Konfigurační soubor nejde přečíst: {0}</value>
   </data>
   <data name="CanNotReadConfigurationFile" xml:space="preserve">
-    <value>Cannot read the PowerShell configuration file '{0}': {1}. Falling back to default settings.</value>
+    <value>Konfigurační soubor prostředí PowerShell nelze číst '{0}': {1}. Návrat k výchozímu nastavení.</value>
   </data>
   <data name="CanNotReadConfigurationValue" xml:space="preserve">
-    <value>Cannot read setting '{0}' from PowerShell configuration file '{1}': {2}. Falling back to default for this setting.</value>
+    <value>Nelze číst '{0}' nastavení z konfiguračního souboru prostředí PowerShell '{1}': {2}. Pro toto nastavení se obnoví výchozí nastavení.</value>
   </data>
 </root>

@@ -132,24 +132,6 @@
   <data name="ShellBannerRLMode" xml:space="preserve">
     <value>[制限付き言語モード]</value>
   </data>
-  <data name="PreviewUpdateNotificationMessage" xml:space="preserve">
-    <value>  {1} 新しい PowerShell のプレビュー リリースが利用可能です。v{0} {2}
-  {1} 今すぐアップグレードするか、{3}{2}
-  {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
-のリリース ページを確認してください</value>
-  </data>
-  <data name="StableUpdateNotificationMessage" xml:space="preserve">
-    <value>  {1} 新しい PowerShell の安定リリースが利用可能です。v{0} {2}
-  {1} 今すぐアップグレードするか、{3}{2}
-  {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
-のリリース ページを確認してください</value>
-  </data>
-  <data name="LTSUpdateNotificationMessage" xml:space="preserve">
-    <value>  {1} 新しい PowerShell LTS リリースが利用可能です。v{0} {2}
-  {1} 今すぐアップグレードするか、{3}{2}
-  {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
-のリリース ページを確認してください</value>
-  </data>
   <data name="UsageHelp" xml:space="preserve">
     <value>使用法: pwsh[.exe] [-Login] [[-File] &lt;filePath&gt; [args]]
                   [-Command { - | &lt;script-block&gt; [-args &lt;arg-array&gt;]

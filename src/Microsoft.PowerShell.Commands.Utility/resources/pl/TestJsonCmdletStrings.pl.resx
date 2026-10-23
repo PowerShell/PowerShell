@@ -132,4 +132,7 @@
   <data name="InvalidUriScheme" xml:space="preserve">
     <value>Schemat identyfikatora URI „{0}” nie jest obsługiwany. Dozwolone są tylko identyfikatory URI HTTP(S) i lokalnego systemu plików.</value>
   </data>
+  <data name="UnresolvedJsonSchemaRef" xml:space="preserve">
+    <value>Schemat JSON zawiera odwołanie, którego nie można rozpoznać. Odwołania do schematu zewnętrznego nie są domyślnie obsługiwane. Użyj parametru „FetchExternalReference”, aby go włączyć.</value>
+  </data>
 </root>

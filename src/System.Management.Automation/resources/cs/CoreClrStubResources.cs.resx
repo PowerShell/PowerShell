@@ -138,4 +138,8 @@
   <data name="UnknownErrorNumber" xml:space="preserve">
     <value>Neznámá chyba {0}.</value>
   </data>
+  <data name="TempHomeDirectoryUnsafePermission" xml:space="preserve">
+    <value>Dočasný adresář HOME „{0}“ již existuje, ale nemá očekávaná oprávnění pouze pro uživatele. Možná ho vytvořil jiný uživatel, což je potenciální bezpečnostní riziko. PowerShell se nespustí, dokud tento adresář neodstraníte, neopravíte jeho oprávnění nebo nenastavíte proměnnou prostředí HOME.</value>
+    <comment>{StrContains="HOME"}</comment>
+  </data>
 </root>

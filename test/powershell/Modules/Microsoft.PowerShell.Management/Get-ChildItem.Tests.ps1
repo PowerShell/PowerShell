@@ -142,6 +142,77 @@ Describe "Get-ChildItem" -Tags "CI" {
             (Get-ChildItem -Path $TestDrive -Depth 1 -Exclude $item_a).Count | Should -Be 7
         }
 
+        It "Should return names recursively when the path has a wildcard leaf" {
+            $root = New-Item -Path $TestDrive -Name "NameRecurse" -ItemType Directory
+            try {
+                $child = New-Item -Path $root -Name "Child" -ItemType Directory
+                $null = New-Item -Path $root -Name "root.md" -ItemType File
+                $null = New-Item -Path $child -Name "child.md" -ItemType File
+                $null = New-Item -Path $child -Name "ignored.txt" -ItemType File
+                $path = Join-Path $root "*.md"
+
+                $result = Get-ChildItem -Path $path -Recurse -File -Name
+                $result | Should -HaveCount 2
+                $result | Should -Contain "root.md"
+                $result | Should -Contain "Child$([IO.Path]::DirectorySeparatorChar)child.md"
+
+                Get-ChildItem -Path $path -Depth 0 -File -Name | Should -BeExactly "root.md"
+            }
+            finally {
+                Remove-Item -LiteralPath $root -Recurse -Force
+            }
+        }
+
+        It "Should preserve recursive wildcard filters through the public GetNames API" {
+            $root = New-Item -Path $TestDrive -Name "PublicGetNamesRecurse" -ItemType Directory
+            try {
+                $child = New-Item -Path $root -Name "Child" -ItemType Directory
+                $null = New-Item -Path $root -Name "root.md" -ItemType File
+                $null = New-Item -Path $child -Name "child.md" -ItemType File
+                $null = New-Item -Path $child -Name "ignored.txt" -ItemType File
+                $path = Join-Path $root "*.md"
+
+                $result = $ExecutionContext.SessionState.InvokeProvider.ChildItem.GetNames(
+                    $path,
+                    [System.Management.Automation.ReturnContainers]::ReturnMatchingContainers,
+                    $true)
+
+                $result | Should -HaveCount 2
+                $result | Should -Contain "root.md"
+                $result | Should -Contain "Child$([IO.Path]::DirectorySeparatorChar)child.md"
+            }
+            finally {
+                Remove-Item -LiteralPath $root -Recurse -Force
+            }
+        }
+
+        It "Should resolve recursive leaf paths from the current directory" {
+            $root = New-Item -Path $TestDrive -Name "CurrentDirectoryRecurse" -ItemType Directory
+            try {
+                $child = New-Item -Path $root -Name "Child" -ItemType Directory
+                $rootFile = New-Item -Path $root -Name "root.md" -ItemType File
+                $childFile = New-Item -Path $child -Name "child.md" -ItemType File
+
+                Push-Location $root
+                try {
+                    $result = Get-ChildItem *.md -Recurse -File -Name
+                    $result | Should -HaveCount 2
+                    $result | Should -Contain $rootFile.Name
+                    $result | Should -Contain "Child$([IO.Path]::DirectorySeparatorChar)$($childFile.Name)"
+
+                    $result = Get-ChildItem child.md -Recurse -File -Name
+                    $result | Should -HaveCount 1
+                    $result | Should -BeExactly "Child$([IO.Path]::DirectorySeparatorChar)$($childFile.Name)"
+                }
+                finally {
+                    Pop-Location
+                }
+            }
+            finally {
+                Remove-Item -LiteralPath $root -Recurse -Force
+            }
+        }
+
         It "Should return items recursively when using 'Include' or 'Exclude' parameters with -LiteralPath" {
             (Get-ChildItem -LiteralPath $TestDrive -Recurse -Exclude *).Count | Should -Be 0
             (Get-ChildItem -LiteralPath $TestDrive -Recurse -Include *.dll).Count | Should -Be (Get-ChildItem $TestDrive -Recurse -Include *.dll).Count

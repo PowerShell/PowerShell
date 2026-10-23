@@ -121,9 +121,9 @@
     <value>보안 문제로 인해 PowerShell이 작동을 중지했습니다. 구성 파일을 읽을 수 없습니다. {0}</value>
   </data>
   <data name="CanNotReadConfigurationFile" xml:space="preserve">
-    <value>Cannot read the PowerShell configuration file '{0}': {1}. Falling back to default settings.</value>
+    <value>PowerShell 구성 파일 '{0}' 읽을 수 없습니다. {1}. 기본 설정으로 대체합니다.</value>
   </data>
   <data name="CanNotReadConfigurationValue" xml:space="preserve">
-    <value>Cannot read setting '{0}' from PowerShell configuration file '{1}': {2}. Falling back to default for this setting.</value>
+    <value>PowerShell 구성 파일 '{1}'에서 설정 '{0}' 읽을 수 없습니다. {2}. 이 설정에 대한 기본값으로 되돌아갑니다.</value>
   </data>
 </root>
