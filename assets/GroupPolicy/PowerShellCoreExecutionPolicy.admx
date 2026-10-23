@@ -115,5 +115,18 @@
         <text id="ConsoleSessionConfigurationName" valueName="ConsoleSessionConfigurationName" required="true"/>
       </elements>
     </policy>
+    <policy name="TrustedHosts" class="Both" displayName="$(string.TrustedHosts)" explainText="$(string.TrustedHosts_Explain)" presentation="$(presentation.TrustedHosts)" key="Software\Policies\Microsoft\PowerShellCore\TrustedHosts" valueName="EnableTrustedHosts">
+      <parentCategory ref="PowerShell" />
+      <supportedOn ref="SUPPORTED_WIN7" />
+      <enabledValue>
+        <decimal value="1" />
+      </enabledValue>
+      <disabledValue>
+        <decimal value="0" />
+      </disabledValue>
+      <elements>
+        <list id="Listbox_TrustedHostPatterns" key="Software\Policies\Microsoft\PowerShellCore\TrustedHosts\Patterns" />
+      </elements>
+    </policy>
   </policies>
 </policyDefinitions>
