@@ -620,3 +620,59 @@ Describe 'Casting Behaviour of Boolean/Null to Numeral' -Tags CI {
         $result | Should -BeOfType $Type
     }
 }
+
+Describe 'Conversion to multidimensional array types' -Tags 'CI' {
+    BeforeAll {
+        $multidimensionalMessage = 'Converting a value to a multidimensional array type is not supported'
+    }
+
+    It 'reports that the target type is unsupported when casting <Expression>' -TestCases @(
+        @{ Expression = '[int[,]] ((1, 2), (2, 3))' }
+        @{ Expression = '[int[,,]] ((1, 2), (2, 3))' }
+        @{ Expression = '[int[,]] @(1)' }
+        @{ Expression = '[int[,]] 1' }
+        @{ Expression = '[object[,]] ''a''' }
+        @{ Expression = '[long[,]] [int[,]]::new(2, 2)' }
+    ) {
+        param($Expression)
+
+        $sb = [scriptblock]::Create($Expression)
+        $err = $sb | Should -Throw -ErrorId 'InvalidCastToMultidimensionalArray' -PassThru
+        $err.Exception.Message | Should -BeLike "*$multidimensionalMessage*"
+    }
+
+    It 'reports the value and both type names in the error message' {
+        $err = { [int[,]] ((1, 2), (2, 3)) } | Should -Throw -PassThru
+        $err.Exception.Message | Should -BeLike ([WildcardPattern]::Escape('Cannot convert the "System.Object[]" value of type "System.Object[]" to type "System.Int32[,]".') + '*')
+    }
+
+    It 'reports the error when binding an argument to a multidimensional array parameter' {
+        function Test-MultidimensionalParameter ([int[,]] $Array) { $Array }
+
+        $err = { Test-MultidimensionalParameter ((1, 2), (3, 4)) } |
+            Should -Throw -ErrorId 'ParameterArgumentTransformationError,Test-MultidimensionalParameter' -PassThru
+        $err.Exception.Message | Should -BeLike "*$multidimensionalMessage*"
+    }
+
+    It 'returns $null for -as with a multidimensional array type' {
+        ((1, 2), (3, 4)) -as [int[,]] | Should -BeNullOrEmpty
+    }
+
+    It 'still passes through a value that already is the multidimensional array type' {
+        $array = [int[,]]::new(2, 2)
+        $array[1, 1] = 5
+
+        $result = [int[,]] $array
+        $result.Rank | Should -Be 2
+        $result[1, 1] | Should -Be 5
+    }
+
+    It 'still converts to jagged and single-dimensional array types' {
+        $jagged = [int[][]] ((1, 2), (3, 4))
+        $jagged.Rank | Should -Be 1
+        $jagged[1][0] | Should -Be 3
+
+        $result = [long[]] (1, 2)
+        $result.GetType() | Should -Be ([long[]])
+    }
+}

@@ -4902,6 +4902,18 @@ namespace System.Management.Automation
                 return Tuple.Create(errorId, errorMsg);
             }
 
+            if (PSObject.Base(valueToConvert) != null && resultType.IsArray && resultType.GetArrayRank() > 1)
+            {
+                typeConversion.WriteLine("Cannot convert to a multidimensional array type.");
+                errorId = nameof(ExtendedTypeSystem.InvalidCastToMultidimensionalArray);
+                errorMsg = StringUtil.Format(
+                    ExtendedTypeSystem.InvalidCastToMultidimensionalArray,
+                    valueToConvert.ToString(),
+                    ObjectToTypeNameString(valueToConvert),
+                    resultType);
+                return Tuple.Create(errorId, errorMsg);
+            }
+
             if (PSObject.Base(valueToConvert) == null)
             {
                 if (resultType.IsEnum)
@@ -5017,6 +5029,14 @@ namespace System.Management.Automation
 
             if (toType.IsArray)
             {
+                if (toType.GetArrayRank() > 1)
+                {
+                    // The array conversions below create a one-dimensional array of the target's element type
+                    // via 'Array.CreateInstance(elementType, length)', so they cannot produce an instance of a
+                    // multidimensional array type. Values that are already assignable were handled earlier.
+                    return CacheConversion<object>(fromType, toType, ConvertNoConversion, ConversionRank.None);
+                }
+
                 Type toElementType = toType.GetElementType();
 
                 if (fromType.IsArray)
