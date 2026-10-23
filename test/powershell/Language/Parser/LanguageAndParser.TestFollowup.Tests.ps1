@@ -82,6 +82,105 @@ Describe "ScriptBlockAst.GetScriptBlock throws on error" -Tags "CI" {
     }
 }
 
+Describe "FunctionDefinitionAst.GetScriptBlock" -Tags "CI" {
+
+    BeforeAll {
+        function Test-FunctionDefinitionAst {
+            [CmdletBinding()]
+            param ([Parameter(Mandatory)][string]$Name)
+
+            "Hello $Name"
+        }
+        function Test-FunctionDefinitionAstParams ($Name) { "Hello $Name" }
+        filter Test-FunctionDefinitionAstFilter ($Multiplier) { $_ * $Multiplier }
+    }
+
+    It "returns an unbound script block from a function scriptblock" {
+        $fda = ${function:Test-FunctionDefinitionAst}.Ast
+        $fda | Should -BeOfType System.Management.Automation.Language.FunctionDefinitionAst
+
+        $sb = $fda.GetScriptBlock()
+        $sb | Should -BeOfType scriptblock
+        $sb | Should -Not -Be ${function:Test-FunctionDefinitionAst}
+        $sb.Ast | Should -Be $fda
+        $sb.Module | Should -BeNullOrEmpty
+        $sb.IsFilter | Should -BeFalse
+        $sb.Attributes[0] | Should -BeOfType System.Management.Automation.CmdletBindingAttribute
+        & $sb -Name World | Should -Be "Hello World"
+    }
+
+    It "includes parameters defined after the function name" {
+        $sb = ${function:Test-FunctionDefinitionAstParams}.Ast.GetScriptBlock()
+        $sb.Ast.Parameters.Count | Should -Be 1
+        & $sb -Name World | Should -Be "Hello World"
+    }
+
+    It "returns a filter script block for a filter" {
+        $sb = ${function:Test-FunctionDefinitionAstFilter}.Ast.GetScriptBlock()
+        $sb.IsFilter | Should -BeTrue
+        1, 2, 3 | & $sb -Multiplier 2 | Should -Be 2, 4, 6
+    }
+
+    It "is not bound to the session state of the module that defined the function" {
+        $module = New-Module -ScriptBlock {
+            $testValue = 'module'
+            function Get-TestValue ($Prefix) { "$Prefix $testValue" }
+        }
+        $testValue = 'caller'
+
+        $boundSb = & $module { ${function:Get-TestValue} }
+        & $boundSb -Prefix Value | Should -Be "Value module"
+
+        $sb = $boundSb.Ast.GetScriptBlock()
+        $sb.Module | Should -BeNullOrEmpty
+        & $sb -Prefix Value | Should -Be "Value caller"
+    }
+
+    It "uses the session state of the runspace it is invoked in" {
+        function Get-TestValue ($Prefix) { "$Prefix $testValue" }
+        $testValue = 'caller'
+
+        $sb = ${function:Get-TestValue}.Ast.GetScriptBlock()
+
+        $ps = [PowerShell]::Create()
+        try {
+            $null = $ps.AddScript('param ($ScriptBlock) $testValue = "other"; & $ScriptBlock -Prefix Value').AddArgument($sb)
+            $actual = $ps.Invoke()
+            $ps.Streams.Error | Should -BeNullOrEmpty
+        }
+        finally {
+            $ps.Dispose()
+        }
+
+        $actual | Should -Be "Value other"
+    }
+
+    It "works on a parsed function definition" {
+        $ast = [System.Management.Automation.Language.Parser]::ParseInput('function foo ($a) { $a + 1 }', [ref]$null, [ref]$null)
+        $sb = $ast.EndBlock.Statements[0].GetScriptBlock()
+        & $sb -a 1 | Should -Be 2
+    }
+
+    It "throws with semantic errors" {
+        $ast = [System.Management.Automation.Language.Parser]::ParseInput('function foo{param()begin{}end{[ref][ref]1}dynamicparam{}}', [ref]$null, [ref]$null)
+        { $ast.EndBlock.Statements[0].GetScriptBlock() } | Should -Throw -ErrorId "PSInvalidOperationException"
+    }
+
+    It "works on a copied function definition" {
+        $fda = ${function:Test-FunctionDefinitionAstParams}.Ast.Copy()
+        $fda.Parent | Should -BeNullOrEmpty
+
+        $sb = $fda.GetScriptBlock()
+        & $sb -Name World | Should -Be "Hello World"
+    }
+
+    It "throws with semantic errors on a copied function definition" {
+        $ast = [System.Management.Automation.Language.Parser]::ParseInput('function foo { [ref][ref]1 }', [ref]$null, [ref]$null)
+        $fda = $ast.EndBlock.Statements[0].Copy()
+        { $fda.GetScriptBlock() } | Should -Throw -ErrorId "ParseException"
+    }
+}
+
 Describe "Hashtable key property syntax" -Tags "CI" {
     $script = @'
     # First create a hashtable wrapped in PSObject
