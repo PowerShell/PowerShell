@@ -132,4 +132,7 @@
   <data name="InvalidUriScheme" xml:space="preserve">
     <value>Das URI-Schema „{0}“ wird nicht unterstützt. Nur HTTP(S) und lokale Dateisystem-URIs sind zulässig.</value>
   </data>
+  <data name="UnresolvedJsonSchemaRef" xml:space="preserve">
+    <value>Das JSON-Schema enthält einen Verweis, der nicht aufgelöst werden konnte. Externe Schemaverweise werden standardmäßig nicht unterstützt. Verwenden Sie zum Aktivieren den Parameter „FetchExternalReference“.</value>
+  </data>
 </root>

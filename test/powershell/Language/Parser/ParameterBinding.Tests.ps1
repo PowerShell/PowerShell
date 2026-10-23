@@ -472,3 +472,81 @@ Describe 'Roundtrippable Conversions for Bare-string Numeric Literals passed to 
         Invoke-Expression "Test-AdvancedStringValue -Value $Argument" | Should -BeExactly $Argument
     }
 }
+
+Describe 'Scalar PSObject binding to non-generic IList parameters' -Tags CI {
+    BeforeAll {
+        $typeDefinition = @'
+using System.Collections;
+using System.Collections.Specialized;
+using System.Management.Automation;
+
+namespace ScalarPSObjectCollectionBinding
+{
+    public sealed class UntypedList : CollectionBase
+    {
+        public object this[int index]
+        {
+            get => List[index];
+            set => List[index] = value;
+        }
+    }
+
+    [Cmdlet(VerbsDiagnostic.Test, "ScalarStringCollectionBinding")]
+    [OutputType(typeof(string))]
+    public sealed class TestScalarStringCollectionBindingCommand : PSCmdlet
+    {
+        [Parameter(Mandatory = true)]
+        public StringCollection Value { get; set; }
+
+        protected override void ProcessRecord()
+        {
+            WriteObject(Value, enumerateCollection: true);
+        }
+    }
+
+    [Cmdlet(VerbsDiagnostic.Test, "ScalarUntypedListBinding")]
+    public sealed class TestScalarUntypedListBindingCommand : PSCmdlet
+    {
+        [Parameter(Mandatory = true)]
+        public UntypedList Value { get; set; }
+
+        protected override void ProcessRecord()
+        {
+            WriteObject(Value[0] is PSObject);
+            WriteObject(((PSObject)Value[0]).Properties["Extra"].Value);
+        }
+    }
+}
+'@
+
+        $types = Add-Type -PassThru -TypeDefinition $typeDefinition
+        Import-Module $types[0].Assembly
+    }
+
+    It 'binds a scalar PSObject wrapping a string to StringCollection' {
+        $value = @('expected', 'expected') | Select-Object -Unique
+
+        $value.GetType().FullName | Should -BeExactly 'System.String'
+        $value -is [System.Management.Automation.PSObject] | Should -BeTrue
+        Test-ScalarStringCollectionBinding -Value $value | Should -BeExactly 'expected'
+    }
+
+    It 'binds multiple PSObjects wrapping strings to StringCollection' {
+        $value = @('first', 'second') | Select-Object -Unique
+
+        $value | ForEach-Object {
+            $_.GetType().FullName | Should -BeExactly 'System.String'
+            $_ -is [System.Management.Automation.PSObject] | Should -BeTrue
+        }
+
+        Test-ScalarStringCollectionBinding -Value $value | Should -BeExactly @('first', 'second')
+    }
+
+    It 'preserves ETS members when the non-generic IList element type is unknown' {
+        $value = 'expected' | Add-Member -NotePropertyName Extra -NotePropertyValue 'preserved' -PassThru
+
+        $value -is [System.Management.Automation.PSObject] | Should -BeTrue
+        $result = @(Test-ScalarUntypedListBinding -Value $value)
+        $result | Should -BeExactly @($true, 'preserved')
+    }
+}
