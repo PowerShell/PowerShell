@@ -232,5 +232,18 @@
     ],
     "Justification": null,
     "TimestampUtc": "2026-10-15T20:47:53.7021735Z"
+  },
+  {
+    "ChangeType": "NonSecurity",
+    "Branch": "release/v7.6.9",
+    "PackageId": ".NET SDK",
+    "FromVersion": "10.0.402",
+    "ToVersion": "10.0.403",
+    "VulnerabilityId": [],
+    "Severity": [],
+    "VulnerableRanges": [],
+    "AdvisoryUrls": [],
+    "Justification": "Updated .NET SDK. Building with the latest SDK is required.",
+    "TimestampUtc": "2026-10-24T23:19:55.1758673Z"
   }
 ]
