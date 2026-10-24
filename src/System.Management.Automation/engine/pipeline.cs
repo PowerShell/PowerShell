@@ -650,6 +650,11 @@ namespace System.Management.Automation.Internal
 
                 try
                 {
+                    if (!commandProcessor.RanBeginAlready)
+                    {
+                        commandProcessor.DoBegin();
+                    }
+
                     commandProcessor.DoComplete();
                 }
                 catch (PipelineStoppedException)

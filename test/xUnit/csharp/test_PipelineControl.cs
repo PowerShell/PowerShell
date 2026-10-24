@@ -154,6 +154,39 @@ namespace PSTests.Sequential
         }
 
         /// <summary>
+        /// Verifies that a cmdlet captured by an outer function cannot request stopping
+        /// while a nested pipeline command is executing.
+        /// </summary>
+        [Fact]
+        public void StopFromNestedPipelineIsRejected()
+        {
+            using var ps = CreatePowerShell();
+            ps.AddScript(@"
+                function Stop-FromNestedPipeline {
+                    [CmdletBinding()] param([Parameter(ValueFromPipeline)] $Value)
+                    begin { $owner = $PSCmdlet }
+                    process {
+                        $Value
+                        $Value | ForEach-Object {
+                            try {
+                                $owner.StopUpstreamCommands()
+                            } catch [System.InvalidOperationException] {
+                                'rejected'
+                            }
+                        }
+                    }
+                    end { 'end' }
+                }
+                1..2 | Stop-FromNestedPipeline
+            ");
+
+            Assert.Equal(
+                [1, "rejected", 2, "rejected", "end"],
+                ps.Invoke().Select(result => result.BaseObject).ToArray());
+            Assert.False(ps.HadErrors);
+        }
+
+        /// <summary>
         /// Verifies that an upstream binary cmdlet's exception filter lets downstream
         /// stopping propagate after two objects, without calling upstream end or
         /// StopProcessing callbacks or reporting errors.
@@ -221,6 +254,30 @@ namespace PSTests.Sequential
             Assert.Equal(
                 [true, "after"],
                 ps.Invoke().Select(result => result.BaseObject).ToArray());
+            Assert.False(ps.HadErrors);
+        }
+
+        /// <summary>
+        /// Verifies that stopping during begin processing initializes a downstream
+        /// non-advanced function before running its end block.
+        /// </summary>
+        [Fact]
+        public void StopDuringBeginInitializesNonAdvancedDownstreamFunction()
+        {
+            using var ps = CreatePowerShell();
+            ps.AddScript(@"
+                function Stop-DuringBegin {
+                    [CmdletBinding()] param()
+                    begin { $PSCmdlet.StopUpstreamCommands() }
+                }
+                function Complete-NonAdvanced {
+                    begin { $initialized = $true }
+                    end { $initialized }
+                }
+                Stop-DuringBegin | Complete-NonAdvanced
+            ");
+
+            Assert.True((bool)Assert.Single(ps.Invoke()).BaseObject);
             Assert.False(ps.HadErrors);
         }
 

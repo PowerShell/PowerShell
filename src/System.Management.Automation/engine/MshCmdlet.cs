@@ -961,6 +961,7 @@ namespace System.Management.Automation
         public void StopUpstreamCommands()
         {
             if (commandRuntime is not MshCommandRuntime runtime
+                || Context.CurrentCommandProcessor?.Command != this
                 || runtime.PipelineProcessor?._permittedToWrite != this
                 || !runtime.PipelineProcessor._permittedToWriteToPipeline
                 || runtime.PipelineProcessor._permittedToWriteThread != System.Threading.Thread.CurrentThread)
