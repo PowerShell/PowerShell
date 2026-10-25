@@ -1308,7 +1308,9 @@ namespace System.Management.Automation
         /// </exception>
         internal Collection<PSDriveInfo> Drives(string scope)
         {
-            Dictionary<string, PSDriveInfo> driveTable = new Dictionary<string, PSDriveInfo>();
+            // Drive names are case-insensitive, the same as in the scope drive tables.
+            // Otherwise a drive automounted as 't' would be automounted again as 'T'.
+            Dictionary<string, PSDriveInfo> driveTable = new Dictionary<string, PSDriveInfo>(StringComparer.OrdinalIgnoreCase);
 
             SessionStateScope startingScope = _currentScope;
 
@@ -1320,7 +1322,7 @@ namespace System.Management.Automation
             SessionStateScopeEnumerator scopeEnumerator =
                 new SessionStateScopeEnumerator(startingScope);
             DriveInfo[] alldrives = DriveInfo.GetDrives();
-            Collection<string> driveNames = new Collection<string>();
+            HashSet<string> driveNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach (DriveInfo drive in alldrives)
             {
                 driveNames.Add(drive.Name.Substring(0, 1));

@@ -56,6 +56,29 @@ Describe "Get-PSDrive" -Tags "CI" {
         $dInfo = Get-PSDrive TESTDRIVE
         $dInfo.Used -ge 0 | Should -BeTrue
     }
+
+    It "Should return a single drive for an automounted drive requested in lowercase" -Skip:(-not $IsWindows) {
+        $UsedDrives  = Get-PSDrive | Select-Object -ExpandProperty Name
+        $PSDriveName = [string]('D'..'Z' | Where-Object -FilterScript {$_ -notin $UsedDrives} | Get-Random)
+
+        # Start a new instance before creating the drive, so the drive gets automounted there by its lowercase name.
+        $ps = [PowerShell]::Create()
+        $null = $ps.AddCommand('Get-PSDrive').Invoke()
+        $ps.Commands.Clear()
+
+        subst "$($PSDriveName):" $TestDrive
+        try {
+            $ps.AddCommand('Get-PSDrive').AddParameter('Name', $PSDriveName.ToLowerInvariant()).Invoke() | Should -HaveCount 1
+
+            $ps.Commands.Clear()
+            $drives = $ps.AddCommand('Get-PSDrive').AddParameter('PSProvider', 'FileSystem').Invoke()
+            $drives.Name -eq $PSDriveName | Should -HaveCount 1
+        }
+        finally {
+            $ps.Dispose()
+            subst "$($PSDriveName):" /D
+        }
+    }
 }
 
 Describe "Temp: drive" -Tag Feature {
