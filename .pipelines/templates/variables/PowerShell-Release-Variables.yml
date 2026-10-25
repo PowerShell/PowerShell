@@ -38,4 +38,4 @@ variables:
   - group: PoolNames
   # Fix for BinSkim ICU package error in Linux containers
   - name: DOTNET_SYSTEM_GLOBALIZATION_INVARIANT
-    value: true
+    value: false
