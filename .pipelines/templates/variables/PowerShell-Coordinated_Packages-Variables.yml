@@ -72,7 +72,7 @@ variables:
       value: false
   # Fix for BinSkim ICU package error in Linux containers
   - name: DOTNET_SYSTEM_GLOBALIZATION_INVARIANT
-    value: true
+    value: false
   # Disable BinSkim at job level to override NonOfficial template defaults
   - name: ob_sdl_binskim_enabled
     value: false
