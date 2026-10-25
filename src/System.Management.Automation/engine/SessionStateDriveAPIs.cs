@@ -1308,9 +1308,7 @@ namespace System.Management.Automation
         /// </exception>
         internal Collection<PSDriveInfo> Drives(string scope)
         {
-            // Drive names are case-insensitive, the same as in the scope drive tables.
-            // Otherwise a drive automounted as 't' would be automounted again as 'T'.
-            Dictionary<string, PSDriveInfo> driveTable = new Dictionary<string, PSDriveInfo>(StringComparer.OrdinalIgnoreCase);
+            Dictionary<string, PSDriveInfo> driveTable = new Dictionary<string, PSDriveInfo>();
 
             SessionStateScope startingScope = _currentScope;
 
@@ -1322,7 +1320,7 @@ namespace System.Management.Automation
             SessionStateScopeEnumerator scopeEnumerator =
                 new SessionStateScopeEnumerator(startingScope);
             DriveInfo[] alldrives = DriveInfo.GetDrives();
-            HashSet<string> driveNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            Collection<string> driveNames = new Collection<string>();
             foreach (DriveInfo drive in alldrives)
             {
                 driveNames.Add(drive.Name.Substring(0, 1));
@@ -1374,12 +1372,15 @@ namespace System.Management.Automation
 
             try
             {
+                // Drive names are case-insensitive. A drive that was automounted as 't'
+                // must not be automounted and listed a second time as 'T'.
+                HashSet<string> listedDriveNames = new HashSet<string>(driveTable.Keys, StringComparer.OrdinalIgnoreCase);
                 foreach (System.IO.DriveInfo fsDriveInfo in alldrives)
                 {
                     if (fsDriveInfo != null)
                     {
                         string fsDriveName = fsDriveInfo.Name.Substring(0, 1);
-                        if (!driveTable.ContainsKey(fsDriveName))
+                        if (!listedDriveNames.Contains(fsDriveName))
                         {
                             PSDriveInfo automountedDrive = AutomountFileSystemDrive(fsDriveInfo);
                             if (automountedDrive != null)

@@ -61,13 +61,17 @@ Describe "Get-PSDrive" -Tags "CI" {
         $UsedDrives  = Get-PSDrive | Select-Object -ExpandProperty Name
         $PSDriveName = [string]('D'..'Z' | Where-Object -FilterScript {$_ -notin $UsedDrives} | Get-Random)
 
-        # Start a new instance before creating the drive, so the drive gets automounted there by its lowercase name.
         $ps = [PowerShell]::Create()
-        $null = $ps.AddCommand('Get-PSDrive').Invoke()
-        $ps.Commands.Clear()
-
-        subst "$($PSDriveName):" $TestDrive
+        $substCreated = $false
         try {
+            # Start the new instance before creating the drive, so the drive gets automounted there by its lowercase name.
+            $null = $ps.AddCommand('Get-PSDrive').Invoke()
+            $ps.Commands.Clear()
+
+            subst "$($PSDriveName):" $TestDrive
+            $LASTEXITCODE | Should -Be 0 -Because "subst should map the free drive letter $PSDriveName"
+            $substCreated = $true
+
             $ps.AddCommand('Get-PSDrive').AddParameter('Name', $PSDriveName.ToLowerInvariant()).Invoke() | Should -HaveCount 1
 
             $ps.Commands.Clear()
@@ -76,7 +80,9 @@ Describe "Get-PSDrive" -Tags "CI" {
         }
         finally {
             $ps.Dispose()
-            subst "$($PSDriveName):" /D
+            if ($substCreated) {
+                subst "$($PSDriveName):" /D
+            }
         }
     }
 }
