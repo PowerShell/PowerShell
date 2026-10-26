@@ -23,6 +23,11 @@ namespace System.Management.Automation
         internal const string PSSerializeJSONLongEnumAsNumber = nameof(PSSerializeJSONLongEnumAsNumber);
         internal const string PSProfileDSCResource = "PSProfileDSCResource";
 
+        /// <summary>
+        /// The opt-in feature for lazy instance metadata on built-in FileSystem items and scalar content output.
+        /// </summary>
+        internal const string PSOptimizedProviderObjects = nameof(PSOptimizedProviderObjects);
+
         #endregion
 
         #region Instance Members
@@ -114,6 +119,10 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: PSProfileDSCResource,
                     description: "DSC v3 resources for managing PowerShell profile."
+                ),
+                new ExperimentalFeature(
+                    name: PSOptimizedProviderObjects,
+                    description: "Use inline instance metadata for built-in FileSystem provider objects."
                 )
             };
 

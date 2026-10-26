@@ -232,3 +232,27 @@ The layout of files should look like this:
 ```
 
 Lastly, run `nuget pack .` from within the folder. Note that you may need the latest `nuget.exe`.
+
+## Optimized filesystem instance metadata
+
+For the engine object layout, access and promotion flow, resurrection behavior, and
+validation entry points, see [Provider instance metadata](provider-instance-metadata.md).
+
+When the `PSOptimizedProviderObjects` experimental feature is enabled, built-in
+FileSystem provider output for `FileInfo` and `DirectoryInfo` stores its drive and,
+on Unix, stat metadata inline in a closed generic `PSObject<TMetadata>`. Static
+accessors declared on the metadata type describe member names and order once per
+closed type. Direct instance-member reads derive paths and container status from the
+current `FileInfo` or `DirectoryInfo`, without creating `PSNoteProperty` objects.
+As a result, unmaterialized path metadata follows filesystem operations such as
+`FileInfo.MoveTo`; once member enumeration or mutation promotes the metadata to
+ordinary note properties, those values remain a snapshot.
+Member enumeration, matching, direct inspection, and mutation promote the source to
+ordinary note properties in the normal ordered dictionary.
+
+Instance-member storage continues to use the existing resurrection table, so unwrapping
+and rewrapping a provider result preserves its metadata source.
+
+Other providers and content output continue to use note properties. The feature can
+be disabled to use the ordinary FileSystem note-property path for compatibility
+comparisons.
