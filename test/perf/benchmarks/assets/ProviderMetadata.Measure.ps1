@@ -6,6 +6,12 @@ param(
     [string] $Directory,
 
     [Parameter(Mandatory)]
+    [string] $ContentFile,
+
+    [Parameter(Mandatory)]
+    [string] $ByteFile,
+
+    [Parameter(Mandatory)]
     [string] $ExpectedFeatureState,
 
     [Parameter(Mandatory)]
@@ -39,6 +45,14 @@ $actualFileCount = @(Get-ChildItem -LiteralPath $Directory -File).Count
 if ($actualFileCount -ne $FileCount) {
     throw "Expected $FileCount files in the benchmark dataset, found $actualFileCount."
 }
+$actualContentLineCount = @(Get-Content -LiteralPath $ContentFile).Count
+if ($actualContentLineCount -ne $FileCount) {
+    throw "Expected $FileCount lines in the content dataset, found $actualContentLineCount."
+}
+$actualByteCount = [System.IO.File]::ReadAllBytes($ByteFile).Length
+if ($actualByteCount -ne $FileCount) {
+    throw "Expected $FileCount bytes in the byte dataset, found $actualByteCount."
+}
 
 $scenarios = [ordered]@{
     Emission = { $null = @(Get-ChildItem -LiteralPath $Directory -File) }
@@ -60,6 +74,35 @@ $scenarios = [ordered]@{
     ForEachParentPath = { $null = Get-ChildItem -LiteralPath $Directory -File | ForEach-Object -MemberName PSParentPath }
     DefaultFormatting = { $null = Get-ChildItem -LiteralPath $Directory -File | Out-String -Width 240 }
     SelectAll = { $null = Get-ChildItem -LiteralPath $Directory -File | Select-Object * }
+    ContentEmission = { $null = Get-Content -LiteralPath $ContentFile }
+    ContentReadCount = {
+        [long] $readCountTotal = 0
+        foreach ($line in Get-Content -LiteralPath $ContentFile) { $readCountTotal += $line.ReadCount }
+        $expectedReadCountTotal = [long]$FileCount * ($FileCount + 1) / 2
+        if ($readCountTotal -ne $expectedReadCountTotal) {
+            throw "ContentReadCount expected $expectedReadCountTotal, found $readCountTotal."
+        }
+    }
+    ContentParentPath = {
+        [long] $pathLengthTotal = 0
+        foreach ($path in Get-Content -LiteralPath $ContentFile | ForEach-Object -MemberName PSParentPath) { $pathLengthTotal += $path.Length }
+        if ($pathLengthTotal -le 0) { throw 'ContentParentPath did not read any PSParentPath values.' }
+    }
+    ContentSelectAll = { $null = Get-Content -LiteralPath $ContentFile | Select-Object * }
+    ByteEmission = { $null = Get-Content -LiteralPath $ByteFile -AsByteStream }
+    ByteReadCount = {
+        [long] $readCountTotal = 0
+        foreach ($byte in Get-Content -LiteralPath $ByteFile -AsByteStream) { $readCountTotal += $byte.ReadCount }
+        $expectedReadCountTotal = [long]$FileCount * ($FileCount + 1) / 2
+        if ($readCountTotal -ne $expectedReadCountTotal) {
+            throw "ByteReadCount expected $expectedReadCountTotal, found $readCountTotal."
+        }
+    }
+    ByteParentPath = {
+        [long] $pathLengthTotal = 0
+        foreach ($path in Get-Content -LiteralPath $ByteFile -AsByteStream | ForEach-Object -MemberName PSParentPath) { $pathLengthTotal += $path.Length }
+        if ($pathLengthTotal -le 0) { throw 'ByteParentPath did not read any PSParentPath values.' }
+    }
 }
 
 $results = foreach ($scenario in $scenarios.GetEnumerator()) {
@@ -96,9 +139,14 @@ $results = foreach ($scenario in $scenarios.GetEnumerator()) {
         Repetitions = $Repetitions
         WarmupIterations = $WarmupIterations
         EmittedItemCount = $FileCount * $Iterations
+        EmittedItemKind = if ($scenario.Key.StartsWith('Byte')) { 'byte objects' } elseif ($scenario.Key.StartsWith('Content')) { 'content lines' } else { 'filesystem items' }
         MetadataReadsPerEmittedItem = switch ($scenario.Key) {
             'DirectMetadata' { 1 }
             'RepeatedMetadata' { 10 }
+            'ContentReadCount' { 1 }
+            'ContentParentPath' { 1 }
+            'ByteReadCount' { 1 }
+            'ByteParentPath' { 1 }
             default { 0 }
         }
         Results = @($runs)

@@ -405,6 +405,136 @@ namespace PSTests.Parallel
             }
         }
 
+        [SkippableFact]
+        public static void GetContentDirectReadsKeepPerOutputMetadataLazy()
+        {
+            Skip.IfNot(ExperimentalFeature.IsEnabled(ExperimentalFeature.PSOptimizedProviderObjects));
+            string path = System.IO.Path.GetTempFileName();
+            try
+            {
+                System.IO.File.WriteAllText(path, "\n\n");
+                using (var runspace = RunspaceFactory.CreateRunspace())
+                {
+                    runspace.Open();
+                    using (var powerShell = PowerShell.Create())
+                    {
+                        powerShell.Runspace = runspace;
+                        string escapedPath = path.Replace("'", "''");
+                        powerShell.AddScript($"Get-Content -LiteralPath '{escapedPath}' -ReadCount 1");
+                        var output = powerShell.Invoke<PSObject>().ToArray();
+                        Assert.Empty(powerShell.Streams.Error);
+                        Assert.Equal(2, output.Length);
+
+                        FieldInfo sourceField = typeof(PSMemberInfoInternalCollection<PSMemberInfo>)
+                            .GetField("_providerSource", BindingFlags.Instance | BindingFlags.NonPublic);
+                        FieldInfo membersField = typeof(PSMemberInfoInternalCollection<PSMemberInfo>)
+                            .GetField("_members", BindingFlags.Instance | BindingFlags.NonPublic);
+                        foreach (PSObject line in output)
+                        {
+                            Assert.NotNull(sourceField.GetValue(line.InstanceMembers));
+                            Assert.Null(membersField.GetValue(line.InstanceMembers));
+                        }
+
+                        powerShell.Commands.Clear();
+                        powerShell.AddScript("$lines | ForEach-Object -MemberName ReadCount");
+
+                        // Keep the original result objects alive in the runspace for direct lookups.
+                        powerShell.Runspace.SessionStateProxy.SetVariable("lines", output);
+                        var readCounts = powerShell.Invoke<long>();
+                        Assert.Empty(powerShell.Streams.Error);
+                        Assert.Equal(new long[] { 1, 2 }, readCounts);
+                        foreach (PSObject line in output)
+                        {
+                            Assert.NotNull(sourceField.GetValue(line.InstanceMembers));
+                            Assert.Null(membersField.GetValue(line.InstanceMembers));
+                        }
+
+                        powerShell.Commands.Clear();
+                        powerShell.AddScript("$null = $lines[0].PSObject.Properties.Remove('ReadCount'); $lines[1].ReadCount");
+                        var remainingReadCount = powerShell.Invoke<long>();
+                        Assert.Empty(powerShell.Streams.Error);
+                        Assert.Equal(2, remainingReadCount.Single());
+                        Assert.Null(sourceField.GetValue(output[0].InstanceMembers));
+                        Assert.NotNull(sourceField.GetValue(output[1].InstanceMembers));
+                        Assert.Null(membersField.GetValue(output[1].InstanceMembers));
+                    }
+                }
+            }
+            finally
+            {
+                System.IO.File.Delete(path);
+            }
+        }
+
+        [SkippableFact]
+        public static void GetContentByteReadsKeepPerOutputMetadataLazyAndDistinct()
+        {
+            Skip.IfNot(ExperimentalFeature.IsEnabled(ExperimentalFeature.PSOptimizedProviderObjects));
+            string path = System.IO.Path.GetTempFileName();
+            try
+            {
+                System.IO.File.WriteAllBytes(path, new byte[] { 7, 7, 9 });
+                using (var runspace = RunspaceFactory.CreateRunspace())
+                {
+                    runspace.Open();
+                    using (var powerShell = PowerShell.Create())
+                    {
+                        powerShell.Runspace = runspace;
+                        string escapedPath = path.Replace("'", "''");
+                        powerShell.AddScript($"Get-Content -LiteralPath '{escapedPath}' -AsByteStream");
+                        var output = powerShell.Invoke<PSObject>().ToArray();
+                        Assert.Empty(powerShell.Streams.Error);
+                        Assert.Equal(3, output.Length);
+                        Assert.Equal((byte)7, output[0].BaseObject);
+                        Assert.Equal((byte)7, output[1].BaseObject);
+                        Assert.NotSame(output[0].BaseObject, output[1].BaseObject);
+
+                        FieldInfo sourceField = typeof(PSMemberInfoInternalCollection<PSMemberInfo>)
+                            .GetField("_providerSource", BindingFlags.Instance | BindingFlags.NonPublic);
+                        FieldInfo membersField = typeof(PSMemberInfoInternalCollection<PSMemberInfo>)
+                            .GetField("_members", BindingFlags.Instance | BindingFlags.NonPublic);
+                        foreach (PSObject value in output)
+                        {
+                            Assert.NotNull(sourceField.GetValue(value.InstanceMembers));
+                            Assert.Null(membersField.GetValue(value.InstanceMembers));
+                        }
+
+                        Assert.Same(
+                            sourceField.GetValue(output[0].InstanceMembers),
+                            sourceField.GetValue(PSObject.AsPSObject(output[0].BaseObject).InstanceMembers));
+
+                        powerShell.Commands.Clear();
+                        powerShell.Runspace.SessionStateProxy.SetVariable("bytes", output);
+                        powerShell.AddScript("$bytes | ForEach-Object -MemberName ReadCount");
+                        Assert.Equal(new long[] { 1, 2, 3 }, powerShell.Invoke<long>());
+                        Assert.Empty(powerShell.Streams.Error);
+
+                        powerShell.Commands.Clear();
+                        powerShell.AddScript("$assigned = $bytes[1]; $assigned.ReadCount");
+                        Assert.Equal(2, powerShell.Invoke<long>().Single());
+                        Assert.Empty(powerShell.Streams.Error);
+                        foreach (PSObject value in output)
+                        {
+                            Assert.NotNull(sourceField.GetValue(value.InstanceMembers));
+                            Assert.Null(membersField.GetValue(value.InstanceMembers));
+                        }
+
+                        powerShell.Commands.Clear();
+                        powerShell.AddScript("$bytes[0].ReadCount = 99; $bytes[1].ReadCount");
+                        Assert.Equal(2, powerShell.Invoke<long>().Single());
+                        Assert.Empty(powerShell.Streams.Error);
+                        Assert.Null(sourceField.GetValue(output[0].InstanceMembers));
+                        Assert.NotNull(sourceField.GetValue(output[1].InstanceMembers));
+                        Assert.Null(membersField.GetValue(output[1].InstanceMembers));
+                    }
+                }
+            }
+            finally
+            {
+                System.IO.File.Delete(path);
+            }
+        }
+
         private static PSObject<TestMetadata> NewMetadataObject(object baseObject = null, uint presenceMask = 0)
         {
             var metadata = new TestMetadata { First = "value", Second = 42 };

@@ -142,94 +142,76 @@ namespace Microsoft.PowerShell.Commands
                 context != null,
                 "The caller should verify the context.");
 
+            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSOptimizedProviderObjects)
+                && pathInfo.Provider.ImplementingType == typeof(FileSystemProvider)
+                && (content is string || content is byte)
+                && !PSObject.HasInstanceMembers(content, out _))
+            {
+                // This specialization covers scalar FileSystem string and byte content.
+                // Boxed bytes use their box identity as the resurrection-table key, so
+                // equal byte values in distinct boxes keep independent metadata. Other
+                // providers and content shapes retain the general note-property path below.
+                ContentPathsCache cache = EnsureContentPathsCache(pathInfo, context, out _);
+                uint presenceMask = (cache.HasParentPath ? 1u : 0u)
+                    | (cache.HasChildName ? 2u : 0u)
+                    | (cache.Drive != null ? 4u : 0u);
+                var metadata = new ContentOutputMetadata { Paths = cache, ReadCount = readCount };
+                var optimizedResult = new PSObject<ContentOutputMetadata>(content, metadata, presenceMask);
+                optimizedResult.AttachProviderInstanceMembers(optimizedResult);
+                WriteObject(optimizedResult);
+                return;
+            }
+
             PSObject result = PSObject.AsPSObject(content);
 
             Dbg.Diagnostics.Assert(
                 result != null,
                 "A PSObject should always be constructed.");
 
-            // Use the cached notes if the cache exists and the path is still the same
-            PSNoteProperty note;
-
-            if (_currentContentItem != null &&
-                ((_currentContentItem.PathInfo == pathInfo) ||
-                    string.Equals(
-                        pathInfo.Path,
-                        _currentContentItem.PathInfo.Path,
-                        StringComparison.OrdinalIgnoreCase)))
-            {
-                result = _currentContentItem.AttachNotes(result);
-            }
-            else
-            {
-                // Generate a new cache item and cache the notes
-                _currentContentItem = new ContentPathsCache(pathInfo);
-
-                // Construct a provider qualified path as the Path note
-                string psPath = pathInfo.Path;
-                note = new PSNoteProperty("PSPath", psPath);
-                result.Properties.Add(note, true);
-                tracer.WriteLine("Attaching {0} = {1}", "PSPath", psPath);
-                _currentContentItem.PSPath = psPath;
-
-                try
-                {
-                    // Now get the parent path and child name
-
-                    string parentPath = null;
-
-                    if (pathInfo.Drive != null)
-                    {
-                        parentPath = SessionState.Path.ParseParent(pathInfo.Path, pathInfo.Drive.Root, context);
-                    }
-                    else
-                    {
-                        parentPath = SessionState.Path.ParseParent(pathInfo.Path, string.Empty, context);
-                    }
-
-                    note = new PSNoteProperty("PSParentPath", parentPath);
-                    result.Properties.Add(note, true);
-                    tracer.WriteLine("Attaching {0} = {1}", "PSParentPath", parentPath);
-                    _currentContentItem.ParentPath = parentPath;
-
-                    // Get the child name
-
-                    string childName = SessionState.Path.ParseChildName(pathInfo.Path, context);
-                    note = new PSNoteProperty("PSChildName", childName);
-                    result.Properties.Add(note, true);
-                    tracer.WriteLine("Attaching {0} = {1}", "PSChildName", childName);
-                    _currentContentItem.ChildName = childName;
-                }
-                catch (NotSupportedException)
-                {
-                    // Ignore. The object just won't have ParentPath or ChildName set.
-                }
-
-                // PSDriveInfo
-
-                if (pathInfo.Drive != null)
-                {
-                    PSDriveInfo drive = pathInfo.Drive;
-                    note = new PSNoteProperty("PSDrive", drive);
-                    result.Properties.Add(note, true);
-                    tracer.WriteLine("Attaching {0} = {1}", "PSDrive", drive);
-                    _currentContentItem.Drive = drive;
-                }
-
-                // ProviderInfo
-
-                ProviderInfo provider = pathInfo.Provider;
-                note = new PSNoteProperty("PSProvider", provider);
-                result.Properties.Add(note, true);
-                tracer.WriteLine("Attaching {0} = {1}", "PSProvider", provider);
-                _currentContentItem.Provider = provider;
-            }
+            // Use cached path context when available; otherwise compute it once.
+            ContentPathsCache paths = EnsureContentPathsCache(pathInfo, context, out bool isNewCache);
+            result = paths.AttachNotes(result, isNewCache);
 
             // Add the ReadCount note
-            note = new PSNoteProperty("ReadCount", readCount);
+            PSNoteProperty note = new PSNoteProperty("ReadCount", readCount);
             result.Properties.Add(note, true);
 
             WriteObject(result);
+        }
+
+        private ContentPathsCache EnsureContentPathsCache(PathInfo pathInfo, CmdletProviderContext context, out bool isNewCache)
+        {
+            if (_currentContentItem != null && ((_currentContentItem.PathInfo == pathInfo)
+                || (ReferenceEquals(pathInfo.Provider, _currentContentItem.PathInfo.Provider)
+                    && ReferenceEquals(pathInfo.Drive, _currentContentItem.PathInfo.Drive)
+                    && string.Equals(pathInfo.Path, _currentContentItem.PathInfo.Path, StringComparison.OrdinalIgnoreCase))))
+            {
+                isNewCache = false;
+                return _currentContentItem;
+            }
+
+            var cache = new ContentPathsCache(pathInfo);
+            _currentContentItem = cache;
+            isNewCache = true;
+            cache.PSPath = pathInfo.Path;
+            try
+            {
+                string parentPath = pathInfo.Drive != null
+                    ? SessionState.Path.ParseParent(pathInfo.Path, pathInfo.Drive.Root, context)
+                    : SessionState.Path.ParseParent(pathInfo.Path, string.Empty, context);
+                cache.ParentPath = parentPath;
+                cache.HasParentPath = true;
+                cache.ChildName = SessionState.Path.ParseChildName(pathInfo.Path, context);
+                cache.HasChildName = true;
+            }
+            catch (NotSupportedException)
+            {
+                // Match legacy behavior when parsing parent/child paths is unsupported.
+            }
+
+            cache.Drive = pathInfo.Drive;
+            cache.Provider = pathInfo.Provider;
+            return cache;
         }
 
         /// <summary>
@@ -286,16 +268,23 @@ namespace Microsoft.PowerShell.Commands
             /// </summary>
             public string ChildName { get; set; }
 
+            public bool HasParentPath { get; set; }
+
+            public bool HasChildName { get; set; }
+
             /// <summary>
             /// Attaches the cached notes to the specified PSObject.
             /// </summary>
             /// <param name="content">
             /// The PSObject to attached the cached notes to.
             /// </param>
+            /// <param name="omitUnsupportedPaths">
+            /// Omit unsupported parent and child notes on the first output for a path.
+            /// </param>
             /// <returns>
             /// The PSObject that was passed in with the cached notes added.
             /// </returns>
-            public PSObject AttachNotes(PSObject content)
+            public PSObject AttachNotes(PSObject content, bool omitUnsupportedPaths = false)
             {
                 // Construct a provider qualified path as the Path note
 
@@ -305,15 +294,21 @@ namespace Microsoft.PowerShell.Commands
 
                 // Now attach the parent path and child name
 
-                note = new PSNoteProperty("PSParentPath", ParentPath);
-                content.Properties.Add(note, true);
-                tracer.WriteLine("Attaching {0} = {1}", "PSParentPath", ParentPath);
+                if (!omitUnsupportedPaths || HasParentPath)
+                {
+                    note = new PSNoteProperty("PSParentPath", ParentPath);
+                    content.Properties.Add(note, true);
+                    tracer.WriteLine("Attaching {0} = {1}", "PSParentPath", ParentPath);
+                }
 
                 // Attach the child name
 
-                note = new PSNoteProperty("PSChildName", ChildName);
-                content.Properties.Add(note, true);
-                tracer.WriteLine("Attaching {0} = {1}", "PSChildName", ChildName);
+                if (!omitUnsupportedPaths || HasChildName)
+                {
+                    note = new PSNoteProperty("PSChildName", ChildName);
+                    content.Properties.Add(note, true);
+                    tracer.WriteLine("Attaching {0} = {1}", "PSChildName", ChildName);
+                }
 
                 // PSDriveInfo
 
