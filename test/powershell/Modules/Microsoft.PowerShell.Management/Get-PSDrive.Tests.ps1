@@ -57,7 +57,7 @@ Describe "Get-PSDrive" -Tags "CI" {
         $dInfo.Used -ge 0 | Should -BeTrue
     }
 
-    It "Should return a single drive for an automounted drive requested in lowercase" -Skip:(-not $IsWindows) {
+    It "Should automount a drive requested in lowercase once, by its upper case name" -Skip:(-not $IsWindows) {
         $UsedDrives  = Get-PSDrive | Select-Object -ExpandProperty Name
         $PSDriveName = [string]('D'..'Z' | Where-Object -FilterScript {$_ -notin $UsedDrives} | Get-Random)
 
@@ -72,11 +72,17 @@ Describe "Get-PSDrive" -Tags "CI" {
             $LASTEXITCODE | Should -Be 0 -Because "subst should map the free drive letter $PSDriveName"
             $substCreated = $true
 
-            $ps.AddCommand('Get-PSDrive').AddParameter('Name', $PSDriveName.ToLowerInvariant()).Invoke() | Should -HaveCount 1
+            $drive = $ps.AddCommand('Get-PSDrive').AddParameter('Name', $PSDriveName.ToLowerInvariant()).Invoke()
+            if ($ps.HadErrors) {
+                throw $ps.Streams.Error[0]
+            }
+            $drive | Should -HaveCount 1
+            $drive.Name | Should -BeExactly $PSDriveName
 
             $ps.Commands.Clear()
             $drives = $ps.AddCommand('Get-PSDrive').AddParameter('PSProvider', 'FileSystem').Invoke()
-            $drives.Name -eq $PSDriveName | Should -HaveCount 1
+            # Case-insensitive on purpose, to catch both 't' and 'T'.
+            $drives.Name -ieq $PSDriveName | Should -HaveCount 1
         }
         finally {
             $ps.Dispose()

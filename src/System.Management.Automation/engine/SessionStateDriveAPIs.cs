@@ -591,6 +591,15 @@ namespace System.Management.Automation
             {
                 try
                 {
+#if !UNIX
+                    // DriveInfo keeps the casing it is given, but DriveInfo.GetDrives() reports drive
+                    // letters in upper case. Use upper case so that a drive first referenced as 't:'
+                    // gets the name it has at startup, instead of being listed twice as 't' and 'T'.
+                    if (char.IsAsciiLetterLower(name[0]))
+                    {
+                        name = name.ToUpperInvariant();
+                    }
+#endif
                     System.IO.DriveInfo driveInfo = new System.IO.DriveInfo(name);
                     result = AutomountFileSystemDrive(driveInfo);
                 }
@@ -1372,15 +1381,12 @@ namespace System.Management.Automation
 
             try
             {
-                // Drive names are case-insensitive. A drive that was automounted as 't'
-                // must not be automounted and listed a second time as 'T'.
-                HashSet<string> listedDriveNames = new HashSet<string>(driveTable.Keys, StringComparer.OrdinalIgnoreCase);
                 foreach (System.IO.DriveInfo fsDriveInfo in alldrives)
                 {
                     if (fsDriveInfo != null)
                     {
                         string fsDriveName = fsDriveInfo.Name.Substring(0, 1);
-                        if (!listedDriveNames.Contains(fsDriveName))
+                        if (!driveTable.ContainsKey(fsDriveName))
                         {
                             PSDriveInfo automountedDrive = AutomountFileSystemDrive(fsDriveInfo);
                             if (automountedDrive != null)
