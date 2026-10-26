@@ -9,7 +9,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Represents a parameter to the Command.
     /// </summary>
-    [DebuggerDisplay("{ParameterName}")]
+    [DebuggerDisplay("{DebuggerDisplay}")]
     internal sealed class CommandParameterInternal
     {
         private sealed class Parameter
@@ -57,6 +57,17 @@ namespace System.Management.Automation
                 Diagnostics.Assert(ParameterNameSpecified, "Caller must verify parameter name was specified");
                 _parameter.parameterName = value;
             }
+        }
+
+        /// <summary>
+        /// Gets the parameter text and supplied argument for display in the debugger.
+        /// </summary>
+        private string DebuggerDisplay
+        {
+            get =>
+                ParameterNameSpecified
+                    ? ArgumentSpecified ? $"{ParameterText} {ArgumentValue}" : ParameterText
+                    : ArgumentSpecified ? ArgumentValue.ToString() : "<empty>";
         }
 
         /// <summary>

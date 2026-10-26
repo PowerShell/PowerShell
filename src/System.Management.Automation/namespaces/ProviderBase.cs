@@ -93,7 +93,7 @@ namespace System.Management.Automation.Provider
         /// The provider information that is stored by the Monad engine.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// If <paramref name="providerInformation"/> is null.
+        /// If <paramref name="providerInfoToSet"/> is null.
         /// </exception>
         internal void SetProviderInformation(ProviderInfo providerInfoToSet)
         {
@@ -1699,12 +1699,7 @@ namespace System.Management.Automation.Provider
             string path,
             bool isContainer)
         {
-            PSObject result = WrapOutputInPSObject(item, path);
-
-            // Now add the IsContainer
-
-            result.AddOrSetProperty("PSIsContainer", isContainer ? Boxed.True : Boxed.False);
-            providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSIsContainer", isContainer);
+            PSObject result = WrapOutputInPSObject(item, path, isContainer);
 
             Diagnostics.Assert(
                 Context != null,
@@ -1727,7 +1722,7 @@ namespace System.Management.Automation.Provider
             object item,
             string path)
         {
-            PSObject result = WrapOutputInPSObject(item, path);
+            PSObject result = WrapOutputInPSObject(item, path, isContainer: null);
 
             Diagnostics.Assert(
                 Context != null,
@@ -1746,6 +1741,7 @@ namespace System.Management.Automation.Provider
         /// <param name="path">
         /// The path to the item.
         /// </param>
+        /// <param name="isContainer">The container flag, or null when it is unspecified.</param>
         /// <returns>
         /// A PSObject that wraps the item and has path information attached
         /// as notes.
@@ -1755,11 +1751,64 @@ namespace System.Management.Automation.Provider
         /// </exception>
         private PSObject WrapOutputInPSObject(
             object item,
-            string path)
+            string path,
+            bool? isContainer)
         {
             if (item == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(item));
+            }
+
+            bool canUseCompactMembers = ExperimentalFeature.IsEnabled(ExperimentalFeature.PSOptimizedProviderObjects)
+                && ProviderInfo?.ImplementingType == typeof(Microsoft.PowerShell.Commands.FileSystemProvider)
+                && item is FileSystemInfo
+                && PSDriveInfo != null
+                && (!isContainer.HasValue || isContainer.Value == (item is DirectoryInfo))
+                && !PSObject.HasInstanceMembers(item, out _);
+
+            if (canUseCompactMembers)
+            {
+                NavigationCmdletProvider navigationProvider = this as NavigationCmdletProvider;
+                bool hasNavigationPath = navigationProvider != null && path != null;
+                uint metadataMask = 0;
+                if (hasNavigationPath)
+                {
+                    metadataMask |= 1 | 2;
+                }
+
+#if UNIX
+                if (hasNavigationPath)
+                {
+                    metadataMask |= 4;
+                }
+#endif
+                metadataMask |= 8;
+                if (isContainer.HasValue)
+                {
+                    metadataMask |= 16;
+                    providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSIsContainer", isContainer.Value);
+                }
+
+                var metadata = new FileSystemProviderMetadata { Drive = PSDriveInfo };
+#if UNIX
+                if (hasNavigationPath)
+                {
+                    try
+                    {
+                        // Use LStat so links report information about the link itself.
+                        metadata.UnixStat = Platform.Unix.GetLStat(path);
+                    }
+                    catch
+                    {
+                        // Match the ordinary provider path when stat information is unavailable.
+                        metadata.UnixStat = null;
+                    }
+                }
+#endif
+
+                var optimizedResult = new PSObject<FileSystemProviderMetadata>(item, metadata, metadataMask);
+                optimizedResult.AttachProviderInstanceMembers(optimizedResult);
+                return optimizedResult;
             }
 
             PSObject result = new PSObject(item);
@@ -1779,9 +1828,7 @@ namespace System.Management.Automation.Provider
 
             // Construct a provider qualified path as the Path note
 
-            string providerQualifiedPath =
-                LocationGlobber.GetProviderQualifiedPath(path, ProviderInfo);
-
+            string providerQualifiedPath = LocationGlobber.GetProviderQualifiedPath(path, ProviderInfo);
             result.AddOrSetProperty("PSPath", providerQualifiedPath);
             providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSPath", providerQualifiedPath);
 
@@ -1792,16 +1839,7 @@ namespace System.Management.Automation.Provider
             {
                 // Get the parent path
 
-                string parentPath = null;
-
-                if (PSDriveInfo != null)
-                {
-                    parentPath = navProvider.GetParentPath(path, PSDriveInfo.Root, Context);
-                }
-                else
-                {
-                    parentPath = navProvider.GetParentPath(path, string.Empty, Context);
-                }
+                string parentPath = navProvider.GetParentPath(path, PSDriveInfo?.Root ?? string.Empty, Context);
 
                 string providerQualifiedParentPath = string.Empty;
 
@@ -1855,6 +1893,12 @@ namespace System.Management.Automation.Provider
 
             result.AddOrSetProperty(this.ProviderInfo.GetNotePropertyForProviderCmdlets("PSProvider"));
             providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSProvider", this.ProviderInfo);
+
+            if (isContainer.HasValue)
+            {
+                result.AddOrSetProperty("PSIsContainer", isContainer.Value ? Boxed.True : Boxed.False);
+                providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSIsContainer", isContainer.Value);
+            }
 
             return result;
         }

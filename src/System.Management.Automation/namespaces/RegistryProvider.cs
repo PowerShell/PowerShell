@@ -144,23 +144,11 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         protected override Collection<PSDriveInfo> InitializeDefaultDrives()
         {
-            Collection<PSDriveInfo> drives = new Collection<PSDriveInfo>();
-
-            drives.Add(
-                new PSDriveInfo(
-                    "HKLM",
-                    ProviderInfo,
-                    "HKEY_LOCAL_MACHINE",
-                    RegistryProviderStrings.HKLMDriveDescription,
-                    null));
-
-            drives.Add(
-                new PSDriveInfo(
-                    "HKCU",
-                    ProviderInfo,
-                    "HKEY_CURRENT_USER",
-                    RegistryProviderStrings.HKCUDriveDescription,
-                    null));
+            var drives = new Collection<PSDriveInfo>
+            {
+                new PSDriveInfo("HKLM", ProviderInfo, "HKEY_LOCAL_MACHINE", RegistryProviderStrings.HKLMDriveDescription, credential: null),
+                new PSDriveInfo("HKCU", ProviderInfo, "HKEY_CURRENT_USER", RegistryProviderStrings.HKCUDriveDescription, credential: null)
+            };
 
             return drives;
         }

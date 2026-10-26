@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "System.Management.Automation": {
+      "commandName": "Executable",
+      "executablePath": "D:\\repos\\PowerShell\\src\\powershell-win-core\\bin\\Debug\\netcoreapp3.1\\win7-x64\\publish\\pwsh.exe",
+      "commandLineArgs": "-nop",
+      "workingDirectory": "d:\\repos\\PowerShell"
+    }
+  }
+}
