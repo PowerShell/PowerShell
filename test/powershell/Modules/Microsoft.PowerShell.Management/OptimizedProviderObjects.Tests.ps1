@@ -72,6 +72,36 @@ Describe "Optimized FileSystem provider instance metadata" -Tags "CI" {
         }
     }
 
+    It "preserves metadata for scalar byte-stream output" {
+        $byteFile = Join-Path $TestDrive "bytes.bin"
+        [System.IO.File]::WriteAllBytes($byteFile, [byte[]](7, 7, 9))
+        $bytes = @(Get-Content -LiteralPath $byteFile -AsByteStream)
+        $bytes.Count | Should -Be 3
+        $bytes[0].GetType().FullName | Should -BeExactly "System.Byte"
+        $bytes[0].ReadCount | Should -Be 1
+        $bytes[1].ReadCount | Should -Be 2
+        $bytes[2].ReadCount | Should -Be 3
+        $bytes[0].PSPath | Should -BeExactly $byteFile
+        $bytes[0].ReadCount = 99
+        $bytes[0].ReadCount | Should -Be 99
+        $bytes[1].ReadCount | Should -Be 2
+
+        $raw = @(Get-Content -LiteralPath $byteFile -AsByteStream -Raw)
+        $raw.Count | Should -Be 1
+        $raw[0].ReadCount | Should -Be 1
+
+        $batch = @(Get-Content -LiteralPath $byteFile -AsByteStream -ReadCount 2)
+        $batch[0].ReadCount | Should -Be 2
+        $batch[1].ReadCount | Should -Be 3
+
+        $xmlPath = Join-Path $TestDrive "bytes.xml"
+        Get-Content -LiteralPath $byteFile -AsByteStream | Export-Clixml -LiteralPath $xmlPath
+        $roundTrip = @(Import-Clixml -LiteralPath $xmlPath)
+        $roundTrip.Count | Should -Be 3
+        $roundTrip[0].ReadCount | Should -Be 1
+        $roundTrip[1].PSPath | Should -BeExactly $byteFile
+    }
+
     It "preserves ReadCount for chunks and raw content" {
         $chunks = @(Get-Content -LiteralPath $file -ReadCount 2)
         $chunks.Count | Should -Be 2
@@ -81,6 +111,27 @@ Describe "Optimized FileSystem provider instance metadata" -Tags "CI" {
         $raw = @(Get-Content -LiteralPath $file -Raw)
         $raw.Count | Should -Be 1
         $raw[0].ReadCount | Should -Be 1
+
+        $all = @(Get-Content -LiteralPath $file -ReadCount 0)
+        $all.Count | Should -Be 1
+        $all[0].ReadCount | Should -Be 3
+    }
+
+    It "isolates metadata for repeated empty lines and preserves custom drive context" {
+        $emptyLineFile = Join-Path $TestDrive "empty-lines.txt"
+        [System.IO.File]::WriteAllText($emptyLineFile, "`n`ntail`n")
+
+        $lines = @(Get-Content -LiteralPath $emptyLineFile -ReadCount 1)
+        $lines.Count | Should -Be 3
+        $lines[0].ReadCount | Should -Be 1
+        $lines[1].ReadCount | Should -Be 2
+        $lines[0].PSObject.Properties.Remove("ReadCount")
+        $lines[1].ReadCount | Should -Be 2
+
+        $driveLines = @(Get-Content -LiteralPath "${driveName}:\sample[1].txt" -ReadCount 1)
+        $driveLines[0].PSDrive.Name | Should -BeExactly $driveName
+        $driveLines[0].PSProvider.Name | Should -BeExactly "FileSystem"
+        $driveLines[0].PSPath | Should -BeExactly "${driveName}:\sample[1].txt"
     }
 
     It "preserves metadata through Export-Clixml and Import-Clixml" {

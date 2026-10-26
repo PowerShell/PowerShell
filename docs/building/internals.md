@@ -233,9 +233,9 @@ The layout of files should look like this:
 
 Lastly, run `nuget pack .` from within the folder. Note that you may need the latest `nuget.exe`.
 
-## Optimized filesystem instance metadata
+## Optimized provider instance metadata
 
-For the engine object layout, access and promotion flow, resurrection behavior, and
+For the design rationale, accessor contract, binding and promotion flow, identity rules, and
 validation entry points, see [Provider instance metadata](provider-instance-metadata.md).
 
 When the `PSOptimizedProviderObjects` experimental feature is enabled, built-in
@@ -253,6 +253,11 @@ ordinary note properties in the normal ordered dictionary.
 Instance-member storage continues to use the existing resurrection table, so unwrapping
 and rewrapping a provider result preserves its metadata source.
 
-Other providers and content output continue to use note properties. The feature can
-be disabled to use the ordinary FileSystem note-property path for compatibility
-comparisons.
+Eligible scalar FileSystem `Get-Content` string and byte outputs use the same mechanism,
+with an inline `ReadCount` and a reference to a shared source-path cache. Unlike item
+metadata, content paths are snapshots. String outputs own metadata through wrapper
+identity; byte outputs use the boxed byte object's reference identity, so equal byte values
+in distinct boxes carry independent counts and rewrapping the same box recovers its metadata.
+
+Other providers, batched `IList` output, `-Raw -AsByteStream` byte arrays, and other content types continue to use note properties.
+Disabling the feature retains the ordinary note-property paths for compatibility comparisons.
