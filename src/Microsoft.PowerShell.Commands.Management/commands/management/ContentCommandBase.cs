@@ -163,7 +163,6 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 // Generate a new cache item and cache the notes
-
                 _currentContentItem = new ContentPathsCache(pathInfo);
 
                 // Construct a provider qualified path as the Path note

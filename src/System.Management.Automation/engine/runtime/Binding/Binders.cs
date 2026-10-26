@@ -2076,8 +2076,14 @@ namespace System.Management.Automation.Language
         private static readonly ConcurrentDictionary<Type, bool> s_mutableValueTypesWithInstanceMembers =
             new ConcurrentDictionary<Type, bool>();
 
+        /// <summary>
+        /// Invalidates assignment rules when a mutable value type first acquires instance metadata.
+        /// </summary>
+        /// <param name="type">The base-object type whose members or type names must survive assignment copies.</param>
         internal static void NoteTypeHasInstanceMemberOrTypeName(Type type)
         {
+            // Assignment sites need a new rule only for mutable value types: their
+            // instance members must survive the copy made when assigning the value.
             if (!type.IsValueType || !IsValueTypeMutable(type))
             {
                 return;
@@ -5005,28 +5011,27 @@ namespace System.Management.Automation.Language
 
         internal bool HasInstanceMember { get { return _hasInstanceMember; } }
 
+        /// <summary>
+        /// Marks a name as potentially instance-backed and invalidates rules that assumed its absence.
+        /// </summary>
+        /// <param name="memberName">The name registered by an ordinary member or metadata descriptor.</param>
+        /// <remarks>Registration is a global hint; each rule still checks presence on the current target.</remarks>
         internal static void SetHasInstanceMember(string memberName)
         {
             // We must invalidate dynamic sites (if any) when the first instance member (for this binder)
             // is created, but we don't need to invalidate any sites after the first instance member.
             // Before any instance members exist, restrictions might look like:
             //     if (binderVersion == oldBinderVersion && obj is string) { ... }
-            // After an instance member is known to exist, the above test (for an object that has no instance
-            // member) will look like:
-            //    MemberInfo mi;
-            //    if (binderVersion == oldBinderVersion && !TryGetInstanceMember(obj, memberName, out mi) && obj is string)
+            // After an instance member is known to exist, the absent-member rule will look like:
+            //    if (binderVersion == oldBinderVersion && !ContainsInstanceMember(obj, memberName) && obj is string)
             //    {
             //        return ((string)obj).memberName;
             //    }
             //    else { update site }
-            // And if there is an instance member, the generic rule will look like:
-            //    MemberInfo mi;
-            //    if (binderVersion == oldBinderVersion && TryGetInstanceMember(obj, memberName, out mi))
-            //    {
-            //        return mi.Value;
-            //    }
+            // And if there is an instance member, the generic rule will call the value lookup
+            // only when the rule executes, so binding doesn't evaluate property accessors.
             //    else { update site }
-            // This way, we can avoid the call to TryGetInstanceMember for binders when we know there aren't any instance
+            // This way, we can avoid the presence check for binders when we know there aren't any instance
             // members, yet invalidate those rules once somebody adds an instance member.
 
             var binderList = s_binderCacheIgnoringCase.GetOrAdd(memberName, static _ => new List<PSGetMemberBinder>());
@@ -5177,6 +5182,16 @@ namespace System.Management.Automation.Language
                 _version);
         }
 
+        /// <summary>
+        /// Binds a member read using instance values, type data, or the target's adapter.
+        /// </summary>
+        /// <param name="target">The object whose member is read.</param>
+        /// <param name="errorSuggestion">An optional fallback error supplied by the target.</param>
+        /// <returns>The read expression and restrictions that determine when it can be reused.</returns>
+        /// <remarks>
+        /// Instance-member binding checks presence without invoking getters. The generated rule reads
+        /// the value when executed and requests rebinding if the member is no longer present.
+        /// </remarks>
         public override DynamicMetaObject FallbackGetMember(DynamicMetaObject target, DynamicMetaObject errorSuggestion)
         {
             if (!target.HasValue)
@@ -5217,12 +5232,12 @@ namespace System.Management.Automation.Language
             BindingRestrictions restrictions;
             PSMemberInfo memberInfo;
             Expression expr = null;
-            if (_hasInstanceMember && TryGetInstanceMember(target.Value, Name, out memberInfo))
+            if (_hasInstanceMember && ContainsInstanceMember(target.Value, Name))
             {
                 // If there is an instance member, we generate (roughly) the following:
-                //     PSMemberInfo memberInfo;
-                //     if (PSGetMemberBinder.TryGetInstanceMember(target.Value, Name, out memberInfo))
-                //         return memberInfo.Value;
+                //     object memberValue;
+                //     if (PSGetMemberBinder.TryGetInstanceValue(target.Value, Name, out memberValue))
+                //         return memberValue;
                 //     else
                 //         update the site
                 // We use a generic method like this because:
@@ -5233,21 +5248,21 @@ namespace System.Management.Automation.Language
                 //         return optimized value (depending on the exact PSMemberInfo subclass)
                 //     else update the site
                 // But the assumption here is that many sites probably performs worse than the dictionary lookup
-                // and unoptimized virtual call to PSMemberInfo.Value.
+                // and unoptimized virtual call to PSMemberInfo.Value for ordinary instance members.
                 //
                 // The binding restrictions could avoid a version check because it's never wrong to look for an instance member,
                 // but we add the check because the DLR requires a non-empty check when the target implements IDynamicMetaObjectProvider,
                 // which PSObject does.  The version check is also marginally useful if we knew we'd never see another
                 // instance member with this member name, but we're not tracking things to make that a useful test.
 
-                var memberInfoVar = Expression.Variable(typeof(PSMemberInfo));
+                var memberValueVar = Expression.Variable(typeof(object));
                 expr = Expression.Condition(
-                    Expression.Call(CachedReflectionInfo.PSGetMemberBinder_TryGetInstanceMember, target.Expression.Cast(typeof(object)), Expression.Constant(Name), memberInfoVar),
-                    Expression.Property(memberInfoVar, "Value"),
+                    Expression.Call(CachedReflectionInfo.PSGetMemberBinder_TryGetInstanceValue, target.Expression.Cast(typeof(object)), Expression.Constant(Name), memberValueVar),
+                    memberValueVar,
                     this.GetUpdateExpression(typeof(object)));
                 expr = WrapGetMemberInTry(expr);
 
-                return (new DynamicMetaObject(Expression.Block(new[] { memberInfoVar }, expr), BinderUtils.GetVersionCheck(this, _version))).WriteToDebugLog(this);
+                return (new DynamicMetaObject(Expression.Block(new[] { memberValueVar }, expr), BinderUtils.GetVersionCheck(this, _version))).WriteToDebugLog(this);
             }
 
             bool canOptimize;
@@ -5569,13 +5584,15 @@ namespace System.Management.Automation.Language
         /// knows instance members might exist (because the name was added to some instance), but the object we're
         /// currently binding does not have an instance member with the given member name.
         /// </summary>
+        /// <param name="target">The target guarded by the rule.</param>
+        /// <returns>A restriction that succeeds only while the instance member is absent.</returns>
+        /// <remarks>Presence checks neither evaluate getters nor materialize provider notes.</remarks>
         internal BindingRestrictions NotInstanceMember(DynamicMetaObject target)
         {
-            var memberInfoVar = Expression.Variable(typeof(PSMemberInfo));
-            var expr = Expression.Call(CachedReflectionInfo.PSGetMemberBinder_TryGetInstanceMember,
-                                       target.Expression.Cast(typeof(object)), Expression.Constant(Name), memberInfoVar);
+            var expr = Expression.Call(CachedReflectionInfo.PSGetMemberBinder_ContainsInstanceMember,
+                                       target.Expression.Cast(typeof(object)), Expression.Constant(Name));
 
-            return BindingRestrictions.GetExpressionRestriction(Expression.Block(new[] { memberInfoVar }, Expression.Not(expr)));
+            return BindingRestrictions.GetExpressionRestriction(Expression.Not(expr));
         }
 
         private static Expression WrapGetMemberInTry(Expression expr)
@@ -5632,6 +5649,21 @@ namespace System.Management.Automation.Language
             return result;
         }
 
+        /// <summary>
+        /// Resolves a static, type-table, or adapted member for a binding rule.
+        /// </summary>
+        /// <param name="target">The target being bound.</param>
+        /// <param name="restrictions">The restrictions required to reuse the resolved member.</param>
+        /// <param name="canOptimize">Whether the member can be accessed through an optimized rule.</param>
+        /// <param name="aliasConversionType">The conversion required by an alias, if any.</param>
+        /// <param name="memberTypeToOperateOn">The kind of member requested from the adapter.</param>
+        /// <param name="aliases">The alias names already visited during resolution.</param>
+        /// <param name="aliasRestrictions">The restrictions accumulated while resolving aliases.</param>
+        /// <returns>The resolved member, or null when no optimizable member is available.</returns>
+        /// <remarks>
+        /// Instance members must be handled by the caller first. The presence assertion deliberately
+        /// avoids requesting a member object, which would materialize lazy provider notes.
+        /// </remarks>
         internal PSMemberInfo GetPSMemberInfo(DynamicMetaObject target,
                                               out BindingRestrictions restrictions,
                                               out bool canOptimize,
@@ -5662,7 +5694,7 @@ namespace System.Management.Automation.Language
 
             canOptimize = false;
 
-            Diagnostics.Assert(!TryGetInstanceMember(target.Value, Name, out _),
+            Diagnostics.Assert(!ContainsInstanceMember(target.Value, Name),
                                 "shouldn't get here if there is an instance member");
 
             PSMemberInfo memberInfo = null;
@@ -5911,12 +5943,51 @@ namespace System.Management.Automation.Language
             return executionContext?.TypeTable;
         }
 
+        /// <summary>
+        /// Finds an instance member object, materializing provider notes on a name match.
+        /// </summary>
+        /// <param name="value">The target object or PSObject wrapper.</param>
+        /// <param name="memberName">The case-insensitive instance-member name.</param>
+        /// <param name="memberInfo">The member on success; otherwise null.</param>
+        /// <returns>Whether an instance member was found.</returns>
+        /// <remarks>Use presence or value lookup when the caller does not need a mutable member object.</remarks>
         internal static bool TryGetInstanceMember(object value, string memberName, out PSMemberInfo memberInfo)
         {
             PSMemberInfoInternalCollection<PSMemberInfo> instanceMembers;
-            memberInfo = PSObject.HasInstanceMembers(value, out instanceMembers) ? instanceMembers[memberName] : null;
+            memberInfo = PSObject.HasInstanceMembers(value, out instanceMembers)
+                && instanceMembers.Contains(memberName)
+                    ? instanceMembers[memberName]
+                    : null;
 
             return (memberInfo != null);
+        }
+
+        /// <summary>
+        /// Tests instance-member presence for binding without invoking a getter.
+        /// </summary>
+        /// <param name="value">The target object or PSObject wrapper.</param>
+        /// <param name="memberName">The case-insensitive instance-member name.</param>
+        /// <returns>Whether an ordinary member or active provider descriptor exists.</returns>
+        /// <remarks>Does not search adapters or materialize provider notes, so it can be used in rule restrictions.</remarks>
+        internal static bool ContainsInstanceMember(object value, string memberName)
+        {
+            return PSObject.HasInstanceMembers(value, out PSMemberInfoInternalCollection<PSMemberInfo> members)
+                && members.Contains(memberName);
+        }
+
+        /// <summary>
+        /// Reads an instance value when a cached get-member rule executes.
+        /// </summary>
+        /// <param name="value">The target object or PSObject wrapper.</param>
+        /// <param name="memberName">The case-insensitive instance-member name.</param>
+        /// <param name="memberValue">The value on success; otherwise null.</param>
+        /// <returns>False when the rule must rebind because the instance member is absent.</returns>
+        /// <remarks>Provider getters remain lazy; ordinary members use their Value property. Getter exceptions propagate.</remarks>
+        internal static bool TryGetInstanceValue(object value, string memberName, out object memberValue)
+        {
+            memberValue = null;
+            return PSObject.HasInstanceMembers(value, out PSMemberInfoInternalCollection<PSMemberInfo> members)
+                && members.TryGetValue(memberName, out memberValue);
         }
 
         internal static bool TryGetIDictionaryValue(IDictionary hash, string memberName, out object value)
