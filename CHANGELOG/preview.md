@@ -1,5 +1,96 @@
 # Preview Changelog
 
+## [7.7.0-preview.6]
+
+### General Cmdlet Updates and Fixes
+
+- Fix `Clear-Host` for remote Windows session from a non-Windows platform (#28116) (Thanks @jborean93!)
+- Remove unused 'pull-requests: read' permission from the labels workflow (#28241) (Thanks @yuunnn!)
+- Remove the Update Notification feature from PowerShell (#28242)
+- Protect property assignment on non-core objects to NoteProperty members in Constrained Language Mode (#28206)
+- Bind Hyper-V socket server V2 to the selected partition VM ID (#28204)
+- Protect ForEach() property assignment on non-core types in Constrained Language Mode (#28207)
+- Require -FetchExternalReference to resolve external Test-Json schema references (#28205)
+- Apply implicit-remoting command protections to resolved aliases (#28208)
+- Validate updatable-help CAB extraction and limit module names to 128 characters (#28203)
+- Honor `-Recurse` when `Get-ChildItem` uses `-Name` (#28078)
+- Fix `Resolve-Path -Relative` output for dot-prefixed names (#28087)
+- Treat `StringCollection` as a list collection with the `String` element type (#28141)
+- Fix duplicate results from `Get-Command` fuzzy matching (#28042)
+- Avoid extra SMB queries when formatting file names (#28038)
+- Use `GetCurrentPackageFamilyNameNative` API instead of path matching to detect MSIX installation (#28029)
+- Replace the deprecated `X509Certificate2` constructor with `X509CertificateLoader.LoadCertificate` (#27965)
+- Protect the fallback temporary home directory by enforcing and checking its file mode on Unix platforms (#27985)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@xtqqczze</p>
+
+</summary>
+
+<ul>
+<li>Remove the redundant <code>#if UNIX</code> check from the Unix only code (#28120)</li>
+<li>Update <code>HelpersRemoting.psm1‎</code> to handle an exception better (#27903) (Thanks @xtqqczze!)</li>
+</ul>
+
+</details>
+
+### Tests
+
+- Fix the `PATH` test for MSIX installed PowerShell (#28068)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@trackd</p>
+
+</summary>
+
+<ul>
+<li>Stop enforcing invariant culture in build pipelines (#28260)</li>
+<li>Update <code>metadata.json</code> for PowerShell releases (#28259)</li>
+<li>Localized file check-in by OneLocBuild Task: Build definition ID 13420: Build ID 2776911 (#28254)</li>
+<li>Localized file check-in by OneLocBuild Task: Build definition ID 13420: Build ID 2776908 (#28253)</li>
+<li>Localized file check-in by OneLocBuild Task: Build definition ID 13420: Build ID 2774633 (#28250)</li>
+<li>Update <code>metadata.json</code> for v7.6.8 release (#28248)</li>
+<li>Localized file check-in by OneLocBuild Task: Build definition ID 13420: Build ID 2773072 (#28247)</li>
+<li>Localized file check-in by OneLocBuild Task: Build definition ID 13420: Build ID 2771893 (#28244)</li>
+<li>Update Microsoft.PowerShell.PSResourceGet to version 1.3.0-rc1 (#28243)</li>
+<li>Localized file check-in by OneLocBuild Task: Build definition ID 13420: Build ID 2770454 (#28227)</li>
+<li>Move Store version metadata to the English description (#28211)</li>
+<li>Fix the package version in <code>TestService.csproj‎</code> to unblock CI (#28209)</li>
+<li>Update stable and LTS release tags to v7.6.7 (#28193)</li>
+<li>Move to the latest <code>Microsoft.PowerShell.Native</code> package and add test (#28173)</li>
+<li>Update Microsoft.PowerShell.Native package version (#28168)</li>
+<li>Add native Azure Linux 4 RPM packaging (#28107)</li>
+<li>Bump CodeQL init and analyze actions to 4.38.2 (#28123)</li>
+<li>Bump CodeQL init and analyze actions to 4.38.1 (#28121)</li>
+<li>Localized file check-in by OneLocBuild Task: Build definition ID 13420: Build ID 2741383 (#28093)</li>
+<li>Update preview and next release tags in metadata.json (#28089) (Thanks @trackd!)</li>
+<li>Localized file check-in by OneLocBuild Task: Build definition ID 13420: Build ID 2734773 (#28060)</li>
+<li>Publish Azure Linux 4 packages to preview PMC (#28074)</li>
+<li>Bump actions/upload-artifact from 7.0.1 to 7.0.2 (#28189)</li>
+<li>Bump github/codeql-action/upload-sarif from 4.36.0 to 4.38.3 (#28188)</li>
+<li>Bump ossf/scorecard-action from 2.4.3 to 2.5.0 (#28202)</li>
+<li>Bump actions/checkout from 6.0.2 to 7.0.1 (#28053)</li>
+<li>Bump PowerShell/compliance/.github/workflows/ready-to-merge.yml from 1.0.0 to 1.0.1 (#27338)</li>
+<li>Bump github/codeql-action/init from 4.38.2 to 4.38.3 (#28210)</li>
+<li>Bump actions/setup-dotnet from 5.3.0 to 6.0.0 (#28056)</li>
+</ul>
+
+</details>
+
+[7.7.0-preview.6]: https://github.com/PowerShell/PowerShell/compare/v7.7.0-preview.5...v7.7.0-preview.6
+
 ## [7.7.0-preview.5]
 
 ### Engine Updates and Fixes
