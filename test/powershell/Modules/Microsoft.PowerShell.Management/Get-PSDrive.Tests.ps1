@@ -56,10 +56,19 @@ Describe "Get-PSDrive" -Tags "CI" {
         $dInfo = Get-PSDrive TESTDRIVE
         $dInfo.Used -ge 0 | Should -BeTrue
     }
+}
+
+# Like the other subst tests, this runs elevated: subst failed to map a drive in the unelevated CI run.
+Describe "Get-PSDrive for automounted drives" -Tags "CI","RequireAdminOnWindows" {
 
     It "Should automount a drive requested in lowercase once, by its upper case name" -Skip:(-not $IsWindows) {
-        $UsedDrives  = Get-PSDrive | Select-Object -ExpandProperty Name
-        $PSDriveName = [string]('D'..'Z' | Where-Object -FilterScript {$_ -notin $UsedDrives} | Get-Random)
+        # Win32_LogicalDisk also lists drives that Get-PSDrive and Test-Path miss,
+        # like a leftover subst drive whose folder is gone or a locked bitlocker drive.
+        $freeDrive = Get-ChildItem function:[h-z]: -Name | Where-Object { !(Test-Path -Path $_) -and !(Get-CimInstance Win32_LogicalDisk -Filter "DeviceID='$_'") } | Select-Object -First 1
+        if ($null -eq $freeDrive) {
+            throw "Test cannot continue as no drive letter available"
+        }
+        $PSDriveName = $freeDrive.TrimEnd(':')
 
         $ps = [PowerShell]::Create()
         $substCreated = $false
@@ -68,8 +77,10 @@ Describe "Get-PSDrive" -Tags "CI" {
             $null = $ps.AddCommand('Get-PSDrive').Invoke()
             $ps.Commands.Clear()
 
-            subst "$($PSDriveName):" $TestDrive
-            $LASTEXITCODE | Should -Be 0 -Because "subst should map the free drive letter $PSDriveName"
+            $out = subst "$($PSDriveName):" $TestDrive 2>&1
+            if ($LASTEXITCODE -ne 0) {
+                throw "subst failed with exit code ${LASTEXITCODE} for drive '$PSDriveName': $out"
+            }
             $substCreated = $true
 
             $drive = $ps.AddCommand('Get-PSDrive').AddParameter('Name', $PSDriveName.ToLowerInvariant()).Invoke()
