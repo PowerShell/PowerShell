@@ -16,19 +16,44 @@
 
   <ItemGroup>
     <!-- This section is to force the version of non-direct dependencies -->
-    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="11.0.0-rc.1.26425.128" />
-    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="11.0.0-rc.1.26425.128" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="11.0.0-rc.3.26522.148" />
+    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="11.0.0-rc.3.26522.148" />
+    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="11.0.0-rc.3.26522.148" />
+    <PackageReference Include="Microsoft.Win32.SystemEvents" Version="11.0.0-rc.3.26522.148" />
+    <PackageReference Include="System.CodeDom" Version="11.0.0-rc.3.26522.148" />
+    <PackageReference Include="System.ComponentModel.Composition" Version="11.0.0-rc.3.26522.148" />
+    <PackageReference Include="System.ComponentModel.Composition.Registration" Version="11.0.0-rc.3.26522.148" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="11.0.0-rc.3.26522.148" />
+    <PackageReference Include="System.Data.Odbc" Version="11.0.0-rc.3.26522.148" />
+    <PackageReference Include="System.Data.OleDb" Version="11.0.0-rc.3.26522.148" />
     <!-- the following package(s) are from https://github.com/dotnet/fxdac -->
     <PackageReference Include="System.Data.SqlClient" Version="4.9.1" />
+    <PackageReference Include="System.Diagnostics.EventLog" Version="11.0.0-rc.3.26522.148" />
+    <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="11.0.0-rc.3.26522.148" />
+    <PackageReference Include="System.DirectoryServices" Version="11.0.0-rc.3.26522.148" />
+    <PackageReference Include="System.DirectoryServices.AccountManagement" Version="11.0.0-rc.3.26522.148" />
+    <PackageReference Include="System.DirectoryServices.Protocols" Version="11.0.0-rc.3.26522.148" />
+    <PackageReference Include="System.Drawing.Common" Version="11.0.0-rc.3.26522.148" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="System.IO.Packaging" Version="11.0.0-rc.1.26425.128" />
-    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="11.0.0-rc.1.26425.128" />
+    <PackageReference Include="System.IO.Packaging" Version="11.0.0-rc.3.26522.148" />
+    <PackageReference Include="System.IO.Ports" Version="11.0.0-rc.3.26522.148" />
+    <PackageReference Include="System.Management" Version="11.0.0-rc.3.26522.148" />
+    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="11.0.0-rc.3.26522.148" />
+    <PackageReference Include="System.Reflection.Context" Version="11.0.0-rc.3.26522.148" />
+    <PackageReference Include="System.Runtime.Caching" Version="11.0.0-rc.3.26522.148" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="11.0.0-rc.3.26522.148" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="11.0.0-rc.3.26522.148" />
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="11.0.0-rc.3.26522.148" />
+    <PackageReference Include="System.Security.Permissions" Version="11.0.0-rc.3.26522.148" />
     <!-- the following package(s) are from https://github.com/dotnet/wcf -->
     <PackageReference Include="System.ServiceModel.Http" Version="10.0.652802" />
     <PackageReference Include="System.ServiceModel.NetTcp" Version="10.0.652802" />
     <PackageReference Include="System.ServiceModel.Primitives" Version="10.0.652802" />
     <!-- the source could not be found for the following package(s) -->
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="11.0.0-rc.1.26425.128" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="11.0.0-rc.3.26522.148" />
+    <PackageReference Include="System.ServiceModel.Syndication" Version="11.0.0-rc.3.26522.148" />
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="11.0.0-rc.3.26522.148" />
+    <PackageReference Include="System.Speech" Version="11.0.0-rc.3.26522.148" />
   </ItemGroup>
 
   <!--
