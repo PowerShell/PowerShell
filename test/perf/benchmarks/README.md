@@ -82,10 +82,21 @@ or change it.
 For each process run, the baseline and candidate execute in alternating order. Each
 fresh process warms every scenario before collecting `-Repetitions` raw samples. Scenarios
 cover filesystem item emission, direct `PSPath` reads, ten repeated `PSPath` reads per
-item, `ForEach-Object -MemberName FullName`, `ForEach-Object -MemberName PSParentPath`, default formatting, and `Select-Object *`. Metadata scenarios accumulate path
-lengths into a checksum so each property value is consumed; the report records the
-metadata read count per emitted item. Comparisons summarize median elapsed
-time and median allocated bytes per emitted item. Ratios are candidate divided by
+item, `ForEach-Object -MemberName FullName`, `ForEach-Object -MemberName PSParentPath`,
+default formatting, and `Select-Object *`. Content scenarios use a separate `content.txt`
+dataset with the same number of lines as filesystem items, outside the enumerated
+directory. They cover `Get-Content` emission, summing each line's `ReadCount`, reading
+each line's `PSParentPath` with `ForEach-Object -MemberName`, and `Select-Object *`.
+The `ReadCount` scenario checks the sum against `N * (N + 1) / 2`, consuming each value.
+The JSON includes `MetadataReadsPerEmittedItem` and `EmittedItemKind` (`filesystem items`
+or `content lines`) to make units clear. `Dataset` records the content file path and line
+count separately from the filesystem directory and file count. Byte scenarios use a
+separate binary file of `FileCount` alternating 0 and 255 values. They cover
+`Get-Content -AsByteStream` emission, summing each byte object's `ReadCount`, and reading
+each byte object's `PSParentPath` with `ForEach-Object -MemberName`. `Dataset` records
+the byte file path and byte count; `EmittedItemKind` labels these outputs `byte objects`,
+separately from allocated-byte measurements. Comparisons summarize median elapsed time
+and median allocated bytes per emitted item. Ratios are candidate divided by
 baseline; percent change is `(ratio - 1) * 100`, so negative values mean a lower measured
 value for the candidate. A zero baseline produces a JSON `null` ratio and percent change.
 

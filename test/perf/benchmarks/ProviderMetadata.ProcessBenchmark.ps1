@@ -52,6 +52,8 @@ if ($OutputPath) {
 
 $tempRoot = [System.IO.Path]::GetFullPath((Join-Path ([System.IO.Path]::GetTempPath()) "PowerShell.ProviderMetadata.$([guid]::NewGuid().ToString('N'))"))
 $dataDirectory = Join-Path $tempRoot 'files'
+$contentFile = Join-Path $tempRoot 'content.txt'
+$byteFile = Join-Path $tempRoot 'content.bin'
 $measureScript = Join-Path $PSScriptRoot 'assets/ProviderMetadata.Measure.ps1'
 
 function Invoke-IsolatedMeasurement {
@@ -77,7 +79,7 @@ function Invoke-IsolatedMeasurement {
     $startInfo.RedirectStandardOutput = $true
     $startInfo.RedirectStandardError = $true
     foreach ($argument in @('-SettingsFile', $settingsFile, '-NoLogo', '-NoProfile', '-File', $measureScript,
-            '-Directory', $dataDirectory, '-ExpectedFeatureState', $(if ($enableFeature) { 'enabled' } else { 'disabled' }),
+            '-Directory', $dataDirectory, '-ContentFile', $contentFile, '-ByteFile', $byteFile, '-ExpectedFeatureState', $(if ($enableFeature) { 'enabled' } else { 'disabled' }),
             '-Side', $Side, '-ProcessRun', $ProcessRun.ToString(), '-FileCount', $FileCount.ToString(),
             '-Iterations', $Iterations.ToString(), '-Repetitions', $Repetitions.ToString(),
             '-WarmupIterations', $WarmupIterations.ToString())) {
@@ -149,6 +151,9 @@ try {
     for ($i = 0; $i -lt $FileCount; $i++) {
         Set-Content -LiteralPath (Join-Path $dataDirectory "item-$i.txt") -Value 'metadata benchmark'
     }
+    Set-Content -LiteralPath $contentFile -Value @((0..($FileCount - 1) | ForEach-Object { "content line $_" }))
+    [byte[]] $byteData = for ($i = 0; $i -lt $FileCount; $i++) { if ($i % 2) { 255 } else { 0 } }
+    [System.IO.File]::WriteAllBytes($byteFile, $byteData)
 
     $baselineMetadata = Get-ExecutableMetadata -Path $BaselinePwshPath
     $candidateMetadata = Get-ExecutableMetadata -Path $PwshPath
@@ -205,7 +210,7 @@ try {
         SchemaVersion = 1
         Environment = [pscustomobject]@{ Baseline = $baselineMetadata; Candidate = $candidateMetadata }
         Settings = [pscustomobject]@{ FileCount = $FileCount; Iterations = $Iterations; Repetitions = $Repetitions; WarmupIterations = $WarmupIterations; ProcessRuns = $ProcessRuns }
-        Dataset = [pscustomobject]@{ Directory = $dataDirectory; FileCount = $FileCount }
+        Dataset = [pscustomobject]@{ Directory = $dataDirectory; FileCount = $FileCount; ContentFile = $contentFile; ContentLineCount = $FileCount; ByteFile = $byteFile; ByteCount = $FileCount }
         ObservedFeatureState = [pscustomobject]@{
             Baseline = @($samples | Where-Object Side -eq 'Baseline' | ForEach-Object { $_.Result.ObservedFeatureState } | Select-Object -Unique)
             Candidate = @($samples | Where-Object Side -eq 'Candidate' | ForEach-Object { $_.Result.ObservedFeatureState } | Select-Object -Unique)
