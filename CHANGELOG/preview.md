@@ -50,7 +50,7 @@
 
 <summary>
 
-<p>Update to .NET SDK 11.0.100-rc.2.26504.105</p>
+<p>Update to .NET SDK 11.0.100-rc.3.26522.148</p>
 
 <p>Update Microsoft.PowerShell.PSResourceGet to 1.3.0-rc1</p>
 
