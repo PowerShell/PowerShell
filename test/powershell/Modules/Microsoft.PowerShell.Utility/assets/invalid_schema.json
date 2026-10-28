@@ -1,0 +1,12 @@
+{
+    "description": "A person",
+    "type": "object",
+    "properties": {
+        "name": {
+            "type":"string"
+        },
+        "hobbies": {
+            "type": 5
+        }
+    }
+}
