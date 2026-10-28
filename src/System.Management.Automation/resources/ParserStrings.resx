@@ -573,6 +573,15 @@ The correct form is: foreach ($a in $b) {...}</value>
   <data name="WhitespaceBeforeHereStringFooter" xml:space="preserve">
     <value>White space is not allowed before the string terminator.</value>
   </data>
+  <data name="CharacterBeforeHereStringFooter" xml:space="preserve">
+    <value>No characters are allowed before the string terminator.</value>
+  </data>
+  <data name="NonWhitespaceCharacterBeforeHereStringFooter" xml:space="preserve">
+    <value>Only white space characters are allowed before the string terminator.</value>
+  </data>
+  <data name="MissingIndentationInHereString" xml:space="preserve">
+    <value>Line is missing indentation. Add whitespace to match the indentation of the footer line.</value>
+  </data>
   <data name="EndSquareBracketExpectedAtEndOfType" xml:space="preserve">
     <value>Missing ] at end of type token.</value>
   </data>
