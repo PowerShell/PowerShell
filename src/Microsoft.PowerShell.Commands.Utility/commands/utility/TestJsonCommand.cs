@@ -140,7 +140,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            _evaluationOptions = new EvaluationOptions { OutputFormat = OutputFormat.Hierarchical };
+            _evaluationOptions = new EvaluationOptions { OutputFormat = OutputFormat.List };
 
             if (FetchExternalReference)
             {
