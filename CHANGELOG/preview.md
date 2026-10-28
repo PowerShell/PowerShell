@@ -5,7 +5,6 @@
 ### General Cmdlet Updates and Fixes
 
 - Fix `Clear-Host` for remote Windows session from a non-Windows platform (#28116) (Thanks @jborean93!)
-- Remove unused 'pull-requests: read' permission from the labels workflow (#28241) (Thanks @yuunnn!)
 - Remove the Update Notification feature from PowerShell (#28242)
 - Protect property assignment on non-core objects to NoteProperty members in Constrained Language Mode (#28206)
 - Bind Hyper-V socket server V2 to the selected partition VM ID (#28204)
@@ -55,7 +54,7 @@
 <p>Update Microsoft.PowerShell.PSResourceGet to 1.3.0-rc1</p>
 
 <p>We thank the following contributors!</p>
-<p>@trackd</p>
+<p>@trackd, @yuunnn</p>
 
 </summary>
 
@@ -69,6 +68,7 @@
 <li>Localized file check-in by OneLocBuild Task: Build definition ID 13420: Build ID 2773072 (#28247)</li>
 <li>Localized file check-in by OneLocBuild Task: Build definition ID 13420: Build ID 2771893 (#28244)</li>
 <li>Update Microsoft.PowerShell.PSResourceGet to version 1.3.0-rc1 (#28243)</li>
+<li>Remove unused 'pull-requests: read' permission from the labels workflow (#28241) (Thanks @yuunnn!)</li>
 <li>Localized file check-in by OneLocBuild Task: Build definition ID 13420: Build ID 2770454 (#28227)</li>
 <li>Move Store version metadata to the English description (#28211)</li>
 <li>Fix the package version in <code>TestService.csproj‎</code> to unblock CI (#28209)</li>
