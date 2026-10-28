@@ -2,6 +2,8 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Management.Automation;
@@ -212,6 +214,21 @@ namespace Microsoft.Management.UI.Internal
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Gets the multiline text from all objects of a property of type PSObject[].
+        /// </summary>
+        /// <param name="psObj">Object to get text from.</param>
+        /// <param name="propertyText">Property with PSObject[] containing text.</param>
+        /// <returns>The lines of the text from a property of type PSObject[].</returns>
+        private static IEnumerable<string> GetMultilineTextFromArray(PSObject psObj, string propertyText)
+        {
+            PSObject[] introductionObjects = HelpParagraphBuilder.GetPropertyObject(psObj, propertyText) as PSObject[];
+            for (var i = 0; i < introductionObjects?.Length; i++)
+            {
+                yield return GetPropertyString(introductionObjects[i], "text");
+            }
         }
 
         /// <summary>
@@ -758,7 +775,7 @@ namespace Microsoft.Management.UI.Internal
 
                 string parameterValue = GetPropertyString(parameter, "parameterValue");
                 string name = GetPropertyString(parameter, "name");
-                string description = GetTextFromArray(parameter, "description");
+                IEnumerable<string> description = GetMultilineTextFromArray(parameter, "description");
                 string required = GetPropertyString(parameter, "required");
                 string position = GetPropertyString(parameter, "position");
                 string pipelineinput = GetPropertyString(parameter, "pipelineInput");
@@ -789,8 +806,11 @@ namespace Microsoft.Management.UI.Internal
 
                 if (description != null)
                 {
-                    this.AddText(HelpParagraphBuilder.AddIndent(description, 2), false);
-                    this.AddText("\r\n", false);
+                    foreach (var line in description)
+                    {
+                        this.AddText(HelpParagraphBuilder.AddIndent(line, 2), false);
+                        this.AddText("\r\n", false);
+                    }
                 }
 
                 this.AddText("\r\n", false);
