@@ -118,7 +118,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get the help in for the PS Class Info.        ///
+        /// Get the help in for the PS Class Info.
         /// </summary>
         /// <param name="searcher">Searcher for PS Classes.</param>
         /// <returns>Next HelpInfo object.</returns>
@@ -162,6 +162,26 @@ namespace System.Management.Automation
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Prepends helpfileIdentifier to the class name and adds the result to help cache.
+        /// </summary>
+        /// <param name="helpIdentifier">The path of the help file.</param>
+        /// <param name="className">Name of the class.</param>
+        /// <param name="helpInfo">Help object for the class.</param>
+        private void AddToClassCache(string helpIdentifier, string className, MamlClassHelpInfo helpInfo)
+        {
+            Debug.Assert(!string.IsNullOrEmpty(className), "Class Name should not be null or empty.");
+
+            string key = className;
+
+            if (!string.IsNullOrEmpty(helpIdentifier))
+            {
+                key = helpIdentifier + "\\" + key;
+            }
+
+            AddCache(key, helpInfo);
         }
 
         /// <summary>
@@ -219,7 +239,7 @@ namespace System.Management.Automation
                     LoadHelpFile(helpFile, helpFile, classInfo.Name, reportErrors);
                 }
 
-                return GetFromPSClassHelpCache(helpFile, Automation.HelpCategory.Class);
+                return GetFromPSClassHelpCache(helpFile, classInfo.Name, Automation.HelpCategory.Class);
             }
 
             return null;
@@ -228,14 +248,21 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the HelpInfo object corresponding to the command.
         /// </summary>
-        /// <param name="helpFileIdentifier">Help file identifier (either name of PSSnapIn or simply full path to help file).</param>
+        /// <param name="helpFileIdentifier">The full path to the help file.</param>
+        /// <param name="className">The name of the class in the help file.</param>
         /// <param name="helpCategory">Help Category for search.</param>
         /// <returns>HelpInfo object.</returns>
-        private HelpInfo GetFromPSClassHelpCache(string helpFileIdentifier, HelpCategory helpCategory)
+        private HelpInfo GetFromPSClassHelpCache(string helpFileIdentifier, string className, HelpCategory helpCategory)
         {
-            Debug.Assert(!string.IsNullOrEmpty(helpFileIdentifier), "helpFileIdentifier should not be null or empty.");
+            Debug.Assert(!string.IsNullOrEmpty(className), "Class Name should not be null or empty.");
 
-            HelpInfo result = GetCache(helpFileIdentifier);
+            string key = className;
+            if (!string.IsNullOrEmpty(helpFileIdentifier))
+            {
+                key = helpFileIdentifier + "\\" + key;
+            }
+
+            HelpInfo result = GetCache(key);
 
             if (result != null)
             {
@@ -358,7 +385,7 @@ namespace System.Management.Automation
                             if (helpInfo != null)
                             {
                                 this.HelpSystem.TraceErrors(helpInfo.Errors);
-                                AddCache(helpFileIdentifier, helpInfo);
+                                AddToClassCache(helpFileIdentifier, helpInfo.Name, helpInfo);
                             }
                         }
                     }
