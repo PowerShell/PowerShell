@@ -154,7 +154,7 @@ namespace System.Management.Automation
         /// </summary>
         private static void WarnIfLegacyCatalogVersion(string catalogFilePath, int catalogVersion)
         {
-            if (catalogVersion == 1)
+            if (catalogVersion < 2)
             {
                 _cmdlet.WriteWarning(StringUtil.Format(CatalogStrings.WeakCatalogHashAlgorithm, catalogFilePath));
             }
