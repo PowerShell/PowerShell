@@ -204,10 +204,12 @@ namespace Microsoft.PowerShell.Commands
             }
 
             _isInitialized = true;
+            byte[]? buffer = null;
             try
             {
                 long totalRead = 0;
-                byte[] buffer = new byte[StreamHelper.ChunkSize];
+                buffer = ArrayPool<byte>.Shared.Rent(StreamHelper.ChunkSize);
+                var mem = buffer.AsMemory();
                 ProgressRecord record = new(StreamHelper.ActivityId, WebCmdletStrings.ReadResponseProgressActivity, "statusDescriptionPlaceholder");
                 string totalDownloadSize = _contentLength is null ? "???" : Utils.DisplayHumanReadableFileSize((long)_contentLength);
                 for (int read = 1; read > 0; totalRead += read)
@@ -232,7 +234,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    read = _originalStreamToProxy.ReadAsync(buffer.AsMemory(), _perReadTimeout, cancellationToken).GetAwaiter().GetResult();
+                    read = _originalStreamToProxy.ReadAsync(mem, _perReadTimeout, cancellationToken).GetAwaiter().GetResult();
 
                     if (read > 0)
                     {
@@ -256,7 +258,109 @@ namespace Microsoft.PowerShell.Commands
                 Dispose();
                 throw;
             }
+            finally
+            {
+                if (buffer != null)
+                {
+                    ArrayPool<byte>.Shared.Return(buffer);
+                }
+            }
         }
+    }
+
+    internal static class StreamReaderTimeoutExtensions
+    {
+        private static async ValueTask<int> ReadBlockAsyncInternal(this StreamReader reader, Memory<char> buffer, TimeSpan perReadTimeout, CancellationToken cancellationToken)
+        {
+            int n = 0, i;
+            do
+            {
+                i = await reader.ReadAsync(buffer.Slice(n), perReadTimeout, cancellationToken).ConfigureAwait(false);
+                n += i;
+            } while (i > 0 && n < buffer.Length);
+
+            return n;
+        }
+
+        internal static async Task<int> ReadBlockAsync(this StreamReader reader, Memory<char> buffer, TimeSpan readTimeout, CancellationToken cancellationToken)
+        {
+            if (readTimeout == Timeout.InfiniteTimeSpan)
+            {
+                return await reader.ReadBlockAsync(buffer, cancellationToken).ConfigureAwait(false);
+            }
+
+            using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            try
+            {
+                cts.CancelAfter(readTimeout);
+                return await reader.ReadBlockAsyncInternal(buffer, readTimeout, cts.Token).ConfigureAwait(false);
+            }
+            catch (TaskCanceledException ex)
+            {
+                if (cts.IsCancellationRequested)
+                {
+                    throw new TimeoutException($"The request was canceled due to the configured OperationTimeout of {readTimeout.TotalSeconds} seconds elapsing", ex);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        internal static async Task<int> ReadAsync(this StreamReader reader, Memory<char> buffer, TimeSpan readTimeout, CancellationToken cancellationToken)
+        {
+            if (readTimeout == Timeout.InfiniteTimeSpan)
+            {
+                return await reader.ReadAsync(buffer, cancellationToken).ConfigureAwait(false);
+            }
+
+            using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            try
+            {
+                cts.CancelAfter(readTimeout);
+                return await reader.ReadAsync(buffer, cts.Token).ConfigureAwait(false);
+            }
+            catch (TaskCanceledException ex)
+            {
+                if (cts.IsCancellationRequested)
+                {
+                    throw new TimeoutException($"The request was canceled due to the configured OperationTimeout of {readTimeout.TotalSeconds} seconds elapsing", ex);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        internal static async Task<string> ReadToEndAsync(this StreamReader reader, TimeSpan perReadTimeout, CancellationToken cancellationToken)
+        {
+            if (perReadTimeout == Timeout.InfiniteTimeSpan)
+            {
+                return await reader.ReadToEndAsync(cancellationToken).ConfigureAwait(false);
+            }
+
+            int useBufferSize = 4096;
+            char[] chars = ArrayPool<char>.Shared.Rent(useBufferSize);
+            try
+            {
+                Memory<char> buffer = chars.AsMemory();
+                StringBuilder sb = new StringBuilder(useBufferSize);
+                int charsRead = 0;
+                while ((charsRead = await reader.ReadAsync(buffer, perReadTimeout, cancellationToken).ConfigureAwait(false)) != 0)
+                {
+                    sb.Append(chars, 0, charsRead);
+                }
+
+                return sb.ToString();
+            }
+            finally
+            {
+                ArrayPool<char>.Shared.Return(chars);
+            }
+        }
+
     }
 
     internal static class StreamTimeoutExtensions
@@ -420,80 +524,32 @@ namespace Microsoft.PowerShell.Commands
             WriteToStream(stream, output, cmdlet, contentLength, perReadTimeout, cancellationToken);
         }
 
-        private static string StreamToString(Stream stream, Encoding encoding, TimeSpan perReadTimeout, CancellationToken cancellationToken)
+        // Precedence: BOM, charset, meta element, XML declaration
+        private static async Task<Encoding> GetStreamEncodingAsync(Stream stream, string? characterSet, TimeSpan perReadTimeout, CancellationToken cancellationToken)
         {
-            StringBuilder result = new(capacity: ChunkSize);
-            Decoder decoder = encoding.GetDecoder();
+            bool encodingSearchFailed = !TryGetEncodingFromCharset(characterSet, out Encoding encoding);
 
-            int useBufferSize = 64;
-            if (useBufferSize < encoding.GetMaxCharCount(10))
+            // Tries to detect encoding from BOM, if it fails fall back to encoding
+            using StreamReader reader = new(stream, encoding, detectEncodingFromByteOrderMarks: true, leaveOpen: true);
+
+            // We only look within the first 1k characters as the meta element and
+            // the xml declaration are at the start of the document
+            int bufferLength = (int)Math.Min(reader.BaseStream.Length, 1024);
+
+            char[] buffer = new char[bufferLength];
+            await reader.ReadBlockAsync(buffer.AsMemory(), perReadTimeout, cancellationToken).ConfigureAwait(false);
+            stream.Seek(0, SeekOrigin.Begin);
+
+            // Only try to parse meta element and XML declaration if getting encoding from charset
+            // fails and detectEncodingFromByteOrderMarks doesn't change the encoding.
+            if (encodingSearchFailed && encoding == reader.CurrentEncoding)
             {
-                useBufferSize = encoding.GetMaxCharCount(10);
-            }
+                string substring = new(buffer);
 
-            char[] chars = ArrayPool<char>.Shared.Rent(useBufferSize);
-            byte[] bytes = ArrayPool<byte>.Shared.Rent(useBufferSize * 4);
-            try
-            {
-                int bytesRead = 0;
-                do
-                {
-                    // Read at most the number of bytes that will fit in the input buffer. The
-                    // return value is the actual number of bytes read, or zero if no bytes remain.
-                    bytesRead = stream.ReadAsync(bytes.AsMemory(), perReadTimeout, cancellationToken).GetAwaiter().GetResult();
-
-                    bool completed = false;
-                    int byteIndex = 0;
-
-                    while (!completed)
-                    {
-                        // If this is the last input data, flush the decoder's internal buffer and state.
-                        bool flush = bytesRead is 0;
-                        decoder.Convert(bytes, byteIndex, bytesRead - byteIndex, chars, 0, useBufferSize, flush, out int bytesUsed, out int charsUsed, out completed);
-
-                        // The conversion produced the number of characters indicated by charsUsed. Write that number
-                        // of characters to our result buffer
-                        result.Append(chars, 0, charsUsed);
-
-                        // Increment byteIndex to the next block of bytes in the input buffer, if any, to convert.
-                        byteIndex += bytesUsed;
-
-                        // The behavior of decoder.Convert changed start .NET 3.1-preview2.
-                        // The change was made in https://github.com/dotnet/coreclr/pull/27229
-                        // The recommendation from .NET team is to not check for 'completed' if 'flush' is false.
-                        // Break out of the loop if all bytes have been read.
-                        if (!flush && bytesRead == byteIndex)
-                        {
-                            break;
-                        }
-                    }
-                }
-                while (bytesRead != 0);
-
-                return result.ToString();
-            }
-            finally
-            {
-                ArrayPool<char>.Shared.Return(chars);
-                ArrayPool<byte>.Shared.Return(bytes);
-            }
-        }
-
-        internal static string DecodeStream(Stream stream, string? characterSet, out Encoding encoding, TimeSpan perReadTimeout, CancellationToken cancellationToken)
-        {
-            bool isDefaultEncoding = !TryGetEncoding(characterSet, out encoding);
-
-            string content = StreamToString(stream, encoding, perReadTimeout, cancellationToken);
-            if (isDefaultEncoding)
-            {
-                // We only look within the first 1k characters as the meta element and
-                // the xml declaration are at the start of the document
-                string substring = content.Substring(0, Math.Min(content.Length, 1024));
-
-                // Check for a charset attribute on the meta element to override the default
+                // Check for a charset attribute on the meta element to override the default.
                 Match match = s_metaRegex.Match(substring);
 
-                // Check for a encoding attribute on the xml declaration to override the default
+                // Check for a encoding attribute on the xml declaration to override the default.
                 if (!match.Success)
                 {
                     match = s_xmlRegex.Match(substring);
@@ -503,19 +559,27 @@ namespace Microsoft.PowerShell.Commands
                 {
                     characterSet = match.Groups["charset"].Value;
 
-                    if (TryGetEncoding(characterSet, out Encoding localEncoding))
+                    if (TryGetEncodingFromCharset(characterSet, out Encoding localEncoding))
                     {
-                        stream.Seek(0, SeekOrigin.Begin);
-                        content = StreamToString(stream, localEncoding, perReadTimeout, cancellationToken);
                         encoding = localEncoding;
                     }
                 }
             }
+            else
+            {
+                encoding = reader.CurrentEncoding;
+            }
 
-            return content;
+            return encoding;
         }
 
-        internal static bool TryGetEncoding(string? characterSet, out Encoding encoding)
+        internal static string DecodeStream(Stream stream, string? characterSet, out Encoding encoding, TimeSpan perReadTimeout, CancellationToken cancellationToken)
+        {
+            encoding = GetStreamEncodingAsync(stream, characterSet, perReadTimeout, cancellationToken).GetAwaiter().GetResult();
+            return new StreamReader(stream, encoding, leaveOpen: true).ReadToEndAsync(perReadTimeout, cancellationToken).GetAwaiter().GetResult();
+        }
+
+        internal static bool TryGetEncodingFromCharset(string? characterSet, out Encoding encoding)
         {
             bool result = false;
             try
