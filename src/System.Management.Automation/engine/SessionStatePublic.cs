@@ -100,6 +100,25 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Get the initial state of environment variables.
+        /// </summary>
+        public Collections.Hashtable GetInitialEnvironmentVariables()
+        {
+            try
+            {
+                // This can throw because there is no environment provider.
+                // In this case, we cannot report anything.
+                // we should not report the current state because we don't have a notion
+                // of "initial".
+                return Microsoft.PowerShell.Commands.EnvironmentProvider.InitialEnvironment;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
         /// Gets the APIs to access paths and location.
         /// </summary>
         public PathIntrinsics Path
