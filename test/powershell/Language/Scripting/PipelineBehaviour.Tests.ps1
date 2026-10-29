@@ -619,6 +619,28 @@ Describe 'Function Pipeline Behaviour' -Tag 'CI' {
             $content | Should -Match 'boom'
             $content | Should -Match 'output'
         }
+
+        It "Errors from a command in a steppable pipeline reach a caller that merges them without passing through the commands after it" {
+            $missing = Join-Path -Path $TestDrive -ChildPath 'Missing'
+
+            function Test-ChainedErrors {
+                [CmdletBinding()]
+                param()
+
+                begin {
+                    $step = { Get-Item -LiteralPath $missing | Select-Object -Property Name }.GetSteppablePipeline()
+                    $step.Begin($PSCmdlet)
+                }
+
+                end {
+                    $step.End()
+                }
+            }
+
+            $result = Test-ChainedErrors 2>&1
+            $result | Should -HaveCount 1
+            $result | Should -BeOfType System.Management.Automation.ErrorRecord
+        }
     }
 
     Context "'exit' statement in command" {

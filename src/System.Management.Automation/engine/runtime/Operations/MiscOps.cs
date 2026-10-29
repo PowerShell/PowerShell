@@ -791,9 +791,7 @@ namespace System.Management.Automation
                 // Set the data stream merge properties based on ExecutionContext.
                 if (context.CurrentCommandProcessor != null && context.CurrentCommandProcessor.CommandRuntime != null)
                 {
-                    // As in AddCommand(), any redirection from the error stream, to a file as well as merged, is the command's own.
-                    bool errorRedirected = commandTuple.Item3.Exists(static redirection => redirection.FromStream is RedirectionStream.Error or RedirectionStream.All);
-                    commandProcessor.CommandRuntime.SetMergeFromRuntime(context.CurrentCommandProcessor.CommandRuntime, errorRedirected);
+                    commandProcessor.CommandRuntime.SetMergeFromRuntime(context.CurrentCommandProcessor.CommandRuntime);
                 }
             }
 
