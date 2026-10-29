@@ -58,6 +58,52 @@ Describe "Get-PSDrive" -Tags "CI" {
     }
 }
 
+# Like the other subst tests, this runs elevated: subst failed to map a drive in the unelevated CI run.
+Describe "Get-PSDrive for automounted drives" -Tags "CI","RequireAdminOnWindows" {
+
+    It "Should automount a drive requested in lowercase once, by its upper case name" -Skip:(-not $IsWindows) {
+        # Win32_LogicalDisk also lists drives that Get-PSDrive and Test-Path miss,
+        # like a leftover subst drive whose folder is gone or a locked bitlocker drive.
+        $freeDrive = Get-ChildItem function:[h-z]: -Name | Where-Object { !(Test-Path -Path $_) -and !(Get-CimInstance Win32_LogicalDisk -Filter "DeviceID='$_'") } | Select-Object -First 1
+        if ($null -eq $freeDrive) {
+            throw "Test cannot continue as no drive letter available"
+        }
+        $PSDriveName = $freeDrive.TrimEnd(':')
+
+        $ps = [PowerShell]::Create()
+        $substCreated = $false
+        try {
+            # Start the new instance before creating the drive, so the drive gets automounted there by its lowercase name.
+            $null = $ps.AddCommand('Get-PSDrive').Invoke()
+            $ps.Commands.Clear()
+
+            $out = subst "$($PSDriveName):" $TestDrive 2>&1
+            if ($LASTEXITCODE -ne 0) {
+                throw "subst failed with exit code ${LASTEXITCODE} for drive '$PSDriveName': $out"
+            }
+            $substCreated = $true
+
+            $drive = $ps.AddCommand('Get-PSDrive').AddParameter('Name', $PSDriveName.ToLowerInvariant()).Invoke()
+            if ($ps.HadErrors) {
+                throw $ps.Streams.Error[0]
+            }
+            $drive | Should -HaveCount 1
+            $drive.Name | Should -BeExactly $PSDriveName
+
+            $ps.Commands.Clear()
+            $drives = $ps.AddCommand('Get-PSDrive').AddParameter('PSProvider', 'FileSystem').Invoke()
+            # Case-insensitive on purpose, to catch both 't' and 'T'.
+            $drives.Name -ieq $PSDriveName | Should -HaveCount 1
+        }
+        finally {
+            $ps.Dispose()
+            if ($substCreated) {
+                subst "$($PSDriveName):" /D
+            }
+        }
+    }
+}
+
 Describe "Temp: drive" -Tag Feature {
     It "TEMP: drive exists" {
         $res = Get-PSDrive Temp
