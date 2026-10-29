@@ -35,6 +35,43 @@ Describe 'Basic engine APIs' -Tags "CI" {
             $result | Should -BeExactly '$args:(1 2 3); $input:()'
         }
     }
+
+    Context 'powershell::GetSteppablePipeline' {
+        BeforeAll {
+            function Invoke-SteppableWriteError {
+                [CmdletBinding()]
+                param(
+                    [switch] $MergeErrors
+                )
+
+                begin {
+                    $ps = [powershell]::Create([System.Management.Automation.RunspaceMode]::CurrentRunspace)
+                    $null = $ps.AddCommand((Get-Command -Name Write-Error)).AddParameter('Message', 'boom')
+                    if ($MergeErrors) {
+                        $ps.Commands.Commands[0].MergeMyResults('Error', 'Output')
+                    }
+
+                    $step = $ps.GetSteppablePipeline()
+                    $step.Begin($PSCmdlet)
+                }
+
+                end {
+                    $step.End()
+                    $ps.Dispose()
+                }
+            }
+        }
+
+        It "gives the pipeline's commands the redirections of the command that built it" {
+            $result = Invoke-SteppableWriteError 2>&1
+            $result | Should -BeOfType System.Management.Automation.ErrorRecord
+        }
+
+        It "keeps a merge the pipeline's command sets for itself over the redirections of the command that built it" {
+            $result = Invoke-SteppableWriteError -MergeErrors 2>$null
+            $result | Should -BeOfType System.Management.Automation.ErrorRecord
+        }
+    }
 }
 
 Describe "Clean up open Runspaces when exit powershell process" -Tags "Feature" {

@@ -4035,6 +4035,23 @@ namespace System.Management.Automation
                     commandProcessorBase.RedirectShellErrorOutputPipe = RedirectShellErrorOutputPipe;
 
                     pipelineProcessor.Add(commandProcessorBase);
+
+                    // Set the data stream merge properties based on ExecutionContext, as ScriptBlock.GetSteppablePipeline() does.
+                    if (context.CurrentCommandProcessor != null && context.CurrentCommandProcessor.CommandRuntime != null)
+                    {
+                        // Unlike SetMergeFromRuntime(), a merge the command sets for itself through Command.MergeMyResults() takes precedence over its caller's.
+                        MshCommandRuntime callerRuntime = context.CurrentCommandProcessor.CommandRuntime;
+                        MshCommandRuntime commandRuntime = commandProcessorBase.CommandRuntime;
+                        if (commandRuntime.ErrorMergeTo == MshCommandRuntime.MergeDataStream.None)
+                        {
+                            commandRuntime.ErrorMergeTo = callerRuntime.ErrorMergeTo;
+                        }
+
+                        commandRuntime.WarningOutputPipe ??= callerRuntime.WarningOutputPipe;
+                        commandRuntime.VerboseOutputPipe ??= callerRuntime.VerboseOutputPipe;
+                        commandRuntime.DebugOutputPipe ??= callerRuntime.DebugOutputPipe;
+                        commandRuntime.InformationOutputPipe ??= callerRuntime.InformationOutputPipe;
+                    }
                 }
             }
             catch (RuntimeException)
