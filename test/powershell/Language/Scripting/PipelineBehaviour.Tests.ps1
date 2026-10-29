@@ -491,6 +491,25 @@ Describe 'Function Pipeline Behaviour' -Tag 'CI' {
             ## but it should skip calling '$steppablePipeline.Clean()' in this case. 
             { TestProxyGci -Attributes } | Should -Throw -ErrorId 'MissingArgument,TestProxyGci'
         }
+
+        It "A command in a steppable pipeline keeps its own redirection over its caller's" {
+            function Test-OwnRedirection {
+                [CmdletBinding()]
+                param()
+
+                begin {
+                    $step = { Write-Error -Message 'boom' 2>&1 }.GetSteppablePipeline()
+                    $step.Begin($PSCmdlet)
+                }
+
+                end {
+                    $step.End()
+                }
+            }
+
+            $result = Test-OwnRedirection 2>$null
+            $result | Should -BeOfType System.Management.Automation.ErrorRecord
+        }
     }
 
     Context "'exit' statement in command" {

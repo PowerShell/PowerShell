@@ -2199,32 +2199,21 @@ namespace System.Management.Automation
         internal MergeDataStream ErrorMergeTo { get; set; }
 
         /// <summary>
-        /// Method to set data stream merging based on passed in runtime object.
+        /// Method to set data stream merging based on passed in runtime object, for each stream this runtime does not already redirect.
         /// </summary>
         /// <param name="fromRuntime">MshCommandRuntime object.</param>
         internal void SetMergeFromRuntime(MshCommandRuntime fromRuntime)
         {
-            this.ErrorMergeTo = fromRuntime.ErrorMergeTo;
-
-            if (fromRuntime.WarningOutputPipe != null)
+            // The command's own redirections, such as 2>&1 on a command in a steppable pipeline, take precedence over its caller's.
+            if (this.ErrorMergeTo == MergeDataStream.None)
             {
-                this.WarningOutputPipe = fromRuntime.WarningOutputPipe;
+                this.ErrorMergeTo = fromRuntime.ErrorMergeTo;
             }
 
-            if (fromRuntime.VerboseOutputPipe != null)
-            {
-                this.VerboseOutputPipe = fromRuntime.VerboseOutputPipe;
-            }
-
-            if (fromRuntime.DebugOutputPipe != null)
-            {
-                this.DebugOutputPipe = fromRuntime.DebugOutputPipe;
-            }
-
-            if (fromRuntime.InformationOutputPipe != null)
-            {
-                this.InformationOutputPipe = fromRuntime.InformationOutputPipe;
-            }
+            this.WarningOutputPipe ??= fromRuntime.WarningOutputPipe;
+            this.VerboseOutputPipe ??= fromRuntime.VerboseOutputPipe;
+            this.DebugOutputPipe ??= fromRuntime.DebugOutputPipe;
+            this.InformationOutputPipe ??= fromRuntime.InformationOutputPipe;
         }
 
         //
