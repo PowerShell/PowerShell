@@ -511,8 +511,14 @@ Describe 'Function Pipeline Behaviour' -Tag 'CI' {
             $result | Should -BeOfType System.Management.Automation.ErrorRecord
         }
 
-        It "A command in a steppable pipeline keeps its own redirection to a file over its caller's merge" {
+        It "A command in a steppable pipeline keeps its own redirection to a file when its caller <Caller>" -TestCases @(
+            @{ Caller = 'does not redirect errors'; Invoke = { Test-OwnFileRedirection } }
+            @{ Caller = 'merges errors into its output'; Invoke = { Test-OwnFileRedirection 2>&1 } }
+        ) {
+            param($Invoke)
+
             $errorFile = Join-Path -Path $TestDrive -ChildPath 'OwnFileRedirection.txt'
+            Remove-Item -LiteralPath $errorFile -ErrorAction Ignore
 
             function Test-OwnFileRedirection {
                 [CmdletBinding()]
@@ -528,8 +534,9 @@ Describe 'Function Pipeline Behaviour' -Tag 'CI' {
                 }
             }
 
-            $result = Test-OwnFileRedirection 2>&1
+            $result = & $Invoke
             $result | Should -BeNullOrEmpty
+            Get-Content -LiteralPath $errorFile -Raw -ErrorAction Stop | Should -Match 'boom'
         }
 
         It "A command in a steppable pipeline keeps its own merge of warnings into its output when its caller <Caller>" -TestCases @(
