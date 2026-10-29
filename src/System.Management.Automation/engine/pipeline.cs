@@ -1361,9 +1361,8 @@ namespace System.Management.Automation.Internal
             {
                 ValidateCommandProcessorNotNull(commandProcessor, errorMessage: null);
 
-                // Leave a redirection of the command's own errors, to a file or to $null, in place.
-                Pipe errorPipe = commandProcessor.CommandRuntime.ErrorOutputPipe;
-                if (errorPipe.DownstreamCmdlet == null && errorPipe.PipelineProcessor == null && !errorPipe.NullPipe)
+                // Leave a redirection of the command's own errors, to a file or to $null, in place, but not an error pipe it took from its function.
+                if (!commandProcessor.CommandRuntime.ErrorOutputRedirected && commandProcessor.CommandRuntime.ErrorOutputPipe.DownstreamCmdlet == null)
                 {
                     commandProcessor.CommandRuntime.ErrorOutputPipe = pipeToUse;
                 }

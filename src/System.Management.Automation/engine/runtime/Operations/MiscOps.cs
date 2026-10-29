@@ -1124,6 +1124,7 @@ namespace System.Management.Automation
 
                     commandProcessor.CommandRuntime.OutputPipe = pipe;
                     commandProcessor.CommandRuntime.ErrorOutputPipe = pipe;
+                    commandProcessor.CommandRuntime.ErrorOutputRedirected = true;
                     commandProcessor.CommandRuntime.WarningOutputPipe = pipe;
                     commandProcessor.CommandRuntime.VerboseOutputPipe = pipe;
                     commandProcessor.CommandRuntime.DebugOutputPipe = pipe;
@@ -1137,6 +1138,7 @@ namespace System.Management.Automation
                     break;
                 case RedirectionStream.Error:
                     commandProcessor.CommandRuntime.ErrorOutputPipe = pipe;
+                    commandProcessor.CommandRuntime.ErrorOutputRedirected = true;
                     break;
                 case RedirectionStream.Warning:
                     commandProcessor.CommandRuntime.WarningOutputPipe = pipe;

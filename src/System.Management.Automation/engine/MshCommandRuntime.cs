@@ -2199,6 +2199,12 @@ namespace System.Management.Automation
         internal MergeDataStream ErrorMergeTo { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether the command redirects its own errors to a file or to $null,
+        /// rather than writing them to an error pipe it was given, such as its function's.
+        /// </summary>
+        internal bool ErrorOutputRedirected { get; set; }
+
+        /// <summary>
         /// Method to set data stream merging based on passed in runtime object, for each stream this runtime does not already redirect.
         /// </summary>
         /// <param name="fromRuntime">MshCommandRuntime object.</param>

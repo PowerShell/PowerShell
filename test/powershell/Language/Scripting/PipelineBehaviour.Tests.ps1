@@ -539,6 +539,38 @@ Describe 'Function Pipeline Behaviour' -Tag 'CI' {
             Get-Content -LiteralPath $errorFile -Raw -ErrorAction Stop | Should -Match 'boom'
         }
 
+        It "A steppable pipeline begun from another command sends its errors to that command's error pipe, not to the one it took where it was built" {
+            $errorFile = Join-Path -Path $TestDrive -ChildPath 'BegunElsewhere.txt'
+            Remove-Item -LiteralPath $errorFile -ErrorAction Ignore
+
+            function Test-BeginElsewhere {
+                [CmdletBinding()]
+                param(
+                    [System.Management.Automation.SteppablePipeline] $Step
+                )
+
+                begin {
+                    $Step.Begin($PSCmdlet)
+                }
+
+                end {
+                    $Step.End()
+                }
+            }
+
+            function Test-BuildAndBeginElsewhere {
+                [CmdletBinding()]
+                param()
+
+                # Write-Error takes this function's error pipe, which discards it under 2>$null.
+                $step = { Write-Error -Message 'boom' }.GetSteppablePipeline()
+                Test-BeginElsewhere -Step $step 2> $errorFile
+            }
+
+            Test-BuildAndBeginElsewhere 2>$null
+            Get-Content -LiteralPath $errorFile -Raw -ErrorAction Stop | Should -Match 'boom'
+        }
+
         It "A command in a steppable pipeline keeps its own merge of warnings into its output when its caller <Caller>" -TestCases @(
             @{ Caller = 'does not redirect warnings'; Invoke = { Test-OwnWarningMerge } }
             @{ Caller = 'discards warnings'; Invoke = { Test-OwnWarningMerge 3>$null } }
