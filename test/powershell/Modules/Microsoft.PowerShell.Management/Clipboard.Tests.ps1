@@ -92,32 +92,84 @@ Describe 'Clipboard cmdlet tests' -Tag CI {
     }
 
     Context 'External clipboard process handling' {
-        It 'falls back when the clipboard helper times out' {
+        BeforeAll {
             $clipboardAssembly = (Get-Command Set-Clipboard).ImplementingType.Assembly
             $clipboardType = $clipboardAssembly.GetType('Microsoft.PowerShell.Commands.Internal.Clipboard')
             $bindingFlags = [System.Reflection.BindingFlags]'NonPublic, Static'
-            $startProcess = $clipboardType.GetMethod('StartProcess', $bindingFlags)
+            $startProcess = $clipboardType.GetMethods($bindingFlags) |
+                Where-Object { $_.Name -eq 'StartProcess' -and $_.GetParameters().Count -eq 5 }
             $clipboardSupported = $clipboardType.GetField('_clipboardSupported', $bindingFlags)
-            $originalClipboardSupported = $clipboardSupported.GetValue($null)
             $pwsh = Join-Path $PSHOME 'pwsh'
+        }
+
+        BeforeEach {
+            $originalClipboardSupported = $clipboardSupported.GetValue($null)
+        }
+
+        AfterEach {
+            $clipboardSupported.SetValue($null, $originalClipboardSupported)
+        }
+
+        It 'terminates a clipboard helper that times out' {
             $arguments = '-NoProfile -Command "Start-Sleep -Seconds 30"'
             $invokeArguments = [object[]]@(
                 $pwsh.PSObject.BaseObject
                 $arguments.PSObject.BaseObject
                 [string]::Empty
                 $false
+                0
             )
             $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
 
             try {
                 $result = $startProcess.Invoke($null, $invokeArguments)
                 $result | Should -BeNullOrEmpty
+                $helperPid = [int]$invokeArguments[4]
+                $helperPid | Should -BeGreaterThan 0
+                Get-Process -Id $helperPid -ErrorAction Ignore | Should -BeNullOrEmpty
                 $stopwatch.Elapsed | Should -BeLessThan ([TimeSpan]::FromSeconds(5))
                 $clipboardSupported.GetValue($null) | Should -BeFalse
             }
             finally {
                 $stopwatch.Stop()
-                $clipboardSupported.SetValue($null, $originalClipboardSupported)
+                if ($helperPid) {
+                    Stop-Process -Id $helperPid -Force -ErrorAction Ignore
+                }
+            }
+        }
+
+        It 'does not wait for a descendant that retains stdout' -Skip:$IsWindows {
+            $childPidPath = Join-Path $TestDrive 'child.pid'
+            $helperPath = Join-Path $TestDrive 'retained-pipe-helper.sh'
+            @'
+sleep 30 &
+echo $! > "$1"
+'@ | Set-Content -LiteralPath $helperPath
+
+            $arguments = '"{0}" "{1}"' -f $helperPath, $childPidPath
+            $invokeArguments = [object[]]@(
+                '/bin/sh'
+                $arguments.PSObject.BaseObject
+                [string]::Empty
+                $true
+                0
+            )
+            $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+
+            try {
+                $result = $startProcess.Invoke($null, $invokeArguments)
+                $result | Should -BeNullOrEmpty
+                $childPidPath | Should -Exist
+                $childPid = [int](Get-Content -LiteralPath $childPidPath)
+                Get-Process -Id $childPid -ErrorAction Stop | Should -Not -BeNullOrEmpty
+                $stopwatch.Elapsed | Should -BeLessThan ([TimeSpan]::FromSeconds(5))
+                $clipboardSupported.GetValue($null) | Should -BeFalse
+            }
+            finally {
+                $stopwatch.Stop()
+                if ($childPid) {
+                    Stop-Process -Id $childPid -Force -ErrorAction Ignore
+                }
             }
         }
     }

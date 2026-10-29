@@ -23,11 +23,21 @@ namespace Microsoft.PowerShell.Commands.Internal
             string stdin = "",
             bool readStdout = true)
         {
+            return StartProcess(tool, args, stdin, readStdout, out _);
+        }
+
+        private static string StartProcess(
+            string tool,
+            string args,
+            string stdin,
+            bool readStdout,
+            out int processId)
+        {
+            processId = -1;
             ProcessStartInfo startInfo = new();
             startInfo.UseShellExecute = false;
             startInfo.RedirectStandardInput = true;
-            startInfo.RedirectStandardOutput = true;
-            startInfo.RedirectStandardError = true;
+            startInfo.RedirectStandardOutput = readStdout;
             startInfo.FileName = tool;
             startInfo.Arguments = args;
             using (Process process = new())
@@ -45,30 +55,34 @@ namespace Microsoft.PowerShell.Commands.Internal
 
                 process.StandardInput.Write(stdin);
                 process.StandardInput.Close();
+                processId = process.Id;
 
-                Task<string> stdoutTask = process.StandardOutput.ReadToEndAsync();
-                Task<string> stderrTask = process.StandardError.ReadToEndAsync();
+                Task<string> stdoutTask = readStdout ? process.StandardOutput.ReadToEndAsync() : null;
 
                 if (!process.WaitForExit(250))
                 {
                     try
                     {
-                        process.Kill();
+                        process.Kill(entireProcessTree: true);
                     }
                     catch (InvalidOperationException)
                     {
                         // The process exited between WaitForExit and Kill.
                     }
 
-                    process.WaitForExit(250);
+                    _ = process.WaitForExit(250);
                     _clipboardSupported = false;
                     return string.Empty;
                 }
 
-                string stdout = stdoutTask.GetAwaiter().GetResult();
-                _ = stderrTask.GetAwaiter().GetResult();
+                if (readStdout && !stdoutTask.Wait(250))
+                {
+                    _clipboardSupported = false;
+                    return string.Empty;
+                }
+
                 _clipboardSupported = process.ExitCode == 0;
-                return readStdout ? stdout : string.Empty;
+                return readStdout ? stdoutTask.GetAwaiter().GetResult() : string.Empty;
             }
         }
 
