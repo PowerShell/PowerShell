@@ -38,6 +38,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             startInfo.UseShellExecute = false;
             startInfo.RedirectStandardInput = true;
             startInfo.RedirectStandardOutput = readStdout;
+            startInfo.RedirectStandardError = true;
             startInfo.FileName = tool;
             startInfo.Arguments = args;
             using (Process process = new())
@@ -53,29 +54,58 @@ namespace Microsoft.PowerShell.Commands.Internal
                     return string.Empty;
                 }
 
-                process.StandardInput.Write(stdin);
-                process.StandardInput.Close();
                 processId = process.Id;
 
-                Task<string> stdoutTask = readStdout ? process.StandardOutput.ReadToEndAsync() : null;
+                Task stdinTask = process.StandardInput.WriteAsync(stdin).ContinueWith(
+                    _ =>
+                    {
+                        try
+                        {
+                            process.StandardInput.Close();
+                        }
+                        catch (InvalidOperationException)
+                        {
+                            // The process may have exited while stdin was being written.
+                        }
+                    },
+                    CancellationToken.None,
+                    TaskContinuationOptions.ExecuteSynchronously,
+                    TaskScheduler.Default);
+                Task<string> stdoutTask = readStdout
+                    ? process.StandardOutput.ReadToEndAsync()
+                    : Task.FromResult(string.Empty);
+                Task<string> stderrTask = process.StandardError.ReadToEndAsync();
+                Task exitTask = Task.Run(() => process.WaitForExit());
+                Task processTask = Task.WhenAll(stdinTask, stdoutTask, stderrTask, exitTask);
 
-                if (!process.WaitForExit(250))
+                try
                 {
-                    try
+                    if (!processTask.Wait(250))
                     {
-                        process.Kill(entireProcessTree: true);
-                    }
-                    catch (InvalidOperationException)
-                    {
-                        // The process exited between WaitForExit and Kill.
-                    }
+                        try
+                        {
+                            process.Kill(entireProcessTree: true);
+                        }
+                        catch (InvalidOperationException)
+                        {
+                            // The process exited between the timeout and Kill.
+                        }
 
-                    _ = process.WaitForExit(250);
-                    _clipboardSupported = false;
-                    return string.Empty;
+                        _ = process.WaitForExit(250);
+                        try
+                        {
+                            _ = processTask.Wait(250);
+                        }
+                        catch (AggregateException)
+                        {
+                            // The terminated process can fault pending stream operations.
+                        }
+
+                        _clipboardSupported = false;
+                        return string.Empty;
+                    }
                 }
-
-                if (readStdout && !stdoutTask.Wait(250))
+                catch (AggregateException)
                 {
                     _clipboardSupported = false;
                     return string.Empty;

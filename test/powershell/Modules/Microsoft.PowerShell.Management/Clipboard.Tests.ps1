@@ -112,10 +112,11 @@ Describe 'Clipboard cmdlet tests' -Tag CI {
 
         It 'terminates a clipboard helper that times out' {
             $arguments = '-NoProfile -Command "Start-Sleep -Seconds 30"'
+            $largeInput = 'a' * 1MB
             $invokeArguments = [object[]]@(
                 $pwsh.PSObject.BaseObject
                 $arguments.PSObject.BaseObject
-                [string]::Empty
+                $largeInput.PSObject.BaseObject
                 $false
                 0
             )
