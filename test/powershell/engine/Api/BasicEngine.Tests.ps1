@@ -71,6 +71,14 @@ Describe 'Basic engine APIs' -Tags "CI" {
             $result = Invoke-SteppableWriteError -MergeErrors 2>$null
             $result | Should -BeOfType System.Management.Automation.ErrorRecord
         }
+
+        It "points errors from the pipeline's commands at the line that called the command that built it" {
+            $call = { Invoke-SteppableWriteError 2>&1 }
+            $result = & $call
+            $result.InvocationInfo.ScriptName | Should -Be $call.File
+            $result.InvocationInfo.ScriptLineNumber | Should -Be $call.StartPosition.StartLine
+            $result.InvocationInfo.InvocationName | Should -BeExactly 'Invoke-SteppableWriteError'
+        }
     }
 }
 

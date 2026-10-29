@@ -10,6 +10,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Runspaces.Internal;
 using System.Runtime.Serialization;
@@ -4035,6 +4036,19 @@ namespace System.Management.Automation
                     commandProcessorBase.RedirectShellErrorOutputPipe = RedirectShellErrorOutputPipe;
 
                     pipelineProcessor.Add(commandProcessorBase);
+
+                    // For nicer error reporting, make errors in the steppable pipeline point back to the caller of the command that built it, as ScriptBlock.GetSteppablePipeline() does.
+                    if (context.CurrentCommandProcessor != null)
+                    {
+                        InvocationInfo callerInvocation = context.CurrentCommandProcessor.Command.MyInvocation;
+                        InvocationInfo myInvocation = commandProcessorBase.Command.MyInvocation;
+                        myInvocation.InvocationName = callerInvocation.InvocationName;
+                        IScriptExtent displayPosition = callerInvocation.ScriptPosition;
+                        if (displayPosition != null && displayPosition != PositionUtilities.EmptyExtent)
+                        {
+                            myInvocation.DisplayScriptPosition = displayPosition;
+                        }
+                    }
 
                     // Set the data stream merge properties based on ExecutionContext, as ScriptBlock.GetSteppablePipeline() does.
                     if (context.CurrentCommandProcessor != null && context.CurrentCommandProcessor.CommandRuntime != null)
