@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<helpItems schema="maml">
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10">
+    <command:details>
+      <command:name>ExampleFunction</command:name>
+        <maml:description>
+          <maml:para>An example function with help from the newbase\en-US culture.</maml:para>
+        </maml:description>
+    </command:details>
+  </command:command>
+</helpItems>
