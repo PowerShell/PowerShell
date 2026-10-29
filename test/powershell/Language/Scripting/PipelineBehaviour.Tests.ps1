@@ -510,6 +510,27 @@ Describe 'Function Pipeline Behaviour' -Tag 'CI' {
             $result = Test-OwnRedirection 2>$null
             $result | Should -BeOfType System.Management.Automation.ErrorRecord
         }
+
+        It "A command in a steppable pipeline keeps its own redirection to a file over its caller's merge" {
+            $errorFile = Join-Path -Path $TestDrive -ChildPath 'OwnFileRedirection.txt'
+
+            function Test-OwnFileRedirection {
+                [CmdletBinding()]
+                param()
+
+                begin {
+                    $step = { Write-Error -Message 'boom' 2> $errorFile }.GetSteppablePipeline()
+                    $step.Begin($PSCmdlet)
+                }
+
+                end {
+                    $step.End()
+                }
+            }
+
+            $result = Test-OwnFileRedirection 2>&1
+            $result | Should -BeNullOrEmpty
+        }
     }
 
     Context "'exit' statement in command" {
