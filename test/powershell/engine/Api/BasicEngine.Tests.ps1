@@ -79,6 +79,38 @@ Describe 'Basic engine APIs' -Tags "CI" {
             $result.InvocationInfo.ScriptLineNumber | Should -Be $call.StartPosition.StartLine
             $result.InvocationInfo.InvocationName | Should -BeExactly 'Invoke-SteppableWriteError'
         }
+
+        It "<Expectation> the redirections of the command running when <Method>() builds the pipeline" -TestCases @(
+            @{ Method = 'GetSteppablePipeline'; Expectation = 'takes'; ExpectMerged = $true }
+            @{ Method = 'GetIndependentSteppablePipeline'; Expectation = 'does not take'; ExpectMerged = $false }
+        ) {
+            param($Method, $ExpectMerged)
+
+            # A remoting server builds its pipeline through GetIndependentSteppablePipeline() from an event, while an unrelated command is running.
+            function Invoke-SteppableWriteErrorFrom {
+                [CmdletBinding()]
+                param(
+                    [string] $Method,
+                    [ref] $StepOutput
+                )
+
+                begin {
+                    $ps = [powershell]::Create([System.Management.Automation.RunspaceMode]::CurrentRunspace)
+                    $null = $ps.AddCommand((Get-Command -Name Write-Error)).AddParameter('Message', 'boom')
+                    $step = [powershell].GetMethod($Method, [System.Reflection.BindingFlags]'Instance, Public, NonPublic', $null, [type[]]@(), $null).Invoke($ps, $null)
+                    $step.Begin($false)
+                }
+
+                end {
+                    $StepOutput.Value = $step.End()
+                    $ps.Dispose()
+                }
+            }
+
+            $stepOutput = $null
+            $null = Invoke-SteppableWriteErrorFrom -Method $Method -StepOutput ([ref]$stepOutput) 2>&1
+            @($stepOutput | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] }).Count -gt 0 | Should -Be $ExpectMerged
+        }
     }
 }
 
