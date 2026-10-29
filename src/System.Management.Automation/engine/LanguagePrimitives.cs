@@ -4117,6 +4117,11 @@ namespace System.Management.Automation
             catch (Exception e)
             {
                 typeConversion.WriteLine("Exception converting with IConvertible: \"{0}\".", e.Message);
+                if (e is InvalidCastException && resultType.IsArray && resultType.GetArrayRank() > 1)
+                {
+                    ThrowInvalidCastException(valueToConvert, resultType);
+                }
+
                 throw new PSInvalidCastException("InvalidCastIConvertible", e,
                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
                     valueToConvert.ToString(), resultType.ToString(), e.Message);
@@ -5036,16 +5041,26 @@ namespace System.Management.Automation
             {
                 if (toType.GetArrayRank() > 1)
                 {
-                    // The array conversions below only build one-dimensional arrays. Keep the scalar rank so
-                    // overload selection and custom converter lookup are unchanged, but fail instead of converting.
-                    if (!fromType.IsArray && !LanguagePrimitives.IsTypeEnumerable(fromType))
+                    // The array conversions below only build one-dimensional arrays. Keep the ranks they would have
+                    // so overload selection and custom converter lookup are unchanged, but fail instead of converting.
+                    if (fromType.IsArray)
                     {
-                        IConversionData elementData = FigureConversion(fromType, toType.GetElementType());
-                        if (elementData.Rank != ConversionRank.None)
-                        {
-                            valueDependentRank = elementData.Rank & ConversionRank.ValueDependent;
-                            valueDependentConversion = LanguagePrimitives.ConvertNoConversion;
-                        }
+                        ConversionRank arrayRank = toType.GetElementType().IsAssignableFrom(fromType.GetElementType())
+                            ? ConversionRank.Language
+                            : ConversionRank.UnrelatedArrays;
+                        return CacheConversion<object>(fromType, toType, LanguagePrimitives.ConvertNoConversion, arrayRank);
+                    }
+
+                    if (LanguagePrimitives.IsTypeEnumerable(fromType))
+                    {
+                        return CacheConversion<object>(fromType, toType, LanguagePrimitives.ConvertNoConversion, ConversionRank.Language);
+                    }
+
+                    IConversionData elementData = FigureConversion(fromType, toType.GetElementType());
+                    if (elementData.Rank != ConversionRank.None)
+                    {
+                        valueDependentRank = elementData.Rank & ConversionRank.ValueDependent;
+                        valueDependentConversion = LanguagePrimitives.ConvertNoConversion;
                     }
 
                     return null;

@@ -631,6 +631,9 @@ Describe 'Conversion to multidimensional array types' -Tags 'CI' {
         @{ Expression = '[int[,,]] ((1, 2), (2, 3))' }
         @{ Expression = '[int[,]] @(1)' }
         @{ Expression = '[int[,]] 1' }
+        @{ Expression = '[int[,]] $true' }
+        @{ Expression = '[int[,]] [System.DayOfWeek]::Monday' }
+        @{ Expression = '[int[,]] [datetime]''2020-01-01''' }
         @{ Expression = '[object[,]] ''a''' }
         @{ Expression = '[long[,]] [int[,]]::new(2, 2)' }
     ) {
@@ -654,8 +657,28 @@ Describe 'Conversion to multidimensional array types' -Tags 'CI' {
         $err.Exception.Message | Should -BeLike "*$multidimensionalMessage*"
     }
 
-    It 'returns $null for -as with a multidimensional array type' {
-        ((1, 2), (3, 4)) -as [int[,]] | Should -BeNullOrEmpty
+    It 'returns $null for -as with a multidimensional array type: <Expression>' -TestCases @(
+        @{ Expression = '((1, 2), (3, 4)) -as [int[,]]' }
+        @{ Expression = '(1, 2) -as [int[,]]' }
+        @{ Expression = '1 -as [int[,]]' }
+    ) {
+        param($Expression)
+
+        $result = & ([scriptblock]::Create($Expression))
+        $null -eq $result | Should -BeTrue
+    }
+
+    It 'keeps overload selection for array arguments' {
+        Add-Type -TypeDefinition @'
+namespace MultidimensionalConversionTest {
+    public static class ArrayTarget {
+        public static string Pick(int[,] value) { return "matrix"; }
+        public static string Pick(string value) { return "string"; }
+    }
+}
+'@
+        $err = { [MultidimensionalConversionTest.ArrayTarget]::Pick([int[]] (1, 2)) } | Should -Throw -PassThru
+        $err.Exception.Message | Should -BeLike "*$multidimensionalMessage*"
     }
 
     It 'still passes through a value that already is the multidimensional array type' {
@@ -681,7 +704,7 @@ Describe 'Conversion to multidimensional array types' -Tags 'CI' {
         $result[1, 1] | Should -Be 9
     }
 
-    It 'keeps overload selection and late type converters for user-defined conversions' {
+    It 'keeps overload selection and type converters for user-defined conversions' {
         Add-Type -TypeDefinition @'
 using System;
 using System.Management.Automation;
