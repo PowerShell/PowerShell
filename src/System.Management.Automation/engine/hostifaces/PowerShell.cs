@@ -3966,8 +3966,20 @@ namespace System.Management.Automation
         public SteppablePipeline GetSteppablePipeline()
         {
             ExecutionContext context = GetContextFromTLS();
-            SteppablePipeline spl = GetSteppablePipeline(context, CommandOrigin.Internal);
+            SteppablePipeline spl = GetSteppablePipeline(context, CommandOrigin.Internal, forCurrentCommand: true);
             return spl;
+        }
+
+        /// <summary>
+        /// Get a steppable pipeline object that runs on behalf of something other than the command currently running,
+        /// such as a remote client, so takes neither that command's stream redirections nor its position for errors.
+        /// </summary>
+        /// <returns>A steppable pipeline object.</returns>
+        /// <exception cref="InvalidOperationException">An attempt was made to use the scriptblock outside of the engine.</exception>
+        internal SteppablePipeline GetIndependentSteppablePipeline()
+        {
+            ExecutionContext context = GetContextFromTLS();
+            return GetSteppablePipeline(context, CommandOrigin.Internal, forCurrentCommand: false);
         }
 
         /// <summary>
@@ -4009,8 +4021,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="context">Engine execution context.</param>
         /// <param name="commandOrigin">Command origin.</param>
+        /// <param name="forCurrentCommand">Whether the pipeline is built for the command currently running, such as a proxy, and so takes its stream redirections and its position for errors.</param>
         /// <returns>Steppable pipeline object.</returns>
-        private SteppablePipeline GetSteppablePipeline(ExecutionContext context, CommandOrigin commandOrigin)
+        private SteppablePipeline GetSteppablePipeline(ExecutionContext context, CommandOrigin commandOrigin, bool forCurrentCommand)
         {
             // Check for an empty pipeline
             if (Commands.Commands.Count == 0)
@@ -4038,7 +4051,7 @@ namespace System.Management.Automation
                     pipelineProcessor.Add(commandProcessorBase);
 
                     // For nicer error reporting, make errors in the steppable pipeline point back to the caller of the command that built it, as ScriptBlock.GetSteppablePipeline() does.
-                    if (context.CurrentCommandProcessor != null)
+                    if (forCurrentCommand && context.CurrentCommandProcessor != null)
                     {
                         InvocationInfo callerInvocation = context.CurrentCommandProcessor.Command.MyInvocation;
                         InvocationInfo myInvocation = commandProcessorBase.Command.MyInvocation;
@@ -4051,7 +4064,7 @@ namespace System.Management.Automation
                     }
 
                     // Set the data stream merge properties based on ExecutionContext, as ScriptBlock.GetSteppablePipeline() does.
-                    if (context.CurrentCommandProcessor != null && context.CurrentCommandProcessor.CommandRuntime != null)
+                    if (forCurrentCommand && context.CurrentCommandProcessor != null && context.CurrentCommandProcessor.CommandRuntime != null)
                     {
                         // Unlike SetMergeFromRuntime(), a merge the command sets for itself through Command.MergeMyResults() takes precedence over its caller's.
                         MshCommandRuntime callerRuntime = context.CurrentCommandProcessor.CommandRuntime;
