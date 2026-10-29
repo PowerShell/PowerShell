@@ -90,4 +90,35 @@ Describe 'Clipboard cmdlet tests' -Tag CI {
             $result | Should -BeExactly @('hello', 'world')
         }
     }
+
+    Context 'External clipboard process handling' {
+        It 'falls back when the clipboard helper times out' {
+            $clipboardAssembly = (Get-Command Set-Clipboard).ImplementingType.Assembly
+            $clipboardType = $clipboardAssembly.GetType('Microsoft.PowerShell.Commands.Internal.Clipboard')
+            $bindingFlags = [System.Reflection.BindingFlags]'NonPublic, Static'
+            $startProcess = $clipboardType.GetMethod('StartProcess', $bindingFlags)
+            $clipboardSupported = $clipboardType.GetField('_clipboardSupported', $bindingFlags)
+            $originalClipboardSupported = $clipboardSupported.GetValue($null)
+            $pwsh = Join-Path $PSHOME 'pwsh'
+            $arguments = '-NoProfile -Command "Start-Sleep -Seconds 30"'
+            $invokeArguments = [object[]]@(
+                $pwsh.PSObject.BaseObject
+                $arguments.PSObject.BaseObject
+                [string]::Empty
+                $false
+            )
+            $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+
+            try {
+                $result = $startProcess.Invoke($null, $invokeArguments)
+                $result | Should -BeNullOrEmpty
+                $stopwatch.Elapsed | Should -BeLessThan ([TimeSpan]::FromSeconds(5))
+                $clipboardSupported.GetValue($null) | Should -BeFalse
+            }
+            finally {
+                $stopwatch.Stop()
+                $clipboardSupported.SetValue($null, $originalClipboardSupported)
+            }
+        }
+    }
 }

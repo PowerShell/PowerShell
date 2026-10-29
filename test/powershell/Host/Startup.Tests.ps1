@@ -96,6 +96,7 @@ Describe "Validate start of console host" -Tag CI {
         }
 
         $diffs = Compare-Object -ReferenceObject $allowedAssemblies -DifferenceObject $loadedAssemblies
+        $assembliesLoadedButNotAllowed = @()
 
         if ($null -ne $diffs) {
             $assembliesAllowedButNotLoaded = $diffs | Where-Object SideIndicator -EQ "<=" | ForEach-Object InputObject
@@ -109,6 +110,6 @@ Describe "Validate start of console host" -Tag CI {
             }
         }
 
-        $diffs | Should -BeExactly $null
+        $assembliesLoadedButNotAllowed | Should -BeNullOrEmpty
     }
 }

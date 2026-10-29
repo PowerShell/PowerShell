@@ -186,9 +186,9 @@ function New-RemoteSession
     $parameters = CreateParameters -Name $Name -ConfigurationName $ConfigurationName -SessionOption $SessionOption -CimSession:$CimSession.IsPresent
 
     if ($CimSession) {
-        $session = New-CimSession @parameters
+        $session = New-CimSession @parameters -ErrorAction Stop
     } else {
-        $session = New-PSSession @parameters
+        $session = New-PSSession @parameters -ErrorAction Stop
     }
 
     Write-Verbose "Successfully created remote PSSession on endpoint: $ConfigurationName"

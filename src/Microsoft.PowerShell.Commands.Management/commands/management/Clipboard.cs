@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Microsoft.PowerShell.Commands.Internal
 {
@@ -29,8 +30,6 @@ namespace Microsoft.PowerShell.Commands.Internal
             startInfo.RedirectStandardError = true;
             startInfo.FileName = tool;
             startInfo.Arguments = args;
-            string stdout = string.Empty;
-
             using (Process process = new())
             {
                 process.StartInfo = startInfo;
@@ -47,16 +46,30 @@ namespace Microsoft.PowerShell.Commands.Internal
                 process.StandardInput.Write(stdin);
                 process.StandardInput.Close();
 
-                if (readStdout)
+                Task<string> stdoutTask = process.StandardOutput.ReadToEndAsync();
+                Task<string> stderrTask = process.StandardError.ReadToEndAsync();
+
+                if (!process.WaitForExit(250))
                 {
-                    stdout = process.StandardOutput.ReadToEnd();
+                    try
+                    {
+                        process.Kill();
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        // The process exited between WaitForExit and Kill.
+                    }
+
+                    process.WaitForExit(250);
+                    _clipboardSupported = false;
+                    return string.Empty;
                 }
 
-                process.WaitForExit(250);
+                string stdout = stdoutTask.GetAwaiter().GetResult();
+                _ = stderrTask.GetAwaiter().GetResult();
                 _clipboardSupported = process.ExitCode == 0;
+                return readStdout ? stdout : string.Empty;
             }
-
-            return stdout;
         }
 
         public static string GetText()
