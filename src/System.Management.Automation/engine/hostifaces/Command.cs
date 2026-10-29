@@ -369,7 +369,7 @@ namespace System.Management.Automation.Runspaces
         /// Set the merge settings on commandProcessor.
         /// </summary>
         /// <param name="commandProcessor"></param>
-        private
+        internal
         void
         SetMergeSettingsOnCommandProcessor(CommandProcessorBase commandProcessor)
         {

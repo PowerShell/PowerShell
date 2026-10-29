@@ -888,6 +888,9 @@ namespace System.Management.Automation.Runspaces
                                 commandProcessorBase.AddParameter(internalParameter);
                             }
                         }
+
+                        // Set the merge settings, as Command.CreateCommandProcessor() does for a command found by name.
+                        command.SetMergeSettingsOnCommandProcessor(commandProcessorBase);
                     }
 
                     commandProcessorBase.RedirectShellErrorOutputPipe = this.RedirectShellErrorOutputPipe;
