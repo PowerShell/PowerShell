@@ -531,6 +531,31 @@ Describe 'Function Pipeline Behaviour' -Tag 'CI' {
             $result = Test-OwnFileRedirection 2>&1
             $result | Should -BeNullOrEmpty
         }
+
+        It "A command in a steppable pipeline keeps its own merge of warnings into its output when its caller <Caller>" -TestCases @(
+            @{ Caller = 'does not redirect warnings'; Invoke = { Test-OwnWarningMerge } }
+            @{ Caller = 'discards warnings'; Invoke = { Test-OwnWarningMerge 3>$null } }
+            @{ Caller = 'merges warnings into its output'; Invoke = { Test-OwnWarningMerge 3>&1 } }
+        ) {
+            param($Invoke)
+
+            function Test-OwnWarningMerge {
+                [CmdletBinding()]
+                param()
+
+                begin {
+                    $step = { Write-Warning -Message 'boom' 3>&1 }.GetSteppablePipeline()
+                    $step.Begin($PSCmdlet)
+                }
+
+                end {
+                    $step.End()
+                }
+            }
+
+            $result = & $Invoke
+            $result | Should -BeOfType System.Management.Automation.WarningRecord
+        }
     }
 
     Context "'exit' statement in command" {

@@ -1316,7 +1316,33 @@ namespace System.Management.Automation.Internal
             CommandProcessorBase LastCommandProcessor = _commands[_commands.Count - 1];
             ValidateCommandProcessorNotNull(LastCommandProcessor, errorMessage: null);
 
-            LastCommandProcessor.CommandRuntime.OutputPipe = pipeToUse;
+            // Take any stream the command merges into its success output, such as with 3>&1, along to the new pipe.
+            MshCommandRuntime commandRuntime = LastCommandProcessor.CommandRuntime;
+            Pipe successPipe = commandRuntime.OutputPipe;
+            if (successPipe != null)
+            {
+                if (commandRuntime.WarningOutputPipe == successPipe)
+                {
+                    commandRuntime.WarningOutputPipe = pipeToUse;
+                }
+
+                if (commandRuntime.VerboseOutputPipe == successPipe)
+                {
+                    commandRuntime.VerboseOutputPipe = pipeToUse;
+                }
+
+                if (commandRuntime.DebugOutputPipe == successPipe)
+                {
+                    commandRuntime.DebugOutputPipe = pipeToUse;
+                }
+
+                if (commandRuntime.InformationOutputPipe == successPipe)
+                {
+                    commandRuntime.InformationOutputPipe = pipeToUse;
+                }
+            }
+
+            commandRuntime.OutputPipe = pipeToUse;
             _linkedSuccessOutput = true;
         }
 
