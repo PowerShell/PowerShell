@@ -650,6 +650,11 @@ namespace System.Management.Automation.Internal
 
                 try
                 {
+                    if (!commandProcessor.RanBeginAlready)
+                    {
+                        commandProcessor.DoBegin();
+                    }
+
                     commandProcessor.DoComplete();
                 }
                 catch (PipelineStoppedException)
@@ -658,6 +663,11 @@ namespace System.Management.Automation.Internal
                     {
                         _firstTerminatingError = null;
                         commandRequestingUpstreamCommandsToStop = exception.RequestingCommandProcessor;
+                        if (ReferenceEquals(commandRequestingUpstreamCommandsToStop, commandProcessor))
+                        {
+                            // The requesting command is already completing; downstream commands must still complete.
+                            commandRequestingUpstreamCommandsToStop = null;
+                        }
                     }
                     else
                     {
