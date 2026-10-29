@@ -641,6 +641,29 @@ Describe 'Function Pipeline Behaviour' -Tag 'CI' {
             $result | Should -HaveCount 1
             $result | Should -BeOfType System.Management.Automation.ErrorRecord
         }
+
+        It "A native command in a steppable pipeline has its stderr merged into the output of a caller that merges its errors" {
+            function Test-NativeErrors {
+                [CmdletBinding()]
+                param()
+
+                begin {
+                    $step = { testexe -stderrandout native }.GetSteppablePipeline()
+                    $step.Begin($PSCmdlet)
+                }
+
+                end {
+                    $step.End()
+                }
+            }
+
+            # testexe writes 'native' to stdout and its reverse to stderr.
+            $result = Test-NativeErrors 2>&1
+            $errors = @($result | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] })
+            $errors | Should -HaveCount 1
+            $errors[0].Exception.Message | Should -BeExactly 'evitan'
+            $result | Where-Object { $_ -is [string] } | Should -BeExactly 'native'
+        }
     }
 
     Context "'exit' statement in command" {

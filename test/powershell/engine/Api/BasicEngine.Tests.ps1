@@ -104,6 +104,32 @@ Describe 'Basic engine APIs' -Tags "CI" {
             $result | Should -BeOfType System.Management.Automation.ErrorRecord
         }
 
+        It "merges a native command's stderr into the output of a command that merges its errors" {
+            function Invoke-SteppableNative {
+                [CmdletBinding()]
+                param()
+
+                begin {
+                    $ps = [powershell]::Create([System.Management.Automation.RunspaceMode]::CurrentRunspace)
+                    $null = $ps.AddCommand((Get-Command -Name testexe -CommandType Application | Select-Object -First 1)).AddArgument('-stderrandout').AddArgument('native')
+                    $step = $ps.GetSteppablePipeline()
+                    $step.Begin($PSCmdlet)
+                }
+
+                end {
+                    $step.End()
+                    $ps.Dispose()
+                }
+            }
+
+            # testexe writes 'native' to stdout and its reverse to stderr.
+            $result = Invoke-SteppableNative 2>&1
+            $errors = @($result | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] })
+            $errors | Should -HaveCount 1
+            $errors[0].Exception.Message | Should -BeExactly 'evitan'
+            $result | Where-Object { $_ -is [string] } | Should -BeExactly 'native'
+        }
+
         It "<Expectation> the stream redirections of the command running when <Method>() builds the pipeline" -TestCases @(
             @{ Method = 'GetSteppablePipeline'; Expectation = 'takes'; ExpectMerged = $true }
             @{ Method = 'GetIndependentSteppablePipeline'; Expectation = 'does not take'; ExpectMerged = $false }
