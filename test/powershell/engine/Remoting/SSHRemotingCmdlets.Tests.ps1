@@ -21,7 +21,7 @@ Describe "SSHTransport switch parameter value" -Tags 'Feature' {
     }
 }
 
-Describe "SSHConnection parameter hashtable error conditions" -Tags 'Feature' {
+Describe "SSHConnection parameter hashtable error conditions" -Tags 'Feature', 'NotWinPE' {
 
     BeforeAll {
 
@@ -41,7 +41,7 @@ Describe "SSHConnection parameter hashtable error conditions" -Tags 'Feature' {
     }
 }
 
-Describe "SSHConnection parameter hashtable type conversions" -Tags 'Feature', 'Slow' {
+Describe "SSHConnection parameter hashtable type conversions" -Tags 'Feature', 'Slow', 'NotWinPE' {
 
     BeforeAll {
 
@@ -71,7 +71,7 @@ Describe "SSHConnection parameter hashtable type conversions" -Tags 'Feature', '
     }
 }
 
-Describe "No hangs when host doesn't exist" -Tags "CI" {
+Describe "No hangs when host doesn't exist" -Tags "CI", "NotWinPE" {
     $testCases = @(
         @{
             Name = 'Verifies no hang for New-PSSession with non-existing host name'

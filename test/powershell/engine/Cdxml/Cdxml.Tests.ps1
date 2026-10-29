@@ -22,7 +22,7 @@ function Test-CimTestInstance {
     $null -eq (Get-CimInstance @CimCmdletArgs)
 }
 
-Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
+Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows,NotWinPE {
     BeforeAll {
         $skipNotWindows = ! $IsWindows
         if ( $skipNotWindows ) {

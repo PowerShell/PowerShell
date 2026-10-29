@@ -100,34 +100,6 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
                 Should -BeTrue -Because "The script was able to re-enter another process and grab the pid of '$pwshId'."
         }
 
-        It "Can enter, exit, and re-enter another Windows PowerShell PSHost" -Skip:(!$IsWindows) {
-            # Start a PowerShell job where the first thing it does is return $PID. After that, spin forever.
-            # We will use this job as the target process for Enter-PSHostProcess
-            $powershellJob = Start-Job -PSVersion 5.1 {
-                $PID
-                while ($true) {
-                    Start-Sleep -Seconds 30 | Out-Null
-                }
-            }
-
-            $powershellId = Wait-JobPid $powershellJob
-
-            try {
-                Wait-UntilTrue { [bool](Get-PSHostProcessInfo -Id $powershellId) } | Should -BeTrue
-
-                # This will enter and exit another process
-                Invoke-PSHostProcessScript -ArgumentString "-Id $powershellId" -Id $powershellId |
-                    Should -BeTrue -Because "The script was able to enter another process and grab the pid of '$powershellId'."
-
-                # Re-enter and exit the other process
-                Invoke-PSHostProcessScript -ArgumentString "-Id $powershellId" -Id $powershellId |
-                    Should -BeTrue -Because "The script was able to re-enter another process and grab the pid of '$powershellId'."
-
-            } finally {
-                $powershellJob | Stop-Job -PassThru | Remove-Job
-            }
-        }
-
         It "Can enter using NamedPipeConnectionInfo" {
             try {
                 Wait-UntilTrue { [bool](Get-PSHostProcessInfo -Id $pwshId) } | Should -BeTrue
@@ -226,6 +198,45 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
 
         It "Should throw if CustomPipeName does not exist" {
             { Enter-PSHostProcess -CustomPipeName badpipename } | Should -Throw -ExpectedMessage "No named pipe was found with CustomPipeName: badpipename."
+        }
+    }
+}
+
+Describe "Enter Windows PowerShell PSHost process" -Tags "Feature", "NotWinPE" {
+    BeforeAll {
+        $oldColor = $env:NO_COLOR
+        $env:NO_COLOR = 1
+    }
+
+    AfterAll {
+        $env:NO_COLOR = $oldColor
+    }
+
+    It "Can enter, exit, and re-enter another Windows PowerShell PSHost" -Skip:(!$IsWindows) {
+        # Start a PowerShell job where the first thing it does is return $PID. After that, spin forever.
+        # We will use this job as the target process for Enter-PSHostProcess
+        $powershellJob = Start-Job -PSVersion 5.1 {
+            $PID
+            while ($true) {
+                Start-Sleep -Seconds 30 | Out-Null
+            }
+        }
+
+        $powershellId = Wait-JobPid $powershellJob
+
+        try {
+            Wait-UntilTrue { [bool](Get-PSHostProcessInfo -Id $powershellId) } | Should -BeTrue
+
+            # This will enter and exit another process
+            Invoke-PSHostProcessScript -ArgumentString "-Id $powershellId" -Id $powershellId |
+                Should -BeTrue -Because "The script was able to enter another process and grab the pid of '$powershellId'."
+
+            # Re-enter and exit the other process
+            Invoke-PSHostProcessScript -ArgumentString "-Id $powershellId" -Id $powershellId |
+                Should -BeTrue -Because "The script was able to re-enter another process and grab the pid of '$powershellId'."
+
+        } finally {
+            $powershellJob | Stop-Job -PassThru | Remove-Job
         }
     }
 }
