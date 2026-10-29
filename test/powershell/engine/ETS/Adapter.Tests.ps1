@@ -443,6 +443,10 @@ namespace SetterOnlyOverrideTest {
         public override int Value { set => _value = value + 1; }
         protected override int ProtectedValue { set => base.ProtectedValue = value + 1; }
     }
+
+    public class GenericTypeSetterOverride<T> : GenericBase<T> {
+        public override T Value { set => _value = value; }
+    }
 }
 '@
         try {
@@ -485,6 +489,13 @@ namespace SetterOnlyOverrideTest {
         $obj = [SetterOnlyOverrideTest.GenericSetterOverride]::new()
         $obj.Value = 1
         $obj.Value | Should -Be 2
+    }
+
+    It "Can get a property whose override in a generic type defines only the setter" {
+        $obj = [SetterOnlyOverrideTest.GenericTypeSetterOverride[int]]::new()
+        $obj.Value = 5
+        $obj.Value | Should -Be 5
+        $obj.psobject.Properties['Value'].Value | Should -Be 5
     }
 
     It "Can get a protected property whose override defines only the setter from a derived class" {
