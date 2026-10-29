@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Microsoft.PowerShell.Commands.Internal
 {
@@ -22,15 +23,24 @@ namespace Microsoft.PowerShell.Commands.Internal
             string stdin = "",
             bool readStdout = true)
         {
+            return StartProcess(tool, args, stdin, readStdout, out _);
+        }
+
+        private static string StartProcess(
+            string tool,
+            string args,
+            string stdin,
+            bool readStdout,
+            out int processId)
+        {
+            processId = -1;
             ProcessStartInfo startInfo = new();
             startInfo.UseShellExecute = false;
             startInfo.RedirectStandardInput = true;
-            startInfo.RedirectStandardOutput = true;
+            startInfo.RedirectStandardOutput = readStdout;
             startInfo.RedirectStandardError = true;
             startInfo.FileName = tool;
             startInfo.Arguments = args;
-            string stdout = string.Empty;
-
             using (Process process = new())
             {
                 process.StartInfo = startInfo;
@@ -44,19 +54,66 @@ namespace Microsoft.PowerShell.Commands.Internal
                     return string.Empty;
                 }
 
-                process.StandardInput.Write(stdin);
-                process.StandardInput.Close();
+                processId = process.Id;
 
-                if (readStdout)
+                Task stdinTask = process.StandardInput.WriteAsync(stdin).ContinueWith(
+                    _ =>
+                    {
+                        try
+                        {
+                            process.StandardInput.Close();
+                        }
+                        catch (InvalidOperationException)
+                        {
+                            // The process may have exited while stdin was being written.
+                        }
+                    },
+                    CancellationToken.None,
+                    TaskContinuationOptions.ExecuteSynchronously,
+                    TaskScheduler.Default);
+                Task<string> stdoutTask = readStdout
+                    ? process.StandardOutput.ReadToEndAsync()
+                    : Task.FromResult(string.Empty);
+                Task<string> stderrTask = process.StandardError.ReadToEndAsync();
+                Task exitTask = Task.Run(() => process.WaitForExit());
+                Task processTask = Task.WhenAll(stdinTask, stdoutTask, stderrTask, exitTask);
+
+                try
                 {
-                    stdout = process.StandardOutput.ReadToEnd();
+                    if (!processTask.Wait(250))
+                    {
+                        try
+                        {
+                            process.Kill(entireProcessTree: true);
+                        }
+                        catch (InvalidOperationException)
+                        {
+                            // The process exited between the timeout and Kill.
+                        }
+
+                        _ = process.WaitForExit(250);
+                        try
+                        {
+                            _ = processTask.Wait(250);
+                        }
+                        catch (AggregateException)
+                        {
+                            // The terminated process can fault pending stream operations.
+                        }
+
+                        _clipboardSupported = false;
+                        return string.Empty;
+                    }
+                }
+                catch (AggregateException)
+                {
+                    _clipboardSupported = false;
+                    return string.Empty;
                 }
 
-                process.WaitForExit(250);
                 _clipboardSupported = process.ExitCode == 0;
+                return readStdout ? stdoutTask.GetAwaiter().GetResult() : string.Empty;
             }
-
-            return stdout;
         }
 
         public static string GetText()
