@@ -5031,10 +5031,8 @@ namespace System.Management.Automation
             {
                 if (toType.GetArrayRank() > 1)
                 {
-                    // The array conversions below create a one-dimensional array of the target's element type
-                    // via 'Array.CreateInstance(elementType, length)', so they cannot produce an instance of a
-                    // multidimensional array type. Values that are already assignable were handled earlier.
-                    return CacheConversion<object>(fromType, toType, ConvertNoConversion, ConversionRank.None);
+                    // The array conversions below only build one-dimensional arrays; let user-defined conversions run.
+                    return null;
                 }
 
                 Type toElementType = toType.GetElementType();

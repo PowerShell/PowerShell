@@ -667,6 +667,20 @@ Describe 'Conversion to multidimensional array types' -Tags 'CI' {
         $result[1, 1] | Should -Be 5
     }
 
+    It 'still uses a user-defined conversion to a multidimensional array type' {
+        class MultidimensionalSource {
+            static [int[,]] op_Implicit([MultidimensionalSource] $source) {
+                $array = [int[,]]::new(2, 2)
+                $array[1, 1] = 9
+                return $array
+            }
+        }
+
+        $result = [int[,]] [MultidimensionalSource]::new()
+        $result.Rank | Should -Be 2
+        $result[1, 1] | Should -Be 9
+    }
+
     It 'still converts to jagged and single-dimensional array types' {
         $jagged = [int[][]] ((1, 2), (3, 4))
         $jagged.Rank | Should -Be 1
