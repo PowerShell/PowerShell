@@ -4184,6 +4184,11 @@ namespace System.Management.Automation
                     return fallbackConverter(valueToConvert, resultType, recursion, originalValueToConvert, formatProvider, backupTable);
                 }
 
+                if (resultType.IsArray && resultType.GetArrayRank() > 1)
+                {
+                    return ThrowInvalidCastException(valueToConvert, resultType);
+                }
+
                 throw new PSInvalidCastException("ConvertToFinalInvalidCastException", null,
                     ExtendedTypeSystem.InvalidCastException,
                     valueToConvert.ToString(), ObjectToTypeNameString(valueToConvert), resultType.ToString());
@@ -5031,7 +5036,18 @@ namespace System.Management.Automation
             {
                 if (toType.GetArrayRank() > 1)
                 {
-                    // The array conversions below only build one-dimensional arrays; let user-defined conversions run.
+                    // The array conversions below only build one-dimensional arrays. Keep the scalar rank so
+                    // overload selection and custom converter lookup are unchanged, but fail instead of converting.
+                    if (!fromType.IsArray && !LanguagePrimitives.IsTypeEnumerable(fromType))
+                    {
+                        IConversionData elementData = FigureConversion(fromType, toType.GetElementType());
+                        if (elementData.Rank != ConversionRank.None)
+                        {
+                            valueDependentRank = elementData.Rank & ConversionRank.ValueDependent;
+                            valueDependentConversion = LanguagePrimitives.ConvertNoConversion;
+                        }
+                    }
+
                     return null;
                 }
 

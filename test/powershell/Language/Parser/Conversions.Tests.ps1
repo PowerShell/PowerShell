@@ -681,6 +681,61 @@ Describe 'Conversion to multidimensional array types' -Tags 'CI' {
         $result[1, 1] | Should -Be 9
     }
 
+    It 'keeps overload selection and late type converters for user-defined conversions' {
+        Add-Type -TypeDefinition @'
+using System;
+using System.Management.Automation;
+namespace MultidimensionalConversionTest {
+    public class Other { }
+    public class Source {
+        public static explicit operator int(Source value) { throw new InvalidCastException(); }
+        public static implicit operator int[,](Source value) { return new int[,] { { 21 } }; }
+        public static implicit operator Other(Source value) { return new Other(); }
+    }
+    public static class Target {
+        public static string Pick(int[,] value) { return "matrix"; }
+        public static string Pick(Other value) { return "other"; }
+    }
+    public class Converter : PSTypeConverter {
+        public override bool CanConvertFrom(object value, Type target) { return false; }
+        public override object ConvertFrom(object value, Type target, IFormatProvider provider, bool ignoreCase) { throw new NotSupportedException(); }
+        public override bool CanConvertTo(object value, Type target) { return target == typeof(int[,]); }
+        public override object ConvertTo(object value, Type target, IFormatProvider provider, bool ignoreCase) { return new int[,] { { 61 } }; }
+    }
+}
+'@
+        $source = [MultidimensionalConversionTest.Source]::new()
+        [MultidimensionalConversionTest.Target]::Pick($source) | Should -BeExactly 'matrix'
+
+        function Get-FirstElement($value) { ([int[,]] $value)[0, 0] }
+        Get-FirstElement $source | Should -Be 21
+
+        try {
+            Update-TypeData -TypeName MultidimensionalConversionTest.Source -TypeConverter MultidimensionalConversionTest.Converter
+            Get-FirstElement $source | Should -Be 61
+        }
+        finally {
+            Remove-TypeData -TypeName MultidimensionalConversionTest.Source
+        }
+    }
+
+    It 'reports the error when a type converter declines the conversion' {
+        Add-Type -TypeDefinition @'
+using System;
+using System.ComponentModel;
+using System.Globalization;
+namespace MultidimensionalConversionTest {
+    public class DecliningConverter : TypeConverter {
+        public override bool CanConvertTo(ITypeDescriptorContext context, Type target) { return false; }
+    }
+    [TypeConverter(typeof(DecliningConverter))]
+    public class DeclinedSource { }
+}
+'@
+        { [int[,]] [MultidimensionalConversionTest.DeclinedSource]::new() } |
+            Should -Throw -ErrorId 'InvalidCastToMultidimensionalArray'
+    }
+
     It 'still converts to jagged and single-dimensional array types' {
         $jagged = [int[][]] ((1, 2), (3, 4))
         $jagged.Rank | Should -Be 1
