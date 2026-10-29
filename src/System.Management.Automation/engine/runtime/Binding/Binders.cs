@@ -5762,7 +5762,8 @@ namespace System.Management.Automation.Language
                             if ((getMethod == null || getMethod.IsPublic || getMethod.IsFamily || getMethod.IsFamilyOrAssembly) &&
                                 (setMethod == null || setMethod.IsPublic || setMethod.IsFamily || setMethod.IsFamilyOrAssembly))
                             {
-                                memberInfo = new PSProperty(this.Name, PSObject.DotNetInstanceAdapter, target.Value, new DotNetAdapter.PropertyCacheEntry(propertyInfo));
+                                var propertyWithGetter = DotNetAdapter.GetPropertyWithInheritedGetter(propertyInfo);
+                                memberInfo = new PSProperty(this.Name, PSObject.DotNetInstanceAdapter, target.Value, new DotNetAdapter.PropertyCacheEntry(propertyWithGetter));
                             }
                         }
                         else

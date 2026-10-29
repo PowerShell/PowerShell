@@ -396,3 +396,81 @@ namespace BaseMethodCallTest.OnXmlDocument {
         $child.ChildNodes.Count | Should -Be 1
     }
 }
+
+Describe "Property override that redefines only the setter" -tags "CI" {
+    BeforeAll {
+        $code = @'
+namespace SetterOnlyOverrideTest {
+    public class Base {
+        protected int _value;
+        public virtual int Value { get => _value; set => _value = value; }
+        public virtual int this[int index] { get => _value + index; set => _value = value; }
+        // Without the getter of the int indexer, Item(1) would call this overload.
+        public virtual int this[string key] { get => -1; set { } }
+        protected virtual int ProtectedValue { get => _value; set => _value = value; }
+    }
+
+    public class SetterOverride : Base {
+        public override int Value { set => _value = value + 1; }
+        public override int this[int index] { set => _value = value + 1; }
+        protected override int ProtectedValue { set => _value = value + 1; }
+    }
+
+    public class GetterOverride : Base {
+        public override int Value { get => _value * 10; }
+    }
+
+    public class SetterOverrideOfGetterOverride : GetterOverride {
+        public override int Value { set => _value = value + 1; }
+    }
+
+    public class GenericBase<T> {
+        protected T _value;
+        public virtual T Value { get => _value; set => _value = value; }
+    }
+
+    public class GenericSetterOverride : GenericBase<int> {
+        public override int Value { set => _value = value + 1; }
+    }
+}
+'@
+        try {
+            $null = [SetterOnlyOverrideTest.Base]
+        } catch {
+            Add-Type -TypeDefinition $code
+        }
+    }
+
+    It "Can get a property whose override defines only the setter" {
+        $obj = [SetterOnlyOverrideTest.SetterOverride]::new()
+        $obj.Value = 1
+        $obj.Value | Should -Be 2
+        $obj.psobject.Properties['Value'].Value | Should -Be 2
+        $obj.psobject.Properties['Value'].Value = 2
+        $obj.Value | Should -Be 3
+        (Get-Member -InputObject $obj -Name Value).Definition | Should -BeExactly 'int Value {get;set;}'
+    }
+
+    It "Calls the getter override of an intermediate type" {
+        $obj = [SetterOnlyOverrideTest.SetterOverrideOfGetterOverride]::new()
+        $obj.Value = 1
+        $obj.Value | Should -Be 20
+    }
+
+    It "Can get a parameterized property whose override defines only the setter" {
+        $obj = [SetterOnlyOverrideTest.SetterOverride]::new()
+        $obj[0] = 1
+        $obj.Item(1) | Should -Be 3
+    }
+
+    It "Can get a property whose override from a generic base type defines only the setter" {
+        $obj = [SetterOnlyOverrideTest.GenericSetterOverride]::new()
+        $obj.Value = 1
+        $obj.Value | Should -Be 2
+    }
+
+    It "Can get a protected property whose override defines only the setter from a derived class" {
+        $obj = Invoke-Expression 'class SetterOnlyOverrideTestClass : SetterOnlyOverrideTest.SetterOverride { [int] GetProtectedValue() { $this.ProtectedValue = 1; return $this.ProtectedValue } } [SetterOnlyOverrideTestClass]::new()'
+        $obj.GetProtectedValue() | Should -Be 2
+    }
+}

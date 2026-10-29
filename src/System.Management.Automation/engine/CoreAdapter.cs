@@ -3340,6 +3340,39 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// An override can redefine only the setter of a virtual property and inherit the getter.
+        /// Reflection then returns a property that has only the setter. In that case, return the property
+        /// from the type that introduced the virtual property, which has the getter. Calls through its
+        /// accessors are virtual, so they still reach the overrides.
+        /// </summary>
+        internal static PropertyInfo GetPropertyWithInheritedGetter(PropertyInfo property)
+        {
+            MethodInfo setter = property.SetMethod;
+            if (property.GetMethod != null || setter == null)
+            {
+                return property;
+            }
+
+            MethodInfo baseSetter = setter.GetBaseDefinition();
+            if (baseSetter.DeclaringType == setter.DeclaringType)
+            {
+                // Not an override.
+                return property;
+            }
+
+            foreach (PropertyInfo baseProperty in baseSetter.DeclaringType.GetProperties(
+                BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
+            {
+                if (baseProperty.SetMethod == baseSetter && string.Equals(baseProperty.Name, property.Name, StringComparison.Ordinal))
+                {
+                    return baseProperty.GetMethod != null ? baseProperty : property;
+                }
+            }
+
+            return property;
+        }
+
+        /// <summary>
         /// Called from GetPropertyReflectionTable within a lock to fill the
         /// property cache table.
         /// </summary>
@@ -3354,7 +3387,7 @@ namespace System.Management.Automation
             PropertyInfo[] properties = type.GetProperties(bindingFlags);
             foreach (PropertyInfo property in properties)
             {
-                PopulateSingleProperty(type, property, tempTable, property.Name);
+                PopulateSingleProperty(type, GetPropertyWithInheritedGetter(property), tempTable, property.Name);
             }
 
             Type[] interfaces = type.GetInterfaces();
