@@ -84,3 +84,127 @@ Describe "Remote runspace pool should expose commands in endpoint configuration"
         $r4.Name | Should -BeExactly 'Get-CimInstance'
     }
 }
+
+Describe "Local runspace pool should load module type and format data in every runspace" -Tags 'CI' {
+
+    BeforeAll {
+        $moduleName = 'RunspacePoolTypeDataTest'
+        $typeName = 'RunspacePoolTypeDataTest.Item'
+        $moduleDir = Join-Path $TestDrive $moduleName
+        $null = New-Item -ItemType Directory -Path $moduleDir -Force
+
+        Set-Content -Path (Join-Path $moduleDir "$moduleName.types.ps1xml") -Value @"
+<Types>
+  <Type>
+    <Name>$typeName</Name>
+    <Members>
+      <ScriptProperty>
+        <Name>Doubled</Name>
+        <GetScriptBlock>`$this.Value * 2</GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
+</Types>
+"@
+        Set-Content -Path (Join-Path $moduleDir "$moduleName.format.ps1xml") -Value @"
+<Configuration>
+  <ViewDefinitions>
+    <View>
+      <Name>$typeName</Name>
+      <ViewSelectedBy>
+        <TypeName>$typeName</TypeName>
+      </ViewSelectedBy>
+      <ListControl>
+        <ListEntries>
+          <ListEntry>
+            <ListItems>
+              <ListItem>
+                <PropertyName>Value</PropertyName>
+              </ListItem>
+            </ListItems>
+          </ListEntry>
+        </ListEntries>
+      </ListControl>
+    </View>
+  </ViewDefinitions>
+</Configuration>
+"@
+        Set-Content -Path (Join-Path $moduleDir "$moduleName.psm1") -Value "function Get-TestItem { [pscustomobject]@{ PSTypeName = '$typeName'; Value = 21 } }"
+
+        $manifestPath = Join-Path $moduleDir "$moduleName.psd1"
+        New-ModuleManifest -Path $manifestPath -RootModule "$moduleName.psm1" -FunctionsToExport 'Get-TestItem' `
+            -TypesToProcess "$moduleName.types.ps1xml" -FormatsToProcess "$moduleName.format.ps1xml"
+
+        # Imports the module and reports whether its type and format data are available in the current runspace.
+        # The 'First' instance waits until the 'Second' instance is running (so its runspace has already been opened)
+        # before importing the module; the 'Second' instance imports the module only after the 'First' one has.
+        $script = {
+            param ($Role, $ManifestPath, $TypeName, $SecondRunspaceOpened, $FirstImportDone)
+
+            if ($Role -eq 'First') {
+                if (-not $SecondRunspaceOpened.Wait(60000)) { throw 'Timed out waiting for the second runspace.' }
+            }
+            else {
+                $SecondRunspaceOpened.Set()
+                if (-not $FirstImportDone.Wait(60000)) { throw 'Timed out waiting for the first import.' }
+            }
+
+            try {
+                Import-Module $ManifestPath -ErrorAction Stop
+            }
+            finally {
+                if ($Role -eq 'First') { $FirstImportDone.Set() }
+            }
+
+            [pscustomobject]@{
+                Role = $Role
+                RunspaceId = [runspace]::DefaultRunspace.InstanceId
+                Doubled = (Get-TestItem).Doubled
+                HasTypeData = $null -ne (Get-TypeData -TypeName $TypeName)
+                HasFormatData = $null -ne (Get-FormatData -TypeName $TypeName)
+            }
+        }
+    }
+
+    It "Loads the data in a runspace that was opened before another runspace in the pool imported the module" {
+        $secondRunspaceOpened = [System.Threading.ManualResetEventSlim]::new($false)
+        $firstImportDone = [System.Threading.ManualResetEventSlim]::new($false)
+        $pool = [runspacefactory]::CreateRunspacePool(1, 2)
+        $invocations = @()
+
+        try {
+            $pool.Open()
+
+            $invocations = foreach ($role in 'First', 'Second') {
+                $ps = [powershell]::Create()
+                $ps.RunspacePool = $pool
+                $null = $ps.AddScript($script).
+                    AddArgument($role).
+                    AddArgument($manifestPath).
+                    AddArgument($typeName).
+                    AddArgument($secondRunspaceOpened).
+                    AddArgument($firstImportDone)
+                [pscustomobject]@{ PowerShell = $ps; AsyncResult = $ps.BeginInvoke() }
+            }
+
+            $results = foreach ($invocation in $invocations) {
+                $invocation.PowerShell.EndInvoke($invocation.AsyncResult)
+            }
+        }
+        finally {
+            $invocations | ForEach-Object { $_.PowerShell.Dispose() }
+            $pool.Dispose()
+            $secondRunspaceOpened.Dispose()
+            $firstImportDone.Dispose()
+        }
+
+        $results | Should -HaveCount 2
+        $results[0].RunspaceId | Should -Not -Be $results[1].RunspaceId
+
+        foreach ($result in $results) {
+            $result.Doubled | Should -Be 42 -Because "the type data should be loaded in the '$($result.Role)' runspace"
+            $result.HasTypeData | Should -BeTrue -Because "the type data should be loaded in the '$($result.Role)' runspace"
+            $result.HasFormatData | Should -BeTrue -Because "the format data should be loaded in the '$($result.Role)' runspace"
+        }
+    }
+}
