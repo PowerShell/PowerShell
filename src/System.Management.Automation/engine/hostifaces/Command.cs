@@ -527,10 +527,18 @@ namespace System.Management.Automation.Runspaces
                     }
                 }
 
-                // Favour a ComamndInfo object if one is available.
-                commandProcessorBase = CommandInfo is CommandInfo commandInfo
-                    ? executionContext.CommandDiscovery.LookupCommandProcessor(commandInfo, origin, _useLocalScope, null)
-                    : executionContext.CommandDiscovery.LookupCommandProcessor(CommandText, origin, _useLocalScope);
+                // Favour a CommandInfo object if one is available.
+                if (CommandInfo is CommandInfo commandInfo)
+                {
+                    commandProcessorBase = executionContext.CommandDiscovery.LookupCommandProcessor(commandInfo, origin, _useLocalScope, null);
+
+                    // The lookup names the command an alias resolves to - restore the alias's name, as LocalPipeline does.
+                    commandProcessorBase.Command.MyInvocation.InvocationName = commandInfo.Name;
+                }
+                else
+                {
+                    commandProcessorBase = executionContext.CommandDiscovery.LookupCommandProcessor(CommandText, origin, _useLocalScope);
+                }
             }
 
             CommandParameterCollection parameters = Parameters;
