@@ -80,36 +80,58 @@ Describe 'Basic engine APIs' -Tags "CI" {
             $result.InvocationInfo.InvocationName | Should -BeExactly 'Invoke-SteppableWriteError'
         }
 
-        It "<Expectation> the redirections of the command running when <Method>() builds the pipeline" -TestCases @(
+        It "sends errors from each of the pipeline's commands to the output of a command that merges them, not through the commands after it" {
+            function Invoke-SteppableGetItemSelectObject {
+                [CmdletBinding()]
+                param()
+
+                begin {
+                    $ps = [powershell]::Create([System.Management.Automation.RunspaceMode]::CurrentRunspace)
+                    $null = $ps.AddCommand((Get-Command -Name Get-Item)).AddParameter('LiteralPath', (Join-Path -Path $TestDrive -ChildPath 'Missing'))
+                    $null = $ps.AddCommand((Get-Command -Name Select-Object)).AddParameter('Property', 'Name')
+                    $step = $ps.GetSteppablePipeline()
+                    $step.Begin($PSCmdlet)
+                }
+
+                end {
+                    $step.End()
+                    $ps.Dispose()
+                }
+            }
+
+            $result = Invoke-SteppableGetItemSelectObject 2>&1
+            $result | Should -HaveCount 1
+            $result | Should -BeOfType System.Management.Automation.ErrorRecord
+        }
+
+        It "<Expectation> the stream redirections of the command running when <Method>() builds the pipeline" -TestCases @(
             @{ Method = 'GetSteppablePipeline'; Expectation = 'takes'; ExpectMerged = $true }
             @{ Method = 'GetIndependentSteppablePipeline'; Expectation = 'does not take'; ExpectMerged = $false }
         ) {
             param($Method, $ExpectMerged)
 
             # A remoting server builds its pipeline through GetIndependentSteppablePipeline() from an event, while an unrelated command is running.
-            function Invoke-SteppableWriteErrorFrom {
+            function Invoke-SteppableWriteWarningFrom {
                 [CmdletBinding()]
                 param(
-                    [string] $Method,
-                    [ref] $StepOutput
+                    [string] $Method
                 )
 
                 begin {
                     $ps = [powershell]::Create([System.Management.Automation.RunspaceMode]::CurrentRunspace)
-                    $null = $ps.AddCommand((Get-Command -Name Write-Error)).AddParameter('Message', 'boom')
+                    $null = $ps.AddCommand((Get-Command -Name Write-Warning)).AddParameter('Message', 'boom')
                     $step = [powershell].GetMethod($Method, [System.Reflection.BindingFlags]'Instance, Public, NonPublic', $null, [type[]]@(), $null).Invoke($ps, $null)
                     $step.Begin($false)
                 }
 
                 end {
-                    $StepOutput.Value = $step.End()
+                    $null = $step.End()
                     $ps.Dispose()
                 }
             }
 
-            $stepOutput = $null
-            $null = Invoke-SteppableWriteErrorFrom -Method $Method -StepOutput ([ref]$stepOutput) 2>&1
-            @($stepOutput | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] }).Count -gt 0 | Should -Be $ExpectMerged
+            $result = Invoke-SteppableWriteWarningFrom -Method $Method 3>&1
+            @($result | Where-Object { $_ -is [System.Management.Automation.WarningRecord] }).Count -gt 0 | Should -Be $ExpectMerged
         }
     }
 }

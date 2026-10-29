@@ -4063,17 +4063,13 @@ namespace System.Management.Automation
                         }
                     }
 
-                    // Set the data stream merge properties based on ExecutionContext, as ScriptBlock.GetSteppablePipeline() does.
+                    // Give the command the stream pipes of the command that builds the pipeline, as ScriptBlock.GetSteppablePipeline() does.
+                    // Errors that command merges into its output reach it through SteppablePipeline.Begin() instead, straight from each command.
                     if (forCurrentCommand && context.CurrentCommandProcessor != null && context.CurrentCommandProcessor.CommandRuntime != null)
                     {
                         // Unlike SetMergeFromRuntime(), a merge the command sets for itself through Command.MergeMyResults() takes precedence over its caller's.
                         MshCommandRuntime callerRuntime = context.CurrentCommandProcessor.CommandRuntime;
                         MshCommandRuntime commandRuntime = commandProcessorBase.CommandRuntime;
-                        if (commandRuntime.ErrorMergeTo == MshCommandRuntime.MergeDataStream.None)
-                        {
-                            commandRuntime.ErrorMergeTo = callerRuntime.ErrorMergeTo;
-                        }
-
                         commandRuntime.WarningOutputPipe ??= callerRuntime.WarningOutputPipe;
                         commandRuntime.VerboseOutputPipe ??= callerRuntime.VerboseOutputPipe;
                         commandRuntime.DebugOutputPipe ??= callerRuntime.DebugOutputPipe;
