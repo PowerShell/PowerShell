@@ -42,25 +42,6 @@ namespace System.Management.Automation.Runspaces
         /// <param name="initialSessionState">
         /// configuration information for this minshell.
         /// </param>
-        /// <param name="suppressClone">
-        /// If true, don't make a copy of the initial session state object
-        /// </param>
-        [SuppressMessage("Microsoft.Maintainability", "CA1505:AvoidUnmaintainableCode")]
-        internal LocalRunspace(PSHost host, InitialSessionState initialSessionState, bool suppressClone)
-            : base(host, initialSessionState, suppressClone)
-        {
-        }
-
-        /// <summary>
-        /// Construct an instance of an Runspace using a custom implementation
-        /// of PSHost.
-        /// </summary>
-        /// <param name="host">
-        /// The explicit PSHost implementation
-        /// </param>
-        /// <param name="initialSessionState">
-        /// configuration information for this minshell.
-        /// </param>
         [SuppressMessage("Microsoft.Maintainability", "CA1505:AvoidUnmaintainableCode")]
         internal LocalRunspace(PSHost host, InitialSessionState initialSessionState)
             : base(host, initialSessionState)
