@@ -108,7 +108,7 @@ Describe "PSCommand API tests" -Tag "CI" {
             $result | Should -BeOfType System.DateTime
         }
 
-        It "Gives the command an alias resolves to the alias's name as its invocation name, as Invoke does" {
+        It "Uses the alias's name as the invocation name when given an AliasInfo, as Invoke does" {
             function Get-InvocationName { $MyInvocation.InvocationName }
             Set-Alias -Name Get-InvocationNameAlias -Value Get-InvocationName
             $null = $steppableShell.AddCommand((Get-Alias -Name Get-InvocationNameAlias))
