@@ -150,6 +150,9 @@
   <data name="UnKnownCatalogVersion" xml:space="preserve">
     <value>카탈로그 버전이 유효하지 않습니다. 버전 {0} 및 버전 {1} 카탈로그만 지원됩니다.</value>
   </data>
+  <data name="WeakCatalogHashAlgorithm" xml:space="preserve">
+    <value>'{0}' is a version catalog that uses SHA0 or SHA1. Consider regenerating this catalog with '-CatalogVersion 2'.</value>
+  </data>
   <data name="UnableToOpenCatalogDefinitionFile" xml:space="preserve">
     <value>카탈로그 정의 파일을 열 수 없습니다.</value>
   </data>
