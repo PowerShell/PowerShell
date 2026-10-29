@@ -563,6 +563,30 @@ Describe 'Function Pipeline Behaviour' -Tag 'CI' {
             $result = & $Invoke
             $result | Should -BeOfType System.Management.Automation.WarningRecord
         }
+
+        It "A command in a steppable pipeline keeps its own redirection of all streams to a file" {
+            $allFile = Join-Path -Path $TestDrive -ChildPath 'OwnAllRedirection.txt'
+
+            function Test-OwnAllRedirection {
+                [CmdletBinding()]
+                param()
+
+                begin {
+                    $step = { & { Write-Warning -Message 'boom'; 'output' } *> $allFile }.GetSteppablePipeline()
+                    $step.Begin($PSCmdlet)
+                }
+
+                end {
+                    $step.End()
+                }
+            }
+
+            $result = Test-OwnAllRedirection 3>&1
+            $result | Should -BeNullOrEmpty
+            $content = Get-Content -LiteralPath $allFile -Raw -ErrorAction Stop
+            $content | Should -Match 'boom'
+            $content | Should -Match 'output'
+        }
     }
 
     Context "'exit' statement in command" {
