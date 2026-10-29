@@ -59,5 +59,10 @@ namespace Microsoft.PowerShell.Commands
         /// PATCH method.
         /// </summary>
         Patch,
+
+        /// <summary>
+        /// QUERY method.
+        /// </summary>
+        Query,
     }
 }
