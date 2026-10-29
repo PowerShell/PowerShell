@@ -59,7 +59,7 @@ namespace System.Management.Automation
         {
             public string Name { get; }
 
-            public WMIParameterInformation(string name, Type ty) : base(ty, true, null, false)
+            public WMIParameterInformation(string name, Type ty) : base(name, ty, true, null, false)
             {
                 Name = name;
             }
