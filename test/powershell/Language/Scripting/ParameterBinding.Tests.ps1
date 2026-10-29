@@ -515,4 +515,135 @@ Describe "Tests for parameter binding" -Tags "CI" {
         #The position of the enumerator shouldn't be modified
         $b.current | Should -Be 1
     }
+
+    Context 'Positional parameter binding across multiple parameter sets (issue #2212)' {
+        It 'Parameter with different positions across parameter sets binds correctly' {
+            function Test-PositionalBinding2212 {
+                [CmdletBinding()]
+                param(
+                    [Parameter(ParameterSetName = 'Two', Position = 0)]
+                    [Parameter(ParameterSetName = 'One', Position = 1)]
+                    [string] $First,
+
+                    [Parameter(ParameterSetName = 'Two', Position = 1)]
+                    [string] $Second
+                )
+
+                @{
+                    ParameterSet = $PSCmdlet.ParameterSetName
+                    First = $First
+                    Second = $Second
+                }
+            }
+
+            $result = Test-PositionalBinding2212 Hello World
+            $result.ParameterSet | Should -BeExactly 'Two'
+            $result.First | Should -BeExactly 'Hello'
+            $result.Second | Should -BeExactly 'World'
+        }
+
+        It 'PSBoundParameters correctly reflects positional binding across parameter sets' {
+            function Test-BoundParams2212 {
+                [CmdletBinding()]
+                param(
+                    [Parameter(ParameterSetName = 'Two', Position = 0)]
+                    [Parameter(ParameterSetName = 'One', Position = 1)]
+                    [string] $First,
+
+                    [Parameter(ParameterSetName = 'Two', Position = 1)]
+                    [string] $Second
+                )
+
+                $PSBoundParameters
+            }
+
+            $bound = Test-BoundParams2212 Hello World
+            $bound['First'] | Should -BeExactly 'Hello'
+            $bound['Second'] | Should -BeExactly 'World'
+            $bound.Count | Should -Be 2
+        }
+
+        It 'Named parameter binding still works when parameter has different positions across sets' {
+            function Test-NamedBinding2212 {
+                [CmdletBinding()]
+                param(
+                    [Parameter(ParameterSetName = 'Two', Position = 0)]
+                    [Parameter(ParameterSetName = 'One', Position = 1)]
+                    [string] $First,
+
+                    [Parameter(ParameterSetName = 'Two', Position = 1)]
+                    [string] $Second
+                )
+
+                @{
+                    ParameterSet = $PSCmdlet.ParameterSetName
+                    First = $First
+                    Second = $Second
+                }
+            }
+
+            $result = Test-NamedBinding2212 -First Hello -Second World
+            $result.ParameterSet | Should -BeExactly 'Two'
+            $result.First | Should -BeExactly 'Hello'
+            $result.Second | Should -BeExactly 'World'
+        }
+
+        It 'Parameter at same numeric position across sets does not double-bind' {
+            # Regression: Position=5 in SetA and Position=5 in SetB caused the same
+            # double-binding symptom as the primary issue.
+            function Test-PositionalSamePosition {
+                [CmdletBinding()]
+                param(
+                    [Parameter(ParameterSetName = 'SetA', Position = 0)]
+                    [Parameter(ParameterSetName = 'SetB', Position = 5)]
+                    [string] $Alpha,
+
+                    [Parameter(ParameterSetName = 'SetA', Position = 5)]
+                    [string] $Beta
+                )
+
+                @{
+                    ParameterSet = $PSCmdlet.ParameterSetName
+                    Alpha = $Alpha
+                    Beta = $Beta
+                }
+            }
+
+            $result = Test-PositionalSamePosition Foo Bar
+            $result.ParameterSet | Should -BeExactly 'SetA'
+            $result.Alpha | Should -BeExactly 'Foo'
+            $result.Beta | Should -BeExactly 'Bar'
+        }
+
+        It 'Parameter at different positions across three parameter sets binds correctly' {
+            function Test-ThreeSetPositional {
+                [CmdletBinding()]
+                param(
+                    [Parameter(ParameterSetName = 'A', Position = 0)]
+                    [Parameter(ParameterSetName = 'B', Position = 1)]
+                    [Parameter(ParameterSetName = 'C', Position = 2)]
+                    [string] $Param1,
+
+                    [Parameter(ParameterSetName = 'A', Position = 1)]
+                    [string] $Param2,
+
+                    [Parameter(ParameterSetName = 'A', Position = 2)]
+                    [string] $Param3
+                )
+
+                @{
+                    ParameterSet = $PSCmdlet.ParameterSetName
+                    Param1 = $Param1
+                    Param2 = $Param2
+                    Param3 = $Param3
+                }
+            }
+
+            $result = Test-ThreeSetPositional X Y Z
+            $result.ParameterSet | Should -BeExactly 'A'
+            $result.Param1 | Should -BeExactly 'X'
+            $result.Param2 | Should -BeExactly 'Y'
+            $result.Param3 | Should -BeExactly 'Z'
+        }
+    }
 }

@@ -1823,6 +1823,14 @@ namespace System.Management.Automation.Language
             uint localParameterSetFlag = 0;
             foreach (PositionalCommandParameter parameter in nextPositionalParameters.Values)
             {
+                // Skip parameters that were already bound at a previous position.
+                // Mirrors the same guard in BindPositionalParametersInSet().
+                // See https://github.com/PowerShell/PowerShell/issues/2212
+                if (_boundParameters.ContainsKey(parameter.Parameter.Parameter.Name))
+                {
+                    continue;
+                }
+
                 foreach (ParameterSetSpecificMetadata parameterSetData in parameter.ParameterSetData)
                 {
                     // Skip it if it's not in the specified parameter set
