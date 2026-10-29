@@ -424,13 +424,24 @@ namespace SetterOnlyOverrideTest {
         public override int Value { set => _value = value + 1; }
     }
 
+    public class OptionalIndexBase {
+        public int Column;
+        public virtual int this[int row, int column = 0] { get => row * 100 + column; set => Column = column; }
+    }
+
+    public class OptionalIndexSetterOverride : OptionalIndexBase {
+        public override int this[int row, int column = 1] { set => Column = column; }
+    }
+
     public class GenericBase<T> {
         protected T _value;
         public virtual T Value { get => _value; set => _value = value; }
+        protected virtual int ProtectedValue { get; set; }
     }
 
     public class GenericSetterOverride : GenericBase<int> {
         public override int Value { set => _value = value + 1; }
+        protected override int ProtectedValue { set => base.ProtectedValue = value + 1; }
     }
 }
 '@
@@ -463,6 +474,13 @@ namespace SetterOnlyOverrideTest {
         $obj.Item(1) | Should -Be 3
     }
 
+    It "Keeps the optional argument default of an indexer override that defines only the setter" {
+        $obj = [SetterOnlyOverrideTest.OptionalIndexSetterOverride]::new()
+        $obj.psobject.Members['Item'].InvokeSet(42, 5)
+        $obj.Column | Should -Be 1
+        $obj.Item(5, 2) | Should -Be 502
+    }
+
     It "Can get a property whose override from a generic base type defines only the setter" {
         $obj = [SetterOnlyOverrideTest.GenericSetterOverride]::new()
         $obj.Value = 1
@@ -471,6 +489,11 @@ namespace SetterOnlyOverrideTest {
 
     It "Can get a protected property whose override defines only the setter from a derived class" {
         $obj = Invoke-Expression 'class SetterOnlyOverrideTestClass : SetterOnlyOverrideTest.SetterOverride { [int] GetProtectedValue() { $this.ProtectedValue = 1; return $this.ProtectedValue } } [SetterOnlyOverrideTestClass]::new()'
+        $obj.GetProtectedValue() | Should -Be 2
+    }
+
+    It "Can get a protected property of a generic base type whose override defines only the setter from a derived class" {
+        $obj = Invoke-Expression 'class GenericSetterOnlyOverrideTestClass : SetterOnlyOverrideTest.GenericSetterOverride { [int] GetProtectedValue() { $this.ProtectedValue = 1; return $this.ProtectedValue } } [GenericSetterOnlyOverrideTestClass]::new()'
         $obj.GetProtectedValue() | Should -Be 2
     }
 }
