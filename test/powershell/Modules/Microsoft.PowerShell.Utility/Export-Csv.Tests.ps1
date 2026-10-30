@@ -91,6 +91,33 @@ Describe "Export-Csv" -Tags "CI" {
         $results[0] | Should -BeExactly "#TYPE System.String"
     }
 
+    It "Uses the default delimiter when -UseCulture is explicitly false" {
+        $originalCulture = [System.Threading.Thread]::CurrentThread.CurrentCulture
+        $originalUICulture = [System.Threading.Thread]::CurrentThread.CurrentUICulture
+
+        try {
+            [System.Threading.Thread]::CurrentThread.CurrentCulture = [CultureInfo]'de-DE'
+            [System.Threading.Thread]::CurrentThread.CurrentUICulture = [CultureInfo]'de-DE'
+            [CultureInfo]::CurrentCulture.TextInfo.ListSeparator | Should -Not -BeExactly ','
+
+            $P1 | Export-Csv -Path $testCsv -UseCulture:$false
+            $results = Get-Content -Path $testCsv
+
+            $results[0] | Should -BeExactly '"P1"'
+            $results[1] | Should -BeExactly '"first"'
+
+            [pscustomobject]@{ H1 = 'V1'; H2 = 'V2' } | Export-Csv -Path $testCsv -UseCulture:$false
+            $results = Get-Content -Path $testCsv
+
+            $results[0] | Should -BeExactly '"H1","H2"'
+            $results[1] | Should -BeExactly '"V1","V2"'
+        }
+        finally {
+            [System.Threading.Thread]::CurrentThread.CurrentCulture = $originalCulture
+            [System.Threading.Thread]::CurrentThread.CurrentUICulture = $originalUICulture
+        }
+    }
+
     It "Should support -LiteralPath parameter" {
         $testObject | Export-Csv -LiteralPath $testCsv
         $results = Import-Csv -Path  $testCsv
