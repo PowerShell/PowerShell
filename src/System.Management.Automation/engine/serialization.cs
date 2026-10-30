@@ -1482,6 +1482,24 @@ namespace System.Management.Automation
             _writer.WriteEndElement();
         }
 
+        private static PSObject GetRemotingSerializationTarget(PSObject source)
+        {
+            PSObject target = source.Copy();
+
+            // Keep remoting-only notes local to the serialization wrapper, rather
+            // than writing them to the base object's resurrection table.
+            target.InstanceMembers = new PSMemberInfoInternalCollection<PSMemberInfo>();
+            foreach (PSMemberInfo member in source.InstanceMembers)
+            {
+                if (!member.IsHidden)
+                {
+                    target.InstanceMembers.Add(member.Copy());
+                }
+            }
+
+            return target;
+        }
+
         private void HandleComplexTypePSObject
         (
             object source,
@@ -1514,6 +1532,7 @@ namespace System.Management.Automation
                     ErrorRecord errorRecord = mshSource.ImmediateBaseObject as ErrorRecord;
                     if (errorRecord != null)
                     {
+                        mshSource = GetRemotingSerializationTarget(mshSource);
                         errorRecord.ToPSObjectForRemoting(mshSource);
                         isErrorRecord = true;
                         break;
@@ -1522,6 +1541,7 @@ namespace System.Management.Automation
                     InformationalRecord informationalRecord = mshSource.ImmediateBaseObject as InformationalRecord;
                     if (informationalRecord != null)
                     {
+                        mshSource = GetRemotingSerializationTarget(mshSource);
                         informationalRecord.ToPSObjectForRemoting(mshSource);
                         isInformationalRecord = true;
                         break;
