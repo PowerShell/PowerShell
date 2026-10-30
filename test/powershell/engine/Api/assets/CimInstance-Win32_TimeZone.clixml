@@ -1,0 +1,68 @@
+<Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04">
+  <Obj RefId="0">
+    <TN RefId="0">
+      <T>Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_TimeZone</T>
+      <T>Microsoft.Management.Infrastructure.CimInstance#ROOT/cimv2/CIM_Setting</T>
+      <T>Microsoft.Management.Infrastructure.CimInstance#Win32_TimeZone</T>
+      <T>Microsoft.Management.Infrastructure.CimInstance#CIM_Setting</T>
+      <T>Microsoft.Management.Infrastructure.CimInstance</T>
+      <T>System.Object</T>
+    </TN>
+    <ToString>Win32_TimeZone: (UTC+03:00) Moscow, St. Petersburg (StandardName = "Russia TZ 2 Standard Time")</ToString>
+    <Props>
+      <S N="Caption">(UTC+03:00) Moscow, St. Petersburg</S>
+      <S N="Description">(UTC+03:00) Moscow, St. Petersburg</S>
+      <Nil N="SettingID" />
+      <I32 N="Bias">180</I32>
+      <I32 N="DaylightBias">-60</I32>
+      <U32 N="DaylightDay">0</U32>
+      <By N="DaylightDayOfWeek">0</By>
+      <U32 N="DaylightHour">0</U32>
+      <U32 N="DaylightMillisecond">0</U32>
+      <U32 N="DaylightMinute">0</U32>
+      <U32 N="DaylightMonth">0</U32>
+      <S N="DaylightName">Russia TZ 2 Daylight Time</S>
+      <U32 N="DaylightSecond">0</U32>
+      <U32 N="DaylightYear">0</U32>
+      <U32 N="StandardBias">0</U32>
+      <U32 N="StandardDay">0</U32>
+      <By N="StandardDayOfWeek">0</By>
+      <U32 N="StandardHour">0</U32>
+      <U32 N="StandardMillisecond">0</U32>
+      <U32 N="StandardMinute">0</U32>
+      <U32 N="StandardMonth">0</U32>
+      <S N="StandardName">Russia TZ 2 Standard Time</S>
+      <U32 N="StandardSecond">0</U32>
+      <U32 N="StandardYear">0</U32>
+      <Nil N="PSComputerName" />
+    </Props>
+    <MS>
+      <Obj N="__ClassMetadata" RefId="1">
+        <TN RefId="1">
+          <T>System.Collections.ArrayList</T>
+          <T>System.Object</T>
+        </TN>
+        <LST>
+          <Obj RefId="2">
+            <MS>
+              <S N="ClassName">CIM_Setting</S>
+              <S N="Namespace">ROOT/cimv2</S>
+              <S N="ServerName">TESTHOST</S>
+              <I32 N="Hash">-65824216</I32>
+              <S N="MiXml">&lt;CLASS NAME="CIM_Setting"&gt;&lt;QUALIFIER NAME="Abstract" TYPE="boolean" TOSUBCLASS="false"&gt;&lt;VALUE&gt;true&lt;/VALUE&gt;&lt;/QUALIFIER&gt;&lt;QUALIFIER NAME="Locale" TYPE="sint32"&gt;&lt;VALUE&gt;1033&lt;/VALUE&gt;&lt;/QUALIFIER&gt;&lt;QUALIFIER NAME="UUID" TYPE="string"&gt;&lt;VALUE&gt;{8502C572-5FBB-11D2-AAC1-006008C78BC7}&lt;/VALUE&gt;&lt;/QUALIFIER&gt;&lt;PROPERTY NAME="Caption" TYPE="string"&gt;&lt;QUALIFIER NAME="MaxLen" TYPE="sint32"&gt;&lt;VALUE&gt;64&lt;/VALUE&gt;&lt;/QUALIFIER&gt;&lt;QUALIFIER NAME="read" TYPE="boolean"&gt;&lt;VALUE&gt;true&lt;/VALUE&gt;&lt;/QUALIFIER&gt;&lt;/PROPERTY&gt;&lt;PROPERTY NAME="Description" TYPE="string"&gt;&lt;QUALIFIER NAME="read" TYPE="boolean"&gt;&lt;VALUE&gt;true&lt;/VALUE&gt;&lt;/QUALIFIER&gt;&lt;/PROPERTY&gt;&lt;PROPERTY NAME="SettingID" TYPE="string"&gt;&lt;QUALIFIER NAME="MaxLen" TYPE="sint32"&gt;&lt;VALUE&gt;256&lt;/VALUE&gt;&lt;/QUALIFIER&gt;&lt;QUALIFIER NAME="read" TYPE="boolean"&gt;&lt;VALUE&gt;true&lt;/VALUE&gt;&lt;/QUALIFIER&gt;&lt;/PROPERTY&gt;&lt;/CLASS&gt;</S>
+            </MS>
+          </Obj>
+          <Obj RefId="3">
+            <MS>
+              <S N="ClassName">Win32_TimeZone</S>
+              <S N="Namespace">root/cimv2</S>
+              <S N="ServerName">TESTHOST</S>
+              <I32 N="Hash">-65835656</I32>
+              <S N="MiXml">&lt;CLASS NAME="Win32_TimeZone" SUPERCLASS="CIM_Setting"&gt;&lt;QUALIFIER NAME="Locale" TYPE="sint32"&gt;&lt;VALUE&gt;1033&lt;/VALUE&gt;&lt;/QUALIFIER&gt;&lt;QUALIFIER NAME="UUID" TYPE="string"&gt;&lt;VALUE&gt;{8502C4EC-5FBB-11D2-AAC1-006008C78BC7}&lt;/VALUE&gt;&lt;/QUALIFIER&gt;&lt;QUALIFIER NAME="dynamic" TYPE="boolean"&gt;&lt;VALUE&gt;true&lt;/VALUE&gt;&lt;/QUALIFIER&gt;&lt;QUALIFIER NAME="provider" TYPE="string"&gt;&lt;VALUE&gt;CIMWin32&lt;/VALUE&gt;&lt;/QUALIFIER&gt;&lt;PROPERTY NAME="Bias" TYPE="sint32"&gt;&lt;QUALIFIER NAME="MappingStrings" TYPE="string"&gt;&lt;VALUE.ARRAY&gt;&lt;VALUE&gt;Win32API|Time Structures|TIME_ZONE_INFORMATION|Bias&lt;/VALUE&gt;&lt;/VALUE.ARRAY&gt;&lt;/QUALIFIER&gt;&lt;QUALIFIER NAME="read" TYPE="boolean"&gt;&lt;VALUE&gt;true&lt;/VALUE&gt;&lt;/QUALIFIER&gt;&lt;/PROPERTY&gt;&lt;PROPERTY NAME="DaylightBias" TYPE="sint32"&gt;&lt;QUALIFIER NAME="MappingStrings" TYPE="string"&gt;&lt;VALUE.ARRAY&gt;&lt;VALUE&gt;Win32API|Time Structures|TIME_ZONE_INFORMATION|DaylightBias&lt;/VALUE&gt;&lt;/VALUE.ARRAY&gt;&lt;/QUALIFIER&gt;&lt;QUALIFIER NAME="read" TYPE="boolean"&gt;&lt;VALUE&gt;true&lt;/VALUE&gt;&lt;/QUALIFIER&gt;&lt;/PROPERTY&gt;&lt;PROPERTY NAME="DaylightDay" TYPE="uint32"&gt;&lt;QUALIFIER NAME="MappingStrings" TYPE="string"&gt;&lt;VALUE.ARRAY&gt;&lt;VALUE&gt;Win32API|Time Structures|TIME_ZONE_INFORMATION|DaylightDate|wDay&lt;/VALUE&gt;&lt;/VALUE.ARRAY&gt;&lt;/QUALIFIER&gt;&lt;QUALIFIER NAME="read" TYPE="boolean"&gt;&lt;VALUE&gt;true&lt;/VALUE&gt;&lt;/QUALIFIER&gt;&lt;/PROPERTY&gt;&lt;PROPERTY NAME="DaylightDayOfWeek" TYPE="uint8"&gt;&lt;QUALIFIER NAME="MappingStrings" TYPE="string"&gt;&lt;VALUE.ARRAY&gt;&lt;VALUE&gt;Win32API|Time Structures|TIME_ZONE_INFORMATION|DaylightDate|wDayOfWeek&lt;/VALUE&gt;&lt;/VALUE.ARRAY&gt;&lt;/QUALIFIER&gt;&lt;QUALIFIER NAME="read" TYPE="boolean"&gt;&lt;VALUE&gt;true&lt;/VALUE&gt;&lt;/QUALIFIER&gt;&lt;/PROPERTY&gt;&lt;PROPERTY NAME="DaylightHour" TYPE="uint32"&gt;&lt;QUALIFIER NAME="MappingStrings" TYPE="string"&gt;&lt;VALUE.ARRAY&gt;&lt;VALUE&gt;Win32API|Time Structures|TIME_ZONE_INFORMATION|DaylightDate|wHour&lt;/VALUE&gt;&lt;/VALUE.ARRAY&gt;&lt;/QUALIFIER&gt;&lt;QUALIFIER NAME="read" TYPE="boolean"&gt;&lt;VALUE&gt;true&lt;/VALUE&gt;&lt;/QUALIFIER&gt;&lt;/PROPERTY&gt;&lt;PROPERTY NAME="DaylightMillisecond" TYPE="uint32"&gt;&lt;QUALIFIER NAME="MappingStrings" TYPE="string"&gt;&lt;VALUE.ARRAY&gt;&lt;VALUE&gt;Win32API|Time Structures|TIME_ZONE_INFORMATION|DaylightDate|wMilliseconds&lt;/VALUE&gt;&lt;/VALUE.ARRAY&gt;&lt;/QUALIFIER&gt;&lt;QUALIFIER NAME="read" TYPE="boolean"&gt;&lt;VALUE&gt;true&lt;/VALUE&gt;&lt;/QUALIFIER&gt;&lt;/PROPERTY&gt;&lt;PROPERTY NAME="DaylightMinute" TYPE="uint32"&gt;&lt;QUALIFIER NAME="MappingStrings" TYPE="string"&gt;&lt;VALUE.ARRAY&gt;&lt;VALUE&gt;Win32API|Time Structures|TIME_ZONE_INFORMATION|DaylightDate|wMinute&lt;/VALUE&gt;&lt;/VALUE.ARRAY&gt;&lt;/QUALIFIER&gt;&lt;QUALIFIER NAME="read" TYPE="boolean"&gt;&lt;VALUE&gt;true&lt;/VALUE&gt;&lt;/QUALIFIER&gt;&lt;/PROPERTY&gt;&lt;PROPERTY NAME="DaylightMonth" TYPE="uint32"&gt;&lt;QUALIFIER NAME="MappingStrings" TYPE="string"&gt;&lt;VALUE.ARRAY&gt;&lt;VALUE&gt;Win32API|Time Structures|TIME_ZONE_INFORMATION|DaylightDate|wMonth&lt;/VALUE&gt;&lt;/VALUE.ARRAY&gt;&lt;/QUALIFIER&gt;&lt;QUALIFIER NAME="read" TYPE="boolean"&gt;&lt;VALUE&gt;true&lt;/VALUE&gt;&lt;/QUALIFIER&gt;&lt;QUALIFIER NAME="ValueMap" TYPE="string"&gt;&lt;VALUE.ARRAY&gt;&lt;VALUE&gt;1&lt;/VALUE&gt;&lt;VALUE&gt;2&lt;/VALUE&gt;&lt;VALUE&gt;3&lt;/VALUE&gt;&lt;VALUE&gt;4&lt;/VALUE&gt;&lt;VALUE&gt;5&lt;/VALUE&gt;&lt;VALUE&gt;6&lt;/VALUE&gt;&lt;VALUE&gt;7&lt;/VALUE&gt;&lt;VALUE&gt;8&lt;/VALUE&gt;&lt;VALUE&gt;9&lt;/VALUE&gt;&lt;VALUE&gt;10&lt;/VALUE&gt;&lt;VALUE&gt;11&lt;/VALUE&gt;&lt;VALUE&gt;12&lt;/VALUE&gt;&lt;/VALUE.ARRAY&gt;&lt;/QUALIFIER&gt;&lt;/PROPERTY&gt;&lt;PROPERTY NAME="DaylightName" TYPE="string"&gt;&lt;QUALIFIER NAME="MappingStrings" TYPE="string"&gt;&lt;VALUE.ARRAY&gt;&lt;VALUE&gt;Win32API|Time Structures|TIME_ZONE_INFORMATION|DaylightName&lt;/VALUE&gt;&lt;/VALUE.ARRAY&gt;&lt;/QUALIFIER&gt;&lt;QUALIFIER NAME="MaxLen" TYPE="sint32"&gt;&lt;VALUE&gt;256&lt;/VALUE&gt;&lt;/QUALIFIER&gt;&lt;QUALIFIER NAME="read" TYPE="boolean"&gt;&lt;VALUE&gt;true&lt;/VALUE&gt;&lt;/QUALIFIER&gt;&lt;/PROPERTY&gt;&lt;PROPERTY NAME="DaylightSecond" TYPE="uint32"&gt;&lt;QUALIFIER NAME="MappingStrings" TYPE="string"&gt;&lt;VALUE.ARRAY&gt;&lt;VALUE&gt;Win32API|Time Structures|TIME_ZONE_INFORMATION|DaylightDate|wSecond&lt;/VALUE&gt;&lt;/VALUE.ARRAY&gt;&lt;/QUALIFIER&gt;&lt;QUALIFIER NAME="read" TYPE="boolean"&gt;&lt;VALUE&gt;true&lt;/VALUE&gt;&lt;/QUALIFIER&gt;&lt;/PROPERTY&gt;&lt;PROPERTY NAME="DaylightYear" TYPE="uint32"&gt;&lt;QUALIFIER NAME="MappingStrings" TYPE="string"&gt;&lt;VALUE.ARRAY&gt;&lt;VALUE&gt;Win32API|Time Structures|TIME_ZONE_INFORMATION|DaylightDate|wYear&lt;/VALUE&gt;&lt;/VALUE.ARRAY&gt;&lt;/QUALIFIER&gt;&lt;QUALIFIER NAME="read" TYPE="boolean"&gt;&lt;VALUE&gt;true&lt;/VALUE&gt;&lt;/QUALIFIER&gt;&lt;/PROPERTY&gt;&lt;PROPERTY NAME="StandardBias" TYPE="uint32"&gt;&lt;QUALIFIER NAME="MappingStrings" TYPE="string"&gt;&lt;VALUE.ARRAY&gt;&lt;VALUE&gt;Win32API|Time Structures|TIME_ZONE_INFORMATION|StandardBias&lt;/VALUE&gt;&lt;/VALUE.ARRAY&gt;&lt;/QUALIFIER&gt;&lt;QUALIFIER NAME="read" TYPE="boolean"&gt;&lt;VALUE&gt;true&lt;/VALUE&gt;&lt;/QUALIFIER&gt;&lt;/PROPERTY&gt;&lt;PROPERTY NAME="StandardDay" TYPE="uint32"&gt;&lt;QUALIFIER NAME="MappingStrings" TYPE="string"&gt;&lt;VALUE.ARRAY&gt;&lt;VALUE&gt;Win32API|Time Structures|TIME_ZONE_INFORMATION|StandardDate|wDay&lt;/VALUE&gt;&lt;/VALUE.ARRAY&gt;&lt;/QUALIFIER&gt;&lt;QUALIFIER NAME="read" TYPE="boolean"&gt;&lt;VALUE&gt;true&lt;/VALUE&gt;&lt;/QUALIFIER&gt;&lt;/PROPERTY&gt;&lt;PROPERTY NAME="StandardDayOfWeek" TYPE="uint8"&gt;&lt;QUALIFIER NAME="MappingStrings" TYPE="string"&gt;&lt;VALUE.ARRAY&gt;&lt;VALUE&gt;Win32API|Time Structures|TIME_ZONE_INFORMATION|StandardDate|wDayOfWeek&lt;/VALUE&gt;&lt;/VALUE.ARRAY&gt;&lt;/QUALIFIER&gt;&lt;QUALIFIER NAME="read" TYPE="boolean"&gt;&lt;VALUE&gt;true&lt;/VALUE&gt;&lt;/QUALIFIER&gt;&lt;/PROPERTY&gt;&lt;PROPERTY NAME="StandardHour" TYPE="uint32"&gt;&lt;QUALIFIER NAME="MappingStrings" TYPE="string"&gt;&lt;VALUE.ARRAY&gt;&lt;VALUE&gt;Win32API|Time Structures|TIME_ZONE_INFORMATION|StandardDate|wHour&lt;/VALUE&gt;&lt;/VALUE.ARRAY&gt;&lt;/QUALIFIER&gt;&lt;QUALIFIER NAME="read" TYPE="boolean"&gt;&lt;VALUE&gt;true&lt;/VALUE&gt;&lt;/QUALIFIER&gt;&lt;/PROPERTY&gt;&lt;PROPERTY NAME="StandardMillisecond" TYPE="uint32"&gt;&lt;QUALIFIER NAME="MappingStrings" TYPE="string"&gt;&lt;VALUE.ARRAY&gt;&lt;VALUE&gt;Win32API|Time Structures|TIME_ZONE_INFORMATION|StandardDate|wMilliseconds&lt;/VALUE&gt;&lt;/VALUE.ARRAY&gt;&lt;/QUALIFIER&gt;&lt;QUALIFIER NAME="read" TYPE="boolean"&gt;&lt;VALUE&gt;true&lt;/VALUE&gt;&lt;/QUALIFIER&gt;&lt;/PROPERTY&gt;&lt;PROPERTY NAME="StandardMinute" TYPE="uint32"&gt;&lt;QUALIFIER NAME="MappingStrings" TYPE="string"&gt;&lt;VALUE.ARRAY&gt;&lt;VALUE&gt;Win32API|Time Structures|TIME_ZONE_INFORMATION|StandardDate|wMinute&lt;/VALUE&gt;&lt;/VALUE.ARRAY&gt;&lt;/QUALIFIER&gt;&lt;QUALIFIER NAME="read" TYPE="boolean"&gt;&lt;VALUE&gt;true&lt;/VALUE&gt;&lt;/QUALIFIER&gt;&lt;/PROPERTY&gt;&lt;PROPERTY NAME="StandardMonth" TYPE="uint32"&gt;&lt;QUALIFIER NAME="MappingStrings" TYPE="string"&gt;&lt;VALUE.ARRAY&gt;&lt;VALUE&gt;Win32API|Time Structures|TIME_ZONE_INFORMATION|StandardDate|wMonth&lt;/VALUE&gt;&lt;/VALUE.ARRAY&gt;&lt;/QUALIFIER&gt;&lt;QUALIFIER NAME="read" TYPE="boolean"&gt;&lt;VALUE&gt;true&lt;/VALUE&gt;&lt;/QUALIFIER&gt;&lt;QUALIFIER NAME="ValueMap" TYPE="string"&gt;&lt;VALUE.ARRAY&gt;&lt;VALUE&gt;1&lt;/VALUE&gt;&lt;VALUE&gt;2&lt;/VALUE&gt;&lt;VALUE&gt;3&lt;/VALUE&gt;&lt;VALUE&gt;4&lt;/VALUE&gt;&lt;VALUE&gt;5&lt;/VALUE&gt;&lt;VALUE&gt;6&lt;/VALUE&gt;&lt;VALUE&gt;7&lt;/VALUE&gt;&lt;VALUE&gt;8&lt;/VALUE&gt;&lt;VALUE&gt;9&lt;/VALUE&gt;&lt;VALUE&gt;10&lt;/VALUE&gt;&lt;VALUE&gt;11&lt;/VALUE&gt;&lt;VALUE&gt;12&lt;/VALUE&gt;&lt;/VALUE.ARRAY&gt;&lt;/QUALIFIER&gt;&lt;/PROPERTY&gt;&lt;PROPERTY NAME="StandardName" TYPE="string"&gt;&lt;QUALIFIER NAME="key" TYPE="boolean" OVERRIDABLE="false"&gt;&lt;VALUE&gt;true&lt;/VALUE&gt;&lt;/QUALIFIER&gt;&lt;QUALIFIER NAME="MappingStrings" TYPE="string"&gt;&lt;VALUE.ARRAY&gt;&lt;VALUE&gt;Win32API|Time Structures|TIME_ZONE_INFORMATION|StandardName&lt;/VALUE&gt;&lt;/VALUE.ARRAY&gt;&lt;/QUALIFIER&gt;&lt;QUALIFIER NAME="MaxLen" TYPE="sint32"&gt;&lt;VALUE&gt;256&lt;/VALUE&gt;&lt;/QUALIFIER&gt;&lt;QUALIFIER NAME="read" TYPE="boolean"&gt;&lt;VALUE&gt;true&lt;/VALUE&gt;&lt;/QUALIFIER&gt;&lt;/PROPERTY&gt;&lt;PROPERTY NAME="StandardSecond" TYPE="uint32"&gt;&lt;QUALIFIER NAME="MappingStrings" TYPE="string"&gt;&lt;VALUE.ARRAY&gt;&lt;VALUE&gt;Win32API|Time Structures|TIME_ZONE_INFORMATION|StandardDate|wSecond&lt;/VALUE&gt;&lt;/VALUE.ARRAY&gt;&lt;/QUALIFIER&gt;&lt;QUALIFIER NAME="read" TYPE="boolean"&gt;&lt;VALUE&gt;true&lt;/VALUE&gt;&lt;/QUALIFIER&gt;&lt;/PROPERTY&gt;&lt;PROPERTY NAME="StandardYear" TYPE="uint32"&gt;&lt;QUALIFIER NAME="MappingStrings" TYPE="string"&gt;&lt;VALUE.ARRAY&gt;&lt;VALUE&gt;Win32API|Time Structures|TIME_ZONE_INFORMATION|StandardDate|wYear&lt;/VALUE&gt;&lt;/VALUE.ARRAY&gt;&lt;/QUALIFIER&gt;&lt;QUALIFIER NAME="read" TYPE="boolean"&gt;&lt;VALUE&gt;true&lt;/VALUE&gt;&lt;/QUALIFIER&gt;&lt;/PROPERTY&gt;&lt;/CLASS&gt;</S>
+            </MS>
+          </Obj>
+        </LST>
+      </Obj>
+    </MS>
+  </Obj>
+</Objs>
