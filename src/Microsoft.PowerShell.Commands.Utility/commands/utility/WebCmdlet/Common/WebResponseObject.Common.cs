@@ -177,7 +177,7 @@ namespace Microsoft.PowerShell.Commands
         /// Returns the string representation of this web response.
         /// </summary>
         /// <returns>The string representation of this web response.</returns>
-        public sealed override string ToString()
+        public override string ToString()
         {
             if (Content is null)
             {
