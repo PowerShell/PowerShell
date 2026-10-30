@@ -4117,6 +4117,11 @@ namespace System.Management.Automation
             catch (Exception e)
             {
                 typeConversion.WriteLine("Exception converting with IConvertible: \"{0}\".", e.Message);
+                if (e is InvalidCastException && resultType.IsArray && resultType.GetArrayRank() > 1)
+                {
+                    ThrowInvalidCastException(valueToConvert, resultType);
+                }
+
                 throw new PSInvalidCastException("InvalidCastIConvertible", e,
                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
                     valueToConvert.ToString(), resultType.ToString(), e.Message);
@@ -4182,6 +4187,11 @@ namespace System.Management.Automation
                 if (fallbackConverter != null)
                 {
                     return fallbackConverter(valueToConvert, resultType, recursion, originalValueToConvert, formatProvider, backupTable);
+                }
+
+                if (resultType.IsArray && resultType.GetArrayRank() > 1)
+                {
+                    return ThrowInvalidCastException(valueToConvert, resultType);
                 }
 
                 throw new PSInvalidCastException("ConvertToFinalInvalidCastException", null,
@@ -4902,6 +4912,18 @@ namespace System.Management.Automation
                 return Tuple.Create(errorId, errorMsg);
             }
 
+            if (PSObject.Base(valueToConvert) != null && resultType.IsArray && resultType.GetArrayRank() > 1)
+            {
+                typeConversion.WriteLine("Cannot convert to a multidimensional array type.");
+                errorId = nameof(ExtendedTypeSystem.InvalidCastToMultidimensionalArray);
+                errorMsg = StringUtil.Format(
+                    ExtendedTypeSystem.InvalidCastToMultidimensionalArray,
+                    valueToConvert.ToString(),
+                    ObjectToTypeNameString(valueToConvert),
+                    resultType);
+                return Tuple.Create(errorId, errorMsg);
+            }
+
             if (PSObject.Base(valueToConvert) == null)
             {
                 if (resultType.IsEnum)
@@ -5017,6 +5039,33 @@ namespace System.Management.Automation
 
             if (toType.IsArray)
             {
+                if (toType.GetArrayRank() > 1)
+                {
+                    // The array conversions below only build one-dimensional arrays. Keep the ranks they would have
+                    // so overload selection and custom converter lookup are unchanged, but fail instead of converting.
+                    if (fromType.IsArray)
+                    {
+                        ConversionRank arrayRank = toType.GetElementType().IsAssignableFrom(fromType.GetElementType())
+                            ? ConversionRank.Language
+                            : ConversionRank.UnrelatedArrays;
+                        return CacheConversion<object>(fromType, toType, LanguagePrimitives.ConvertNoConversion, arrayRank);
+                    }
+
+                    if (LanguagePrimitives.IsTypeEnumerable(fromType))
+                    {
+                        return CacheConversion<object>(fromType, toType, LanguagePrimitives.ConvertNoConversion, ConversionRank.Language);
+                    }
+
+                    IConversionData elementData = FigureConversion(fromType, toType.GetElementType());
+                    if (elementData.Rank != ConversionRank.None)
+                    {
+                        valueDependentRank = elementData.Rank & ConversionRank.ValueDependent;
+                        valueDependentConversion = LanguagePrimitives.ConvertNoConversion;
+                    }
+
+                    return null;
+                }
+
                 Type toElementType = toType.GetElementType();
 
                 if (fromType.IsArray)
