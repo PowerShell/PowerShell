@@ -37,6 +37,10 @@ namespace System.Management.Automation
 
         internal static readonly VariablePath PSStyleVarPath = new VariablePath(PSStyle);
 
+        internal const string PSClipboardActions = "PSClipboardActions";
+
+        internal static readonly VariablePath PSClipboardActionsVarPath = new VariablePath(PSClipboardActions);
+
         internal const string OutputEncoding = "OutputEncoding";
 
         internal static readonly VariablePath OutputEncodingVarPath = new VariablePath(OutputEncoding);
