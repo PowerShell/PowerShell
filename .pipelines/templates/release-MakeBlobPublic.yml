@@ -51,7 +51,15 @@ jobs:
         Get-ChildItem Env:
       displayName: 'Capture Environment Variables'
 
-    - task: AzurePowerShell@5.280.3
+    - pwsh: |
+        $repositoryName = 'PowerShellGalleryMirror'
+        if (-not (Get-PSRepository -Name $repositoryName -ErrorAction Ignore)) {
+          Register-PSRepository -Name $repositoryName -SourceLocation 'https://pkgs.dev.azure.com/powershell/PowerShell/_packaging/PowerShellGalleryMirror/nuget/v2' -InstallationPolicy Trusted -ErrorAction Stop
+        }
+        Install-Module -Repository $repositoryName -Name Az.Storage -RequiredVersion 9.7.2 -Scope CurrentUser -Force -ErrorAction Stop
+      displayName: Install Az.Storage 9.7.2
+
+    - task: AzurePowerShell@5
       displayName: Copy blobs to PSInfra storage
       inputs:
         azureSubscription: az-blob-cicd-infra
@@ -59,6 +67,8 @@ jobs:
         azurePowerShellVersion: LatestVersion
         pwsh: true
         inline: |
+          Import-Module Az.Storage -RequiredVersion 9.7.2 -ErrorAction Stop
+
           $sourceStorageAccountName = '$(StorageAccount)'
           $destinationStorageAccountName = '$(PSInfraStorageAccount)'
           $destinationContainerName = '$web'
@@ -137,7 +147,15 @@ jobs:
         Get-ChildItem Env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
       displayName: 'Capture Environment Variables'
 
-    - task: AzurePowerShell@5.280.3
+    - pwsh: |
+        $repositoryName = 'PowerShellGalleryMirror'
+        if (-not (Get-PSRepository -Name $repositoryName -ErrorAction Ignore)) {
+          Register-PSRepository -Name $repositoryName -SourceLocation 'https://pkgs.dev.azure.com/powershell/PowerShell/_packaging/PowerShellGalleryMirror/nuget/v2' -InstallationPolicy Trusted -ErrorAction Stop
+        }
+        Install-Module -Repository $repositoryName -Name Az.Storage -RequiredVersion 9.7.2 -Scope CurrentUser -Force -ErrorAction Stop
+      displayName: Install Az.Storage 9.7.2
+
+    - task: AzurePowerShell@5
       displayName: Copy blobs to PSInfra storage
       inputs:
         azureSubscription: az-blob-cicd-infra
@@ -145,6 +163,8 @@ jobs:
         azurePowerShellVersion: LatestVersion
         pwsh: true
         inline: |
+          Import-Module Az.Storage -RequiredVersion 9.7.2 -ErrorAction Stop
+
           $sourceStorageAccountName = '$(StorageAccount)'
           $sourceContainerName = '$(AzureVersion)-nuget'
           $prefix = 'globaltool'
