@@ -182,7 +182,7 @@ class PSLogItem
     [string] $EventId = [string]::Empty
     [string] $Message = [string]::Empty
     [int] $Count = 1
-    [System.Collections.Generic.List[String]]$ParseErrors = [System.Collections.Generic.List[string]]::new()
+    [System.Collections.Generic.List[string]]$ParseErrors = [System.Collections.Generic.List[string]]::new()
 
     hidden static $monthNames = @('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun','Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec')
 

@@ -559,7 +559,7 @@ Describe 'get-help other tests' -Tags "CI" {
     Context 'get-help helpFunc12' {
         # Test case w/ cmdlet binding, but no parameter sets.
         function helpFunc12 {
-            Param ([Parameter(Mandatory=$true)][String]$Name,
+            Param ([Parameter(Mandatory=$true)][string]$Name,
                    [string]$Extension = "txt",
                    $NoType,
                    [switch]$ASwitch,
