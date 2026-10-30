@@ -116,7 +116,7 @@ jobs:
       }
     displayName: Create json files
 
-  - task: AzurePowerShell@5
+  - task: AzurePowerShell@5.280.3
     displayName: Upload buildjson to blob
     inputs:
       azureSubscription: az-blob-cicd-infra
