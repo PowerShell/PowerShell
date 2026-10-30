@@ -205,7 +205,7 @@
     <value>Directory {0} cannot be removed because it is not empty.</value>
   </data>
   <data name="UnknownType" xml:space="preserve">
-    <value>The type is not a known type for the file system. Only "file","directory" or "symboliclink" can be specified.</value>
+    <value>The type is not a known type for the file system. Only "file","directory","symboliclink","junction" or "hardlink" can be specified.</value>
   </data>
   <data name="PathOutSideBasePath" xml:space="preserve">
     <value>Cannot process the path because the specified path refers to an item that is outside the basePath.</value>
