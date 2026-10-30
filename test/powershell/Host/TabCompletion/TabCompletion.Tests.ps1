@@ -363,6 +363,19 @@ namespace BugRepro
         }
     }
 
+    it 'should only complete selected properties' -Test {
+        $res = TabExpansion2 -inputScript 'Get-ChildItem | Select Name, FullName | Select '
+        $res.CompletionMatches.Count | Should -Be 2
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly FullName
+        $res.CompletionMatches[1].CompletionText | Should -BeExactly Name
+    }
+
+    it 'should hashtable properties for psobject wrapped hashtable' -Test {
+        $res = TabExpansion2 -inputScript '([psobject]@{Test = New-Guid}).Key'
+        $res.CompletionMatches.Count | Should -Be 1
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly Keys
+    }
+
     It 'should complete index expression for <Intent>' -TestCases @(
         @{
             Intent = 'Hashtable with no user input'
