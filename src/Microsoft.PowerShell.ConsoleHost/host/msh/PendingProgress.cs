@@ -82,6 +82,12 @@ namespace Microsoft.PowerShell
                         foundNode.PercentComplete = Math.Min(record.PercentComplete, 100);
                         foundNode.SecondsRemaining = record.SecondsRemaining;
                         foundNode.Age = 0;
+
+                        if (ProgressNode.IsMinimalProgressRenderingEnabled() && foundNode.PercentComplete == 100)
+                        {
+                            RemoveNodeAndPromoteChildren(listWhereFound, indexWhereFound);
+                        }
+
                         break;
                     }
                     else
@@ -134,6 +140,11 @@ namespace Microsoft.PowerShell
                 }
 
                 AddNode(_topLevelNodes, newNode);
+
+                if (ProgressNode.IsMinimalProgressRenderingEnabled() && newNode.PercentComplete == 100)
+                {
+                    RemoveNodeAndPromoteChildren(_topLevelNodes, _topLevelNodes.Count - 1);
+                }
             } while (false);
 
             // At this point the tree is up-to-date.  Make a pass to age all of the nodes
@@ -581,7 +592,12 @@ namespace Microsoft.PowerShell
 
             if (ProgressNode.IsMinimalProgressRenderingEnabled())
             {
-                RenderHelper(result, _topLevelNodes, indentation: 0, maxWidth, rawUI);
+                const int maxMinimalBars = 5;
+                ArrayList nodesToRender = _topLevelNodes.Count > maxMinimalBars
+                    ? new ArrayList(_topLevelNodes.GetRange(_topLevelNodes.Count - maxMinimalBars, maxMinimalBars))
+                    : _topLevelNodes;
+
+                RenderHelper(result, nodesToRender, indentation: 0, maxWidth, rawUI);
                 return (string[])result.ToArray(typeof(string));
             }
 
