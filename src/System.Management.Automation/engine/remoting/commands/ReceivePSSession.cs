@@ -569,7 +569,7 @@ namespace Microsoft.PowerShell.Commands
                 string scheme = UseSSL.IsPresent ? WSManConnectionInfo.HttpsScheme : WSManConnectionInfo.HttpScheme;
 
                 connectionInfo.Scheme = scheme;
-                connectionInfo.ComputerName = ResolveComputerName(ComputerName);
+                connectionInfo.ComputerName = RemotingUtils.ResolveComputerName(ComputerName);
                 connectionInfo.AppName = ApplicationName;
                 connectionInfo.ShellUri = ConfigurationName;
                 connectionInfo.Port = Port;
