@@ -507,7 +507,7 @@ namespace Microsoft.PowerShell
             bool
             Visit(ProgressNode node, ArrayList unused, int unusedToo)
             {
-                node.Age = Math.Min(node.Age + 1, Int32.MaxValue - 1);
+                node.Age = Math.Min(node.Age + 1, int.MaxValue - 1);
 
                 node.Style = ProgressNode.IsMinimalProgressRenderingEnabled()
                     ? ProgressNode.RenderStyle.Ansi

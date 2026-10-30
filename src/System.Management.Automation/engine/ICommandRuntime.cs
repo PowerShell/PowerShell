@@ -123,7 +123,7 @@ namespace System.Management.Automation
         /// in a fashion appropriate for the application. For example, a GUI application
         /// would implement this as a progress bar of some sort.
         /// </remarks>
-        void WriteProgress(Int64 sourceId, ProgressRecord progressRecord);
+        void WriteProgress(long sourceId, ProgressRecord progressRecord);
 
         /// <summary>
         /// Called when the cmdlet want to display verbose information.
