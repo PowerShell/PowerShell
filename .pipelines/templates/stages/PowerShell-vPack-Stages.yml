@@ -57,14 +57,8 @@ stages:
 
     strategy:
       matrix:
-        x86:
-          architecture: x86
-
         x64:
           architecture: x64
-
-        arm64:
-          architecture: arm64
 
     variables:
       ArtifactPlatform: 'windows'
