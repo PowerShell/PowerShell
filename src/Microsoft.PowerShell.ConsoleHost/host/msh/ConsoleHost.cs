@@ -1495,11 +1495,16 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                _outputSerializer ??=
-                    new WrappedSerializer(
-                        OutputFormat,
-                        "Output",
-                        Console.IsOutputRedirected ? Console.Out : ConsoleTextWriter);
+                TextWriter writer = Console.IsOutputRedirected ? Console.Out : ConsoleTextWriter;
+                if (_outputSerializer == null)
+                {
+                    _outputSerializer = new WrappedSerializer(OutputFormat, "Output", writer);
+                }
+                else
+                {
+                    // Console.Out is replaced when [Console]::OutputEncoding changes, and text output follows it.
+                    _outputSerializer.FollowTextWriter(writer);
+                }
 
                 return _outputSerializer;
             }
@@ -1509,11 +1514,16 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                _errorSerializer ??=
-                    new WrappedSerializer(
-                        ErrorFormat,
-                        "Error",
-                        Console.IsErrorRedirected ? Console.Error : ConsoleTextWriter);
+                TextWriter writer = Console.IsErrorRedirected ? Console.Error : ConsoleTextWriter;
+                if (_errorSerializer == null)
+                {
+                    _errorSerializer = new WrappedSerializer(ErrorFormat, "Error", writer);
+                }
+                else
+                {
+                    // Console.Error is replaced when [Console]::OutputEncoding changes, and text output follows it.
+                    _errorSerializer.FollowTextWriter(writer);
+                }
 
                 return _errorSerializer;
             }
