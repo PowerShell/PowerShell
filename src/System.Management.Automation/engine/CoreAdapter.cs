@@ -2757,8 +2757,8 @@ namespace System.Management.Automation
                         this.propertyType = typeof(object);
                     }
 
-                    // Get the public getter
-                    MethodInfo propertyGetter = property.GetGetMethod();
+                    // Get the public getter, which is inherited when an override defines only the setter
+                    MethodInfo propertyGetter = property.GetGetMethod() ?? GetPropertyWithInheritedGetter(property).GetGetMethod();
                     StringBuilder definition = new StringBuilder();
                     StringBuilder extraDefinition = new StringBuilder();
                     if (propertyGetter != null)
@@ -2815,6 +2815,7 @@ namespace System.Management.Automation
             internal PropertyCacheEntry(PropertyInfo property)
             {
                 this.member = property;
+                this.getterProperty = GetPropertyWithInheritedGetter(property);
                 this.propertyType = property.PropertyType;
                 // Generating code for fields/properties in ValueTypes is complex and will probably
                 // require different delegates
@@ -2828,13 +2829,13 @@ namespace System.Management.Automation
                     propertyType.IsCOMObject)
                 {
                     this.readOnly = property.GetSetMethod() == null;
-                    this.writeOnly = property.GetGetMethod() == null;
+                    this.writeOnly = getterProperty.GetGetMethod() == null;
                     this.useReflection = true;
                     return;
                 }
 
                 // Get the public or protected getter
-                MethodInfo propertyGetter = property.GetGetMethod(true);
+                MethodInfo propertyGetter = getterProperty.GetGetMethod(true);
                 if (propertyGetter != null && (propertyGetter.IsPublic || propertyGetter.IsFamily || propertyGetter.IsFamilyOrAssembly))
                 {
                     this.isStatic = propertyGetter.IsStatic;
@@ -2924,7 +2925,7 @@ namespace System.Management.Automation
                     return;
                 }
 
-                var property = (PropertyInfo)member;
+                var property = getterProperty;
                 var propertyGetter = property.GetGetMethod(true);
 
                 instance = this.isStatic ? null : parameter.Cast(propertyGetter.DeclaringType);
@@ -3010,6 +3011,10 @@ namespace System.Management.Automation
             }
 
             internal MemberInfo member;
+
+            // The property whose getter is used. It differs from 'member' when 'member' is an override
+            // that defines only the setter, see GetPropertyWithInheritedGetter.
+            internal PropertyInfo getterProperty;
 
             internal GetterDelegate getterDelegate
             {
@@ -3337,6 +3342,39 @@ namespace System.Management.Automation
             }
 
             return returnValue;
+        }
+
+        /// <summary>
+        /// An override can redefine only the setter of a virtual property and inherit the getter.
+        /// Reflection then returns a property that has only the setter. In that case, return the property
+        /// from the type that introduced the virtual property, so that its getter can be used. The getter
+        /// is virtual, so a call through it still reaches a getter override in a type in between.
+        /// </summary>
+        private static PropertyInfo GetPropertyWithInheritedGetter(PropertyInfo property)
+        {
+            MethodInfo setter = property.SetMethod;
+            if (property.GetMethod != null || setter == null)
+            {
+                return property;
+            }
+
+            MethodInfo baseSetter = setter.GetBaseDefinition();
+            if (baseSetter.DeclaringType == setter.DeclaringType)
+            {
+                // Not an override.
+                return property;
+            }
+
+            foreach (PropertyInfo baseProperty in baseSetter.DeclaringType.GetProperties(
+                BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
+            {
+                if (baseProperty.SetMethod == baseSetter && string.Equals(baseProperty.Name, property.Name, StringComparison.Ordinal))
+                {
+                    return baseProperty.GetMethod != null ? baseProperty : property;
+                }
+            }
+
+            return property;
         }
 
         /// <summary>
@@ -4053,7 +4091,7 @@ namespace System.Management.Automation
 
                 if (adapterData.useReflection)
                 {
-                    return propertyInfo.GetValue(property.baseObject, null);
+                    return adapterData.getterProperty.GetValue(property.baseObject, null);
                 }
                 else
                 {
