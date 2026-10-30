@@ -175,6 +175,24 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $transcriptFilePath | Should -FileContentMatch $machineName
     }
 
+    It "Transcription should prefix native command output with a timestamp when 'IncludeTimeStamp' parameter is used" {
+        # The native command output is piped so that it is transcribed through the
+        # regular output stream. Standalone native command output is only captured by
+        # screen scraping when a physical console is available, which is not guaranteed
+        # in test environments.
+        $script = {
+            Start-Transcript -Path $transcriptFilePath -IncludeTimeStamp
+            hostname | ForEach-Object { Write-Host -Message $_ }
+            Stop-Transcript
+        }
+
+        & $script
+
+        $transcriptFilePath | Should -Exist
+        $machineName = [System.Environment]::MachineName
+        (Get-Content $transcriptFilePath | Where-Object { $_ -match "^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} .*$machineName" }).Count | Should -BeGreaterThan 0
+    }
+
     It "Transcription should record Write-Information output when InformationAction is set to Continue" {
         [String]$message = New-Guid
         $script = {
@@ -320,5 +338,83 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         Remove-Item $transcriptMinHeaderFilePath -ErrorAction SilentlyContinue
 
         $transcriptMinHeaderLength | Should -BeLessThan $transcriptLength
+    }
+
+    It "Transcription should prefix recorded output with a timestamp when 'IncludeTimeStamp' parameter is used" {
+        $message = "TimeStampTestMessage"
+        $script = {
+            Start-Transcript -Path $transcriptFilePath -IncludeTimeStamp
+            Write-Host -Message $message
+            Write-Host -Message "$message second`n$message third"
+            Stop-Transcript
+        }
+
+        & $script
+
+        $transcriptFilePath | Should -Exist
+        $content = Get-Content $transcriptFilePath
+        ($content | Where-Object { $_ -match "^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} .*$message" }).Count | Should -Be 3
+    }
+
+    It "Transcription should not prefix recorded output with a timestamp by default" {
+        $message = "NoTimeStampTestMessage"
+        $script = {
+            Start-Transcript -Path $transcriptFilePath
+            Write-Host -Message $message
+            Stop-Transcript
+        }
+
+        & $script
+
+        $transcriptFilePath | Should -Exist
+        $transcriptFilePath | Should -FileContentMatch $message
+        (Get-Content $transcriptFilePath | Where-Object { $_ -match "^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} " }).Count | Should -Be 0
+    }
+
+    It "Transcription should use the format specified by the 'TimeStampFormat' parameter" {
+        $message = "CustomFormatTestMessage"
+        $script = {
+            Start-Transcript -Path $transcriptFilePath -IncludeTimeStamp -TimeStampFormat "HH:mm:ss"
+            Write-Host -Message $message
+            Stop-Transcript
+        }
+
+        & $script
+
+        $transcriptFilePath | Should -Exist
+        (Get-Content $transcriptFilePath | Where-Object { $_ -match "^\d{2}:\d{2}:\d{2} .*$message" }).Count | Should -BeGreaterThan 0
+    }
+
+    It "Specifying 'TimeStampFormat' alone should enable timestamps" {
+        $message = "FormatOnlyTestMessage"
+        $script = {
+            Start-Transcript -Path $transcriptFilePath -TimeStampFormat "yyyy/MM/dd"
+            Write-Host -Message $message
+            Stop-Transcript
+        }
+
+        & $script
+
+        $transcriptFilePath | Should -Exist
+        (Get-Content $transcriptFilePath | Where-Object { $_ -match "^\d{4}/\d{2}/\d{2} .*$message" }).Count | Should -BeGreaterThan 0
+    }
+
+    It "Transcription should support standard .NET date and time format strings for 'TimeStampFormat'" {
+        $message = "StandardFormatTestMessage"
+        $script = {
+            Start-Transcript -Path $transcriptFilePath -TimeStampFormat "s"
+            Write-Host -Message $message
+            Stop-Transcript
+        }
+
+        & $script
+
+        $transcriptFilePath | Should -Exist
+        (Get-Content $transcriptFilePath | Where-Object { $_ -match "^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2} .*$message" }).Count | Should -BeGreaterThan 0
+    }
+
+    It "Should reject an invalid 'TimeStampFormat'" {
+        { Start-Transcript -Path $transcriptFilePath -IncludeTimeStamp -TimeStampFormat "yyyy 'unterminated" } | Should -Throw -ErrorId "InvalidTimeStampFormat,Microsoft.PowerShell.Commands.StartTranscriptCommand"
+        { Start-Transcript -Path $transcriptFilePath -IncludeTimeStamp -TimeStampFormat "q" } | Should -Throw -ErrorId "InvalidTimeStampFormat,Microsoft.PowerShell.Commands.StartTranscriptCommand"
     }
 }
