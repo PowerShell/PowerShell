@@ -51,7 +51,7 @@ jobs:
         Get-ChildItem Env:
       displayName: 'Capture Environment Variables'
 
-    - task: AzurePowerShell@5
+    - task: AzurePowerShell@5.280.3
       displayName: Copy blobs to PSInfra storage
       inputs:
         azureSubscription: az-blob-cicd-infra
@@ -137,7 +137,7 @@ jobs:
         Get-ChildItem Env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
       displayName: 'Capture Environment Variables'
 
-    - task: AzurePowerShell@5
+    - task: AzurePowerShell@5.280.3
       displayName: Copy blobs to PSInfra storage
       inputs:
         azureSubscription: az-blob-cicd-infra
