@@ -12,7 +12,8 @@
 
   <ItemGroup>
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="System.ServiceProcess.ServiceController" Version="11.0.0-rc.1.26425.128" />
+    <PackageReference Include="System.Diagnostics.EventLog" Version="11.0.0-rc.3.26522.148" />
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="11.0.0-rc.3.26522.148" />
   </ItemGroup>
 
   <ItemGroup>

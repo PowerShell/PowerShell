@@ -32,17 +32,21 @@
     <!-- the Application Insights package -->
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.23.0" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="11.0.0-rc.1.26425.128" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="11.0.0-rc.1.26425.128" />
-    <PackageReference Include="System.DirectoryServices" Version="11.0.0-rc.1.26425.128" />
-    <PackageReference Include="System.Management" Version="11.0.0-rc.1.26425.128" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="11.0.0-rc.1.26425.128" />
-    <PackageReference Include="System.Security.Permissions" Version="11.0.0-rc.1.26425.128" />
+    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="11.0.0-rc.3.26522.148" />
+    <PackageReference Include="System.CodeDom" Version="11.0.0-rc.3.26522.148" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="11.0.0-rc.3.26522.148" />
+    <PackageReference Include="System.Diagnostics.EventLog" Version="11.0.0-rc.3.26522.148" />
+    <PackageReference Include="System.DirectoryServices" Version="11.0.0-rc.3.26522.148" />
+    <PackageReference Include="System.Management" Version="11.0.0-rc.3.26522.148" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="11.0.0-rc.3.26522.148" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="11.0.0-rc.3.26522.148" />
+    <PackageReference Include="System.Security.Permissions" Version="11.0.0-rc.3.26522.148" />
     <!-- the following package(s) are from the powershell org -->
     <PackageReference Include="Microsoft.Management.Infrastructure" Version="3.0.0" />
     <PackageReference Include="Microsoft.PowerShell.Native" Version="700.0.2" />
     <!-- Signing APIs -->
     <PackageReference Include="Microsoft.Security.Extensions" Version="1.4.0" />
+    <PackageReference Include="System.Windows.Extensions" Version="11.0.0-rc.3.26522.148" />
   </ItemGroup>
 
   <ItemGroup>
