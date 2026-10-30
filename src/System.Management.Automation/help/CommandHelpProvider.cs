@@ -15,6 +15,7 @@ using System.Xml;
 using Dbg = System.Management.Automation.Diagnostics;
 using System.Management.Automation.Help;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace System.Management.Automation
 {
@@ -352,10 +353,12 @@ namespace System.Management.Automation
             {
                 if (isCmdlet)
                 {
+                    _originalHelpFiles.TryAdd(cmdletInfo, cmdletInfo.HelpFile);
                     cmdletInfo.HelpFile = helpFile;
                 }
                 else if (isFunction)
                 {
+                    _originalHelpFiles.TryAdd(functionInfo, functionInfo.HelpFile);
                     functionInfo.HelpFile = helpFile;
                 }
             }
@@ -490,6 +493,13 @@ namespace System.Management.Automation
         /// to a help file that actually doesn't contain the help for it).
         /// </summary>
         private readonly Hashtable _helpFiles = new Hashtable();
+
+        /// <summary>
+        /// The original HelpFile property of the commands whose HelpFile was set to the file their help
+        /// was found in. A full path in HelpFile is loaded directly, so Reset() restores the original
+        /// values to search for the help again, e.g. in a new UI culture or after Update-Help.
+        /// </summary>
+        private readonly ConditionalWeakTable<CommandInfo, string> _originalHelpFiles = new ConditionalWeakTable<CommandInfo, string>();
 
         private string GetHelpFile(string helpFile, CmdletInfo cmdletInfo)
         {
@@ -1304,6 +1314,20 @@ namespace System.Management.Automation
             base.Reset();
 
             _helpFiles.Clear();
+
+            foreach (KeyValuePair<CommandInfo, string> entry in _originalHelpFiles)
+            {
+                if (entry.Key is CmdletInfo cmdletInfo)
+                {
+                    cmdletInfo.HelpFile = entry.Value;
+                }
+                else if (entry.Key is FunctionInfo functionInfo)
+                {
+                    functionInfo.HelpFile = entry.Value;
+                }
+            }
+
+            _originalHelpFiles.Clear();
         }
 
         #endregion
