@@ -254,4 +254,9 @@ Describe "Bug fixes" -Tags "CI" {
         Test-Path -Path $errorFile | Should -BeTrue
         (Get-Item $errorFile).Length | Should -Be 0
     }
+
+    ## https://github.com/PowerShell/PowerShell/issues/25397
+    It "Should handle shell: URIs with path components without throwing ProviderNotFoundException" -Skip:(!$IsWindows) {
+        { Start-Process 'shell:::{8E908FC9-BECC-40f6-915B-F4CA0E70D03D}\Advanced' } | Should -Not -Throw
+    }
 }
