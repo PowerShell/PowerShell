@@ -491,6 +491,179 @@ Describe 'Function Pipeline Behaviour' -Tag 'CI' {
             ## but it should skip calling '$steppablePipeline.Clean()' in this case. 
             { TestProxyGci -Attributes } | Should -Throw -ErrorId 'MissingArgument,TestProxyGci'
         }
+
+        It "A command in a steppable pipeline keeps its own redirection over its caller's" {
+            function Test-OwnRedirection {
+                [CmdletBinding()]
+                param()
+
+                begin {
+                    $step = { Write-Error -Message 'boom' 2>&1 }.GetSteppablePipeline()
+                    $step.Begin($PSCmdlet)
+                }
+
+                end {
+                    $step.End()
+                }
+            }
+
+            $result = Test-OwnRedirection 2>$null
+            $result | Should -BeOfType System.Management.Automation.ErrorRecord
+        }
+
+        It "A command in a steppable pipeline keeps its own redirection to a file when its caller <Caller>" -TestCases @(
+            @{ Caller = 'does not redirect errors'; Invoke = { Test-OwnFileRedirection } }
+            @{ Caller = 'merges errors into its output'; Invoke = { Test-OwnFileRedirection 2>&1 } }
+        ) {
+            param($Invoke)
+
+            $errorFile = Join-Path -Path $TestDrive -ChildPath 'OwnFileRedirection.txt'
+            Remove-Item -LiteralPath $errorFile -ErrorAction Ignore
+
+            function Test-OwnFileRedirection {
+                [CmdletBinding()]
+                param()
+
+                begin {
+                    $step = { Write-Error -Message 'boom' 2> $errorFile }.GetSteppablePipeline()
+                    $step.Begin($PSCmdlet)
+                }
+
+                end {
+                    $step.End()
+                }
+            }
+
+            $result = & $Invoke
+            $result | Should -BeNullOrEmpty
+            Get-Content -LiteralPath $errorFile -Raw -ErrorAction Stop | Should -Match 'boom'
+        }
+
+        It "A steppable pipeline begun from another command sends its errors to that command's error pipe, not to the one it took where it was built" {
+            $errorFile = Join-Path -Path $TestDrive -ChildPath 'BegunElsewhere.txt'
+            Remove-Item -LiteralPath $errorFile -ErrorAction Ignore
+
+            function Test-BeginElsewhere {
+                [CmdletBinding()]
+                param(
+                    [System.Management.Automation.SteppablePipeline] $Step
+                )
+
+                begin {
+                    $Step.Begin($PSCmdlet)
+                }
+
+                end {
+                    $Step.End()
+                }
+            }
+
+            function Test-BuildAndBeginElsewhere {
+                [CmdletBinding()]
+                param()
+
+                # Write-Error takes this function's error pipe, which discards it under 2>$null.
+                $step = { Write-Error -Message 'boom' }.GetSteppablePipeline()
+                Test-BeginElsewhere -Step $step 2> $errorFile
+            }
+
+            Test-BuildAndBeginElsewhere 2>$null
+            Get-Content -LiteralPath $errorFile -Raw -ErrorAction Stop | Should -Match 'boom'
+        }
+
+        It "A command in a steppable pipeline keeps its own merge of warnings into its output when its caller <Caller>" -TestCases @(
+            @{ Caller = 'does not redirect warnings'; Invoke = { Test-OwnWarningMerge } }
+            @{ Caller = 'discards warnings'; Invoke = { Test-OwnWarningMerge 3>$null } }
+            @{ Caller = 'merges warnings into its output'; Invoke = { Test-OwnWarningMerge 3>&1 } }
+        ) {
+            param($Invoke)
+
+            function Test-OwnWarningMerge {
+                [CmdletBinding()]
+                param()
+
+                begin {
+                    $step = { Write-Warning -Message 'boom' 3>&1 }.GetSteppablePipeline()
+                    $step.Begin($PSCmdlet)
+                }
+
+                end {
+                    $step.End()
+                }
+            }
+
+            $result = & $Invoke
+            $result | Should -BeOfType System.Management.Automation.WarningRecord
+        }
+
+        It "A command in a steppable pipeline keeps its own redirection of all streams to a file" {
+            $allFile = Join-Path -Path $TestDrive -ChildPath 'OwnAllRedirection.txt'
+
+            function Test-OwnAllRedirection {
+                [CmdletBinding()]
+                param()
+
+                begin {
+                    $step = { & { Write-Warning -Message 'boom'; 'output' } *> $allFile }.GetSteppablePipeline()
+                    $step.Begin($PSCmdlet)
+                }
+
+                end {
+                    $step.End()
+                }
+            }
+
+            $result = Test-OwnAllRedirection 3>&1
+            $result | Should -BeNullOrEmpty
+            $content = Get-Content -LiteralPath $allFile -Raw -ErrorAction Stop
+            $content | Should -Match 'boom'
+            $content | Should -Match 'output'
+        }
+
+        It "Errors from a command in a steppable pipeline reach a caller that merges them without passing through the commands after it" {
+            $missing = Join-Path -Path $TestDrive -ChildPath 'Missing'
+
+            function Test-ChainedErrors {
+                [CmdletBinding()]
+                param()
+
+                begin {
+                    $step = { Get-Item -LiteralPath $missing | Select-Object -Property Name }.GetSteppablePipeline()
+                    $step.Begin($PSCmdlet)
+                }
+
+                end {
+                    $step.End()
+                }
+            }
+
+            $result = Test-ChainedErrors 2>&1
+            $result | Should -HaveCount 1
+            $result | Should -BeOfType System.Management.Automation.ErrorRecord
+        }
+
+        It "A native command in a steppable pipeline has its stderr merged into the output of a caller that merges its errors" {
+            function Test-NativeErrors {
+                [CmdletBinding()]
+                param()
+
+                begin {
+                    $step = { testexe -stderrandout native }.GetSteppablePipeline()
+                    $step.Begin($PSCmdlet)
+                }
+
+                end {
+                    $step.End()
+                }
+            }
+
+            # testexe writes 'native' to stdout and its reverse to stderr.
+            $result = Test-NativeErrors 2>&1
+            $errors = @($result | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] })
+            $errors | Should -HaveCount 1
+            $errors[0].Exception.Message | Should -BeExactly 'evitan'
+            $result | Where-Object { $_ -is [string] } | Should -BeExactly 'native'
+        }
     }
 
     Context "'exit' statement in command" {

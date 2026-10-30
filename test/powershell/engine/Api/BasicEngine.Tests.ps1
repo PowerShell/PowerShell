@@ -35,6 +35,131 @@ Describe 'Basic engine APIs' -Tags "CI" {
             $result | Should -BeExactly '$args:(1 2 3); $input:()'
         }
     }
+
+    Context 'powershell::GetSteppablePipeline' {
+        BeforeAll {
+            function Invoke-SteppableWriteError {
+                [CmdletBinding()]
+                param(
+                    [switch] $MergeErrors
+                )
+
+                begin {
+                    $ps = [powershell]::Create([System.Management.Automation.RunspaceMode]::CurrentRunspace)
+                    $null = $ps.AddCommand((Get-Command -Name Write-Error)).AddParameter('Message', 'boom')
+                    if ($MergeErrors) {
+                        $ps.Commands.Commands[0].MergeMyResults('Error', 'Output')
+                    }
+
+                    $step = $ps.GetSteppablePipeline()
+                    $step.Begin($PSCmdlet)
+                }
+
+                end {
+                    $step.End()
+                    $ps.Dispose()
+                }
+            }
+        }
+
+        It "gives the pipeline's commands the redirections of the command that built it" {
+            $result = Invoke-SteppableWriteError 2>&1
+            $result | Should -BeOfType System.Management.Automation.ErrorRecord
+        }
+
+        It "keeps a merge the pipeline's command sets for itself over the redirections of the command that built it" {
+            $result = Invoke-SteppableWriteError -MergeErrors 2>$null
+            $result | Should -BeOfType System.Management.Automation.ErrorRecord
+        }
+
+        It "points errors from the pipeline's commands at the line that called the command that built it" {
+            $call = { Invoke-SteppableWriteError 2>&1 }
+            $result = & $call
+            $result.InvocationInfo.ScriptName | Should -Be $call.File
+            $result.InvocationInfo.ScriptLineNumber | Should -Be $call.StartPosition.StartLine
+            $result.InvocationInfo.InvocationName | Should -BeExactly 'Invoke-SteppableWriteError'
+        }
+
+        It "sends errors from each of the pipeline's commands to the output of a command that merges them, not through the commands after it" {
+            function Invoke-SteppableGetItemSelectObject {
+                [CmdletBinding()]
+                param()
+
+                begin {
+                    $ps = [powershell]::Create([System.Management.Automation.RunspaceMode]::CurrentRunspace)
+                    $null = $ps.AddCommand((Get-Command -Name Get-Item)).AddParameter('LiteralPath', (Join-Path -Path $TestDrive -ChildPath 'Missing'))
+                    $null = $ps.AddCommand((Get-Command -Name Select-Object)).AddParameter('Property', 'Name')
+                    $step = $ps.GetSteppablePipeline()
+                    $step.Begin($PSCmdlet)
+                }
+
+                end {
+                    $step.End()
+                    $ps.Dispose()
+                }
+            }
+
+            $result = Invoke-SteppableGetItemSelectObject 2>&1
+            $result | Should -HaveCount 1
+            $result | Should -BeOfType System.Management.Automation.ErrorRecord
+        }
+
+        It "merges a native command's stderr into the output of a command that merges its errors" {
+            function Invoke-SteppableNative {
+                [CmdletBinding()]
+                param()
+
+                begin {
+                    $ps = [powershell]::Create([System.Management.Automation.RunspaceMode]::CurrentRunspace)
+                    $null = $ps.AddCommand((Get-Command -Name testexe -CommandType Application | Select-Object -First 1)).AddArgument('-stderrandout').AddArgument('native')
+                    $step = $ps.GetSteppablePipeline()
+                    $step.Begin($PSCmdlet)
+                }
+
+                end {
+                    $step.End()
+                    $ps.Dispose()
+                }
+            }
+
+            # testexe writes 'native' to stdout and its reverse to stderr.
+            $result = Invoke-SteppableNative 2>&1
+            $errors = @($result | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] })
+            $errors | Should -HaveCount 1
+            $errors[0].Exception.Message | Should -BeExactly 'evitan'
+            $result | Where-Object { $_ -is [string] } | Should -BeExactly 'native'
+        }
+
+        It "<Expectation> the stream redirections of the command running when <Method>() builds the pipeline" -TestCases @(
+            @{ Method = 'GetSteppablePipeline'; Expectation = 'takes'; ExpectMerged = $true }
+            @{ Method = 'GetIndependentSteppablePipeline'; Expectation = 'does not take'; ExpectMerged = $false }
+        ) {
+            param($Method, $ExpectMerged)
+
+            # A remoting server builds its pipeline through GetIndependentSteppablePipeline() from an event, while an unrelated command is running.
+            function Invoke-SteppableWriteWarningFrom {
+                [CmdletBinding()]
+                param(
+                    [string] $Method
+                )
+
+                begin {
+                    $ps = [powershell]::Create([System.Management.Automation.RunspaceMode]::CurrentRunspace)
+                    $null = $ps.AddCommand((Get-Command -Name Write-Warning)).AddParameter('Message', 'boom')
+                    $step = [powershell].GetMethod($Method, [System.Reflection.BindingFlags]'Instance, Public, NonPublic', $null, [type[]]@(), $null).Invoke($ps, $null)
+                    $step.Begin($false)
+                }
+
+                end {
+                    $null = $step.End()
+                    $ps.Dispose()
+                }
+            }
+
+            $result = Invoke-SteppableWriteWarningFrom -Method $Method 3>&1
+            @($result | Where-Object { $_ -is [System.Management.Automation.WarningRecord] }).Count -gt 0 | Should -Be $ExpectMerged
+        }
+    }
 }
 
 Describe "Clean up open Runspaces when exit powershell process" -Tags "Feature" {
