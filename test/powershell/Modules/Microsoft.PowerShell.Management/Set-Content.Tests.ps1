@@ -105,6 +105,91 @@ Describe "Set-Content cmdlet tests" -Tags "CI" {
             Get-Content -Path ${altStreamDirectory2} -Stream ${streamName} | Should -BeExactly $stringData
         }
     }
+    Context "Set-Content should work with -Delimiter parameter" {
+        BeforeAll {
+            $testPath = "$TESTDRIVE/test.txt"
+            $content = "a", "b", "c"
+            $nestedContent = "a", @("b", "c", "d")
+        }
+
+        It "Should throw an exception if -Delimiter and -NoNewLine parameters are used together" {
+            { $content | Set-Content -Path $testPath -Delimiter "`n" -NoNewLine -ErrorAction Stop } | Should -Throw -ErrorId 'GetContentWriterArgumentError'
+        }
+
+        It "Should throw an exception if -Delimiter and -AsByteStream parameters are used together" {
+            { $content | Set-Content -Path $testPath -Delimiter "`n" -AsByteStream -ErrorAction Stop } | Should -Throw -ErrorId 'GetContentWriterArgumentError'
+        }
+
+        It "Should throw an exception if -NoTrailingDelimiter is used without -Delimiter parameter" {
+            { $content | Set-Content -Path $testPath -NoTrailingDelimiter -ErrorAction Stop } | Should -Throw -ErrorId 'GetContentWriterArgumentError'
+        }
+
+        It "Should create file with newlines as delimiter" {
+            $stringData = "a$([System.Environment]::NewLine)b$([System.Environment]::NewLine)c$([System.Environment]::NewLine)"
+
+            $content | Set-Content -Path $testPath -Delimiter ([System.Environment]::NewLine)
+            Get-Content -Path $testPath -Raw | Should -BeExactly $stringData
+
+            Set-Content -Value $content -Path $testPath -Delimiter ([System.Environment]::NewLine)
+            Get-Content -Path $testPath -Raw | Should -BeExactly $stringData
+        }
+
+        It "Should create file with newlines as delimiter and suppress final newline delimiter" {
+            $stringData = "a$([System.Environment]::NewLine)b$([System.Environment]::NewLine)c"
+
+            $content | Set-Content -Path $testPath -Delimiter ([System.Environment]::NewLine) -NoTrailingDelimiter
+            Get-Content -Path $testPath -Raw | Should -BeExactly $stringData
+
+            Set-Content -Value $content -Path $testPath -Delimiter ([System.Environment]::NewLine) -NoTrailingDelimiter
+            Get-Content -Path $testPath -Raw | Should -BeExactly $stringData
+        }
+
+        It "Should create file with commas as delimiter" {
+            $stringData = "a,b,c,"
+
+            $content | Set-Content -Path $testPath -Delimiter ","
+            Get-Content -Path $testPath -Raw | Should -BeExactly $stringData
+
+            Set-Content -Value $content -Path $testPath -Delimiter ","
+            Get-Content -Path $testPath -Raw | Should -BeExactly $stringData
+        }
+
+        It "Should create file with commas as delimiter and suppress final delimiter" {
+            $stringData = "a,b,c"
+
+            $content | Set-Content -Path $testPath -Delimiter "," -NoTrailingDelimiter
+            Get-Content -Path $testPath -Raw | Should -BeExactly $stringData
+
+            Set-Content -Value $content -Path $testPath -Delimiter "," -NoTrailingDelimiter
+            Get-Content -Path $testPath -Raw | Should -BeExactly $stringData
+        }
+
+        It "Should create file with commas as delimiter using nested content" {
+            $stringData = "a,b,c,d,"
+
+            $nestedContent | Set-Content -Path $testPath -Delimiter ","
+            Get-Content -Path $testPath -Raw | Should -BeExactly $stringData
+
+            Set-Content -Value $nestedContent -Path $testPath -Delimiter ","
+            Get-Content -Path $testPath -Raw | Should -BeExactly $stringData
+        }
+
+        It "Should create file with commas as delimiter using nested content and suppress final delimiter" {
+            $stringData = "a,b,c,d"
+
+            $nestedContent | Set-Content -Path $testPath -Delimiter "," -NoTrailingDelimiter
+            Get-Content -Path $testPath -Raw | Should -BeExactly $stringData
+
+            Set-Content -Value $nestedContent -Path $testPath -Delimiter "," -NoTrailingDelimiter
+            Get-Content -Path $testPath -Raw | Should -BeExactly $stringData
+        }
+
+        AfterEach {
+            if (Test-Path -Path $testPath) {
+                Remove-Item -Path $testPath -Force
+            }
+        }
+    }
 }
 
 Describe "Set-Content should work for PSDrive with UNC path as root" -Tags @('CI', 'RequireAdminOnWindows') {
