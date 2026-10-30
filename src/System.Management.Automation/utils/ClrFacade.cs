@@ -12,6 +12,8 @@ using System.Security;
 using System.Text;
 using System.Text.RegularExpressions;
 
+using System.Management.Automation.Configuration;
+
 namespace System.Management.Automation
 {
     /// <summary>
@@ -145,6 +147,54 @@ namespace System.Management.Automation
             return MapSecurityZone(filePath);
         }
 
+#if !UNIX
+        /// <summary>
+        /// Check if a UNC path matches any trusted host pattern.
+        /// </summary>
+        /// <param name="uncPath">The full UNC path to check.</param>
+        /// <param name="hostname">The hostname from the UNC path.</param>
+        /// <returns>True if the path matches a trusted host pattern, false otherwise.</returns>
+        private static bool IsTrustedHost(string uncPath, string hostname)
+        {
+            // Get trusted host patterns from Group Policy (takes precedence) or config file
+            TrustedHosts trustedHostsPolicy = Utils.GetPolicySetting<TrustedHosts>(Utils.SystemWideThenCurrentUserConfig);
+            string[] patterns = trustedHostsPolicy?.Patterns;
+
+            // If no trusted hosts configured, return false (not trusted)
+            if (patterns == null || patterns.Length == 0)
+            {
+                return false;
+            }
+
+            // Check both hostname and full UNC path against patterns
+            foreach (string pattern in patterns)
+            {
+                if (string.IsNullOrWhiteSpace(pattern))
+                {
+                    continue;
+                }
+
+                try
+                {
+                    WildcardPattern wildcardPattern = WildcardPattern.Get(pattern, WildcardOptions.IgnoreCase);
+
+                    // Check if pattern matches hostname or full UNC path
+                    if (wildcardPattern.IsMatch(hostname) || wildcardPattern.IsMatch(uncPath))
+                    {
+                        return true;
+                    }
+                }
+                catch (Exception)
+                {
+                    // Invalid pattern - skip it silently
+                    continue;
+                }
+            }
+
+            return false;
+        }
+#endif
+
         /// <summary>
         /// Map the file to SecurityZone.
         /// </summary>
@@ -212,10 +262,21 @@ namespace System.Management.Automation
                     return SecurityZone.Internet;
                 }
 
-                // This is also an observation of Zone.CreateFromUrl/Zone.SecurityZone. If the host name
-                // has 'dot' in it, the file will be treated as in Internet security zone. Otherwise, it's
-                // in Intranet security zone.
+                // Check if this is a trusted host before applying the period check.
+                // This allows administrators to configure FQDN hosts that should be treated as Intranet.
                 string hostName = uri.Host;
+
+#if !UNIX
+                // Check trusted hosts configuration (Group Policy takes precedence over config file)
+                if (IsTrustedHost(filePath, hostName))
+                {
+                    return SecurityZone.Intranet;
+                }
+#endif
+
+                // Original behavior: If the host name has 'dot' in it, the file will be treated
+                // as in Internet security zone. Otherwise, it's in Intranet security zone.
+                // This is an observation of Zone.CreateFromUrl/Zone.SecurityZone behavior.
                 return hostName.Contains('.') ? SecurityZone.Internet : SecurityZone.Intranet;
             }
 
