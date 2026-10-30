@@ -10,7 +10,7 @@ function Wait-JobPid {
 
     # This is to prevent hanging in the test.
     # Some test environments (such as raspberry_pi) require more time for background job to run.
-    $startTime = [DateTime]::Now
+    $startTime = [datetime]::Now
     $TimeoutInMilliseconds = 60000
 
     # This will receive the pid of the Job process and nothing more since that was the only thing written to the pipeline.
@@ -18,7 +18,7 @@ function Wait-JobPid {
         Start-Sleep -Seconds 1
         $pwshId = Receive-Job $Job
 
-        if (([DateTime]::Now - $startTime).TotalMilliseconds -gt $timeoutInMilliseconds) {
+        if (([datetime]::Now - $startTime).TotalMilliseconds -gt $timeoutInMilliseconds) {
             throw "Unable to receive PowerShell process id."
         }
     } while (!$pwshId)
