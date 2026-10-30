@@ -633,7 +633,11 @@ namespace Microsoft.PowerShell
 
                 try
                 {
-                    ConsoleControl.SetMode(handle, newMode);
+                    if (newMode != originalMode)
+                    {
+                        ConsoleControl.SetMode(handle, newMode);
+                    }
+
                     while (true)
                     {
                         int actualNumberOfInput = ConsoleControl.ReadConsoleInput(handle, ref inputRecords);
@@ -984,6 +988,7 @@ namespace Microsoft.PowerShell
                         }
                     }
                 }
+
                 // Check right edge
                 if (lineEnd == bufferWidth - 1)
                 {

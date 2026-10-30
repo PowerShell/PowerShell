@@ -232,3 +232,32 @@ The layout of files should look like this:
 ```
 
 Lastly, run `nuget pack .` from within the folder. Note that you may need the latest `nuget.exe`.
+
+## Optimized provider instance metadata
+
+For the design rationale, accessor contract, binding and promotion flow, identity rules, and
+validation entry points, see [Provider instance metadata](provider-instance-metadata.md).
+
+When the `PSOptimizedProviderObjects` experimental feature is enabled, built-in
+FileSystem provider output for `FileInfo` and `DirectoryInfo` stores its drive and,
+on Unix, stat metadata inline in a closed generic `PSObject<TMetadata>`. Static
+accessors declared on the metadata type describe member names and order once per
+closed type. Direct instance-member reads derive paths and container status from the
+current `FileInfo` or `DirectoryInfo`, without creating `PSNoteProperty` objects.
+As a result, unmaterialized path metadata follows filesystem operations such as
+`FileInfo.MoveTo`; once member enumeration or mutation promotes the metadata to
+ordinary note properties, those values remain a snapshot.
+Member enumeration, matching, direct inspection, and mutation promote the source to
+ordinary note properties in the normal ordered dictionary.
+
+Instance-member storage continues to use the existing resurrection table, so unwrapping
+and rewrapping a provider result preserves its metadata source.
+
+Eligible scalar FileSystem `Get-Content` string and byte outputs use the same mechanism,
+with an inline `ReadCount` and a reference to a shared source-path cache. Unlike item
+metadata, content paths are snapshots. String outputs own metadata through wrapper
+identity; byte outputs use the boxed byte object's reference identity, so equal byte values
+in distinct boxes carry independent counts and rewrapping the same box recovers its metadata.
+
+Other providers, batched `IList` output, `-Raw -AsByteStream` byte arrays, and other content types continue to use note properties.
+Disabling the feature retains the ordinary note-property paths for compatibility comparisons.

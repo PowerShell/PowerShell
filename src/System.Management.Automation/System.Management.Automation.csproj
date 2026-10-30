@@ -4,6 +4,7 @@
     <Description>PowerShell's System.Management.Automation project</Description>
     <NoWarn>$(NoWarn);CS1570;CS1734;CA1416;CA2022</NoWarn>
     <AssemblyName>System.Management.Automation</AssemblyName>
+    <UseResharper Condition="'$(UseResharper)' != 'true'">false</UseResharper>
   </PropertyGroup>
 
   <PropertyGroup>

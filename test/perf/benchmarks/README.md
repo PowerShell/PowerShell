@@ -52,6 +52,66 @@ Start-Benchmarking -Runtime <string[]> [-Filter <string[]>] [-Artifacts <string>
 ```
 Run `Get-Help Start-Benchmarking -Full` to see the description of each parameter.
 
+### FileSystem provider metadata comparison
+
+The experimental feature is read once during process initialization. The helper compares
+separate `pwsh` processes with explicit settings files:
+
+```powershell
+./ProviderMetadata.ProcessBenchmark.ps1 -PwshPath <candidate-pwsh> -FileCount 100 -Iterations 20 -Repetitions 3 -WarmupIterations 3 -ProcessRuns 3 -OutputPath .\provider-metadata.json
+```
+
+`-BaselinePwshPath` defaults to `-PwshPath`. The baseline always receives a settings file
+with the feature disabled; it may be a build that does not know the feature, in which
+case the report records `unavailable-off`. The candidate receives a settings file with
+the feature enabled and must expose and enable it. Use two paths to compare against a
+pre-feature build:
+
+```powershell
+./ProviderMetadata.ProcessBenchmark.ps1 -BaselinePwshPath <pre-feature-pwsh> -PwshPath <candidate-pwsh>
+```
+
+Using the same build for both sides with the feature off and on isolates the feature's
+effect in that build. A separate pre-feature build can show overhead shared by both
+feature states, but differences in PowerShell, CLR, OS, or architecture can confound the
+comparison. The JSON records executable paths, PowerShell and CLR versions, OS,
+architecture, and an assembly-attribute-based debug status where available. Set the
+build configuration through the build itself; the helper reports it and does not infer
+or change it.
+
+For each process run, the baseline and candidate execute in alternating order. Each
+fresh process warms every scenario before collecting `-Repetitions` raw samples. Scenarios
+cover filesystem item emission, direct `PSPath` reads, ten repeated `PSPath` reads per
+item, `ForEach-Object -MemberName FullName`, `ForEach-Object -MemberName PSParentPath`,
+default formatting, and `Select-Object *`. Content scenarios use a separate `content.txt`
+dataset with the same number of lines as filesystem items, outside the enumerated
+directory. They cover `Get-Content` emission, summing each line's `ReadCount`, reading
+each line's `PSParentPath` with `ForEach-Object -MemberName`, and `Select-Object *`.
+The `ReadCount` scenario checks the sum against `N * (N + 1) / 2`, consuming each value.
+The JSON includes `MetadataReadsPerEmittedItem` and `EmittedItemKind` (`filesystem items`
+or `content lines`) to make units clear. `Dataset` records the content file path and line
+count separately from the filesystem directory and file count. Byte scenarios use a
+separate binary file of `FileCount` alternating 0 and 255 values. They cover
+`Get-Content -AsByteStream` emission, summing each byte object's `ReadCount`, and reading
+each byte object's `PSParentPath` with `ForEach-Object -MemberName`. `Dataset` records
+the byte file path and byte count; `EmittedItemKind` labels these outputs `byte objects`,
+separately from allocated-byte measurements. Comparisons summarize median elapsed time
+and median allocated bytes per emitted item. Ratios are candidate divided by
+baseline; percent change is `(ratio - 1) * 100`, so negative values mean a lower measured
+value for the candidate. A zero baseline produces a JSON `null` ratio and percent change.
+
+The report includes the effective settings, observed feature state, dataset count,
+process order, and all raw samples. `-OutputPath` is optional; when set, the exact JSON
+printed to stdout is also written there, and its parent directory must already exist.
+The helper creates and removes only its guarded temporary dataset and settings files;
+it does not edit the current PowerShell configuration.
+
+Retained emission is reported separately as an approximate retained managed-heap delta
+per emitted object after forced collections. It is not process RSS and should not be
+treated as a significance estimate. Allocations come from
+`GC.GetAllocatedBytesForCurrentThread`, so they measure allocations on the child
+PowerShell thread rather than all process threads.
+
 ### Regression Detection
 
 We use the tool [`ResultsComparer`](../dotnet-tools/ResultsComparer) to compare the provided benchmark results.
