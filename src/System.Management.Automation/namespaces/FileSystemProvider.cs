@@ -253,8 +253,7 @@ namespace Microsoft.PowerShell.Commands
         internal override bool IsFilterSet()
         {
             bool attributeFilterSet = false;
-            GetChildDynamicParameters fspDynamicParam = DynamicParameters as GetChildDynamicParameters;
-            if (fspDynamicParam != null)
+            if (DynamicParameters is GetChildDynamicParameters fspDynamicParam)
             {
                 attributeFilterSet = (
                     (fspDynamicParam.Attributes != null)
@@ -1269,8 +1268,7 @@ namespace Microsoft.PowerShell.Commands
 
             FlagsExpression<FileAttributes> evaluator = null;
             FlagsExpression<FileAttributes> switchEvaluator = null;
-            GetChildDynamicParameters fspDynamicParam = DynamicParameters as GetChildDynamicParameters;
-            if (fspDynamicParam != null)
+            if (DynamicParameters is GetChildDynamicParameters fspDynamicParam)
             {
                 evaluator = fspDynamicParam.Attributes;
                 switchEvaluator = FormatAttributeSwitchParameters();
@@ -1533,8 +1531,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (recurse)
                     {
-                        GetChildDynamicParameters fspDynamicParam = DynamicParameters as GetChildDynamicParameters;
-                        if (fspDynamicParam != null && fspDynamicParam.FollowSymlink)
+                        if (DynamicParameters is GetChildDynamicParameters fspDynamicParam && fspDynamicParam.FollowSymlink)
                         {
                             tracker = new InodeTracker(fsinfo.FullName);
                         }
@@ -1547,8 +1544,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     FlagsExpression<FileAttributes> evaluator = null;
                     FlagsExpression<FileAttributes> switchEvaluator = null;
-                    GetChildDynamicParameters fspDynamicParam = DynamicParameters as GetChildDynamicParameters;
-                    if (fspDynamicParam != null)
+                    if (DynamicParameters is GetChildDynamicParameters fspDynamicParam)
                     {
                         evaluator = fspDynamicParam.Attributes;
                         switchEvaluator = FormatAttributeSwitchParameters();
@@ -1658,8 +1654,7 @@ namespace Microsoft.PowerShell.Commands
                 FlagsExpression<FileAttributes> evaluator = null;
                 FlagsExpression<FileAttributes> switchEvaluator = null;
 
-                GetChildDynamicParameters fspDynamicParam = DynamicParameters as GetChildDynamicParameters;
-                if (fspDynamicParam != null)
+                if (DynamicParameters is GetChildDynamicParameters fspDynamicParam)
                 {
                     evaluator = fspDynamicParam.Attributes;
                     switchEvaluator = FormatAttributeSwitchParameters();
@@ -3394,11 +3389,8 @@ namespace Microsoft.PowerShell.Commands
                 var fsinfo = GetFileSystemInfo(path, out bool _);
                 result = fsinfo != null;
 
-                FileSystemItemProviderDynamicParameters itemExistsDynamicParameters =
-                    DynamicParameters as FileSystemItemProviderDynamicParameters;
-
                 // If the items see if we need to check the age of the file...
-                if (result && itemExistsDynamicParameters != null)
+                if (result && DynamicParameters is FileSystemItemProviderDynamicParameters itemExistsDynamicParameters)
                 {
                     DateTime lastWriteTime = fsinfo.LastWriteTime;
 
@@ -3599,9 +3591,7 @@ namespace Microsoft.PowerShell.Commands
             PSSession fromSession = null;
             PSSession toSession = null;
 
-            CopyItemDynamicParameters copyDynamicParameter = DynamicParameters as CopyItemDynamicParameters;
-
-            if (copyDynamicParameter != null)
+            if (DynamicParameters is CopyItemDynamicParameters copyDynamicParameter)
             {
                 if (copyDynamicParameter.FromSession != null)
                 {
@@ -6708,10 +6698,7 @@ namespace Microsoft.PowerShell.Commands
             // They override the defaults specified above.
             if (DynamicParameters != null)
             {
-                FileSystemContentReaderDynamicParameters dynParams =
-                    DynamicParameters as FileSystemContentReaderDynamicParameters;
-
-                if (dynParams != null)
+                if (DynamicParameters is FileSystemContentReaderDynamicParameters dynParams)
                 {
                     // -raw is not allowed when -first,-last or -wait is specified
                     // this call will validate that and throws.
@@ -6885,10 +6872,7 @@ namespace Microsoft.PowerShell.Commands
             // Get the dynamic parameters
             if (DynamicParameters != null)
             {
-                FileSystemContentWriterDynamicParameters dynParams =
-                    DynamicParameters as FileSystemContentWriterDynamicParameters;
-
-                if (dynParams != null)
+                if (DynamicParameters is FileSystemContentWriterDynamicParameters dynParams)
                 {
                     usingByteEncoding = dynParams.AsByteStream;
                     streamTypeSpecified = dynParams.WasStreamTypeSpecified;
@@ -7857,9 +7841,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The link type of the reparse point. SymbolicLink for symbolic links.</returns>
         public static string GetLinkType(PSObject instance)
         {
-            FileSystemInfo fileSysInfo = instance.BaseObject as FileSystemInfo;
-
-            if (fileSysInfo != null)
+            if (instance.BaseObject is FileSystemInfo fileSysInfo)
             {
                 return InternalGetLinkType(fileSysInfo);
             }
