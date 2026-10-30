@@ -713,3 +713,44 @@ Describe 'InputTypes accurately describe pipelinable input' {
         $inputTypes | Should -Be "System.String"
     }
 }
+
+Describe "Get-Help searches for help again after its cache is reset" -Tags 'CI' {
+    BeforeAll {
+        $moduleName = 'HelpCacheResetTest'
+        $moduleBase = Join-Path $TestDrive $moduleName
+        foreach ($culture in 'en-US', 'de-DE') {
+            $null = New-Item -ItemType Directory -Path (Join-Path $moduleBase $culture) -Force
+            Set-Content -Path (Join-Path $moduleBase $culture "$moduleName-Help.xml") -Value @"
+<?xml version="1.0" encoding="utf-8"?>
+<helpItems schema="maml" xmlns="http://msh">
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10">
+    <command:details>
+      <command:name>Get-HelpCacheResetTest</command:name>
+      <maml:description><maml:para>Help for $culture</maml:para></maml:description>
+    </command:details>
+  </command:command>
+</helpItems>
+"@
+        }
+
+        Set-Content -Path (Join-Path $moduleBase "$moduleName.psm1") -Value 'function Get-HelpCacheResetTest { }'
+        Import-Module (Join-Path $moduleBase "$moduleName.psm1")
+        $originalUICulture = [System.Globalization.CultureInfo]::CurrentUICulture
+    }
+
+    AfterAll {
+        [System.Globalization.CultureInfo]::CurrentUICulture = $originalUICulture
+        Remove-Module $moduleName -ErrorAction SilentlyContinue
+    }
+
+    It "Get-Help finds the help of the new UI culture after the help was found in another one" {
+        # Finding the help sets the HelpFile property of the command to the full path of the help file.
+        # A change of the UI culture resets the help cache, like Update-Help does, so the help has to be
+        # searched for again instead of loading that file.
+        [System.Globalization.CultureInfo]::CurrentUICulture = 'en-US'
+        (Get-Help Get-HelpCacheResetTest).Synopsis | Should -BeExactly 'Help for en-US'
+
+        [System.Globalization.CultureInfo]::CurrentUICulture = 'de-DE'
+        (Get-Help Get-HelpCacheResetTest).Synopsis | Should -BeExactly 'Help for de-DE'
+    }
+}
