@@ -13,7 +13,7 @@ pwsh(1) -- PowerShell command-line shell and .NET REPL
 [`-Interactive`] [`-MTA`] [`-NoExit`] [`-NoLogo`] [`-NonInteractive`]
 [`-NoProfile`] [`-NoProfileLoadTime`] [`-OutputFormat` {Text | XML}]
 [`-SettingsFile` <filePath>] [`-SSHServerMode`] [`-STA`] [`-Version`]
-[`-WindowStyle` <style>] [`-WorkingDirectory` <directoryPath>]
+[`-WindowStyle` <windowStyle>] [`-WorkingDirectory` <directoryPath>]
 
 ## DESCRIPTION
 

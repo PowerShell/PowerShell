@@ -1,10 +1,151 @@
-.\" generated with Ronn/v0.7.3
-.\" http://github.com/rtomayko/ronn/tree/0.7.3
-.
-.TH "PWSH" "1" "October 2023" "" ""
-.
+.\" generated with Ronn-NG/v0.10.1
+.\" http://github.com/apjanke/ronn-ng/tree/0.10.1
+.TH "PWSH" "1" "October 2026" ""
 .SH "NAME"
 \fBpwsh\fR \- PowerShell command\-line shell and \.NET REPL
-.
 .SH "SYNOPSIS"
-\fBpwsh\fR [\fB\-Login\fR] [ [\fB\-File\fR] \fIfilePath\fR [args] ] [\fB\-Command\fR { \- | \fIscript\-block\fR [\fB\-args\fR \fIarg\-array\fR] | \fIstring\fR [\fICommandParameters\fR] } ] [\fB\-ConfigurationFile\fR \fIfilePath\fR] [\fB\-ConfigurationName\fR \fIstring\fR] [\fB\-CustomPipeName\fR \fIstring\fR] [\fB\-EncodedArguments\fR \fIBase64EncodedArguments\fR] [\fB\-EncodedCommand\fR \fIBase64EncodedCommand\fR] [\fB\-ExecutionPolicy\fR \fIExecutionPolicy\fR] [\fB\-Help\fR] [\fB\-InputFormat\fR {Text | XML}] [\fB\-Interactive\fR] [\fB\-MTA\fR] [\fB\-NoExit\fR] [\fB\-NoLogo\fR] [\fB\-NonInteractive\fR] [\fB\-NoProfile\fR] [\fB\-NoProfileLoadTime\fR] [\fB\-OutputFormat\fR {Text | XML}] [\fB\-SettingsFile\fR \fIfilePath\fR] [\fB\-SSHServerMode\fR] [\fB\-STA\fR] [\fB\-Version\fR] [\fB\-WindowStyle\fR
+\fBpwsh\fR [\fB\-Login\fR] [ [\fB\-File\fR] \fIfilePath\fR [args] ] [\fB\-Command\fR { \- | \fIscript\-block\fR [\fB\-args\fR \fIarg\-array\fR] | \fIstring\fR [\fICommandParameters\fR] } ] [\fB\-ConfigurationFile\fR \fIfilePath\fR] [\fB\-ConfigurationName\fR \fIstring\fR] [\fB\-CustomPipeName\fR \fIstring\fR] [\fB\-EncodedArguments\fR \fIBase64EncodedArguments\fR] [\fB\-EncodedCommand\fR \fIBase64EncodedCommand\fR] [\fB\-ExecutionPolicy\fR \fIExecutionPolicy\fR] [\fB\-Help\fR] [\fB\-InputFormat\fR {Text | XML}] [\fB\-Interactive\fR] [\fB\-MTA\fR] [\fB\-NoExit\fR] [\fB\-NoLogo\fR] [\fB\-NonInteractive\fR] [\fB\-NoProfile\fR] [\fB\-NoProfileLoadTime\fR] [\fB\-OutputFormat\fR {Text | XML}] [\fB\-SettingsFile\fR \fIfilePath\fR] [\fB\-SSHServerMode\fR] [\fB\-STA\fR] [\fB\-Version\fR] [\fB\-WindowStyle\fR \fIwindowStyle\fR] [\fB\-WorkingDirectory\fR \fIdirectoryPath\fR]
+.SH "DESCRIPTION"
+PowerShell is an automation and configuration management platform\. It consists of a cross\-platform (Windows, Linux and macOS) command\-line shell and associated scripting language\.
+.SH "OPTIONS"
+All parameters are case\-insensitive\.
+.P
+\fBpwsh\fR accepts both \fB\-\fR and \fB\-\-\fR prefixed arguments\.
+.P
+Some parameters have abbreviated forms
+.IP "\(bu" 4
+\fB\-File\fR | \fB\-f\fR: Runs the specified script in the local scope ("dot\-sourced"), so that the functions and variables that the script creates are available in the current session\. Enter the script file path and any parameters\. File must be the last parameter in the command, because all characters typed after the File parameter name are interpreted as the script file path followed by the script parameters\.
+.IP "\(bu" 4
+\fB\-Command\fR | \fB\-c\fR: Executes the specified commands (and any parameters) as though they were typed at the PowerShell command prompt, and then exits, unless NoExit is specified\. The value of Command can be \fB\-\fR, a string, or a script block\. If the value of Command is \fB\-\fR, the command text is read from standard input\. If the value of Command is a script block, the script block must be enclosed in braces (\fB{}\fR)\. You can specify a script block only when running PowerShell in PowerShell\. The results of the script block are returned to the parent shell as deserialized XML objects, not live objects\. If the value of Command is a string, Command must be the last parameter in the command, because any characters typed after the command are interpreted as the command arguments\.
+.IP
+To write a string that runs a PowerShell command, use the format: \fB& {<command>}\fR where the quotation marks indicate a string and the invoke operator (\fB&\fR) causes the command to be executed\.
+.IP "\(bu" 4
+\fB\-ConfigurationName\fR | \fB\-config\fR: Specifies a configuration endpoint in which PowerShell is run\. This can be any endpoint registered on the local machine including the default PowerShell remoting endpoints or a custom endpoint having specific user role capabilities\.
+.IP
+Example: \fBpwsh \-ConfigurationName AdminRoles\fR
+.IP "\(bu" 4
+\fB\-CustomPipeName\fR: Specifies the name to use for an additional IPC server (named pipe) used for debugging and other cross\-process communication\. This offers a predictable mechanism for connecting to other PowerShell instances\. Typically used with the \fBCustomPipeName\fR parameter on \fBEnter\-PSHostProcess\fR\.
+.IP
+This parameter was introduced in PowerShell 6\.2\.
+.IP
+For example:
+.IP "" 4
+.nf
+# PowerShell instance 1
+pwsh \-CustomPipeName mydebugpipe
+# PowerShell instance 2
+Enter\-PSHostProcess \-CustomPipeName mydebugpipe
+.fi
+.IP "" 0
+
+.IP "\(bu" 4
+\fB\-EncodedArguments\fR | \fB\-encodeda\fR | \fB\-ea\fR: Accepts a base\-64\-encoded string version of command arguments\. Use this parameter to submit command arguments to PowerShell that require complex quotation marks or curly braces\.
+.IP "\(bu" 4
+\fB\-EncodedCommand\fR | \fB\-e\fR | \fB\-ec\fR: Accepts a base\-64\-encoded string version of a command\. Use this parameter to submit commands to PowerShell that require complex quotation marks or curly braces\.
+.IP "\(bu" 4
+\fB\-ExecutionPolicy\fR | \fB\-ex\fR | \fB\-ep\fR: This parameter only applies to Windows computers\. On non\-Windows platforms, the parameter and the value provided are ignored\.
+.IP "\(bu" 4
+\fB\-InputFormat\fR | \fB\-inp\fR | \fB\-if\fR: Describes the format of data sent to PowerShell\. Valid values are "Text" (text strings) or "XML" (serialized CLIXML format)\.
+.IP "\(bu" 4
+\fB\-Interactive\fR | \fB\-i\fR: Present an interactive prompt to the user\. Inverse for NonInteractive parameter\.
+.IP "\(bu" 4
+\fB\-Login\fR | \fB\-l\fR: On Linux and macOS, starts PowerShell as a login shell, using \fB/bin/sh\fR to execute login profiles such as \fB/etc/profile\fR and \fB~/\.profile\fR\.
+.IP
+This parameter must come first to start PowerShell as a login shell\. This parameter is ignored if it is passed in another position\.
+.IP
+To set up \fBpwsh\fR as the login shell:
+.IP "\(bu" 4
+Verify that the full absolute path to \fBpwsh\fR is listed under \fB/etc/shells\fR
+.IP "\(bu" 4
+This path is usually something like \fB/opt/microsoft/powershell/7/pwsh\fR on Linux or \fB/usr/local/bin/pwsh\fR on macOS
+.IP "\(bu" 4
+If \fBpwsh\fR isn't present in \fB/etc/shells\fR, use an editor to append the path to \fBpwsh\fR on the last line\. This requires elevated privileges to edit\.
+.IP "" 0
+
+.IP "\(bu" 4
+Use the \fBchsh\fR utility to set your current user's shell to \fBpwsh\fR:
+.IP "" 4
+.nf
+chsh \-s /usr/bin/pwsh
+.fi
+.IP "" 0
+
+.IP "" 0
+
+.IP "\(bu" 4
+\-MTA This parameter is only supported on Windows\. Using this parameter on non\-Windows platforms results in an error\.
+.IP "\(bu" 4
+\fB\-NoExit\fR | \fB\-noe\fR: Doesn't exit after running startup commands\.
+.IP
+Example: \fBpwsh \-NoExit \-Command Get\-Date\fR
+.IP "\(bu" 4
+\fB\-NoLogo\fR | \fB\-nol\fR: Hides the copyright banner at startup\.
+.IP "\(bu" 4
+\fB\-NonInteractive\fR | \fB\-noni\fR: Does not present an interactive prompt to the user\.
+.IP "\(bu" 4
+\fB\-NoProfile\fR | \fB\-nop\fR: Doesn't load the PowerShell profile\.
+.IP "\(bu" 4
+\fB\-OutputFormat\fR | \fB\-o\fR | \fB\-of\fR`: Determines how output from PowerShell is formatted\. Valid values are "Text" (text strings) or "XML" (serialized CLIXML format)\.
+.IP
+Example: \fBpwsh \-o XML \-c Get\-Date\fR
+.IP
+When called within a PowerShell session, you get deserialized objects as output rather plain strings\. When called from other shells, the output is string data formatted as CLIXML text\.
+.IP "\(bu" 4
+\fB\-SettingsFile\fR | \fB\-settings\fR: Overrides the system\-wide \fBpowershell\.config\.json\fR settings file for the session\. By default, system\-wide settings are read from the \fBpowershell\.config\.json\fR in the \fB$PSHOME\fR directory\.
+.IP
+Note that these settings aren't used by the endpoint specified by the \fB\-ConfigurationName\fR argument\.
+.IP
+Example: \fBpwsh \-SettingsFile c:\emyproject\epowershell\.config\.json\fR
+.IP "\(bu" 4
+\fB\-SSHServerMode\fR | \fB\-sshs\fR: Used in \fBsshd_config\fR for running PowerShell as an SSH subsystem\. It isn't intended or supported for any other use\.
+.IP "\(bu" 4
+\-STA This parameter is only supported on Windows\. Using this parameter on non\-Windows platforms results in an error\.
+.IP "\(bu" 4
+\fB\-Version\fR | \fB\-v\fR: Displays the version of PowerShell\. Additional parameters are ignored\.
+.IP "\(bu" 4
+\fB\-WindowStyle\fR | \fB\-w\fR Sets the window style for the session\. Valid values are Normal, Minimized, Maximized, and Hidden\. This parameter only applies to Windows\. Using this parameter on non\-Windows platforms results in an error\.
+.IP "\(bu" 4
+\fB\-WorkingDirectory\fR | \fB\-wd\fR | \fB\-wo\fR Sets the initial working directory by executing at startup\. Any valid PowerShell file path is supported\.
+.IP
+To start PowerShell in your home directory, use: \fBpwsh \-WorkingDirectory ~\fR
+.IP "\(bu" 4
+\fB\-Help\fR, \fB\-h\fR, \fB\-?\fR, \fB/?\fR: Shows this message\.
+.IP "" 0
+.SH "FILES"
+.IP "\(bu" 4
+\fB~/\.config/powershell/Microsoft\.PowerShell_profile\.ps1\fR User profile\.
+.IP "\(bu" 4
+\fB~/\.local/share/powershell/Modules\fR User modules\.
+.IP "\(bu" 4
+\fB~/\.local/share/powershell/PSReadLine/ConsoleHost_history\.txt\fR User PSReadLine history file\.
+.IP "" 0
+.SH "ENVIRONMENT"
+These are environment variables used by PowerShell\.
+.TP
+\fB$PSModulePath\fR
+A colon (\fB:\fR) separated load path for PowerShell modules\.
+.SH "AUTOMATIC VARIABLES"
+These are automatically defined PowerShell\-language variables\.
+.TP
+\fB$PSHOME\fR
+This is the location of all the system PowerShell binaries, modules, configuration, etc\.
+.TP
+\fB$PROFILE\fR
+Location for user configuration file\.
+.TP
+\fB$HOST\fR
+Contains an object that represents the program that is hosting PowerShell (similar to \fBGet\-Host\fR)\.
+.TP
+\fB$LASTEXITCODE\fR
+Contains the exit code of the last native process that ran in PowerShell (not cmdlets, as those are in\-process)\.
+.TP
+\fB$PWD\fR
+Contains an object that represents the current working location (similar to \fBGet\-Location\fR)\.
+.SH "SEE ALSO"
+.IP "\(bu" 4
+https://microsoft\.com/powershell
+.IP "\(bu" 4
+https://github\.com/PowerShell/PowerShell
+.IP "" 0
+.SH "COPYRIGHT"
+Copyright (c) Microsoft Corporation\.
