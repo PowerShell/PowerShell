@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         // Process the entire input as a single Json content.
-                        ConvertFromJsonHelper(string.Join(System.Environment.NewLine, _inputObjectBuffer.ToArray()));
+                        ConvertFromJsonHelper(string.Join(System.Environment.NewLine, _inputObjectBuffer));
                     }
                 }
             }
