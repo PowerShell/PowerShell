@@ -150,6 +150,9 @@
   <data name="UnKnownCatalogVersion" xml:space="preserve">
     <value>Неверная версия каталога. Мы поддерживаем только версию каталога {0} и версию {1}.</value>
   </data>
+  <data name="WeakCatalogHashAlgorithm" xml:space="preserve">
+    <value>'{0}' is a version catalog that uses SHA0 or SHA1. Consider regenerating this catalog with '-CatalogVersion 2'.</value>
+  </data>
   <data name="UnableToOpenCatalogDefinitionFile" xml:space="preserve">
     <value>Не удалось открыть файл определения каталога.</value>
   </data>

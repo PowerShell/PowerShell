@@ -150,6 +150,9 @@
   <data name="UnKnownCatalogVersion" xml:space="preserve">
     <value>La versión del catálogo no es válida. Solo se admite la versión del catálogo {0} y la versión {1}.</value>
   </data>
+  <data name="WeakCatalogHashAlgorithm" xml:space="preserve">
+    <value>'{0}' is a version catalog that uses SHA0 or SHA1. Consider regenerating this catalog with '-CatalogVersion 2'.</value>
+  </data>
   <data name="UnableToOpenCatalogDefinitionFile" xml:space="preserve">
     <value>No se puede abrir el archivo de definición del catálogo.</value>
   </data>
