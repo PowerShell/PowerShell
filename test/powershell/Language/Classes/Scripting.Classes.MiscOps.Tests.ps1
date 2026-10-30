@@ -27,7 +27,7 @@ Describe 'Misc Test' -Tags "CI" {
         [int[]] $Wheels = @(1,2,3);
         [string] Foo() {
             $ret=""
-            Foreach($PSItem in $this.Wheels) { $ret +="$PSItem;"}
+            Foreach($item in $this.Wheels) { $ret +="$item;"}
             return $ret
         }
 
