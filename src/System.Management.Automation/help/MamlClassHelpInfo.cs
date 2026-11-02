@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Globalization;
 using System.Xml;
 
 namespace System.Management.Automation
@@ -110,15 +111,41 @@ namespace System.Management.Automation
         {
             get
             {
-                string tempSynopsis = string.Empty;
-                var intro = _fullHelpObject.Properties["introduction"];
-
-                if (intro != null && intro.Value != null)
+                if (_fullHelpObject == null)
                 {
-                    tempSynopsis = intro.Value.ToString();
+                    return string.Empty;
                 }
 
-                return tempSynopsis;
+                if (_fullHelpObject.Properties["introduction"] == null ||
+                    _fullHelpObject.Properties["introduction"].Value == null)
+                {
+                    return string.Empty;
+                }
+
+                object[] synopsisItems = (object[])LanguagePrimitives.ConvertTo(
+                    _fullHelpObject.Properties["introduction"].Value,
+                    typeof(object[]),
+                    CultureInfo.InvariantCulture);
+                if (synopsisItems == null || synopsisItems.Length == 0)
+                {
+                    return string.Empty;
+                }
+
+                PSObject firstSynopsisItem = synopsisItems[0] == null ? null : PSObject.AsPSObject(synopsisItems[0]);
+                if (firstSynopsisItem == null ||
+                    firstSynopsisItem.Properties["Text"] == null ||
+                    firstSynopsisItem.Properties["Text"].Value == null)
+                {
+                    return string.Empty;
+                }
+
+                string synopsis = firstSynopsisItem.Properties["Text"].Value.ToString();
+                if (synopsis == null)
+                {
+                    return string.Empty;
+                }
+
+                return synopsis.Trim();
             }
         }
 
