@@ -177,8 +177,10 @@ namespace System.Management.Automation
             {
                 Type resultType = value.GetType();
 
-                if (resultType == typeof(PSObject))
-                    resultType = ((PSObject)value).BaseObject.GetType();
+                if (value is PSObject psObject)
+                {
+                    resultType = psObject.BaseObject.GetType();
+                }
 
                 if (!(LanguagePrimitives.IsNumeric(resultType.GetTypeCode()) ||
                       LanguagePrimitives.IsBoolOrSwitchParameterType(resultType)))

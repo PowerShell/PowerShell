@@ -102,6 +102,40 @@ Describe "Optimized FileSystem provider instance metadata" -Tags "CI" {
         $roundTrip[1].PSPath | Should -BeExactly $byteFile
     }
 
+    It "unwraps provider objects for object-typed method arguments" {
+        $item = Get-Item -LiteralPath $file
+        $line = Get-Content -LiteralPath $file -TotalCount 1
+        $byteFile = Join-Path $TestDrive "binding.bin"
+        [System.IO.File]::WriteAllBytes($byteFile, [byte[]](7))
+        $byte = Get-Content -LiteralPath $byteFile -AsByteStream
+
+        foreach ($value in @($item, $line, $byte)) {
+            [object]::ReferenceEquals($value, $value.PSObject.BaseObject) | Should -BeTrue
+        }
+    }
+
+    It "binds scalar byte content to Boolean parameters: <number>" -TestCases @(
+        @{ number = 0; expected = $false }
+        @{ number = 1; expected = $true }
+        @{ number = 255; expected = $true }
+    ) {
+        param($number, $expected)
+
+        function Test-SimpleBool { param([bool] $Value) $Value }
+        function Test-AdvancedBool { [CmdletBinding()] param([bool] $Value) $Value }
+        function Test-NullableBool { [CmdletBinding()] param([Nullable[bool]] $Value) $Value }
+
+        $byteFile = Join-Path $TestDrive "binding.bin"
+        [System.IO.File]::WriteAllBytes($byteFile, [byte[]]($number))
+        $value = Get-Content -LiteralPath $byteFile -AsByteStream
+
+        Test-SimpleBool -Value $value | Should -Be $expected
+        Test-AdvancedBool -Value $value | Should -Be $expected
+        (Get-Item -LiteralPath $file -Force:$value).FullName | Should -BeExactly $file
+        Test-NullableBool -Value $value | Should -Be $expected
+        $value.ReadCount | Should -Be 1
+    }
+
     It "preserves ReadCount for chunks and raw content" {
         $chunks = @(Get-Content -LiteralPath $file -ReadCount 2)
         $chunks.Count | Should -Be 2
