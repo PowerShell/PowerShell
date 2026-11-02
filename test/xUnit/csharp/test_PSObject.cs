@@ -535,6 +535,75 @@ namespace PSTests.Parallel
             }
         }
 
+        [Theory]
+        [InlineData("file")]
+        [InlineData("string")]
+        [InlineData("byte")]
+        public static void MetadataWrappersAreUnwrappedForObjectArgumentsAndSetters(string kind)
+        {
+            object baseObject = kind switch
+            {
+                "file" => new System.IO.FileInfo("example.txt"),
+                "string" => "content",
+                _ => (byte)7,
+            };
+            var wrapped = NewMetadataObject(baseObject);
+            var holder = new ObjectValueHolder();
+            var arguments = new System.Collections.Generic.List<object>();
+            using var runspace = RunspaceFactory.CreateRunspace();
+            runspace.Open();
+            runspace.SessionStateProxy.SetVariable("value", wrapped);
+            runspace.SessionStateProxy.SetVariable("baseValue", baseObject);
+            runspace.SessionStateProxy.SetVariable("holder", holder);
+            runspace.SessionStateProxy.SetVariable("arguments", arguments);
+
+            using var powerShell = PowerShell.Create();
+            powerShell.Runspace = runspace;
+            powerShell.AddScript("[object]::ReferenceEquals($value, $baseValue); $arguments.Add($value); $holder.Value = $value");
+            var output = powerShell.Invoke<bool>();
+
+            Assert.Empty(powerShell.Streams.Error);
+            Assert.True(Assert.Single(output));
+            Assert.Same(baseObject, Assert.Single(arguments));
+            Assert.Same(baseObject, holder.Value);
+            Assert.NotNull(typeof(PSMemberInfoInternalCollection<PSMemberInfo>)
+                .GetField("_providerSource", BindingFlags.Instance | BindingFlags.NonPublic)
+                .GetValue(wrapped.InstanceMembers));
+        }
+
+        [Theory]
+        [InlineData(0, false)]
+        [InlineData(1, true)]
+        [InlineData(255, true)]
+        public static void MetadataBytesBindToBooleanParameters(int number, bool expected)
+        {
+            var wrapped = NewMetadataObject((byte)number);
+            var initialState = InitialSessionState.CreateDefault2();
+            initialState.Commands.Add(new SessionStateCmdletEntry("Test-MetadataBooleanBinding", typeof(MetadataBooleanBindingCommand), null));
+            using var runspace = RunspaceFactory.CreateRunspace(initialState);
+            runspace.Open();
+            runspace.SessionStateProxy.SetVariable("value", wrapped);
+            using var powerShell = PowerShell.Create();
+            powerShell.Runspace = runspace;
+            powerShell.AddScript(@"
+                function Test-SimpleBool { param([bool] $Value) $Value }
+                function Test-AdvancedBool { [CmdletBinding()] param([bool] $Value) $Value }
+                function Test-NullableBool { [CmdletBinding()] param([Nullable[bool]] $Value) $Value }
+                Test-SimpleBool -Value $value
+                Test-AdvancedBool -Value $value
+                Test-MetadataBooleanBinding -Boolean $value -Switch:$value -NullableBoolean $value
+                Test-NullableBool -Value $value
+            ");
+            var output = powerShell.Invoke<bool>();
+
+            Assert.Empty(powerShell.Streams.Error);
+            Assert.Equal(6, output.Count);
+            Assert.All(output, value => Assert.Equal(expected, value));
+            Assert.NotNull(typeof(PSMemberInfoInternalCollection<PSMemberInfo>)
+                .GetField("_providerSource", BindingFlags.Instance | BindingFlags.NonPublic)
+                .GetValue(wrapped.InstanceMembers));
+        }
+
         private static PSObject<TestMetadata> NewMetadataObject(object baseObject = null, uint presenceMask = 0)
         {
             var metadata = new TestMetadata { First = "value", Second = 42 };
@@ -596,6 +665,31 @@ namespace PSTests.Parallel
 
             [PSObjectMetadataAccessor("Bad", 0)]
             private int GetInstanceValue(object baseObject) => _value;
+        }
+
+        public sealed class ObjectValueHolder
+        {
+            public object Value { get; set; }
+        }
+
+        [Cmdlet(VerbsDiagnostic.Test, "MetadataBooleanBinding")]
+        public sealed class MetadataBooleanBindingCommand : PSCmdlet
+        {
+            [Parameter]
+            public bool Boolean { get; set; }
+
+            [Parameter]
+            public SwitchParameter Switch { get; set; }
+
+            [Parameter]
+            public bool? NullableBoolean { get; set; }
+
+            protected override void ProcessRecord()
+            {
+                WriteObject(Boolean);
+                WriteObject(Switch.IsPresent);
+                WriteObject(NullableBoolean);
+            }
         }
     }
 }

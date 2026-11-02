@@ -259,7 +259,7 @@ namespace System.Management.Automation.Language
             }
 
             var argType = target.LimitType;
-            if (parameterType == typeof(object) && argType == typeof(PSObject))
+            if (parameterType == typeof(object) && typeof(PSObject).IsAssignableFrom(argType))
             {
                 return Expression.Call(CachedReflectionInfo.PSObject_Base, target.Expression.Cast(typeof(PSObject)));
             }
@@ -6456,7 +6456,7 @@ namespace System.Management.Automation.Language
                             }
                             else
                             {
-                                assignedValue = (lhsType == typeof(object) && value.LimitType == typeof(PSObject))
+                                assignedValue = (lhsType == typeof(object) && typeof(PSObject).IsAssignableFrom(value.LimitType))
                                                            ? Expression.Call(CachedReflectionInfo.PSObject_Base, value.Expression.Cast(typeof(PSObject)))
                                                            : value.CastOrConvert(lhsType);
                             }
