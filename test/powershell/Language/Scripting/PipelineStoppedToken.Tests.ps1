@@ -74,7 +74,7 @@ Describe 'PipelineStopToken tests' -Tags 'CI' {
 
                 $null = $PSCmdlet.PipelineStopToken.Register([Action]{ throw 'callback failure' })
                 'start'
-                Start-Sleep -Seconds $Timeout
+                [System.Threading.Tasks.Task]::Delay($Timeout * 1000, $PSCmdlet.PipelineStopToken).GetAwaiter().GetResult()
             }
 
             Test-FunctionWithStop -Timeout 10
