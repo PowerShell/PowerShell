@@ -127,7 +127,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         }
         foreach ($x in "--help", "-help", "-h", "-?", "--he", "-hel", "--HELP", "-hEl") {
             It "Accepts '$x' as a parameter for help" {
-                & $powershell -noprofile $x | Where-Object { $_ -match "pwsh\[\.exe\] -h \| -Help \| -\? \| /\?" } | Should -Not -BeNullOrEmpty
+                & $powershell -noprofile $x | Where-Object { $_ -match 'pwsh\[\.exe\] -h \| -Help \| -\? \| /\?' } | Should -Not -BeNullOrEmpty
             }
         }
 
