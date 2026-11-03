@@ -145,7 +145,7 @@
     <value>Le nom d’entrée « {0} » ne peut pas être résolu en méthode.</value>
   </data>
   <data name="NoMethodInvocationInRestrictedLanguageMode" xml:space="preserve">
-    <value>Nous ne pouvons pas appeler une méthode en mode de langage restreint.</value>
+    <value>Nous ne pouvons pas appeler une méthode en mode langage restreint.</value>
   </data>
   <data name="NoShouldProcessForScriptBlockSet" xml:space="preserve">
     <value>Les paramètres -WhatIf et -Confirm ne sont pas pris en charge pour les blocs de script.</value>
@@ -188,6 +188,6 @@ ErrorAction, WarningAction, InformationAction, PipelineVariable</value>
     <value>Cmdlet ForEach-Object</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>L’appel de méthode sur le type « {0} » ne sera pas autorisé lors de l’exécution en mode de langage contraint.</value>
+    <value>L’appel de méthode sur le type « {0} » ne sera pas autorisé lors de l’exécution en mode langage avec contraintes.</value>
   </data>
 </root>

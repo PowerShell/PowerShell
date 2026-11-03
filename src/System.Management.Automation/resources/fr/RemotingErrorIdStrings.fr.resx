@@ -1021,7 +1021,7 @@ Toutes les sessions WinRM connectées à des configurations de session PowerShel
     <value>Indique s’il faut exécuter cette configuration de session en tant que compte d’administrateur (virtuel) de l’ordinateur</value>
   </data>
   <data name="DISCLanguageModeComment" xml:space="preserve">
-    <value>Mode de langue à appliquer lorsqu’il est appliqué à une session. Peut être « NoLanguage » (recommandé), « RestrictedLanguage », « ConstrainedLanguage » ou « FullLanguage »</value>
+    <value>Mode langage à appliquer lorsqu’il est appliqué à une session. Peut être « NoLanguage » (recommandé), « RestrictedLanguage », « ConstrainedLanguage » ou « FullLanguage »</value>
   </data>
   <data name="DISCModulesToImportComment" xml:space="preserve">
     <value>Modules à importer lorsqu’ils sont appliqués à une session</value>
@@ -1342,10 +1342,10 @@ Toutes les sessions WinRM connectées à des configurations de session PowerShel
     <value>PSSession {0} a été créé à l’aide du paramètre EnableNetworkAccess et ne peut être reconnecté qu’à partir de l’ordinateur local.</value>
   </data>
   <data name="CannotStartJobInconsistentLanguageMode" xml:space="preserve">
-    <value>Impossible de démarrer le travail. Le mode de langage de cette session n’est pas compatible avec le mode de langage à l’échelle du système.</value>
+    <value>Impossible de démarrer le travail. Le mode langage de cette session n’est pas compatible avec le mode langage à l’échelle du système.</value>
   </data>
   <data name="CannotCreateRunspaceInconsistentState" xml:space="preserve">
-    <value>Impossible de créer un espace d'exécution. Le mode de langue de cette configuration n’est pas compatible avec le mode de langue à l’échelle du système.</value>
+    <value>Impossible de créer un espace d'exécution. Le mode langage de cette configuration n’est pas compatible avec le mode langage à l’échelle du système.</value>
   </data>
   <data name="CannotExitNestedPipeline" xml:space="preserve">
     <value>Impossible de quitter un pipeline imbriqué, car le pipeline n’est pas dans l’état imbriqué.</value>
@@ -1721,7 +1721,7 @@ Le processus client SSH s’est arrêté avant que la connexion puisse être ét
     <value>L’évaluation de l’expression peut échouer</value>
   </data>
   <data name="WDACGetPowerShellLogMessage" xml:space="preserve">
-    <value>La création d’un objet PowerShell à partir d’un bloc de script peut nécessiter l’évaluation de certaines expressions dans le bloc de script. L'évaluation de l'expression échouera silencieusement et renverra « null » en mode de langage restreint (Constrained Language mode), à ​​moins que l'expression ne représente une valeur constante.</value>
+    <value>La création d’un objet PowerShell à partir d’un bloc de script peut nécessiter l’évaluation de certaines expressions dans le bloc de script. L'évaluation de l'expression échouera silencieusement et renverra « null » en mode langage avec contraintes, à ​​moins que l'expression ne représente une valeur constante.</value>
   </data>
   <data name="HyperVFailedToGetStateUnknownType" xml:space="preserve">
     <value>Échec de l’obtention de l’état de la machine virtuelle Hyper-V. La valeur était de type {0}, mais était censée être Microsoft.HyperV.PowerShell.VMState ou System.String.</value>

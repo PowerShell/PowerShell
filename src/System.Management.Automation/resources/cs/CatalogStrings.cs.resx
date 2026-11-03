@@ -151,7 +151,7 @@
     <value>Verze katalogu není platná. Podporujeme jen katalog verze {0} a verze {1}.</value>
   </data>
   <data name="WeakCatalogHashAlgorithm" xml:space="preserve">
-    <value>'{0}' is a version catalog that uses SHA0 or SHA1. Consider regenerating this catalog with '-CatalogVersion 2'.</value>
+    <value>{0} je katalog verzí, který používá SHA0 nebo SHA1. Zvažte opětovné vygenerování tohoto katalogu pomocí -CatalogVersion 2.</value>
   </data>
   <data name="UnableToOpenCatalogDefinitionFile" xml:space="preserve">
     <value>Soubor s definicí katalogu nejde otevřít.</value>

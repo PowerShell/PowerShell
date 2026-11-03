@@ -138,7 +138,7 @@
     <value>Impossible de trouver le fichier de données PowerShell «{0}» dans le répertoire «{1}» ou dans les répertoires de culture parent.</value>
   </data>
   <data name="CannotDefineSupportedCommand" xml:space="preserve">
-    <value>Impossible d’importer des données localisées. La définition de commandes supplémentaires prises en charge n’est pas autorisée dans ce mode de langage.</value>
+    <value>Impossible d’importer des données localisées. La définition de commandes supplémentaires prises en charge n’est pas autorisée dans ce mode langage.</value>
   </data>
   <data name="IncorrectVariableName" xml:space="preserve">
     <value>Le nom BindingVariable «{0}» n’est pas valide.</value>

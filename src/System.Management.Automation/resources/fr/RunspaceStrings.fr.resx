@@ -172,7 +172,7 @@
     <value>Les options de thread ne peuvent être modifiées que si l’état de cloisonnement est MTA (Multithreaded Apartment), si les options actuelles sont UseNewThread ou UseCurrentThread, et si la nouvelle valeur est ReuseThread.</value>
   </data>
   <data name="UseLocalScopeNotAllowed" xml:space="preserve">
-    <value>{0} ne peut pas avoir la valeur false lorsque le mode de langage est {1} ou {2}.</value>
+    <value>{0} ne peut pas avoir la valeur false lorsque le mode langage est {1} ou {2}.</value>
   </data>
   <data name="DisconnectNotSupported" xml:space="preserve">
     <value>Vous ne pouvez pas déconnecter un espace d’exécution local uniquement.</value>
