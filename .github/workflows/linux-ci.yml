@@ -231,20 +231,6 @@ jobs:
   #     contents: read
   #     security-events: write
   #   with:
-  linux_packaging:
-    name: Linux Packaging
-    needs:
-      - ci_build
-      - changes
-    if: ${{ needs.changes.outputs.packagingChanged == 'true' }}
-    runs-on: ubuntu-24.04
-    steps:
-      - name: checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          fetch-depth: 0
-      - name: Linux Packaging
-        uses: "./.github/actions/test/linux-packaging"
 
   ready_to_merge:
     name: Linux ready to merge
@@ -262,3 +248,17 @@ jobs:
     uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@e051ddbdb7865c0a505ce3bf3b2b7abdb50f79d3 # v1.0.0
     with:
       needs_context: ${{ toJson(needs) }}
+
+  linux_packaging:
+    name: Linux Packaging
+    needs:
+      - changes
+    if: ${{ needs.changes.outputs.packagingChanged == 'true' }}
+    runs-on: ubuntu-24.04
+    steps:
+      - name: checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Linux Packaging
+        uses: "./.github/actions/test/linux-packaging"
