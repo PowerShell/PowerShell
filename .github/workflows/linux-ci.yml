@@ -248,7 +248,6 @@ jobs:
     uses: PowerShell/compliance/.github/workflows/ready-to-merge.yml@e051ddbdb7865c0a505ce3bf3b2b7abdb50f79d3 # v1.0.0
     with:
       needs_context: ${{ toJson(needs) }}
-
   linux_packaging:
     name: Linux Packaging
     needs:
