@@ -59,6 +59,13 @@ mask 16). Unmasked entries are always present. A mask value of 3 would require b
 and 2; it does not mean “either bit.” The masks encode optional parent, child, stat, drive,
 and container properties.
 
+On Windows, Registry key output uses `RegistryProviderMetadata`. Its descriptors are
+`Property` (0), `PSPath` (1), `PSParentPath` (2), `PSChildName` (3), `PSDrive` (4),
+`PSProvider` (5), and `PSIsContainer` (6). The metadata struct holds only the drive:
+the key supplies its value names and registry path, while the drive supplies the
+provider and drive context. Registry keys without a drive and keys with existing
+instance members use the ordinary note-property path.
+
 An accessor declaration shows both data sources: the base object is supplied as the first
 parameter and the inline metadata as an optional readonly second parameter.
 
@@ -298,12 +305,16 @@ not a claim that FileInfo needs type invalidation.
 
 ## Built-in provider eligibility and temporal behavior
 
-The FileSystem provider's item optimization is gated in `ProviderBase.WrapOutputInPSObject` and is
-limited to the built-in FileSystem provider and `FileSystemInfo` items. The provider also
-requires a usable drive, compatible container state, and no preexisting instance members.
+The item optimization is gated in `ProviderBase.WrapOutputInPSObject` and is opt-in through
+`IProviderItemObjectFactory`. Providers implement that protocol to create wrappers for eligible
+items; `ProviderBase` attaches the metadata source to the returned wrapper. The FileSystem
+provider accepts `FileSystemInfo` items only, and also requires a usable drive, compatible
+container state, and no preexisting instance members.
 The last condition matters because wrapping with the compact source must not discard
-provider- or caller-supplied notes. Other providers and ineligible item types follow the
-legacy note attachment path.
+provider- or caller-supplied notes. On Windows, the same protocol also covers Registry key
+output with no preexisting instance members and a drive. Registry paths and value names are
+derived from the key on access; the drive supplies the provider context.
+Other providers and ineligible item types follow the legacy note attachment path.
 
 The `FileInfo`/`DirectoryInfo` object does not retain the PowerShell drive through which it
 was discovered. `PSDrive` and `PSProvider` therefore come from carried metadata, rather than
@@ -420,7 +431,8 @@ state?” Those questions catch most integration regressions in this design.
 | PSObject wrapping, member attachment, resurrection keys, copying | [`MshObject.cs`](../../src/System.Management.Automation/engine/MshObject.cs) |
 | Lazy source, promotion, lookup, enumeration and mutation behavior | [`MshMemberInfo.cs`](../../src/System.Management.Automation/engine/MshMemberInfo.cs) |
 | Dynamic get-member and value/member lookup binders | [`Binders.cs`](../../src/System.Management.Automation/engine/runtime/Binding/Binders.cs) |
-| FileSystem eligibility, wrapper construction, and emission-time Unix `LStat` capture | [`ProviderBase.cs`](../../src/System.Management.Automation/namespaces/ProviderBase.cs) |
+| FileSystem and Registry eligibility, wrapper construction, and emission-time Unix `LStat` capture | [`ProviderBase.cs`](../../src/System.Management.Automation/namespaces/ProviderBase.cs) |
+| Registry key emission and default value-name normalization | [`RegistryProvider.cs`](../../src/System.Management.Automation/namespaces/RegistryProvider.cs) |
 | Content metadata, emission path, path cache, legacy note fallback | [`ContentCommandBase.cs`](../../src/Microsoft.PowerShell.Commands.Management/commands/management/ContentCommandBase.cs) |
 | Built-in FileSystem provider lexical path helpers | [`FileSystemProvider.cs`](../../src/System.Management.Automation/namespaces/FileSystemProvider.cs) |
 | Focused engine tests | [`test_PSObject.cs`](../../test/xUnit/csharp/test_PSObject.cs) |

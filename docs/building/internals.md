@@ -238,8 +238,9 @@ Lastly, run `nuget pack .` from within the folder. Note that you may need the la
 For the design rationale, accessor contract, binding and promotion flow, identity rules, and
 validation entry points, see [Provider instance metadata](provider-instance-metadata.md).
 
-When the `PSOptimizedProviderObjects` experimental feature is enabled, built-in
-FileSystem provider output for `FileInfo` and `DirectoryInfo` stores its drive and,
+When the `PSOptimizedProviderObjects` experimental feature is enabled, built-in providers
+implementing `IProviderItemObjectFactory` can supply compact item wrappers. FileSystem
+output for `FileInfo` and `DirectoryInfo` stores its drive and,
 on Unix, stat metadata inline in a closed generic `PSObject<TMetadata>`. Static
 accessors declared on the metadata type describe member names and order once per
 closed type. Direct instance-member reads derive paths and container status from the
@@ -258,6 +259,11 @@ with an inline `ReadCount` and a reference to a shared source-path cache. Unlike
 metadata, content paths are snapshots. String outputs own metadata through wrapper
 identity; byte outputs use the boxed byte object's reference identity, so equal byte values
 in distinct boxes carry independent counts and rewrapping the same box recovers its metadata.
+
+On Windows, eligible Registry key output uses `PSObject<RegistryProviderMetadata>`.
+The key supplies its value names and path, while the drive supplies the provider and
+drive context. Existing instance members and keys without a drive retain the ordinary
+note-property output path.
 
 Other providers, batched `IList` output, `-Raw -AsByteStream` byte arrays, and other content types continue to use note properties.
 Disabling the feature retains the ordinary note-property paths for compatibility comparisons.

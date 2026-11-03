@@ -1,6 +1,141 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+Describe "Optimized Registry provider instance metadata" -Tags "CI" {
+    BeforeAll {
+        if ($IsWindows) {
+            $registryPath = "HKCU:\Software\PowerShellMetadataTests_$([guid]::NewGuid().ToString('N'))"
+            New-Item -Path $registryPath -ErrorAction Stop | Out-Null
+            $keyPath = Join-Path $registryPath "sample[1]"
+            New-Item -Path $keyPath -ErrorAction Stop | Out-Null
+            Set-Item -LiteralPath $keyPath -Value "default value"
+            New-ItemProperty -LiteralPath $keyPath -Name "Named" -Value "value" | Out-Null
+            New-PSDrive -Name RegistryMetadata -PSProvider Registry -Root (Get-Item -LiteralPath $registryPath).Name | Out-Null
+            $registryMetadataEnabled = [bool](Get-ExperimentalFeature -Name PSOptimizedProviderObjects).Enabled
+            Add-Type -TypeDefinition @'
+using System.Management.Automation;
+using System.Reflection;
+
+public static class RegistryMetadataTestHelper
+{
+    public static string SourceType(PSObject item)
+    {
+        object members = typeof(PSObject).GetField("_instanceMembers", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(item);
+        object source = members.GetType().GetField("_providerSource", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(members);
+        return source?.GetType().GenericTypeArguments[0].Name;
+    }
+
+    public static bool HasStorage(PSObject item)
+    {
+        object members = typeof(PSObject).GetField("_instanceMembers", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(item);
+        return members.GetType().GetField("_members", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(members) != null;
+    }
+}
+'@
+        }
+    }
+
+    AfterAll {
+        if ($IsWindows) {
+            Remove-PSDrive -Name RegistryMetadata -Force -ErrorAction Stop
+            Remove-Item -LiteralPath $registryPath -Recurse -Force -ErrorAction Stop
+        }
+    }
+
+    It "preserves registry paths, value names, and member ordering" -Skip:(!$IsWindows) {
+        $item = Get-Item -LiteralPath $keyPath
+        $item.PSPath | Should -BeExactly "Microsoft.PowerShell.Core\Registry::$($item.Name)"
+        $item.PSParentPath | Should -BeExactly "Microsoft.PowerShell.Core\Registry::$((Get-Item -LiteralPath $registryPath).Name)"
+        $item.PSChildName | Should -BeExactly 'sample[1]'
+        $item.PSIsContainer | Should -BeTrue
+        $item.PSDrive.Name | Should -BeExactly "HKCU"
+        $item.PSProvider.Name | Should -BeExactly "Registry"
+        $item.Property | Should -Contain "(default)"
+        $item.Property | Should -Contain "Named"
+
+        $notes = @($item.PSObject.Properties | Where-Object MemberType -EQ NoteProperty)
+        $notes.Name | Should -Be @("Property", "PSPath", "PSParentPath", "PSChildName", "PSDrive", "PSProvider", "PSIsContainer")
+    }
+
+    It "keeps direct registry reads compact until mutation" -Skip:(!$IsWindows) {
+        if (-not $registryMetadataEnabled) {
+            Set-ItResult -Skipped -Because "Requires PSOptimizedProviderObjects"
+            return
+        }
+
+        $item = Get-Item -LiteralPath $keyPath
+        [RegistryMetadataTestHelper]::SourceType($item) | Should -BeExactly "RegistryProviderMetadata"
+        [RegistryMetadataTestHelper]::HasStorage($item) | Should -BeFalse
+
+        $item.Property | Should -Contain "Named"
+        $item.PSPath | Should -Match "Registry::"
+        $item | ForEach-Object -MemberName pschildname | Should -BeExactly 'sample[1]'
+        [RegistryMetadataTestHelper]::HasStorage($item) | Should -BeFalse
+        [RegistryMetadataTestHelper]::SourceType($item) | Should -BeExactly "RegistryProviderMetadata"
+
+        $item.PSPath = "changed"
+        $item.PSPath | Should -BeExactly "changed"
+        [RegistryMetadataTestHelper]::SourceType($item) | Should -BeNullOrEmpty
+        $item.PSObject.Properties.Remove("PSPath")
+        $item.PSObject.Properties["PSPath"] | Should -BeNullOrEmpty
+    }
+
+    It "derives registry metadata from the key and drive" -Skip:(!$IsWindows) {
+        $item = Get-Item -LiteralPath $keyPath
+        if ($registryMetadataEnabled) {
+            [RegistryMetadataTestHelper]::SourceType($item) | Should -BeExactly "RegistryProviderMetadata"
+        }
+        else {
+            [RegistryMetadataTestHelper]::SourceType($item) | Should -BeNullOrEmpty
+        }
+        $item.Property | Should -Contain "(default)"
+        $item.Property | Should -Contain "Named"
+        $item.PSPath | Should -BeExactly "Microsoft.PowerShell.Core\Registry::$($item.Name)"
+        $item.PSParentPath | Should -BeExactly "Microsoft.PowerShell.Core\Registry::$((Get-Item -LiteralPath $registryPath).Name)"
+        $item.PSChildName | Should -BeExactly 'sample[1]'
+        $item.PSDrive.Name | Should -BeExactly "HKCU"
+        $item.PSProvider | Should -BeExactly $item.PSDrive.Provider
+
+        if ($registryMetadataEnabled) {
+            New-ItemProperty -LiteralPath $keyPath -Name "DerivedLater" -Value "value" | Out-Null
+            try {
+                $item.Property | Should -Contain "DerivedLater"
+            }
+            finally {
+                Remove-ItemProperty -LiteralPath $keyPath -Name "DerivedLater" -ErrorAction Stop
+            }
+        }
+    }
+
+    It "preserves custom drive and drive-less registry metadata" -Skip:(!$IsWindows) {
+        $item = Get-Item -LiteralPath 'RegistryMetadata:\sample[1]'
+        $item.PSDrive.Name | Should -BeExactly "RegistryMetadata"
+        $item.PSChildName | Should -BeExactly 'sample[1]'
+        Push-Location $TestDrive
+        try {
+            $qualified = Get-Item -LiteralPath "Registry::$($item.Name)"
+            $qualified.PSObject.Properties["PSDrive"] | Should -BeNullOrEmpty
+            $qualified.PSProvider.Name | Should -BeExactly "Registry"
+            $qualified.Property | Should -Contain "Named"
+        }
+        finally {
+            Pop-Location
+        }
+    }
+
+    It "preserves metadata for created and enumerated registry keys" -Skip:(!$IsWindows) {
+        $created = New-Item -Path (Join-Path $registryPath "created")
+        $item = Get-Item -LiteralPath $keyPath
+        $children = @(Get-ChildItem -LiteralPath $registryPath)
+        $children.Count | Should -Be 2
+        foreach ($registryItem in @($created, $item) + $children) {
+            $registryItem.PSIsContainer | Should -BeTrue
+            $registryItem.PSProvider.Name | Should -BeExactly "Registry"
+            $registryItem.PSObject.Properties["Property"].MemberType | Should -Be "NoteProperty"
+        }
+    }
+}
+
 Describe "Optimized FileSystem provider instance metadata" -Tags "CI" {
     BeforeAll {
         $file = Join-Path $TestDrive "sample[1].txt"

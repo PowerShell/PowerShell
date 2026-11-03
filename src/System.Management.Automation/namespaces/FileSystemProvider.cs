@@ -52,7 +52,8 @@ namespace Microsoft.PowerShell.Commands
                                                      IContentCmdletProvider,
                                                      IPropertyCmdletProvider,
                                                      ISecurityDescriptorCmdletProvider,
-                                                     ICmdletProviderSupportsHelp
+                                                     ICmdletProviderSupportsHelp,
+                                                     IProviderItemObjectFactory
     {
         // 4MB gives the best results without spiking the resources on the remote connection for file transfers between pssessions.
         // NOTE: The script used to copy file data from session (PSCopyFromSessionHelper) has a
@@ -86,6 +87,78 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public FileSystemProvider()
         {
+        }
+
+        bool IProviderItemObjectFactory.TryCreateItemObject(object item, string path, bool? isContainer, out PSObject itemObject)
+        {
+            itemObject = null;
+            if (item is not FileSystemInfo fileSystemInfo
+                || PSDriveInfo == null
+                || (isContainer.HasValue && isContainer.Value != (item is DirectoryInfo))
+                || PSObject.HasInstanceMembers(item, out _))
+            {
+                return false;
+            }
+
+            bool hasNavigationPath = path != null;
+            uint metadataMask = 0;
+            if (hasNavigationPath)
+            {
+                metadataMask |= 1 | 2;
+            }
+
+#if UNIX
+            if (hasNavigationPath)
+            {
+                metadataMask |= 4;
+            }
+#endif
+            metadataMask |= 8;
+            if (isContainer.HasValue)
+            {
+                metadataMask |= 16;
+                providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSIsContainer", isContainer.Value);
+            }
+
+            var metadata = new FileSystemProviderMetadata { Drive = PSDriveInfo };
+#if UNIX
+            if (hasNavigationPath)
+            {
+                try
+                {
+                    // Use LStat so links report information about the link itself.
+                    metadata.UnixStat = Platform.Unix.GetLStat(path);
+                }
+                catch
+                {
+                    // Match the ordinary provider path when stat information is unavailable.
+                    metadata.UnixStat = null;
+                }
+            }
+#endif
+
+            itemObject = new PSObject<FileSystemProviderMetadata>(fileSystemInfo, metadata, metadataMask);
+            itemObject.AttachProviderInstanceMembers((IProviderInstanceMemberSource)itemObject);
+            return true;
+        }
+
+        void IProviderItemObjectFactory.AddItemObjectProperties(PSObject itemObject, object item, string path)
+        {
+#if UNIX
+            if (path != null)
+            {
+                try
+                {
+                    // Use LStat so links report information about the link itself.
+                    itemObject.AddOrSetProperty("UnixStat", Platform.Unix.GetLStat(path));
+                }
+                catch
+                {
+                    // Match the ordinary provider path when stat information is unavailable.
+                    itemObject.AddOrSetProperty("UnixStat", value: null);
+                }
+            }
+#endif
         }
 
         private Collection<WildcardPattern> _excludeMatcher = null;

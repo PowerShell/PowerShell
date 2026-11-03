@@ -40,6 +40,41 @@ namespace System.Management.Automation.Provider
         string GetHelpMaml(string helpItemName, string path);
     }
 #nullable restore
+
+    /// <summary>
+    /// Allows a provider to create a specialized <see cref="PSObject"/> for emitted items.
+    /// </summary>
+    /// <remarks>
+    /// This protocol is used only when <c>PSOptimizedProviderObjects</c> is enabled.
+    /// Return <see langword="true"/> when the provider handled the item and supplied its
+    /// fully configured wrapper; otherwise return <see langword="false"/> to use the standard provider wrapper.
+    /// <see cref="AddItemObjectProperties"/> is also called for standard wrappers, including
+    /// when the feature is disabled, so providers can retain additional item properties.
+    /// </remarks>
+    public interface IProviderItemObjectFactory
+    {
+        /// <summary>
+        /// Tries to create a specialized wrapper for an item being emitted by the provider.
+        /// </summary>
+        /// <param name="item">The item being written.</param>
+        /// <param name="path">The provider path for the item.</param>
+        /// <param name="isContainer">Whether the item is a container, or null when unspecified.</param>
+        /// <param name="itemObject">The specialized wrapper when handled; otherwise null.</param>
+        /// <returns>True when the provider created the item wrapper; otherwise false.</returns>
+        bool TryCreateItemObject(object item, string path, bool? isContainer, out PSObject itemObject);
+
+        /// <summary>
+        /// Adds provider-specific properties to a standard item wrapper.
+        /// </summary>
+        /// <param name="itemObject">The standard wrapper with common path properties attached.</param>
+        /// <param name="item">The item being written.</param>
+        /// <param name="path">The provider path for the item.</param>
+        /// <remarks>
+        /// This method is not called when <see cref="TryCreateItemObject"/> supplies a specialized wrapper.
+        /// </remarks>
+        void AddItemObjectProperties(PSObject itemObject, object item, string path);
+    }
+
     #region CmdletProvider
 
     /// <summary>
@@ -1759,55 +1794,15 @@ namespace System.Management.Automation.Provider
                 throw PSTraceSource.NewArgumentNullException(nameof(item));
             }
 
-            bool canUseCompactMembers = ExperimentalFeature.IsEnabled(ExperimentalFeature.PSOptimizedProviderObjects)
-                && ProviderInfo?.ImplementingType == typeof(Microsoft.PowerShell.Commands.FileSystemProvider)
-                && item is FileSystemInfo
-                && PSDriveInfo != null
-                && (!isContainer.HasValue || isContainer.Value == (item is DirectoryInfo))
-                && !PSObject.HasInstanceMembers(item, out _);
-
-            if (canUseCompactMembers)
+            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSOptimizedProviderObjects)
+                && this is IProviderItemObjectFactory itemObjectFactory
+                && itemObjectFactory.TryCreateItemObject(item, path, isContainer, out PSObject optimizedResult))
             {
-                NavigationCmdletProvider navigationProvider = this as NavigationCmdletProvider;
-                bool hasNavigationPath = navigationProvider != null && path != null;
-                uint metadataMask = 0;
-                if (hasNavigationPath)
+                if (optimizedResult == null)
                 {
-                    metadataMask |= 1 | 2;
+                    throw new InvalidOperationException("A provider returning true from TryCreateItemObject must supply an item object.");
                 }
 
-#if UNIX
-                if (hasNavigationPath)
-                {
-                    metadataMask |= 4;
-                }
-#endif
-                metadataMask |= 8;
-                if (isContainer.HasValue)
-                {
-                    metadataMask |= 16;
-                    providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSIsContainer", isContainer.Value);
-                }
-
-                var metadata = new FileSystemProviderMetadata { Drive = PSDriveInfo };
-#if UNIX
-                if (hasNavigationPath)
-                {
-                    try
-                    {
-                        // Use LStat so links report information about the link itself.
-                        metadata.UnixStat = Platform.Unix.GetLStat(path);
-                    }
-                    catch
-                    {
-                        // Match the ordinary provider path when stat information is unavailable.
-                        metadata.UnixStat = null;
-                    }
-                }
-#endif
-
-                var optimizedResult = new PSObject<FileSystemProviderMetadata>(item, metadata, metadataMask);
-                optimizedResult.AttachProviderInstanceMembers(optimizedResult);
                 return optimizedResult;
             }
 
@@ -1858,27 +1853,11 @@ namespace System.Management.Automation.Provider
 
                 result.AddOrSetProperty("PSChildName", childName);
                 providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSChildName", childName);
-#if UNIX
+            }
 
-                // Add a commonstat structure to file system objects
-                if (ProviderInfo.ImplementingType == typeof(Microsoft.PowerShell.Commands.FileSystemProvider))
-                {
-                    try
-                    {
-                        // Use LStat because if you get a link, you want the information about the
-                        // link, not the file.
-                        var commonStat = Platform.Unix.GetLStat(path);
-                        result.AddOrSetProperty("UnixStat", commonStat);
-                    }
-                    catch
-                    {
-                        // If there is *any* problem in retrieving the stat information
-                        // set the property to null. There is no specific exception which
-                        // would result in different behavior.
-                        result.AddOrSetProperty("UnixStat", value: null);
-                    }
-                }
-#endif
+            if (this is IProviderItemObjectFactory fallbackItemObjectFactory)
+            {
+                fallbackItemObjectFactory.AddItemObjectProperties(result, item, path);
             }
 
             // PSDriveInfo
