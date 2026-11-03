@@ -24,7 +24,7 @@ namespace System.Management.Automation
         internal const string PSProfileDSCResource = "PSProfileDSCResource";
 
         /// <summary>
-        /// The opt-in feature for lazy instance metadata on built-in FileSystem items and scalar content output.
+        /// The opt-in feature for lazy instance metadata on provider items and scalar content output.
         /// </summary>
         internal const string PSOptimizedProviderObjects = nameof(PSOptimizedProviderObjects);
 
@@ -122,7 +122,7 @@ namespace System.Management.Automation
                 ),
                 new ExperimentalFeature(
                     name: PSOptimizedProviderObjects,
-                    description: "Use inline instance metadata for built-in FileSystem provider objects."
+                    description: "Use inline instance metadata for eligible provider objects."
                 )
             };
 

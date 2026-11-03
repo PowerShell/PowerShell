@@ -374,6 +374,51 @@ namespace System.Management.Automation
 
 namespace System.Management.Automation.Provider
 {
+#if !UNIX
+    /// <summary>
+    /// Carries the drive used to derive registry provider notes from the key.
+    /// </summary>
+    internal struct RegistryProviderMetadata
+    {
+        internal PSDriveInfo Drive;
+
+        [PSObjectMetadataAccessor("Property", 0)]
+        private static string[] GetProperty(Microsoft.Win32.RegistryKey key)
+            => Microsoft.PowerShell.Commands.RegistryProvider.GetValueNamesForMetadata(key.GetValueNames());
+
+        [PSObjectMetadataAccessor("PSPath", 1)]
+        private static string GetPath(Microsoft.Win32.RegistryKey key, in RegistryProviderMetadata metadata)
+            => LocationGlobber.GetProviderQualifiedPath(key.Name, metadata.Drive.Provider);
+
+        [PSObjectMetadataAccessor("PSParentPath", 2)]
+        private static string GetParentPath(Microsoft.Win32.RegistryKey key, in RegistryProviderMetadata metadata)
+        {
+            string keyName = key.Name;
+            int separatorIndex = keyName.LastIndexOf('\\');
+            return separatorIndex < 0
+                ? string.Empty
+                : LocationGlobber.GetProviderQualifiedPath(keyName.Substring(0, separatorIndex), metadata.Drive.Provider);
+        }
+
+        [PSObjectMetadataAccessor("PSChildName", 3)]
+        private static string GetChildName(Microsoft.Win32.RegistryKey key)
+        {
+            string keyName = key.Name;
+            int separatorIndex = keyName.LastIndexOf('\\');
+            return separatorIndex < 0 ? keyName : keyName.Substring(separatorIndex + 1);
+        }
+
+        [PSObjectMetadataAccessor("PSDrive", 4)]
+        private static PSDriveInfo GetDrive(Microsoft.Win32.RegistryKey key, in RegistryProviderMetadata metadata) => metadata.Drive;
+
+        [PSObjectMetadataAccessor("PSProvider", 5)]
+        private static ProviderInfo GetProvider(Microsoft.Win32.RegistryKey key, in RegistryProviderMetadata metadata) => metadata.Drive.Provider;
+
+        [PSObjectMetadataAccessor("PSIsContainer", 6)]
+        private static object GetIsContainer(Microsoft.Win32.RegistryKey key) => Boxed.True;
+    }
+#endif
+
     /// <summary>
     /// Carries the drive context and Unix stat captured when a FileSystem item is emitted.
     /// </summary>
