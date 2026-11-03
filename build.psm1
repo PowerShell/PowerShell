@@ -900,13 +900,17 @@ Fix steps:
 function Switch-PSNugetConfig {
     <#
     .SYNOPSIS
-        Switches the NuGet configuration between public, private, and NuGet.org-only sources.
+        Switches the NuGet configuration between public, private, NuGet.org-only, and early-access sources.
     .DESCRIPTION
         Regenerates nuget.config files in the repository root, src/Modules, and test/tools/Modules
         to point to the specified feed source. Optionally stores authenticated credentials.
     .PARAMETER Source
         The feed set to activate: 'Public' (nuget.org + dotnet feed), 'Private' (PowerShell ADO
-        feed), or 'NuGetOnly' (nuget.org only).
+        feed), 'NuGetOnly' (nuget.org only), or 'EarlyAccess' (.NET early-access
+        feed, with the PowerShell feed for released modules).
+    .PARAMETER UseEarlyAccessModules
+        Adds the internal module early-access feed for bundled modules independently
+        of the .NET feed selected by Source.
     .PARAMETER UserName
         Username for authenticated private feed access.
     .PARAMETER ClearTextPAT
@@ -922,7 +926,9 @@ function Switch-PSNugetConfig {
         [string] $UserName,
 
         [Parameter(Mandatory = $true, ParameterSetName = 'user')]
-        [string] $ClearTextPAT
+        [string] $ClearTextPAT,
+
+        [switch] $UseEarlyAccessModules
     )
 
     Clear-PipelineNugetAuthentication
@@ -938,19 +944,18 @@ function Switch-PSNugetConfig {
     $dotnetSdk = [NugetPackageSource] @{Url = 'https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet9/nuget/v2'; Name = 'dotnet' }
     $gallery = [NugetPackageSource] @{Url = 'https://www.powershellgallery.com/api/v2/'; Name = 'psgallery' }
     $nugetorg = [NugetPackageSource] @{Url = 'https://api.nuget.org/v3/index.json'; Name = 'nuget.org' }
+    $moduleSource = $gallery
     if ( $Source -eq 'Public') {
         New-NugetConfigFile -NugetPackageSource $nugetorg, $dotnetSdk   -Destination "$PSScriptRoot/" @extraParams
-        New-NugetConfigFile -NugetPackageSource $gallery                -Destination "$PSScriptRoot/src/Modules/" @extraParams
         New-NugetConfigFile -NugetPackageSource $gallery                -Destination "$PSScriptRoot/test/tools/Modules/" @extraParams
     } elseif ( $Source -eq 'NuGetOnly') {
         New-NugetConfigFile -NugetPackageSource $nugetorg   -Destination "$PSScriptRoot/" @extraParams
-        New-NugetConfigFile -NugetPackageSource $gallery                -Destination "$PSScriptRoot/src/Modules/" @extraParams
         New-NugetConfigFile -NugetPackageSource $gallery                -Destination "$PSScriptRoot/test/tools/Modules/" @extraParams
     } elseif ( $Source -eq 'Private') {
         $powerShellPackages = [NugetPackageSource] @{Url = 'https://pkgs.dev.azure.com/powershell/PowerShell/_packaging/PowerShell/nuget/v3/index.json'; Name = 'powershell' }
+        $moduleSource = $powerShellPackages
 
         New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/" @extraParams
-        New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/src/Modules/" @extraParams
         New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/test/tools/Modules/" @extraParams
     } elseif ($Source -eq 'EarlyAccess') {
         $earlyAccess = $env:EARLY_ACCESS_FEED
@@ -967,12 +972,20 @@ function Switch-PSNugetConfig {
 
         $earlyAccessFeed = [NugetPackageSource] @{Url = $earlyAccessFeedUrl; Name = 'earlyaccess' }
         $powerShellPackages = [NugetPackageSource] @{Url = 'https://pkgs.dev.azure.com/powershell/PowerShell/_packaging/PowerShell/nuget/v3/index.json'; Name = 'powershell' }
+        $moduleSource = $powerShellPackages
 
         New-NugetConfigFile -NugetPackageSource $earlyAccessFeed -Destination "$PSScriptRoot/"
-        New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/src/Modules/" @extraParams
         New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/test/tools/Modules/" @extraParams
     } else {
         throw "Unknown source: $Source"
+    }
+
+    if ($UseEarlyAccessModules) {
+        $moduleEarlyAccessFeed = [NugetPackageSource] @{Url = 'https://pkgs.dev.azure.com/powershell-rel/PowerShell/_packaging/powershell-module-earlyaccess/nuget/v3/index.json'; Name = 'module-earlyaccess' }
+        # Credentials for moduleSource are registered by the test module configuration above.
+        New-NugetConfigFile -NugetPackageSource $moduleEarlyAccessFeed, $moduleSource -Destination "$PSScriptRoot/src/Modules/"
+    } else {
+        New-NugetConfigFile -NugetPackageSource $moduleSource -Destination "$PSScriptRoot/src/Modules/" @extraParams
     }
 
     if ($UserName -or $ClearTextPAT) {
