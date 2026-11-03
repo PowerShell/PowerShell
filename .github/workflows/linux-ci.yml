@@ -231,6 +231,7 @@ jobs:
   #     contents: read
   #     security-events: write
   #   with:
+  #     runner_os: ubuntu-latest
 
   ready_to_merge:
     name: Linux ready to merge
