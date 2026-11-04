@@ -128,13 +128,27 @@ namespace Microsoft.PowerShell.Commands
         {
             StringBuilder raw = ContentHelper.GetRawContentHeader(baseResponse);
 
-            // Use ASCII encoding for the RawContent visual view of the content.
+            // Keep the existing RawContent preview behavior.
             if (Content?.Length > 0)
             {
-                raw.Append(ToString());
+                raw.Append(GetRawContentPreview());
             }
 
             RawContent = raw.ToString();
+        }
+
+        private string GetRawContentPreview()
+        {
+            char[] stringContent = Encoding.ASCII.GetChars(Content!);
+            for (int counter = 0; counter < stringContent.Length; counter++)
+            {
+                if (!IsPrintable(stringContent[counter]))
+                {
+                    stringContent[counter] = '.';
+                }
+            }
+
+            return new string(stringContent);
         }
 
         private static bool IsPrintable(char c) => char.IsLetterOrDigit(c)
@@ -184,7 +198,10 @@ namespace Microsoft.PowerShell.Commands
                 return string.Empty;
             }
 
-            char[] stringContent = Encoding.ASCII.GetChars(Content);
+            string? characterSet = WebResponseHelper.GetCharacterSet(BaseResponse);
+            StreamHelper.TryGetEncoding(characterSet, out Encoding encoding);
+
+            char[] stringContent = encoding.GetChars(Content);
             for (int counter = 0; counter < stringContent.Length; counter++)
             {
                 if (!IsPrintable(stringContent[counter]))
