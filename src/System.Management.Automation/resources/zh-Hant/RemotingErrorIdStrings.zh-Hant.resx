@@ -654,19 +654,19 @@
     <value>必須同時指定 "{0}" 和 "{1}"，或兩者都不指定。</value>
   </data>
   <data name="CSCmdsShellNotFound" xml:space="preserve">
-    <value>找不到工作階段設定 "{0}"。</value>
+    <value>找不到工作階段組態 "{0}"。</value>
   </data>
   <data name="CSCmdsShellNotPowerShellBased" xml:space="preserve">
-    <value>工作階段設定 "{0}" 不是以 PowerShell 為基礎的殼層。</value>
+    <value>工作階段組態 "{0}" 不是以 PowerShell 為基礎的殼層。</value>
   </data>
   <data name="CSCmdsPowerShellCoreShellNotModifiable" xml:space="preserve">
-    <value>工作階段設定 "{0}" 是以 PowerShell 為基礎的殼層。請使用 PowerShell 6+ 加以修改。</value>
+    <value>工作階段組態 "{0}" 是以 PowerShell 為基礎的殼層。請使用 PowerShell 6+ 加以修改。</value>
   </data>
   <data name="CSCmdsWindowsPowerShellCoreNotModifiable" xml:space="preserve">
-    <value>工作階段設定 "{0}" 是以 Windows PowerShell 為基礎的殼層。請使用 Windows PowerShell 加以修改。</value>
+    <value>工作階段組態 "{0}" 是以 Windows PowerShell 為基礎的殼層。請使用 Windows PowerShell 加以修改。</value>
   </data>
   <data name="CustomShellNotFound" xml:space="preserve">
-    <value>沒有任何工作階段設定符合條件 "{0}"。</value>
+    <value>沒有任何工作階段組態符合條件 "{0}"。</value>
   </data>
   <data name="CSShouldProcessAction" xml:space="preserve">
     <value>{0}</value>
@@ -687,25 +687,25 @@
     <value>無法將殼層設定資料寫入暫存檔案 {0}。失敗原因: {1}。</value>
   </data>
   <data name="NcsScriptMessageV" xml:space="preserve">
-    <value>正在執行命令 "{0}" 以建立新工作階段設定。</value>
+    <value>正在執行命令 "{0}" 以建立新工作階段組態。</value>
   </data>
   <data name="NcsShouldProcessTargetSDDL" xml:space="preserve">
     <value>名稱: {0} SDDL: {1}。這可讓所選使用者從遠端在此電腦上執行 PowerShell 命令。</value>
   </data>
   <data name="RcsScriptMessageV" xml:space="preserve">
-    <value>正在執行命令 "{0}" 以移除工作階段設定。</value>
+    <value>正在執行命令 "{0}" 以移除工作階段組態。</value>
   </data>
   <data name="GcsScriptMessageV" xml:space="preserve">
-    <value>正在執行命令 "{0}" 以取得以 PowerShell 為基礎的工作階段設定。</value>
+    <value>正在執行命令 "{0}" 以取得以 PowerShell 為基礎的工作階段組態。</value>
   </data>
   <data name="ScsScriptMessageV" xml:space="preserve">
-    <value>正在執行命令 "{0}" 以更新工作階段設定屬性。</value>
+    <value>正在執行命令 "{0}" 以更新工作階段組態屬性。</value>
   </data>
   <data name="ScsShouldProcessTargetSDDL" xml:space="preserve">
     <value>名稱: {0} SDDL: {1}</value>
   </data>
   <data name="EcsScriptMessageV" xml:space="preserve">
-    <value>正在執行命令 "{0}" 以啟用工作階段設定。</value>
+    <value>正在執行命令 "{0}" 以啟用工作階段組態。</value>
   </data>
   <data name="EcsWSManQCCaption" xml:space="preserve">
     <value>WinRM 快速設定</value>
@@ -727,13 +727,13 @@
     <value>名稱: {0} SDDL: {1}。這可讓所選使用者從遠端在此電腦上執行 PowerShell 命令。</value>
   </data>
   <data name="DcsScriptMessageV" xml:space="preserve">
-    <value>正在執行命令 "{0}" 以停用工作階段設定。</value>
+    <value>正在執行命令 "{0}" 以停用工作階段組態。</value>
   </data>
   <data name="DcsShouldProcessTarget" xml:space="preserve">
-    <value>名稱: {0} SDDL: {1}。這會拒絕所有人存取此工作階段設定。</value>
+    <value>名稱: {0} SDDL: {1}。這會拒絕所有人存取此工作階段組態。</value>
   </data>
   <data name="DcsWarningMessage" xml:space="preserve">
-    <value>停用工作階段設定不會復原由 Enable-PSRemoting 或 Enable-PSSessionConfiguration Cmdlet 所做的所有變更。您可能必須依照下列步驟手動還原這些變更: 
+    <value>停用工作階段組態不會復原由 Enable-PSRemoting 或 Enable-PSSessionConfiguration Cmdlet 所做的所有變更。您可能必須依照下列步驟手動還原這些變更: 
     1. 停止並停用 WinRM 服務。
     2. 刪除接受任何 IP 位址上之要求的接聽程式。
     3. 停用 WS-Management 通訊的防火牆例外。
@@ -755,10 +755,10 @@
     <value>必須重新啟動 WinRM 服務，才能顯示 SecurityDescriptor 選取的 UI。重新啟動 WinRM 服務，然後執行下列命令: "{0}"</value>
   </data>
   <data name="ERemotingCaption" xml:space="preserve">
-    <value>正在註冊工作階段設定</value>
+    <value>正在註冊工作階段組態</value>
   </data>
   <data name="ERemotingQuery" xml:space="preserve">
-    <value>找不到工作階段設定 "{0}"。正在執行命令 "{1}" 以建立 "{0}" 工作階段設定。執行此命令會重新啟動 WinRM 服務。</value>
+    <value>找不到工作階段組態 "{0}"。正在執行命令 "{1}" 以建立 "{0}" 工作階段組態。執行此命令會重新啟動 WinRM 服務。</value>
   </data>
   <data name="ShowUIAndSDDLCannotExist" xml:space="preserve">
     <value>不能同時指定 "{0}" 和 "{1}" 參數。請指定 "{0}" 或 "{1}" 參數。</value>
@@ -940,7 +940,7 @@
   </data>
   <data name="WinRMRestartWarning" xml:space="preserve">
     <value>{0} 如果最近已取消註冊使用此名稱的設定，可能需要重新啟動 WinRM 服務，因為某些系統資料結構可能仍在快取中。在那樣的情況下，可能需要重新啟動 WinRM。
-所有連線至 PowerShell 工作階段設定 (例如 Microsoft.PowerShell，以及使用 Register-PSSessionConfiguration Cmdlet 建立的工作階段設定) 的 WinRM 工作階段都會中斷連線。</value>
+所有連線至 PowerShell 工作階段組態 (例如 Microsoft.PowerShell，以及使用 Register-PSSessionConfiguration Cmdlet 建立的工作階段組態) 的 WinRM 工作階段都會中斷連線。</value>
   </data>
   <data name="WinRMForceRestartWarning" xml:space="preserve">
     <value>您正在遠端工作階段中執行，且已選取 Force 選項，這表示 WinRM 服務可能會重新啟動。如果 WinRM 服務重新啟動，此遠端工作階段就會終止，而您需要建立新的工作階段才能繼續</value>
@@ -967,7 +967,7 @@
     <value>執行用戶端方法的遠端 Runspace 未指定用戶端電腦。</value>
   </data>
   <data name="DisableRemotingShouldProcessTarget" xml:space="preserve">
-    <value>名稱: {0} SDDL: {1}。這會拒絕此工作階段設定的遠端存取權。</value>
+    <value>名稱: {0} SDDL: {1}。這會拒絕此工作階段組態的遠端存取權。</value>
   </data>
   <data name="SetEnabledFalseTarget" xml:space="preserve">
     <value>已啟用: False。這會將 WS-Management 服務設定為拒絕連線要求。</value>
@@ -1012,13 +1012,13 @@
     <value>用於唯一識別此文件的識別碼</value>
   </data>
   <data name="DISCInitialSessionStateComment" xml:space="preserve">
-    <value>此工作階段設定要套用的工作階段類型預設值。可以是 'RestrictedRemoteServer' (建議)、'Empty' 或 'Default'</value>
+    <value>此工作階段組態要套用的工作階段類型預設值。可以是 'RestrictedRemoteServer' (建議)、'Empty' 或 'Default'</value>
   </data>
   <data name="DISCTranscriptDirectoryComment" xml:space="preserve">
-    <value>放置此工作階段設定的工作階段文字記錄的目錄</value>
+    <value>放置此工作階段組態的工作階段文字記錄的目錄</value>
   </data>
   <data name="DISCRunAsVirtualAccountComment" xml:space="preserve">
-    <value>是否要以電腦的 (虛擬) 系統管理員帳戶執行此工作階段設定</value>
+    <value>是否要以電腦的 (虛擬) 系統管理員帳戶執行此工作階段組態</value>
   </data>
   <data name="DISCLanguageModeComment" xml:space="preserve">
     <value>套用到工作階段時要使用的語言模式。可以是 'NoLanguage'(建議)、'RestrictedLanguage'、'ConstrainedLanguage' 或 'FullLanguage'</value>
@@ -1078,7 +1078,7 @@
     <value>'Roles' 項目必須是雜湊表，但實際上是 {0}。</value>
   </data>
   <data name="InvalidRoleValue" xml:space="preserve">
-    <value>無法將 '{0}' 角色項目的值轉換成雜湊表。'Roles' 項目必須是以群組名稱作為索引鍵的雜湊表，其中與每個索引鍵相關聯的值，都是該角色的工作階段設定屬性所構成的另一個雜湊表。</value>
+    <value>無法將 '{0}' 角色項目的值轉換成雜湊表。'Roles' 項目必須是以群組名稱作為索引鍵的雜湊表，其中與每個索引鍵相關聯的值，都是該角色的工作階段組態屬性所構成的另一個雜湊表。</value>
   </data>
   <data name="CouldNotFindRoleCapability" xml:space="preserve">
     <value>找不到角色功能 '{0}'。角色功能必須是目前模組路徑中模組內 'RoleCapabilities' 目錄中的檔案 '{1}'。</value>
@@ -1259,7 +1259,7 @@
     <value>-AutoRemoveJob 參數必須搭配 -Wait 參數使用</value>
   </data>
   <data name="InvalidConfigurationName" xml:space="preserve">
-    <value>WS-Management 服務無法處理該要求。在 {0} 電腦上的 WSMan: 磁碟機中找不到 {1} 工作階段設定。如需詳細資訊，請參閱 about_Remote_Troubleshooting 說明主題。</value>
+    <value>WS-Management 服務無法處理該要求。在 {0} 電腦上的 WSMan: 磁碟機中找不到 {1} 工作階段組態。如需詳細資訊，請參閱 about_Remote_Troubleshooting 說明主題。</value>
   </data>
   <data name="BadRunspaceTypeForJob" xml:space="preserve">
     <value>無法從 {0} 規格建立工作，因為所提供的 runspace 不是本機 runspace。請改用本機 runspace，或指定 RunspaceMode 引數。</value>
@@ -1277,7 +1277,7 @@
 {1} is a placeholder for the minimum allowed idletimeout value</comment>
   </data>
   <data name="DISCVisibilityAndAutoLoadingCannotBeBothSpecified" xml:space="preserve">
-    <value>在工作階段設定檔中指定 "{2}"、"{3}"、"{4}" 或 "{5}" 索引鍵時，不能存在 Cmdlet "{0}" 或別名 "{1}"。</value>
+    <value>在工作階段組態檔中指定 "{2}"、"{3}"、"{4}" 或 "{5}" 索引鍵時，不能存在 Cmdlet "{0}" 或別名 "{1}"。</value>
   </data>
   <data name="InvalidConfigurationXMLAttribute" xml:space="preserve">
     <value>「傳輸選項無效。只有當參數 "{0}" 設定為 true 時，參數 "{1}" 才可以是非零值。」</value>
@@ -1321,7 +1321,7 @@
     <value>一或多個工作處於暫停或已中斷連線狀態，且沒有其他使用者輸入就無法繼續。 請指定 -Force 參數，以繼續並移至已完成、失敗或已停止狀態。</value>
   </data>
   <data name="RunAsSessionConfigurationSecurityWarning" xml:space="preserve">
-    <value>在 PowerShell 工作階段設定中啟用 RunAs 時，Windows 安全性模型無法在使用此端點建立的不同使用者工作階段之間強制執行安全性界限。請確認 PowerShell runspace 設定只限制為必要的 Cmdlet 和功能。</value>
+    <value>在 PowerShell 工作階段組態中啟用 RunAs 時，Windows 安全性模型無法在使用此端點建立的不同使用者工作階段之間強制執行安全性界限。請確認 PowerShell runspace 設定只限制為必要的 Cmdlet 和功能。</value>
   </data>
   <data name="ForceSuspendJob" xml:space="preserve">
     <value>已透過新增 Force 參數成功暫停工作。</value>
@@ -1330,7 +1330,7 @@
     <value>工作階段組態檔 {0} 無效。請指定有效的工作階段組態檔，然後再試一次命令。剖析組態檔時發生錯誤: {1}。</value>
   </data>
   <data name="ErrorParsingTheKeyInPSSessionConfigurationFile" xml:space="preserve">
-    <value>Register-PSSessionConfiguration: {1} 中的 '{0}' 索引鍵。工作階段設定檔包含無效的值。請更正檔案，然後再次執行命令。</value>
+    <value>Register-PSSessionConfiguration: {1} 中的 '{0}' 索引鍵。工作階段組態檔包含無效的值。請更正檔案，然後再次執行命令。</value>
   </data>
   <data name="EndpointDoesNotSupportDisconnect" xml:space="preserve">
     <value>只有在遠端電腦執行 PowerShell 3.0 或更新版本時，才支援中斷連線的工作階段。</value>
@@ -1540,10 +1540,10 @@
     <value>在伺服器模式中無法啟動具名管道伺服器。</value>
   </data>
   <data name="CouldNotResolveRoleDefinitionPrincipal" xml:space="preserve">
-    <value>無法將遠端存取權授與 '{0}':'{1}'。工作階段設定已登錄，但此群組沒有存取權。若要解決此錯誤，請提供有效的群組名稱，然後重新登錄工作階段設定。</value>
+    <value>無法將遠端存取權授與 '{0}':'{1}'。工作階段組態已登錄，但此群組沒有存取權。若要解決此錯誤，請提供有效的群組名稱，然後重新登錄工作階段組態。</value>
   </data>
   <data name="SessionConfigurationMustBeFileBased" xml:space="preserve">
-    <value>無法取得工作階段設定 '{0}' 的工作階段功能：此設定未使用工作階段設定檔 (.pssc) 註冊，例如由 New-PSSessionConfigurationFile Cmdlet 建立的設定檔。</value>
+    <value>無法取得工作階段組態 '{0}' 的工作階段功能：此設定未使用工作階段組態檔 (.pssc) 註冊，例如由 New-PSSessionConfigurationFile Cmdlet 建立的設定檔。</value>
   </data>
   <data name="CouldNotResolveUsername" xml:space="preserve">
     <value>無法解析使用者名稱 '{0}'。請確認使用者名稱，然後再試一次。</value>
@@ -1606,10 +1606,10 @@
     <value>無法建立工作階段使用者磁碟機，因為目前的使用者名稱包含無效的檔案路徑字元。</value>
   </data>
   <data name="InvalidRoleCapabilityKey" xml:space="preserve">
-    <value>無效的角色功能金鑰: {0}。請確定角色功能名稱拼字正確，而且是有效的工作階段設定屬性。</value>
+    <value>無效的角色功能金鑰: {0}。請確定角色功能名稱拼字正確，而且是有效的工作階段組態屬性。</value>
   </data>
   <data name="InvalidRoleCapabilityKeyType" xml:space="preserve">
-    <value>無效的角色功能金鑰類型: {0}。角色功能金鑰必須是可識別有效工作階段設定屬性的字串。</value>
+    <value>無效的角色功能金鑰類型: {0}。角色功能金鑰必須是可識別有效工作階段組態屬性的字串。</value>
   </data>
   <data name="InvalidRoleKeyType" xml:space="preserve">
     <value>無效的角色金鑰類型: {0}。角色金鑰必須是可識別安全性群組的字串。</value>
@@ -1709,13 +1709,13 @@ SSH 用戶端處理序在建立連線之前就已終止。</value>
     <value>Create 的 Runspace 引數必須是非 Null 的 RemoteRunspace 物件。</value>
   </data>
   <data name="DISCInvalidConfigKeyType" xml:space="preserve">
-    <value>工作階段設定雜湊表包含無效的索引鍵類型。索引鍵應為字串類型。</value>
+    <value>工作階段組態雜湊表包含無效的索引鍵類型。索引鍵應為字串類型。</value>
   </data>
   <data name="DISCUnsupportedConfigName" xml:space="preserve">
-    <value>工作階段設定檔包含不支援的組態選項: {0}。這是遠端端點設定選項，不適用於 PowerShell 工作階段狀態。</value>
+    <value>工作階段組態檔包含不支援的組態選項: {0}。這是遠端端點設定選項，不適用於 PowerShell 工作階段狀態。</value>
   </data>
   <data name="DISCUnknownConfigName" xml:space="preserve">
-    <value>工作階段設定檔包含未知的組態選項: {0}。</value>
+    <value>工作階段組態檔包含未知的組態選項: {0}。</value>
   </data>
   <data name="WDACGetPowerShellLogTitle" xml:space="preserve">
     <value>運算式評估可能失敗</value>

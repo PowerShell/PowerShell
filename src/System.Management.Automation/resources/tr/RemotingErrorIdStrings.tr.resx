@@ -737,7 +737,7 @@ Devam etmek istiyor musunuz?</value>
     1. WinRM hizmetini durdurun ve devre dışı bırakın.
     2. Herhangi bir IP adresindeki istekleri kabul eden dinleyiciyi silin.
     3. WS-Management iletişimleri için güvenlik duvarı özel durumlarını devre dışı bırakın.
-    4. LocalAccountTokenFilterPolicy değerini 0 olarak geri yükleyin. Bu, bilgisayardaki Yönetici grubunun üyelerine uzak erişimi kısıtlar.</value>
+    4. LocalAccountTokenFilterPolicy değerini 0 olarak geri yükleyin. Bu, bilgisayardaki Yönetici grubunun üyelerine uzaktan erişimi kısıtlar.</value>
   </data>
   <data name="EDcsRequiresElevation" xml:space="preserve">
     <value>Erişim reddedildi. Bu cmdlet'i çalıştırmak için PowerShell'i "Yönetici olarak çalıştır" seçeneğiyle başlatın.</value>

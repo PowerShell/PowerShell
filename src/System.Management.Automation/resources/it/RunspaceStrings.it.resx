@@ -172,7 +172,7 @@
     <value>Le opzioni del thread possono essere modificate solo se lo stato dell'apartment è multithreading apartment (MTA), le opzioni correnti sono UseNewThread o UseCurrentThread e il nuovo valore è ReuseThread.</value>
   </data>
   <data name="UseLocalScopeNotAllowed" xml:space="preserve">
-    <value>{0} non può essere false quando la modalità lingua è {1} o {2}.</value>
+    <value>{0} non può essere false quando la modalità di linguaggio è {1} o {2}.</value>
   </data>
   <data name="DisconnectNotSupported" xml:space="preserve">
     <value>Non è possibile disconnettere uno spazio di esecuzione solo locale.</value>

@@ -187,7 +187,7 @@
     <value>無法處理命令，因為 -ConfigurationName 需要一個為遠端端點設定名稱的引數。請指定此引數，然後再試一次。</value>
   </data>
   <data name="MissingConfigurationFileArgument" xml:space="preserve">
-    <value>無法處理命令，因為 -ConfigurationFile 需要一個為工作階段設定 (.pssc) 檔案路徑的引數。請指定此引數，然後再試一次。</value>
+    <value>無法處理命令，因為 -ConfigurationFile 需要一個為工作階段組態 (.pssc) 檔案路徑的引數。請指定此引數，然後再試一次。</value>
   </data>
   <data name="MissingCustomPipeNameArgument" xml:space="preserve">
     <value>無法處理命令，因為 -CustomPipeName 需要一個是您所想要使用之管道名稱的引數。請指定此引數，然後再試一次。</value>

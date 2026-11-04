@@ -634,7 +634,7 @@
     <value>Questo modulo usa l'operatore dot-source per esportare funzioni utilizzando caratteri jolly e questo non è consentito quando nel sistema è applicata la verifica delle applicazioni.</value>
   </data>
   <data name="CannotExportMembersAccrossLanguageBoundaries" xml:space="preserve">
-    <value>Non è possibile esportare membri del modulo da un modulo con una modalità linguaggio diversa da quella della sessione in esecuzione.</value>
+    <value>Non è possibile esportare membri da un modulo con una modalità di linguaggio diversa da quella della sessione in esecuzione.</value>
   </data>
   <data name="CannotCreateModuleWithScriptBlock" xml:space="preserve">
     <value>Non è possibile creare un nuovo modulo mentre la sessione è in modalità ConstrainedLanguage.</value>
@@ -652,7 +652,7 @@
     <value>Esportazione implicita di funzioni del modulo</value>
   </data>
   <data name="WDACImplicitFunctionExportLogMessage" xml:space="preserve">
-    <value>L'esportazione implicita delle funzioni per il modulo '{0}' verrà negata, perché è attendibile (viene eseguito in modalità linguaggio completo), ma la sessione non è attendibile (viene eseguita in modalità linguaggio vincolato). È consigliabile esportare sempre le funzioni del modulo singolarmente usando il nome completo.</value>
+    <value>L'esportazione implicita delle funzioni per il modulo '{0}' verrà negata, perché l'operazione è attendibile (viene eseguita in modalità di linguaggio completo), ma la sessione non è attendibile (viene eseguita in modalità di linguaggio vincolato). È consigliabile esportare sempre le funzioni del modulo singolarmente usando il nome completo.</value>
   </data>
   <data name="WDACScriptFileImportLogTitle" xml:space="preserve">
     <value>Importazione del file di script come modulo</value>
@@ -664,13 +664,13 @@
     <value>Il modulo contiene l'operatore dot-source</value>
   </data>
   <data name="WDACModuleDotSourceLogMessage" xml:space="preserve">
-    <value>L'importazione del modulo '{0}' avrà esito negativo in modalità linguaggio vincolato perché esporta le funzioni usando caratteri jolly e usando anche l'operatore dot-source.</value>
+    <value>L'importazione del modulo '{0}' avrà esito negativo in modalità di linguaggio vincolato perché esporta le funzioni usando caratteri jolly e anche l'operatore dot-source.</value>
   </data>
   <data name="WDACModuleFnExportWithNestedModulesLogTitle" xml:space="preserve">
     <value>"Funzioni di esportazione del modulo</value>
   </data>
   <data name="WDACModuleFnExportWithNestedModulesLogMessage" xml:space="preserve">
-    <value>Il modulo '{0}' esporta funzioni usando caratteri jolly nel nome. I nomi di funzione dei moduli annidati verranno rimossi quando si esegue il codice in modalità linguaggio vincolato.</value>
+    <value>Il modulo '{0}' esporta funzioni usando caratteri jolly nel nome. I nomi di funzione dei moduli annidati verranno rimossi quando si esegue il codice in modalità di linguaggio vincolato.</value>
   </data>
   <data name="WDACNewModuleCommandLogTitle" xml:space="preserve">
     <value>"Cmdlet New-Module</value>

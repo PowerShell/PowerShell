@@ -652,6 +652,6 @@
     <value>会话状态变量</value>
   </data>
   <data name="WDACSessionStateVarLogMessage" xml:space="preserve">
-    <value>在 ConstrainedLanguage 模式下，更改或创建变量 '{0}' 的作用域为 AllScope 将被阻止。</value>
+    <value>在 ConstrainedLanguage 模式下，更改或创建变量“{0}”的作用域为 AllScope 将被阻止。</value>
   </data>
 </root>

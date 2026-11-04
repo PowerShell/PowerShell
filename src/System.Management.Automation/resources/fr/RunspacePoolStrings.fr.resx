@@ -154,7 +154,7 @@
     <value>L’opération de déconnexion n’est pas prise en charge sur le serveur.  Le serveur doit exécuter PowerShell 3.0 ou une version ultérieure pour prendre en charge la déconnexion du pool d’instances d’exécution distantes.</value>
   </data>
   <data name="CannotReconstructCommands" xml:space="preserve">
-    <value>Ce pool d’espaces d’exécution {0} n’est pas configuré pour fournir des objets PowerShell déconnectés pour les commandes exécutées sur le serveur distant.  Utilisez la méthode statique GetRunspacePools() de la classe RunspacePool pour interroger le serveur et renvoyer les objets de pool d’espaces d’exécution configurés à cet effet.</value>
+    <value>Ce pool d’instances d’exécution {0} n’est pas configuré pour fournir des objets PowerShell déconnectés pour les commandes exécutées sur le serveur distant.  Utilisez la méthode statique GetRunspacePools() de la classe RunspacePool pour interroger le serveur et renvoyer les objets de pool d’instances d’exécution configurés à cet effet.</value>
   </data>
   <data name="CannotConnect" xml:space="preserve">
     <value>Nous ne pouvons pas vous connecter ce pool d’instances d’exécution, car le pool d’instances d’exécution correspondant côté serveur est connecté à un autre client.</value>
