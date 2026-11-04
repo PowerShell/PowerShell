@@ -303,6 +303,45 @@ namespace Microsoft.PowerShell.Commands
 
         private List<UniquePSObjectHelper> _uniques = null;
 
+        private static List<PSPropertyExpression> ResolvePropertyNames(PSPropertyExpression expression, PSObject inputObject)
+        {
+            PSPropertyExpression literalExpression = ResolveEscapedLiteralPropertyName(expression, inputObject);
+            return literalExpression is null
+                ? expression.ResolveNames(inputObject)
+                : new List<PSPropertyExpression> { literalExpression };
+        }
+
+        private static List<PSPropertyExpressionResult> GetPropertyValues(PSPropertyExpression expression, PSObject inputObject)
+        {
+            List<PSPropertyExpressionResult> expressionResults = new();
+            foreach (PSPropertyExpression resolvedName in ResolvePropertyNames(expression, inputObject))
+            {
+                expressionResults.AddRange(resolvedName.GetValues(inputObject));
+            }
+
+            return expressionResults;
+        }
+
+        private static PSPropertyExpression ResolveEscapedLiteralPropertyName(PSPropertyExpression expression, PSObject inputObject)
+        {
+            if (expression.Script is not null || expression.HasWildCardCharacters)
+            {
+                return null;
+            }
+
+            string expressionText = expression.ToString();
+            string propertyName = WildcardPattern.Unescape(expressionText);
+            if (string.Equals(propertyName, expressionText, StringComparison.Ordinal))
+            {
+                return null;
+            }
+
+            PSPropertyInfo member = inputObject.Properties[propertyName];
+            return member is null
+                ? null
+                : new PSPropertyExpression(member.Name, isResolved: true);
+        }
+
         private void ProcessExpressionParameter()
         {
             TerminatingErrorContext invocationContext = new(this);
@@ -396,7 +435,7 @@ namespace Microsoft.PowerShell.Commands
 
             PSPropertyExpression ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
             List<PSPropertyExpressionResult> expressionResults = new();
-            foreach (PSPropertyExpression resolvedName in ex.ResolveNames(inputObject))
+            foreach (PSPropertyExpression resolvedName in ResolvePropertyNames(ex, inputObject))
             {
                 if (_exclusionFilter == null || !_exclusionFilter.IsMatch(resolvedName))
                 {
@@ -470,7 +509,7 @@ namespace Microsoft.PowerShell.Commands
             List<PSNoteProperty> matchedProperties)
         {
             PSPropertyExpression ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
-            List<PSPropertyExpressionResult> expressionResults = ex.GetValues(inputObject);
+            List<PSPropertyExpressionResult> expressionResults = GetPropertyValues(ex, inputObject);
 
             if (expressionResults.Count == 0)
             {
