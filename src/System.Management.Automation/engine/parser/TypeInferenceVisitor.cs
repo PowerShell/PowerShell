@@ -2357,12 +2357,10 @@ namespace System.Management.Automation
                         }
                         else if (currentAst is BinaryExpressionAst binaryExpression
                             && binaryExpression.Operator is TokenKind.Creplace or TokenKind.Ireplace
-                            && ((binaryExpression.Right is ArrayLiteralAst arrayLiteral
+                            && binaryExpression.Right is ArrayLiteralAst arrayLiteral
                             && arrayLiteral.Elements.Count == 2
-                            && variableExpressionAst.Extent.IsWithin(arrayLiteral.Elements[1].Extent))
-                            || (binaryExpression.Right is ArrayExpressionAst arrayExpression
-                            && arrayExpression.SubExpression.Statements.Count == 2
-                            && variableExpressionAst.Extent.IsWithin(arrayExpression.SubExpression.Statements[1].Extent))))
+                            && arrayLiteral.Elements[1] is ScriptBlockExpressionAst sbExpression
+                            && sbExpression.ScriptBlock.Find(ast => ast == variableExpressionAst, searchNestedScriptBlocks: false) is not null)
                         {
                             // $_ is used inside a regex replacement scriptblock, like: "123" -replace '2', {[int]$_.Value + 2}
                             inferredTypes.Add(new PSTypeName(typeof(Match)));

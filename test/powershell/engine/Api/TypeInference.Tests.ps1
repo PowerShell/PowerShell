@@ -1849,6 +1849,13 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Count | Should -Be 1
         $res.Name | Should -Be 'System.Text.RegularExpressions.Match'
     }
+
+    It 'Infers type of $_ in a nested expression of a -replace scriptblock' {
+        $res = [AstTypeInference]::InferTypeOf(
+            {"outer" | ForEach-Object { "123" -replace '2', (& { $_ }) }}.Ast.Find({param($a) $a -is [Language.VariableExpressionAst]}, $true))
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.String'
+    }
 }
 
 Describe "AstTypeInference tests" -Tags CI {
