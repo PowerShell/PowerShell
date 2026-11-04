@@ -33,7 +33,7 @@ The [PoshCode][03] unofficial guide is our reference.
 
 Error handling in PowerShell is unique, as not all errors result in catchable exceptions by default.
 Setting `$ErrorActionPreference = 'Stop'` will likely do what you want; that is, cause
-non-terminating errors instead of terminating. Read the [GitHub issue][02] for more information.
+non-terminating errors to be treated as terminating (throwing catchable exceptions). Read the [GitHub issue][02] for more information.
 
 ## Where do I get the PowerShell Core SDK package?
 
