@@ -2214,7 +2214,7 @@ namespace System.Management.Automation
                         if (!multipleValues && foundOne)
                         {
                             object firstValue = Enum.ToObject(destinationType, returnUInt64);
-                            object secondValue = Enum.ToObject(destinationType, Convert.ToUInt64(values.GetValue(i), CultureInfo.CurrentCulture));
+                            object secondValue = Enum.ToObject(destinationType, Convert.ToUInt64(values.GetValue(j), CultureInfo.CurrentCulture));
                             throw new PSInvalidCastException("InvalidCastEnumTwoStringsFoundAndNoFlags", null,
                                 ExtendedTypeSystem.InvalidCastExceptionEnumerationMoreThanOneValue,
                                 sourceValue, destinationType, firstValue, secondValue);
