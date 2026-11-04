@@ -281,6 +281,58 @@ namespace System.Management.Automation.Language
             return StringUtil.Format(ParserStrings.TraceScriptLineMessage, position.LineNumber, message.ToString());
         }
 
+        /// <summary>
+        /// Return messages for an extent that may span multiple lines.
+        /// For single-line extents, returns an array with one element:
+        ///     12+  >>>> $x + $b.
+        /// For multi-line extents (e.g., line continuation with backtick), returns an array with one element per line:
+        ///     12+  >>>> Write-Output "foo `
+        ///     13+  >>>> bar"
+        /// </summary>
+        internal static string[] BriefMessage(IScriptExtent extent)
+        {
+            // For single-line extents, delegate to the existing single-position method
+            if (extent.StartLineNumber == extent.EndLineNumber)
+            {
+                return new[] { BriefMessage(extent.StartScriptPosition) };
+            }
+
+            // For multi-line extents, include all lines
+            string[] lines = extent.Text.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+            string[] result = new string[lines.Length];
+            int lineNumber = extent.StartLineNumber;
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                string line = lines[i];
+                StringBuilder message = new StringBuilder(line);
+
+                // Insert the marker at the appropriate position
+                if (i == 0)
+                {
+                    // For the first line, insert at the start column
+                    if (extent.StartColumnNumber > message.Length + 1)
+                    {
+                        message.Append(" <<<< ");
+                    }
+                    else
+                    {
+                        message.Insert(extent.StartColumnNumber - 1, " >>>> ");
+                    }
+                }
+                else
+                {
+                    // For continuation lines, insert the marker at the beginning
+                    message.Insert(0, " >>>> ");
+                }
+
+                result[i] = StringUtil.Format(ParserStrings.TraceScriptLineMessage, lineNumber, message.ToString());
+                lineNumber++;
+            }
+
+            return result;
+        }
+
         internal static IScriptExtent NewScriptExtent(IScriptExtent start, IScriptExtent end)
         {
             if (start == end)
