@@ -27,6 +27,15 @@ Describe "ConvertTo-Csv DRT Unit Tests" -Tags "CI" {
         $returnObject[2] | Should -BeExactly "`"1`"$($delimiter)`"2`""
     }
 
+    ## https://github.com/PowerShell/PowerShell/issues/26513
+    It "Test convertto-csv with -UseCulture:`$false uses default comma delimiter" {
+        $returnObject = $inputObject | ConvertTo-Csv -UseCulture:$false -IncludeTypeInformation
+        $returnObject.Count | Should -Be 3
+        $returnObject[0] | Should -BeExactly "#TYPE System.Management.Automation.PSCustomObject"
+        $returnObject[1] | Should -BeExactly "`"First`",`"Second`""
+        $returnObject[2] | Should -BeExactly "`"1`",`"2`""
+    }
+
     It "Test convertto-csv with Delimiter" {
         $returnObject = $inputObject | ConvertTo-Csv -Delimiter ";" -IncludeTypeInformation
         $returnObject.Count | Should -Be 3
