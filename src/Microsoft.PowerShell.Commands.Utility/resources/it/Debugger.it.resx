@@ -133,7 +133,7 @@
     <value>Il debug non è supportato nelle sessioni remote.</value>
   </data>
   <data name="CannotSetBreakpointInconsistentLanguageMode" xml:space="preserve">
-    <value>Non è possibile impostare il punto di interruzione. La modalità linguaggio per questa sessione non è compatibile con la modalità linguaggio a livello di sistema.</value>
+    <value>Non è possibile impostare il punto di interruzione. La modalità di linguaggio per questa sessione non è compatibile con la modalità di linguaggio a livello di sistema.</value>
   </data>
   <data name="RemoteDebuggerNotSupportedInHost" xml:space="preserve">
     <value>Impossibile impostare i punti di interruzione nella sessione remota perché il debug remoto non è supportato dall'host corrente.</value>

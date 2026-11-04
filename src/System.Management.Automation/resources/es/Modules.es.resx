@@ -679,7 +679,7 @@
     <value>Se bloqueará un nuevo módulo de una sesión de lenguaje restringido que no sea de confianza para que no proporcione el bloque de script FullLanguage.</value>
   </data>
   <data name="WDACMismatchedLanguageModesTitle" xml:space="preserve">
-    <value>"Modos de idioma no coincidentes del módulo</value>
+    <value>"Modos de lenguaje no coincidentes del módulo</value>
   </data>
   <data name="WDACMismatchedLanguageModesMessage" xml:space="preserve">
     <value>Se está cargando un módulo dependiente que tiene un modo de lenguaje diferente al primario. Esto no se permitirá cuando esté en modo de lenguaje restringido.</value>

@@ -151,7 +151,8 @@
     <value>카탈로그 버전이 유효하지 않습니다. 버전 {0} 및 버전 {1} 카탈로그만 지원됩니다.</value>
   </data>
   <data name="WeakCatalogHashAlgorithm" xml:space="preserve">
-    <value>'{0}'은(는) SHA0 또는 SHA1을 사용하는 버전 카탈로그입니다. '-CatalogVersion 2'를 사용하여 이 카탈로그를 다시 생성하는 것을 권장합니다.</value>
+    <value>'{0}' is a version 1 catalog that uses the weak SHA-1 hash algorithm. Consider regenerating this catalog with '-CatalogVersion 2'.</value>
+    <comment>{StrContains="SHA-1"}{StrContains="-CatalogVersion 2"}</comment>
   </data>
   <data name="UnableToOpenCatalogDefinitionFile" xml:space="preserve">
     <value>카탈로그 정의 파일을 열 수 없습니다.</value>

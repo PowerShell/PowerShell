@@ -634,7 +634,7 @@
     <value>Este módulo usa o operador dot-source ao exportar funções usando caracteres curinga e isso não é permitido quando o sistema está sob a imposição de verificação do aplicativo.</value>
   </data>
   <data name="CannotExportMembersAccrossLanguageBoundaries" xml:space="preserve">
-    <value>Não é possível exportar membros de módulo de um módulo que tenha um modo de idioma diferente da sessão em execução.</value>
+    <value>Não é possível exportar membros de módulo de um módulo que tenha um modo de linguagem diferente da sessão em execução.</value>
   </data>
   <data name="CannotCreateModuleWithScriptBlock" xml:space="preserve">
     <value>Não é possível criar um novo módulo enquanto a sessão estiver no modo ConstrainedLanguage.</value>
@@ -646,13 +646,13 @@
     <value>Cmdlet Export-ModuleMember</value>
   </data>
   <data name="WDACExportModuleCommandLogMessage" xml:space="preserve">
-    <value>A exportação de membros do módulo falhará no modo idioma restrito porque o módulo "{0}", tem um modo de idioma "{1}" diferente da sessão atual "{2}".</value>
+    <value>A exportação de membros do módulo falhará no Modo de Linguagem com Restrição porque o módulo "{0}", tem um modo de idioma "{1}" diferente da sessão atual "{2}".</value>
   </data>
   <data name="WDACImplicitFunctionExportLogTitle" xml:space="preserve">
     <value>Exportação de Função Implícita do Módulo</value>
   </data>
   <data name="WDACImplicitFunctionExportLogMessage" xml:space="preserve">
-    <value>A exportação de função implícita para o módulo "{0}" será negada porque é confiável (é executada no modo de Idioma Completo), mas a sessão não é confiável (é executada no modo idioma restrito). É uma prática recomendada sempre exportar funções de módulo individualmente por nome completo.</value>
+    <value>A exportação de função implícita para o módulo "{0}" será negada porque é confiável (é executada no Modo de Linguagem Completo), mas a sessão não é confiável (é executada no Modo de Linguagem com Restrição). É uma prática recomendada sempre exportar funções de módulo individualmente por nome completo.</value>
   </data>
   <data name="WDACScriptFileImportLogTitle" xml:space="preserve">
     <value>Importando arquivo de script como módulo</value>
@@ -664,7 +664,7 @@
     <value>Módulo Contém Operador dot-source</value>
   </data>
   <data name="WDACModuleDotSourceLogMessage" xml:space="preserve">
-    <value>A importação do módulo "{0}" falhará no modo idioma restrito porque exporta funções usando caracteres curinga enquanto também usa o operador dot-source.</value>
+    <value>A importação do módulo "{0}" falhará no Modo de Linguagem com Restrição porque exporta funções usando caracteres curinga enquanto também usa o operador dot-source.</value>
   </data>
   <data name="WDACModuleFnExportWithNestedModulesLogTitle" xml:space="preserve">
     <value>"Módulo exportando funções</value>
@@ -682,6 +682,6 @@
     <value>"Modos de linguagem incompatíveis do módulo</value>
   </data>
   <data name="WDACMismatchedLanguageModesMessage" xml:space="preserve">
-    <value>Um módulo dependente está sendo carregado que tem um modo de idioma diferente do pai. Isso não será permitido quando estiver no modo de Idioma Restrito.</value>
+    <value>Um módulo dependente está sendo carregado que tem um modo de idioma diferente do pai. Isso não será permitido quando estiver no Modo de Linguagem com Restrição.</value>
   </data>
 </root>

@@ -188,6 +188,6 @@ ErrorAction、WarningAction、InformationAction、PipelineVariable</value>
     <value>ForEach-Object Cmdlet</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>在 Constrained Language 模式下執行時，不允許對類型 '{0}' 呼叫方法。</value>
+    <value>在限縮語言模式下執行時，不允許對類型 '{0}' 呼叫方法。</value>
   </data>
 </root>
