@@ -968,7 +968,7 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
     <value>Unable to load resource '{0}': Resource not found.</value>
   </data>
   <data name="ConfigurationNotAllowedInConstrainedLanguage" xml:space="preserve">
-    <value>Configuration keyword is not allowed in constrainedLanguage mode.</value>
+    <value>Configuration keyword is not allowed in ConstrainedLanguage mode.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="InvalidConfigurationName" xml:space="preserve">
