@@ -329,6 +329,16 @@ Describe 'NullConditionalMemberAccess' -Tag 'CI' {
         It 'Should throw error when method does not exist' {
             { ${psObj}?.nestedMethod?.NonExistent() } | Should -Throw -ErrorId 'MethodNotFound'
         }
+
+        It 'Should not run the target expression twice' {
+            $i = 0
+            $($i++; [PSCustomObject]@{ Prop = $true })?.Prop | Should -Be $true
+            $i | Should -Be 1
+
+            # Strongly typed expression as a valuetype should skip test
+            ([bool]$($i++; $true))?.ToString() | Should -Be 'True'
+            $i | Should -Be 2
+        }
     }
 
     Context '?[] operator tests' {
@@ -367,6 +377,16 @@ Describe 'NullConditionalMemberAccess' -Tag 'CI' {
         It 'Calling a method on nonexistent item give null' {
             ${dateArray}?[1234]?.ToLongDateString() | Should -BeNullOrEmpty
             ${doesNotExist}?[0]?.MyGetMethod() | Should -BeNullOrEmpty
+        }
+
+        It 'Should not run the target expression twice' {
+            $i = 0
+            $($i++; 'value')?[0] | Should -Be 'v'
+            $i | Should -Be 1
+
+            # Strongly typed expression as a valuetype should skip test
+            ([bool]$($i++; $true))?[0] | Should -BeTrue
+            $i | Should -Be 2
         }
     }
 }
