@@ -335,6 +335,18 @@ namespace System.Management.Automation
         internal bool HasRunspaceEverUsedConstrainedLanguageMode { get; private set; }
 
         /// <summary>
+        /// True when this runspace's <see cref="PSLanguageMode.ConstrainedLanguage"/> mode was applied solely
+        /// because the system-wide App Control (WDAC) policy is in audit mode.
+        /// In audit mode no restrictions are enforced; only audit events are emitted.
+        /// This is distinct from a runspace that is explicitly configured for ConstrainedLanguage
+        /// (for example, via a session/JEA configuration or an enforced system lockdown policy),
+        /// whose security boundary must be preserved.
+        /// The value is set only by <see cref="Utils.EnforceSystemLockDownLanguageMode"/> when it changes a
+        /// FullLanguage runspace to ConstrainedLanguage as a result of an audit-mode policy.
+        /// </summary>
+        internal bool LanguageModeWasSetByAppControlAudit { get; set; }
+
+        /// <summary>
         /// Indicate if a parameter binding is happening that transitions the execution from ConstrainedLanguage
         /// mode to a trusted FullLanguage command.
         /// </summary>
