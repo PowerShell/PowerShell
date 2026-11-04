@@ -347,7 +347,7 @@
     <value>下列參數不得為 null 或空白: Module。</value>
   </data>
   <data name="ModuleNameTooLong" xml:space="preserve">
-    <value>The module name exceeds the maximum supported length of {1} characters (actual length: {0}).</value>
+    <value>模組名稱超過支援的最大長度 {1} 個字元 (實際長度: {0})。</value>
   </data>
   <data name="PathNullOrEmpty" xml:space="preserve">
     <value>下列參數不得為 null 或空白: Path。</value>
