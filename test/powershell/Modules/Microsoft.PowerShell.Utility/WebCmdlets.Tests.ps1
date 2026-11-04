@@ -1965,6 +1965,18 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $result.Headers.Authorization | Should -BeExactly "Basic dGVzdHVzZXI6dGVzdHBhc3N3b3Jk"
         }
 
+        It "Verifies Invoke-WebRequest Negotiated -Credential defaults to HTTPS when the URI has no scheme" {
+            $params = @{
+                Uri                  = $httpsBasicUri.OriginalString.Split("//")[1]
+                Credential           = $credential
+                SkipCertificateCheck = $true
+            }
+            $Response = Invoke-WebRequest @params
+            $result = $response.Content | ConvertFrom-Json
+
+            $result.Headers.Authorization | Should -BeExactly "Basic dGVzdHVzZXI6dGVzdHBhc3N3b3Jk"
+        }
+
         It "Verifies Invoke-WebRequest Negotiated -Credential Requires HTTPS" {
             $params = @{
                 Uri         = $httpBasicUri
@@ -3974,6 +3986,17 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         It "Verifies Invoke-RestMethod Negotiated -Credential over HTTPS" {
             $params = @{
                 Uri                  = $httpsBasicUri
+                Credential           = $credential
+                SkipCertificateCheck = $true
+            }
+            $result = Invoke-RestMethod @params
+
+            $result.Headers.Authorization | Should -BeExactly "Basic dGVzdHVzZXI6dGVzdHBhc3N3b3Jk"
+        }
+
+        It "Verifies Invoke-RestMethod Negotiated -Credential defaults to HTTPS when the URI has no scheme" {
+            $params = @{
+                Uri                  = $httpsBasicUri.OriginalString.Split("//")[1]
                 Credential           = $credential
                 SkipCertificateCheck = $true
             }

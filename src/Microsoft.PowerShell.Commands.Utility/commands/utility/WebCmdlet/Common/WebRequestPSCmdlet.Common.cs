@@ -541,6 +541,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 // Set cmdlet context for write progress
+                Uri = CheckProtocol(Uri);
                 ValidateParameters();
                 PrepareSession();
 
