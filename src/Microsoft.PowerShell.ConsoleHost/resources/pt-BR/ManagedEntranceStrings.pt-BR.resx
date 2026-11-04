@@ -127,10 +127,10 @@
     <value>[Modo de AUDITORIA de Linguagem Restrita: Sem Restrições]</value>
   </data>
   <data name="ShellBannerNLMode" xml:space="preserve">
-    <value>[Modo sem Linguagem]</value>
+    <value>Sem [Modo de Linguagem]</value>
   </data>
   <data name="ShellBannerRLMode" xml:space="preserve">
-    <value>[Modo de Linguagem Restrita]</value>
+    <value>[Modo de Linguagem Restrito]</value>
   </data>
   <data name="UsageHelp" xml:space="preserve">
     <value>Uso: pwsh[.exe] [-Login] [[-File] &lt;filePath&gt; [args]]
