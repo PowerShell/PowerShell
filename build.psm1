@@ -1676,6 +1676,10 @@ function Publish-PSTestTools {
 
     # Publish the Microsoft.PowerShell.NamedPipeConnection module
     Publish-CustomConnectionTestModule
+
+    # Build intermediates are not needed to run tests and must not be included in test packages.
+    Get-ChildItem -Path "$PSScriptRoot/test" -Directory -Recurse -Filter 'obj' |
+        Remove-Item -Recurse -Force
     Write-LogGroupEnd -Title "Publish-PSTestTools"
 }
 
