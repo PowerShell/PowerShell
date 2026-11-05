@@ -259,7 +259,7 @@ function RunSaveHelpTests
                 } else {
                     $null
                 }
-                
+
                 if ($saveHelpFolder) {
                     New-Item  $saveHelpFolder -Force -ItemType Directory > $null
                 }
@@ -475,3 +475,73 @@ Describe "Validate 'Save-Help -DestinationPath for all PowerShell modules." -Tag
     }
     RunSaveHelpTests -Tag "Feature"
 }
+
+Describe "Validate 'Save-Help -Module' for module with invalid names" -Tags @('Feature', 'RequireAdminOnWindows') {
+    BeforeAll {
+        $SavedProgressPreference = $ProgressPreference
+        $ProgressPreference = "SilentlyContinue"
+    }
+    AfterAll {
+        $ProgressPreference = $SavedProgressPreference
+    }
+
+    Context "Save-Help validates deserialized module names" {
+        $invalidModuleNames = @(
+            @{ ModuleName = 'testmodule'; IsValid = $true },
+            @{ ModuleName = 'test.module'; IsValid = $true },
+            @{ ModuleName = 'test-module'; IsValid = $true },
+            @{ ModuleName = 'test_module'; IsValid = $true },
+            @{ ModuleName = 'test module'; IsValid = $true },
+            @{ ModuleName = '.'; IsValid = $false },
+            @{ ModuleName = '..'; IsValid = $false },
+            @{ ModuleName = '../testmodule'; IsValid = $false },
+            @{ ModuleName = '..\testmodule'; IsValid = $false },
+            @{ ModuleName = '/subDir/testmodule'; IsValid = $false },
+            @{ ModuleName = '\subDir\testmodule'; IsValid = $false },
+            @{ ModuleName = '/testmodule'; IsValid = $false },
+            @{ ModuleName = '\testmodule'; IsValid = $false },
+            @{ ModuleName = 'C:\testmodule'; IsValid = $false },
+            @{ ModuleName = 'C:/testmodule'; IsValid = $false },
+            @{ ModuleName = '..\'; IsValid = $false },
+            ## The char ':' is not allowed on Windows, but allowed on Unix platforms.
+            @{ ModuleName = 'stream:testmodule'; IsValid = !$isWindows })
+
+        It "Save-Help should validate module name '<ModuleName>'" -TestCases $invalidModuleNames {
+            param ($ModuleName, $IsValid)
+
+            $root = Join-Path $TestDrive ("savehelp-namevalidation-" + [guid]::NewGuid().ToString('N'))
+            $dest = Join-Path $root 'dest'
+            New-Item -ItemType Directory -Path $dest -Force | Out-Null
+            $destFull = (Get-Item -LiteralPath $dest).FullName
+
+            $mod = [pscustomobject]@{
+                Name        = $ModuleName
+                Guid        = [guid]::NewGuid()
+                Version     = [Version]'1.0.0.0'
+                ModuleBase  = $root
+                HelpInfoUri = 'https://example.invalid/help/'
+            }
+            $mod.PSTypeNames.Insert(0, 'Deserialized.System.Management.Automation.PSModuleInfo')
+
+            try
+            {
+                Save-Help -Module $mod -DestinationPath $dest -Force -UICulture en-US -ErrorAction SilentlyContinue -ErrorVariable err
+            }
+            catch { }
+
+            if (!$IsValid){
+                $err.Count | Should -BeGreaterThan 0
+                $err[0].FullyQualifiedErrorId | Should -Be 'InvalidModuleName,Microsoft.PowerShell.Commands.SaveHelpCommand'
+            }
+            else {
+                $err[0].FullyQualifiedErrorId | Should -Not -Match 'InvalidModuleName,Microsoft.PowerShell.Commands.SaveHelpCommand'
+            }
+
+            $escaped = @(Get-ChildItem -LiteralPath $root -Recurse -File -Force -ErrorAction SilentlyContinue |
+                        Where-Object { -not $_.FullName.StartsWith($destFull, [System.StringComparison]::OrdinalIgnoreCase) })
+
+            $escaped.Count | Should -Be 0
+        }
+    }
+}
+
