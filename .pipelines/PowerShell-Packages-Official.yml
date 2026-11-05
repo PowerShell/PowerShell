@@ -1,6 +1,10 @@
 trigger: none
 
 parameters: # parameters are shown up in ADO UI in a build queue time
+  - name: UseEarlyAccessModules
+    displayName: Use early-access modules
+    type: boolean
+    default: false
   - name: ForceAzureBlobDelete
     displayName: Delete Azure Blob
     type: string
@@ -50,6 +54,8 @@ parameters: # parameters are shown up in ADO UI in a build queue time
 name: pkgs-$(BUILD.SOURCEBRANCHNAME)-prod-$(Build.BuildId)
 
 variables:
+  - name: UseEarlyAccessModules
+    value: ${{ parameters.UseEarlyAccessModules }}
   - template: templates/variables/PowerShell-Packages-Variables.yml
     parameters:
       debug: ${{ parameters.debug }}

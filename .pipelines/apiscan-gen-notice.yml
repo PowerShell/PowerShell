@@ -4,6 +4,10 @@ name: apiscan-genNotice-$(BUILD.SOURCEBRANCHNAME)-$(Build.BuildId)
 trigger: none
 
 parameters:
+  - name: UseEarlyAccessModules
+    displayName: Use early-access modules
+    type: boolean
+    default: false
   - name: IsEarlyAccess
     type: boolean
     default: false
@@ -29,6 +33,8 @@ parameters:
     default: false
 
 variables:
+  - name: UseEarlyAccessModules
+    value: ${{ parameters.UseEarlyAccessModules }}
   # PAT permissions NOTE: Declare a SymbolServerPAT variable in this group with a 'microsoft' organizanization scoped PAT with 'Symbols' Read permission.
   # A PAT in the wrong org will give a single Error 203. No PAT will give a single Error 401, and individual pdbs may be missing even if permissions are correct.
   - group: symbols
