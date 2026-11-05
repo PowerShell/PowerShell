@@ -40,6 +40,41 @@ namespace System.Management.Automation.Provider
         string GetHelpMaml(string helpItemName, string path);
     }
 #nullable restore
+
+    /// <summary>
+    /// Allows a provider to create a specialized <see cref="PSObject"/> for emitted items.
+    /// </summary>
+    /// <remarks>
+    /// This protocol is used only when <c>PSOptimizedProviderObjects</c> is enabled.
+    /// Return <see langword="true"/> when the provider handled the item and supplied its
+    /// fully configured wrapper; otherwise return <see langword="false"/> to use the standard provider wrapper.
+    /// <see cref="AddItemObjectProperties"/> is also called for standard wrappers, including
+    /// when the feature is disabled, so providers can retain additional item properties.
+    /// </remarks>
+    public interface IProviderItemObjectFactory
+    {
+        /// <summary>
+        /// Tries to create a specialized wrapper for an item being emitted by the provider.
+        /// </summary>
+        /// <param name="item">The item being written.</param>
+        /// <param name="path">The provider path for the item.</param>
+        /// <param name="isContainer">Whether the item is a container, or null when unspecified.</param>
+        /// <param name="itemObject">The specialized wrapper when handled; otherwise null.</param>
+        /// <returns>True when the provider created the item wrapper; otherwise false.</returns>
+        bool TryCreateItemObject(object item, string path, bool? isContainer, out PSObject itemObject);
+
+        /// <summary>
+        /// Adds provider-specific properties to a standard item wrapper.
+        /// </summary>
+        /// <param name="itemObject">The standard wrapper with common path properties attached.</param>
+        /// <param name="item">The item being written.</param>
+        /// <param name="path">The provider path for the item.</param>
+        /// <remarks>
+        /// This method is not called when <see cref="TryCreateItemObject"/> supplies a specialized wrapper.
+        /// </remarks>
+        void AddItemObjectProperties(PSObject itemObject, object item, string path);
+    }
+
     #region CmdletProvider
 
     /// <summary>
@@ -93,7 +128,7 @@ namespace System.Management.Automation.Provider
         /// The provider information that is stored by the Monad engine.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// If <paramref name="providerInformation"/> is null.
+        /// If <paramref name="providerInfoToSet"/> is null.
         /// </exception>
         internal void SetProviderInformation(ProviderInfo providerInfoToSet)
         {
@@ -1699,12 +1734,7 @@ namespace System.Management.Automation.Provider
             string path,
             bool isContainer)
         {
-            PSObject result = WrapOutputInPSObject(item, path);
-
-            // Now add the IsContainer
-
-            result.AddOrSetProperty("PSIsContainer", isContainer ? Boxed.True : Boxed.False);
-            providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSIsContainer", isContainer);
+            PSObject result = WrapOutputInPSObject(item, path, isContainer);
 
             Diagnostics.Assert(
                 Context != null,
@@ -1727,7 +1757,7 @@ namespace System.Management.Automation.Provider
             object item,
             string path)
         {
-            PSObject result = WrapOutputInPSObject(item, path);
+            PSObject result = WrapOutputInPSObject(item, path, isContainer: null);
 
             Diagnostics.Assert(
                 Context != null,
@@ -1746,6 +1776,7 @@ namespace System.Management.Automation.Provider
         /// <param name="path">
         /// The path to the item.
         /// </param>
+        /// <param name="isContainer">The container flag, or null when it is unspecified.</param>
         /// <returns>
         /// A PSObject that wraps the item and has path information attached
         /// as notes.
@@ -1755,11 +1786,24 @@ namespace System.Management.Automation.Provider
         /// </exception>
         private PSObject WrapOutputInPSObject(
             object item,
-            string path)
+            string path,
+            bool? isContainer)
         {
             if (item == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(item));
+            }
+
+            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSOptimizedProviderObjects)
+                && this is IProviderItemObjectFactory itemObjectFactory
+                && itemObjectFactory.TryCreateItemObject(item, path, isContainer, out PSObject optimizedResult))
+            {
+                if (optimizedResult == null)
+                {
+                    throw new InvalidOperationException("A provider returning true from TryCreateItemObject must supply an item object.");
+                }
+
+                return optimizedResult;
             }
 
             PSObject result = new PSObject(item);
@@ -1779,9 +1823,7 @@ namespace System.Management.Automation.Provider
 
             // Construct a provider qualified path as the Path note
 
-            string providerQualifiedPath =
-                LocationGlobber.GetProviderQualifiedPath(path, ProviderInfo);
-
+            string providerQualifiedPath = LocationGlobber.GetProviderQualifiedPath(path, ProviderInfo);
             result.AddOrSetProperty("PSPath", providerQualifiedPath);
             providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSPath", providerQualifiedPath);
 
@@ -1792,16 +1834,7 @@ namespace System.Management.Automation.Provider
             {
                 // Get the parent path
 
-                string parentPath = null;
-
-                if (PSDriveInfo != null)
-                {
-                    parentPath = navProvider.GetParentPath(path, PSDriveInfo.Root, Context);
-                }
-                else
-                {
-                    parentPath = navProvider.GetParentPath(path, string.Empty, Context);
-                }
+                string parentPath = navProvider.GetParentPath(path, PSDriveInfo?.Root ?? string.Empty, Context);
 
                 string providerQualifiedParentPath = string.Empty;
 
@@ -1820,27 +1853,11 @@ namespace System.Management.Automation.Provider
 
                 result.AddOrSetProperty("PSChildName", childName);
                 providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSChildName", childName);
-#if UNIX
+            }
 
-                // Add a commonstat structure to file system objects
-                if (ProviderInfo.ImplementingType == typeof(Microsoft.PowerShell.Commands.FileSystemProvider))
-                {
-                    try
-                    {
-                        // Use LStat because if you get a link, you want the information about the
-                        // link, not the file.
-                        var commonStat = Platform.Unix.GetLStat(path);
-                        result.AddOrSetProperty("UnixStat", commonStat);
-                    }
-                    catch
-                    {
-                        // If there is *any* problem in retrieving the stat information
-                        // set the property to null. There is no specific exception which
-                        // would result in different behavior.
-                        result.AddOrSetProperty("UnixStat", value: null);
-                    }
-                }
-#endif
+            if (this is IProviderItemObjectFactory fallbackItemObjectFactory)
+            {
+                fallbackItemObjectFactory.AddItemObjectProperties(result, item, path);
             }
 
             // PSDriveInfo
@@ -1855,6 +1872,12 @@ namespace System.Management.Automation.Provider
 
             result.AddOrSetProperty(this.ProviderInfo.GetNotePropertyForProviderCmdlets("PSProvider"));
             providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSProvider", this.ProviderInfo);
+
+            if (isContainer.HasValue)
+            {
+                result.AddOrSetProperty("PSIsContainer", isContainer.Value ? Boxed.True : Boxed.False);
+                providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSIsContainer", isContainer.Value);
+            }
 
             return result;
         }

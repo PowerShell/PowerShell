@@ -691,6 +691,81 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Attach provider-generated instance notes without allocating a note
+        /// property for every emitted object.
+        /// </summary>
+        /// <param name="members">The source of provider-generated notes.</param>
+        /// <exception cref="ArgumentNullException">The source is null.</exception>
+        /// <remarks>
+        /// Uses the normal instance-member collection and resurrection identity. Existing members
+        /// force materialization; attachment also updates assignment rules for mutable value types.
+        /// </remarks>
+        internal void AttachProviderInstanceMembers(IProviderInstanceMemberSource members)
+        {
+            if (members == null)
+            {
+                throw PSTraceSource.NewArgumentNullException(nameof(members));
+            }
+
+            // MetadataAccessor.Create registers member names with ordinary lookup. Notify
+            // the assignment binder, whose mutable-value-type rules may depend on instance
+            // members. The resurrection table still owns this collection, preserving identity.
+            InstanceMembers.SetProviderSource(members);
+            object baseObject = Base(this);
+            if (baseObject != null)
+            {
+                PSVariableAssignmentBinder.NoteTypeHasInstanceMemberOrTypeName(baseObject.GetType());
+            }
+        }
+
+        /// <summary>
+        /// Checks instance-member presence without evaluating a getter or materializing provider notes.
+        /// </summary>
+        /// <param name="name">The case-insensitive member name.</param>
+        /// <returns>False for a missing, null, or empty name.</returns>
+        internal bool ContainsInstanceMember(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return false;
+            }
+
+            return HasInstanceMembers(this, out PSMemberInfoInternalCollection<PSMemberInfo> members)
+                && members.Contains(name);
+        }
+
+        /// <summary>
+        /// Checks whether a name is still backed by an unmaterialized provider source.
+        /// </summary>
+        /// <param name="name">The case-insensitive member name.</param>
+        /// <returns>True only for an active provider descriptor; false after promotion to ordinary notes.</returns>
+        internal bool ContainsProviderInstanceMember(string name)
+        {
+            return !string.IsNullOrEmpty(name)
+                && HasInstanceMembers(this, out PSMemberInfoInternalCollection<PSMemberInfo> members)
+                && members.ContainsProviderSourceMember(name);
+        }
+
+        /// <summary>
+        /// Reads an instance value without requiring a member object.
+        /// </summary>
+        /// <param name="name">The case-insensitive member name.</param>
+        /// <param name="value">The member value on success; otherwise null.</param>
+        /// <returns>True when an instance member is found, even if its value is null.</returns>
+        /// <remarks>Does not search adapted or static members. Getter exceptions propagate to the caller.</remarks>
+        internal bool TryGetInstanceValue(string name, out object value)
+        {
+            value = null;
+            if (string.IsNullOrEmpty(name)
+                || !HasInstanceMembers(this, out PSMemberInfoInternalCollection<PSMemberInfo> members))
+            {
+                return false;
+            }
+
+            return members.TryGetValue(name, out value);
+        }
+
+        /// <summary>
         /// This is the adapter that will depend on the type of baseObject.
         /// </summary>
         internal Adapter InternalAdapter => InternalAdapterSet.OriginalAdapter;

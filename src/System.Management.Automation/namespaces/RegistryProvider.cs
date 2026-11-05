@@ -68,7 +68,8 @@ namespace Microsoft.PowerShell.Commands
         NavigationCmdletProvider,
         IPropertyCmdletProvider,
         IDynamicPropertyCmdletProvider,
-        ISecurityDescriptorCmdletProvider
+        ISecurityDescriptorCmdletProvider,
+        IProviderItemObjectFactory
     {
         #region tracer
 
@@ -4033,12 +4034,53 @@ namespace Microsoft.PowerShell.Commands
             // Escape any wildcard characters in the path
             path = EscapeSpecialChars(path);
 
+            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSOptimizedProviderObjects)
+                && key.RegistryKey is RegistryKey registryKey
+                && PSDriveInfo != null
+                && !PSObject.HasInstanceMembers(registryKey, out _))
+            {
+                WriteItemObject(registryKey, path, true);
+                return;
+            }
+
             // Wrap the key in an PSObject
             PSObject outputObject = PSObject.AsPSObject(key.RegistryKey);
 
             // Add the registry values to the PSObject
-            string[] valueNames = key.GetValueNames();
+            outputObject.AddOrSetProperty("Property", GetValueNamesForMetadata(key.GetValueNames()));
 
+            WriteItemObject(outputObject, path, true);
+        }
+
+        bool IProviderItemObjectFactory.TryCreateItemObject(object item, string path, bool? isContainer, out PSObject itemObject)
+        {
+            itemObject = null;
+            if (item is not RegistryKey registryKey
+                || isContainer != true
+                || PSDriveInfo == null
+                || PSObject.HasInstanceMembers(item, out _))
+            {
+                return false;
+            }
+
+            itemObject = new PSObject<RegistryProviderMetadata>(
+                registryKey,
+                new RegistryProviderMetadata { Drive = PSDriveInfo });
+            itemObject.AttachProviderInstanceMembers((IProviderInstanceMemberSource)itemObject);
+            return true;
+        }
+
+        void IProviderItemObjectFactory.AddItemObjectProperties(PSObject itemObject, object item, string path)
+        {
+        }
+
+        /// <summary>
+        /// Normalizes the default value name in the registry value-name array.
+        /// </summary>
+        /// <param name="valueNames">The value names read from a registry key.</param>
+        /// <returns>The value names with the default value's display name.</returns>
+        internal static string[] GetValueNamesForMetadata(string[] valueNames)
+        {
             for (int index = 0; index < valueNames.Length; ++index)
             {
                 if (string.IsNullOrEmpty(valueNames[index]))
@@ -4049,9 +4091,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            outputObject.AddOrSetProperty("Property", valueNames);
-
-            WriteItemObject(outputObject, path, true);
+            return valueNames;
         }
 
         /// <summary>

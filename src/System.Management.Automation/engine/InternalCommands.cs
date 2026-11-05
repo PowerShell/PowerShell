@@ -633,6 +633,13 @@ namespace Microsoft.PowerShell.Commands
                 args: emptyArray);
         }
 
+        /// <summary>
+        /// Processes the current input for the ForEach-Object member-name parameter set.
+        /// </summary>
+        /// <remarks>
+        /// Exact provider-property names are checked without materializing notes. Their getters run
+        /// only after ShouldProcess approves the operation. Wildcard matching still requests member objects.
+        /// </remarks>
         private void ProcessPropertyAndMethodParameterSet()
         {
             _targetString = string.Format(CultureInfo.InvariantCulture, InternalCommandStrings.ForEachObjectTarget, GetStringRepresentation(InputObject));
@@ -692,6 +699,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 PSMemberInfo member = null;
+                string providerPropertyName = null;
                 if (WildcardPattern.ContainsWildcardCharacters(_propertyOrMethodName))
                 {
                     // get the matched member(s)
@@ -721,7 +729,17 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    member = _inputObject.Members[_propertyOrMethodName];
+                    if (_inputObject.ContainsProviderInstanceMember(_propertyOrMethodName))
+                    {
+                        // Keep the source-backed value lazy: resolve it through the normal
+                        // property getter only after ShouldProcess, preserving WhatIf behavior
+                        // and the usual getter error handling without materializing the member.
+                        providerPropertyName = _propertyOrMethodName;
+                    }
+                    else
+                    {
+                        member = _inputObject.Members[_propertyOrMethodName];
+                    }
                 }
 
                 // member is a method
@@ -781,9 +799,9 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    string resolvedPropertyName = null;
+                    string resolvedPropertyName = providerPropertyName;
                     bool isBlindDynamicAccess = false;
-                    if (member == null)
+                    if (member == null && string.IsNullOrEmpty(providerPropertyName))
                     {
                         if ((_inputObject.BaseObject is IDynamicMetaObjectProvider) &&
                             !WildcardPattern.ContainsWildcardCharacters(_propertyOrMethodName))
@@ -812,7 +830,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         // member is [presumably] a property (note that it could be a
                         // dynamic property, if it shows up in GetDynamicMemberNames())
-                        resolvedPropertyName = member.Name;
+                        resolvedPropertyName = member == null ? providerPropertyName : member.Name;
                     }
 
                     if (!string.IsNullOrEmpty(resolvedPropertyName))

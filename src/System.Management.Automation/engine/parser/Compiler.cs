@@ -426,6 +426,18 @@ namespace System.Management.Automation.Language
         internal static readonly MethodInfo PSGetMemberBinder_TryGetInstanceMember =
             typeof(PSGetMemberBinder).GetMethod(nameof(PSGetMemberBinder.TryGetInstanceMember), StaticFlags);
 
+        /// <summary>
+        /// Caches the presence-only helper used in get-member binding restrictions.
+        /// </summary>
+        internal static readonly MethodInfo PSGetMemberBinder_ContainsInstanceMember =
+            typeof(PSGetMemberBinder).GetMethod(nameof(PSGetMemberBinder.ContainsInstanceMember), StaticFlags);
+
+        /// <summary>
+        /// Caches the value lookup helper used by get-member rules without materializing provider notes.
+        /// </summary>
+        internal static readonly MethodInfo PSGetMemberBinder_TryGetInstanceValue =
+            typeof(PSGetMemberBinder).GetMethod(nameof(PSGetMemberBinder.TryGetInstanceValue), StaticFlags);
+
         internal static readonly MethodInfo PSGetMemberBinder_TryGetIDictionaryValue =
             typeof(PSGetMemberBinder).GetMethod(nameof(PSGetMemberBinder.TryGetIDictionaryValue), StaticFlags);
 
