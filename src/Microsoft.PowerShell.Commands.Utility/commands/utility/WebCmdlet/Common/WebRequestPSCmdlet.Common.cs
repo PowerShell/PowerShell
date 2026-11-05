@@ -1154,8 +1154,9 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (isRedirect && !PreserveAuthorizationOnRedirect && request.Headers.Contains(HttpKnownHeaderNames.Authorization))
+            if (isRedirect && !PreserveAuthorizationOnRedirect)
             {
+                WebSession?.Headers?.Remove(HttpKnownHeaderNames.Authorization);
                 request.Headers.Remove(HttpKnownHeaderNames.Authorization);
             }
 
