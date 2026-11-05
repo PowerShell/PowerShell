@@ -626,6 +626,7 @@
   </data>
   <data name="ImportPSFileNotAllowedInConstrainedLanguage" xml:space="preserve">
     <value>L'importazione di file *.ps1 come moduli non è consentita in modalità ConstrainedLanguage.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="MismatchedLanguageModes" xml:space="preserve">
     <value>Si è verificato un errore durante il caricamento del modulo di script {0} perché ha una modalità di linguaggio diversa rispetto al manifesto del modulo. La modalità di linguaggio del manifesto è {1} e la modalità di linguaggio del modulo è {2}. Assicurarsi che tutti i file del modulo siano firmati o facciano comunque parte della configurazione dell'elenco di elementi consentiti dell'applicazione.</value>
@@ -638,6 +639,7 @@
   </data>
   <data name="CannotCreateModuleWithScriptBlock" xml:space="preserve">
     <value>Non è possibile creare un nuovo modulo mentre la sessione è in modalità ConstrainedLanguage.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="CannotFindCoreCompatibleBuiltInModule" xml:space="preserve">
     <value>Non è possibile trovare il modulo predefinito '{0}' compatibile con l'edizione 'Core'. Assicurarsi che i moduli predefiniti di PowerShell siano disponibili. In genere sono inclusi nel pacchetto PowerShell nel percorso del modulo $PSHOME e sono necessari per il corretto funzionamento di PowerShell.</value>
@@ -646,42 +648,49 @@
     <value>Cmdlet Export-ModuleMember</value>
   </data>
   <data name="WDACExportModuleCommandLogMessage" xml:space="preserve">
-    <value>L'esportazione dei membri del modulo avrà esito negativo in modalità linguaggio vincolato perché il modulo '{0}', ha una modalità di linguaggio '{1}' diversa rispetto a quella della sessione corrente '{2}'.</value>
+    <value>Export of module members will fail in ConstrainedLanguage mode because module '{0}', has a language mode '{1}' that is different from the current session '{2}'.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACImplicitFunctionExportLogTitle" xml:space="preserve">
     <value>Esportazione implicita di funzioni del modulo</value>
   </data>
   <data name="WDACImplicitFunctionExportLogMessage" xml:space="preserve">
-    <value>L'esportazione implicita delle funzioni per il modulo '{0}' verrà negata, perché l'operazione è attendibile (viene eseguita in modalità di linguaggio completo), ma la sessione non è attendibile (viene eseguita in modalità di linguaggio vincolato). È consigliabile esportare sempre le funzioni del modulo singolarmente usando il nome completo.</value>
+    <value>Implicit function export for module '{0}' will be denied because it is trusted (runs in FullLanguage mode) but the session is not trusted (runs in ConstrainedLanguage mode). It is best practice to always export module functions individually by full name.</value>
+    <comment>{StrContains="FullLanguage"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACScriptFileImportLogTitle" xml:space="preserve">
     <value>Importazione del file di script come modulo</value>
   </data>
   <data name="WDACScriptFileImportLogMessage" xml:space="preserve">
     <value>L'importazione del file di script '{0}' come modulo non sarà consentita in modalità ConstrainedLanguage.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACModuleDotSourceLogTitle" xml:space="preserve">
     <value>Il modulo contiene l'operatore dot-source</value>
   </data>
   <data name="WDACModuleDotSourceLogMessage" xml:space="preserve">
-    <value>L'importazione del modulo '{0}' avrà esito negativo in modalità di linguaggio vincolato perché esporta le funzioni usando caratteri jolly e anche l'operatore dot-source.</value>
+    <value>Module '{0}' import will in fail ConstrainedLanguage mode because it exports functions using wildcard characters while also using the dot-source operator.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACModuleFnExportWithNestedModulesLogTitle" xml:space="preserve">
-    <value>"Funzioni di esportazione del modulo</value>
+    <value>Module Exporting Functions</value>
   </data>
   <data name="WDACModuleFnExportWithNestedModulesLogMessage" xml:space="preserve">
-    <value>Il modulo '{0}' esporta funzioni usando caratteri jolly nel nome. I nomi di funzione dei moduli annidati verranno rimossi quando si esegue il codice in modalità di linguaggio vincolato.</value>
+    <value>Module '{0}' exports functions using name wildcard characters. Any nested module function names will be removed when running in ConstrainedLanguage mode.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACNewModuleCommandLogTitle" xml:space="preserve">
-    <value>"Cmdlet New-Module</value>
+    <value>New-Module Cmdlet</value>
   </data>
   <data name="WDACNewModuleCommandLogMessage" xml:space="preserve">
-    <value>A un nuovo modulo di una sessione di linguaggio vincolato non attendibile verrà impedito di fornire il blocco di script FullLanguage.</value>
+    <value>A new module from an untrusted ConstrainedLanguage session will be blocked from providing the FullLanguage script block.</value>
+    <comment>{StrContains="ConstrainedLanguage"}{StrContains="FullLanguage"}</comment>
   </data>
   <data name="WDACMismatchedLanguageModesTitle" xml:space="preserve">
-    <value>"Modalità di linguaggio del modulo non corrispondenti</value>
+    <value>Module Mismatched Language Modes</value>
   </data>
   <data name="WDACMismatchedLanguageModesMessage" xml:space="preserve">
-    <value>È in corso il caricamento di un modulo dipendente con una modalità di linguaggio diversa da quella del modulo padre. Questa operazione non sarà consentita in modalità linguaggio vincolato.</value>
+    <value>A dependent module is being loaded that has a different language mode than the parent. This will be disallowed when in ConstrainedLanguage mode.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

@@ -250,12 +250,14 @@
     <value>Methoden- oder Eigenschaftsaufruf nicht zulässig</value>
   </data>
   <data name="WDACBinderInvocationLogMessage" xml:space="preserve">
-    <value>Der Aufruf der Methode oder Eigenschaft „{0}“ für Typ „{1}“ ist im Constrained Language-Modus für nicht vertrauenswürdige Skripts nicht zulässig.</value>
+    <value>Invocation of Method or Property '{0}' on type '{1}' will not be allowed in ConstrainedLanguage mode for untrusted scripts.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACBinderTypeCreationLogTitle" xml:space="preserve">
     <value>Typerstellung nicht zulässig</value>
   </data>
   <data name="WDACBinderTypeCreationLogMessage" xml:space="preserve">
-    <value>Die Erstellung des Typs „{0}“ ist während der Parameterbindung im eingeschränkten Sprachmodus für nicht vertrauenswürdige Skripts nicht zulässig.</value>
+    <value>Creation of Type '{0}' will not be allowed during parameter binding in ConstrainedLanguage mode for untrusted scripts.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

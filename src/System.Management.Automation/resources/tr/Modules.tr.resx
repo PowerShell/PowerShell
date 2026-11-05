@@ -626,6 +626,7 @@
   </data>
   <data name="ImportPSFileNotAllowedInConstrainedLanguage" xml:space="preserve">
     <value>ConstrainedLanguage modunda *.ps1 dosyalarının modül olarak içeri aktarılmasına izin verilmiyor.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="MismatchedLanguageModes" xml:space="preserve">
     <value>{0} betik modülü, modül bildiriminden farklı bir dil moduna sahip olduğundan betik modülü yüklenirken bir hata oluştu. Bildirim dil modu {1} ve modül dil modu {2}. Tüm modül dosyalarının imzalı olduğundan veya uygulamanızın izin verilenler listesi yapılandırmasının bir parçası olduğundan emin olun.</value>
@@ -638,6 +639,7 @@
   </data>
   <data name="CannotCreateModuleWithScriptBlock" xml:space="preserve">
     <value>Oturum ConstrainedLanguage modundayken yeni modül oluşturulamaz.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="CannotFindCoreCompatibleBuiltInModule" xml:space="preserve">
     <value>'Core' sürümüyle uyumlu yerleşik '{0}' modülü bulunamıyor. Lütfen PowerShell yerleşik modüllerinin kullanılabilir olduğundan emin olun. Bunlar genellikle PowerShell paketinin içinde, $PSHOME modül yolunun altında yer alır ve PowerShell’in düzgün çalışması için gereklidir.</value>
@@ -646,42 +648,49 @@
     <value>Export-ModuleMember Cmdlet'i</value>
   </data>
   <data name="WDACExportModuleCommandLogMessage" xml:space="preserve">
-    <value>'{0}' modülü, geçerli '{2}' oturumundan farklı olan '{1}' dil moduna sahip olduğundan modül üyelerinin dışarı aktarılması Kısıtlı Dil modunda başarısız olur.</value>
+    <value>Export of module members will fail in ConstrainedLanguage mode because module '{0}', has a language mode '{1}' that is different from the current session '{2}'.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACImplicitFunctionExportLogTitle" xml:space="preserve">
     <value>Modül Örtük İşlev Dışarı Aktarma</value>
   </data>
   <data name="WDACImplicitFunctionExportLogMessage" xml:space="preserve">
-    <value>'{0}' modülü güvenilir (Tam Dil modunda çalışıyor) ancak oturum güvenilir olmadığından (Kısıtlı Dil modunda çalışıyor) bu modül için örtük işlev dışarı aktarma işlemi reddedilecek. En iyi uygulama olarak, modül işlevlerini her zaman tam ada göre tek tek dışarı aktarın.</value>
+    <value>Implicit function export for module '{0}' will be denied because it is trusted (runs in FullLanguage mode) but the session is not trusted (runs in ConstrainedLanguage mode). It is best practice to always export module functions individually by full name.</value>
+    <comment>{StrContains="FullLanguage"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACScriptFileImportLogTitle" xml:space="preserve">
     <value>Betik Dosyası Modül Olarak İçeri Aktarılıyor</value>
   </data>
   <data name="WDACScriptFileImportLogMessage" xml:space="preserve">
     <value>'{0}' betik dosyasının modül olarak içeri aktarılmasına ConstrainedLanguage modunda izin verilmeyecek.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACModuleDotSourceLogTitle" xml:space="preserve">
     <value>Modül Nokta Kaynak İşleci İçeriyor</value>
   </data>
   <data name="WDACModuleDotSourceLogMessage" xml:space="preserve">
-    <value>'{0}' modülünün içeri aktarılması, joker karakterler kullanırken aynı zamanda nokta kaynak işlecini de kullanarak işlevleri dışarı aktardığından Kısıtlı Dil modunda başarısız olacak.</value>
+    <value>Module '{0}' import will in fail ConstrainedLanguage mode because it exports functions using wildcard characters while also using the dot-source operator.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACModuleFnExportWithNestedModulesLogTitle" xml:space="preserve">
-    <value>"Modül Dışarı Aktaran İşlevler</value>
+    <value>Module Exporting Functions</value>
   </data>
   <data name="WDACModuleFnExportWithNestedModulesLogMessage" xml:space="preserve">
-    <value>'{0}' modülü, işlevleri ad joker karakterleri kullanarak dışarı aktarır. Kısıtlı Dil modunda çalıştırıldığında iç içe modül işlev adlarının tümü kaldırılır.</value>
+    <value>Module '{0}' exports functions using name wildcard characters. Any nested module function names will be removed when running in ConstrainedLanguage mode.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACNewModuleCommandLogTitle" xml:space="preserve">
-    <value>"Yeni Modül Cmdlet'i</value>
+    <value>New-Module Cmdlet</value>
   </data>
   <data name="WDACNewModuleCommandLogMessage" xml:space="preserve">
-    <value>Güvenilmeyen bir Kısıtlı Dil oturumundaki yeni bir modülün FullLanguage betik bloğu sağlaması engellenir.</value>
+    <value>A new module from an untrusted ConstrainedLanguage session will be blocked from providing the FullLanguage script block.</value>
+    <comment>{StrContains="ConstrainedLanguage"}{StrContains="FullLanguage"}</comment>
   </data>
   <data name="WDACMismatchedLanguageModesTitle" xml:space="preserve">
-    <value>"Modül Eşleşmeyen Dil Modları</value>
+    <value>Module Mismatched Language Modes</value>
   </data>
   <data name="WDACMismatchedLanguageModesMessage" xml:space="preserve">
-    <value>Üst modülden farklı bir dil moduna sahip bağımlı bir modül yükleniyor. Kısıtlı Dil modunda buna izin verilmez.</value>
+    <value>A dependent module is being loaded that has a different language mode than the parent. This will be disallowed when in ConstrainedLanguage mode.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>
