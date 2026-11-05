@@ -184,7 +184,8 @@
     <value>La session est occupée. Dès que la session sera disponible, vous serez connecté. Pour annuler la commande Enter-PSSession, appuyez sur Ctrl+C.</value>
   </data>
   <data name="NotSupportedOnRestrictedRunspace" xml:space="preserve">
-    <value>Nous ne pouvons pas effectuer la commande. L’appel de script n’est pas pris en charge dans la configuration de cette session. Cela peut se produire si la configuration de session est en mode sans langage.</value>
+    <value>The command cannot be completed. Script invocation is not supported in this session configuration. This can occur if the session configuration is in NoLanguage mode.</value>
+    <comment>{StrContains="NoLanguage"}</comment>
   </data>
   <data name="DisconnectConnectNotSupported" xml:space="preserve">
     <value>Vous ne pouvez pas utiliser les opérations Disconnect et Connect sur les instances d’exécution locales.</value>

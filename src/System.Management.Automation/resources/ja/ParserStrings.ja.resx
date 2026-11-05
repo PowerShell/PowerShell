@@ -402,7 +402,8 @@
     <value>スクリプトが複雑すぎるため、処理が停止されました。</value>
   </data>
   <data name="ScriptsNotAllowed" xml:space="preserve">
-    <value>この構文は、この実行空間ではサポートされていません。これは実行空間が NoLanguage モードの場合に発生することがあります。</value>
+    <value>The syntax is not supported by this runspace. This can occur if the runspace is in NoLanguage mode.</value>
+    <comment>{StrContains="NoLanguage"}</comment>
   </data>
   <data name="InvalidSplitOptionCombination" xml:space="preserve">
     <value>オプションと -split 演算子の組み合わせが無効です。</value>
@@ -581,84 +582,111 @@
   </data>
   <data name="MissingStatementBlockForDataSection" xml:space="preserve">
     <value>Data セクションにステートメント ブロックがありません。</value>
+    <comment>{StrContains="Data"}</comment>
   </data>
   <data name="InvalidParameterForDataSectionStatement" xml:space="preserve">
     <value>Data セクションの "{0}" パラメーターは無効です。有効な Data セクション パラメーターは SupportedCommand です。</value>
+    <comment>{StrContains="Data"}{StrContains="SupportedCommand"}</comment>
   </data>
   <data name="ArrayReferenceNotSupportedInDataSection" xml:space="preserve">
-    <value>配列参照は、制限付き言語モードまたは Data セクション内では使用できません。</value>
+    <value>Array references are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="AssignmentStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>代入ステートメントは、制限付き言語モードまたは Data セクション内では使用できません。</value>
+    <value>Assignment statements are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="RedirectionNotSupportedInDataSection" xml:space="preserve">
-    <value>リダイレクトは、制限付き言語モードまたは Data セクション内では使用できません。</value>
+    <value>Redirection is not allowed in RestrictedLanguage mode or a Data section.</value>
+    <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="DoWhileStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>Do および While ステートメントは、制限付き言語モードまたは Data セクション内では使用できません。</value>
+    <value>The Do and While statements are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <comment>{StrContains="Do"}{StrContains="While"}{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="ExpandableStringNotSupportedInDataSection" xml:space="preserve">
-    <value>展開可能な文字列は、制限付き言語モードまたは Data セクション内では使用できません。</value>
+    <value>Expandable strings are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="OperatorNotSupportedInDataSection" xml:space="preserve">
-    <value>'{0}' 演算子は、制限付き言語モードまたは Data セクション内では使用できません。</value>
+    <value>The '{0}' operator is not allowed in RestrictedLanguage mode or a Data section.</value>
+    <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="TrapStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>Trap ステートメントは、制限付き言語モードまたは Data セクション内では使用できません。</value>
+    <value>The Trap statement is not allowed in RestrictedLanguage mode or a Data section.</value>
+    <comment>{StrContains="Trap"}{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="TryStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>Try ステートメントは、制限付き言語モードまたは Data セクション内では使用できません。</value>
+    <value>The Try statement is not allowed in RestrictedLanguage mode or a Data section.</value>
+    <comment>{StrContains="Try"}{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="FlowControlStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>Break、Continue、Return、Exit、Throw などのフロー制御ステートメントは、制限付き言語モードまたは Data セクション内では使用できません。</value>
+    <value>Flow control statements such as Break, Continue, Return, Exit, and Throw are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <comment>{StrContains="Break"}{StrContains="Continue"}{StrContains="Return"}{StrContains="Exit"}{StrContains="Throw"}{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="ForeachStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>Foreach ステートメントは、制限付き言語モードまたは Data セクション内では使用できません。</value>
+    <value>Foreach statements are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <comment>{StrContains="Foreach"}{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="ForWhileStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>For および While ステートメントは、制限付き言語モードまたは Data セクション内では使用できません。</value>
+    <value>For and While statements are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <comment>{StrContains="For"}{StrContains="While"}{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="FunctionDeclarationNotSupportedInDataSection" xml:space="preserve">
-    <value>関数宣言は、制限付き言語モードまたは Data セクション内では使用できません。</value>
+    <value>Function declarations are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <comment>{StrContains="Function"}{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="MethodCallNotSupportedInDataSection" xml:space="preserve">
-    <value>メソッド呼び出しは、制限付き言語モードまたは Data セクション内では使用できません。</value>
+    <value>Method calls are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="ParameterDeclarationNotSupportedInDataSection" xml:space="preserve">
-    <value>パラメーター宣言は、制限付き言語モードまたは Data セクション内では使用できません。</value>
+    <value>Parameter declarations are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="PropertyReferenceNotSupportedInDataSection" xml:space="preserve">
-    <value>プロパティ参照は、制限付き言語モードまたは Data セクション内では使用できません。</value>
+    <value>Property references are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="ScriptBlockNotSupportedInDataSection" xml:space="preserve">
-    <value>スクリプト ブロック リテラルは、制限付き言語モードまたは Data セクション内では使用できません。</value>
+    <value>Script block literals are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="SwitchStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>switch ステートメントは、制限付き言語モードまたは Data セクション内では使用できません。</value>
+    <value>The Switch statement is not allowed in RestrictedLanguage mode or a Data section.</value>
+    <comment>{StrContains="Switch"}{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="VariableReferenceNotSupportedInDataSection" xml:space="preserve">
-    <value>制限付き言語モードまたは Data セクション内で参照してはならない変数が参照されています。参照できる変数は次のとおりです: {0}。</value>
+    <value>A variable that cannot be referenced in RestrictedLanguage mode or a Data section is being referenced. Variables that can be referenced include the following: {0}.</value>
+    <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="CmdletNotInAllowedListForDataSection" xml:space="preserve">
-    <value>コマンド '{0}' は、制限付き言語モードまたは Data セクション内では使用できません。</value>
+    <value>The command '{0}' is not allowed in RestrictedLanguage mode or a Data section.</value>
+    <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="DataSectionStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>data ステートメントは、制限付き言語モードまたは別の Data セクション内では使用できません。</value>
+    <value>The Data statement is not allowed in RestrictedLanguage mode or another Data section.</value>
+    <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="MissingValueForSupportedCommandInDataSectionStatement" xml:space="preserve">
     <value>Data セクションの SupportedCommand パラメーターに値がありません。パラメーターにコマンドレット名または関数名を指定してください。</value>
+    <comment>{StrContains="SupportedCommand"}{StrContains="Data"}</comment>
   </data>
   <data name="InvalidScriptBlockInDataSection" xml:space="preserve">
-    <value>Begin ステートメント ブロック、Process ステートメント ブロック、parameter ステートメントは、Data セクション内では使用できません。</value>
+    <value>A Begin statement block, Process statement block, or Param statement is not allowed in a Data section.</value>
+    <comment>{StrContains="Begin"}{StrContains="Process"}{StrContains="Param"}{StrContains="Data"}</comment>
   </data>
   <data name="StringMultiplyToolongInDataSection" xml:space="preserve">
-    <value>結果の文字数が "{0}" 文字を超える文字列乗算は、制限付き言語モードまたは Data セクション内では許可されません。</value>
+    <value>String multiplication results with more than "{0}" characters are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="ArrayMultiplyToolongInDataSection" xml:space="preserve">
-    <value>結果の要素数が {0} 個を超える配列乗算は、制限付き言語モードまたは Data セクション内では許可されません。</value>
+    <value>Array multiplication resulting in more than {0} elements is not allowed in RestrictedLanguage mode or a Data section.</value>
+    <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="DotSourcingNotSupportedInDataSection" xml:space="preserve">
-    <value>ドット ソースは、制限付き言語モードまたは Data セクション内では使用できません。</value>
+    <value>Dot sourcing is not allowed in RestrictedLanguage mode or a Data section.</value>
+    <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="ParameterAttributeArgumentNeedsToBeConstantOrScriptBlock" xml:space="preserve">
     <value>属性引数は、定数またはスクリプト ブロックである必要があります。</value>
@@ -721,10 +749,12 @@
     <value>ハッシュ リテラル内では null キーは使用できません。</value>
   </data>
   <data name="AttributeNotSupportedInDataSection" xml:space="preserve">
-    <value>属性は、制限付き言語モードまたは Data セクション内では使用できません。</value>
+    <value>Attributes are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="TypeNotAllowedInDataSection" xml:space="preserve">
-    <value>型 {0} は、制限付き言語モードまたは Data セクション内では使用できません。</value>
+    <value>The type {0} is not allowed in RestrictedLanguage mode or a Data section.</value>
+    <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="PropertyIsReadOnly" xml:space="preserve">
     <value>'{0}' は読み取り専用プロパティです。</value>
@@ -784,7 +814,8 @@
     <value>キーワード '{0}' の後にステートメント本文がありません。</value>
   </data>
   <data name="ParallelAndSequenceBlockNotSupportedInDataSection" xml:space="preserve">
-    <value>Parallel および sequence ブロックは、制限付き言語モードまたは Data セクション内では使用できません。</value>
+    <value>Parallel and Sequence blocks are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <comment>{StrContains="Parallel"}{StrContains="Sequence"}{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="UnexpectedKeyword" xml:space="preserve">
     <value>予期しないキーワード '{0}' があります。</value>
@@ -796,7 +827,8 @@
     <value>このメソッドは呼び出せません。</value>
   </data>
   <data name="HashtableToObjectConversionNotSupportedInDataSection" xml:space="preserve">
-    <value>ハッシュテーブルを次の型のオブジェクトに変換できません: {0}。ハッシュテーブルからオブジェクトへの変換は、制限付き言語モードまたは Data セクション内ではサポートされていません。</value>
+    <value>Cannot convert hashtable to an object of the following type: {0}. Hashtable-to-Object conversion is not supported in RestrictedLanguage mode or a Data section.</value>
+    <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="RequiresArgumentMustBeConstant" xml:space="preserve">
     <value>引数は定数である必要があります。</value>
@@ -842,7 +874,8 @@
     <value>スキーマ ファイル {0} が見つかりませんでした。構成ステートメントで指定されたモジュールに schema.mof ファイルが含まれていることを確認して、スクリプトをもう一度実行してください。</value>
   </data>
   <data name="DataSectionAllowedCommandDisallowed" xml:space="preserve">
-    <value>データ セクションを定義できません。追加でサポートされるコマンドの定義は、この言語モードではサポートされていません。</value>
+    <value>Cannot define Data section. Definition of additional supported commands is not supported in this language mode.</value>
+    <comment>{StrContains="Data"}</comment>
   </data>
   <data name="MissingCurlyInConfigurationStatement" xml:space="preserve">
     <value>構成ステートメントに '{' がありません。</value>
@@ -935,7 +968,8 @@ ModuleVersion : インポートするモジュールのバージョン。これ�
     <value>リソース '{0}' を読み込めません: リソースが見つかりません。</value>
   </data>
   <data name="ConfigurationNotAllowedInConstrainedLanguage" xml:space="preserve">
-    <value>構成キーワードは constrainedLanguage モードでは使用できません。</value>
+    <value>Configuration keyword is not allowed in ConstrainedLanguage mode.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="InvalidConfigurationName" xml:space="preserve">
     <value>構成名 '{0}' は無効です。標準的な名前に使用できる文字は、英字 (a-z、A-Z)、数字 (0-9)、ピリオド (.)、ハイフン (-)、アンダースコア (_) のみです。名前を null 値または空にすることはできません。先頭は英字である必要があります。</value>
@@ -1320,7 +1354,8 @@ ModuleVersion : インポートするモジュールのバージョン。これ�
     <value>演算子 '&amp;' または '.' を使用して、言語の境界を越えたモジュール スコープ コマンドを呼び出すことはできません。</value>
   </data>
   <data name="ClassesNotAllowedInConstrainedLanguage" xml:space="preserve">
-    <value>クラス キーワードは constrainedLanguage モードでは使用できません。</value>
+    <value>Class keyword is not allowed in ConstrainedLanguage mode.</value>
+    <comment>{StrContains="Class"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="MissingColonInTernaryExpression" xml:space="preserve">
     <value>3 項式に ':' がありません。</value>
@@ -1338,37 +1373,43 @@ ModuleVersion : インポートするモジュールのバージョン。これ�
     <value>パーサー構成キーワード</value>
   </data>
   <data name="WDACParserConfigKeywordLogMessage" xml:space="preserve">
-    <value>Configuration キーワードは、信頼されていないスクリプトの制約付き言語モードでは使用できません。</value>
+    <value>The Configuration keyword will not be allowed in ConstrainedLanguage mode for untrusted script.</value>
+    <comment>{StrContains="Configuration"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACParserClassKeywordLogTitle" xml:space="preserve">
     <value>パーサー クラス キーワード</value>
   </data>
   <data name="WDACParserClassKeywordLogMessage" xml:space="preserve">
-    <value>Class キーワードは、信頼されていないスクリプトの制約付き言語モードでは使用できません。</value>
+    <value>The Class keyword will not be allowed in ConstrainedLanguage mode for untrusted script.</value>
+    <comment>{StrContains="Class"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACParserDSSupportedCommandLogTitle" xml:space="preserve">
     <value>パーサー データ セクション SupportedCommand</value>
   </data>
   <data name="WDACParserDSSupportedCommandLogMessage" xml:space="preserve">
-    <value>SupportedCommand パラメーターを含んだ Data セクションは、信頼されていないスクリプトの制限付き言語モードでは使用できません。</value>
+    <value>The Data section that includes the SupportedCommand parameter would be disallowed in ConstrainedLanguage mode for untrusted script.</value>
+    <comment>{StrContains="Data"}{StrContains="SupportedCommand"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACParserModuleScopeCallOperatorLogTitle" xml:space="preserve">
     <value>モジュール スコープ呼び出し演算子</value>
   </data>
   <data name="WDACParserModuleScopeCallOperatorLogMessage" xml:space="preserve">
-    <value>制約付き言語モードでは、モジュール スコープ呼び出し演算子は拒否されます。</value>
+    <value>The module scope call operator will be denied in ConstrainedLanguage mode.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACParserForEachOperatorLogTitle" xml:space="preserve">
     <value>ForEach キーワード メソッド呼び出し</value>
   </data>
   <data name="WDACParserForEachOperatorLogMessage" xml:space="preserve">
-    <value>制約付き言語モードで実行された場合、ForEach キーワードによる '{0}' イテレーション項目メソッドの呼び出しは失敗します。</value>
+    <value>The ForEach keyword will fail '{0}' iteration item method invocation when run in ConstrainedLanguage mode.</value>
+    <comment>{StrContains="ForEach"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACGetSteppablePipelineLogTitle" xml:space="preserve">
     <value>式評価に失敗する可能性があります</value>
   </data>
   <data name="WDACGetSteppablePipelineLogMessage" xml:space="preserve">
-    <value>ステップ可能なパイプラインをスクリプト ブロックから作成するには、そのスクリプト ブロック内で何らかの式を評価することが必要な場合があります。この式評価は、制約付き言語モードでは、式が定数値を表していない限り警告なしに失敗して 'null' を返します。</value>
+    <value>Creating a steppable pipeline from a script block may require evaluating some expressions within the script block. The expression evaluation will silently fail and return 'null' in ConstrainedLanguage mode, unless the expression represents a constant value.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="ConfigurationNotAllowedOnArm64" xml:space="preserve">
     <value>構成キーワードは ARM64 プロセッサではサポートされていません。</value>

@@ -184,7 +184,8 @@
     <value>Oturum meşgul. Kullanılabilir olduğu anda oturuma bağlanacaksınız. Enter-PSSession komutunu iptal etmek için Ctrl-C tuşlarına basın.</value>
   </data>
   <data name="NotSupportedOnRestrictedRunspace" xml:space="preserve">
-    <value>Komut tamamlanamıyor. Betik çağrısı bu oturum yapılandırmasında desteklenmiyor. Oturum yapılandırması dil yok modundaysa bu durum oluşabilir.</value>
+    <value>The command cannot be completed. Script invocation is not supported in this session configuration. This can occur if the session configuration is in NoLanguage mode.</value>
+    <comment>{StrContains="NoLanguage"}</comment>
   </data>
   <data name="DisconnectConnectNotSupported" xml:space="preserve">
     <value>Yerel çalışma alanlarında Bağlantıyı Kes ve Bağlan işlemlerini kullanamazsınız.</value>

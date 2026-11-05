@@ -163,6 +163,7 @@
     <value>Skriptdatei lesen</value>
   </data>
   <data name="ExternalScriptWDACLogMessage" xml:space="preserve">
-    <value>Die Skriptdatei „{0}“ ist von der Richtlinie nicht vertrauenswürdig und wird im ConstrainedLanguage-Modus ausgeführt.</value>
+    <value>Skriptdatei '{0}' ist laut Richtlinie nicht vertrauenswürdig und wird im ConstrainedLanguage-Modus ausgeführt.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

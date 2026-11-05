@@ -130,7 +130,7 @@
     <value>Stan puli obszarów działania nie jest prawidłowy dla tej operacji.</value>
   </data>
   <data name="InvalidRunspacePoolState" xml:space="preserve">
-    <value>Nie można wykonać operacji, ponieważ obszar działania nie jest w stanie „{0}”. Bieżący stan to „{1}”.</value>
+    <value>Nie można wykonać operacji, ponieważ pula obszarów działania nie jest w stanie „{0}”. Bieżący stan to „{1}”.</value>
   </data>
   <data name="CannotOpenAgain" xml:space="preserve">
     <value>Nie można otworzyć puli obszarów działania, ponieważ nie jest ona w stanie „'BeforeOpen”. Bieżący stan to „{0}”.</value>
@@ -148,7 +148,7 @@
     <value>Ten obszar działania nie obsługuje operacji rozłączania i ponownego łączenia.</value>
   </data>
   <data name="CannotWhileDisconnected" xml:space="preserve">
-    <value>Nie można wykonać operacji, ponieważ obszar działania nie jest w stanie Disconnected.</value>
+    <value>Nie można wykonać operacji, ponieważ pula obszarów działania nie jest w stanie Disconnected.</value>
   </data>
   <data name="DisconnectNotSupportedOnServer" xml:space="preserve">
     <value>Operacja Disconnect nie jest obsługiwana na serwerze.  Serwer musi działać w programie PowerShell 3.0 lub nowszym, aby obsługiwać rozłączanie zdalnej puli obszarów działania.</value>
@@ -157,7 +157,7 @@
     <value>Ta pula obszarów działania {0} nie jest skonfigurowana do udostępniania odłączonych obiektów programu PowerShell dla poleceń uruchamianych na serwerze zdalnym.  Użyj statycznej metody GetRunspacePools() klasy RunspacePool, aby odpytać serwer i zwrócić obiekty puli obszarów działania skonfigurowane do tego celu.</value>
   </data>
   <data name="CannotConnect" xml:space="preserve">
-    <value>Nie można połączyć tej puli obszarów działania, ponieważ odpowiadająca jej pula po stronie serwera jest połączona z innym klientem.</value>
+    <value>Nie można połączyć tej puli obszarów działania, ponieważ odpowiadająca jej pula obszarów działania po stronie serwera jest połączona z innym klientem.</value>
   </data>
   <data name="ResetRunspaceStateNotSupportedOnServer" xml:space="preserve">
     <value>ResetRunspaceState nie jest obsługiwany na serwerze.  Serwer musi działać w programie PowerShell 5.0 lub nowszym.</value>
