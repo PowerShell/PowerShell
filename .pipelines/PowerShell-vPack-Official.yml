@@ -1,6 +1,10 @@
 trigger: none
 
 parameters: # parameters are shown up in ADO UI in a build queue time
+- name: UseEarlyAccessModules
+  displayName: Use early-access modules
+  type: boolean
+  default: false
 - name: 'createVPack'
   displayName: 'Create and Submit VPack'
   type: boolean
@@ -32,6 +36,8 @@ parameters: # parameters are shown up in ADO UI in a build queue time
 name: vPack_$(Build.SourceBranchName)_Prod_Create.${{ parameters.createVPack }}_Name.${{ parameters.vPackName}}_$(date:yyyyMMdd).$(rev:rr)
 
 variables:
+  - name: UseEarlyAccessModules
+    value: ${{ parameters.UseEarlyAccessModules }}
   - template: templates/variables/PowerShell-vPack-Variables.yml
     parameters:
       debug: ${{ parameters.debug }}
