@@ -524,26 +524,12 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private SwitchParameter _current;
-
         /// <summary>
         /// Gets the Current Process.
         /// </summary>
         [Parameter(ParameterSetName = CurrentParameterSet, Mandatory = true)]
         [Parameter(ParameterSetName = CurrentWithUserNameParameterSet, Mandatory = true)]
-        public SwitchParameter Current
-        {
-            get
-            {
-                return _current;
-            }
-
-            set
-            {
-                _current = value;
-                myMode = MatchMode.ByCurrent;
-            }
-        }
+        public SwitchParameter Current {get; set; }
 
         /// <summary>
         /// Include the UserName.
