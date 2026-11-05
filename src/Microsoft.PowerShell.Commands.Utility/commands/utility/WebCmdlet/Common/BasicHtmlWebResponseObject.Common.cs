@@ -68,6 +68,12 @@ namespace Microsoft.PowerShell.Commands
         /// </value>
         public Encoding? Encoding { get; private set; }
 
+        /// <summary>
+        /// Returns the decoded text response content.
+        /// </summary>
+        /// <returns>The decoded text response content.</returns>
+        public override string ToString() => Content;
+
         private WebCmdletElementCollection? _inputFields;
 
         /// <summary>
