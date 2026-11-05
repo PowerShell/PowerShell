@@ -395,12 +395,14 @@ PS&gt; [System.Collections.Generic.Comparer``1]::get_Default()
     <value>Erweiterte Typsystem-Hashtabellenkonvertierung</value>
   </data>
   <data name="WDACHashTypeLogMessage" xml:space="preserve">
-    <value>Die Typkonvertierung von „HashTable“ in „{0}“ ist im ConstrainedLanguage-Modus nicht zulässig.</value>
+    <value>Typkonvertierung von HashTable zu '{0}' im ConstrainedLanguage-Modus nicht zulässig.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACTypeConversionLogTitle" xml:space="preserve">
     <value>Erweiterte Typsystem-Hashtabellenkonvertierung</value>
   </data>
   <data name="WDACTypeConversionLogMessage" xml:space="preserve">
-    <value>Die Typkonvertierung von „{0}“ in „{1}“ ist im ConstrainedLanguage-Modus nicht zulässig.</value>
+    <value>Typkonvertierung von '{0}' zu '{1}' im ConstrainedLanguage-Modus nicht zulässig.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

@@ -145,13 +145,15 @@
     <value>入力名 "{0}" はメソッドに解決できません。</value>
   </data>
   <data name="NoMethodInvocationInRestrictedLanguageMode" xml:space="preserve">
-    <value>制限付き言語モードでメソッドを呼び出すことはできません。</value>
+    <value>Cannot invoke a method in the RestrictedLanguage mode.</value>
+    <comment>{StrContains="RestrictedLanguage"}</comment>
   </data>
   <data name="NoShouldProcessForScriptBlockSet" xml:space="preserve">
     <value>-WhatIf パラメーターと -Confirm パラメーターは、スクリプト ブロックではサポートされていません。</value>
   </data>
   <data name="OperationNotAllowedInRestrictedLanguageMode" xml:space="preserve">
     <value>'{0}' 操作は RestrictedLanguage モードでは許可されていません。</value>
+    <comment>{StrContains="RestrictedLanguage"}</comment>
   </data>
   <data name="OperatorNotSpecified" xml:space="preserve">
     <value>指定した 2 つの値を比較するには、演算子が必要です。コマンドに有効な演算子を含めてから、コマンドを再試行してください。たとえば、Get-Process | Where-Object -Property Name -eq Idle</value>
@@ -188,6 +190,7 @@ ErrorAction, WarningAction, InformationAction, PipelineVariable</value>
     <value>ForEach-Object コマンドレット</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>制約付き言語モードで実行する場合、型 '{0}' でのメソッドの呼び出しは許可されません。</value>
+    <value>Method invocation on type '{0}' will not be allowed when run in ConstrainedLanguage mode.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

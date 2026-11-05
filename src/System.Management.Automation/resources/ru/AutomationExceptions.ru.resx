@@ -205,6 +205,7 @@
     <value>Точечное подключение скомпилированного блока сценария</value>
   </data>
   <data name="WDACCompiledScriptBlockLogMessage" xml:space="preserve">
-    <value>Вызов блока сценария {0} в текущей области будет запрещен в режиме ограниченного языка. Режим языка сценария: {1}, режим языка контекста: {2}.</value>
+    <value>Script block '{0}' invocation into current scope will be disallowed in ConstrainedLanguage mode. Script language mode: {1}, Context language mode: {2}.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

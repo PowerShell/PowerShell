@@ -232,12 +232,14 @@ Reviewed by TArcher on 2010-07-20
     <value>Skriptblockverarbeitung Punkt-Quelle-Überprüfung</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>Die Dot-Source-Verarbeitung für den Skriptblock „{0}“ schlägt im Modus „Eingeschränkte Sprache“ fehl, da der Sprachmodus „{1}“ nicht mit dem aktuellen Sprachmodus „{2}“ übereinstimmt.</value>
+    <value>Dot-Source processing for script block '{0}' will fail in ConstrainedLanguage mode because its language mode '{1}' does not match the current language mode '{2}'.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="SearcherWDACLogTitle" xml:space="preserve">
     <value>Befehlssuche</value>
   </data>
   <data name="SearcherWDACLogMessage" xml:space="preserve">
-    <value>Der Befehl „{0}“ im Modul „{1}“ ist nicht vertrauenswürdig und im ConstrainedLanguage-Modus nicht zugänglich.</value>
+    <value>Der Befehl '{0}' im Modul '{1}' ist nicht vertrauenswürdig und im ConstrainedLanguage-Modus nicht zugänglich.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

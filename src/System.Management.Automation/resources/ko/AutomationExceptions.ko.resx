@@ -205,6 +205,7 @@
     <value>컴파일된 스크립트 블록 점 소스</value>
   </data>
   <data name="WDACCompiledScriptBlockLogMessage" xml:space="preserve">
-    <value>제한된 언어 모드에서는 스크립트 블록 '{0}'을(를) 현재 범위에 호출할 수 없습니다. 스크립트 언어 모드: {1}, 컨텍스트 언어 모드: {2}.</value>
+    <value>Script block '{0}' invocation into current scope will be disallowed in ConstrainedLanguage mode. Script language mode: {1}, Context language mode: {2}.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>
