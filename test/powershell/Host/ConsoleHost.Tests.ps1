@@ -513,6 +513,20 @@ export $envVarName='$guid'
             EnsureChildHasExited $process
         }
 
+        It "Redirected input w/ host output that follows a change to [Console]::OutputEncoding" {
+            # Host output before the change creates the serializer that writes it, which must then follow Console.Out.
+            $si = NewProcessStartInfo "-NonInteractive -noprofile -c ""Write-Host 'before'; [Console]::OutputEncoding = [System.Text.Encoding]::Unicode; Write-Host ([char]0xE9)""" -RedirectStdIn
+            $process = RunPowerShell $si
+            $output = [System.IO.MemoryStream]::new()
+            $process.StandardOutput.BaseStream.CopyTo($output)
+            EnsureChildHasExited $process
+
+            $expected = [System.Text.Encoding]::Unicode.GetBytes("$([char]0xE9)$([Environment]::NewLine)")
+            $actual = $output.ToArray()
+            $actual.Length | Should -BeGreaterOrEqual $expected.Length
+            [System.BitConverter]::ToString($actual, $actual.Length - $expected.Length) | Should -BeExactly ([System.BitConverter]::ToString($expected))
+        }
+
         It "Redirected input w/ explicit -Command w/ -NonInteractive" {
             $si = NewProcessStartInfo "-NonInteractive -noprofile -Command 1+1" -RedirectStdIn
             $process = RunPowerShell $si
