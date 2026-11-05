@@ -18,7 +18,7 @@ Describe 'Early-access module feeds' {
             }
 
             $inline = $inlineMatch.Groups['script'].Value -replace '(?m)^      ', ''
-            $inline = $inline.Replace('$(EARLY_ACCESS_FEED)', 'net11').
+            $inline = $inline.Replace('$(EARLY_ACCESS_FEED)', 'net10').
                 Replace('$(AzDevopsFeedUserNameKVPAT)', 'test-user').
                 Replace('$(powershellPackageReadPat)', 'test-pat')
             $script:authenticationScript = [scriptblock]::Create($inline)
@@ -61,7 +61,7 @@ Describe 'Early-access module feeds' {
                 $prefix = '##vso[task.setvariable variable=VSS_NUGET_EXTERNAL_FEED_ENDPOINTS;issecret=true]'
                 if (-not "$Object".StartsWith($prefix)) { return $false }
                 $credentials = ("$Object".Substring($prefix.Length) | ConvertFrom-Json).endpointCredentials
-                $netCredentials = @($credentials | Where-Object endpoint -like '*powershell-net-11-early-access/nuget/v3/index.json')
+                $netCredentials = @($credentials | Where-Object endpoint -like '*powershell-net-10-early-access/nuget/v3/index.json')
                 $moduleCredentials = @($credentials | Where-Object endpoint -like '*powershell-module-earlyaccess/nuget/v3/index.json')
                 $credentials.Count -eq $Count -and
                 $credentials[0].username -eq 'test-user' -and
@@ -75,7 +75,7 @@ Describe 'Early-access module feeds' {
         It 'Supports module-only authentication with no .NET feed selector' {
             $env:ISEARLYACCESS = 'false'
             $env:USEEARLYACCESSMODULES = 'true'
-            $moduleOnlyScript = [scriptblock]::Create($script:authenticationScript.ToString().Replace("'net11'", "''"))
+            $moduleOnlyScript = [scriptblock]::Create($script:authenticationScript.ToString().Replace("'net10'", "''"))
 
             { & $moduleOnlyScript } | Should -Not -Throw
         }
@@ -89,7 +89,7 @@ Describe 'Early-access module feeds' {
     }
 
     BeforeEach {
-        $env:EARLY_ACCESS_FEED = 'net11'
+        $env:EARLY_ACCESS_FEED = 'net10'
         Mock New-NugetConfigFile -ModuleName build {}
         Mock Set-PipelineVariable -ModuleName build {}
     }
