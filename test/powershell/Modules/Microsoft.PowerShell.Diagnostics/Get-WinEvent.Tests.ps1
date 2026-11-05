@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-Describe 'Get-WinEvent' -Tags "CI" {
+Describe 'Get-WinEvent live logs' -Tags "CI", "NotWinPE" {
     BeforeAll {
         if ( ! $IsWindows )
         {
@@ -97,6 +97,21 @@ Describe 'Get-WinEvent' -Tags "CI" {
         }
 
     }
+}
+
+Describe 'Get-WinEvent offline event files' -Tags "CI" {
+    BeforeAll {
+        if ( ! $IsWindows )
+        {
+            $origDefaults = $PSDefaultParameterValues.Clone()
+            $PSDefaultParameterValues['it:skip'] = $true
+        }
+    }
+    AfterAll {
+        if ( ! $IsWindows ){
+            $global:PSDefaultParameterValues = $origDefaults
+        }
+    }
     Context "Get-WinEvent UserData Queries" {
         It 'Get-WinEvent can retrieve events with UserData queries using FilterXml' {
             # this relies on apriori knowledge about the log file
@@ -170,7 +185,10 @@ Describe 'Get-WinEvent' -Tags "CI" {
             @($resultsSuppress).Count | Should -Be 2
         }
     }
-    It 'can query a System log' {
+}
+
+Describe "Get-WinEvent system log" -Tags "CI", "NotWinPE" {
+    It 'can query a System log' -Skip:(!$IsWindows) {
         Get-WinEvent -LogName System -MaxEvents 1 | Should -Not -BeNullOrEmpty
     }
 }

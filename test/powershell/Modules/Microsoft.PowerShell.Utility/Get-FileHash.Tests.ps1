@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
 Describe "Get-FileHash" -Tags "CI" {
 
     BeforeAll {
@@ -29,12 +30,6 @@ Describe "Get-FileHash" -Tags "CI" {
             $errorVariable.FullyQualifiedErrorId | Should -BeExactly "UnauthorizedAccessError,Microsoft.PowerShell.Commands.GetFileHashCommand"
         }
 
-        It "Should write non-terminating error if a file is locked" -Skip:(-not $IsWindows) {
-            $pagefilePath = (Get-CimInstance -ClassName Win32_PageFileusage).Name
-            $result = $pagefilePath, "${pshome}\pwsh.dll" | Get-FileHash -ErrorVariable errorVariable -ErrorAction SilentlyContinue
-            $result.Count | Should -Be 1
-            $errorVariable.FullyQualifiedErrorId | Should -BeExactly "FileReadError,Microsoft.PowerShell.Commands.GetFileHashCommand"
-        }
     }
 
     Context "Algorithm tests" {
@@ -91,5 +86,14 @@ Describe "Get-FileHash" -Tags "CI" {
 
             Remove-Item -Path $testDocumentCopy -Force -ErrorAction SilentlyContinue
         }
+    }
+}
+
+Describe "Get-FileHash with a locked page file" -Tags "CI", "NotWinPE" {
+    It "Should write non-terminating error if a file is locked" -Skip:(-not $IsWindows) {
+        $pagefilePath = (Get-CimInstance -ClassName Win32_PageFileusage).Name
+        $result = $pagefilePath, "${pshome}\pwsh.dll" | Get-FileHash -ErrorVariable errorVariable -ErrorAction SilentlyContinue
+        $result.Count | Should -Be 1
+        $errorVariable.FullyQualifiedErrorId | Should -BeExactly "FileReadError,Microsoft.PowerShell.Commands.GetFileHashCommand"
     }
 }

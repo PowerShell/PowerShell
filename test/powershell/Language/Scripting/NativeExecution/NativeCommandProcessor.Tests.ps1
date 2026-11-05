@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
 Describe 'Native pipeline should have proper encoding' -tags 'CI' {
     It '$OutputEncoding should be set to UTF8 without BOM' {
         $OutputEncoding.BodyName | Should -Be "utf-8"
@@ -31,17 +32,6 @@ Describe 'native commands with pipeline' -tags 'Feature' {
 
         $ps.Stop()
         $rs.ResetRunspaceState()
-    }
-
-    It "native | native | native should work fine" {
-
-        if ($IsWindows) {
-            $result = @(ping.exe | findstr.exe count | findstr.exe ping)
-            $result[0] | Should -Match "Usage: ping"
-        } else {
-            $result = @(ps aux | grep pwsh | grep -v grep)
-            $result[0] | Should -Match "pwsh"
-        }
     }
 
     It 'native command should be killed when pipeline is disposed' -Skip:($IsWindows) {
@@ -98,6 +88,19 @@ Describe 'native commands with pipeline' -tags 'Feature' {
         $err | Should -BeNullOrEmpty -Because $err
         $out = Get-Item -Path "$testdrive/out" -ErrorAction Ignore
         $out | Should -Not -BeNullOrEmpty
+    }
+}
+
+Describe "Native pipeline with platform utilities" -Tags "Feature", "NotWinPE" {
+    It "native | native | native should work fine" {
+
+        if ($IsWindows) {
+            $result = @(ping.exe | findstr.exe count | findstr.exe ping)
+            $result[0] | Should -Match "Usage: ping"
+        } else {
+            $result = @(ps aux | grep pwsh | grep -v grep)
+            $result[0] | Should -Match "pwsh"
+        }
     }
 }
 
@@ -313,7 +316,7 @@ Categories=Application;
     }
 }
 
-Describe "Run native command from a mounted FAT-format VHD" -tags @("Feature", "RequireAdminOnWindows") {
+Describe "Run native command from a mounted FAT-format VHD" -tags @("Feature", "RequireAdminOnWindows", "NotWinPE") {
     BeforeAll {
         if (-not $IsWindows) {
             return;

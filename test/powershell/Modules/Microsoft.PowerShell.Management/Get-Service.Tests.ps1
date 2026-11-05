@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
 Describe "Get-Service cmdlet tests" -Tags "CI" {
   # Service cmdlet is currently working on windows only
   # So skip the tests on non-Windows
@@ -116,6 +117,30 @@ Describe 'Get-Service Admin tests' -Tag CI,RequireAdminOnWindows {
     $actual.Description | Should -BeNullOrEmpty
     $actual.UserName | Should -Be LocalSystem
     $actual.StartupType | Should -Be Manual
+  }
+}
+
+Describe "Get-Service security descriptor tests" -Tags CI, RequireAdminOnWindows, NotWinPE {
+  BeforeAll {
+    $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+    if ( -not $IsWindows ) {
+        $PSDefaultParameterValues["it:skip"] = $true
+    }
+  }
+  AfterAll {
+      $global:PSDefaultParameterValues = $originalDefaultParameterValues
+  }
+
+  BeforeEach {
+    $serviceParams = @{
+      Name = "PowerShellTest-$([Guid]::NewGuid().Guid)"
+      BinaryPathName = "$env:SystemRoot\System32\cmd.exe"
+      StartupType = 'Manual'
+    }
+    $service = New-Service @serviceParams
+  }
+  AfterEach {
+    $service | Remove-Service
   }
 
   It "Ignores no SERVICE_QUERY_CONFIG access" {

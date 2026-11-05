@@ -85,7 +85,7 @@ function UpdatePackageManager {
     }
 }
 
-Describe "Path update for package managers" -tags @('CI', 'RequireAdminOnWindows') {
+Describe "Path update for package managers" -tags @('CI', 'RequireAdminOnWindows', 'NotWinPE') {
 
     It "Path update is off for an executable that is not registered" {
         try {

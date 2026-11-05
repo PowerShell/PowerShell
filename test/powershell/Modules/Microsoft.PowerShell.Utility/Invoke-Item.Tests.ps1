@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
 using namespace System.Diagnostics
 
 function Invoke-AppleScript
@@ -156,7 +157,9 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
         }
     }
 
-    Context "Invoke a folder" {
+}
+
+Describe "Invoke a folder" -Tags "Feature", "NotWinPE" {
         BeforeAll {
             $supportedEnvironment = $true
             if ($IsLinux)
@@ -261,7 +264,6 @@ Categories=Application;
                 'tell application "Finder" to close front window' | osascript
             }
         }
-    }
 }
 
 Describe "Invoke-Item tests on Windows" -Tags "CI","RequireAdminOnWindows" {

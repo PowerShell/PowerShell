@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-Describe "SSH Remoting Cmdlet Tests" -Tags "Feature" {
+Describe "SSH Remoting Cmdlet Tests" -Tags "Feature", "NotWinPE" {
 
     It "Enter-PSSession HostName parameter set should throw error for invalid key path" {
         { Enter-PSSession -HostName localhost -UserName User -KeyFilePath NoKeyFile } |

@@ -238,19 +238,13 @@ Describe "Test-Connection" -tags "CI", "RequireSudoOnUnix" {
             $result.Address | Should -BeExactly $resolvedAddress
         }
 
-        It "TimeOut works" {
-            (Measure-Command { Test-Connection $UnreachableAddress -Count 1 -TimeOut 1 }).TotalSeconds |
-                Should -BeLessThan 3
-            (Measure-Command { Test-Connection $UnreachableAddress -Count 1 -TimeOut 4 }).TotalSeconds |
-                Should -BeGreaterThan 3
-        }
-
         It "Repeat works" {
             # By default we do 4 ping so for '-Repeat' we expect to get >4 results.
-            # Also we should wait >4 seconds before check results but previous tests already did the pause.
+            $receivedEnoughResults = Wait-UntilTrue -sb { @(Receive-Job $jobContinues -Keep).Count -gt 4 } -TimeoutInMilliseconds 10000 -IntervalInMilliseconds 250
             $pingResults = Receive-Job $jobContinues
             Remove-Job $jobContinues -Force
 
+            $receivedEnoughResults | Should -BeTrue
             $pingResults.Count | Should -BeGreaterThan 4
             $pingResults[0].Address | Should -BeExactly $targetAddress
             $pingResults.Status | Should -Contain "Success"
@@ -266,6 +260,27 @@ Describe "Test-Connection" -tags "CI", "RequireSudoOnUnix" {
             # Should get exactly 4 pings (the default Count value)
             $pingResults.Count | Should -Be 4
             $pingResults[0].Address | Should -BeExactly $targetAddress
+        }
+    }
+
+}
+
+Describe "Test-Connection network-dependent scenarios" -Tags "CI", "RequireSudoOnUnix", "NotWinPE" {
+    BeforeAll {
+        $hostName = [System.Net.Dns]::GetHostName()
+        $gatewayAddress = GetGatewayAddress
+        $publicHostAddress = GetExternalHostAddress -HostName $hostName
+        $testAddress = if ($publicHostAddress) { $publicHostAddress } else  { $gatewayAddress }
+        $targetAddress = "127.0.0.1"
+        $UnreachableAddress = "10.11.12.13"
+    }
+
+    Context "Unreachable network timeout" {
+        It "TimeOut works" {
+            (Measure-Command { Test-Connection $UnreachableAddress -Count 1 -TimeOut 1 }).TotalSeconds |
+                Should -BeLessThan 3
+            (Measure-Command { Test-Connection $UnreachableAddress -Count 1 -TimeOut 4 }).TotalSeconds |
+                Should -BeGreaterThan 3
         }
     }
 
@@ -304,7 +319,7 @@ Describe "Test-Connection" -tags "CI", "RequireSudoOnUnix" {
         It "MtuSize with explicit false should behave like default ping" {
             # -MtuSize:$false should behave the same as not specifying -MtuSize (default ping)
             $pingResults = Test-Connection $targetAddress -MtuSize:$false
-            
+
             # Should return PingStatus, not PingMtuStatus
             $pingResults[0] | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+PingStatus
             # Should get 4 pings (the default Count value)
@@ -355,7 +370,7 @@ Describe "Test-Connection" -tags "CI", "RequireSudoOnUnix" {
         It "Traceroute with explicit false should behave like default ping" {
             # -Traceroute:$false should behave the same as not specifying -Traceroute (default ping)
             $pingResults = Test-Connection $targetAddress -Traceroute:$false
-            
+
             # Should return PingStatus, not TraceStatus
             $pingResults[0] | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+PingStatus
             # Should get 4 pings (the default Count value)
@@ -416,7 +431,7 @@ Describe "Connection" -Tag "CI", "RequireAdminOnWindows" {
     }
 }
 
-Describe "Test-Connection should run in the default synchronization context (threadpool)" -Tag "CI" {
+Describe "Test-Connection should run in the default synchronization context (threadpool)" -Tag "CI", "NotMinSize" {
     It "Test-Connection works after constructing a WindowsForm object" -Skip:(!$IsWindows) {
         $pwsh = Join-Path $PSHOME "pwsh"
         $pingResults = & $pwsh -NoProfile {
