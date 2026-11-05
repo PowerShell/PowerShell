@@ -3342,6 +3342,34 @@ namespace System.Management.Automation
 
         private static readonly Lazy<CimDeserializer> s_cimDeserializer = new Lazy<CimDeserializer>(CimDeserializer.Create);
 
+        // The native MI library is not available on every platform (for example, there is no libmi on macOS).
+        // Without it CIM classes cannot be rehydrated; once that is known, skip the attempt for later objects.
+        private static volatile bool s_cimDeserializerUnavailable;
+
+        private static bool TryGetCimDeserializer(out CimDeserializer cimDeserializer)
+        {
+            cimDeserializer = null;
+            if (s_cimDeserializerUnavailable)
+            {
+                return false;
+            }
+
+            try
+            {
+                cimDeserializer = s_cimDeserializer.Value;
+                return true;
+            }
+            catch (Exception e) when (e is DllNotFoundException
+                                        or EntryPointNotFoundException
+                                        or BadImageFormatException
+                                        or TypeInitializationException
+                                        or PlatformNotSupportedException)
+            {
+                s_cimDeserializerUnavailable = true;
+                return false;
+            }
+        }
+
         private CimClass RehydrateCimClass(PSPropertyInfo classMetadataProperty)
         {
             if ((classMetadataProperty == null) || (classMetadataProperty.Value == null))
@@ -3430,12 +3458,19 @@ namespace System.Management.Automation
                     return null;
                 }
 
+                // Keep the deserialized property bag instead of failing the whole deserialization
+                // when CIM classes cannot be rehydrated on this platform.
+                if (!TryGetCimDeserializer(out CimDeserializer cimDeserializer))
+                {
+                    return null;
+                }
+
                 string miXmlString = miXmlProperty.Value.ToString();
                 byte[] miXmlBytes = Encoding.Unicode.GetBytes(miXmlString);
                 uint offset = 0;
                 try
                 {
-                    currentClass = s_cimDeserializer.Value.DeserializeClass(
+                    currentClass = cimDeserializer.DeserializeClass(
                         miXmlBytes,
                         ref offset,
                         parentClass,
@@ -3462,6 +3497,28 @@ namespace System.Management.Automation
 
         // NOTE: Win7 change for refid-s that span multiple xml documents: ADMIN: changelist #226414
 
+        /// <summary>
+        /// Hides the CIM metadata of an instance that could not be rehydrated.
+        /// </summary>
+        /// <remarks>
+        /// The serializer attaches __ClassMetadata and __InstanceMetadata as hidden note properties, but the
+        /// hidden flag is not part of the serialized form. Hide them again so the deserialized object shows only
+        /// the instance properties; they are kept, so serializing the object again still carries the metadata
+        /// and a receiver that can rehydrate CIM instances gets a live CimInstance.
+        /// </remarks>
+        private static PSObject HideCimMetadata(PSObject deserializedObject)
+        {
+            foreach (string metadataPropertyName in new[] { CimClassMetadataProperty, CimInstanceMetadataProperty })
+            {
+                if (deserializedObject.InstanceMembers[metadataPropertyName] is PSPropertyInfo metadataProperty)
+                {
+                    metadataProperty.IsHidden = true;
+                }
+            }
+
+            return deserializedObject;
+        }
+
         private PSObject RehydrateCimInstance(PSObject deserializedObject)
         {
             if (deserializedObject.BaseObject is not PSCustomObject)
@@ -3473,7 +3530,7 @@ namespace System.Management.Automation
             CimClass cimClass = RehydrateCimClass(classMetadataProperty);
             if (cimClass == null)
             {
-                return deserializedObject;
+                return HideCimMetadata(deserializedObject);
             }
 
             CimInstance cimInstance;
@@ -3483,7 +3540,7 @@ namespace System.Management.Automation
             }
             catch (CimException)
             {
-                return deserializedObject;
+                return HideCimMetadata(deserializedObject);
             }
 
             PSObject psoCimInstance = PSObject.AsPSObject(cimInstance);
@@ -3523,7 +3580,7 @@ namespace System.Management.Automation
 
                     if (!propertyHandledSuccessfully)
                     {
-                        return deserializedObject;
+                        return HideCimMetadata(deserializedObject);
                     }
                 }
             }
