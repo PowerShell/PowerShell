@@ -35,6 +35,20 @@ Describe "PSCommand API tests" -Tag "CI" {
         }
     }
 
+    Context "MergeMyResults on a command" {
+        It "Merges the errors of a command added by <AddedBy> into its output" -TestCases @(
+            @{ AddedBy = 'name'; Command = 'Write-Error' }
+            @{ AddedBy = 'CommandInfo'; Command = (Get-Command -Name Write-Error) }
+        ) {
+            param($Command)
+
+            $null = $shell.AddCommand($Command).AddParameter("Message", "boom")
+            $shell.Commands.Commands[0].MergeMyResults("Error", "Output")
+            $result = $shell.Invoke()
+            $result | Should -BeOfType System.Management.Automation.ErrorRecord
+        }
+    }
+
     Context "Cloning PSCommands" {
         It "The clone method successfully copies commands" {
             $null = $psCommand.AddCommand("Write-Output").AddParameter("InputObject", 5)
