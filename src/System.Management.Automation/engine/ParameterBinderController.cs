@@ -929,6 +929,16 @@ namespace System.Management.Automation
 
             foreach (PositionalCommandParameter parameter in nextPositionalParameters.Values)
             {
+                // Skip parameters that were already bound at a previous position.
+                // A parameter can appear at multiple positions across different parameter sets
+                // (e.g., Position=0 in set 'Two' and Position=1 in set 'One'). Once bound,
+                // it must not be re-bound (and overwritten) when the loop reaches the other position.
+                // See https://github.com/PowerShell/PowerShell/issues/2212
+                if (BoundParameters.ContainsKey(parameter.Parameter.Parameter.Name))
+                {
+                    continue;
+                }
+
                 foreach (ParameterSetSpecificMetadata parameterSetData in parameter.ParameterSetData)
                 {
                     // if the parameter is not in the specified parameter set, don't consider it
