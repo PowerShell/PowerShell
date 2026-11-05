@@ -529,7 +529,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = CurrentParameterSet, Mandatory = true)]
         [Parameter(ParameterSetName = CurrentWithUserNameParameterSet, Mandatory = true)]
-        public SwitchParameter Current {get; set; }
+        public SwitchParameter Current { get; set; }
 
         /// <summary>
         /// Include the UserName.
