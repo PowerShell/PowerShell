@@ -88,6 +88,21 @@ Describe 'Early-access module feeds' {
         }
     }
 
+    It 'Maps secret feed credentials directly into the build environment in <Pipeline>' -TestCases @(
+        @{ Pipeline = '.pipelines/templates/stages/PowerShell-vPack-Stages.yml' }
+        @{ Pipeline = '.pipelines/MSIXBundle-vPack-Official.yml' }
+    ) {
+        param($Pipeline)
+
+        $template = Get-Content "$PSScriptRoot/../../$Pipeline" -Raw
+        $buildStep = [regex]::Match($template, '(?ms)^\s*displayName: [''"]?Build Windows Universal[^\r\n]*\r?\n(?<envIndent> +)env:\r?\n(?<env>.*?)(?=^\k<envIndent>\S|\z)')
+        $buildStep.Success | Should -BeTrue
+        $envIndent = $buildStep.Groups['envIndent'].Value + '  '
+        $buildStep.Groups['env'].Value | Should -Match (
+            '(?m)^' + $envIndent + 'VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: \$\(VSS_NUGET_EXTERNAL_FEED_ENDPOINTS\)\r?$'
+        )
+    }
+
     BeforeEach {
         $env:EARLY_ACCESS_FEED = 'net10'
         Mock New-NugetConfigFile -ModuleName build {}
