@@ -1600,7 +1600,7 @@ namespace System.Management.Automation
             }
             else
             {
-                _eventManager.AddForwardedEvent(e);
+                _eventManager.AddForwardedEventCore(e);
             }
         }
 
