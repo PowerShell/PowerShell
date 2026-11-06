@@ -76,8 +76,22 @@ namespace System.Management.Automation.Remoting
             Collection<ChoiceDescription> choices,
             IEnumerable<int> defaultChoices)
         {
+            // The remote host encoder picks the wire format from the runtime
+            // type while the client decodes IEnumerable<int> as a
+            // Collection<int>. Normalize to Collection<int> so that arrays,
+            // lists, or any other IEnumerable<int> can round trip.
+            Collection<int> defaultChoicesCollection = null;
+            if (defaultChoices is not null)
+            {
+                defaultChoicesCollection = new Collection<int>();
+                foreach (int choice in defaultChoices)
+                {
+                    defaultChoicesCollection.Add(choice);
+                }
+            }
+
             return _serverMethodExecutor.ExecuteMethod<Collection<int>>(RemoteHostMethodId.PromptForChoiceMultipleSelection,
-                new object[] { caption, message, choices, defaultChoices });
+                new object[] { caption, message, choices, defaultChoicesCollection });
         }
 
         /// <summary>
