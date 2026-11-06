@@ -145,13 +145,15 @@
     <value>입력 이름 "{0}"을(를) 메서드로 확인할 수 없습니다.</value>
   </data>
   <data name="NoMethodInvocationInRestrictedLanguageMode" xml:space="preserve">
-    <value>제한된 언어 모드에서는 메서드를 호출할 수 없습니다.</value>
+    <value>Cannot invoke a method in the RestrictedLanguage mode.</value>
+    <comment>{StrContains="RestrictedLanguage"}</comment>
   </data>
   <data name="NoShouldProcessForScriptBlockSet" xml:space="preserve">
     <value>-WhatIf 및 -Confirm 매개 변수는 스크립트 블록에서 지원되지 않습니다.</value>
   </data>
   <data name="OperationNotAllowedInRestrictedLanguageMode" xml:space="preserve">
     <value>RestrictedLanguage 모드에서는 '{0}' 작업이 허용되지 않습니다.</value>
+    <comment>{StrContains="RestrictedLanguage"}</comment>
   </data>
   <data name="OperatorNotSpecified" xml:space="preserve">
     <value>지정된 두 값을 비교하려면 연산자가 필요합니다. 명령에 올바른 연산자를 포함한 다음 명령을 다시 시도하세요. 예: Get-Process | Where-Object -Property Name -eq Idle</value>
@@ -188,6 +190,7 @@ ErrorAction, WarningAction, InformationAction, PipelineVariable</value>
     <value>ForEach-Object Cmdlet</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>제한된 언어 모드에서 '{0}' 형식에 대한 메서드 호출은 허용되지 않습니다.</value>
+    <value>Method invocation on type '{0}' will not be allowed when run in ConstrainedLanguage mode.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

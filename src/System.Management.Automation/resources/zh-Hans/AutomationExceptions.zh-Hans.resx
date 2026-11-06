@@ -205,6 +205,7 @@
     <value>编译的脚本块点源</value>
   </data>
   <data name="WDACCompiledScriptBlockLogMessage" xml:space="preserve">
-    <value>在“受约束语言”模式下，将不允许在当前范围中调用脚本块 "{0}"。脚本语言模式: {1}，上下文语言模式: {2}。</value>
+    <value>Script block '{0}' invocation into current scope will be disallowed in ConstrainedLanguage mode. Script language mode: {1}, Context language mode: {2}.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

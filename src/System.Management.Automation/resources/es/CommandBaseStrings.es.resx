@@ -232,12 +232,14 @@ Reviewed by TArcher on 2010-07-20
     <value>Comprobación de operador punto del procesamiento de bloques de script</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>El procesamiento de operador punto para el bloque de script "{0}" fallará en modo de lenguaje restringido porque su modo de lenguaje "{1}" no coincide con el modo de lenguaje actual "{2}".</value>
+    <value>Dot-Source processing for script block '{0}' will fail in ConstrainedLanguage mode because its language mode '{1}' does not match the current language mode '{2}'.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="SearcherWDACLogTitle" xml:space="preserve">
     <value>Buscador de comandos</value>
   </data>
   <data name="SearcherWDACLogMessage" xml:space="preserve">
     <value>El comando "{0}" del módulo "{1}" no es de confianza y no estará disponible en el modo ConstrainedLanguage.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

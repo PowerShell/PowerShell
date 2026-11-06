@@ -626,6 +626,7 @@
   </data>
   <data name="ImportPSFileNotAllowedInConstrainedLanguage" xml:space="preserve">
     <value>*.ps1 ファイルをモジュールとしてインポートすることは、ConstrainedLanguage モードでは許可されていません。</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="MismatchedLanguageModes" xml:space="preserve">
     <value>スクリプト モジュール {0} の読み込み中にエラーが発生しました。モジュール マニフェストが言語モードが異なるためです。マニフェスト言語モードは {1} で、モジュール言語モードが {2} です。すべてのモジュール ファイルが署名されているか、アプリケーションの許可リスト構成の一部であることを確認してください。</value>
@@ -638,6 +639,7 @@
   </data>
   <data name="CannotCreateModuleWithScriptBlock" xml:space="preserve">
     <value>セッションが ConstrainedLanguage モードの間は、新しいモジュールを作成できません。</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="CannotFindCoreCompatibleBuiltInModule" xml:space="preserve">
     <value>'Core' エディションと互換性のある組み込みモジュール '{0}' が見つかりません。PowerShell 組み込みモジュールが使用可能であることを確認してください。これらは通常、$PSHOME モジュール パスの下に PowerShell パッケージが付属しており、PowerShell が正常に機能するために必要です。</value>
@@ -646,42 +648,49 @@
     <value>Export-ModuleMember コマンドレット</value>
   </data>
   <data name="WDACExportModuleCommandLogMessage" xml:space="preserve">
-    <value>モジュール '{0}'、言語モード '{1}' が現在のセッション '{2}' とは異なるため、モジュール メンバーのエクスポートは制約付き言語モードで失敗します。</value>
+    <value>Export of module members will fail in ConstrainedLanguage mode because module '{0}', has a language mode '{1}' that is different from the current session '{2}'.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACImplicitFunctionExportLogTitle" xml:space="preserve">
     <value>モジュールの暗黙的な関数のエクスポート</value>
   </data>
   <data name="WDACImplicitFunctionExportLogMessage" xml:space="preserve">
-    <value>モジュール '{0}' の暗黙的な関数エクスポートは、信頼されている (完全言語モードで実行される) が、セッションが信頼されていない (制約言語モードで実行される) ため、拒否されます。モジュール関数は常にフル ネームで個別にエクスポートすることをお勧めします。</value>
+    <value>Implicit function export for module '{0}' will be denied because it is trusted (runs in FullLanguage mode) but the session is not trusted (runs in ConstrainedLanguage mode). It is best practice to always export module functions individually by full name.</value>
+    <comment>{StrContains="FullLanguage"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACScriptFileImportLogTitle" xml:space="preserve">
     <value>モジュールとしてスクリプト ファイルをインポートしています</value>
   </data>
   <data name="WDACScriptFileImportLogMessage" xml:space="preserve">
     <value>スクリプト ファイル '{0}' をモジュールとしてインポートすることは、ConstrainedLanguage モードでは許可されません。</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACModuleDotSourceLogTitle" xml:space="preserve">
     <value>モジュールにドットソース演算子が含まれています</value>
   </data>
   <data name="WDACModuleDotSourceLogMessage" xml:space="preserve">
-    <value>モジュール '{0}' のインポートは、ドットソース演算子を使用しながらワイルドカード文字を使用して関数をエクスポートするため、制約付き言語モードで失敗します。</value>
+    <value>Module '{0}' import will in fail ConstrainedLanguage mode because it exports functions using wildcard characters while also using the dot-source operator.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACModuleFnExportWithNestedModulesLogTitle" xml:space="preserve">
-    <value>"モジュールエクスポート関数</value>
+    <value>Module Exporting Functions</value>
   </data>
   <data name="WDACModuleFnExportWithNestedModulesLogMessage" xml:space="preserve">
-    <value>モジュール '{0}' は、名前のワイルドカード文字を使用して関数をエクスポートします。入れ子になったモジュール関数名は、制約付き言語モードで実行すると削除されます。</value>
+    <value>Module '{0}' exports functions using name wildcard characters. Any nested module function names will be removed when running in ConstrainedLanguage mode.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACNewModuleCommandLogTitle" xml:space="preserve">
-    <value>"New-Module コマンドレット</value>
+    <value>New-Module Cmdlet</value>
   </data>
   <data name="WDACNewModuleCommandLogMessage" xml:space="preserve">
-    <value>信頼されていない制約言語セッションからの新しいモジュールは、FullLanguage スクリプト ブロックの提供をブロックされます。</value>
+    <value>A new module from an untrusted ConstrainedLanguage session will be blocked from providing the FullLanguage script block.</value>
+    <comment>{StrContains="ConstrainedLanguage"}{StrContains="FullLanguage"}</comment>
   </data>
   <data name="WDACMismatchedLanguageModesTitle" xml:space="preserve">
-    <value>"モジュールの言語モードが一致しません</value>
+    <value>Module Mismatched Language Modes</value>
   </data>
   <data name="WDACMismatchedLanguageModesMessage" xml:space="preserve">
-    <value>親とは異なる言語モードの依存モジュールが読み込まれています。これは、制約付き言語モードでは許可されません。</value>
+    <value>A dependent module is being loaded that has a different language mode than the parent. This will be disallowed when in ConstrainedLanguage mode.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

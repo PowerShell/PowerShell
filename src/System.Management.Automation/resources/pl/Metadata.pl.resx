@@ -262,6 +262,7 @@
     <value>Sprawdzanie atrybutu ValidateTrustedData nie powiodło się</value>
   </data>
   <data name="WDACParameterArgNotTrustedMessage" xml:space="preserve">
-    <value>Argument parametru „{0}” nie jest zaufany i nie przejdzie sprawdzania atrybutu ValidateTrustedData w trybie Constrained Language.</value>
+    <value>The parameter argument '{0}' is not trusted and will fail the ValidateTrustedData parameter attribute check in ConstrainedLanguage mode.</value>
+    <comment>{StrContains="ValidateTrustedData"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

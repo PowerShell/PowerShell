@@ -184,7 +184,8 @@
     <value>Relace je zaneprázdněna. Jakmile bude relace dostupná, budete k ní připojeni. Pokud chcete zrušit příkaz Enter-PSSession, stiskněte Ctrl+C.</value>
   </data>
   <data name="NotSupportedOnRestrictedRunspace" xml:space="preserve">
-    <value>Příkaz nelze dokončit. Spouštění skriptů není v této konfiguraci relace podporováno. K tomu může dojít, pokud je konfigurace relace v režimu bez jazyka.</value>
+    <value>The command cannot be completed. Script invocation is not supported in this session configuration. This can occur if the session configuration is in NoLanguage mode.</value>
+    <comment>{StrContains="NoLanguage"}</comment>
   </data>
   <data name="DisconnectConnectNotSupported" xml:space="preserve">
     <value>Operace Disconnect a Connect nelze používat v místních prostředích runspace.</value>

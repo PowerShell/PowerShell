@@ -250,12 +250,14 @@
     <value>不允許叫用方法或屬性</value>
   </data>
   <data name="WDACBinderInvocationLogMessage" xml:space="preserve">
-    <value>在未受信任指令碼的限制語言模式中，不允許在類型 '{1}' 上叫用方法或屬性 '{0}'。</value>
+    <value>Invocation of Method or Property '{0}' on type '{1}' will not be allowed in ConstrainedLanguage mode for untrusted scripts.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACBinderTypeCreationLogTitle" xml:space="preserve">
     <value>不允許建立類型</value>
   </data>
   <data name="WDACBinderTypeCreationLogMessage" xml:space="preserve">
-    <value>在未受信任指令碼的限制語言模式中，不允許在參數繫結其間建立類型 '{0}'。</value>
+    <value>Creation of Type '{0}' will not be allowed during parameter binding in ConstrainedLanguage mode for untrusted scripts.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

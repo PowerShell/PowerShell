@@ -145,13 +145,15 @@
     <value>Název vstupu {0} nelze přiřadit metodě.</value>
   </data>
   <data name="NoMethodInvocationInRestrictedLanguageMode" xml:space="preserve">
-    <value>Nelze vyvolat metodu v režimu omezeného jazyka.</value>
+    <value>Cannot invoke a method in the RestrictedLanguage mode.</value>
+    <comment>{StrContains="RestrictedLanguage"}</comment>
   </data>
   <data name="NoShouldProcessForScriptBlockSet" xml:space="preserve">
     <value>Parametry -WhatIf a -Confirm nejsou podporovány pro bloky skriptu.</value>
   </data>
   <data name="OperationNotAllowedInRestrictedLanguageMode" xml:space="preserve">
     <value>Operace {0} není v režimu RestrictedLanguage povolena.</value>
+    <comment>{StrContains="RestrictedLanguage"}</comment>
   </data>
   <data name="OperatorNotSpecified" xml:space="preserve">
     <value>K porovnání dvou zadaných hodnot je vyžadován operátor. Do příkazu zahrňte platný operátor a potom příkaz spusťte znovu. Například Get-Process | Where-Object -Property Name -eq Idle</value>
@@ -188,6 +190,7 @@ ErrorAction, WarningAction, InformationAction, PipelineVariable</value>
     <value>Rutina ForEach-Object</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>Vyvolání metody u typu {0} nebude povoleno, pokud bude spuštěno v režimu omezeného jazyka.</value>
+    <value>Method invocation on type '{0}' will not be allowed when run in ConstrainedLanguage mode.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

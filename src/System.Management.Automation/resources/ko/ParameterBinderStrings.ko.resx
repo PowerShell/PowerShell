@@ -250,12 +250,14 @@
     <value>메서드 또는 속성 호출은 허용되지 않습니다.</value>
   </data>
   <data name="WDACBinderInvocationLogMessage" xml:space="preserve">
-    <value>신뢰할 수 없는 스크립트에 대한 제한된 언어 모드에서는 '{1}' 형식의 메서드 또는 속성 '{0}' 호출을 허용하지 않습니다.</value>
+    <value>Invocation of Method or Property '{0}' on type '{1}' will not be allowed in ConstrainedLanguage mode for untrusted scripts.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACBinderTypeCreationLogTitle" xml:space="preserve">
     <value>형식 만들기가 허용되지 않음</value>
   </data>
   <data name="WDACBinderTypeCreationLogMessage" xml:space="preserve">
-    <value>신뢰할 수 없는 스크립트에 대한 제한된 언어 모드에서는 매개 변수 바인딩 중에 '{0}' 형식을 만들 수 없습니다.</value>
+    <value>Creation of Type '{0}' will not be allowed during parameter binding in ConstrainedLanguage mode for untrusted scripts.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

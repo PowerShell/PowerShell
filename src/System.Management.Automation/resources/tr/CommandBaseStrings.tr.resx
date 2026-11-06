@@ -232,12 +232,14 @@ Reviewed by TArcher on 2010-07-20
     <value>Betik Bloğu İşleme Dot-Source Denetimi</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>Betik bloğu '{0}' için Dot-Source işleme, dil modu '{1}' geçerli dil modu '{2}' ile eşleşmediği için Kısıtlı Dil modunda başarısız olur.</value>
+    <value>Dot-Source processing for script block '{0}' will fail in ConstrainedLanguage mode because its language mode '{1}' does not match the current language mode '{2}'.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="SearcherWDACLogTitle" xml:space="preserve">
     <value>Komut Arayıcı</value>
   </data>
   <data name="SearcherWDACLogMessage" xml:space="preserve">
-    <value>'{1}' modülündeki '{0}' komutuna güvenilmiyor ve Kısıtlı Dil modunda erişilebilir olmayacak.</value>
+    <value>Command '{0}' in module '{1}' is untrusted and will not be accessible in ConstrainedLanguage mode.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

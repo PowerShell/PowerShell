@@ -154,6 +154,7 @@
     <value>Add-Type-Cmdlet</value>
   </data>
   <data name="AddTypeLogMessage" xml:space="preserve">
-    <value>Das Add-Type-cmdlet ist im ConstrainedLanguage-Modus nicht zulässig.</value>
+    <value>Das Cmdlet Add-Type ist im ConstrainedLanguage-Modus nicht zulässig.</value>
+    <comment>{StrContains="Add-Type"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

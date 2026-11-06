@@ -164,5 +164,6 @@
   </data>
   <data name="ExternalScriptWDACLogMessage" xml:space="preserve">
     <value>指令檔 '{0}' 不受原則信任，將以 ConstrainedLanguage 模式執行。</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

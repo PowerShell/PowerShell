@@ -145,13 +145,15 @@
     <value>Не удается сопоставить имя ввода {0} с методом.</value>
   </data>
   <data name="NoMethodInvocationInRestrictedLanguageMode" xml:space="preserve">
-    <value>Нельзя вызывать метод в режиме ограниченного языка.</value>
+    <value>Cannot invoke a method in the RestrictedLanguage mode.</value>
+    <comment>{StrContains="RestrictedLanguage"}</comment>
   </data>
   <data name="NoShouldProcessForScriptBlockSet" xml:space="preserve">
     <value>Параметры -WhatIf и -Confirm не поддерживаются для блоков сценария.</value>
   </data>
   <data name="OperationNotAllowedInRestrictedLanguageMode" xml:space="preserve">
     <value>Операция {0} не разрешена в режиме RestrictedLanguage.</value>
+    <comment>{StrContains="RestrictedLanguage"}</comment>
   </data>
   <data name="OperatorNotSpecified" xml:space="preserve">
     <value>Требуется оператор для сравнения двух указанных значений. Укажите допустимый оператор в команде и повторите попытку. Например, Get-Process | Where-Object -Property Name -eq Idle</value>
@@ -188,6 +190,7 @@ ErrorAction, WarningAction, InformationAction, PipelineVariable</value>
     <value>Командлет ForEach-Object</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>Вызов метода для типа {0} будет запрещен при выполнении в режиме ограниченного языка (Constrained Language).</value>
+    <value>Method invocation on type '{0}' will not be allowed when run in ConstrainedLanguage mode.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

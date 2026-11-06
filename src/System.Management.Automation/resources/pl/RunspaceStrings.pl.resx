@@ -184,7 +184,8 @@
     <value>Sesja jest zajęta. Połączysz się z nią, gdy tylko będzie dostępna. Aby anulować polecenie Enter-PSSession, naciśnij Ctrl-C.</value>
   </data>
   <data name="NotSupportedOnRestrictedRunspace" xml:space="preserve">
-    <value>Nie można wykonać polecenia. Wywołanie skryptu nie jest obsługiwane w tej konfiguracji sesji. Może się tak zdarzyć, jeśli konfiguracja sesji jest w trybie bez języka.</value>
+    <value>The command cannot be completed. Script invocation is not supported in this session configuration. This can occur if the session configuration is in NoLanguage mode.</value>
+    <comment>{StrContains="NoLanguage"}</comment>
   </data>
   <data name="DisconnectConnectNotSupported" xml:space="preserve">
     <value>Nie można używać operacji rozłączania i łączenia w lokalnych obszarach uruchomieniowych.</value>

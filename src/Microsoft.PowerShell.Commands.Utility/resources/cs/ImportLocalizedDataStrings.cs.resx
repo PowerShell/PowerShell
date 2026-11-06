@@ -148,5 +148,6 @@
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
     <value>V režimu ConstrainedLanguage nebudou povolené další podporované příkazy zadané parametrem SupportedCommand.</value>
+    <comment>{StrContains="SupportedCommand"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

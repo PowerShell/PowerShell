@@ -154,7 +154,7 @@
     <value>Es ist kein Runspace zum Ausführen von Befehlen in diesem Thread verfügbar. Sie können einen in der DefaultRunspace-Eigenschaft des Typs „System.Management.Automation.Runspaces.Runspace“ angeben. Der Befehl, den Sie aufrufen wollten, war: {0}</value>
   </data>
   <data name="CannotConnect" xml:space="preserve">
-    <value>Für dieses PowerShell-Objekt kann keine Verbindung hergestellt werden, da es keinem Remoterunspace oder Runspacepool zugeordnet ist.</value>
+    <value>Für dieses PowerShell-Objekt kann keine Verbindung hergestellt werden, da es keinem Remote-Runspace oder Runspace-Pool zugeordnet ist.</value>
   </data>
   <data name="DiscOnSyncCommand" xml:space="preserve">
     <value>Der ausgeführte Befehl wurde getrennt, wird aber weiterhin auf dem Remoteserver ausgeführt.  Stellen Sie die Verbindung wieder her, um den Status des Befehlsvorgangs und die Ausgabedaten abzurufen.</value>

@@ -184,7 +184,8 @@
     <value>会话正忙。会话可用后，你将立即连接到会话。若要取消 Enter-PSSession 命令，请按 Ctrl-C。</value>
   </data>
   <data name="NotSupportedOnRestrictedRunspace" xml:space="preserve">
-    <value>无法完成该命令。此会话配置中不支持脚本调用。如果会话配置处于无语言模式，则可能会发生这种情况。</value>
+    <value>The command cannot be completed. Script invocation is not supported in this session configuration. This can occur if the session configuration is in NoLanguage mode.</value>
+    <comment>{StrContains="NoLanguage"}</comment>
   </data>
   <data name="DisconnectConnectNotSupported" xml:space="preserve">
     <value>无法在本地运行空间上使用 Disconnect 和 Connect 操作。</value>
