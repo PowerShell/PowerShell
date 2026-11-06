@@ -5,8 +5,16 @@ Describe "AppLocker policy test files at startup" -Tags 'CI' {
     BeforeAll {
         $skipTest = -not $IsWindows
         if (-not $skipTest) {
+            Import-Module HelpersCommon
+
+            $systemPolicy = [System.Management.Automation.Security.SystemPolicy]
             $flags = [System.Reflection.BindingFlags]'NonPublic, Static'
-            $hasScriptPolicy = [System.Management.Automation.Security.SystemPolicy].GetMethod('HasAppLockerOrSaferScriptPolicy', $flags).Invoke($null, $null)
+            $hasScriptPolicy = $systemPolicy.GetMethod('HasAppLockerOrSaferScriptPolicy', $flags).Invoke($null, $null)
+
+            # When WDAC enforces lockdown, the AppLocker check is never reached.
+            $null = $systemPolicy::GetSystemLockdownPolicy()
+            $wldpPolicy = $systemPolicy.GetField('s_cachedWldpSystemPolicy', $flags).GetValue($null)
+            $expectTestFiles = $hasScriptPolicy -and ($wldpPolicy -ne [System.Management.Automation.Security.SystemEnforcementMode]::Enforce)
         }
     }
 
@@ -23,7 +31,7 @@ Describe "AppLocker policy test files at startup" -Tags 'CI' {
         try {
             $env:TEMP = $tempDir
             $env:TMP = $tempDir
-            & "$PSHOME/pwsh" -NoProfile -NonInteractive -Command exit
+            Start-NativeExecution { & "$PSHOME/pwsh" -NoProfile -NonInteractive -Command exit }
             Start-Sleep -Milliseconds 500
             $created = @(Get-Event -SourceIdentifier $sourceId -ErrorAction Ignore)
         }
@@ -35,7 +43,7 @@ Describe "AppLocker policy test files at startup" -Tags 'CI' {
             $watcher.Dispose()
         }
 
-        if ($hasScriptPolicy) {
+        if ($expectTestFiles) {
             $created.Count | Should -BeGreaterThan 0
         }
         else {

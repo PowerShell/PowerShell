@@ -74,10 +74,30 @@ namespace PSTests.Parallel
         }
 
         [Fact]
+        public static void TestRegistryKeyMayExist()
+        {
+            string testKeyPath = @"Software\PowerShellTests\SystemPolicy_" + Guid.NewGuid().ToString("N");
+            string script = testKeyPath + @"\SrpV2\Script";
+            try
+            {
+                Assert.False(SystemPolicy.RegistryKeyMayExist(Registry.CurrentUser, script));
+
+                // An existing AppLocker key counts even when it is empty.
+                Registry.CurrentUser.CreateSubKey(script).Dispose();
+                Assert.True(SystemPolicy.RegistryKeyMayExist(Registry.CurrentUser, script));
+            }
+            finally
+            {
+                Registry.CurrentUser.DeleteSubKeyTree(testKeyPath, throwOnMissingSubKey: false);
+            }
+        }
+
+        [Fact]
         public static void TestHasAppLockerOrSaferScriptPolicyMatchesMachine()
         {
-            bool expected = File.Exists(Path.Combine(Environment.SystemDirectory, "AppLocker", "Script.AppLocker"))
-                || !SystemPolicy.IsPolicyKeyEmpty(Registry.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\SrpV2\Script", ignoredValueName: null)
+            bool expected = (Environment.Is64BitOperatingSystem && !Environment.Is64BitProcess)
+                || SystemPolicy.PolicyFileMayExist(Path.Combine(Environment.SystemDirectory, "AppLocker", "Script.AppLocker"))
+                || SystemPolicy.RegistryKeyMayExist(Registry.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\SrpV2\Script")
                 || !SystemPolicy.IsPolicyKeyEmpty(Registry.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\Safer\CodeIdentifiers", "AuthenticodeEnabled")
                 || !SystemPolicy.IsPolicyKeyEmpty(Registry.CurrentUser, @"SOFTWARE\Policies\Microsoft\Windows\Safer\CodeIdentifiers", "AuthenticodeEnabled");
 

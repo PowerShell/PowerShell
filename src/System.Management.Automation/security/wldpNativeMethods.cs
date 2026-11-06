@@ -481,11 +481,18 @@ namespace System.Management.Automation.Security
         /// <returns>False only when no script policy is configured on the machine.</returns>
         internal static bool HasAppLockerOrSaferScriptPolicy()
         {
+            // A 32-bit process on 64-bit Windows sees a redirected system directory, so it cannot check the
+            // compiled policy file reliably. Keep the probe in that case.
+            if (Environment.Is64BitOperatingSystem && !Environment.Is64BitProcess)
+            {
+                return true;
+            }
+
             // AppLocker compiles the effective script rules (group policy, local policy or MDM) into this file.
             string compiledScriptPolicy = IO.Path.Combine(Environment.SystemDirectory, "AppLocker", "Script.AppLocker");
 
             return PolicyFileMayExist(compiledScriptPolicy)
-                || !IsPolicyKeyEmpty(Registry.LocalMachine, AppLockerScriptPolicyKey, ignoredValueName: null)
+                || RegistryKeyMayExist(Registry.LocalMachine, AppLockerScriptPolicyKey)
                 || !IsPolicyKeyEmpty(Registry.LocalMachine, SaferCodeIdentifiersKey, SaferAuthenticodeEnabledValue)
                 || !IsPolicyKeyEmpty(Registry.CurrentUser, SaferCodeIdentifiersKey, SaferAuthenticodeEnabledValue);
         }
@@ -509,6 +516,22 @@ namespace System.Management.Automation.Security
                 return false;
             }
             catch (Exception e) when (e is IO.IOException or UnauthorizedAccessException)
+            {
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// Returns false only if the registry key does not exist.
+        /// </summary>
+        internal static bool RegistryKeyMayExist(RegistryKey root, string subKeyPath)
+        {
+            try
+            {
+                using RegistryKey key = root.OpenSubKey(subKeyPath);
+                return key is not null;
+            }
+            catch (Exception e) when (e is System.Security.SecurityException or UnauthorizedAccessException or IO.IOException)
             {
                 return true;
             }
