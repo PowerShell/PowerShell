@@ -1698,7 +1698,6 @@ Start-PSBootStrap
 precheck
 SKUs
 powershell.config.json
-Microsoft.PowerShell.GlobalTool.Shim.csproj
 InvokeCommand
 UseDotNet
 vmImage
