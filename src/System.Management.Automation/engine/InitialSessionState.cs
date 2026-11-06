@@ -4653,6 +4653,12 @@ end {
                     Platform.IsCoreCLR,
                     string.Empty,
                     ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
+
+                new SessionStateVariableEntry(
+                    SpecialVariables.IsElevated,
+                    Platform.IsElevated,
+                    string.Empty,
+                    ScopedItemOptions.Constant | ScopedItemOptions.AllScope),
                 #endregion
             };
 
