@@ -97,7 +97,7 @@ namespace System.Management.Automation
         /// </summary>
         private void ResolveCurrentDirectoryInLookupPaths()
         {
-            var indexesToRemove = new SortedDictionary<int, int>();
+            SortedDictionary<int, int>? indexesToRemove = null;
             int removalListCount = 0;
 
             string fileSystemProviderName = _context.ProviderNames.FileSystem;
@@ -199,6 +199,7 @@ namespace System.Management.Automation
                             // The relative path index is less than the explicit path,
                             // so remove the explicit path.
 
+                            indexesToRemove ??= new SortedDictionary<int, int>();
                             indexesToRemove.Add(removalListCount++, existingIndex);
                             _lookupPaths[index] = resolvedDirectory;
                         }
@@ -207,6 +208,7 @@ namespace System.Management.Automation
                             // The explicit path index is less than the relative path
                             // index, so remove the relative path.
 
+                            indexesToRemove ??= new SortedDictionary<int, int>();
                             indexesToRemove.Add(removalListCount++, index);
                         }
                     }
@@ -222,6 +224,7 @@ namespace System.Management.Automation
                     // The directory couldn't be resolved so remove it from the
                     // lookup paths.
 
+                    indexesToRemove ??= new SortedDictionary<int, int>();
                     indexesToRemove.Add(removalListCount++, index);
                 }
             }
@@ -230,10 +233,13 @@ namespace System.Management.Automation
             // As each element is removed, elements that follow are moved up to occupy
             // the emptied index.
 
-            for (int removeIndex = indexesToRemove.Count; removeIndex > 0; --removeIndex)
+            if (indexesToRemove is not null)
             {
-                int indexToRemove = indexesToRemove[removeIndex - 1];
-                _lookupPaths.RemoveAt(indexToRemove);
+                for (int removeIndex = indexesToRemove.Count; removeIndex > 0; --removeIndex)
+                {
+                    int indexToRemove = indexesToRemove[removeIndex - 1];
+                    _lookupPaths.RemoveAt(indexToRemove);
+                }
             }
         }
 
