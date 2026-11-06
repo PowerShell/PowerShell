@@ -142,7 +142,11 @@ namespace System.Management.Automation
 
                     string externalHelpFile = current.HelpFile;
 
-                    if (!string.IsNullOrEmpty(externalHelpFile))
+                    if (Utils.PathIsNetworkOrDevicePath(externalHelpFile))
+                    {
+                        s_tracer.WriteLine("Ignoring network/device .EXTERNALHELP path '{0}' for module '{1}'; falling back to the module help file.", externalHelpFile, moduleName);
+                    }
+                    else if (!string.IsNullOrEmpty(externalHelpFile))
                     {
                         FileInfo helpFileInfo = new FileInfo(externalHelpFile);
                         DirectoryInfo dirToSearch = helpFileInfo.Directory;

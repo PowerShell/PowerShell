@@ -1288,6 +1288,31 @@ namespace System.Management.Automation
 #endif
         }
 
+        /// <summary>
+        /// Returns true when the path is a network path (UNC, WebDAV, or mapped network drive)
+        /// or a Win32 device path.
+        /// Separators are normalized to backslashes first because downstream sinks rewrite
+        /// forward-slash spellings (e.g. //?/UNC/...) into the backslash form before probing.
+        /// PathIsNetworkPath (not the managed Uri parser) is used because Uri.TryCreate rejects
+        /// WebDAV forms such as \\host@SSL@443\..., and it additionally classifies mapped
+        /// network drives (e.g. Z:\ backed by a UNC share) that carry no leading backslashes.
+        /// </summary>
+        internal static bool PathIsNetworkOrDevicePath(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                return false;
+            }
+
+            string normalizedPath = path.Replace(
+                Path.AltDirectorySeparatorChar,
+                Path.DirectorySeparatorChar);
+
+            return normalizedPath.StartsWith(@"\\", StringComparison.Ordinal) ||
+                   FileSystemProvider.PathIsNetworkPath(normalizedPath) ||
+                   PathIsDevicePath(normalizedPath);
+        }
+
         internal static readonly string PowerShellAssemblyStrongNameFormat =
             "{0}, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
 

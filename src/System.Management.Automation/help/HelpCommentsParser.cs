@@ -642,6 +642,25 @@ namespace System.Management.Automation
                 return null;
             }
 
+            // Block network paths (UNC \\server\share, WebDAV \\host@SSL@443\..., mapped
+            // network drives) and Win32 device-path forms (\\?\UNC\..., \\.\..., \\;LanmanRedirector\...)
+            // in the raw .EXTERNALHELP token. Directory.Exists() (reached via MUIFileSearcher below)
+            // routes all of these through the SMB/WebDAV redirector, leaking Net-NTLMv2 to an
+            // attacker-chosen host.
+            //
+            // Classify the raw token, not the Path.Combine result: a rooted token (the attack form)
+            // is returned by Path.Combine verbatim, so it is still caught; a relative token only ever
+            // combines onto the script/module's own directory, so if that directory is itself a share
+            // the help loads from the same server the module was already read from -- no new credential
+            // exposure -- and a legitimately share-hosted module with a relative .EXTERNALHELP keeps
+            // working instead of silently losing its help.
+            // Utils.PathIsNetworkOrDevicePath normalizes separators first so forward-slash spellings
+            // (e.g. //?/UNC/...) cannot slip past the classifier.
+            if (Utils.PathIsNetworkOrDevicePath(_sections.MamlHelpFile))
+            {
+                return null;
+            }
+
             string helpFileToLoad = _sections.MamlHelpFile;
             Collection<string> searchPaths = new Collection<string>();
             string scriptFile = ((IScriptCommandInfo)commandInfo).ScriptBlock.File;

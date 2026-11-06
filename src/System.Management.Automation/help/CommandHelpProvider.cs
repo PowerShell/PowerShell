@@ -1262,6 +1262,20 @@ namespace System.Management.Automation
                 commandHelpRequest.Target = helpInfo.ForwardTarget;
                 commandHelpRequest.CommandOrigin = CommandOrigin.Internal; // a public command can forward help to a private command
 
+                // Defense-in-depth: a malicious .FORWARDHELPTARGETNAME can point at a
+                // UNC/device/mapped-drive path. The forwarded target flows into CommandSearcher
+                // (LookupCommandInfo / ExactMatchHelp), whose network-probe pre-check is bypassed
+                // for Internal-origin searches. No outbound probe was reproduced from this sink in
+                // testing, but a forward target is a command name, never a network/device path, so
+                // we refuse to forward those - staying consistent with the .EXTERNALHELP/class help
+                // sinks and guarding against a future command-discovery change that would resolve
+                // such a target to a File.Exists probe and leak the caller's Net-NTLMv2 hash.
+                if (Utils.PathIsNetworkOrDevicePath(commandHelpRequest.Target))
+                {
+                    s_tracer.WriteLine("Refusing to forward help to network/device target '{0}'.", commandHelpRequest.Target);
+                    yield break;
+                }
+
                 // We may know what category to forward to.  If so, just set it.  If not, look up the
                 // command and determine it's category.  For aliases, we definitely don't know the category
                 // to forward to, so always do the lookup.
