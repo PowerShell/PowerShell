@@ -49,6 +49,8 @@ The flags can also be enabled together. The shared
 [`insert-nuget-config-azfeed.yml`](../../.pipelines/templates/insert-nuget-config-azfeed.yml)
 template installs the Azure Artifacts Credential Provider and supplies an Azure DevOps
 access token through the secret `VSS_NUGET_EXTERNAL_FEED_ENDPOINTS` variable.
+Build steps must explicitly map this secret variable into their `env` block,
+including module-only builds; Azure Pipelines does not automatically export secret variables.
 The `powershell-net-early-access` service connection identity must have read access
 to the module feed. The existing PowerShell feed continues to use its separate PAT.
 For local restores, install the Azure Artifacts Credential Provider and use
