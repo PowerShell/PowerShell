@@ -32,6 +32,8 @@ namespace System.Management.Automation
     {
         private static readonly AnalysisCacheData s_cacheData = AnalysisCacheData.Get();
 
+        internal static void SerializePendingCache() => s_cacheData.SerializeIfPending();
+
         // This dictionary shouldn't see much use, so low concurrency and capacity
         private static readonly ConcurrentDictionary<string, string> s_modulesBeingAnalyzed =
             new(concurrencyLevel: 1, capacity: 2, StringComparer.OrdinalIgnoreCase);
@@ -676,6 +678,15 @@ namespace System.Management.Automation
             // We want to make sure we only queue one task.
             if (_saveCacheToDisk && Interlocked.Increment(ref _saveCacheToDiskQueued) == 1)
             {
+                // A process that exits before the delayed write below (for example pwsh -Command)
+                // would otherwise never save its analysis, and the next process would redo it.
+                // The handler is static and only saves the process-wide cache, so the temporary
+                // instances read while merging another process's cache are not kept alive until exit.
+                if (Interlocked.Exchange(ref s_exitHandlerRegistered, 1) == 0)
+                {
+                    AppDomain.CurrentDomain.ProcessExit += static (sender, e) => AnalysisCache.SerializePendingCache();
+                }
+
                 Task.Run(async delegate
                 {
                     // Wait a while before assuming we've finished the updates,
@@ -691,8 +702,23 @@ namespace System.Management.Automation
                         await Task.Delay(3000).ConfigureAwait(false);
                         counter2 = _saveCacheToDiskQueued;
                     } while (counter1 != counter2);
-                    Serialize(s_cacheStoreLocation);
+                    SerializeIfPending();
                 });
+            }
+        }
+
+        private static int s_exitHandlerRegistered;
+
+        private readonly object _serializeLock = new object();
+
+        internal void SerializeIfPending()
+        {
+            lock (_serializeLock)
+            {
+                if (_saveCacheToDisk && Volatile.Read(ref _saveCacheToDiskQueued) > 0)
+                {
+                    Serialize(s_cacheStoreLocation);
+                }
             }
         }
 
