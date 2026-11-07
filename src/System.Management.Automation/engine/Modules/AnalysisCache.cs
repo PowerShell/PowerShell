@@ -676,6 +676,13 @@ namespace System.Management.Automation
             // We want to make sure we only queue one task.
             if (_saveCacheToDisk && Interlocked.Increment(ref _saveCacheToDiskQueued) == 1)
             {
+                // A process that exits before the delayed write below (for example pwsh -Command)
+                // would otherwise never save its analysis, and the next process would redo it.
+                if (Interlocked.Exchange(ref _exitHandlerRegistered, 1) == 0)
+                {
+                    AppDomain.CurrentDomain.ProcessExit += (sender, e) => SerializeIfPending();
+                }
+
                 Task.Run(async delegate
                 {
                     // Wait a while before assuming we've finished the updates,
@@ -691,8 +698,23 @@ namespace System.Management.Automation
                         await Task.Delay(3000).ConfigureAwait(false);
                         counter2 = _saveCacheToDiskQueued;
                     } while (counter1 != counter2);
-                    Serialize(s_cacheStoreLocation);
+                    SerializeIfPending();
                 });
+            }
+        }
+
+        private int _exitHandlerRegistered;
+
+        private readonly object _serializeLock = new object();
+
+        private void SerializeIfPending()
+        {
+            lock (_serializeLock)
+            {
+                if (_saveCacheToDisk && Volatile.Read(ref _saveCacheToDiskQueued) > 0)
+                {
+                    Serialize(s_cacheStoreLocation);
+                }
             }
         }
 
