@@ -32,6 +32,8 @@ namespace System.Management.Automation
     {
         private static readonly AnalysisCacheData s_cacheData = AnalysisCacheData.Get();
 
+        internal static void SerializePendingCache() => s_cacheData.SerializeIfPending();
+
         // This dictionary shouldn't see much use, so low concurrency and capacity
         private static readonly ConcurrentDictionary<string, string> s_modulesBeingAnalyzed =
             new(concurrencyLevel: 1, capacity: 2, StringComparer.OrdinalIgnoreCase);
@@ -678,9 +680,11 @@ namespace System.Management.Automation
             {
                 // A process that exits before the delayed write below (for example pwsh -Command)
                 // would otherwise never save its analysis, and the next process would redo it.
-                if (Interlocked.Exchange(ref _exitHandlerRegistered, 1) == 0)
+                // The handler is static and only saves the process-wide cache, so the temporary
+                // instances read while merging another process's cache are not kept alive until exit.
+                if (Interlocked.Exchange(ref s_exitHandlerRegistered, 1) == 0)
                 {
-                    AppDomain.CurrentDomain.ProcessExit += (sender, e) => SerializeIfPending();
+                    AppDomain.CurrentDomain.ProcessExit += static (sender, e) => AnalysisCache.SerializePendingCache();
                 }
 
                 Task.Run(async delegate
@@ -703,11 +707,11 @@ namespace System.Management.Automation
             }
         }
 
-        private int _exitHandlerRegistered;
+        private static int s_exitHandlerRegistered;
 
         private readonly object _serializeLock = new object();
 
-        private void SerializeIfPending()
+        internal void SerializeIfPending()
         {
             lock (_serializeLock)
             {
