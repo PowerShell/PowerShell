@@ -52,6 +52,53 @@ namespace mvc.Controllers
             await Response.Body.WriteAsync(body, 0, body.Length);
         }
 
+        public async void Utf8BOM()
+        {
+            MediaTypeHeaderValue mediaType = new MediaTypeHeaderValue("text/html");
+            Response.ContentType = mediaType.ToString();
+            byte[] body = Encoding.UTF8.GetPreamble().Concat(Encoding.UTF8.GetBytes("hello")).ToArray();
+
+            await Response.Body.WriteAsync(body, 0, body.Length);
+        }
+
+        public async void Unicode()
+        {
+            MediaTypeHeaderValue mediaType = new MediaTypeHeaderValue("text/html");
+            Response.ContentType = mediaType.ToString();
+            byte[] body = Encoding.Unicode.GetPreamble().Concat(Encoding.Unicode.GetBytes("hello")).ToArray();
+
+            await Response.Body.WriteAsync(body, 0, body.Length);
+        }
+
+        public async void BigEndianUnicode()
+        {
+            MediaTypeHeaderValue mediaType = new MediaTypeHeaderValue("text/html");
+            Response.ContentType = mediaType.ToString();
+            byte[] body = Encoding.BigEndianUnicode.GetPreamble().Concat(Encoding.BigEndianUnicode.GetBytes("hello")).ToArray();
+
+            await Response.Body.WriteAsync(body, 0, body.Length);
+        }
+
+        public async void Utf32()
+        {
+            MediaTypeHeaderValue mediaType = new MediaTypeHeaderValue("text/html");
+            Response.ContentType = mediaType.ToString();
+            byte[] body = Encoding.UTF32.GetPreamble().Concat(Encoding.UTF32.GetBytes("hello")).ToArray();
+
+            await Response.Body.WriteAsync(body, 0, body.Length);
+        }
+
+        public async void Utf32BE()
+        {
+            MediaTypeHeaderValue mediaType = new MediaTypeHeaderValue("text/html");
+            Response.ContentType = mediaType.ToString();
+
+            UTF32Encoding utf32BE = new(bigEndian: true, byteOrderMark: true);
+            byte[] body = utf32BE.GetPreamble().Concat(utf32BE.GetBytes("hello")).ToArray();
+
+            await Response.Body.WriteAsync(body, 0, body.Length);
+        }
+
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
