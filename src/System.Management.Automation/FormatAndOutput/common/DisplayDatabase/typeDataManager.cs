@@ -409,6 +409,28 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     continue;
                 }
 
+                if (file.FormatDataXml != null)
+                {
+                    XmlFileLoadInfo info =
+                        new XmlFileLoadInfo("Inline", "Inline XML", file.Errors, file.PSSnapinName);
+                    using (TypeInfoDataBaseLoader loader = new TypeInfoDataBaseLoader())
+                    {
+                        if (!loader.LoadXmlString(file.FormatDataXml, info, db, expressionFactory, preValidated))
+                            success = false;
+
+                        foreach (XmlLoaderLoggerEntry entry in loader.LogEntries)
+                        {
+                            if (entry.entryType == XmlLoaderLoggerEntry.EntryType.Error)
+                            {
+                                string mshsnapinMessage = StringUtil.Format(FormatAndOutXmlLoadingStrings.MshSnapinQualifiedError, info.psSnapinName, entry.message);
+                                info.errors.Add(mshsnapinMessage);
+                            }
+                        }
+                        logEntries.AddRange(loader.LogEntries);
+                    }
+                    continue;
+                }
+
                 if (etwEnabled)
                 {
                     RunspaceEventSource.Log.ProcessFormatFileStart(file.FullPath);
