@@ -51,6 +51,15 @@ namespace Microsoft.PowerShell
         {
             ArgumentNullException.ThrowIfNull(args);
 
+#if !UNIX
+            // On Windows with consoleAllocationPolicy=detached in the manifest,
+            // no console is auto-allocated by the OS. We must allocate one ourselves
+            // before anything touches CONOUT$/CONIN$ handles.
+            // On older Windows the manifest element is ignored and the OS auto-allocates
+            // a console, so GetConsoleWindow() != 0 and EarlyConsoleInit is a no-op.
+            EarlyConsoleInit(args);
+#endif
+
 #if DEBUG
             if (args.Length > 0 && !string.IsNullOrEmpty(args[0]) && args[0]!.Equals("-isswait", StringComparison.OrdinalIgnoreCase))
             {
@@ -120,5 +129,95 @@ namespace Microsoft.PowerShell
 
             return exitCode;
         }
+
+#if !UNIX
+        /// <summary>
+        /// Allocates a console early in startup to support consoleAllocationPolicy=detached.
+        /// On newer Windows (with the detached policy active), the OS does not auto-allocate
+        /// a console for CUI apps. On older Windows the manifest is ignored, so the OS
+        /// auto-allocates a console and GetConsoleWindow() returns non-zero (early return).
+        /// </summary>
+        private static void EarlyConsoleInit(string[] args)
+        {
+            nint existingConsole = Interop.Windows.GetConsoleWindow();
+            if (existingConsole != nint.Zero)
+            {
+                // Console already exists (inherited from parent or auto-allocated on older Windows).
+                // Leave -WindowStyle handling to the existing SetConsoleMode code path.
+                return;
+            }
+
+            // No console exists (GetConsoleWindow() == 0). This means either:
+            //   (a) The detached manifest policy is active (newer Windows), or
+            //   (b) DETACHED_PROCESS — no console at all, or
+            //   (c) CREATE_NO_WINDOW — console session exists but no window.
+            //
+            // For (c), AllocConsoleWithOptions returns ExistingConsole (no-op).
+            // For (a) and (b), behavior depends on the mode:
+            //   Default mode: allocates if the parent would have given us a console
+            //     on prior Windows versions, returns NoConsole for DETACHED_PROCESS.
+            //   NoWindow mode: always creates a console session (overrides DETACHED).
+            //
+            // When -WindowStyle Hidden is specified, we intentionally use NoWindow
+            // even though it overrides DETACHED_PROCESS — the user explicitly asked
+            // for invisible PowerShell with working I/O, and the alternative (no
+            // console, crashing on stdin/stdout access) is strictly worse.
+            //
+            // If the API is not available (older Windows), TryAlloc* returns false.
+            // On older Windows the manifest is ignored and the OS auto-allocates
+            // a console, so GetConsoleWindow() would have returned non-zero above.
+            // The only older-Windows path here is DETACHED_PROCESS, where the
+            // existing behavior is no console I/O; we preserve that by not
+            // falling back to plain AllocConsole() (per DHowett's guidance).
+            if (EarlyCheckForHiddenWindowStyle(args))
+            {
+                Interop.Windows.TryAllocConsoleNoWindow();
+            }
+            else
+            {
+                Interop.Windows.TryAllocConsoleDefault();
+            }
+        }
+
+        /// <summary>
+        /// Minimal early scan for -WindowStyle Hidden in command line args.
+        /// Matches any unambiguous prefix of "windowstyle" starting from "w"
+        /// (e.g. -w, -wi, -win, ..., -windowstyle, --windowstyle) followed by "hidden".
+        /// This is a best-effort check that runs before the full parser. False positives
+        /// (e.g. a hypothetical future -w parameter) are acceptable because the worst case
+        /// is allocating a hidden console that the full parser would later show.
+        /// </summary>
+        private static bool EarlyCheckForHiddenWindowStyle(string[] args)
+        {
+            for (int i = 0; i < args.Length - 1; i++)
+            {
+                string arg = args[i];
+                if (arg.Length >= 2 && (arg[0] == '-' || arg[0] == '/'))
+                {
+                    int start = 1;
+
+                    // Strip second dash for --windowstyle (matches full parser behavior).
+                    if (arg.Length >= 3 && arg[0] == '-' && arg[1] == '-')
+                    {
+                        start = 2;
+                    }
+
+                    ReadOnlySpan<char> key = arg.AsSpan(start);
+                    if (key.Length >= 1
+                        && key.Length <= "windowstyle".Length
+                        && "windowstyle".AsSpan().StartsWith(key, StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (args[i + 1].Equals("hidden", StringComparison.OrdinalIgnoreCase))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+#endif
     }
 }

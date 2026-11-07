@@ -420,7 +420,14 @@ namespace Microsoft.PowerShell
         internal static void SetConsoleMode(ProcessWindowStyle style)
         {
             IntPtr hwnd = GetConsoleWindow();
-            Dbg.Assert(hwnd != IntPtr.Zero, "Console handle should never be zero");
+            if (hwnd == IntPtr.Zero)
+            {
+                // No console window to modify. This can happen when running with
+                // consoleAllocationPolicy=detached before the console is allocated,
+                // or in a GUI-hosted scenario.
+                return;
+            }
+
             switch (style)
             {
                 case ProcessWindowStyle.Hidden:
