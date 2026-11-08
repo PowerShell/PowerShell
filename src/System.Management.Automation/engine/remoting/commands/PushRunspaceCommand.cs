@@ -1176,9 +1176,10 @@ namespace Microsoft.PowerShell.Commands
                         break;
                 }
 
+                string targetNameRedacted = RedactIfPowerShellCode(targetName);
                 string promptFn = StringUtil.Format(RemotingErrorIdStrings.EnterVMSessionPrompt,
                     @"function global:prompt { """,
-                    targetName,
+                    targetNameRedacted,
                     @"PS $($executionContext.SessionState.Path.CurrentLocation)> "" }");
 
                 // Set prompt in pushed named pipe runspace.
