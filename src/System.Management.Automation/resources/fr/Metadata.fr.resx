@@ -262,6 +262,6 @@
     <value>Échec de la vérification d’attribut ValidateTrustedData</value>
   </data>
   <data name="WDACParameterArgNotTrustedMessage" xml:space="preserve">
-    <value>L’argument de paramètre «{0}» n’est pas approuvé et échoue à la vérification de l’attribut de paramètre ValidateTrustedData en mode langue contrainte.</value>
+    <value>L’argument de paramètre «{0}» n’est pas approuvé et échoue à la vérification de l’attribut de paramètre ValidateTrustedData en mode langage avec contraintes.</value>
   </data>
 </root>

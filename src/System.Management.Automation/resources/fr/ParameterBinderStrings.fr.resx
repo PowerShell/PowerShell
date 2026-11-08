@@ -250,12 +250,12 @@
     <value>Appel de méthode ou de propriété non autorisé</value>
   </data>
   <data name="WDACBinderInvocationLogMessage" xml:space="preserve">
-    <value>L’appel d’une méthode ou d’une propriété « {0} » sur le type « {1} » n’est pas autorisé en mode de langage contraint pour les scripts non approuvés.</value>
+    <value>L’appel d’une méthode ou d’une propriété « {0} » sur le type « {1} » n’est pas autorisé en mode langage avec contraintes pour les scripts non approuvés.</value>
   </data>
   <data name="WDACBinderTypeCreationLogTitle" xml:space="preserve">
     <value>Création de type non autorisée</value>
   </data>
   <data name="WDACBinderTypeCreationLogMessage" xml:space="preserve">
-    <value>La création du type « {0} » n’est pas autorisée lors de la liaison de paramètres en mode de langage contraint pour les scripts non approuvés.</value>
+    <value>La création du type « {0} » n’est pas autorisée lors de la liaison de paramètres en mode langage avec contraintes pour les scripts non approuvés.</value>
   </data>
 </root>

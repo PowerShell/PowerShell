@@ -135,7 +135,7 @@
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowRunspacePoolCreated" xml:space="preserve">
-    <value>Se creó un grupo de espacio de ejecución de flujo de trabajo.
+    <value>Se creó un grupo de espacios de ejecución de flujo de trabajo.
  	 WorkflowId: {0}
  	 ManagedNode: {1}</value>
 </data>

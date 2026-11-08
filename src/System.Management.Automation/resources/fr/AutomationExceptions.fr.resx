@@ -205,6 +205,6 @@
     <value>Source point de bloc de script compilée</value>
   </data>
   <data name="WDACCompiledScriptBlockLogMessage" xml:space="preserve">
-    <value>L’appel du bloc de script «{0}» dans l’étendue actuelle ne sera pas autorisé en mode langue contrainte. Mode de langage de script : {1}, mode de langage de contexte : {2}.</value>
+    <value>L’appel du bloc de script «{0}» dans l’étendue actuelle ne sera pas autorisé en mode langage avec contraintes. Mode langage de script : {1}, mode langage de contexte : {2}.</value>
   </data>
 </root>

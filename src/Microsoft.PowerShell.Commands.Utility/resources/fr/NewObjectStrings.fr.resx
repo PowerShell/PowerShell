@@ -142,10 +142,10 @@
     <value>Nous ne pouvons pas créer des instances du type ByRef-like « {0} ». Les types ByRef-like ne sont pas pris en charge dans PowerShell.</value>
   </data>
   <data name="CannotCreateTypeConstrainedLanguage" xml:space="preserve">
-    <value>Nous ne pouvons pas créer le type. Seuls les types principaux sont pris en charge dans ce mode de langage.</value>
+    <value>Nous ne pouvons pas créer le type. Seuls les types principaux sont pris en charge dans ce mode langage.</value>
   </data>
   <data name="CannotCreateTypeLanguageMode" xml:space="preserve">
-    <value>Nous ne pouvons pas créer le type. Seuls les types principaux sont pris en charge en mode langue {0} sur un ordinateur verrouillé par stratégie.</value>
+    <value>Nous ne pouvons pas créer le type. Seuls les types principaux sont pris en charge en mode langage {0} sur un ordinateur verrouillé par stratégie.</value>
   </data>
   <data name="TypeWDACLogTitle" xml:space="preserve">
     <value>Création d’un type avec l’applet de commande New-Object</value>

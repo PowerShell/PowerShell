@@ -116,6 +116,14 @@ jobs:
       }
     displayName: Create json files
 
+  - pwsh: |
+      $repositoryName = 'PowerShellGalleryMirror'
+      if (-not (Get-PSRepository -Name $repositoryName -ErrorAction Ignore)) {
+        Register-PSRepository -Name $repositoryName -SourceLocation 'https://pkgs.dev.azure.com/powershell/PowerShell/_packaging/PowerShellGalleryMirror/nuget/v2' -InstallationPolicy Trusted -ErrorAction Stop
+      }
+      Install-Module -Repository $repositoryName -Name Az.Storage -RequiredVersion 9.7.2 -Scope CurrentUser -Force -ErrorAction Stop
+    displayName: Install Az.Storage 9.7.2
+
   - task: AzurePowerShell@5
     displayName: Upload buildjson to blob
     inputs:
@@ -124,6 +132,8 @@ jobs:
       azurePowerShellVersion: LatestVersion
       pwsh: true
       inline: |
+        Import-Module Az.Storage -RequiredVersion 9.7.2 -ErrorAction Stop
+
         $containerName = '$web'
         $storageAccount = '$(PSInfraStorageAccount)'
         $prefix = "buildinfo"

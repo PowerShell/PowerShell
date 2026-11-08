@@ -580,85 +580,85 @@
     <value>变量名称中应使用 `{ 而不是 {。</value>
   </data>
   <data name="MissingStatementBlockForDataSection" xml:space="preserve">
-    <value>Data 节缺少语句块。</value>
+    <value>数据段缺少语句块。</value>
   </data>
   <data name="InvalidParameterForDataSectionStatement" xml:space="preserve">
-    <value>Data 节的 "{0}" 参数无效。有效的 Data 节参数为 SupportedCommand。</value>
+    <value>数据段的“{0}”参数无效。有效的数据段参数为 SupportedCommand。</value>
   </data>
   <data name="ArrayReferenceNotSupportedInDataSection" xml:space="preserve">
     <value>受限语言模式或 Data 节中不允许使用数组引用。</value>
   </data>
   <data name="AssignmentStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>受限语言模式或 Data 节中不允许使用赋值语句。</value>
+    <value>受限语言模式或数据段中不允许使用赋值语句。</value>
   </data>
   <data name="RedirectionNotSupportedInDataSection" xml:space="preserve">
-    <value>在受限语言模式或数据部分中不允许重定向。</value>
+    <value>在受限语言模式或数据段中不允许重定向。</value>
   </data>
   <data name="DoWhileStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>受限语言模式或 Data 节中不允许使用 Do 和 While 语句。</value>
+    <value>受限语言模式或数据段中不允许使用 Do 和 While 语句。</value>
   </data>
   <data name="ExpandableStringNotSupportedInDataSection" xml:space="preserve">
-    <value>在受限语言模式或数据部分中不允许使用可扩展字符串。</value>
+    <value>在受限语言模式或数据段中不允许使用可扩展字符串。</value>
   </data>
   <data name="OperatorNotSupportedInDataSection" xml:space="preserve">
-    <value>在受限语言模式或 Data 节中不允许使用“{0}”运算符。</value>
+    <value>在受限语言模式或数据段中不允许使用“{0}”运算符。</value>
   </data>
   <data name="TrapStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>在受限语言模式或 Data 节中不允许使用 Trap 语句。</value>
+    <value>在受限语言模式或数据段中不允许使用 Trap 语句。</value>
   </data>
   <data name="TryStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>在受限语言模式或 Data 节中不允许使用 Try 语句。</value>
+    <value>在受限语言模式或数据段中不允许使用 Try 语句。</value>
   </data>
   <data name="FlowControlStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>不允许在受限语言模式或 Data 节中使用 Break、Continue、Return、Exit 和 Throw 等流控制语句。</value>
+    <value>不允许在受限语言模式或数据段中使用 Break、Continue、Return、Exit 和 Throw 等流控制语句。</value>
   </data>
   <data name="ForeachStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>不允许在受限语言模式或 Data 节中使用 Foreach 语句。</value>
+    <value>不允许在受限语言模式或数据段中使用 Foreach 语句。</value>
   </data>
   <data name="ForWhileStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>受限语言模式或 Data 节中不允许使用 For 和 While 语句。</value>
+    <value>受限语言模式或数据段中不允许使用 For 和 While 语句。</value>
   </data>
   <data name="FunctionDeclarationNotSupportedInDataSection" xml:space="preserve">
-    <value>在受限语言模式或 Data 节中不允许函数声明。</value>
+    <value>在受限语言模式或数据段中不允许函数声明。</value>
   </data>
   <data name="MethodCallNotSupportedInDataSection" xml:space="preserve">
-    <value>受限语言模式或 Data 节中不允许使用方法调用。</value>
+    <value>受限语言模式或数据段中不允许使用方法调用。</value>
   </data>
   <data name="ParameterDeclarationNotSupportedInDataSection" xml:space="preserve">
-    <value>在受限语言模式或 Data 节中不允许使用参数声明。</value>
+    <value>在受限语言模式或数据段中不允许使用参数声明。</value>
   </data>
   <data name="PropertyReferenceNotSupportedInDataSection" xml:space="preserve">
-    <value>受限语言模式或 Data 节中不允许使用属性引用。</value>
+    <value>受限语言模式或数据段中不允许使用属性引用。</value>
   </data>
   <data name="ScriptBlockNotSupportedInDataSection" xml:space="preserve">
-    <value>在受限语言模式或数据部分中不允许使用脚本块文本。</value>
+    <value>在受限语言模式或数据段中不允许使用脚本块文本。</value>
   </data>
   <data name="SwitchStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>在受限语言模式或 Data 节中不允许使用 switch 语句。</value>
+    <value>在受限语言模式或数据段中不允许使用 switch 语句。</value>
   </data>
   <data name="VariableReferenceNotSupportedInDataSection" xml:space="preserve">
-    <value>所引用的变量不能在受限语言模式或 Data 节中引用。可引用的变量包括以下内容： {0}。</value>
+    <value>所引用的变量不能在受限语言模式或数据段中引用。可引用的变量包括以下内容: {0}。</value>
   </data>
   <data name="CmdletNotInAllowedListForDataSection" xml:space="preserve">
-    <value>受限语言模式或 Data 节中不允许使用命令“{0}”。</value>
+    <value>受限语言模式或数据段中不允许使用命令“{0}”。</value>
   </data>
   <data name="DataSectionStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>受限语言模式或另一个 Data 节中不允许使用 data 语句。</value>
+    <value>受限语言模式或另一个数据段中不允许使用 data 语句。</value>
   </data>
   <data name="MissingValueForSupportedCommandInDataSectionStatement" xml:space="preserve">
-    <value>Data 节的 SupportedCommand 参数缺少值。请为该参数提供 cmdlet 或函数名称。</value>
+    <value>数据段的 SupportedCommand 参数缺少值。请为该参数提供 cmdlet 或函数名称。</value>
   </data>
   <data name="InvalidScriptBlockInDataSection" xml:space="preserve">
-    <value>在 Data 节中不允许使用 Begin 语句块、Process 语句块或参数语句。</value>
+    <value>在数据段中不允许使用 Begin 语句块、Process 语句块或参数语句。</value>
   </data>
   <data name="StringMultiplyToolongInDataSection" xml:space="preserve">
-    <value>受限语言模式或 Data 节中不允许字符串乘法结果超过“{0}”个字符。</value>
+    <value>受限语言模式或数据段中不允许字符串乘法结果超过“{0}”个字符。</value>
   </data>
   <data name="ArrayMultiplyToolongInDataSection" xml:space="preserve">
-    <value>在受限语言模式或 Data 节中，不允许数组乘法产生超过 {0} 个元素。</value>
+    <value>在受限语言模式或数据段中，不允许数组乘法产生超过 {0} 个元素。</value>
   </data>
   <data name="DotSourcingNotSupportedInDataSection" xml:space="preserve">
-    <value>受限语言模式或 Data 节中不允许使用点源语法。</value>
+    <value>受限语言模式或数据段中不允许使用点源语法。</value>
   </data>
   <data name="ParameterAttributeArgumentNeedsToBeConstantOrScriptBlock" xml:space="preserve">
     <value>特性参数必须是常量或脚本块。</value>
@@ -721,10 +721,10 @@
     <value>哈希文本中不允许使用空键。</value>
   </data>
   <data name="AttributeNotSupportedInDataSection" xml:space="preserve">
-    <value>受限语言模式或 Data 节中不允许使用属性。</value>
+    <value>受限语言模式或数据段中不允许使用属性。</value>
   </data>
   <data name="TypeNotAllowedInDataSection" xml:space="preserve">
-    <value>在受限语言模式或数据节中不允许使用该类型 {0}。</value>
+    <value>在受限语言模式或数据段中不允许使用该类型 {0}。</value>
   </data>
   <data name="PropertyIsReadOnly" xml:space="preserve">
     <value>“{0}”是 ReadOnly 属性。</value>
@@ -784,7 +784,7 @@
     <value>关键字'{0}'后缺少语句体。</value>
   </data>
   <data name="ParallelAndSequenceBlockNotSupportedInDataSection" xml:space="preserve">
-    <value>受限语言模式或 Data 节中不允许使用 parallel 和 sequence 块。</value>
+    <value>受限语言模式或数据段中不允许使用 parallel 和 sequence 块。</value>
   </data>
   <data name="UnexpectedKeyword" xml:space="preserve">
     <value>意外的关键字 '{0}'。</value>
@@ -796,7 +796,7 @@
     <value>无法调用该方法。</value>
   </data>
   <data name="HashtableToObjectConversionNotSupportedInDataSection" xml:space="preserve">
-    <value>无法将哈希表转换为以下类型的对象: {0}。在受限语言模式或 Data 节中不支持哈希表到对象的转换。</value>
+    <value>无法将哈希表转换为以下类型的对象: {0}。在受限语言模式或数据段中不支持哈希表到对象的转换。</value>
   </data>
   <data name="RequiresArgumentMustBeConstant" xml:space="preserve">
     <value>参数必须是常量。</value>
@@ -842,7 +842,7 @@
     <value>找不到架构文件 {0}。请验证配置语句中指定的所有模块是否都包含 schema.mof 文件，然后再次尝试运行脚本。</value>
   </data>
   <data name="DataSectionAllowedCommandDisallowed" xml:space="preserve">
-    <value>无法定义数据节。此语言模式不支持定义其他受支持的命令。</value>
+    <value>无法定义数据段。此语言模式不支持定义其他受支持的命令。</value>
   </data>
   <data name="MissingCurlyInConfigurationStatement" xml:space="preserve">
     <value>配置语句中缺少“{”。</value>
@@ -1338,37 +1338,37 @@ ModuleVersion: 要导入的模块版本。如果使用 ModuleName，则它只能
     <value>解析器配置关键字</value>
   </data>
   <data name="WDACParserConfigKeywordLogMessage" xml:space="preserve">
-    <value>对于不受信任的脚本，在 Constrained Language 模式下不允许使用 Configuration 关键字。</value>
+    <value>对于不受信任的脚本，在约束语言模式下不允许使用 Configuration 关键字。</value>
   </data>
   <data name="WDACParserClassKeywordLogTitle" xml:space="preserve">
     <value>解析器类关键字</value>
   </data>
   <data name="WDACParserClassKeywordLogMessage" xml:space="preserve">
-    <value>对于不受信任的脚本，在 Constrained Language 模式下不允许使用 Class 关键字。</value>
+    <value>对于不受信任的脚本，在约束语言模式下不允许使用 Class 关键字。</value>
   </data>
   <data name="WDACParserDSSupportedCommandLogTitle" xml:space="preserve">
-    <value>解析器数据节 SupportedCommand</value>
+    <value>分析程序数据段 SupportedCommand</value>
   </data>
   <data name="WDACParserDSSupportedCommandLogMessage" xml:space="preserve">
-    <value>对于不受信任的脚本，在 Constrained Language 模式下，不允许包含 SupportedCommand 参数的数据节。</value>
+    <value>对于不受信任的脚本，在约束语言模式下，不允许包含 SupportedCommand 参数的数据节。</value>
   </data>
   <data name="WDACParserModuleScopeCallOperatorLogTitle" xml:space="preserve">
     <value>模块范围调用运算符</value>
   </data>
   <data name="WDACParserModuleScopeCallOperatorLogMessage" xml:space="preserve">
-    <value>在 Constrained Language 模式下，将拒绝模块范围调用运算符。</value>
+    <value>在约束语言模式下，将拒绝模块范围调用运算符。</value>
   </data>
   <data name="WDACParserForEachOperatorLogTitle" xml:space="preserve">
     <value>ForEach 关键字方法调用</value>
   </data>
   <data name="WDACParserForEachOperatorLogMessage" xml:space="preserve">
-    <value>在 Constrained Language 模式下运行时，ForEach 关键字对“{0}”迭代项的方法调用将失败。</value>
+    <value>在约束语言模式下运行时，ForEach 关键字对“{0}”迭代项的方法调用将失败。</value>
   </data>
   <data name="WDACGetSteppablePipelineLogTitle" xml:space="preserve">
     <value>表达式计算可能失败</value>
   </data>
   <data name="WDACGetSteppablePipelineLogMessage" xml:space="preserve">
-    <value>从脚本块创建可步进管道可能需要计算脚本块中的某些表达式。除非表达式表示常量值，否则在“受限语言”模式下，表达式计算会静默失败并返回 'null'。</value>
+    <value>从脚本块创建可步进管道可能需要计算脚本块中的某些表达式。除非表达式表示常量值，否则在约束语言模式下，表达式计算会静默失败并返回 'null'。</value>
   </data>
   <data name="ConfigurationNotAllowedOnArm64" xml:space="preserve">
     <value>ARM64 处理器上不支持配置关键字。</value>

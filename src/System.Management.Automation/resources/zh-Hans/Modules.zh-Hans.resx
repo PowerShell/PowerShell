@@ -658,19 +658,19 @@
     <value>正在将脚本文件作为模块导入</value>
   </data>
   <data name="WDACScriptFileImportLogMessage" xml:space="preserve">
-    <value>在 ConstrainedLanguage 模式下，不允许将脚本文件 "{0}" 作为模块导入。</value>
+    <value>在 ConstrainedLanguage 模式下，不允许将脚本文件“{0}”作为模块导入。</value>
   </data>
   <data name="WDACModuleDotSourceLogTitle" xml:space="preserve">
     <value>模块包含点源运算符</value>
   </data>
   <data name="WDACModuleDotSourceLogMessage" xml:space="preserve">
-    <value>模块 "{0}" 的导入在 Constrained Language 模式下会失败，因为它在使用点源运算符的同时，还使用通配符导出函数。</value>
+    <value>模块“{0}”的导入在约束语言模式模式下会失败，因为它在使用点源运算符的同时，还使用通配符导出函数。</value>
   </data>
   <data name="WDACModuleFnExportWithNestedModulesLogTitle" xml:space="preserve">
     <value>“模块导出函数</value>
   </data>
   <data name="WDACModuleFnExportWithNestedModulesLogMessage" xml:space="preserve">
-    <value>模块 "{0}" 使用名称通配符导出函数。在 Constrained Language 模式下运行时，任何嵌套模块的函数名称都将被删除。</value>
+    <value>模块“{0}”使用名称通配符导出函数。在约束语言模式模式下运行时，任何嵌套模块的函数名称都将被删除。</value>
   </data>
   <data name="WDACNewModuleCommandLogTitle" xml:space="preserve">
     <value>"New-Module Cmdlet</value>

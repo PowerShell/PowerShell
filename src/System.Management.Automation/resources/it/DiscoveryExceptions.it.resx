@@ -217,7 +217,7 @@ Per altre informazioni, eseguire 'Import-Module {1}'.</value>
     <value>Nessun comando corrispondente include un parametro denominato '{0}'.  Controllare l'ortografia del nome del parametro, quindi riprovare.</value>
   </data>
   <data name="DotSourceNotSupported" xml:space="preserve">
-    <value>Non è possibile eseguire il comando con dot-sourcing perché è stato definito in una modalità linguaggio diversa. Per richiamare questo comando senza importarne il contenuto, omettere l'operatore '.'.</value>
+    <value>Non è possibile eseguire il comando dot-source perché è stato definito in una modalità di linguaggio diversa. Per richiamare questo comando senza importarne il contenuto, omettere l'operatore '.'.</value>
   </data>
   <data name="GetCommandShowCommandInfoParamError" xml:space="preserve">
     <value>I parametri ShowCommandInfo e Syntax non possono essere specificati insieme.</value>
