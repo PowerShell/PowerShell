@@ -530,9 +530,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = CurrentParameterSet, Mandatory = true)]
         [Parameter(ParameterSetName = CurrentWithUserNameParameterSet, Mandatory = true)]
         [Alias("CurrentProcess", "ThisProcess", "This", "CP")]
-        public SwitchParameter Current 
-        { 
-            get 
+        public SwitchParameter Current
+        {
+            get
             {
                 return myMode == MatchMode.ByCurrent;
             }
