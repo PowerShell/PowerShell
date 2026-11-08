@@ -119,6 +119,29 @@ Describe "Get-Process" -Tags "CI" {
         $currentProcess[0].Id | Should -BeExactly $PID
     }
 
+    It "Should return Current Process with -ThisProcess" {
+        $currentProcess = Get-Process -ThisProcess
+        $currentProcess | Should -HaveCount 1
+        $currentProcess[0].Id | Should -BeExactly $PID
+    }
+
+    It "Should return Current Process with -This" {
+        $currentProcess = Get-Process -This
+        $currentProcess | Should -HaveCount 1
+        $currentProcess[0].Id | Should -BeExactly $PID
+    }
+
+    It "Should return Current Process with -CurrentProcess" {
+        $currentProcess = Get-Process -CurrentProcess
+        $currentProcess | Should -HaveCount 1
+        $currentProcess[0].Id | Should -BeExactly $PID
+    }
+    It "Should return Current Process with -CP" {
+        $currentProcess = Get-Process -C
+        $currentProcess | Should -HaveCount 1
+        $currentProcess[0].Id | Should -BeExactly $PID
+    }
+
          It "Should support -Current in RestrictedLanguage" {
          $runspace = [System.Management.Automation.Runspaces.RunspaceFactory]::CreateRunspace()
          try {

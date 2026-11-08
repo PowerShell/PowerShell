@@ -529,6 +529,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = CurrentParameterSet, Mandatory = true)]
         [Parameter(ParameterSetName = CurrentWithUserNameParameterSet, Mandatory = true)]
+        [Alias("CurrentProcess", "ThisProcess", "This", "CP")]
         public SwitchParameter Current 
         { 
             get 
