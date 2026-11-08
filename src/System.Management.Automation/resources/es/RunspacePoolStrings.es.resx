@@ -130,7 +130,7 @@
     <value>El estado del grupo de espacios de ejecución no es válido para esta operación.</value>
   </data>
   <data name="InvalidRunspacePoolState" xml:space="preserve">
-    <value>No se puede realizar la operación porque el grupo de espacio de ejecución no se encuentra en el estado "{0}". El estado actual es "{1}".</value>
+    <value>No se puede realizar la operación porque el grupo de espacios de ejecución no se encuentra en el estado "{0}". El estado actual es "{1}".</value>
   </data>
   <data name="CannotOpenAgain" xml:space="preserve">
     <value>No se puede abrir el grupo de espacios de ejecución porque no está en el estado "BeforeOpen". El estado actual es "{0}".</value>
@@ -148,7 +148,7 @@
     <value>Este espacio de ejecución no admite operaciones de desconexión y conexión.</value>
   </data>
   <data name="CannotWhileDisconnected" xml:space="preserve">
-    <value>No se puede realizar la operación porque el grupo de espacio de ejecución está en estado Desconectado.</value>
+    <value>No se puede realizar la operación porque el grupo de espacios de ejecución está en estado Desconectado.</value>
   </data>
   <data name="DisconnectNotSupportedOnServer" xml:space="preserve">
     <value>La operación Desconectar no se admite en el servidor.  El servidor debe ejecutar PowerShell 3.0 o una versión posterior para admitir la desconexión del grupo de espacios de ejecución remoto.</value>

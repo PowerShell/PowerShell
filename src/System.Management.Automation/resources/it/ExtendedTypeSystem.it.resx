@@ -377,7 +377,7 @@ PS&gt; [System.Collections.Generic.Comparer``1]::get_Default()
     <value>Non è possibile convertire il valore "{0}" in un array stringa.</value>
   </data>
   <data name="InvalidCastExceptionNonCoreType" xml:space="preserve">
-    <value>Non è possibile convertire il valore nel tipo "{0}". In questa modalità linguaggio sono supportati solo i tipi di base.</value>
+    <value>Non è possibile convertire il valore nel tipo "{0}". In questa modalità di linguaggio sono supportati solo i tipi di base.</value>
   </data>
   <data name="InvalidCastToByRefLikeType" xml:space="preserve">
     <value>Non è possibile eseguire la conversione nel tipo simile a ByRef "{0}". I tipi simili a ByRef non sono supportati in PowerShell.</value>
@@ -401,6 +401,6 @@ PS&gt; [System.Collections.Generic.Comparer``1]::get_Default()
     <value>Conversione della tabella hash del sistema di tipi estesi</value>
   </data>
   <data name="WDACTypeConversionLogMessage" xml:space="preserve">
-    <value>La conversione del tipo da '{0}' a '{1}' non sarà consentita in modalità ConstrainedLanguage.</value>
+    <value>La conversione del tipo da '{0}' in '{1}' non sarà consentita in modalità ConstrainedLanguage.</value>
   </data>
 </root>

@@ -121,16 +121,16 @@
     <value>PowerShell {0}</value>
   </data>
   <data name="ShellBannerCLMode" xml:space="preserve">
-    <value>[Mode de langue contrainte]</value>
+    <value>[Mode langage avec contraintes]</value>
   </data>
   <data name="ShellBannerCLAuditMode" xml:space="preserve">
     <value>[Mode AUDIT du langage contraint : Aucune restriction]</value>
   </data>
   <data name="ShellBannerNLMode" xml:space="preserve">
-    <value>[Aucun mode de langue]</value>
+    <value>[Aucun mode langage]</value>
   </data>
   <data name="ShellBannerRLMode" xml:space="preserve">
-    <value>[Mode de langage restreint]</value>
+    <value>[Mode langage restreint]</value>
   </data>
   <data name="UsageHelp" xml:space="preserve">
     <value>Utilisation : pwsh[.exe] [-Login] [[-File] &lt;filePath&gt; [args]]

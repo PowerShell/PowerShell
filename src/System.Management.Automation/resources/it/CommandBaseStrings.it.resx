@@ -232,7 +232,7 @@ Reviewed by TArcher on 2010-07-20
     <value>Controllo Dot-Source per elaborazione blocco script</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>L'elaborazione Dot-Source per il blocco di script '{0}' non riuscirà in modalità linguaggio con restrizioni perché la relativa modalità linguaggio '{1}' non corrisponde alla modalità linguaggio corrente '{2}'.</value>
+    <value>L'elaborazione Dot-Source per il blocco di script '{0}' avrà esito negativo in modalità di linguaggio vincolato perché la relativa modalità di linguaggio '{1}' non corrisponde alla modalità di linguaggio corrente '{2}'.</value>
   </data>
   <data name="SearcherWDACLogTitle" xml:space="preserve">
     <value>Strumento di ricerca comandi</value>

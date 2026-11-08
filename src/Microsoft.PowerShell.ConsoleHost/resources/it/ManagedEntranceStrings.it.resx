@@ -121,7 +121,7 @@
     <value>PowerShell {0}</value>
   </data>
   <data name="ShellBannerCLMode" xml:space="preserve">
-    <value>[Modalità linguaggio con restrizioni]</value>
+    <value>[Modalità di linguaggio vincolato]</value>
   </data>
   <data name="ShellBannerCLAuditMode" xml:space="preserve">
     <value>[Modalità di controllo linguaggio con restrizioni: nessuna restrizione]</value>

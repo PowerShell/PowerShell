@@ -142,7 +142,7 @@
     <value>Nous ne pouvons pas ajouter de type. Le paramètre OutputType nécessite que le paramètre OutputAssembly soit indiqué.</value>
   </data>
   <data name="CannotDefineNewType" xml:space="preserve">
-    <value>Nous ne pouvons pas ajouter de type. La définition de nouveaux types n’est pas prise en charge dans ce mode de langage.</value>
+    <value>Nous ne pouvons pas ajouter de type. La définition de nouveaux types n’est pas prise en charge dans ce mode langage.</value>
   </data>
   <data name="ReferenceAssemblyIgnored" xml:space="preserve">
     <value>L’assembly de référence spécifié « {0} » est inutile et ignoré.</value>

@@ -1069,7 +1069,7 @@
     <value>应用于会话时要显示的外部命令(脚本和应用程序)</value>
   </data>
   <data name="InvalidPSSessionConfigurationFilePath" xml:space="preserve">
-    <value>PSSession 配置文件路径 '{0}' 无效。路径自变量必须解析为文件系统中具有 '.pssc' 扩展名的单个文件。请修复路径规范，然后重试。</value>
+    <value>PSSession 配置文件路径“{0}”无效。路径自变量必须解析为文件系统中具有 '.pssc' 扩展名的单个文件。请修复路径规范，然后重试。</value>
   </data>
   <data name="InvalidRoleCapabilityFilePath" xml:space="preserve">
     <value>角色功能文件路径 '{0}' 无效。路径自变量必须解析为文件系统中具有 '.psrc' 扩展名的单个文件。请修复路径规范，然后重试。</value>
@@ -1721,7 +1721,7 @@ SSH 客户端进程已在建立连接之前终止。</value>
     <value>表达式计算可能失败</value>
   </data>
   <data name="WDACGetPowerShellLogMessage" xml:space="preserve">
-    <value>基于脚本块创建 PowerShell 对象可能需要计算脚本块中的某些表达式。除非表达式表示常量值，否则在“受限语言”模式下，表达式计算会静默失败并返回 'null'。</value>
+    <value>基于脚本块创建 PowerShell 对象可能需要计算脚本块中的某些表达式。除非表达式表示常量值，否则在约束语言模式下，表达式计算会静默失败并返回 'null'。</value>
   </data>
   <data name="HyperVFailedToGetStateUnknownType" xml:space="preserve">
     <value>未能获取 Hyper-V VM 状态。该值的类型为 {0}，但应为 Microsoft.HyperV.PowerShell.VMState 或 System.String。</value>
