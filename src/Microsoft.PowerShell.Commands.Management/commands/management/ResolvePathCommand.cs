@@ -95,6 +95,23 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Gets or sets the base path the resolved path should be based off.
+        /// This property is kept for backwards compatibility; use <see cref="BasePath"/> instead.
+        /// </summary>
+        public string RelativeBasePath
+        {
+            get
+            {
+                return BasePath;
+            }
+
+            set
+            {
+                BasePath = value;
+            }
+        }
+
+        /// <summary>
         /// Gets or sets the force property.
         /// </summary>
         [Parameter]
