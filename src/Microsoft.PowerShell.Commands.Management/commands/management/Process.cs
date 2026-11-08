@@ -536,7 +536,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return myMode == MatchMode.ByCurrent;
             }
-            
+
             set
             {
                 myMode = MatchMode.ByCurrent;
