@@ -1395,6 +1395,58 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        internal static string RedactIfPowerShellCode(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return input;
+            }
+            
+            bool startsWithDangerousToken =
+                input.StartsWith('$') ||
+                input.StartsWith("@{") ||
+                input.StartsWith('(') ||
+                input.StartsWith('"') ||
+                input.StartsWith("'") ||
+                input.StartsWith('@') ||
+                input.StartsWith('\'');
+
+            if (startsWithDangerousToken)
+            {   
+                // TODO add a debug message
+                return "REDACTED";
+            }
+
+            var ast = Parser.ParseInput(
+                input.ToString(),
+                out Token[] _,
+                out ParseError[] errors);
+
+            if (errors.Length > 0)
+            {
+                return input;
+            }
+
+            bool containsCode = false;
+            // we leave out n is CommandAst from here as to allow VMNames like svr19 to pass through without being redacted.
+            // Also could have used .Any() from Linq but I couldn't get that working.
+            foreach (var node in ast.FindAll(
+                n =>
+                    n is VariableExpressionAst ||
+                    n is ExpandableStringExpressionAst ||
+                    n is SubExpressionAst,
+                true))
+            {
+                containsCode = true;
+                // TODO add a debug message
+                break;
+            }
+
+            return containsCode
+                ? "REDACTED"
+                : input;
+        }
+
         #endregion
     }
 }
