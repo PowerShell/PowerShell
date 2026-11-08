@@ -64,9 +64,9 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
         [ValidateNotNullOrEmpty]
-        public override Hashtable Options 
-        { 
-            get 
+        public override Hashtable Options
+        {
+            get
             {
                 return base.Options;
             }
