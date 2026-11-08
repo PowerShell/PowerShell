@@ -137,7 +137,7 @@ Describe "Get-Process" -Tags "CI" {
         $currentProcess[0].Id | Should -BeExactly $PID
     }
     It "Should return Current Process with -CP" {
-        $currentProcess = Get-Process -C
+        $currentProcess = Get-Process -CP
         $currentProcess | Should -HaveCount 1
         $currentProcess[0].Id | Should -BeExactly $PID
     }
