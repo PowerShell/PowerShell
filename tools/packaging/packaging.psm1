@@ -5227,7 +5227,13 @@ function Test-Bom {
 
     # If we added or removed BOMs, log the new file and throw
     if ($noMatch.count -gt 0 -or $needsRemoval.Count -gt 0) {
-        Send-AzdoFile -Path $newBom
+        ## Send-AzdoFile -Path $newBom
+        Write-Verbose -Verbose @"
+New BOM file content:
+$(Get-Content -Path $newBom -Raw)
+
+
+"@
 
         # If -Fix was specified, update the original BOM
         if ($Fix) {
