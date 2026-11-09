@@ -5049,8 +5049,18 @@ function Send-AzdoFile {
 
     Write-Verbose "Capture the log file as '$newName'" -Verbose
     if($env:TF_BUILD) {
-        ## In Azure DevOps
-        Write-Host "##vso[artifact.upload containerfolder=$newName;artifactname=$newName]$logFile"
+        if ($env:ONEBRANCH_PIPELINES) {
+            ## In OneBranch Pipelines
+            if (-not (Test-Path -Path $env:OB_OUTPUTDIRECTORY)) {
+                New-Item -ItemType Directory -Path $env:OB_OUTPUTDIRECTORY -Force
+            }
+
+            Copy-Item -Path $logFile -Destination $env:OB_OUTPUTDIRECTORY -Force -Verbose
+        }
+        else {
+            ## In Azure DevOps
+            Write-Host "##vso[artifact.upload containerfolder=$newName;artifactname=$newName]$logFile"
+        }
     } elseif ($env:GITHUB_WORKFLOW -and $env:SYSTEM_ARTIFACTSDIRECTORY) {
         ## In GitHub Actions
         $destinationPath = $env:SYSTEM_ARTIFACTSDIRECTORY
@@ -5227,13 +5237,7 @@ function Test-Bom {
 
     # If we added or removed BOMs, log the new file and throw
     if ($noMatch.count -gt 0 -or $needsRemoval.Count -gt 0) {
-        ## Send-AzdoFile -Path $newBom
-        Write-Verbose -Verbose @"
-New BOM file content:
-$(Get-Content -Path $newBom -Raw)
-
-
-"@
+        Send-AzdoFile -Path $newBom
 
         # If -Fix was specified, update the original BOM
         if ($Fix) {
