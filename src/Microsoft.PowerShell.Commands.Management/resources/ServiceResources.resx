@@ -226,7 +226,7 @@
     <value>Service '{1} ({0})' cannot be restarted due to the following error: {2}</value>
   </data>
   <data name="SudoRequired" xml:space="preserve">
-    <value>The current user is not authorized to manage service '{1} ({0})'. Run PowerShell as root (for example: sudo pwsh) or configure passwordless sudo for the service manager command.</value>
+    <value>The current user is not authorized to manage service '{1} ({0})'. Run PowerShell as root (for example: sudo pwsh), configure passwordless sudo for the service manager command, or make sure sudo is available on PATH.</value>
   </data>
   <data name="ServiceManagerDoesNotSupportFeature" xml:space="preserve">
     <value>The '{0}' service manager does not support retrieving the dependent or required services of a service.</value>

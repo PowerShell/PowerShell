@@ -78,10 +78,17 @@ namespace Microsoft.PowerShell.Commands
 
     #region ServiceCommandException
 
+    // Custom serialization support is intentional so that the ServiceName property is
+    // preserved when the exception is serialized (for example in remoting scenarios).
+    // The base Exception serialization members are marked obsolete (SYSLIB0051) because
+    // they were designed for the legacy formatter-based serialization.
+#pragma warning disable SYSLIB0051
+
     /// <summary>
     /// Non-terminating errors occurring in the service noun commands on Unix platforms.
     /// </summary>
-    public class ServiceCommandException : SystemException
+    [Serializable]
+    public class ServiceCommandException : SystemException, System.Runtime.Serialization.ISerializable
     {
         /// <summary>
         /// Standard constructor.
@@ -108,10 +115,35 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Serialization constructor.
+        /// </summary>
+        /// <param name="info">The serialization information.</param>
+        /// <param name="context">The streaming context.</param>
+        protected ServiceCommandException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+            : base(info, context)
+        {
+            ServiceName = info.GetString(nameof(ServiceName)) ?? string.Empty;
+        }
+
+        /// <summary>
+        /// Serializes the exception, preserving the service name.
+        /// </summary>
+        /// <param name="info">The serialization information.</param>
+        /// <param name="context">The streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8, hence this method is now marked as obsolete", DiagnosticId = "SYSLIB0051")]
+        public override void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue(nameof(ServiceName), ServiceName);
+        }
+
+        /// <summary>
         /// Gets or sets the name of the service which could not be found or operated upon.
         /// </summary>
         public string ServiceName { get; set; } = string.Empty;
     }
+
+#pragma warning restore SYSLIB0051
 
     #endregion ServiceCommandException
 
@@ -227,6 +259,12 @@ namespace Microsoft.PowerShell.Commands
         /// 'sudo -n' and sudo reported that a password would be required.
         /// </summary>
         internal bool SudoPasswordRequired { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the invocation required elevation,
+        /// the process is not running as root, and sudo was not found on PATH.
+        /// </summary>
+        internal bool SudoUnavailable { get; set; }
     }
 
     /// <summary>
@@ -827,16 +865,22 @@ namespace Microsoft.PowerShell.Commands
 
                     break;
 
-                default:
-                    // sysvinit and OpenRC use the same action verbs.
-                    args.Add(action switch
+                case ServiceManagerKind.SysVInit:
+                case ServiceManagerKind.OpenRC:
                     {
-                        ServiceAction.Start => "start",
-                        ServiceAction.Stop => "stop",
-                        ServiceAction.Restart => "restart",
-                        _ => throw PSTraceSource.NewArgumentException(nameof(action)),
-                    });
-                    args.Add(service.Name);
+                        // Both managers take the service name before the action verb,
+                        // e.g. 'service sshd restart' and 'rc-service sshd restart'.
+                        string actionName = action switch
+                        {
+                            ServiceAction.Start => "start",
+                            ServiceAction.Stop => "stop",
+                            ServiceAction.Restart => "restart",
+                            _ => throw PSTraceSource.NewArgumentException(nameof(action)),
+                        };
+                        args.Add(service.Name);
+                        args.Add(actionName);
+                    }
+
                     break;
             }
 
@@ -936,16 +980,24 @@ namespace Microsoft.PowerShell.Commands
             ServiceManagerContext manager = GetServiceManager();
             string fileName = manager.ManagerPath;
             var args = new List<string>(arguments);
+            var result = new ServiceCommandResult();
 
             bool usedSudo = false;
-            if (elevate && !manager.IsElevated && manager.SudoPath is not null)
+            if (elevate && !manager.IsElevated)
             {
-                // Insert the non-interactive flag first so that 'sudo -n' does not
-                // hang when a password would be required.
-                args.Insert(0, fileName);
-                args.Insert(0, "-n");
-                fileName = manager.SudoPath;
-                usedSudo = true;
+                if (manager.SudoPath is not null)
+                {
+                    // Insert the non-interactive flag first so that 'sudo -n' does not
+                    // hang when a password would be required.
+                    args.Insert(0, fileName);
+                    args.Insert(0, "-n");
+                    fileName = manager.SudoPath;
+                    usedSudo = true;
+                }
+                else
+                {
+                    result.SudoUnavailable = true;
+                }
             }
 
             var process = new Process
@@ -965,9 +1017,7 @@ namespace Microsoft.PowerShell.Commands
                 process.StartInfo.ArgumentList.Add(argument);
             }
 
-            var result = new ServiceCommandResult();
-            _currentProcess = process;
-            try
+            _currentProcess = process;            try
             {
                 process.Start();
 
@@ -1773,7 +1823,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Runs the service manager for a mutating operation, writing a non-terminating
         /// error when the command fails. Non-zero exit codes surface the standard error
-        /// output of the command as an ErrorRecord.
+        /// output of the command as an ErrorRecord; permission failures when not
+        /// running as root surface targeted sudo guidance instead.
         /// </summary>
         /// <param name="service">The service to operate on.</param>
         /// <param name="args">The service manager arguments.</param>
@@ -1790,15 +1841,17 @@ namespace Microsoft.PowerShell.Commands
         {
             ServiceCommandResult result = RunServiceManagerCommand(args, elevate: true);
 
-            if (result.SudoPasswordRequired)
-            {
-                WriteSudoRequiredError(service);
-                return false;
-            }
-
             if (result.ExitCode != 0)
             {
-                WriteOperationFailedError(service, result, errorId, errorMessage, category);
+                if (result.SudoPasswordRequired || result.SudoUnavailable)
+                {
+                    WriteSudoRequiredError(service);
+                }
+                else
+                {
+                    WriteOperationFailedError(service, result, errorId, errorMessage, category);
+                }
+
                 return false;
             }
 
@@ -2115,18 +2168,24 @@ namespace Microsoft.PowerShell.Commands
     {
         /// <summary>
         /// Adds the default display property set to the service so that it is formatted
-        /// similarly to the Windows output of Get-Service.
+        /// similarly to the Windows output of Get-Service. The member set is only added
+        /// when it is not already present, since the same service instance can be
+        /// emitted multiple times (for example when listing dependencies).
         /// </summary>
         /// <param name="service">The service.</param>
         /// <returns>The service as a PSObject with the default display property set.</returns>
         internal static PSObject AddDefaultDisplayProperties(UnixServiceController service)
         {
             PSObject serviceAsPSObj = PSObject.AsPSObject(service);
-            PSMemberInfo[] defaultPropertySet = new PSMemberInfo[]
+            if (serviceAsPSObj.Members["PSStandardMember"] is null)
             {
-                new PSPropertySet("DefaultDisplayPropertySet", new string[] { "Status", "Name", "DisplayName", "StartType" }),
-            };
-            serviceAsPSObj.Members.Add(new PSMemberSet("PSStandardMember", defaultPropertySet));
+                PSMemberInfo[] defaultPropertySet = new PSMemberInfo[]
+                {
+                    new PSPropertySet("DefaultDisplayPropertySet", new string[] { "Status", "Name", "DisplayName", "StartType" }),
+                };
+                serviceAsPSObj.Members.Add(new PSMemberSet("PSStandardMember", defaultPropertySet));
+            }
+
             return serviceAsPSObj;
         }
     }

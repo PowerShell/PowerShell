@@ -260,6 +260,24 @@ exec "${@:2}"
                 Should -Throw -ErrorId "SudoRequired,Microsoft.PowerShell.Commands.StopServiceCommand"
         }
 
+        It "reports SudoRequired when sudo is not available and the user is not root" {
+            if ($script:isRoot) {
+                Set-ItResult -Skipped -Because "sudo is not used when running as root"
+                return
+            }
+
+            $sudoPath = Join-Path $script:shimDir "sudo"
+            Move-Item $sudoPath "$sudoPath.bak"
+            try {
+                Reset-Shim -Stdout "sshd.service loaded active running OpenSSH server daemon" -Stderr "Access denied" -ExitCode 1
+
+                { Stop-Service -Name "sshd" -ErrorAction Stop } |
+                    Should -Throw -ErrorId "SudoRequired,Microsoft.PowerShell.Commands.StopServiceCommand"
+            } finally {
+                Move-Item "$sudoPath.bak" $sudoPath
+            }
+        }
+
         It "Get-Service -DependentServices lists services depending on the service" {
             Reset-Shim -Stdout "sshd.service loaded active running OpenSSH server daemon`nnetwork.service loaded active running Network" `
                 -UnitFilesStdout "sshd.service enabled enabled" `
@@ -294,6 +312,32 @@ exec "${@:2}"
                 ($services | Where-Object { $_.Name -eq "com.example.stopped" }).Status.ToString() | Should -Be "Stopped"
 
                 (Get-InvocationLog)[0] | Should -Be "list"
+
+                Start-Service -Name "com.example.running"
+                Stop-Service -Name "com.example.running"
+                Restart-Service -Name "com.example.running"
+
+                # mutating operations use the launchctl domain of the current user
+                # (system for root, gui/<uid> otherwise) and are sudo-wrapped when
+                # not running as root
+                $log = Get-InvocationLog
+                $ops = @($log | Where-Object { $_ -match "com\.example\.running" })
+                if ($script:isRoot) {
+                    $ops.Count | Should -Be 3
+                    $ops[0] | Should -Be "kickstart system/com.example.running"
+                    $ops[1] | Should -Be "kill SIGTERM system/com.example.running"
+                    $ops[2] | Should -Be "kickstart -k system/com.example.running"
+                } else {
+                    # the sudo shim logs its own invocation, then the exec'd shim logs
+                    # the payload, so the lines alternate
+                    $ops.Count | Should -Be 6
+                    $ops[0] | Should -Match '^-n .+launchctl kickstart gui/\d+/com\.example\.running$'
+                    $ops[1] | Should -Match '^kickstart gui/\d+/com\.example\.running$'
+                    $ops[2] | Should -Match '^-n .+launchctl kill SIGTERM gui/\d+/com\.example\.running$'
+                    $ops[3] | Should -Match '^kill SIGTERM gui/\d+/com\.example\.running$'
+                    $ops[4] | Should -Match '^-n .+launchctl kickstart -k gui/\d+/com\.example\.running$'
+                    $ops[5] | Should -Match '^kickstart -k gui/\d+/com\.example\.running$'
+                }
             } finally {
                 Move-Item "$systemctlShim.bak" $systemctlShim
                 $env:PATH = "$script:shimDir$([System.IO.Path]::PathSeparator)$script:originalPath"
@@ -316,6 +360,28 @@ exec "${@:2}"
                 ($services | Where-Object { $_.Name -eq "cron" }).Status.ToString() | Should -Be "Stopped"
 
                 (Get-InvocationLog)[0] | Should -Be "--all"
+
+                # mutating operations take the service name before the action verb
+                Stop-Service -Name "sshd"
+                Start-Service -Name "sshd"
+                Restart-Service -Name "sshd"
+
+                $log = Get-InvocationLog
+                $ops = @($log | Where-Object { $_ -match "sshd" } | Select-Object -Last 3)
+                if ($script:isRoot) {
+                    $ops.Count | Should -Be 3
+                    $ops[0] | Should -Be "sshd stop"
+                    $ops[1] | Should -Be "sshd start"
+                    $ops[2] | Should -Be "sshd restart"
+                } else {
+                    $ops.Count | Should -Be 6
+                    $ops[0] | Should -Match '^-n .+rc-service sshd stop$'
+                    $ops[1] | Should -Be "sshd stop"
+                    $ops[2] | Should -Match '^-n .+rc-service sshd start$'
+                    $ops[3] | Should -Be "sshd start"
+                    $ops[4] | Should -Match '^-n .+rc-service sshd restart$'
+                    $ops[5] | Should -Be "sshd restart"
+                }
             } finally {
                 Move-Item "$systemctlShim.bak" $systemctlShim
                 Move-Item "$launchctlShim.bak" $launchctlShim
@@ -340,6 +406,24 @@ exec "${@:2}"
                 ($services | Where-Object { $_.Name -eq "cron" }).Status.ToString() | Should -Be "Stopped"
 
                 (Get-InvocationLog)[0] | Should -Be "--status-all"
+
+                # mutating operations take the service name before the action verb
+                Restart-Service -Name "sshd"
+                Stop-Service -Name "sshd"
+
+                $log = Get-InvocationLog
+                $ops = @($log | Where-Object { $_ -match "sshd" } | Select-Object -Last 2)
+                if ($script:isRoot) {
+                    $ops.Count | Should -Be 2
+                    $ops[0] | Should -Be "sshd restart"
+                    $ops[1] | Should -Be "sshd stop"
+                } else {
+                    $ops.Count | Should -Be 4
+                    $ops[0] | Should -Match '^-n .+service sshd restart$'
+                    $ops[1] | Should -Be "sshd restart"
+                    $ops[2] | Should -Match '^-n .+service sshd stop$'
+                    $ops[3] | Should -Be "sshd stop"
+                }
             } finally {
                 Move-Item "$systemctlShim.bak" $systemctlShim
                 Move-Item "$launchctlShim.bak" $launchctlShim
