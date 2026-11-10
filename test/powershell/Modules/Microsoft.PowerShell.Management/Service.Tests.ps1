@@ -3,7 +3,7 @@
 
 Describe "Unix Service cmdlets" -Tags "CI" {
     BeforeAll {
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+        $script:savedDefaultParameterValues = $PSDefaultParameterValues.Clone()
         if ($IsWindows) {
             # The service cmdlets are only compiled on Unix
             $PSDefaultParameterValues["it:skip"] = $true
@@ -59,6 +59,7 @@ exec "${@:2}"
         $env:PS_SERVICE_SHIM_LOG = $script:logFile
 
         function Reset-Shim {
+            [CmdletBinding(SupportsShouldProcess)]
             param(
                 [string]$Stdout = "",
                 [string]$UnitFilesStdout = "",
@@ -66,6 +67,10 @@ exec "${@:2}"
                 [string]$Stderr = "",
                 [int]$ExitCode = 0
             )
+
+            if (-not $PSCmdlet.ShouldProcess("service manager shim invocation log and environment", "Reset shim state")) {
+                return
+            }
 
             $env:PS_SERVICE_SHIM_STDOUT = $Stdout
             $env:PS_SERVICE_SHIM_UF_STDOUT = $UnitFilesStdout
@@ -89,7 +94,7 @@ exec "${@:2}"
     }
 
     AfterAll {
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
+        $global:PSDefaultParameterValues = $script:savedDefaultParameterValues
         if ($script:originalPath) {
             $env:PATH = $script:originalPath
         }

@@ -307,51 +307,61 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (string rawLine in output.Split('\n'))
             {
-                string line = rawLine.TrimEnd('\r');
-                if (line.Length == 0)
+                UnixServiceController? service = TryParseSystemdUnitLine(rawLine);
+                if (service is not null)
                 {
-                    continue;
+                    services.Add(service);
                 }
-
-                // Columns: UNIT LOAD ACTIVE SUB DESCRIPTION
-                string[] tokens = line.Split((char[]?)null, 5, StringSplitOptions.RemoveEmptyEntries);
-                if (tokens.Length < 4)
-                {
-                    continue;
-                }
-
-                string unit = tokens[0];
-                if (!unit.EndsWith(ServiceSuffix, StringComparison.Ordinal) ||
-                    unit.EndsWith("@.service", StringComparison.Ordinal))
-                {
-                    // Only real '.service' units are of interest here and
-                    // template units ('foo@.service') are not services themselves.
-                    continue;
-                }
-
-                string loadState = tokens[1];
-                if (loadState == "not-found")
-                {
-                    continue;
-                }
-
-                string activeState = tokens[2];
-                string subState = tokens[3];
-                string description = tokens.Length > 4 ? tokens[4].Trim() : string.Empty;
-                string name = RemoveServiceSuffix(unit);
-
-                services.Add(new UnixServiceController
-                {
-                    Name = name,
-                    DisplayName = description.Length > 0 ? description : name,
-                    Description = description.Length > 0 ? description : null,
-                    Status = MapSystemdStatus(activeState),
-                    SubState = subState,
-                    StartType = ServiceStartMode.Manual,
-                });
             }
 
             return services;
+        }
+
+        /// <summary>
+        /// Parses a single line of 'systemctl list-units' output. Returns null for
+        /// lines that do not describe a real service unit.
+        /// </summary>
+        /// <param name="rawLine">The line to parse.</param>
+        /// <returns>The parsed service, or null.</returns>
+        private static UnixServiceController? TryParseSystemdUnitLine(string rawLine)
+        {
+            string line = rawLine.TrimEnd('\r');
+            if (line.Length == 0)
+            {
+                return null;
+            }
+
+            // Columns: UNIT LOAD ACTIVE SUB DESCRIPTION
+            string[] tokens = line.Split((char[]?)null, 5, StringSplitOptions.RemoveEmptyEntries);
+            if (tokens.Length < 4 ||
+                !tokens[0].EndsWith(ServiceSuffix, StringComparison.Ordinal) ||
+                tokens[0].EndsWith("@.service", StringComparison.Ordinal))
+            {
+                // Only real '.service' units are of interest here and
+                // template units ('foo@.service') are not services themselves.
+                return null;
+            }
+
+            string loadState = tokens[1];
+            if (loadState == "not-found")
+            {
+                return null;
+            }
+
+            string activeState = tokens[2];
+            string subState = tokens[3];
+            string description = tokens.Length > 4 ? tokens[4].Trim() : string.Empty;
+            string name = RemoveServiceSuffix(tokens[0]);
+
+            return new UnixServiceController
+            {
+                Name = name,
+                DisplayName = description.Length > 0 ? description : name,
+                Description = description.Length > 0 ? description : null,
+                Status = MapSystemdStatus(activeState),
+                SubState = subState,
+                StartType = ServiceStartMode.Manual,
+            };
         }
 
         /// <summary>
@@ -370,48 +380,58 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (string rawLine in output.Split('\n'))
             {
-                string line = rawLine.TrimEnd('\r');
-                if (line.Length == 0)
+                (string? Name, string? State) unitFile = TryParseSystemdUnitFileLine(rawLine);
+                if (unitFile.Name is null || unitFile.State is null)
                 {
                     continue;
                 }
 
-                // Columns: UNIT FILE STATE [VENDOR PRESET]
-                string[] tokens = line.Split((char[]?)null, 3, StringSplitOptions.RemoveEmptyEntries);
-                if (tokens.Length < 2)
+                if (servicesByName.TryGetValue(unitFile.Name, out UnixServiceController? service))
                 {
-                    continue;
-                }
-
-                string unit = tokens[0];
-                if (!unit.EndsWith(ServiceSuffix, StringComparison.Ordinal) ||
-                    unit.EndsWith("@.service", StringComparison.Ordinal))
-                {
-                    continue;
-                }
-
-                string state = tokens[1];
-                string name = RemoveServiceSuffix(unit);
-                if (servicesByName.TryGetValue(name, out UnixServiceController? service))
-                {
-                    service.UnitFileState = state;
-                    service.StartType = MapSystemdUnitFileState(state);
+                    service.UnitFileState = unitFile.State;
+                    service.StartType = MapSystemdUnitFileState(unitFile.State);
                 }
                 else
                 {
                     // The service exists but was never loaded (for example it is disabled).
                     var newService = new UnixServiceController
                     {
-                        Name = name,
-                        DisplayName = name,
+                        Name = unitFile.Name,
+                        DisplayName = unitFile.Name,
                         Status = ServiceControllerStatus.Stopped,
-                        StartType = MapSystemdUnitFileState(state),
-                        UnitFileState = state,
+                        StartType = MapSystemdUnitFileState(unitFile.State),
+                        UnitFileState = unitFile.State,
                     };
-                    servicesByName[name] = newService;
+                    servicesByName[unitFile.Name] = newService;
                     services.Add(newService);
                 }
             }
+        }
+
+        /// <summary>
+        /// Parses a single line of 'systemctl list-unit-files' output. Returns null
+        /// parts for lines that do not describe a real service unit file.
+        /// </summary>
+        /// <param name="rawLine">The line to parse.</param>
+        /// <returns>The service name and unit file state, or null parts.</returns>
+        private static (string? Name, string? State) TryParseSystemdUnitFileLine(string rawLine)
+        {
+            string line = rawLine.TrimEnd('\r');
+            if (line.Length == 0)
+            {
+                return (null, null);
+            }
+
+            // Columns: UNIT FILE STATE [VENDOR PRESET]
+            string[] tokens = line.Split((char[]?)null, 3, StringSplitOptions.RemoveEmptyEntries);
+            if (tokens.Length < 2 ||
+                !tokens[0].EndsWith(ServiceSuffix, StringComparison.Ordinal) ||
+                tokens[0].EndsWith("@.service", StringComparison.Ordinal))
+            {
+                return (null, null);
+            }
+
+            return (RemoveServiceSuffix(tokens[0]), tokens[1]);
         }
 
         /// <summary>
@@ -425,35 +445,50 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (string rawLine in output.Split('\n'))
             {
-                string line = rawLine.TrimEnd('\r');
-                if (line.Length == 0)
+                UnixServiceController? service = TryParseLaunchCtlLine(rawLine);
+                if (service is not null)
                 {
-                    continue;
+                    services.Add(service);
                 }
-
-                // Columns: PID Status Label. The PID is '-' when the label is not running.
-                string[] tokens = line.Split('\t');
-                if (tokens.Length < 3)
-                {
-                    tokens = line.Split((char[]?)null, 3, StringSplitOptions.RemoveEmptyEntries);
-                }
-
-                if (tokens.Length < 3 || tokens[0] == "PID")
-                {
-                    continue;
-                }
-
-                bool isRunning = tokens[0] != "-";
-                services.Add(new UnixServiceController
-                {
-                    Name = tokens[2],
-                    DisplayName = tokens[2],
-                    Status = isRunning ? ServiceControllerStatus.Running : ServiceControllerStatus.Stopped,
-                    StartType = ServiceStartMode.Manual,
-                });
             }
 
             return services;
+        }
+
+        /// <summary>
+        /// Parses a single line of 'launchctl list' output. Returns null for header
+        /// lines and lines that do not describe a service label.
+        /// </summary>
+        /// <param name="rawLine">The line to parse.</param>
+        /// <returns>The parsed service, or null.</returns>
+        private static UnixServiceController? TryParseLaunchCtlLine(string rawLine)
+        {
+            string line = rawLine.TrimEnd('\r');
+            if (line.Length == 0)
+            {
+                return null;
+            }
+
+            // Columns: PID Status Label. The PID is '-' when the label is not running.
+            string[] tokens = line.Split('\t');
+            if (tokens.Length < 3)
+            {
+                tokens = line.Split((char[]?)null, 3, StringSplitOptions.RemoveEmptyEntries);
+            }
+
+            if (tokens.Length < 3 || tokens[0] == "PID")
+            {
+                return null;
+            }
+
+            bool isRunning = tokens[0] != "-";
+            return new UnixServiceController
+            {
+                Name = tokens[2],
+                DisplayName = tokens[2],
+                Status = isRunning ? ServiceControllerStatus.Running : ServiceControllerStatus.Stopped,
+                StartType = ServiceStartMode.Manual,
+            };
         }
 
         /// <summary>
@@ -467,54 +502,69 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (string rawLine in output.Split('\n'))
             {
-                string line = rawLine.Trim();
-                if (line.Length == 0 || !line.StartsWith('['))
+                UnixServiceController? service = TryParseSysVStatusLine(rawLine);
+                if (service is not null)
                 {
-                    continue;
+                    services.Add(service);
                 }
-
-                int closeIndex = line.IndexOf(']');
-                if (closeIndex < 0)
-                {
-                    continue;
-                }
-
-                // Format: '[ + ] name [ (description) ]'. '+' marks a running service.
-                string state = line[1..closeIndex].Trim();
-                string rest = line[(closeIndex + 1)..].Trim();
-                if (rest.Length == 0)
-                {
-                    continue;
-                }
-
-                int spaceIndex = rest.IndexOf(' ');
-                string name;
-                string? description = null;
-                if (spaceIndex < 0)
-                {
-                    name = rest;
-                }
-                else
-                {
-                    name = rest[..spaceIndex];
-                    description = rest[(spaceIndex + 1)..].Trim();
-                    if (description.Length == 0)
-                    {
-                        description = null;
-                    }
-                }
-
-                services.Add(new UnixServiceController
-                {
-                    Name = name,
-                    DisplayName = description ?? name,
-                    Description = description,
-                    Status = state == "+" ? ServiceControllerStatus.Running : ServiceControllerStatus.Stopped,
-                    StartType = ServiceStartMode.Manual,
-                });
             }
 
             return services;
+        }
+
+        /// <summary>
+        /// Parses a single line of 'service --status-all' output. Returns null for
+        /// lines that do not describe a service.
+        /// </summary>
+        /// <param name="rawLine">The line to parse.</param>
+        /// <returns>The parsed service, or null.</returns>
+        private static UnixServiceController? TryParseSysVStatusLine(string rawLine)
+        {
+            string line = rawLine.Trim();
+            if (line.Length == 0 || !line.StartsWith('['))
+            {
+                return null;
+            }
+
+            int closeIndex = line.IndexOf(']');
+            if (closeIndex < 0)
+            {
+                return null;
+            }
+
+            // Format: '[ + ] name [ (description) ]'. '+' marks a running service.
+            string state = line[1..closeIndex].Trim();
+            string rest = line[(closeIndex + 1)..].Trim();
+            if (rest.Length == 0)
+            {
+                return null;
+            }
+
+            int spaceIndex = rest.IndexOf(' ');
+            string name;
+            string? description = null;
+            if (spaceIndex < 0)
+            {
+                name = rest;
+            }
+            else
+            {
+                name = rest[..spaceIndex];
+                description = rest[(spaceIndex + 1)..].Trim();
+                if (description.Length == 0)
+                {
+                    description = null;
+                }
+            }
+
+            return new UnixServiceController
+            {
+                Name = name,
+                DisplayName = description ?? name,
+                Description = description,
+                Status = state == "+" ? ServiceControllerStatus.Running : ServiceControllerStatus.Stopped,
+                StartType = ServiceStartMode.Manual,
+            };
         }
 
         /// <summary>
@@ -528,58 +578,74 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (string rawLine in output.Split('\n'))
             {
-                string line = rawLine.Trim();
-                int openIndex = line.IndexOf('[');
-                if (openIndex < 0)
+                (string? Name, ServiceControllerStatus Status) service = TryParseOpenRcStatusLine(rawLine);
+                if (service.Name is null)
                 {
                     continue;
                 }
 
-                int closeIndex = line.IndexOf(']', openIndex);
-                if (closeIndex < 0)
-                {
-                    continue;
-                }
-
-                // Format: ' * name [ state ]'. Runlevel headers do not contain brackets.
-                string state = line[(openIndex + 1)..closeIndex].Trim();
-                string before = line[..openIndex].Trim();
-                string? name = null;
-                foreach (string token in before.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries))
-                {
-                    if (token != "*")
-                    {
-                        name = token;
-                    }
-                }
-
-                if (string.IsNullOrEmpty(name))
-                {
-                    continue;
-                }
-
-                ServiceControllerStatus status = MapOpenRcStatus(state);
-                if (servicesByName.TryGetValue(name, out UnixServiceController? service))
+                if (servicesByName.TryGetValue(service.Name, out UnixServiceController? existing))
                 {
                     // Services may be listed under multiple runlevels; prefer a running entry.
-                    if (status == ServiceControllerStatus.Running)
+                    if (service.Status == ServiceControllerStatus.Running)
                     {
-                        service.Status = status;
+                        existing.Status = service.Status;
                     }
                 }
                 else
                 {
-                    servicesByName[name] = new UnixServiceController
+                    servicesByName[service.Name] = new UnixServiceController
                     {
-                        Name = name,
-                        DisplayName = name,
-                        Status = status,
+                        Name = service.Name,
+                        DisplayName = service.Name,
+                        Status = service.Status,
                         StartType = ServiceStartMode.Manual,
                     };
                 }
             }
 
             return new List<UnixServiceController>(servicesByName.Values);
+        }
+
+        /// <summary>
+        /// Parses a single line of 'rc-status --all' output. Returns a null name for
+        /// lines that do not describe a service (for example runlevel headers).
+        /// </summary>
+        /// <param name="rawLine">The line to parse.</param>
+        /// <returns>The service name and status, or a null name.</returns>
+        private static (string? Name, ServiceControllerStatus Status) TryParseOpenRcStatusLine(string rawLine)
+        {
+            string line = rawLine.Trim();
+            int openIndex = line.IndexOf('[');
+            if (openIndex < 0)
+            {
+                return (null, ServiceControllerStatus.Stopped);
+            }
+
+            int closeIndex = line.IndexOf(']', openIndex);
+            if (closeIndex < 0)
+            {
+                return (null, ServiceControllerStatus.Stopped);
+            }
+
+            // Format: ' * name [ state ]'. Runlevel headers do not contain brackets.
+            string state = line[(openIndex + 1)..closeIndex].Trim();
+            string before = line[..openIndex].Trim();
+            string? name = null;
+            foreach (string token in before.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries))
+            {
+                if (token != "*")
+                {
+                    name = token;
+                }
+            }
+
+            if (string.IsNullOrEmpty(name))
+            {
+                return (null, ServiceControllerStatus.Stopped);
+            }
+
+            return (name, MapOpenRcStatus(state));
         }
 
         /// <summary>
@@ -745,62 +811,71 @@ namespace Microsoft.PowerShell.Commands
         internal List<UnixServiceController> EnumerateServices()
         {
             ServiceManagerContext manager = GetServiceManager();
-            List<UnixServiceController> services;
-
-            switch (manager.Kind)
+            List<UnixServiceController> services = manager.Kind switch
             {
-                case ServiceManagerKind.Systemd:
-                    {
-                        ServiceCommandResult units = RunServiceManagerCommand(
-                            new[] { "list-units", "--type=service", "--all", "--no-legend", "--no-pager" },
-                            elevate: false);
-                        ThrowIfEnumerationFailed(units);
-
-                        ServiceCommandResult unitFiles = RunServiceManagerCommand(
-                            new[] { "list-unit-files", "--type=service", "--no-legend", "--no-pager" },
-                            elevate: false);
-                        ThrowIfEnumerationFailed(unitFiles);
-
-                        services = UnixServiceParser.ParseSystemdListUnits(units.StandardOutput);
-                        UnixServiceParser.MergeSystemdUnitFiles(services, unitFiles.StandardOutput);
-                    }
-
-                    break;
-
-                case ServiceManagerKind.LaunchD:
-                    {
-                        ServiceCommandResult result = RunServiceManagerCommand(new[] { "list" }, elevate: false);
-                        ThrowIfEnumerationFailed(result);
-                        services = UnixServiceParser.ParseLaunchCtlList(result.StandardOutput);
-                    }
-
-                    break;
-
-                case ServiceManagerKind.SysVInit:
-                    {
-                        ServiceCommandResult result = RunServiceManagerCommand(new[] { "--status-all" }, elevate: false);
-                        ThrowIfEnumerationFailed(result);
-                        // Some init scripts write their status to standard error.
-                        services = UnixServiceParser.ParseSysVStatusAll(result.StandardOutput + result.StandardError);
-                    }
-
-                    break;
-
-                case ServiceManagerKind.OpenRC:
-                    {
-                        ServiceCommandResult result = RunServiceManagerCommand(new[] { "--all" }, elevate: false);
-                        ThrowIfEnumerationFailed(result);
-                        services = UnixServiceParser.ParseOpenRcStatusAll(result.StandardOutput);
-                    }
-
-                    break;
-
-                default:
-                    services = new List<UnixServiceController>();
-                    break;
-            }
+                ServiceManagerKind.Systemd => EnumerateSystemdServices(),
+                ServiceManagerKind.LaunchD => EnumerateLaunchdServices(),
+                ServiceManagerKind.SysVInit => EnumerateSysVServices(),
+                ServiceManagerKind.OpenRC => EnumerateOpenRcServices(),
+                _ => new List<UnixServiceController>(),
+            };
 
             return services;
+        }
+
+        /// <summary>
+        /// Enumerates services through 'systemctl list-units' and 'systemctl list-unit-files'.
+        /// </summary>
+        /// <returns>All services reported by systemctl.</returns>
+        private List<UnixServiceController> EnumerateSystemdServices()
+        {
+            ServiceCommandResult units = RunServiceManagerCommand(
+                new[] { "list-units", "--type=service", "--all", "--no-legend", "--no-pager" },
+                elevate: false);
+            ThrowIfEnumerationFailed(units);
+
+            ServiceCommandResult unitFiles = RunServiceManagerCommand(
+                new[] { "list-unit-files", "--type=service", "--no-legend", "--no-pager" },
+                elevate: false);
+            ThrowIfEnumerationFailed(unitFiles);
+
+            List<UnixServiceController> services = UnixServiceParser.ParseSystemdListUnits(units.StandardOutput);
+            UnixServiceParser.MergeSystemdUnitFiles(services, unitFiles.StandardOutput);
+            return services;
+        }
+
+        /// <summary>
+        /// Enumerates services through 'launchctl list'.
+        /// </summary>
+        /// <returns>All services reported by launchctl.</returns>
+        private List<UnixServiceController> EnumerateLaunchdServices()
+        {
+            ServiceCommandResult result = RunServiceManagerCommand(new[] { "list" }, elevate: false);
+            ThrowIfEnumerationFailed(result);
+            return UnixServiceParser.ParseLaunchCtlList(result.StandardOutput);
+        }
+
+        /// <summary>
+        /// Enumerates services through 'service --status-all'.
+        /// </summary>
+        /// <returns>All services reported by the service wrapper.</returns>
+        private List<UnixServiceController> EnumerateSysVServices()
+        {
+            ServiceCommandResult result = RunServiceManagerCommand(new[] { "--status-all" }, elevate: false);
+            ThrowIfEnumerationFailed(result);
+            // Some init scripts write their status to standard error.
+            return UnixServiceParser.ParseSysVStatusAll(result.StandardOutput + result.StandardError);
+        }
+
+        /// <summary>
+        /// Enumerates services through 'rc-status --all'.
+        /// </summary>
+        /// <returns>All services reported by rc-status.</returns>
+        private List<UnixServiceController> EnumerateOpenRcServices()
+        {
+            ServiceCommandResult result = RunServiceManagerCommand(new[] { "--all" }, elevate: false);
+            ThrowIfEnumerationFailed(result);
+            return UnixServiceParser.ParseOpenRcStatusAll(result.StandardOutput);
         }
 
         /// <summary>
@@ -813,78 +888,81 @@ namespace Microsoft.PowerShell.Commands
         internal List<string> GetOperationArguments(ServiceAction action, UnixServiceController service, bool noWait)
         {
             ServiceManagerContext manager = GetServiceManager();
-            var args = new List<string>();
-
-            switch (manager.Kind)
+            return manager.Kind switch
             {
-                case ServiceManagerKind.Systemd:
-                    if (noWait)
-                    {
-                        args.Add("--no-block");
-                    }
+                ServiceManagerKind.Systemd => GetSystemdOperationArguments(action, service, noWait),
+                ServiceManagerKind.LaunchD => GetLaunchdOperationArguments(action, service, manager),
+                _ => GetScriptOperationArguments(action, service),
+            };
+        }
 
-                    args.Add(action switch
-                    {
-                        ServiceAction.Start => "start",
-                        ServiceAction.Stop => "stop",
-                        ServiceAction.Restart => "restart",
-                        _ => throw PSTraceSource.NewArgumentException(nameof(action)),
-                    });
-                    args.Add(service.Name + ".service");
-                    break;
-
-                case ServiceManagerKind.LaunchD:
-                    {
-                        string domain = manager.IsElevated
-                            ? "system"
-                            : $"gui/{UnixServiceNativeMethods.GetUserId()}";
-                        string unitPath = domain + "/" + service.Name;
-                        switch (action)
-                        {
-                            case ServiceAction.Start:
-                                args.Add("kickstart");
-                                args.Add(unitPath);
-                                break;
-
-                            case ServiceAction.Stop:
-                                args.Add("kill");
-                                args.Add("SIGTERM");
-                                args.Add(unitPath);
-                                break;
-
-                            case ServiceAction.Restart:
-                                args.Add("kickstart");
-                                args.Add("-k");
-                                args.Add(unitPath);
-                                break;
-
-                            default:
-                                throw PSTraceSource.NewArgumentException(nameof(action));
-                        }
-                    }
-
-                    break;
-
-                case ServiceManagerKind.SysVInit:
-                case ServiceManagerKind.OpenRC:
-                    {
-                        // Both managers take the service name before the action verb,
-                        // e.g. 'service sshd restart' and 'rc-service sshd restart'.
-                        string actionName = action switch
-                        {
-                            ServiceAction.Start => "start",
-                            ServiceAction.Stop => "stop",
-                            ServiceAction.Restart => "restart",
-                            _ => throw PSTraceSource.NewArgumentException(nameof(action)),
-                        };
-                        args.Add(service.Name);
-                        args.Add(actionName);
-                    }
-
-                    break;
+        /// <summary>
+        /// Builds the systemctl arguments for the given operation.
+        /// </summary>
+        /// <param name="action">The operation to perform.</param>
+        /// <param name="service">The service to operate on.</param>
+        /// <param name="noWait">Prepend '--no-block' so that systemctl returns before the operation completes.</param>
+        /// <returns>The argument list.</returns>
+        private static List<string> GetSystemdOperationArguments(ServiceAction action, UnixServiceController service, bool noWait)
+        {
+            var args = new List<string>();
+            if (noWait)
+            {
+                args.Add("--no-block");
             }
 
+            args.Add(action switch
+            {
+                ServiceAction.Start => "start",
+                ServiceAction.Stop => "stop",
+                ServiceAction.Restart => "restart",
+                _ => throw PSTraceSource.NewArgumentException(nameof(action)),
+            });
+            args.Add(service.Name + ".service");
             return args;
+        }
+
+        /// <summary>
+        /// Builds the launchctl arguments for the given operation, targeting the
+        /// launchd domain of the current user ('system' for root, 'gui/<uid>' otherwise).
+        /// </summary>
+        /// <param name="action">The operation to perform.</param>
+        /// <param name="service">The service to operate on.</param>
+        /// <param name="manager">The resolved launchd manager.</param>
+        /// <returns>The argument list.</returns>
+        private static List<string> GetLaunchdOperationArguments(ServiceAction action, UnixServiceController service, ServiceManagerContext manager)
+        {
+            string domain = manager.IsElevated
+                ? "system"
+                : $"gui/{UnixServiceNativeMethods.GetUserId()}";
+            string unitPath = domain + "/" + service.Name;
+            return action switch
+            {
+                ServiceAction.Start => new List<string> { "kickstart", unitPath },
+                ServiceAction.Stop => new List<string> { "kill", "SIGTERM", unitPath },
+                ServiceAction.Restart => new List<string> { "kickstart", "-k", unitPath },
+                _ => throw PSTraceSource.NewArgumentException(nameof(action)),
+            };
+        }
+
+        /// <summary>
+        /// Builds the arguments for sysvinit and OpenRC, which both take the service
+        /// name before the action verb, e.g. 'service sshd restart' and
+        /// 'rc-service sshd restart'.
+        /// </summary>
+        /// <param name="action">The operation to perform.</param>
+        /// <param name="service">The service to operate on.</param>
+        /// <returns>The argument list.</returns>
+        private static List<string> GetScriptOperationArguments(ServiceAction action, UnixServiceController service)
+        {
+            string actionName = action switch
+            {
+                ServiceAction.Start => "start",
+                ServiceAction.Stop => "stop",
+                ServiceAction.Restart => "restart",
+                _ => throw PSTraceSource.NewArgumentException(nameof(action)),
+            };
+            return new List<string> { service.Name, actionName };
         }
 
         /// <summary>
@@ -1165,11 +1243,10 @@ namespace Microsoft.PowerShell.Commands
                     _currentProcess.Kill(entireProcessTree: true);
                 }
             }
-            catch (InvalidOperationException)
+            catch (Exception e) when (e is InvalidOperationException || e is NotSupportedException)
             {
-            }
-            catch (NotSupportedException)
-            {
+                // The process has already exited or cannot be killed; there is
+                // nothing left to do when the pipeline is being stopped.
             }
         }
 
