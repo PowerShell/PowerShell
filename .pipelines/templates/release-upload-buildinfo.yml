@@ -117,17 +117,7 @@ jobs:
     displayName: Create json files
 
   - pwsh: |
-      $repositoryName = 'PowerShellGalleryMirror'
-      $repositorySourceLocation = 'https://pkgs.dev.azure.com/powershell/PowerShell/_packaging/PowerShellGalleryMirror/nuget/v2'
-      Unregister-PSRepository -Name $repositoryName -ErrorAction Ignore
-      Register-PSRepository -Name $repositoryName -SourceLocation $repositorySourceLocation -InstallationPolicy Trusted -ErrorAction Stop
-
-      $registeredSourceLocation = (Get-PSRepository -Name $repositoryName -ErrorAction Stop).SourceLocation
-      if ($registeredSourceLocation.TrimEnd('/') -ne $repositorySourceLocation.TrimEnd('/')) {
-        throw "Repository '$repositoryName' has unexpected source location '$registeredSourceLocation'."
-      }
-      Install-Module -Repository $repositoryName -Name Az.Accounts -RequiredVersion 5.5.2 -Scope CurrentUser -Force -ErrorAction Stop
-      Install-Module -Repository $repositoryName -Name Az.Storage -RequiredVersion 9.7.2 -Scope CurrentUser -Force -ErrorAction Stop
+      & "$(Build.SourcesDirectory)/.pipelines/scripts/Install-ReleaseAzModules.ps1"
     displayName: Install Az.Accounts 5.5.2 and Az.Storage 9.7.2
 
   - task: AzurePowerShell@5
