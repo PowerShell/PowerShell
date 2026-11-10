@@ -101,6 +101,7 @@ steps:
   displayName: 'Publish PowerShell global tool (${{ parameters.Rid }})'
   env:
     __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+    VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: $(VSS_NUGET_EXTERNAL_FEED_ENDPOINTS)
 
 - pwsh: |
     # obp-file-signing.yml's "Prepare files to be signed" step branches on $(ArtifactPlatform)
@@ -217,3 +218,5 @@ steps:
       throw "Global tool package not found at $($nupkg.FullName)"
     }
   displayName: 'Pack PowerShell global tool (${{ parameters.Rid }})'
+  env:
+    VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: $(VSS_NUGET_EXTERNAL_FEED_ENDPOINTS)
