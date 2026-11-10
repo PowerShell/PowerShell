@@ -56,8 +56,9 @@ jobs:
         if (-not (Get-PSRepository -Name $repositoryName -ErrorAction Ignore)) {
           Register-PSRepository -Name $repositoryName -SourceLocation 'https://pkgs.dev.azure.com/powershell/PowerShell/_packaging/PowerShellGalleryMirror/nuget/v2' -InstallationPolicy Trusted -ErrorAction Stop
         }
+        Install-Module -Repository $repositoryName -Name Az.Accounts -RequiredVersion 5.5.2 -Scope CurrentUser -Force -ErrorAction Stop
         Install-Module -Repository $repositoryName -Name Az.Storage -RequiredVersion 9.7.2 -Scope CurrentUser -Force -ErrorAction Stop
-      displayName: Install Az.Storage 9.7.2
+      displayName: Install Az.Accounts 5.5.2 and Az.Storage 9.7.2
 
     - task: AzurePowerShell@5
       displayName: Copy blobs to PSInfra storage
@@ -152,8 +153,9 @@ jobs:
         if (-not (Get-PSRepository -Name $repositoryName -ErrorAction Ignore)) {
           Register-PSRepository -Name $repositoryName -SourceLocation 'https://pkgs.dev.azure.com/powershell/PowerShell/_packaging/PowerShellGalleryMirror/nuget/v2' -InstallationPolicy Trusted -ErrorAction Stop
         }
+        Install-Module -Repository $repositoryName -Name Az.Accounts -RequiredVersion 5.5.2 -Scope CurrentUser -Force -ErrorAction Stop
         Install-Module -Repository $repositoryName -Name Az.Storage -RequiredVersion 9.7.2 -Scope CurrentUser -Force -ErrorAction Stop
-      displayName: Install Az.Storage 9.7.2
+      displayName: Install Az.Accounts 5.5.2 and Az.Storage 9.7.2
 
     - task: AzurePowerShell@5
       displayName: Copy blobs to PSInfra storage
