@@ -205,7 +205,7 @@
     <value>Compiled Script Block Dot Source</value>
   </data>
   <data name="WDACCompiledScriptBlockLogMessage" xml:space="preserve">
-    <value>Script block '{0}' invocation into current scope will be disallowed in ConstrainedLanguage mode. Script language mode: {1}, Context language mode: {2}.</value>
+    <value>A invocação do bloco de script '{0}' no escopo atual não será permitida no modo ConstrainedLanguage. Modo de linguagem de script: {1}, Modo de linguagem de contexto: {2}.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

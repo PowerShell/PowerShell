@@ -190,7 +190,7 @@ ErrorAction, WarningAction, InformationAction, PipelineVariable</value>
     <value>Командлет ForEach-Object</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>Method invocation on type '{0}' will not be allowed when run in ConstrainedLanguage mode.</value>
+    <value>Вызов метода для типа '{0}' не будет разрешен при запуске в режиме ConstrainedLanguage.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

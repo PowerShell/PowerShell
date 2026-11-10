@@ -262,7 +262,7 @@
     <value>ValidateTrustedData Öznitelik Denetimi Hatası</value>
   </data>
   <data name="WDACParameterArgNotTrustedMessage" xml:space="preserve">
-    <value>The parameter argument '{0}' is not trusted and will fail the ValidateTrustedData parameter attribute check in ConstrainedLanguage mode.</value>
+    <value>“{0}" parametre bağımsız değişkeni güvenilir değil ve ConstrainedLanguage modunda ValidateTrustedData parametre özniteliği denetiminde başarısız olacak.</value>
     <comment>{StrContains="ValidateTrustedData"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

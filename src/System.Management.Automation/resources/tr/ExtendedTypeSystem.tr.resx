@@ -402,7 +402,7 @@ PS&gt; [System.Collections.Generic.Comparer``1]::get_Default()
     <value>Genişletilmiş Tür Sistemi Hashtable Dönüşümü</value>
   </data>
   <data name="WDACTypeConversionLogMessage" xml:space="preserve">
-    <value>Type conversion from '{0}' to '{1}' will not be allowed in ConstrainedLanguage mode.</value>
+    <value>ConstrainedLanguage modunda '{0}' türünden '{1}' türüne dönüştürmeye izin verilmeyecek.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

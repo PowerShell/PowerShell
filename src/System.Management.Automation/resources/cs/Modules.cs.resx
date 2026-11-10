@@ -648,14 +648,14 @@
     <value>Rutina Export-ModuleMember</value>
   </data>
   <data name="WDACExportModuleCommandLogMessage" xml:space="preserve">
-    <value>Export of module members will fail in ConstrainedLanguage mode because module '{0}', has a language mode '{1}' that is different from the current session '{2}'.</value>
+    <value>Export členů modulu se v režimu ConstrainedLanguage nezdaří, protože modul '{0}' má '{1}' jazykového režimu, který se liší od aktuálního '{2}' relace.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACImplicitFunctionExportLogTitle" xml:space="preserve">
     <value>Implicitní export funkcí modulu</value>
   </data>
   <data name="WDACImplicitFunctionExportLogMessage" xml:space="preserve">
-    <value>Implicit function export for module '{0}' will be denied because it is trusted (runs in FullLanguage mode) but the session is not trusted (runs in ConstrainedLanguage mode). It is best practice to always export module functions individually by full name.</value>
+    <value>Implicitní export funkcí z modulu {0} bude odepřen, protože modul je důvěryhodný (běží v režimu FullLanguage), ale relace důvěryhodná není (běží v režimu ConstrainedLanguage). Osvědčeným postupem je vždy exportovat funkce modulu jednotlivě pod úplným názvem.</value>
     <comment>{StrContains="FullLanguage"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACScriptFileImportLogTitle" xml:space="preserve">
@@ -669,28 +669,28 @@
     <value>Modul obsahuje operátor dot-source</value>
   </data>
   <data name="WDACModuleDotSourceLogMessage" xml:space="preserve">
-    <value>Module '{0}' import will in fail ConstrainedLanguage mode because it exports functions using wildcard characters while also using the dot-source operator.</value>
+    <value>Import modulu {0} v režimu ConstrainedLanguage selže, protože modul exportuje funkce pomocí zástupných znaků a současně používá operátor dot-source.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACModuleFnExportWithNestedModulesLogTitle" xml:space="preserve">
-    <value>Module Exporting Functions</value>
+    <value>Export funkcí z modulu</value>
   </data>
   <data name="WDACModuleFnExportWithNestedModulesLogMessage" xml:space="preserve">
-    <value>Module '{0}' exports functions using name wildcard characters. Any nested module function names will be removed when running in ConstrainedLanguage mode.</value>
+    <value>Modul '{0}' exportuje funkce pomocí zástupných znaků názvu. Všechny vnořené názvy funkcí modulu se při spuštění v režimu ConstrainedLanguage odeberou.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACNewModuleCommandLogTitle" xml:space="preserve">
-    <value>New-Module Cmdlet</value>
+    <value>Rutina New-Module</value>
   </data>
   <data name="WDACNewModuleCommandLogMessage" xml:space="preserve">
-    <value>A new module from an untrusted ConstrainedLanguage session will be blocked from providing the FullLanguage script block.</value>
+    <value>Nový modul z nedůvěryhodné relace v režimu ConstrainedLanguage nebude moct poskytovat blok skriptu v režimu FullLanguage.</value>
     <comment>{StrContains="ConstrainedLanguage"}{StrContains="FullLanguage"}</comment>
   </data>
   <data name="WDACMismatchedLanguageModesTitle" xml:space="preserve">
-    <value>Module Mismatched Language Modes</value>
+    <value>Neshodné režimy jazyka modulů</value>
   </data>
   <data name="WDACMismatchedLanguageModesMessage" xml:space="preserve">
-    <value>A dependent module is being loaded that has a different language mode than the parent. This will be disallowed when in ConstrainedLanguage mode.</value>
+    <value>Načítá se závislý modul, který má jiný jazykový režim než nadřazený modul. V režimu ConstrainedLanguage to nebude povolené.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

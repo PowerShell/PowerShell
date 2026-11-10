@@ -262,7 +262,7 @@
     <value>Error en la comprobación del atributo ValidateTrustedData</value>
   </data>
   <data name="WDACParameterArgNotTrustedMessage" xml:space="preserve">
-    <value>The parameter argument '{0}' is not trusted and will fail the ValidateTrustedData parameter attribute check in ConstrainedLanguage mode.</value>
+    <value>El argumento de parámetro '{0}' no es de confianza y producirá un error en la comprobación del atributo de parámetro de ValidateTrustedData en modo ConstrainedLanguage.</value>
     <comment>{StrContains="ValidateTrustedData"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

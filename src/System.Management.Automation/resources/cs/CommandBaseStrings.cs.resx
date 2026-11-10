@@ -232,7 +232,7 @@ Reviewed by TArcher on 2010-07-20
     <value>Kontrola zpracování bloku skriptu pomocí tečkové notace</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>Dot-Source processing for script block '{0}' will fail in ConstrainedLanguage mode because its language mode '{1}' does not match the current language mode '{2}'.</value>
+    <value>Zpracování bloku skriptu {0} pomocí operátoru dot-source v režimu ConstrainedLanguage selže, protože jeho režim jazyka {1} neodpovídá aktuálnímu režimu jazyka {2}.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="SearcherWDACLogTitle" xml:space="preserve">

@@ -145,7 +145,7 @@
     <value>入力名 "{0}" はメソッドに解決できません。</value>
   </data>
   <data name="NoMethodInvocationInRestrictedLanguageMode" xml:space="preserve">
-    <value>Cannot invoke a method in the RestrictedLanguage mode.</value>
+    <value>RestrictedLanguageモードでメソッドを呼び出すことはできません。</value>
     <comment>{StrContains="RestrictedLanguage"}</comment>
   </data>
   <data name="NoShouldProcessForScriptBlockSet" xml:space="preserve">
@@ -190,7 +190,7 @@ ErrorAction, WarningAction, InformationAction, PipelineVariable</value>
     <value>ForEach-Object コマンドレット</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>Method invocation on type '{0}' will not be allowed when run in ConstrainedLanguage mode.</value>
+    <value>ConstrainedLanguage モードで実行する場合、型 '{0}' でのメソッドの呼び出しは許可されません。</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

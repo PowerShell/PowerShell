@@ -145,7 +145,7 @@
     <value>입력 이름 "{0}"을(를) 메서드로 확인할 수 없습니다.</value>
   </data>
   <data name="NoMethodInvocationInRestrictedLanguageMode" xml:space="preserve">
-    <value>Cannot invoke a method in the RestrictedLanguage mode.</value>
+    <value>RestrictedLanguage 모드에서는 메서드를 호출할 수 없습니다.</value>
     <comment>{StrContains="RestrictedLanguage"}</comment>
   </data>
   <data name="NoShouldProcessForScriptBlockSet" xml:space="preserve">
@@ -190,7 +190,7 @@ ErrorAction, WarningAction, InformationAction, PipelineVariable</value>
     <value>ForEach-Object Cmdlet</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>Method invocation on type '{0}' will not be allowed when run in ConstrainedLanguage mode.</value>
+    <value>ConstrainedLanguage 모드에서 실행할 경우 '{0}' 형식에 대한 메서드 호출이 허용되지 않습니다.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

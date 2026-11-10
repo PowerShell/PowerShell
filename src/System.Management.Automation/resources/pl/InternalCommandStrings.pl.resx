@@ -145,7 +145,7 @@
     <value>Nie można rozpoznać nazwy wejściowej „{0}” jako metody.</value>
   </data>
   <data name="NoMethodInvocationInRestrictedLanguageMode" xml:space="preserve">
-    <value>Cannot invoke a method in the RestrictedLanguage mode.</value>
+    <value>Nie można wywołać metody w trybie RestrictedLanguage.</value>
     <comment>{StrContains="RestrictedLanguage"}</comment>
   </data>
   <data name="NoShouldProcessForScriptBlockSet" xml:space="preserve">
@@ -190,7 +190,7 @@ ErrorAction, WarningAction, InformationAction, PipelineVariable</value>
     <value>ForEach-Object Cmdlet</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>Method invocation on type '{0}' will not be allowed when run in ConstrainedLanguage mode.</value>
+    <value>Wywołanie metody dla typu '{0}' nie będzie dozwolone podczas uruchamiania w trybie ConstrainedLanguage.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

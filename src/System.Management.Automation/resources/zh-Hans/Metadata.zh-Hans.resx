@@ -262,7 +262,7 @@
     <value>ValidateTrustedData 属性检查失败</value>
   </data>
   <data name="WDACParameterArgNotTrustedMessage" xml:space="preserve">
-    <value>The parameter argument '{0}' is not trusted and will fail the ValidateTrustedData parameter attribute check in ConstrainedLanguage mode.</value>
+    <value>参数实参 '{0}' 不受信任，且在 ConstrainedLanguage 模式下无法通过 ValidateTrustedData 参数属性检查。</value>
     <comment>{StrContains="ValidateTrustedData"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

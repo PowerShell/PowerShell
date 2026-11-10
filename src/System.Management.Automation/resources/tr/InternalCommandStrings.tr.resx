@@ -145,14 +145,14 @@
     <value>"{0}" giriş adı bir yönteme çözümlenemiyor.</value>
   </data>
   <data name="NoMethodInvocationInRestrictedLanguageMode" xml:space="preserve">
-    <value>Cannot invoke a method in the RestrictedLanguage mode.</value>
+    <value>RestrictedLanguage modunda yöntem çağrılamaz.</value>
     <comment>{StrContains="RestrictedLanguage"}</comment>
   </data>
   <data name="NoShouldProcessForScriptBlockSet" xml:space="preserve">
     <value>-WhatIf ve -Confirm parametreleri betik blokları için desteklenmez.</value>
   </data>
   <data name="OperationNotAllowedInRestrictedLanguageMode" xml:space="preserve">
-    <value>The '{0}' operation is not allowed in the RestrictedLanguage mode.</value>
+    <value>RestrictedLanguage modunda '{0}' işlemine izin verilmiyor.</value>
     <comment>{StrContains="RestrictedLanguage"}</comment>
   </data>
   <data name="OperatorNotSpecified" xml:space="preserve">
@@ -190,7 +190,7 @@ ErrorAction, WarningAction, InformationAction, PipelineVariable</value>
     <value>ForEach-Object Cmdlet'i</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>Method invocation on type '{0}' will not be allowed when run in ConstrainedLanguage mode.</value>
+    <value>ConstrainedLanguage modunda çalıştırıldığında, '{0}' türünde yöntem çağrısına izin verilmez.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

@@ -232,7 +232,7 @@ Reviewed by TArcher on 2010-07-20
     <value>指令碼區塊處理 Dot-Source 檢查</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>Dot-Source processing for script block '{0}' will fail in ConstrainedLanguage mode because its language mode '{1}' does not match the current language mode '{2}'.</value>
+    <value>在 ConstrainedLanguage 模式中，指令碼區塊 '{0}' 的 Dot-Source 處理將會失敗，因為其語言模式 '{1}' 與目前的語言模式 '{2}' 不符。</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="SearcherWDACLogTitle" xml:space="preserve">

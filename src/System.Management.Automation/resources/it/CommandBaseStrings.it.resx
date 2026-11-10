@@ -232,7 +232,7 @@ Reviewed by TArcher on 2010-07-20
     <value>Controllo Dot-Source per elaborazione blocco script</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>Dot-Source processing for script block '{0}' will fail in ConstrainedLanguage mode because its language mode '{1}' does not match the current language mode '{2}'.</value>
+    <value>Dot-Source'elaborazione del '{0}' del blocco di script non riuscirà in modalità ConstrainedLanguage perché la modalità linguaggio '{1}' non corrisponde alla modalità linguaggio corrente '{2}'.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="SearcherWDACLogTitle" xml:space="preserve">
