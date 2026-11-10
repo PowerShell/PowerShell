@@ -402,7 +402,7 @@
     <value>スクリプトが複雑すぎるため、処理が停止されました。</value>
   </data>
   <data name="ScriptsNotAllowed" xml:space="preserve">
-    <value>The syntax is not supported by this runspace. This can occur if the runspace is in NoLanguage mode.</value>
+    <value>この構文は、この実行空間ではサポートされていません。これは実行空間が NoLanguage モードの場合に発生することがあります。</value>
     <comment>{StrContains="NoLanguage"}</comment>
   </data>
   <data name="InvalidSplitOptionCombination" xml:space="preserve">
@@ -657,7 +657,7 @@
     <comment>{StrContains="Switch"}{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="VariableReferenceNotSupportedInDataSection" xml:space="preserve">
-    <value>A variable that cannot be referenced in RestrictedLanguage mode or a Data section is being referenced. Variables that can be referenced include the following: {0}.</value>
+    <value>RestrictedLanguage モードまたは Data セクションで参照できない変数が参照されています。参照できる変数は次のとおりです: {0}。</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="CmdletNotInAllowedListForDataSection" xml:space="preserve">
@@ -681,7 +681,7 @@
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="ArrayMultiplyToolongInDataSection" xml:space="preserve">
-    <value>Array multiplication resulting in more than {0} elements is not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>RestrictedLanguage モードまたは Data セクションでは、要素が {0} を超える配列の乗算は許可されていません。</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="DotSourcingNotSupportedInDataSection" xml:space="preserve">
@@ -968,7 +968,7 @@ ModuleVersion : インポートするモジュールのバージョン。これ�
     <value>リソース '{0}' を読み込めません: リソースが見つかりません。</value>
   </data>
   <data name="ConfigurationNotAllowedInConstrainedLanguage" xml:space="preserve">
-    <value>Configuration keyword is not allowed in ConstrainedLanguage mode.</value>
+    <value>構成キーワードは ConstrainedLanguage モード内では使用できません。</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="InvalidConfigurationName" xml:space="preserve">
@@ -1354,7 +1354,7 @@ ModuleVersion : インポートするモジュールのバージョン。これ�
     <value>演算子 '&amp;' または '.' を使用して、言語の境界を越えたモジュール スコープ コマンドを呼び出すことはできません。</value>
   </data>
   <data name="ClassesNotAllowedInConstrainedLanguage" xml:space="preserve">
-    <value>Class keyword is not allowed in ConstrainedLanguage mode.</value>
+    <value>Class キーワードは ConstrainedLanguage モードでは使用できません。</value>
     <comment>{StrContains="Class"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="MissingColonInTernaryExpression" xml:space="preserve">
@@ -1373,14 +1373,14 @@ ModuleVersion : インポートするモジュールのバージョン。これ�
     <value>パーサー構成キーワード</value>
   </data>
   <data name="WDACParserConfigKeywordLogMessage" xml:space="preserve">
-    <value>The Configuration keyword will not be allowed in ConstrainedLanguage mode for untrusted script.</value>
+    <value>Configuration キーワードは、信頼されていないスクリプトのConstrainedLanguageモード内では使用できません。</value>
     <comment>{StrContains="Configuration"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACParserClassKeywordLogTitle" xml:space="preserve">
     <value>パーサー クラス キーワード</value>
   </data>
   <data name="WDACParserClassKeywordLogMessage" xml:space="preserve">
-    <value>The Class keyword will not be allowed in ConstrainedLanguage mode for untrusted script.</value>
+    <value>Class キーワードは、信頼されていないスクリプトのConstrainedLanguageモード内では使用できません。</value>
     <comment>{StrContains="Class"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACParserDSSupportedCommandLogTitle" xml:space="preserve">
@@ -1394,21 +1394,21 @@ ModuleVersion : インポートするモジュールのバージョン。これ�
     <value>モジュール スコープ呼び出し演算子</value>
   </data>
   <data name="WDACParserModuleScopeCallOperatorLogMessage" xml:space="preserve">
-    <value>The module scope call operator will be denied in ConstrainedLanguage mode.</value>
+    <value>ConstrainedLanguage モードでは、モジュール スコープ呼び出し演算子は拒否されます。</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACParserForEachOperatorLogTitle" xml:space="preserve">
     <value>ForEach キーワード メソッド呼び出し</value>
   </data>
   <data name="WDACParserForEachOperatorLogMessage" xml:space="preserve">
-    <value>The ForEach keyword will fail '{0}' iteration item method invocation when run in ConstrainedLanguage mode.</value>
+    <value>ConstrainedLanguage モードで実行すると、イテレーション項目メソッドの呼び出し '{0}' ForEach キーワード (keyword) が失敗します。</value>
     <comment>{StrContains="ForEach"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACGetSteppablePipelineLogTitle" xml:space="preserve">
     <value>式評価に失敗する可能性があります</value>
   </data>
   <data name="WDACGetSteppablePipelineLogMessage" xml:space="preserve">
-    <value>Creating a steppable pipeline from a script block may require evaluating some expressions within the script block. The expression evaluation will silently fail and return 'null' in ConstrainedLanguage mode, unless the expression represents a constant value.</value>
+    <value>ステップ可能なパイプラインをスクリプト ブロックから作成するには、そのスクリプト ブロック内で何らかの式を評価することが必要な場合があります。この式評価は、ConstrainedLanguage モードでは、式が定数値を表していない限り警告なしに失敗して 'null' を返します。</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="ConfigurationNotAllowedOnArm64" xml:space="preserve">

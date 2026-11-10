@@ -648,14 +648,14 @@
     <value>Export-ModuleMember コマンドレット</value>
   </data>
   <data name="WDACExportModuleCommandLogMessage" xml:space="preserve">
-    <value>Export of module members will fail in ConstrainedLanguage mode because module '{0}', has a language mode '{1}' that is different from the current session '{2}'.</value>
+    <value>モジュール '{0}' の言語モード '{1}' が現在のセッション '{2}' と異なるため、ConstrainedLanguage モードではモジュール メンバーのエクスポートが失敗します。</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACImplicitFunctionExportLogTitle" xml:space="preserve">
     <value>モジュールの暗黙的な関数のエクスポート</value>
   </data>
   <data name="WDACImplicitFunctionExportLogMessage" xml:space="preserve">
-    <value>Implicit function export for module '{0}' will be denied because it is trusted (runs in FullLanguage mode) but the session is not trusted (runs in ConstrainedLanguage mode). It is best practice to always export module functions individually by full name.</value>
+    <value>モジュール '{0}' の暗黙的な関数エクスポートは、信頼されている (FullLanguageモードで実行される) が、セッションが信頼されていない (ConstrainedLanguageモードで実行される) ため、拒否されます。モジュール関数は常にフル ネームで個別にエクスポートすることをお勧めします。</value>
     <comment>{StrContains="FullLanguage"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACScriptFileImportLogTitle" xml:space="preserve">
@@ -669,28 +669,28 @@
     <value>モジュールにドットソース演算子が含まれています</value>
   </data>
   <data name="WDACModuleDotSourceLogMessage" xml:space="preserve">
-    <value>Module '{0}' import will in fail ConstrainedLanguage mode because it exports functions using wildcard characters while also using the dot-source operator.</value>
+    <value>モジュール '{0}' インポートは、ワイルドカード文字を使用して関数をエクスポートし、ドット ソース演算子も使用するため、フェール ConstrainedLanguage モードになります。</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACModuleFnExportWithNestedModulesLogTitle" xml:space="preserve">
-    <value>Module Exporting Functions</value>
+    <value>モジュールのエクスポート関数</value>
   </data>
   <data name="WDACModuleFnExportWithNestedModulesLogMessage" xml:space="preserve">
-    <value>Module '{0}' exports functions using name wildcard characters. Any nested module function names will be removed when running in ConstrainedLanguage mode.</value>
+    <value>モジュール '{0}' は、名前のワイルドカード文字を使用して関数をエクスポートします。ConstrainedLanguage モードで実行すると、入れ子になったモジュール関数名はすべて削除されます。</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACNewModuleCommandLogTitle" xml:space="preserve">
-    <value>New-Module Cmdlet</value>
+    <value>New-Module コマンドレット</value>
   </data>
   <data name="WDACNewModuleCommandLogMessage" xml:space="preserve">
-    <value>A new module from an untrusted ConstrainedLanguage session will be blocked from providing the FullLanguage script block.</value>
+    <value>信頼されていない ConstrainedLanguage セッションからの新しいモジュールは、FullLanguage スクリプト ブロックの提供をブロックされます。</value>
     <comment>{StrContains="ConstrainedLanguage"}{StrContains="FullLanguage"}</comment>
   </data>
   <data name="WDACMismatchedLanguageModesTitle" xml:space="preserve">
-    <value>Module Mismatched Language Modes</value>
+    <value>モジュールの言語モードが一致しません</value>
   </data>
   <data name="WDACMismatchedLanguageModesMessage" xml:space="preserve">
-    <value>A dependent module is being loaded that has a different language mode than the parent. This will be disallowed when in ConstrainedLanguage mode.</value>
+    <value>親とは異なる言語モードを持つ依存モジュールが読み込まれています。これは、ConstrainedLanguage モードでは許可されません。</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

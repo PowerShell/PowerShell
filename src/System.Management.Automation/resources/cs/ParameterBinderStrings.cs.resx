@@ -250,14 +250,14 @@
     <value>Volání metody nebo vlastnosti není povolené</value>
   </data>
   <data name="WDACBinderInvocationLogMessage" xml:space="preserve">
-    <value>Invocation of Method or Property '{0}' on type '{1}' will not be allowed in ConstrainedLanguage mode for untrusted scripts.</value>
+    <value>Vyvolání metody nebo vlastnosti '{0}' typu '{1}' nebude v režimu ConstrainedLanguage pro nedůvěryhodné skripty povoleno.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACBinderTypeCreationLogTitle" xml:space="preserve">
     <value>Vytvoření typu není povolené</value>
   </data>
   <data name="WDACBinderTypeCreationLogMessage" xml:space="preserve">
-    <value>Creation of Type '{0}' will not be allowed during parameter binding in ConstrainedLanguage mode for untrusted scripts.</value>
+    <value>Vytvoření typu '{0}' nebude povoleno během vazby parametrů v režimu ConstrainedLanguage pro nedůvěryhodné skripty.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

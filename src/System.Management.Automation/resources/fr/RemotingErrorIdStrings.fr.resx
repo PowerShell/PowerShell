@@ -1722,7 +1722,7 @@ Le processus client SSH s’est arrêté avant que la connexion puisse être ét
     <value>L’évaluation de l’expression peut échouer</value>
   </data>
   <data name="WDACGetPowerShellLogMessage" xml:space="preserve">
-    <value>Creating a PowerShell object from a script block may require evaluating some expressions within the script block. The expression evaluation will silently fail and return 'null' in ConstrainedLanguage mode, unless the expression represents a constant value.</value>
+    <value>La création d’un objet PowerShell à partir d’un bloc de script peut nécessiter l’évaluation de certaines expressions dans le bloc de script. L’évaluation de l’expression échouera silencieusement et renverra « null » en mode ConstrainedLanguage, sauf si l’expression représente une valeur constante.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="HyperVFailedToGetStateUnknownType" xml:space="preserve">

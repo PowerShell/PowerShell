@@ -1021,7 +1021,7 @@ Wszystkie sesje WinRM połączone z konfiguracjami sesji programu PowerShell, ta
     <value>Określa, czy uruchomić tę konfigurację sesji jako konto administratora maszyny (wirtualnej)</value>
   </data>
   <data name="DISCLanguageModeComment" xml:space="preserve">
-    <value>Language mode to apply when applied to a session. Can be 'NoLanguage' (recommended), 'RestrictedLanguage', 'ConstrainedLanguage', or 'FullLanguage'</value>
+    <value>Tryb języka do zastosowania w przypadku zastosowania do sesji. Może to być „NoLanguage” (zalecane), „RestrictedLanguage”, „ConstrainedLanguage” lub „FullLanguage”</value>
     <comment>{StrContains="NoLanguage"}{StrContains="RestrictedLanguage"}{StrContains="ConstrainedLanguage"}{StrContains="FullLanguage"}</comment>
   </data>
   <data name="DISCModulesToImportComment" xml:space="preserve">

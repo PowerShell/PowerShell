@@ -1722,7 +1722,7 @@ El proceso de cliente SSH finalizó antes de que se pudiera establecer la conexi
     <value>Puede producirse un error en la evaluación de expresiones</value>
   </data>
   <data name="WDACGetPowerShellLogMessage" xml:space="preserve">
-    <value>Creating a PowerShell object from a script block may require evaluating some expressions within the script block. The expression evaluation will silently fail and return 'null' in ConstrainedLanguage mode, unless the expression represents a constant value.</value>
+    <value>La creación de un objeto de PowerShell a partir de un bloque de script puede requerir la evaluación de algunas expresiones dentro del bloque de script. La evaluación de expresiones producirá un error en modo silencioso y devolverá "null" en el modo ConstrainedLanguage, a menos que la expresión represente un valor constante.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="HyperVFailedToGetStateUnknownType" xml:space="preserve">

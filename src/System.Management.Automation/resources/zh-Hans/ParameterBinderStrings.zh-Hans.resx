@@ -250,14 +250,14 @@
     <value>不允许方法或属性调用</value>
   </data>
   <data name="WDACBinderInvocationLogMessage" xml:space="preserve">
-    <value>Invocation of Method or Property '{0}' on type '{1}' will not be allowed in ConstrainedLanguage mode for untrusted scripts.</value>
+    <value>对于不受信任的脚本，不允许在 ConstrainedLanguage 模式调用类型 '{1}' 上的方法或属性 '{0}'。</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACBinderTypeCreationLogTitle" xml:space="preserve">
     <value>不允许创建类型</value>
   </data>
   <data name="WDACBinderTypeCreationLogMessage" xml:space="preserve">
-    <value>Creation of Type '{0}' will not be allowed during parameter binding in ConstrainedLanguage mode for untrusted scripts.</value>
+    <value>对于不受信任的脚本，不允许在 ConstrainedLanguage 模式进行参数绑定期间创建类型 '{0}'。</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

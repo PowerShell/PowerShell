@@ -1722,7 +1722,7 @@ SSH 用戶端處理序在建立連線之前就已終止。</value>
     <value>運算式評估可能失敗</value>
   </data>
   <data name="WDACGetPowerShellLogMessage" xml:space="preserve">
-    <value>Creating a PowerShell object from a script block may require evaluating some expressions within the script block. The expression evaluation will silently fail and return 'null' in ConstrainedLanguage mode, unless the expression represents a constant value.</value>
+    <value>從指令碼區塊建立 PowerShell 物件可能需要評估指令碼區塊中的一些運算式。除非運算式代表常數值，否則在 ConstrainedLanguage 模式下，運算式評估會悄悄失敗，並傳回 'null'。</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="HyperVFailedToGetStateUnknownType" xml:space="preserve">

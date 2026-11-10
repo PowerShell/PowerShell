@@ -1722,7 +1722,7 @@ Proces klienta SSH se ukončil dříve, než bylo možné navázat připojení.<
     <value>Vyhodnocení výrazu může selhat</value>
   </data>
   <data name="WDACGetPowerShellLogMessage" xml:space="preserve">
-    <value>Creating a PowerShell object from a script block may require evaluating some expressions within the script block. The expression evaluation will silently fail and return 'null' in ConstrainedLanguage mode, unless the expression represents a constant value.</value>
+    <value>Vytvoření objektu PowerShellu z bloku skriptu může vyžadovat vyhodnocení některých výrazů uvnitř bloku skriptu. V režimu ConstrainedLanguage vyhodnocení výrazu bez upozornění selže a vrátí hodnotu null, pokud výraz nepředstavuje konstantní hodnotu.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="HyperVFailedToGetStateUnknownType" xml:space="preserve">

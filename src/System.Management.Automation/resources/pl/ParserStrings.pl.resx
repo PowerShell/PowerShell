@@ -581,11 +581,11 @@ Poprawna forma to: ForEach ($a in $b) {...}</value>
     <value>Użyj znaku { zamiast { w nazwach zmiennych.</value>
   </data>
   <data name="MissingStatementBlockForDataSection" xml:space="preserve">
-    <value>The Data section is missing its statement block.</value>
+    <value>Sekcja Data nie ma bloku instrukcji.</value>
     <comment>{StrContains="Data"}</comment>
   </data>
   <data name="InvalidParameterForDataSectionStatement" xml:space="preserve">
-    <value>The "{0}" parameter of the Data section is not valid. The valid Data section parameter is SupportedCommand.</value>
+    <value>Parametr „{0}” sekcji Data jest nieprawidłowy. Prawidłowym parametrem sekcji Data jest SupportedCommand.</value>
     <comment>{StrContains="Data"}{StrContains="SupportedCommand"}</comment>
   </data>
   <data name="ArrayReferenceNotSupportedInDataSection" xml:space="preserve">
@@ -609,7 +609,7 @@ Poprawna forma to: ForEach ($a in $b) {...}</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="OperatorNotSupportedInDataSection" xml:space="preserve">
-    <value>The '{0}' operator is not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>Operator '{0}' jest niedozwolony w trybie RestrictedLanguage lub sekcji Data.</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="TrapStatementNotSupportedInDataSection" xml:space="preserve">
@@ -661,7 +661,7 @@ Poprawna forma to: ForEach ($a in $b) {...}</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="CmdletNotInAllowedListForDataSection" xml:space="preserve">
-    <value>The command '{0}' is not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>Polecenie '{0}' jest niedozwolone w trybie RestrictedLanguage lub sekcji Data.</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="DataSectionStatementNotSupportedInDataSection" xml:space="preserve">
@@ -669,7 +669,7 @@ Poprawna forma to: ForEach ($a in $b) {...}</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="MissingValueForSupportedCommandInDataSectionStatement" xml:space="preserve">
-    <value>The SupportedCommand parameter of the Data section is missing a value. Supply a cmdlet or function name to the parameter.</value>
+    <value>Brak wartości parametru SupportedCommand w sekcji Data. Podaj do tego parametru nazwę polecenia cmdlet lub funkcji.</value>
     <comment>{StrContains="SupportedCommand"}{StrContains="Data"}</comment>
   </data>
   <data name="InvalidScriptBlockInDataSection" xml:space="preserve">
@@ -827,7 +827,7 @@ Poprawna forma to: ForEach ($a in $b) {...}</value>
     <value>Metody nie można wywoływać.</value>
   </data>
   <data name="HashtableToObjectConversionNotSupportedInDataSection" xml:space="preserve">
-    <value>Cannot convert hashtable to an object of the following type: {0}. Hashtable-to-Object conversion is not supported in RestrictedLanguage mode or a Data section.</value>
+    <value>Nie można przekonwertować obiektu skrótu na obiekt następującego typu: {0}. Konwersja obiektu skrótu na obiekt nie jest obsługiwana w trybie RestrictedLanguage ani w sekcji Data.</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="RequiresArgumentMustBeConstant" xml:space="preserve">
@@ -874,7 +874,7 @@ Poprawna forma to: ForEach ($a in $b) {...}</value>
     <value>Nie znaleziono pliku schematu {0}. Sprawdź, czy wszystkie moduły określone w instrukcji konfiguracji zawierają plik schema.mof, a następnie spróbuj uruchomić skrypt ponownie.</value>
   </data>
   <data name="DataSectionAllowedCommandDisallowed" xml:space="preserve">
-    <value>Cannot define Data section. Definition of additional supported commands is not supported in this language mode.</value>
+    <value>Nie można zdefiniować Data sekcji. Definicja dodatkowych obsługiwanych poleceń nie jest obsługiwana w tym trybie języka.</value>
     <comment>{StrContains="Data"}</comment>
   </data>
   <data name="MissingCurlyInConfigurationStatement" xml:space="preserve">
@@ -1354,7 +1354,7 @@ ModuleVersion : Wersja modułu do zaimportowania. Jeśli element jest używany, 
     <value>Nie można używać operatorów „&amp;” ani „ ” do wywoływania polecenia w zakresie modułu między granicami języka.</value>
   </data>
   <data name="ClassesNotAllowedInConstrainedLanguage" xml:space="preserve">
-    <value>Class keyword is not allowed in ConstrainedLanguage mode.</value>
+    <value>Słowo kluczowe Class nie jest dozwolone w trybie ConstrainedLanguage.</value>
     <comment>{StrContains="Class"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="MissingColonInTernaryExpression" xml:space="preserve">
@@ -1401,7 +1401,7 @@ ModuleVersion : Wersja modułu do zaimportowania. Jeśli element jest używany, 
     <value>Wywołanie metody dla słowa kluczowego ForEach</value>
   </data>
   <data name="WDACParserForEachOperatorLogMessage" xml:space="preserve">
-    <value>The ForEach keyword will fail '{0}' iteration item method invocation when run in ConstrainedLanguage mode.</value>
+    <value>Użycie słowa kluczowego ForEach nie powiedzie się '{0}' wywołaniu metody elementu iteracji w trybie ConstrainedLanguage.</value>
     <comment>{StrContains="ForEach"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACGetSteppablePipelineLogTitle" xml:space="preserve">

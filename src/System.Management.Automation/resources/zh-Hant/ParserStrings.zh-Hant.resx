@@ -402,7 +402,7 @@
     <value>已停止處理，因為指令碼太複雜。</value>
   </data>
   <data name="ScriptsNotAllowed" xml:space="preserve">
-    <value>The syntax is not supported by this runspace. This can occur if the runspace is in NoLanguage mode.</value>
+    <value>此 Runspace 不支援此語法。如果 Runspace 處於 NoLanguage 模式，就會發生這種情況。</value>
     <comment>{StrContains="NoLanguage"}</comment>
   </data>
   <data name="InvalidSplitOptionCombination" xml:space="preserve">
@@ -589,83 +589,83 @@
     <comment>{StrContains="Data"}{StrContains="SupportedCommand"}</comment>
   </data>
   <data name="ArrayReferenceNotSupportedInDataSection" xml:space="preserve">
-    <value>Array references are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>RestrictedLanguage 模式或 Data 區段中不允許陣列參考。</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="AssignmentStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>Assignment statements are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>RestrictedLanguage 模式或 Data 區段中不允許 Assignment 陳述式。</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="RedirectionNotSupportedInDataSection" xml:space="preserve">
-    <value>Redirection is not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>RestrictedLanguage 模式或 Data 區段中不允許重新導向。</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="DoWhileStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>The Do and While statements are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>RestrictedLanguage 模式或 Data 區段中不允許 Do 和 While 陳述式。</value>
     <comment>{StrContains="Do"}{StrContains="While"}{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="ExpandableStringNotSupportedInDataSection" xml:space="preserve">
-    <value>Expandable strings are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>RestrictedLanguage 模式或 Data 區段中不允許可擴充字串。</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="OperatorNotSupportedInDataSection" xml:space="preserve">
-    <value>The '{0}' operator is not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>RestrictedLanguage 模式或 Data 區段中不允許 '{0}' 運算子。</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="TrapStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>The Trap statement is not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>RestrictedLanguage 模式或 Data 區段中不允許 Trap 陳述式。</value>
     <comment>{StrContains="Trap"}{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="TryStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>The Try statement is not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>RestrictedLanguage 模式或 Data 區段中不允許 Try 陳述式。</value>
     <comment>{StrContains="Try"}{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="FlowControlStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>Flow control statements such as Break, Continue, Return, Exit, and Throw are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>RestrictedLanguage 模式中或 Data 區段中不允許流程控制陳述式，例如 Break、Continue、Return、Exit 和 Throw。</value>
     <comment>{StrContains="Break"}{StrContains="Continue"}{StrContains="Return"}{StrContains="Exit"}{StrContains="Throw"}{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="ForeachStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>Foreach statements are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>RestrictedLanguage 模式或 Data 區段中不允許 Foreach 陳述式。</value>
     <comment>{StrContains="Foreach"}{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="ForWhileStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>For and While statements are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>RestrictedLanguage 模式或 Data 區段中不允許 For 和 While 陳述式。</value>
     <comment>{StrContains="For"}{StrContains="While"}{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="FunctionDeclarationNotSupportedInDataSection" xml:space="preserve">
-    <value>Function declarations are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>RestrictedLanguage 模式或 Data 區段中不允許 Function 宣告。</value>
     <comment>{StrContains="Function"}{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="MethodCallNotSupportedInDataSection" xml:space="preserve">
-    <value>Method calls are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>RestrictedLanguage 模式或 Data 區段中不允許方法呼叫。</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="ParameterDeclarationNotSupportedInDataSection" xml:space="preserve">
-    <value>Parameter declarations are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>RestrictedLanguage 模式或 Data 區段中不允許參數宣告。</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="PropertyReferenceNotSupportedInDataSection" xml:space="preserve">
-    <value>Property references are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>RestrictedLanguage 模式或 Data 區段中不允許屬性參考。</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="ScriptBlockNotSupportedInDataSection" xml:space="preserve">
-    <value>Script block literals are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>RestrictedLanguage 模式或 Data 區段中不允許指令碼區塊常值。</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="SwitchStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>The Switch statement is not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>RestrictedLanguage 模式或 Data 區段中不允許 Switch 陳述式。</value>
     <comment>{StrContains="Switch"}{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="VariableReferenceNotSupportedInDataSection" xml:space="preserve">
-    <value>A variable that cannot be referenced in RestrictedLanguage mode or a Data section is being referenced. Variables that can be referenced include the following: {0}.</value>
+    <value>無法在 RestrictedLanguage 模式中參考的變數或正在參考的 Data 區段。可參考的變數包括： {0}。</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="CmdletNotInAllowedListForDataSection" xml:space="preserve">
-    <value>The command '{0}' is not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>RestrictedLanguage 模式或 Data 區段中不允許命令 '{0}'。</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="DataSectionStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>The Data statement is not allowed in RestrictedLanguage mode or another Data section.</value>
+    <value>RestrictedLanguage 模式或其他 Data 區段中不允許資料陳述式。</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="MissingValueForSupportedCommandInDataSectionStatement" xml:space="preserve">
@@ -673,19 +673,19 @@
     <comment>{StrContains="SupportedCommand"}{StrContains="Data"}</comment>
   </data>
   <data name="InvalidScriptBlockInDataSection" xml:space="preserve">
-    <value>A Begin statement block, Process statement block, or Param statement is not allowed in a Data section.</value>
+    <value>Data 區段中不允許 Begin 陳述式區塊、Process 陳述式區塊或 Param 陳述式。</value>
     <comment>{StrContains="Begin"}{StrContains="Process"}{StrContains="Param"}{StrContains="Data"}</comment>
   </data>
   <data name="StringMultiplyToolongInDataSection" xml:space="preserve">
-    <value>String multiplication results with more than "{0}" characters are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>RestrictedLanguage 模式或 Data 區段中不允許超過 "{0}" 個字元的字串乘法結果。</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="ArrayMultiplyToolongInDataSection" xml:space="preserve">
-    <value>Array multiplication resulting in more than {0} elements is not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>RestrictedLanguage 模式中或 Data 區段中不允許陣列相乘導致超過 {0} 個元素。</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="DotSourcingNotSupportedInDataSection" xml:space="preserve">
-    <value>Dot sourcing is not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>RestrictedLanguage 模式或 Data 區段中不允許點執行。</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="ParameterAttributeArgumentNeedsToBeConstantOrScriptBlock" xml:space="preserve">
@@ -749,11 +749,11 @@
     <value>雜湊常值中不允許使用 null 索引鍵。</value>
   </data>
   <data name="AttributeNotSupportedInDataSection" xml:space="preserve">
-    <value>Attributes are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>RestrictedLanguage 模式或 Data 區段中不允許屬性。</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="TypeNotAllowedInDataSection" xml:space="preserve">
-    <value>The type {0} is not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>RestrictedLanguage 模式或 Data 區段中不允許類型 {0}。</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="PropertyIsReadOnly" xml:space="preserve">
@@ -814,7 +814,7 @@
     <value>關鍵字 '{0}' 後面缺少陳述式主體。</value>
   </data>
   <data name="ParallelAndSequenceBlockNotSupportedInDataSection" xml:space="preserve">
-    <value>Parallel and Sequence blocks are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>RestrictedLanguage 模式或 Data 區段中不允許 Parallel 和 Sequence 區塊。</value>
     <comment>{StrContains="Parallel"}{StrContains="Sequence"}{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="UnexpectedKeyword" xml:space="preserve">
@@ -827,7 +827,7 @@
     <value>無法叫用此方法。</value>
   </data>
   <data name="HashtableToObjectConversionNotSupportedInDataSection" xml:space="preserve">
-    <value>Cannot convert hashtable to an object of the following type: {0}. Hashtable-to-Object conversion is not supported in RestrictedLanguage mode or a Data section.</value>
+    <value>無法將雜湊表轉換為下列類型的物件: {0}。RestrictedLanguage 模式中或 Data 區段不支援 Hashtable-to-Object 轉換。</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="RequiresArgumentMustBeConstant" xml:space="preserve">
@@ -874,7 +874,7 @@
     <value>找不到結構描述檔案 {0}。請確認組態陳述式中指定的任何模組都包含 schema.mof 檔案，然後再次嘗試執行指令碼。</value>
   </data>
   <data name="DataSectionAllowedCommandDisallowed" xml:space="preserve">
-    <value>Cannot define Data section. Definition of additional supported commands is not supported in this language mode.</value>
+    <value>無法定義 Data 區段。此語言模式不支援定義其他支援的命令。</value>
     <comment>{StrContains="Data"}</comment>
   </data>
   <data name="MissingCurlyInConfigurationStatement" xml:space="preserve">
@@ -968,7 +968,7 @@ ModuleVersion: 要匯入的模組版本。如果使用這個參數，ModuleName 
     <value>無法載入資源 '{0}': 找不到資源。</value>
   </data>
   <data name="ConfigurationNotAllowedInConstrainedLanguage" xml:space="preserve">
-    <value>Configuration keyword is not allowed in ConstrainedLanguage mode.</value>
+    <value>ConstrainedLanguage 模式中不允許使用 Configuration 關鍵字。</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="InvalidConfigurationName" xml:space="preserve">
@@ -1373,42 +1373,42 @@ ModuleVersion: 要匯入的模組版本。如果使用這個參數，ModuleName 
     <value>剖析器組態關鍵字</value>
   </data>
   <data name="WDACParserConfigKeywordLogMessage" xml:space="preserve">
-    <value>The Configuration keyword will not be allowed in ConstrainedLanguage mode for untrusted script.</value>
+    <value>在 ConstrainedLanguage 模式中，不受信任的指令碼不允許使用 Configuration 關鍵字。</value>
     <comment>{StrContains="Configuration"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACParserClassKeywordLogTitle" xml:space="preserve">
     <value>剖析器類別關鍵字</value>
   </data>
   <data name="WDACParserClassKeywordLogMessage" xml:space="preserve">
-    <value>The Class keyword will not be allowed in ConstrainedLanguage mode for untrusted script.</value>
+    <value>在 ConstrainedLanguage 模式中，不受信任的指令碼不允許使用 Class 關鍵字。</value>
     <comment>{StrContains="Class"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACParserDSSupportedCommandLogTitle" xml:space="preserve">
     <value>剖析器資料區段 SupportedCommand</value>
   </data>
   <data name="WDACParserDSSupportedCommandLogMessage" xml:space="preserve">
-    <value>The Data section that includes the SupportedCommand parameter would be disallowed in ConstrainedLanguage mode for untrusted script.</value>
+    <value>對於不受信任的指令碼，在 ConstrainedLanguage 模式中不允許包含 SupportedCommand 參數的 Data 區段。</value>
     <comment>{StrContains="Data"}{StrContains="SupportedCommand"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACParserModuleScopeCallOperatorLogTitle" xml:space="preserve">
     <value>模組範圍呼叫運算子</value>
   </data>
   <data name="WDACParserModuleScopeCallOperatorLogMessage" xml:space="preserve">
-    <value>The module scope call operator will be denied in ConstrainedLanguage mode.</value>
+    <value>在 ConstrainedLanguage 模式中，模組範圍呼叫運算子將會被拒絕。</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACParserForEachOperatorLogTitle" xml:space="preserve">
     <value>ForEach 關鍵字方法呼叫</value>
   </data>
   <data name="WDACParserForEachOperatorLogMessage" xml:space="preserve">
-    <value>The ForEach keyword will fail '{0}' iteration item method invocation when run in ConstrainedLanguage mode.</value>
+    <value>在 ConstrainedLanguage 模式中執行時，ForEach 關鍵字會使 '{0}' 反覆項目項目方法叫用失敗。</value>
     <comment>{StrContains="ForEach"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACGetSteppablePipelineLogTitle" xml:space="preserve">
     <value>運算式評估可能失敗</value>
   </data>
   <data name="WDACGetSteppablePipelineLogMessage" xml:space="preserve">
-    <value>Creating a steppable pipeline from a script block may require evaluating some expressions within the script block. The expression evaluation will silently fail and return 'null' in ConstrainedLanguage mode, unless the expression represents a constant value.</value>
+    <value>從指令碼區塊建立可逐步執行管線可能需要評估指令碼區塊中的一些運算式。除非運算式代表常數值，否則在 ConstrainedLanguage 模式下，運算式評估會悄悄失敗，並傳回 'null'。</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="ConfigurationNotAllowedOnArm64" xml:space="preserve">

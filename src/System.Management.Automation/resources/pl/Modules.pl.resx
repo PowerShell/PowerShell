@@ -655,7 +655,7 @@
     <value>Niejawny eksport funkcji modułu</value>
   </data>
   <data name="WDACImplicitFunctionExportLogMessage" xml:space="preserve">
-    <value>Implicit function export for module '{0}' will be denied because it is trusted (runs in FullLanguage mode) but the session is not trusted (runs in ConstrainedLanguage mode). It is best practice to always export module functions individually by full name.</value>
+    <value>Eksport niejawnej funkcji dla modułu '{0}' zostanie odrzucony, ponieważ jest on zaufany (działa w trybie FullLanguage), ale sesja nie jest zaufana (działa w trybie ConstrainedLanguage). Najlepszym rozwiązaniem jest zawsze eksportowanie funkcji modułu indywidualnie według pełnej nazwy.</value>
     <comment>{StrContains="FullLanguage"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACScriptFileImportLogTitle" xml:space="preserve">
@@ -676,7 +676,7 @@
     <value>Module Exporting Functions</value>
   </data>
   <data name="WDACModuleFnExportWithNestedModulesLogMessage" xml:space="preserve">
-    <value>Module '{0}' exports functions using name wildcard characters. Any nested module function names will be removed when running in ConstrainedLanguage mode.</value>
+    <value>Moduł '{0}' eksportuje funkcje przy użyciu symboli wieloznacznych nazwy. Wszystkie zagnieżdżone nazwy funkcji modułu zostaną usunięte podczas działania w trybie ConstrainedLanguage.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACNewModuleCommandLogTitle" xml:space="preserve">

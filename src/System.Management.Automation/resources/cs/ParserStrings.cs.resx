@@ -402,7 +402,7 @@ Správný tvar je: foreach ($a in $b) {...}</value>
     <value>Zpracování se zastavilo, protože skript je příliš složitý.</value>
   </data>
   <data name="ScriptsNotAllowed" xml:space="preserve">
-    <value>The syntax is not supported by this runspace. This can occur if the runspace is in NoLanguage mode.</value>
+    <value>Tato syntaxe není v tomto prostředí runspace podporovaná. K tomu může dojít, pokud je prostředí runspace v režimu NoLanguage.</value>
     <comment>{StrContains="NoLanguage"}</comment>
   </data>
   <data name="InvalidSplitOptionCombination" xml:space="preserve">
@@ -589,83 +589,83 @@ Správný tvar je: foreach ($a in $b) {...}</value>
     <comment>{StrContains="Data"}{StrContains="SupportedCommand"}</comment>
   </data>
   <data name="ArrayReferenceNotSupportedInDataSection" xml:space="preserve">
-    <value>Array references are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>Odkazy na pole nejsou v režimu RestrictedLanguage ani v oddílu Data povolené.</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="AssignmentStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>Assignment statements are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>Příkazy přiřazení nejsou v režimu RestrictedLanguage ani v oddílu Data povolené.</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="RedirectionNotSupportedInDataSection" xml:space="preserve">
-    <value>Redirection is not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>Přesměrování není v režimu RestrictedLanguage ani v oddílu Data povolené.</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="DoWhileStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>The Do and While statements are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>Příkazy Do a While nejsou v režimu RestrictedLanguage ani v oddílu Data povolené.</value>
     <comment>{StrContains="Do"}{StrContains="While"}{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="ExpandableStringNotSupportedInDataSection" xml:space="preserve">
-    <value>Expandable strings are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>Rozbalitelné řetězce nejsou v režimu RestrictedLanguage ani v oddílu Data povolené.</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="OperatorNotSupportedInDataSection" xml:space="preserve">
-    <value>The '{0}' operator is not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>Operátor '{0}' není v režimu RestrictedLanguage nebo v oddílu Data povolen.</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="TrapStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>The Trap statement is not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>Příkaz Trap není v režimu RestrictedLanguage ani v oddílu Data povolený.</value>
     <comment>{StrContains="Trap"}{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="TryStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>The Try statement is not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>Příkaz Try není v režimu RestrictedLanguage ani v oddílu Data povolený.</value>
     <comment>{StrContains="Try"}{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="FlowControlStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>Flow control statements such as Break, Continue, Return, Exit, and Throw are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>Příkazy řízení toku, jako jsou Break, Continue, Return, Exit a Throw, nejsou v režimu RestrictedLanguage nebo oddílu Data povoleny.</value>
     <comment>{StrContains="Break"}{StrContains="Continue"}{StrContains="Return"}{StrContains="Exit"}{StrContains="Throw"}{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="ForeachStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>Foreach statements are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>Příkazy Foreach nejsou v režimu RestrictedLanguage ani v oddílu Data povolené.</value>
     <comment>{StrContains="Foreach"}{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="ForWhileStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>For and While statements are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>Příkazy For a While nejsou v režimu RestrictedLanguage ani v oddílu Data povolené.</value>
     <comment>{StrContains="For"}{StrContains="While"}{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="FunctionDeclarationNotSupportedInDataSection" xml:space="preserve">
-    <value>Function declarations are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>Deklarace funkcí (Function) nejsou v režimu RestrictedLanguage ani v oddílu Data povolené.</value>
     <comment>{StrContains="Function"}{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="MethodCallNotSupportedInDataSection" xml:space="preserve">
-    <value>Method calls are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>Volání metod nejsou v režimu RestrictedLanguage ani v oddílu Data povolená.</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="ParameterDeclarationNotSupportedInDataSection" xml:space="preserve">
-    <value>Parameter declarations are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>Deklarace parametrů nejsou v režimu RestrictedLanguage ani v oddílu Data povolené.</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="PropertyReferenceNotSupportedInDataSection" xml:space="preserve">
-    <value>Property references are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>Odkazy na vlastnosti nejsou v režimu RestrictedLanguage ani v oddílu Data povolené.</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="ScriptBlockNotSupportedInDataSection" xml:space="preserve">
-    <value>Script block literals are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>Literály bloků skriptu nejsou v režimu RestrictedLanguage ani v oddílu Data povolené.</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="SwitchStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>The Switch statement is not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>Příkaz Switch není v režimu RestrictedLanguage ani v oddílu Data povolený.</value>
     <comment>{StrContains="Switch"}{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="VariableReferenceNotSupportedInDataSection" xml:space="preserve">
-    <value>A variable that cannot be referenced in RestrictedLanguage mode or a Data section is being referenced. Variables that can be referenced include the following: {0}.</value>
+    <value>Odkazuje se na proměnnou, na kterou v režimu RestrictedLanguage ani v oddílu Data odkazovat nelze. Mezi proměnné, na které lze odkazovat, patří: {0}.</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="CmdletNotInAllowedListForDataSection" xml:space="preserve">
-    <value>The command '{0}' is not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>Příkaz '{0}' není v režimu RestrictedLanguage nebo v oddílu Data povolen.</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="DataSectionStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>The Data statement is not allowed in RestrictedLanguage mode or another Data section.</value>
+    <value>Příkaz Data není v režimu RestrictedLanguage ani v jiném oddílu Data povolený.</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="MissingValueForSupportedCommandInDataSectionStatement" xml:space="preserve">
@@ -673,19 +673,19 @@ Správný tvar je: foreach ($a in $b) {...}</value>
     <comment>{StrContains="SupportedCommand"}{StrContains="Data"}</comment>
   </data>
   <data name="InvalidScriptBlockInDataSection" xml:space="preserve">
-    <value>A Begin statement block, Process statement block, or Param statement is not allowed in a Data section.</value>
+    <value>V oddílu Data není povolený blok příkazu Begin, blok příkazu Process ani příkaz Param.</value>
     <comment>{StrContains="Begin"}{StrContains="Process"}{StrContains="Param"}{StrContains="Data"}</comment>
   </data>
   <data name="StringMultiplyToolongInDataSection" xml:space="preserve">
-    <value>String multiplication results with more than "{0}" characters are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>Výsledky násobení řetězců s více než "{0}" znaky nejsou v režimu RestrictedLanguage nebo v oddílu Data povoleny.</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="ArrayMultiplyToolongInDataSection" xml:space="preserve">
-    <value>Array multiplication resulting in more than {0} elements is not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>Násobení polí, jehož výsledkem je více než {0} prvků, není v režimu RestrictedLanguage nebo v oddílu Data povoleno.</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="DotSourcingNotSupportedInDataSection" xml:space="preserve">
-    <value>Dot sourcing is not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>Použití operátoru dot-source není v režimu RestrictedLanguage ani v oddílu Data povolené.</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="ParameterAttributeArgumentNeedsToBeConstantOrScriptBlock" xml:space="preserve">
@@ -749,11 +749,11 @@ Správný tvar je: foreach ($a in $b) {...}</value>
     <value>Klíč null není v literálu hashovací tabulky povolený.</value>
   </data>
   <data name="AttributeNotSupportedInDataSection" xml:space="preserve">
-    <value>Attributes are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>Atributy nejsou v režimu RestrictedLanguage ani v oddílu Data povolené.</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="TypeNotAllowedInDataSection" xml:space="preserve">
-    <value>The type {0} is not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>Typ {0} není v režimu RestrictedLanguage ani v oddílu Data povolený.</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="PropertyIsReadOnly" xml:space="preserve">
@@ -814,7 +814,7 @@ Správný tvar je: foreach ($a in $b) {...}</value>
     <value>Za klíčovým slovem {0} chybí tělo příkazu.</value>
   </data>
   <data name="ParallelAndSequenceBlockNotSupportedInDataSection" xml:space="preserve">
-    <value>Parallel and Sequence blocks are not allowed in RestrictedLanguage mode or a Data section.</value>
+    <value>Bloky Parallel a Sequence nejsou v režimu RestrictedLanguage ani v oddílu Data povolené.</value>
     <comment>{StrContains="Parallel"}{StrContains="Sequence"}{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="UnexpectedKeyword" xml:space="preserve">
@@ -827,7 +827,7 @@ Správný tvar je: foreach ($a in $b) {...}</value>
     <value>Tuto metodu nelze vyvolat.</value>
   </data>
   <data name="HashtableToObjectConversionNotSupportedInDataSection" xml:space="preserve">
-    <value>Cannot convert hashtable to an object of the following type: {0}. Hashtable-to-Object conversion is not supported in RestrictedLanguage mode or a Data section.</value>
+    <value>Hashovací tabulku nejde převést na objekt následujícího typu: {0}. Převod hashovací tabulky na objekt není v režimu RestrictedLanguage ani v oddílu Data podporovaný.</value>
     <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="RequiresArgumentMustBeConstant" xml:space="preserve">
@@ -874,7 +874,7 @@ Správný tvar je: foreach ($a in $b) {...}</value>
     <value>Soubor schématu {0} se nenašel. Ověřte, že všechny moduly zadané v příkazu konfigurace obsahují soubor schema.mof, a potom zkuste skript spustit znovu.</value>
   </data>
   <data name="DataSectionAllowedCommandDisallowed" xml:space="preserve">
-    <value>Cannot define Data section. Definition of additional supported commands is not supported in this language mode.</value>
+    <value>Nelze definovat oddíl Data. Definování dalších podporovaných příkazů není v tomto jazykovém režimu podporované.</value>
     <comment>{StrContains="Data"}</comment>
   </data>
   <data name="MissingCurlyInConfigurationStatement" xml:space="preserve">
@@ -968,7 +968,7 @@ ModuleVersion : Verze modulu k importu. Pokud se použije, ModuleName musí podl
     <value>Prostředek {0} se nepodařilo načíst: Prostředek se nenašel.</value>
   </data>
   <data name="ConfigurationNotAllowedInConstrainedLanguage" xml:space="preserve">
-    <value>Configuration keyword is not allowed in ConstrainedLanguage mode.</value>
+    <value>Klíčové slovo konfigurace není v režimu ConstrainedLanguage povoleno.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="InvalidConfigurationName" xml:space="preserve">
@@ -1373,42 +1373,42 @@ ModuleVersion : Verze modulu k importu. Pokud se použije, ModuleName musí podl
     <value>Klíčové slovo Configuration parseru</value>
   </data>
   <data name="WDACParserConfigKeywordLogMessage" xml:space="preserve">
-    <value>The Configuration keyword will not be allowed in ConstrainedLanguage mode for untrusted script.</value>
+    <value>Klíčové slovo Configuration nebude v nedůvěryhodném skriptu v režimu ConstrainedLanguage povolené.</value>
     <comment>{StrContains="Configuration"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACParserClassKeywordLogTitle" xml:space="preserve">
     <value>Klíčové slovo Class parseru</value>
   </data>
   <data name="WDACParserClassKeywordLogMessage" xml:space="preserve">
-    <value>The Class keyword will not be allowed in ConstrainedLanguage mode for untrusted script.</value>
+    <value>Klíčové slovo Class nebude v nedůvěryhodném skriptu v režimu ConstrainedLanguage povolené.</value>
     <comment>{StrContains="Class"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACParserDSSupportedCommandLogTitle" xml:space="preserve">
     <value>SupportedCommand oddílu Data parseru</value>
   </data>
   <data name="WDACParserDSSupportedCommandLogMessage" xml:space="preserve">
-    <value>The Data section that includes the SupportedCommand parameter would be disallowed in ConstrainedLanguage mode for untrusted script.</value>
+    <value>V nedůvěryhodném skriptu by oddíl Data s parametrem SupportedCommand nebyl v režimu ConstrainedLanguage povolený.</value>
     <comment>{StrContains="Data"}{StrContains="SupportedCommand"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACParserModuleScopeCallOperatorLogTitle" xml:space="preserve">
     <value>Operátor volání oboru modulu</value>
   </data>
   <data name="WDACParserModuleScopeCallOperatorLogMessage" xml:space="preserve">
-    <value>The module scope call operator will be denied in ConstrainedLanguage mode.</value>
+    <value>Použití operátoru volání v oboru modulu bude v režimu ConstrainedLanguage odepřeno.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACParserForEachOperatorLogTitle" xml:space="preserve">
     <value>Vyvolání metody klíčového slova ForEach</value>
   </data>
   <data name="WDACParserForEachOperatorLogMessage" xml:space="preserve">
-    <value>The ForEach keyword will fail '{0}' iteration item method invocation when run in ConstrainedLanguage mode.</value>
+    <value>Klíčové slovo ForEach selže '{0}' vyvolání metody položky iterace při spuštění v režimu ConstrainedLanguage.</value>
     <comment>{StrContains="ForEach"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACGetSteppablePipelineLogTitle" xml:space="preserve">
     <value>Vyhodnocení výrazu může selhat</value>
   </data>
   <data name="WDACGetSteppablePipelineLogMessage" xml:space="preserve">
-    <value>Creating a steppable pipeline from a script block may require evaluating some expressions within the script block. The expression evaluation will silently fail and return 'null' in ConstrainedLanguage mode, unless the expression represents a constant value.</value>
+    <value>Vytvoření postupně spustitelného kanálu z bloku skriptu může vyžadovat vyhodnocení některých výrazů v bloku skriptu. V režimu ConstrainedLanguage vyhodnocení výrazu bez upozornění selže a vrátí hodnotu null, pokud výraz nepředstavuje konstantní hodnotu.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="ConfigurationNotAllowedOnArm64" xml:space="preserve">

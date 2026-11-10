@@ -1722,7 +1722,7 @@ SSH istemci işlemi, bağlantı kurulamadan önce sonlandırıldı.</value>
     <value>İfade Değerlendirmesi Başarısız Olabilir</value>
   </data>
   <data name="WDACGetPowerShellLogMessage" xml:space="preserve">
-    <value>Creating a PowerShell object from a script block may require evaluating some expressions within the script block. The expression evaluation will silently fail and return 'null' in ConstrainedLanguage mode, unless the expression represents a constant value.</value>
+    <value>Bir betik bloğundan PowerShell nesnesi oluşturmak, betik bloğu içindeki bazı ifadelerin değerlendirilmesini gerektirebilir. İfade değerlendirmesi, ifade sabit bir değer temsil etmediği sürece ConstrainedLanguage modunda sessizce başarısız olur ve 'null' döndürür.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="HyperVFailedToGetStateUnknownType" xml:space="preserve">

@@ -648,7 +648,7 @@
     <value>Командлет Export-ModuleMember</value>
   </data>
   <data name="WDACExportModuleCommandLogMessage" xml:space="preserve">
-    <value>Export of module members will fail in ConstrainedLanguage mode because module '{0}', has a language mode '{1}' that is different from the current session '{2}'.</value>
+    <value>Экспорт элементов модуля не удастся выполнить в режиме ConstrainedLanguage, так как модуль '{0}' имеет языковой режим '{1}', отличный от текущего сеанса '{2}'.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACImplicitFunctionExportLogTitle" xml:space="preserve">

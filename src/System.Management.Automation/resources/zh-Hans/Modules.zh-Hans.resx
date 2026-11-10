@@ -648,14 +648,14 @@
     <value>Export-ModuleMember Cmdlet</value>
   </data>
   <data name="WDACExportModuleCommandLogMessage" xml:space="preserve">
-    <value>Export of module members will fail in ConstrainedLanguage mode because module '{0}', has a language mode '{1}' that is different from the current session '{2}'.</value>
+    <value>在 ConstrainedLanguage 模式下，导出模块成员将会失败，因为模块 '{0}' 的语言模式 '{1}' 与当前会话 '{2}' 的模式不同。</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACImplicitFunctionExportLogTitle" xml:space="preserve">
     <value>模块隐式函数导出</value>
   </data>
   <data name="WDACImplicitFunctionExportLogMessage" xml:space="preserve">
-    <value>Implicit function export for module '{0}' will be denied because it is trusted (runs in FullLanguage mode) but the session is not trusted (runs in ConstrainedLanguage mode). It is best practice to always export module functions individually by full name.</value>
+    <value>模块 '{0}' 的隐式函数导出将被拒绝，因为它受信任 (在 FullLanguage 模式下运行) 但会话不受信任 (在 ConstrainedLanguage 模式下运行)。最佳做法是始终按全名单独导出模块函数。</value>
     <comment>{StrContains="FullLanguage"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACScriptFileImportLogTitle" xml:space="preserve">
@@ -669,28 +669,28 @@
     <value>模块包含点源运算符</value>
   </data>
   <data name="WDACModuleDotSourceLogMessage" xml:space="preserve">
-    <value>Module '{0}' import will in fail ConstrainedLanguage mode because it exports functions using wildcard characters while also using the dot-source operator.</value>
+    <value>模块 '{0}' 导入将处于失败 ConstrainedLanguage 模式，因为它使用通配符导出函数，同时还使用 dot-source 运算符。</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACModuleFnExportWithNestedModulesLogTitle" xml:space="preserve">
-    <value>Module Exporting Functions</value>
+    <value>模块导出函数</value>
   </data>
   <data name="WDACModuleFnExportWithNestedModulesLogMessage" xml:space="preserve">
-    <value>Module '{0}' exports functions using name wildcard characters. Any nested module function names will be removed when running in ConstrainedLanguage mode.</value>
+    <value>模块 '{0}' 使用名称通配符导出函数。在 ConstrainedLanguage 模式下运行时，将删除任何嵌套的模块函数名称。</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACNewModuleCommandLogTitle" xml:space="preserve">
     <value>New-Module Cmdlet</value>
   </data>
   <data name="WDACNewModuleCommandLogMessage" xml:space="preserve">
-    <value>A new module from an untrusted ConstrainedLanguage session will be blocked from providing the FullLanguage script block.</value>
+    <value>系统将阻止来自不受信任的 ConstrainedLanguage 会话的新模块提供 FullLanguage 脚本块。</value>
     <comment>{StrContains="ConstrainedLanguage"}{StrContains="FullLanguage"}</comment>
   </data>
   <data name="WDACMismatchedLanguageModesTitle" xml:space="preserve">
-    <value>Module Mismatched Language Modes</value>
+    <value>模块语言模式不匹配</value>
   </data>
   <data name="WDACMismatchedLanguageModesMessage" xml:space="preserve">
-    <value>A dependent module is being loaded that has a different language mode than the parent. This will be disallowed when in ConstrainedLanguage mode.</value>
+    <value>正在加载的依赖模块的语言模式与父模块不同。在 ConstrainedLanguage 模式下，将不允许这样做。</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

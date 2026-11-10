@@ -648,14 +648,14 @@
     <value>Cmdlet Export-ModuleMember</value>
   </data>
   <data name="WDACExportModuleCommandLogMessage" xml:space="preserve">
-    <value>Export of module members will fail in ConstrainedLanguage mode because module '{0}', has a language mode '{1}' that is different from the current session '{2}'.</value>
+    <value>L'esportazione dei membri del modulo avrà esito negativo in modalità ConstrainedLanguage perché il modulo '{0}', ha una modalità di linguaggio '{1}' diversa rispetto a quella della sessione corrente '{2}'.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACImplicitFunctionExportLogTitle" xml:space="preserve">
     <value>Esportazione implicita di funzioni del modulo</value>
   </data>
   <data name="WDACImplicitFunctionExportLogMessage" xml:space="preserve">
-    <value>Implicit function export for module '{0}' will be denied because it is trusted (runs in FullLanguage mode) but the session is not trusted (runs in ConstrainedLanguage mode). It is best practice to always export module functions individually by full name.</value>
+    <value>L'esportazione implicita delle funzioni per il modulo '{0}' verrà negata, perché è attendibile (viene eseguito in modalità FullLanguage), ma la sessione non è attendibile (viene eseguita in modalità ConstrainedLanguage). È consigliabile esportare sempre le funzioni del modulo singolarmente usando il nome completo.</value>
     <comment>{StrContains="FullLanguage"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACScriptFileImportLogTitle" xml:space="preserve">
@@ -669,28 +669,28 @@
     <value>Il modulo contiene l'operatore dot-source</value>
   </data>
   <data name="WDACModuleDotSourceLogMessage" xml:space="preserve">
-    <value>Module '{0}' import will in fail ConstrainedLanguage mode because it exports functions using wildcard characters while also using the dot-source operator.</value>
+    <value>L'importazione del modulo '{0}' avrà esito negativo in modalità ConstrainedLanguage perché esporta le funzioni usando caratteri jolly e usando anche l'operatore dot-source.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACModuleFnExportWithNestedModulesLogTitle" xml:space="preserve">
-    <value>Module Exporting Functions</value>
+    <value>Funzioni di esportazione del modulo</value>
   </data>
   <data name="WDACModuleFnExportWithNestedModulesLogMessage" xml:space="preserve">
-    <value>Module '{0}' exports functions using name wildcard characters. Any nested module function names will be removed when running in ConstrainedLanguage mode.</value>
+    <value>Il modulo '{0}' esporta le funzioni usando caratteri jolly del nome. Tutti i nomi di funzione del modulo annidati verranno rimossi durante l'esecuzione in modalità ConstrainedLanguage.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACNewModuleCommandLogTitle" xml:space="preserve">
-    <value>New-Module Cmdlet</value>
+    <value>Cmdlet New-Module</value>
   </data>
   <data name="WDACNewModuleCommandLogMessage" xml:space="preserve">
-    <value>A new module from an untrusted ConstrainedLanguage session will be blocked from providing the FullLanguage script block.</value>
+    <value>Un nuovo modulo di una sessione di ConstrainedLanguage non attendibile non potrà fornire il blocco di script FullLanguage.</value>
     <comment>{StrContains="ConstrainedLanguage"}{StrContains="FullLanguage"}</comment>
   </data>
   <data name="WDACMismatchedLanguageModesTitle" xml:space="preserve">
-    <value>Module Mismatched Language Modes</value>
+    <value>Modalità di linguaggio del modulo non corrispondenti</value>
   </data>
   <data name="WDACMismatchedLanguageModesMessage" xml:space="preserve">
-    <value>A dependent module is being loaded that has a different language mode than the parent. This will be disallowed when in ConstrainedLanguage mode.</value>
+    <value>È in corso il caricamento di un modulo dipendente con una modalità di linguaggio diversa da quella del modulo padre. Questa operazione non sarà consentita in modalità ConstrainedLanguage.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

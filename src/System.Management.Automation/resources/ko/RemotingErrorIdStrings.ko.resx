@@ -1723,7 +1723,7 @@ Microsoft.PowerShell과 Register-PSSessionConfiguration cmdlet으로 만든 세�
     <value>식 계산이 실패할 수 있습니다.</value>
   </data>
   <data name="WDACGetPowerShellLogMessage" xml:space="preserve">
-    <value>Creating a PowerShell object from a script block may require evaluating some expressions within the script block. The expression evaluation will silently fail and return 'null' in ConstrainedLanguage mode, unless the expression represents a constant value.</value>
+    <value>스크립트 블록에서 PowerShell 개체를 만들려면 스크립트 블록 내의 일부 식을 평가해야 할 수 있습니다. 식이 상수 값을 나타내지 않는 한 식 계산은 자동으로 실패하고 ConstrainedLanguage 모드에서 'null'을 반환합니다.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="HyperVFailedToGetStateUnknownType" xml:space="preserve">

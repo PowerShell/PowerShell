@@ -250,14 +250,14 @@
     <value>Método ou Invocação de Propriedade Não Permitido</value>
   </data>
   <data name="WDACBinderInvocationLogMessage" xml:space="preserve">
-    <value>Invocation of Method or Property '{0}' on type '{1}' will not be allowed in ConstrainedLanguage mode for untrusted scripts.</value>
+    <value>A invocação de '{0}' de Método ou Propriedade no tipo '{1}' não será permitida no modo ConstrainedLanguage para scripts não confiáveis.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACBinderTypeCreationLogTitle" xml:space="preserve">
     <value>Criação de Tipo Não Permitida</value>
   </data>
   <data name="WDACBinderTypeCreationLogMessage" xml:space="preserve">
-    <value>Creation of Type '{0}' will not be allowed during parameter binding in ConstrainedLanguage mode for untrusted scripts.</value>
+    <value>A criação do Tipo '{0}' não será permitida durante a associação de parâmetros no modo ConstrainedLanguage para scripts não confiáveis.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

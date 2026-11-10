@@ -250,14 +250,14 @@
     <value>メソッドまたはプロパティの呼び出しは許可されていません</value>
   </data>
   <data name="WDACBinderInvocationLogMessage" xml:space="preserve">
-    <value>Invocation of Method or Property '{0}' on type '{1}' will not be allowed in ConstrainedLanguage mode for untrusted scripts.</value>
+    <value>信頼されていないスクリプトの ConstrainedLanguage モードでは、型 '{1}' でのメソッドまたはプロパティ '{0}' の呼び出しは許可されません。</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACBinderTypeCreationLogTitle" xml:space="preserve">
     <value>型の作成は許可されていません</value>
   </data>
   <data name="WDACBinderTypeCreationLogMessage" xml:space="preserve">
-    <value>Creation of Type '{0}' will not be allowed during parameter binding in ConstrainedLanguage mode for untrusted scripts.</value>
+    <value>信頼されていないスクリプトのパラメーター バインド中は、型 '{0}' の作成は ConstrainedLanguage できません。</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

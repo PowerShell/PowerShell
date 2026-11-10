@@ -250,14 +250,14 @@
     <value>Yöntem veya Özellik Çağrısına İzin Verilmiyor</value>
   </data>
   <data name="WDACBinderInvocationLogMessage" xml:space="preserve">
-    <value>Invocation of Method or Property '{0}' on type '{1}' will not be allowed in ConstrainedLanguage mode for untrusted scripts.</value>
+    <value>Güvenilmeyen betikler için '{1}' türünde Yöntem veya Özellik '{0}' çağrılmasına ConstrainedLanguage modda izin verilmez.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACBinderTypeCreationLogTitle" xml:space="preserve">
     <value>Tür Oluşturmaya İzin Verilmiyor</value>
   </data>
   <data name="WDACBinderTypeCreationLogMessage" xml:space="preserve">
-    <value>Creation of Type '{0}' will not be allowed during parameter binding in ConstrainedLanguage mode for untrusted scripts.</value>
+    <value>Güvenilmeyen betikler için ConstrainedLanguage modunda parametre bağlama sırasında '{0}' Türünün oluşturulmasına izin verilmez.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

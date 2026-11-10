@@ -1722,7 +1722,7 @@ Microsoft.PowerShell や Register-PSSessionConfiguration コマンドレット�
     <value>式評価に失敗する可能性があります</value>
   </data>
   <data name="WDACGetPowerShellLogMessage" xml:space="preserve">
-    <value>Creating a PowerShell object from a script block may require evaluating some expressions within the script block. The expression evaluation will silently fail and return 'null' in ConstrainedLanguage mode, unless the expression represents a constant value.</value>
+    <value>スクリプト ブロックから PowerShell オブジェクトを作成するには、スクリプト ブロック内のいくつかの式の評価が必要になる場合があります。式が定数値を表していない限り、式の評価はサイレント エラーになり、ConstrainedLanguage モードで 'null' が返されます。</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="HyperVFailedToGetStateUnknownType" xml:space="preserve">

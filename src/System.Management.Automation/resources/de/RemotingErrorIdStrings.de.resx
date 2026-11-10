@@ -1722,7 +1722,7 @@ Der SSH-Clientprozess wurde beendet, bevor die Verbindung hergestellt werden kon
     <value>Ausdrucksauswertung kann fehlschlagen</value>
   </data>
   <data name="WDACGetPowerShellLogMessage" xml:space="preserve">
-    <value>Creating a PowerShell object from a script block may require evaluating some expressions within the script block. The expression evaluation will silently fail and return 'null' in ConstrainedLanguage mode, unless the expression represents a constant value.</value>
+    <value>Um aus einem Skriptblock ein PowerShell-Objekt zu erstellen, müssen möglicherweise einige Ausdrücke innerhalb des Skriptblocks ausgewertet werden. Im ConstrainedLanguage-Modus schlägt die Auswertung des Ausdrucks ohne Fehlermeldung fehl und gibt „null“ zurück, es sei denn, der Ausdruck stellt einen konstanten Wert dar.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="HyperVFailedToGetStateUnknownType" xml:space="preserve">

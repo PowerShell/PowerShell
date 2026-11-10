@@ -1722,7 +1722,7 @@ SSH 客户端进程已在建立连接之前终止。</value>
     <value>表达式计算可能失败</value>
   </data>
   <data name="WDACGetPowerShellLogMessage" xml:space="preserve">
-    <value>Creating a PowerShell object from a script block may require evaluating some expressions within the script block. The expression evaluation will silently fail and return 'null' in ConstrainedLanguage mode, unless the expression represents a constant value.</value>
+    <value>从脚本块创建 PowerShell 对象可能需要评估脚本块中的某些表达式。表达式计算将以静默方式失败，并在 ConstrainedLanguage 模式下返回 “null”，除非表达式表示常量值。</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="HyperVFailedToGetStateUnknownType" xml:space="preserve">
