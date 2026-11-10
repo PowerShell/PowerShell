@@ -216,4 +216,25 @@
   <data name="CouldNotGetServiceProperty" xml:space="preserve">
     <value>Could not retrieve property '{1}' for service '{0}': {2}</value>
   </data>
+  <data name="ServiceManagerNotFound" xml:space="preserve">
+    <value>No supported service manager was found on this system. The service cmdlets on Unix support the following service managers: systemctl (systemd), launchctl (macOS), service (sysvinit), and rc-service (OpenRC).</value>
+  </data>
+  <data name="ExitCodeWithoutStderr" xml:space="preserve">
+    <value>The command exited with code {0}.</value>
+  </data>
+  <data name="CouldNotRestartService" xml:space="preserve">
+    <value>Service '{1} ({0})' cannot be restarted due to the following error: {2}</value>
+  </data>
+  <data name="SudoRequired" xml:space="preserve">
+    <value>The current user is not authorized to manage service '{1} ({0})'. Run PowerShell as root (for example: sudo pwsh) or configure passwordless sudo for the service manager command.</value>
+  </data>
+  <data name="ServiceManagerDoesNotSupportFeature" xml:space="preserve">
+    <value>The '{0}' service manager does not support retrieving the dependent or required services of a service.</value>
+  </data>
+  <data name="ServiceEnumerationFailed" xml:space="preserve">
+    <value>Failed to enumerate services with the command '{0}' due to the following error: {1}</value>
+  </data>
+  <data name="CouldNotGetServiceDependencies" xml:space="preserve">
+    <value>Cannot get the dependent or required services for service '{1} ({0})' due to the following error: {2}</value>
+  </data>
 </root>
