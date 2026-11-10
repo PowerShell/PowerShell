@@ -184,7 +184,7 @@
     <value>La sesión está ocupada. Se conectará a la sesión en cuanto esté disponible. Para cancelar el comando Enter-PSSession, presione Ctrl-C.</value>
   </data>
   <data name="NotSupportedOnRestrictedRunspace" xml:space="preserve">
-    <value>The command cannot be completed. Script invocation is not supported in this session configuration. This can occur if the session configuration is in NoLanguage mode.</value>
+    <value>No se puede completar el comando. No se admite la invocación de scripts en esta configuración de sesión. Esto puede ocurrir si la configuración de la sesión está en modo NoLanguage.</value>
     <comment>{StrContains="NoLanguage"}</comment>
   </data>
   <data name="DisconnectConnectNotSupported" xml:space="preserve">

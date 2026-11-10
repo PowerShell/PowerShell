@@ -184,7 +184,7 @@
     <value>セッションはビジー状態です。利用可能になり次第、セッションに接続されます。Enter-PSSession コマンドをキャンセルするには、Ctrl キーを押しながら C キーを押します。</value>
   </data>
   <data name="NotSupportedOnRestrictedRunspace" xml:space="preserve">
-    <value>The command cannot be completed. Script invocation is not supported in this session configuration. This can occur if the session configuration is in NoLanguage mode.</value>
+    <value>コマンドを完了できません。スクリプトの呼び出しは、このセッション構成ではサポートされていません。これは、セッション構成が NoLanguage モードの場合に発生することがあります。</value>
     <comment>{StrContains="NoLanguage"}</comment>
   </data>
   <data name="DisconnectConnectNotSupported" xml:space="preserve">

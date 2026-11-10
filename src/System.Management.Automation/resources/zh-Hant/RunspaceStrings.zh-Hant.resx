@@ -184,7 +184,7 @@
     <value>工作階段忙碌中。工作階段一旦可供使用，您就會連線至該工作階段。若要取消 Enter-PSSession 命令，請按 Ctrl-C。</value>
   </data>
   <data name="NotSupportedOnRestrictedRunspace" xml:space="preserve">
-    <value>The command cannot be completed. Script invocation is not supported in this session configuration. This can occur if the session configuration is in NoLanguage mode.</value>
+    <value>無法完成命令。此工作階段設定不支援指令碼叫用。如果工作階段設定處於 NoLanguage 模式，就可能發生此情況。</value>
     <comment>{StrContains="NoLanguage"}</comment>
   </data>
   <data name="DisconnectConnectNotSupported" xml:space="preserve">

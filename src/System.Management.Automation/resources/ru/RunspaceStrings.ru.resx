@@ -184,7 +184,7 @@
     <value>Сеанс занят. Подключение к сеансу будет установлено, как только он станет доступным. Чтобы отменить команду Enter-PSSession, нажмите Ctrl-C.</value>
   </data>
   <data name="NotSupportedOnRestrictedRunspace" xml:space="preserve">
-    <value>The command cannot be completed. Script invocation is not supported in this session configuration. This can occur if the session configuration is in NoLanguage mode.</value>
+    <value>Не удается выполнить команду. Вызов сценария не поддерживается в этой конфигурации сеанса. Это может произойти, если конфигурация сеанса находится в режиме NoLanguage.</value>
     <comment>{StrContains="NoLanguage"}</comment>
   </data>
   <data name="DisconnectConnectNotSupported" xml:space="preserve">
