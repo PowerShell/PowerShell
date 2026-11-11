@@ -2327,27 +2327,40 @@ namespace System.Management.Automation
             }
         }
 
-        internal static string[] GetNamespacesForTypeResolutionState(IEnumerable<UsingStatementAst> usingAsts)
+        internal static string[] GetNamespacesForTypeResolutionState(IEnumerable<UsingStatementAst> usingAsts, out Dictionary<string, string> usingNamespaceAliases)
         {
             var usedSystem = false;
             var namespaces = new List<string>();
+            usingNamespaceAliases = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
             foreach (var usingStmt in usingAsts)
             {
                 if (usingStmt.UsingStatementKind == UsingStatementKind.Namespace)
                 {
-                    if (!usedSystem && usingStmt.Name.Value.Equals("System", StringComparison.OrdinalIgnoreCase))
+                    if (usingStmt.Alias is not null)
                     {
-                        usedSystem = true;
+                        usingNamespaceAliases.Add(usingStmt.Name.Value, usingStmt.Alias.Value);
                     }
+                    else
+                    {
+                        namespaces.Add(usingStmt.Name.Value);
 
-                    namespaces.Add(usingStmt.Name.Value);
+                        if (!usedSystem && usingStmt.Name.Value.Equals("System", StringComparison.OrdinalIgnoreCase))
+                        {
+                            usedSystem = true;
+                        }
+                    }
                 }
             }
 
             if (!usedSystem)
             {
                 namespaces.Insert(0, "System");
+            }
+
+            if (usingNamespaceAliases.Count == 0)
+            {
+                usingNamespaceAliases = null;
             }
 
             return namespaces.ToArray();
