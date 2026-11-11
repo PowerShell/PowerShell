@@ -22,7 +22,6 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(UnixServiceController))]
     public sealed class GetServiceCommand : MultipleServiceCommandBase
     {
-        #region Parameters
 
         /// <summary>
         /// Gets or sets an array of service names.
@@ -65,10 +64,6 @@ namespace Microsoft.PowerShell.Commands
         [Alias("SDO", "ServicesDependedOn")]
         public SwitchParameter RequiredServices { get; set; }
 
-        #endregion Parameters
-
-        #region Overrides
-
         /// <summary>
         /// Write the service objects.
         /// </summary>
@@ -99,10 +94,6 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
-
-        #endregion Overrides
-
-        #region Private Members
 
         /// <summary>
         /// Gets the dependent or required services of a service. Only systemd provides
@@ -174,7 +165,6 @@ namespace Microsoft.PowerShell.Commands
             return results;
         }
 
-        #endregion Private Members
     }
 }
 

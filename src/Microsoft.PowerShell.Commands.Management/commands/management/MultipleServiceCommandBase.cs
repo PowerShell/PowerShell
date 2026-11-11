@@ -19,7 +19,6 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public abstract class MultipleServiceCommandBase : ServiceBaseCommand
     {
-        #region Private Members
 
         /// <summary>
         /// Holds the selection mode setting.
@@ -66,10 +65,6 @@ namespace Microsoft.PowerShell.Commands
             /// </summary>
             ServiceName = 3,
         }
-
-        #endregion Private Members
-
-        #region Parameters
 
         /// <summary>
         /// Gets or sets an array of display names for services.
@@ -127,10 +122,6 @@ namespace Microsoft.PowerShell.Commands
                 CurrentSelectionMode = SelectionMode.InputObject;
             }
         }
-
-        #endregion Parameters
-
-        #region Internal
 
         /// <summary>
         /// Gets an array of all services.
@@ -390,7 +381,6 @@ namespace Microsoft.PowerShell.Commands
             return false;
         }
 
-        #endregion Internal
     }
 }
 

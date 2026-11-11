@@ -5,7 +5,6 @@
 
 #if UNIX
 
-
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>

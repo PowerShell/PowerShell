@@ -18,7 +18,6 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public abstract class ServiceOperationBaseCommand : MultipleServiceCommandBase
     {
-        #region Parameters
 
         /// <summary>
         /// Gets or sets an array of service names.
@@ -67,10 +66,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         public SwitchParameter PassThru { get; set; }
-
-        #endregion Parameters
-
-        #region Internal
 
         /// <summary>
         /// Applies the expected status of the service after a successful operation, so
@@ -172,7 +167,6 @@ namespace Microsoft.PowerShell.Commands
             return true;
         }
 
-        #endregion Internal
     }
 }
 

@@ -23,7 +23,6 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public abstract class ServiceBaseCommand : Cmdlet, IDisposable
     {
-        #region Private Members
 
         /// <summary>
         /// The service manager commands of the supported init systems, in the order in
@@ -40,10 +39,6 @@ namespace Microsoft.PowerShell.Commands
         private ServiceManagerContext? serviceManager;
         private Process? currentProcess;
 
-        #endregion Private Members
-
-        #region IDisposable Members
-
         /// <summary>
         /// Releases all resources used by the cmdlet.
         /// </summary>
@@ -52,10 +47,6 @@ namespace Microsoft.PowerShell.Commands
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
-
-        #endregion IDisposable Members
-
-        #region Internal Members
 
         /// <summary>
         /// Gets the resolved service manager, searching the PATH for the service manager
@@ -400,10 +391,6 @@ namespace Microsoft.PowerShell.Commands
             WriteError(new ErrorRecord(exception, "SudoRequired", ErrorCategory.PermissionDenied, service));
         }
 
-        #endregion Internal Members
-
-        #region Overrides
-
         /// <summary>
         /// Terminate the service manager process when the pipeline is stopped,
         /// for example by CTRL+C.
@@ -424,10 +411,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        #endregion Overrides
-
-        #region IDisposable Members
-
         /// <summary>
         /// Releases the unmanaged resources used by the cmdlet and optionally releases
         /// the managed resources.
@@ -444,10 +427,6 @@ namespace Microsoft.PowerShell.Commands
                 currentProcess = null;
             }
         }
-
-        #endregion IDisposable Members
-
-        #region Private Members
 
         /// <summary>
         /// Builds the systemctl arguments for the given operation.
@@ -656,7 +635,6 @@ namespace Microsoft.PowerShell.Commands
             ThrowTerminatingError(error);
         }
 
-        #endregion Private Members
     }
 }
 
