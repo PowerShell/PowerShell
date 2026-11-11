@@ -145,13 +145,15 @@
     <value>"{0}" giriş adı bir yönteme çözümlenemiyor.</value>
   </data>
   <data name="NoMethodInvocationInRestrictedLanguageMode" xml:space="preserve">
-    <value>Kısıtlı dil modunda yöntem çağrılamaz.</value>
+    <value>RestrictedLanguage modunda yöntem çağrılamaz.</value>
+    <comment>{StrContains="RestrictedLanguage"}</comment>
   </data>
   <data name="NoShouldProcessForScriptBlockSet" xml:space="preserve">
     <value>-WhatIf ve -Confirm parametreleri betik blokları için desteklenmez.</value>
   </data>
   <data name="OperationNotAllowedInRestrictedLanguageMode" xml:space="preserve">
-    <value>Kısıtlı Dil modunda '{0}' işlemine izin verilmiyor.</value>
+    <value>RestrictedLanguage modunda '{0}' işlemine izin verilmiyor.</value>
+    <comment>{StrContains="RestrictedLanguage"}</comment>
   </data>
   <data name="OperatorNotSpecified" xml:space="preserve">
     <value>Belirtilen iki değeri karşılaştırmak için bir işleç gerekiyor. Komuta geçerli bir işleç ekleyin ve sonra komutu yeniden deneyin. Örneğin, Get-Process | Where-Object -Property Name -eq Idle</value>
@@ -188,6 +190,7 @@ ErrorAction, WarningAction, InformationAction, PipelineVariable</value>
     <value>ForEach-Object Cmdlet'i</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>Kısıtlı Dil modunda çalıştırıldığında, '{0}' türünde yöntem çağrısına izin verilmez.</value>
+    <value>ConstrainedLanguage modunda çalıştırıldığında, '{0}' türünde yöntem çağrısına izin verilmez.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

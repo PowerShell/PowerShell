@@ -402,7 +402,8 @@ Il formato corretto è: foreach ($a in $b) {...}</value>
     <value>L'elaborazione è stata interrotta perché lo script è troppo complesso.</value>
   </data>
   <data name="ScriptsNotAllowed" xml:space="preserve">
-    <value>La sintassi non è supportata da questo spazio di esecuzione. Questo problema può verificarsi se lo spazio di esecuzione è in modalità senza linguaggio.</value>
+    <value>La sintassi non è supportata da questo spazio di esecuzione. Questo problema può verificarsi se lo spazio di esecuzione è in modalità NoLanguage.</value>
+    <comment>{StrContains="NoLanguage"}</comment>
   </data>
   <data name="InvalidSplitOptionCombination" xml:space="preserve">
     <value>La combinazione di opzioni con l'operatore -split non è valida.</value>
@@ -580,85 +581,112 @@ Il formato corretto è: foreach ($a in $b) {...}</value>
     <value>Usare `{ invece di { nei nomi di variabile.</value>
   </data>
   <data name="MissingStatementBlockForDataSection" xml:space="preserve">
-    <value>Nella sezione di dati manca il blocco di istruzioni.</value>
+    <value>Nella sezione di Data manca il blocco di istruzioni.</value>
+    <comment>{StrContains="Data"}</comment>
   </data>
   <data name="InvalidParameterForDataSectionStatement" xml:space="preserve">
-    <value>Il parametro "{0}" della sezione di dati non è valido. Il parametro valido della sezione di dati è SupportedCommand.</value>
+    <value>Il parametro "{0}" della sezione di Data non è valido. Il parametro valido della sezione di Data è SupportedCommand.</value>
+    <comment>{StrContains="Data"}{StrContains="SupportedCommand"}</comment>
   </data>
   <data name="ArrayReferenceNotSupportedInDataSection" xml:space="preserve">
-    <value>I riferimenti alle matrici non sono consentiti in modalità di linguaggio con restrizioni o in una sezione di dati.</value>
+    <value>I riferimenti a matrici non sono consentiti in modalità RestrictedLanguage o in una sezione Data.</value>
+    <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="AssignmentStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>Le istruzioni di assegnazione non sono consentite in modalità di linguaggio con restrizioni o in una sezione di dati.</value>
+    <value>Le istruzioni di assegnazione non sono consentite in modalità RestrictedLanguage o in una sezione Data.</value>
+    <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="RedirectionNotSupportedInDataSection" xml:space="preserve">
-    <value>Il reindirizzamento non è consentito in modalità di linguaggio con restrizioni o in una sezione di dati.</value>
+    <value>Il reindirizzamento non è consentito in modalità RestrictedLanguage o in una sezione Data.</value>
+    <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="DoWhileStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>Le istruzioni Do e While non sono consentite in modalità di linguaggio con restrizioni o in una sezione di dati.</value>
+    <value>Le istruzioni Do e While non sono consentite in modalità RestrictedLanguage o in una sezione Data.</value>
+    <comment>{StrContains="Do"}{StrContains="While"}{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="ExpandableStringNotSupportedInDataSection" xml:space="preserve">
-    <value>Le stringhe espandibili non sono consentite in modalità di linguaggio con restrizioni o in una sezione di dati.</value>
+    <value>Le stringhe espandibili non sono consentite in modalità RestrictedLanguage o in una sezione Data.</value>
+    <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="OperatorNotSupportedInDataSection" xml:space="preserve">
-    <value>L'operatore '{0}' non è consentito in modalità di linguaggio con restrizioni o in una sezione di dati.</value>
+    <value>L'operatore ''{0}'' non è consentito in modalità RestrictedLanguage o in una sezione Data.</value>
+    <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="TrapStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>L'istruzione Trap non è consentita in modalità di linguaggio con restrizioni o in una sezione di dati.</value>
+    <value>L'istruzione Trap non è consentita in modalità RestrictedLanguage o in una sezione Data.</value>
+    <comment>{StrContains="Trap"}{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="TryStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>L'istruzione Try non è consentita in modalità di linguaggio con restrizioni o in una sezione di dati.</value>
+    <value>L'istruzione Try non è consentita in modalità RestrictedLanguage o in una sezione Data.</value>
+    <comment>{StrContains="Try"}{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="FlowControlStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>Le istruzioni di controllo del flusso, ad esempio Break, Continue, Return, Exit e Throw, non sono consentite in modalità di linguaggio con restrizioni o in una sezione di dati.</value>
+    <value>Le istruzioni di controllo del flusso, ad esempio Break, Continue, Return, Exit e Throw, non sono consentite in modalità RestrictedLanguage o in una sezione Data.</value>
+    <comment>{StrContains="Break"}{StrContains="Continue"}{StrContains="Return"}{StrContains="Exit"}{StrContains="Throw"}{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="ForeachStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>Le istruzioni Foreach non sono consentite in modalità di linguaggio con restrizioni o in una sezione di dati.</value>
+    <value>Le istruzioni Foreach non sono consentite in modalità RestrictedLanguage o in una sezione Data.</value>
+    <comment>{StrContains="Foreach"}{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="ForWhileStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>Le istruzioni For e While non sono consentite in modalità di linguaggio con restrizioni o in una sezione di dati.</value>
+    <value>Le istruzioni For e While non sono consentite in modalità RestrictedLanguage o in una sezione Data.</value>
+    <comment>{StrContains="For"}{StrContains="While"}{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="FunctionDeclarationNotSupportedInDataSection" xml:space="preserve">
-    <value>Le dichiarazioni di funzione non sono consentite in modalità di linguaggio con restrizioni o in una sezione di dati.</value>
+    <value>Le dichiarazioni Function non sono consentite in modalità RestrictedLanguage o in una sezione Data.</value>
+    <comment>{StrContains="Function"}{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="MethodCallNotSupportedInDataSection" xml:space="preserve">
-    <value>Le chiamate a un metodo non sono consentite in modalità di linguaggio con restrizioni o in una sezione di dati.</value>
+    <value>Le chiamate a metodi non sono consentite in modalità RestrictedLanguage o in una sezione Data.</value>
+    <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="ParameterDeclarationNotSupportedInDataSection" xml:space="preserve">
-    <value>Le dichiarazioni di parametro non sono consentite in modalità di linguaggio con restrizioni o in una sezione di dati.</value>
+    <value>Le dichiarazioni di parametro non sono consentite in modalità RestrictedLanguage o in una sezione Data.</value>
+    <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="PropertyReferenceNotSupportedInDataSection" xml:space="preserve">
-    <value>I riferimenti alle proprietà non sono consentiti in modalità di linguaggio con restrizioni o in una sezione di dati.</value>
+    <value>I riferimenti alle proprietà non sono consentiti in modalità RestrictedLanguage o in una sezione Data.</value>
+    <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="ScriptBlockNotSupportedInDataSection" xml:space="preserve">
-    <value>I valori letterali del blocco di script non sono consentiti in modalità di linguaggio con restrizioni o in una sezione di dati.</value>
+    <value>I valori letterali dei blocchi di script non sono consentiti in modalità RestrictedLanguage o in una sezione Data.</value>
+    <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="SwitchStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>L'istruzione switch non è consentita in modalità di linguaggio con restrizioni o in una sezione di dati.</value>
+    <value>L'istruzione Switch non è consentita in modalità RestrictedLanguage o in una sezione Data.</value>
+    <comment>{StrContains="Switch"}{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="VariableReferenceNotSupportedInDataSection" xml:space="preserve">
-    <value>Variabile a cui non è possibile fare riferimento in modalità di linguaggio con restrizioni o in una sezione di dati. Le variabili a cui è possibile fare riferimento includono: {0}.</value>
+    <value>Variabile a cui non è possibile fare riferimento in modalità RestrictedLanguage o a una sezione Data. Le variabili a cui è possibile fare riferimento includono le seguenti: {0}.</value>
+    <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="CmdletNotInAllowedListForDataSection" xml:space="preserve">
-    <value>Il comando '{0}' non è consentito in modalità di linguaggio con restrizioni o in una sezione di dati.</value>
+    <value>Il comando ''{0}'' non è consentito in modalità RestrictedLanguage o in una sezione Data.</value>
+    <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="DataSectionStatementNotSupportedInDataSection" xml:space="preserve">
-    <value>L'istruzione dati non è consentita in modalità di linguaggio con restrizioni o in un'altra sezione di dati.</value>
+    <value>L'istruzione Data non è consentita in modalità RestrictedLanguage o in un'altra sezione Data.</value>
+    <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="MissingValueForSupportedCommandInDataSectionStatement" xml:space="preserve">
-    <value>Nel parametro SupportedCommand della sezione di dati manca un valore. Specificare un nome di cmdlet o funzione per il parametro.</value>
+    <value>Nel parametro SupportedCommand della sezione di Data manca un valore. Specificare un nome di cmdlet o funzione per il parametro.</value>
+    <comment>{StrContains="SupportedCommand"}{StrContains="Data"}</comment>
   </data>
   <data name="InvalidScriptBlockInDataSection" xml:space="preserve">
-    <value>Un blocco di istruzioni Begin, un blocco di istruzioni Process o un'istruzione param non sono consentiti in una sezione di dati.</value>
+    <value>Un blocco di istruzioni Begin, un blocco di istruzioni Process o un'istruzione Param non sono consentiti in una sezione Data.</value>
+    <comment>{StrContains="Begin"}{StrContains="Process"}{StrContains="Param"}{StrContains="Data"}</comment>
   </data>
   <data name="StringMultiplyToolongInDataSection" xml:space="preserve">
-    <value>I risultati della moltiplicazione di stringhe con più di "{0}" caratteri non sono consentiti in modalità di linguaggio con restrizioni o in una sezione di dati.</value>
+    <value>I risultati di moltiplicazione di stringhe con più di "{0}" caratteri non sono consentiti in modalità RestrictedLanguage o in una sezione Data.</value>
+    <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="ArrayMultiplyToolongInDataSection" xml:space="preserve">
-    <value>La moltiplicazione delle matrici che genera più di {0} elementi non è consentita in modalità di linguaggio con restrizioni o in una sezione di dati.</value>
+    <value>La moltiplicazione delle matrici che genera più di {0} elementi non è consentita in modalità RestrictedLanguage o in una sezione Data.</value>
+    <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="DotSourcingNotSupportedInDataSection" xml:space="preserve">
-    <value>L'origine punti non è consentita in modalità di linguaggio con restrizioni o in una sezione di dati.</value>
+    <value>L'origine punti non è consentita in modalità RestrictedLanguage o in una sezione Data.</value>
+    <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="ParameterAttributeArgumentNeedsToBeConstantOrScriptBlock" xml:space="preserve">
     <value>L'argomento dell'attributo deve essere una costante o un blocco di script.</value>
@@ -721,10 +749,12 @@ Il formato corretto è: foreach ($a in $b) {...}</value>
     <value>Chiave Null non consentita in un valore letterale hash.</value>
   </data>
   <data name="AttributeNotSupportedInDataSection" xml:space="preserve">
-    <value>Gli attributi non sono consentiti in modalità di linguaggio con restrizioni o in una sezione di dati.</value>
+    <value>Gli attributi non sono consentiti in modalità RestrictedLanguage o in una sezione Data.</value>
+    <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="TypeNotAllowedInDataSection" xml:space="preserve">
-    <value>Il tipo {0} non è consentito in modalità di linguaggio con restrizioni o in una sezione di dati.</value>
+    <value>Tipo {0} non consentito in modalità RestrictedLanguage o in una sezione Data.</value>
+    <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="PropertyIsReadOnly" xml:space="preserve">
     <value>"{0}" è una proprietà di sola lettura.</value>
@@ -784,7 +814,8 @@ Il formato corretto è: foreach ($a in $b) {...}</value>
     <value>Corpo dell'istruzione mancante dopo la parola chiave ''{0}''.</value>
   </data>
   <data name="ParallelAndSequenceBlockNotSupportedInDataSection" xml:space="preserve">
-    <value>I blocchi paralleli e di sequenza non sono consentiti in modalità di linguaggio con restrizioni o in una sezione di dati.</value>
+    <value>I blocchi Parallel e Sequence non sono consentiti in modalità RestrictedLanguage o in una sezione Data.</value>
+    <comment>{StrContains="Parallel"}{StrContains="Sequence"}{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="UnexpectedKeyword" xml:space="preserve">
     <value>Parola chiave imprevista ''{0}''.</value>
@@ -796,7 +827,8 @@ Il formato corretto è: foreach ($a in $b) {...}</value>
     <value>Impossibile richiamare il metodo.</value>
   </data>
   <data name="HashtableToObjectConversionNotSupportedInDataSection" xml:space="preserve">
-    <value>Non è possibile convertire una tabella hash nel seguente tipo di oggetto: {0}. La conversione da tabella hash a oggetto non è supportata in modalità di linguaggio con restrizioni o in una sezione di dati.</value>
+    <value>Impossibile convertire una tabella hash in un oggetto del tipo seguente: {0}. La conversione da tabella hash a oggetto non è supportata in modalità RestrictedLanguage o in una sezione Data.</value>
+    <comment>{StrContains="RestrictedLanguage"}{StrContains="Data"}</comment>
   </data>
   <data name="RequiresArgumentMustBeConstant" xml:space="preserve">
     <value>L'argomento deve essere costante.</value>
@@ -842,7 +874,8 @@ Il formato corretto è: foreach ($a in $b) {...}</value>
     <value>Non è possibile trovare il file di schema {0}. Verificare che tutti i moduli specificati in un'istruzione di configurazione contengano un file schema.mof, quindi riprovare a eseguire lo script.</value>
   </data>
   <data name="DataSectionAllowedCommandDisallowed" xml:space="preserve">
-    <value>Non è possibile definire la sezione di dati. La definizione di comandi aggiuntivi supportati non è consentita in questa modalità di linguaggio.</value>
+    <value>Impossibile definire Data sezione. La definizione di comandi aggiuntivi supportati non è supportata in questa modalità linguaggio.</value>
+    <comment>{StrContains="Data"}</comment>
   </data>
   <data name="MissingCurlyInConfigurationStatement" xml:space="preserve">
     <value>''{'' mancante nell'istruzione di configurazione.</value>
@@ -935,7 +968,8 @@ ModuleVersion: versione del modulo da importare. Se usato, ModuleName deve rappr
     <value>Non è possibile caricare la risorsa ''{0}'': risorsa non trovata.</value>
   </data>
   <data name="ConfigurationNotAllowedInConstrainedLanguage" xml:space="preserve">
-    <value>La parola chiave Configuration non è consentita in modalità ConstrainedLanguage.</value>
+    <value>La parola chiave Configurazione non è consentita in modalità ConstrainedLanguage.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="InvalidConfigurationName" xml:space="preserve">
     <value>Il nome di configurazione ''{0}'' non è valido. I nomi standard possono contenere solo lettere (a-z, A-Z), numeri (0-9), punti (.), trattini (-) e caratteri di sottolineatura (_). Il nome non può essere Null o vuoto e deve iniziare con una lettera.</value>
@@ -1321,6 +1355,7 @@ ModuleVersion: versione del modulo da importare. Se usato, ModuleName deve rappr
   </data>
   <data name="ClassesNotAllowedInConstrainedLanguage" xml:space="preserve">
     <value>La parola chiave Class non è consentita in modalità ConstrainedLanguage.</value>
+    <comment>{StrContains="Class"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="MissingColonInTernaryExpression" xml:space="preserve">
     <value>'':'' mancante nell'espressione ternaria.</value>
@@ -1338,37 +1373,43 @@ ModuleVersion: versione del modulo da importare. Se usato, ModuleName deve rappr
     <value>Parola chiave di configurazione del parser</value>
   </data>
   <data name="WDACParserConfigKeywordLogMessage" xml:space="preserve">
-    <value>La parola chiave Configuration non sarà consentita in modalità di linguaggio vincolato per script non attendibili.</value>
+    <value>La parola chiave Configuration non sarà consentita in modalità ConstrainedLanguage per script non attendibili.</value>
+    <comment>{StrContains="Configuration"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACParserClassKeywordLogTitle" xml:space="preserve">
     <value>Parola chiave della classe Parser</value>
   </data>
   <data name="WDACParserClassKeywordLogMessage" xml:space="preserve">
-    <value>La parola chiave Class non sarà consentita in modalità di linguaggio vincolato per script non attendibili.</value>
+    <value>La parola chiave Class non sarà consentita in modalità ConstrainedLanguage per script non attendibili.</value>
+    <comment>{StrContains="Class"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACParserDSSupportedCommandLogTitle" xml:space="preserve">
     <value>Sezione di dati del parser SupportedCommand</value>
   </data>
   <data name="WDACParserDSSupportedCommandLogMessage" xml:space="preserve">
-    <value>La sezione di dati che include il parametro SupportedCommand non è consentita in modalità di linguaggio vincolato per script non attendibili.</value>
+    <value>La sezione Data che include il parametro SupportedCommand non sarà consentita in modalità ConstrainedLanguage per script non attendibili.</value>
+    <comment>{StrContains="Data"}{StrContains="SupportedCommand"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACParserModuleScopeCallOperatorLogTitle" xml:space="preserve">
     <value>Operatore di chiamata ambito modulo</value>
   </data>
   <data name="WDACParserModuleScopeCallOperatorLogMessage" xml:space="preserve">
-    <value>L'operatore di chiamata dell'ambito del modulo verrà negato in modalità di linguaggio vincolato.</value>
+    <value>L'operatore di chiamata all'ambito del modulo verrà negato in modalità ConstrainedLanguage.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACParserForEachOperatorLogTitle" xml:space="preserve">
     <value>Chiamata al metodo della parola chiave ForEach</value>
   </data>
   <data name="WDACParserForEachOperatorLogMessage" xml:space="preserve">
-    <value>La parola chiave ForEach non riuscirà a eseguire la chiamata al metodo dell'elemento di iterazione '{0}' quando viene eseguita in modalità di linguaggio vincolato.</value>
+    <value>La parola chiave ForEach non riuscirà '{0}' chiamare il metodo dell'elemento di iterazione se eseguita in modalità ConstrainedLanguage.</value>
+    <comment>{StrContains="ForEach"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACGetSteppablePipelineLogTitle" xml:space="preserve">
     <value>La valutazione dell'espressione potrebbe non riuscire</value>
   </data>
   <data name="WDACGetSteppablePipelineLogMessage" xml:space="preserve">
-    <value>La creazione di una pipeline eseguibile per fasi da un blocco di script può richiedere la valutazione di alcune espressioni all'interno del blocco di script. La valutazione dell'espressione avrà esito negativo in modo invisibile all'utente e restituirà 'null' in modalità di linguaggio vincolato, a meno che l'espressione non rappresenti un valore costante.</value>
+    <value>La creazione di una pipeline di cui è possibile eseguire passaggi da un blocco di script può richiedere la valutazione di alcune espressioni all'interno del blocco di script. La valutazione dell'espressione avrà esito negativo in modo invisibile all'utente e restituirà ''null'' in modalità ConstrainedLanguage, a meno che l'espressione non rappresenti un valore costante.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="ConfigurationNotAllowedOnArm64" xml:space="preserve">
     <value>La parola chiave Configuration non è supportata nei processori ARM64.</value>

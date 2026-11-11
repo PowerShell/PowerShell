@@ -184,7 +184,8 @@
     <value>セッションはビジー状態です。利用可能になり次第、セッションに接続されます。Enter-PSSession コマンドをキャンセルするには、Ctrl キーを押しながら C キーを押します。</value>
   </data>
   <data name="NotSupportedOnRestrictedRunspace" xml:space="preserve">
-    <value>コマンドを完了できません。スクリプトの呼び出しは、このセッション構成ではサポートされていません。これは、セッション構成が no-language モードの場合に発生することがあります。</value>
+    <value>コマンドを完了できません。スクリプトの呼び出しは、このセッション構成ではサポートされていません。これは、セッション構成が NoLanguage モードの場合に発生することがあります。</value>
+    <comment>{StrContains="NoLanguage"}</comment>
   </data>
   <data name="DisconnectConnectNotSupported" xml:space="preserve">
     <value>ローカルの実行空間では、切断および接続の操作は使用できません。</value>
