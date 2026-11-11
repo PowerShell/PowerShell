@@ -45,7 +45,7 @@ printf '%s\n' "$*" >> "$PS_SERVICE_SHIM_LOG"
 exec "${@:2}"
 '@
 
-        foreach ($name in "systemctl", "launchctl", "service", "rc-service") {
+        foreach ($name in "systemctl", "launchctl", "service", "rc-service", "rc-status") {
             $shimPath = Join-Path $script:shimDir $name
             Set-Content -Path $shimPath -Value ($managerShimBody -replace "`r", "")
             $null = & chmod +x $shimPath
@@ -273,6 +273,10 @@ exec "${@:2}"
 
             $sudoPath = Join-Path $script:shimDir "sudo"
             Move-Item $sudoPath "$sudoPath.bak"
+            # restrict PATH to the shim directory so that the host's real sudo is not
+            # found either
+            $savedPath = $env:PATH
+            $env:PATH = $script:shimDir
             try {
                 Reset-Shim -Stdout "sshd.service loaded active running OpenSSH server daemon" -Stderr "Access denied" -ExitCode 1
 
@@ -280,6 +284,7 @@ exec "${@:2}"
                     Should -Throw -ErrorId "SudoRequired,Microsoft.PowerShell.Commands.StopServiceCommand"
             } finally {
                 Move-Item "$sudoPath.bak" $sudoPath
+                $env:PATH = $savedPath
             }
         }
 
@@ -372,7 +377,7 @@ exec "${@:2}"
                 Restart-Service -Name "sshd"
 
                 $log = Get-InvocationLog
-                $ops = @($log | Where-Object { $_ -match "sshd" } | Select-Object -Last 3)
+                $ops = @($log | Where-Object { $_ -match "sshd" })
                 if ($script:isRoot) {
                     $ops.Count | Should -Be 3
                     $ops[0] | Should -Be "sshd stop"
@@ -417,7 +422,7 @@ exec "${@:2}"
                 Stop-Service -Name "sshd"
 
                 $log = Get-InvocationLog
-                $ops = @($log | Where-Object { $_ -match "sshd" } | Select-Object -Last 2)
+                $ops = @($log | Where-Object { $_ -match "sshd" })
                 if ($script:isRoot) {
                     $ops.Count | Should -Be 2
                     $ops[0] | Should -Be "sshd restart"

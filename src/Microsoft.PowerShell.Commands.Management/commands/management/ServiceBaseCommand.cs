@@ -225,11 +225,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="arguments">The service manager arguments.</param>
         /// <param name="elevate">True when the operation requires elevated permissions.</param>
+        /// <param name="managerExecutable">Optional full path of an alternate service manager executable to invoke (for example 'rc-status' for OpenRC enumeration); when null, the resolved service manager is used.</param>
         /// <returns>The invocation result.</returns>
-        internal ServiceCommandResult RunServiceManagerCommand(IList<string> arguments, bool elevate)
+        internal ServiceCommandResult RunServiceManagerCommand(IList<string> arguments, bool elevate, string? managerExecutable = null)
         {
             ServiceManagerContext manager = GetServiceManager();
-            string fileName = manager.ManagerPath;
+            string fileName = managerExecutable ?? manager.ManagerPath;
             var args = new List<string>(arguments);
             var result = new ServiceCommandResult();
 
@@ -563,12 +564,17 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Enumerates services through 'rc-status --all'.
+        /// Enumerates services through 'rc-status --all'. The status listing lives in
+        /// 'rc-status'; 'rc-service' only manages a single service at a time.
         /// </summary>
         /// <returns>All services reported by rc-status.</returns>
         private List<UnixServiceController> EnumerateOpenRcServices()
         {
-            ServiceCommandResult result = RunServiceManagerCommand(new[] { "--all" }, elevate: false);
+            // When 'rc-status' cannot be found, the enumeration is left to fail through
+            // the service manager itself so that the resulting error names the actual
+            // command that ran.
+            string? rcStatusPath = ResolveApplicationPath("rc-status");
+            ServiceCommandResult result = RunServiceManagerCommand(new[] { "--all" }, elevate: false, managerExecutable: rcStatusPath);
             ThrowIfEnumerationFailed(result);
             return UnixServiceParser.ParseOpenRcStatusAll(result.StandardOutput);
         }
