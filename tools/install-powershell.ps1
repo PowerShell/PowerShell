@@ -1,15 +1,20 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
 <#
 .Synopsis
     Install PowerShell on Windows, Linux or macOS.
 .DESCRIPTION
-    By default, the latest PowerShell release package will be installed.
+    By default, the latest stable PowerShell release package will be installed.
     If '-Preview' is specified, then the latest PowerShell preview package will be installed.
+    If '-UseMSI' is specified without '-Preview', then the latest LTS release will be installed using MSI.
 .Parameter Destination
     The destination path to install PowerShell to.
 .Parameter Preview
     Install the latest PowerShell preview build.
+.Parameter UseMSI
+    Install using MSI on Windows. Without '-Preview', select the latest LTS 7.6.x release, which still supports MSI.
+    MSI packages are not available for PowerShell 7.7.0 or later, including preview builds.
 .Parameter DoNotOverwrite
     Do not overwrite the destination folder if it already exists.
 .Parameter AddToPath
@@ -272,8 +277,14 @@ try {
     $metadata = Invoke-RestMethod 'https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/metadata.json'
     if ($Preview) {
         $release = $metadata.PreviewReleaseTag -replace '^v'
-    } else {
+    } elseif ($UseMSI) {
         $release = $metadata.ReleaseTag -replace '^v'
+    } else {
+        $release = $metadata.StableReleaseTag -replace '^v'
+    }
+
+    if ($UseMSI -and [version]($release -replace '-.*$') -ge [version]'7.7.0') {
+        throw "MSI packages are not available for PowerShell $release. Omit '-UseMSI' to install an archive package. Without '-Preview', '-UseMSI' selects the latest LTS 7.6.x release, which still supports MSI."
     }
 
     if ($IsWinEnv) {
