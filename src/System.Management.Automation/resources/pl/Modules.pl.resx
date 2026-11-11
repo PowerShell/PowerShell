@@ -648,7 +648,7 @@
     <value>Polecenie cmdlet Export-ModuleMember</value>
   </data>
   <data name="WDACExportModuleCommandLogMessage" xml:space="preserve">
-    <value>Export of module members will fail in ConstrainedLanguage mode because module '{0}', has a language mode '{1}' that is different from the current session '{2}'.</value>
+    <value>Eksportowanie elementów członkowskich modułu w trybie ConstrainedLanguage zakończy się niepowodzeniem, ponieważ moduł „{0}” ma tryb języka „{1}”, który różni się od bieżącej sesji „{2}”.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACImplicitFunctionExportLogTitle" xml:space="preserve">
@@ -669,28 +669,28 @@
     <value>Moduł zawiera operator dot-source</value>
   </data>
   <data name="WDACModuleDotSourceLogMessage" xml:space="preserve">
-    <value>Module '{0}' import will in fail ConstrainedLanguage mode because it exports functions using wildcard characters while also using the dot-source operator.</value>
+    <value>Importowanie modułu „{0}” zakończy się niepowodzeniem w trybie ConstrainedLanguage, ponieważ eksportuje funkcje przy użyciu symboli wieloznacznych, a jednocześnie używa operatora dot-source.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACModuleFnExportWithNestedModulesLogTitle" xml:space="preserve">
-    <value>Module Exporting Functions</value>
+    <value>Funkcje eksportowane przez moduł</value>
   </data>
   <data name="WDACModuleFnExportWithNestedModulesLogMessage" xml:space="preserve">
     <value>Moduł '{0}' eksportuje funkcje przy użyciu symboli wieloznacznych nazwy. Wszystkie zagnieżdżone nazwy funkcji modułu zostaną usunięte podczas działania w trybie ConstrainedLanguage.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACNewModuleCommandLogTitle" xml:space="preserve">
-    <value>New-Module Cmdlet</value>
+    <value>Polecenie cmdlet New-Module</value>
   </data>
   <data name="WDACNewModuleCommandLogMessage" xml:space="preserve">
-    <value>A new module from an untrusted ConstrainedLanguage session will be blocked from providing the FullLanguage script block.</value>
+    <value>Nowy moduł z niezaufanej sesji ConstrainedLanguage będzie blokowany przed udostępnianiem bloku skryptu FullLanguage.</value>
     <comment>{StrContains="ConstrainedLanguage"}{StrContains="FullLanguage"}</comment>
   </data>
   <data name="WDACMismatchedLanguageModesTitle" xml:space="preserve">
-    <value>Module Mismatched Language Modes</value>
+    <value>Niezgodne tryby języka modułu</value>
   </data>
   <data name="WDACMismatchedLanguageModesMessage" xml:space="preserve">
-    <value>A dependent module is being loaded that has a different language mode than the parent. This will be disallowed when in ConstrainedLanguage mode.</value>
+    <value>Trwa ładowanie modułu zależnego, który ma inny tryb języka niż moduł nadrzędny. W trybie ConstrainedLanguage nie będzie to dozwolone.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

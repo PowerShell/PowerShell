@@ -1722,7 +1722,7 @@
     <value>Оценка выразительности может оказаться неудачной</value>
   </data>
   <data name="WDACGetPowerShellLogMessage" xml:space="preserve">
-    <value>Creating a PowerShell object from a script block may require evaluating some expressions within the script block. The expression evaluation will silently fail and return 'null' in ConstrainedLanguage mode, unless the expression represents a constant value.</value>
+    <value>Для создания объекта PowerShell из блока скрипта может потребоваться оценка некоторых выражений внутри этого блока. В режиме ConstrainedLanguage вычисление выражения завершится без предупреждения и вернет значение "null", если только выражение не представляет собой константу.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="HyperVFailedToGetStateUnknownType" xml:space="preserve">

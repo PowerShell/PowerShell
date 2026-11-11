@@ -1722,7 +1722,7 @@ Proces klienta SSH zakończył się przed nawiązania połączenia.</value>
     <value>Obliczanie wyrażenia może zakończyć się niepowodzeniem</value>
   </data>
   <data name="WDACGetPowerShellLogMessage" xml:space="preserve">
-    <value>Creating a PowerShell object from a script block may require evaluating some expressions within the script block. The expression evaluation will silently fail and return 'null' in ConstrainedLanguage mode, unless the expression represents a constant value.</value>
+    <value>Utworzenie obiektu programu PowerShell na podstawie bloku skryptu może wymagać oceny niektórych wyrażeń w bloku skryptu. Obliczanie wyrażenia w trybie dyskretnym zakończy się niepowodzeniem i zwróci wartość „null” w trybie ConstrainedLanguage, chyba że wyrażenie reprezentuje wartość stałą.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="HyperVFailedToGetStateUnknownType" xml:space="preserve">

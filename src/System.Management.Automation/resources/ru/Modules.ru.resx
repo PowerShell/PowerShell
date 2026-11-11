@@ -655,7 +655,7 @@
     <value>Неявный экспорт функций модуля</value>
   </data>
   <data name="WDACImplicitFunctionExportLogMessage" xml:space="preserve">
-    <value>Implicit function export for module '{0}' will be denied because it is trusted (runs in FullLanguage mode) but the session is not trusted (runs in ConstrainedLanguage mode). It is best practice to always export module functions individually by full name.</value>
+    <value>Неявный экспорт функций для модуля "{0}" будет запрещен, так как он является доверенным (работает в режиме FullLanguage), а сеанс не является доверенным (работает в режиме ConstrainedLanguage). Рекомендуется всегда экспортировать функции модуля по отдельности, указывая полное имя.</value>
     <comment>{StrContains="FullLanguage"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACScriptFileImportLogTitle" xml:space="preserve">
@@ -669,28 +669,28 @@
     <value>Модуль содержит оператор Dot-Source</value>
   </data>
   <data name="WDACModuleDotSourceLogMessage" xml:space="preserve">
-    <value>Module '{0}' import will in fail ConstrainedLanguage mode because it exports functions using wildcard characters while also using the dot-source operator.</value>
+    <value>Импорт модуля "{0}" завершится сбоем в режиме ConstrainedLanguage, так как он экспортирует функции с использованием подстановочных знаков и при этом использует оператор dot-source.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACModuleFnExportWithNestedModulesLogTitle" xml:space="preserve">
-    <value>Module Exporting Functions</value>
+    <value>Функции, экспортируемые модулем</value>
   </data>
   <data name="WDACModuleFnExportWithNestedModulesLogMessage" xml:space="preserve">
-    <value>Module '{0}' exports functions using name wildcard characters. Any nested module function names will be removed when running in ConstrainedLanguage mode.</value>
+    <value>Модуль "{0}" экспортирует функции с использованием подстановочных знаков в именах. Имена всех функций вложенных модулей будут удалены при работе в режиме ConstrainedLanguage.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACNewModuleCommandLogTitle" xml:space="preserve">
-    <value>New-Module Cmdlet</value>
+    <value>Командлет New-Module</value>
   </data>
   <data name="WDACNewModuleCommandLogMessage" xml:space="preserve">
-    <value>A new module from an untrusted ConstrainedLanguage session will be blocked from providing the FullLanguage script block.</value>
+    <value>Для нового модуля из недоверенного сеанса ConstrainedLanguage будет заблокировано предоставление блока сценария FullLanguage.</value>
     <comment>{StrContains="ConstrainedLanguage"}{StrContains="FullLanguage"}</comment>
   </data>
   <data name="WDACMismatchedLanguageModesTitle" xml:space="preserve">
-    <value>Module Mismatched Language Modes</value>
+    <value>Несовместимые языковые режимы модуля</value>
   </data>
   <data name="WDACMismatchedLanguageModesMessage" xml:space="preserve">
-    <value>A dependent module is being loaded that has a different language mode than the parent. This will be disallowed when in ConstrainedLanguage mode.</value>
+    <value>Загружается зависимый модуль с языковым режимом, отличным от режима родительского модуля. В режиме ConstrainedLanguage это будет запрещено.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

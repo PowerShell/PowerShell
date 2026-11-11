@@ -145,7 +145,7 @@
     <value>Не удается сопоставить имя ввода {0} с методом.</value>
   </data>
   <data name="NoMethodInvocationInRestrictedLanguageMode" xml:space="preserve">
-    <value>Cannot invoke a method in the RestrictedLanguage mode.</value>
+    <value>Нельзя вызывать метод в режиме RestrictedLanguage.</value>
     <comment>{StrContains="RestrictedLanguage"}</comment>
   </data>
   <data name="NoShouldProcessForScriptBlockSet" xml:space="preserve">

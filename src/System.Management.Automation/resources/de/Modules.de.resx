@@ -648,14 +648,14 @@
     <value>Export-ModuleMember-Cmdlet</value>
   </data>
   <data name="WDACExportModuleCommandLogMessage" xml:space="preserve">
-    <value>Export of module members will fail in ConstrainedLanguage mode because module '{0}', has a language mode '{1}' that is different from the current session '{2}'.</value>
+    <value>Das Exportieren von Modulelementen schlägt im ConstrainedLanguage-Modus fehl, da das Modul „{0}“ einen Sprachmodus „{1}“ aufweist, der sich von der aktuellen Sitzung „{2}“ unterscheidet.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACImplicitFunctionExportLogTitle" xml:space="preserve">
     <value>Export impliziter Modulfunktionen</value>
   </data>
   <data name="WDACImplicitFunctionExportLogMessage" xml:space="preserve">
-    <value>Implicit function export for module '{0}' will be denied because it is trusted (runs in FullLanguage mode) but the session is not trusted (runs in ConstrainedLanguage mode). It is best practice to always export module functions individually by full name.</value>
+    <value>Der implizite Funktionsexport für das Modul „{0}“ wird verweigert, da es vertrauenswürdig ist (wird im FullLanguage-Modus ausgeführt), die Sitzung jedoch nicht vertrauenswürdig ist (wird im ConstrainedLanguage-Modus ausgeführt). Es hat sich bewährt, Modulfunktionen immer einzeln unter dem vollständigen Namen zu exportieren.</value>
     <comment>{StrContains="FullLanguage"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACScriptFileImportLogTitle" xml:space="preserve">
@@ -669,28 +669,28 @@
     <value>Modul enthält dot-source-Operator</value>
   </data>
   <data name="WDACModuleDotSourceLogMessage" xml:space="preserve">
-    <value>Module '{0}' import will in fail ConstrainedLanguage mode because it exports functions using wildcard characters while also using the dot-source operator.</value>
+    <value>Der Import des Moduls „{0}“ schlägt im ConstrainedLanguage-Modus fehl, da Funktionen mit Platzhalterzeichen exportiert werden und gleichzeitig der dot-source-Operator verwendet wird.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACModuleFnExportWithNestedModulesLogTitle" xml:space="preserve">
     <value>Modulexportfunktionen</value>
   </data>
   <data name="WDACModuleFnExportWithNestedModulesLogMessage" xml:space="preserve">
-    <value>Module '{0}' exports functions using name wildcard characters. Any nested module function names will be removed when running in ConstrainedLanguage mode.</value>
+    <value>Modul „{0}“ exportiert Funktionen mit Namensplatzhaltern. Alle Funktionsnamen aus geschachtelten Modulen werden im ConstrainedLanguage-Modus entfernt.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACNewModuleCommandLogTitle" xml:space="preserve">
     <value>New-Module-Cmdlet</value>
   </data>
   <data name="WDACNewModuleCommandLogMessage" xml:space="preserve">
-    <value>A new module from an untrusted ConstrainedLanguage session will be blocked from providing the FullLanguage script block.</value>
+    <value>Ein neues Modul aus einer nicht vertrauenswürdigen ConstrainedLanguage wird daran gehindert, den FullLanguage-Skriptblock bereitzustellen.</value>
     <comment>{StrContains="ConstrainedLanguage"}{StrContains="FullLanguage"}</comment>
   </data>
   <data name="WDACMismatchedLanguageModesTitle" xml:space="preserve">
     <value>Nicht übereinstimmende Modulsprachmodi</value>
   </data>
   <data name="WDACMismatchedLanguageModesMessage" xml:space="preserve">
-    <value>A dependent module is being loaded that has a different language mode than the parent. This will be disallowed when in ConstrainedLanguage mode.</value>
+    <value>Ein abhängiges Modul wird geladen, das einen anderen Sprachmodus als das übergeordnete Modul verwendet. Dies ist im ConstrainedLanguage-Modus nicht zulässig.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

@@ -448,13 +448,13 @@
     <value>O valor especificado "{0}" é inválido. Tente novamente com um valor válido.</value>
   </data>
   <data name="FunctionsToExport" xml:space="preserve">
-    <value>As funções a serem exportadas deste módulo, para melhor desempenho, não usam curingas e não excluem a entrada, usem uma matriz vazia se não houver funções para exportar.</value>
+    <value>As funções a serem exportadas deste módulo: para melhor desempenho, não use curingas nem exclua a entrada; use uma matriz vazia se não houver funções para exportar.</value>
   </data>
   <data name="AliasesToExport" xml:space="preserve">
-    <value>Aliases a serem exportados deste módulo, para melhor desempenho, não usam curingas e não excluem a entrada, usem uma matriz vazia se não houver aliases para exportar.</value>
+    <value>Aliases a serem exportados deste módulo: para melhor desempenho, não use curingas nem exclua a entrada; use uma matriz vazia se não houver aliases para exportar.</value>
   </data>
   <data name="CmdletsToExport" xml:space="preserve">
-    <value>Os cmdlets a serem exportados deste módulo, para melhor desempenho, não usam curingas e não excluem a entrada, usem uma matriz vazia se não houver cmdlets para exportar.</value>
+    <value>Os cmdlets a serem exportados deste módulo: para melhor desempenho, não use curingas nem exclua a entrada; use uma matriz vazia se não houver cmdlets para exportar.</value>
   </data>
   <data name="VariablesToExport" xml:space="preserve">
     <value>Variáveis a serem exportadas deste módulo</value>
