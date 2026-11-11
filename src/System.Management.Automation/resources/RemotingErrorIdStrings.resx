@@ -1734,4 +1734,7 @@ SSH client process terminated before connection could be established.</value>
   <data name="HyperVNegotiationFailed" xml:space="preserve">
     <value>Negotiating a secure connection to Hyper-V failed. Make sure the Host and Guest are updated with all relevant Microsoft Updates.</value>
   </data>
+  <data name="RemotePromptTargetNameRedacted" xml:space="preserve">
+    <value>The following prompt Target Name '{0}' has been redacted to '{1}' for security reasons.</value>
+  </data>
 </root>
