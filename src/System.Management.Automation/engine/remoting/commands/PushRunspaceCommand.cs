@@ -1175,7 +1175,7 @@ namespace Microsoft.PowerShell.Commands
                         Dbg.Assert(false, "Unrecognized parameter set.");
                         break;
                 }
-                // Check if the remoteRunspace targetName contains potentially unwanted PowerShell code, test this against an allowed list of commonly used PowerShell code that doesn't pose a security risk and redact it if necessary, omitting a Wanring message if the targetName is redacted.
+                // Check if the remoteRunspace targetName contains potentially unwanted PowerShell code, test this against an allowed list of commonly used PowerShell code that doesn't pose a security risk and redact it if necessary, omitting a Warning message if the targetName is redacted.
                 string targetNameRedacted = RedactIfPowerShellCode(targetName);
                 if (!string.Equals(targetName, targetNameRedacted, StringComparison.Ordinal))
                 {
