@@ -74,7 +74,12 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="serviceName">The service name, with or without the '.service' suffix.</param>
         public UnixServiceController(string serviceName)
         {
-            Name = UnixServiceParser.RemoveServiceSuffix(serviceName.Trim());
+            // The '.service' suffix is a systemd naming detail; other managers
+            // use the name exactly as provided.
+            string trimmed = serviceName.Trim();
+            Name = ResolveManager().Kind == ServiceManagerKind.Systemd
+                ? UnixServiceParser.RemoveServiceSuffix(trimmed)
+                : trimmed;
             Resolve();
             AttachDisplaySettings();
         }
@@ -186,7 +191,9 @@ namespace Microsoft.PowerShell.Commands
             {
                 case ServiceManagerKind.Systemd:
                     {
-                        string units = RunQueryCommand(control, new[] { "list-units", "--type=service", "--all", "--no-legend", "--no-pager" });
+                        // --plain keeps failed units from being prefixed with a marker,
+                        // so their rows still start with the unit name.
+                        string units = RunQueryCommand(control, new[] { "list-units", "--type=service", "--all", "--plain", "--no-legend", "--no-pager" });
                         string unitFiles = RunQueryCommand(control, new[] { "list-unit-files", "--type=service", "--no-legend", "--no-pager" });
                         services = UnixServiceParser.ParseSystemdListUnits(units);
                         UnixServiceParser.MergeSystemdUnitFiles(services, unitFiles);
@@ -515,20 +522,42 @@ namespace Microsoft.PowerShell.Commands
             _resolved = true;
             _exists = false;
 
-            foreach (UnixServiceController candidate in GetServices())
+            UnixServiceController[] services = GetServices();
+            UnixServiceController? match = null;
+
+            // Prefer the exact native name; fall back to the Windows-style
+            // case-insensitive lookup only when there is no exact match.
+            foreach (UnixServiceController candidate in services)
             {
-                if (string.Equals(candidate.Name, Name, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(candidate.Name, Name, StringComparison.Ordinal))
                 {
-                    DisplayName = candidate.DisplayName;
-                    Status = candidate.Status;
-                    StartType = candidate.StartType;
-                    Description = candidate.Description;
-                    SubState = candidate.SubState;
-                    UnitFileState = candidate.UnitFileState;
-                    _managerKind = candidate._managerKind;
-                    _exists = true;
+                    match = candidate;
                     break;
                 }
+            }
+
+            if (match is null)
+            {
+                foreach (UnixServiceController candidate in services)
+                {
+                    if (string.Equals(candidate.Name, Name, StringComparison.OrdinalIgnoreCase))
+                    {
+                        match = candidate;
+                        break;
+                    }
+                }
+            }
+
+            if (match is not null)
+            {
+                DisplayName = match.DisplayName;
+                Status = match.Status;
+                StartType = match.StartType;
+                Description = match.Description;
+                SubState = match.SubState;
+                UnitFileState = match.UnitFileState;
+                _managerKind = match._managerKind;
+                _exists = true;
             }
 
             AttachDisplaySettings();

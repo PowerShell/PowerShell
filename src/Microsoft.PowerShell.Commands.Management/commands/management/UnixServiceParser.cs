@@ -221,8 +221,8 @@ namespace Microsoft.PowerShell.Commands
             return unitFileState switch
             {
                 "enabled" or "enabled-runtime" or "generated" or "generated-runtime" or "transient" => ServiceStartMode.Automatic,
-                "disabled" or "masked" => ServiceStartMode.Disabled,
-                _ => ServiceStartMode.Manual, // static, linked, indirect, alias, ...
+                "masked" or "masked-runtime" => ServiceStartMode.Disabled,
+                _ => ServiceStartMode.Manual, // disabled (can still be started manually), static, linked, indirect, alias, ...
             };
         }
 

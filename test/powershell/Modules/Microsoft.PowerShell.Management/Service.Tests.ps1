@@ -117,7 +117,7 @@ exec "${@:2}"
 
     Context "systemd (systemctl)" {
         It "Get-Service enumerates units with status, start type and description" {
-            Reset-Shim -Stdout "sshd.service loaded active running OpenSSH server daemon`nfoo.service loaded inactive dead Foo service`ntemplate@.service loaded active running Template unit" `
+            Reset-Shim -Stdout "sshd.service loaded active running OpenSSH server daemon`nfoo.service loaded inactive dead Foo service`nfailed.service loaded failed failed Failed service`ntemplate@.service loaded active running Template unit" `
                 -UnitFilesStdout "sshd.service enabled enabled`nfoo.service disabled enabled`nmasked.service masked enabled"
 
             $services = Get-Service
@@ -132,17 +132,22 @@ exec "${@:2}"
 
             $foo = $services | Where-Object { $_.Name -eq "foo" }
             $foo.Status.ToString() | Should -Be "Stopped"
-            $foo.StartType.ToString() | Should -Be "Disabled"
+            $foo.StartType.ToString() | Should -Be "Manual"
 
             # template units are not real services
             $services.Name | Should -Not -Contain "template@"
+
+            # failed units are enumerated and reported as stopped
+            $failed = $services | Where-Object { $_.Name -eq "failed" }
+            $failed.Status.ToString() | Should -Be "Stopped"
+            $failed.SubState | Should -Be "failed"
 
             # masked services come from list-unit-files only
             $masked = $services | Where-Object { $_.Name -eq "masked" }
             $masked.StartType.ToString() | Should -Be "Disabled"
 
             $log = Get-InvocationLog
-            $log[0] | Should -Be "list-units --type=service --all --no-legend --no-pager"
+            $log[0] | Should -Be "list-units --type=service --all --plain --no-legend --no-pager"
             $log[1] | Should -Be "list-unit-files --type=service --no-legend --no-pager"
         }
 
