@@ -14,6 +14,12 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     internal static class UnixServiceNativeMethods
     {
+        /// <summary>The native error code reported when the service is already running.</summary>
+        internal const int ERROR_SERVICE_ALREADY_RUNNING = 1056;
+
+        /// <summary>The native error code reported when the service is not active.</summary>
+        internal const int ERROR_SERVICE_NOT_ACTIVE = 1062;
+
         /// <summary>
         /// Gets the effective user id of the current process.
         /// </summary>

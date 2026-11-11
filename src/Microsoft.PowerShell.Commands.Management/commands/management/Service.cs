@@ -1,7 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#if !UNIX // Not built on Unix
+#if UNIX
+// On Unix the service cmdlets run through a Unix service-manager facade; the
+// aliases below make the cmdlet implementation in this file work unchanged.
+using NativeMethods = Microsoft.PowerShell.Commands.UnixServiceNativeMethods;
+using ServiceController = Microsoft.PowerShell.Commands.UnixServiceController;
+#endif
 
 using System;
 using System.Collections.Generic;
@@ -116,6 +121,7 @@ namespace Microsoft.PowerShell.Commands
             string securityDescriptorSddl,
             NakedWin32Handle hService)
         {
+#if !UNIX
             var rawSecurityDescriptor = new RawSecurityDescriptor(securityDescriptorSddl);
             RawAcl rawDiscretionaryAcl = rawSecurityDescriptor.DiscretionaryAcl;
             var discretionaryAcl = new DiscretionaryAcl(false, false, rawDiscretionaryAcl);
@@ -143,6 +149,7 @@ namespace Microsoft.PowerShell.Commands
                     StringUtil.Format(ServiceResources.CouldNotSetServiceSecurityDescriptorSddl, service.ServiceName, exception.Message),
                     accessDenied ? ErrorCategory.PermissionDenied : ErrorCategory.InvalidOperation);
             }
+#endif // !UNIX
         }
         #endregion Internal
     }
@@ -610,6 +617,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
+#if !UNIX
             nint scManagerHandle = nint.Zero;
             if (!DependentServices && !RequiredServices)
             {
@@ -669,12 +677,53 @@ namespace Microsoft.PowerShell.Commands
                     Diagnostics.Assert(succeeded, "SCManager handle close failed");
                 }
             }
+#else
+            // On Unix the enumeration and status come from the service manager facade.
+            try
+            {
+                foreach (ServiceController service in MatchingServices())
+                {
+                    if (!DependentServices.IsPresent && !RequiredServices.IsPresent)
+                    {
+                        WriteObject(service);
+                    }
+                    else
+                    {
+                        if (DependentServices.IsPresent)
+                        {
+                            foreach (ServiceController dependantserv in service.DependentServices)
+                            {
+                                WriteObject(dependantserv);
+                            }
+                        }
+
+                        if (RequiredServices.IsPresent)
+                        {
+                            foreach (ServiceController servicedependedon in service.ServicesDependedOn)
+                            {
+                                WriteObject(servicedependedon);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (InvalidOperationException e) when (e.Data.Contains("NoServiceManagerFound"))
+            {
+                ErrorRecord err = new ErrorRecord(
+                    e,
+                    "NoServiceManagerFound",
+                    ErrorCategory.ObjectNotFound,
+                    null);
+                ThrowTerminatingError(err);
+            }
+#endif
         }
 
         #endregion Overrides
 
 #nullable enable
 
+#if !UNIX
         /// <summary>
         /// Writes a verbose message when a service property query fails.
         /// </summary>
@@ -799,6 +848,7 @@ namespace Microsoft.PowerShell.Commands
 
             return serviceAsPSObj;
         }
+#endif // !UNIX
     }
 #nullable disable
     #endregion GetServiceCommand
@@ -947,6 +997,17 @@ namespace Microsoft.PowerShell.Commands
             {
                 serviceController.Start();
             }
+#if UNIX
+            catch (InvalidOperationException e) when (e.Data.Contains("SudoRequired"))
+            {
+                WriteError(new ErrorRecord(
+                    new ServiceCommandException(e.Message) { ServiceName = serviceController.ServiceName },
+                    "SudoRequired",
+                    ErrorCategory.PermissionDenied,
+                    serviceController));
+                return false;
+            }
+#endif
             catch (Win32Exception e)
             {
                 if (e.NativeErrorCode != NativeMethods.ERROR_SERVICE_ALREADY_RUNNING)
@@ -1063,6 +1124,18 @@ namespace Microsoft.PowerShell.Commands
             {
                 serviceController.Stop();
             }
+#if UNIX
+            catch (InvalidOperationException e) when (e.Data.Contains("SudoRequired"))
+            {
+                WriteError(new ErrorRecord(
+                    new ServiceCommandException(e.Message) { ServiceName = serviceController.ServiceName },
+                    "SudoRequired",
+                    ErrorCategory.PermissionDenied,
+                    serviceController));
+                RemoveNotStoppedServices(stoppedServices);
+                return stoppedServices;
+            }
+#endif
             catch (Win32Exception e)
             {
                 if (e.NativeErrorCode != NativeMethods.ERROR_SERVICE_NOT_ACTIVE)
@@ -1393,6 +1466,7 @@ namespace Microsoft.PowerShell.Commands
     }
     #endregion StartServiceCommand
 
+#if !UNIX
     #region SuspendServiceCommand
     /// <summary>
     /// This class implements the suspend-service command.
@@ -1424,7 +1498,9 @@ namespace Microsoft.PowerShell.Commands
         }
     }
     #endregion SuspendServiceCommand
+#endif // !UNIX
 
+#if !UNIX
     #region ResumeServiceCommand
     /// <summary>
     /// This class implements the resume-service command.
@@ -1457,6 +1533,7 @@ namespace Microsoft.PowerShell.Commands
         }
     }
     #endregion ResumeServiceCommand
+#endif // !UNIX
 
     #region RestartServiceCommand
 
@@ -1512,6 +1589,7 @@ namespace Microsoft.PowerShell.Commands
     }
     #endregion RestartServiceCommand
 
+#if !UNIX
     #region SetServiceCommand
 
     /// <summary>
@@ -2030,7 +2108,9 @@ namespace Microsoft.PowerShell.Commands
 
     }
     #endregion SetServiceCommand
+#endif // !UNIX
 
+#if !UNIX
     #region NewServiceCommand
     /// <summary>
     /// This class implements the New-Service command.
@@ -2396,7 +2476,9 @@ namespace Microsoft.PowerShell.Commands
         #endregion Overrides
     }
     #endregion NewServiceCommand
+#endif // !UNIX
 
+#if !UNIX
     #region RemoveServiceCommand
     /// <summary>
     /// This class implements the Remove-Service command.
@@ -2565,6 +2647,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion Overrides
     }
     #endregion RemoveServiceCommand
+#endif // !UNIX
 
     #region ServiceCommandException
     /// <summary>
@@ -2636,6 +2719,7 @@ namespace Microsoft.PowerShell.Commands
     }
     #endregion ServiceCommandException
 
+#if !UNIX
     #region NativeMethods
     internal static class NativeMethods
     {
@@ -2922,6 +3006,7 @@ namespace Microsoft.PowerShell.Commands
         }
     }
     #endregion NativeMethods
+#endif // !UNIX
 
     #region ServiceStartupType
     /// <summary>
@@ -2943,4 +3028,3 @@ namespace Microsoft.PowerShell.Commands
     #endregion ServiceStartupType
 }
 
-#endif // Not built on Unix

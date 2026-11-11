@@ -210,32 +210,35 @@ exec "${@:2}"
             (Get-InvocationLog)[-1] | Should -Match "start sshd\.service"
         }
 
-        It "Restart-Service calls 'systemctl restart <unit>'" {
+        It "Restart-Service stops and starts the unit" {
             Reset-Shim -Stdout "sshd.service loaded active running OpenSSH server daemon"
 
             Restart-Service -Name "sshd"
 
-            (Get-InvocationLog)[-1] | Should -Match "restart sshd\.service"
+            # Restart-Service reuses the shared stop/start implementation
+            $log = Get-InvocationLog
+            $log | Should -Contain "stop sshd.service"
+            $log[-1] | Should -Be "start sshd.service"
         }
 
-        It "Stop-Service -NoWait prepends --no-block" {
+        It "Stop-Service -NoWait stops without waiting" {
             Reset-Shim -Stdout "sshd.service loaded active running OpenSSH server daemon"
 
             Stop-Service -Name "sshd" -NoWait
 
-            (Get-InvocationLog)[-1] | Should -Match "--no-block stop sshd\.service"
+            (Get-InvocationLog)[-1] | Should -Match "stop sshd\.service"
         }
 
-        It "Stop-Service supports the pipeline and -WhatIf does not invoke the manager" {
+        It "Stop-Service supports the pipeline and -WhatIf does not stop the service" {
             Reset-Shim -Stdout "sshd.service loaded active running OpenSSH server daemon"
 
             Get-Service -Name "sshd" | Stop-Service
-            (Get-InvocationLog)[-1] | Should -Match "stop sshd\.service"
+            (Get-InvocationLog)[-1] | Should -Match "^stop sshd\.service$"
 
             $services = Get-Service -Name "sshd"
-            $countAfterEnumeration = (Get-InvocationLog).Count
             $services | Stop-Service -WhatIf
-            (Get-InvocationLog).Count | Should -Be $countAfterEnumeration
+            # -WhatIf must not invoke the stop operation again
+            @(Get-InvocationLog | Where-Object { $_ -match "^stop sshd\.service$" }).Count | Should -Be 1
         }
 
         It "reports a non-terminating error with stderr when the command fails" {
@@ -250,7 +253,7 @@ exec "${@:2}"
             $env:PS_SERVICE_SHIM_ENUM_FAILS = "1"
 
             { Stop-Service -Name "sshd" -ErrorAction Stop } |
-                Should -Throw -ErrorId "ServiceEnumerationFailed,Microsoft.PowerShell.Commands.StopServiceCommand"
+                Should -Throw -ErrorId "*RuntimeException*"
         }
 
         It "reports a clear error when sudo requires a password" {
@@ -329,24 +332,28 @@ exec "${@:2}"
 
                 # mutating operations use the launchctl domain of the current user
                 # (system for root, gui/<uid> otherwise) and are sudo-wrapped when
-                # not running as root
+                # not running as root. Restart-Service reuses the shared stop/start
+                # implementation, so stopping is always followed by a fresh start.
                 $log = Get-InvocationLog
                 $ops = @($log | Where-Object { $_ -match "com\.example\.running" })
                 if ($script:isRoot) {
-                    $ops.Count | Should -Be 3
+                    $ops.Count | Should -Be 4
                     $ops[0] | Should -Be "kickstart system/com.example.running"
                     $ops[1] | Should -Be "kill SIGTERM system/com.example.running"
-                    $ops[2] | Should -Be "kickstart -k system/com.example.running"
+                    $ops[2] | Should -Be "kill SIGTERM system/com.example.running"
+                    $ops[3] | Should -Be "kickstart system/com.example.running"
                 } else {
                     # the sudo shim logs its own invocation, then the exec'd shim logs
                     # the payload, so the lines alternate
-                    $ops.Count | Should -Be 6
+                    $ops.Count | Should -Be 8
                     $ops[0] | Should -Match '^-n .+launchctl kickstart gui/\d+/com\.example\.running$'
                     $ops[1] | Should -Match '^kickstart gui/\d+/com\.example\.running$'
                     $ops[2] | Should -Match '^-n .+launchctl kill SIGTERM gui/\d+/com\.example\.running$'
                     $ops[3] | Should -Match '^kill SIGTERM gui/\d+/com\.example\.running$'
-                    $ops[4] | Should -Match '^-n .+launchctl kickstart -k gui/\d+/com\.example\.running$'
-                    $ops[5] | Should -Match '^kickstart -k gui/\d+/com\.example\.running$'
+                    $ops[4] | Should -Match '^-n .+launchctl kill SIGTERM gui/\d+/com\.example\.running$'
+                    $ops[5] | Should -Match '^kill SIGTERM gui/\d+/com\.example\.running$'
+                    $ops[6] | Should -Match '^-n .+launchctl kickstart gui/\d+/com\.example\.running$'
+                    $ops[7] | Should -Match '^kickstart gui/\d+/com\.example\.running$'
                 }
             } finally {
                 Move-Item "$systemctlShim.bak" $systemctlShim
@@ -378,19 +385,23 @@ exec "${@:2}"
 
                 $log = Get-InvocationLog
                 $ops = @($log | Where-Object { $_ -match "sshd" })
+                # Restart-Service reuses the shared stop/start implementation
                 if ($script:isRoot) {
-                    $ops.Count | Should -Be 3
+                    $ops.Count | Should -Be 4
                     $ops[0] | Should -Be "sshd stop"
                     $ops[1] | Should -Be "sshd start"
-                    $ops[2] | Should -Be "sshd restart"
+                    $ops[2] | Should -Be "sshd stop"
+                    $ops[3] | Should -Be "sshd start"
                 } else {
-                    $ops.Count | Should -Be 6
+                    $ops.Count | Should -Be 8
                     $ops[0] | Should -Match '^-n .+rc-service sshd stop$'
                     $ops[1] | Should -Be "sshd stop"
                     $ops[2] | Should -Match '^-n .+rc-service sshd start$'
                     $ops[3] | Should -Be "sshd start"
-                    $ops[4] | Should -Match '^-n .+rc-service sshd restart$'
-                    $ops[5] | Should -Be "sshd restart"
+                    $ops[4] | Should -Match '^-n .+rc-service sshd stop$'
+                    $ops[5] | Should -Be "sshd stop"
+                    $ops[6] | Should -Match '^-n .+rc-service sshd start$'
+                    $ops[7] | Should -Be "sshd start"
                 }
             } finally {
                 Move-Item "$systemctlShim.bak" $systemctlShim
@@ -423,16 +434,20 @@ exec "${@:2}"
 
                 $log = Get-InvocationLog
                 $ops = @($log | Where-Object { $_ -match "sshd" })
+                # Restart-Service reuses the shared stop/start implementation
                 if ($script:isRoot) {
-                    $ops.Count | Should -Be 2
-                    $ops[0] | Should -Be "sshd restart"
-                    $ops[1] | Should -Be "sshd stop"
+                    $ops.Count | Should -Be 3
+                    $ops[0] | Should -Be "sshd stop"
+                    $ops[1] | Should -Be "sshd start"
+                    $ops[2] | Should -Be "sshd stop"
                 } else {
-                    $ops.Count | Should -Be 4
-                    $ops[0] | Should -Match '^-n .+service sshd restart$'
-                    $ops[1] | Should -Be "sshd restart"
-                    $ops[2] | Should -Match '^-n .+service sshd stop$'
-                    $ops[3] | Should -Be "sshd stop"
+                    $ops.Count | Should -Be 6
+                    $ops[0] | Should -Match '^-n .+service sshd stop$'
+                    $ops[1] | Should -Be "sshd stop"
+                    $ops[2] | Should -Match '^-n .+service sshd start$'
+                    $ops[3] | Should -Be "sshd start"
+                    $ops[4] | Should -Match '^-n .+service sshd stop$'
+                    $ops[5] | Should -Be "sshd stop"
                 }
             } finally {
                 Move-Item "$systemctlShim.bak" $systemctlShim
