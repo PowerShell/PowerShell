@@ -48,7 +48,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="output">The standard output of the command.</param>
         internal static void MergeSystemdUnitFiles(List<UnixServiceController> services, string output)
         {
-            var servicesByName = new Dictionary<string, UnixServiceController>(StringComparer.OrdinalIgnoreCase);
+            var servicesByName = new Dictionary<string, UnixServiceController>(StringComparer.Ordinal);
             foreach (UnixServiceController service in services)
             {
                 servicesByName[service.Name] = service;
@@ -133,7 +133,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The parsed services.</returns>
         internal static List<UnixServiceController> ParseOpenRcStatusAll(string output)
         {
-            var servicesByName = new Dictionary<string, UnixServiceController>(StringComparer.OrdinalIgnoreCase);
+            var servicesByName = new Dictionary<string, UnixServiceController>(StringComparer.Ordinal);
 
             foreach (string rawLine in output.Split('\n'))
             {
