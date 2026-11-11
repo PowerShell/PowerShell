@@ -253,7 +253,7 @@ exec "${@:2}"
             $env:PS_SERVICE_SHIM_ENUM_FAILS = "1"
 
             { Stop-Service -Name "sshd" -ErrorAction Stop } |
-                Should -Throw -ErrorId "*RuntimeException*"
+                Should -Throw -ErrorId "System.ComponentModel.Win32Exception,Microsoft.PowerShell.Commands.StopServiceCommand"
         }
 
         It "reports a clear error when sudo requires a password" {
