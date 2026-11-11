@@ -41,10 +41,10 @@ Describe "Requires tests" -Tags "CI" {
         BeforeAll {
             $currentVersion = $PSVersionTable.PSVersion
 
-            $powerShellVersions = "1.0", "2.0", "3.0", "4.0", "5.0", "5.1", "6.0", "6.1", "6.2", "7.0", "7.1", "7.2", "7.3", "7.4", "7.5", "7.6", "7.7"
-            $latestVersion = [version]($powerShellVersions | Sort-Object -Descending -Top 1)
-            $nonExistingMinor = "$($latestVersion.Major).$($latestVersion.Minor + 1)"
-            $nonExistingMajor = "$($latestVersion.Major + 1).0"
+            $powerShellVersions = "1.0", "2.0", "3.0", "4.0", "5.0", "5.1", "6.0", "6.1", "6.2"
+            $powerShellVersions += 0..$currentVersion.Minor | ForEach-Object { "$($currentVersion.Major).$_" }
+            $nonExistingMinor = "$($currentVersion.Major).$($currentVersion.Minor + 1)"
+            $nonExistingMajor = "$($currentVersion.Major + 1).0"
 
             foreach ($version in ($powerShellVersions + $nonExistingMinor + $nonExistingMajor)) {
                 $filePath = Join-Path -Path $TestDrive -ChildPath "$version.ps1"
