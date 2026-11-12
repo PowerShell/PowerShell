@@ -99,8 +99,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Temporary place to remember whether to close this runspace on pop or not.
-        /// Used by Start-PSSession.
+        /// Whether to close this runspace when it is popped from an interactive session host.
+        /// Set by Enter-PSSession for runspaces it creates or publicly through <see cref="Runspace.SetShouldCloseOnPop"/>.
         /// </summary>
         internal bool ShouldCloseOnPop { get; set; } = false;
 
