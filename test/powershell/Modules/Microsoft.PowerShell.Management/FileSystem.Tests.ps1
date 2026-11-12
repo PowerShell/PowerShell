@@ -703,6 +703,66 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             Test-Path $junctionToDir | Should -BeTrue
         }
 
+        It "New-Item junction volume query rejects roots before mutation" -Skip:(-Not $IsWindows) {
+            # Invoke the pre-mutation helper: never attempt -Force against a real volume root.
+            $type = [System.Management.Automation.PSObject].Assembly.GetType('Microsoft.PowerShell.Commands.InternalSymbolicLinkLinkCodeMethods', $true)
+            $method = $type.GetMethod('SupportsJunctions', [System.Reflection.BindingFlags]'Static,NonPublic')
+            foreach ($root in @([System.IO.Path]::GetPathRoot($TestDrive), '\\server\share\')) {
+                $failure = $null
+                try {
+                    $method.Invoke($null, @($root))
+                } catch {
+                    $failure = $_.Exception
+                    while ($failure.InnerException) { $failure = $failure.InnerException }
+                }
+
+                $failure | Should -BeOfType System.IO.IOException
+            }
+        }
+
+        It "New-Item junction rejects an unsupported file system without changing existing data" {
+            # Never provision or format a volume here. Windows jobs may opt in with an existing,
+            # disposable FAT32/exFAT test root; Unix uses the actual TestDrive filesystem.
+            $root = if ($IsWindows) { $env:POWERSHELL_JUNCTION_UNSUPPORTED_TEST_ROOT } else { $TestDrive }
+            if (-not $root) {
+                Set-TestInconclusive -Message 'An existing unsupported Windows test volume is required'
+                return
+            }
+
+            if ($IsWindows) {
+                # Resolve the volume at the fixture path, including directory-mounted volumes.
+                # DriveInfo(GetPathRoot(...)) would instead inspect the host drive.
+                $volume = Get-Volume -FilePath ((Resolve-Path -LiteralPath $root).ProviderPath) -ErrorAction Stop
+                $volume | Should -Not -BeNullOrEmpty
+                $volume.FileSystem | Should -BeIn @('FAT32', 'exFAT')
+            }
+
+            $fixture = New-Item -ItemType Directory -Path (Join-Path $root ([guid]::NewGuid().ToString()))
+            try {
+                $targetDir = New-Item -ItemType Directory -Path (Join-Path $TestDrive 'junction-target')
+                $junctionPath = Join-Path $fixture.FullName 'junction'
+                $failure = { New-Item -ItemType Junction -Path $junctionPath -Target $targetDir.FullName -ErrorAction Stop } |
+                    Should -Throw -ErrorId "JunctionNotSupported,Microsoft.PowerShell.Commands.NewItemCommand" -PassThru
+                $failure.Exception.Message | Should -Match 'NTFS and ReFS'
+                $failure.Exception | Should -BeOfType System.PlatformNotSupportedException
+                Test-Path -LiteralPath $junctionPath | Should -BeFalse
+
+                New-Item -ItemType Directory -Path $junctionPath > $null
+                $sentinel = Join-Path $junctionPath 'keep.txt'
+                Set-Content -LiteralPath $sentinel -Value 'preserve me' -NoNewline
+                { New-Item -ItemType Junction -Path $junctionPath -Target $targetDir.FullName -Force -ErrorAction Stop } |
+                    Should -Throw -ErrorId "JunctionNotSupported,Microsoft.PowerShell.Commands.NewItemCommand"
+                Get-Content -LiteralPath $sentinel -Raw | Should -BeExactly 'preserve me'
+
+                $whatIfPath = Join-Path $fixture.FullName 'whatif'
+                { New-Item -ItemType Junction -Path $whatIfPath -Target $targetDir.FullName -WhatIf -ErrorAction Stop } |
+                    Should -Not -Throw
+                Test-Path -LiteralPath $whatIfPath | Should -BeFalse
+            } finally {
+                Remove-Item -LiteralPath $fixture.FullName -Recurse -Force
+            }
+        }
+
         It 'New-Item fails creating junction with relative path' -Skip:(!$IsWindows) {
             try {
                 Push-Location $TestDrive
