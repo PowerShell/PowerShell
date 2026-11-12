@@ -660,6 +660,28 @@ foo
         }
     }
 
+    Context "Redirected standard input as commands" {
+        It "Does not write VT sequences to the output: <CommandLine>" -TestCases @(
+            @{CommandLine = "-noprofile -c -"}
+            @{CommandLine = "-noprofile -Command -"}
+            @{CommandLine = "-noprofile -File -"}
+            @{CommandLine = "-noprofile"}
+        ) {
+            param($CommandLine)
+            $si = NewProcessStartInfo $CommandLine -RedirectStdIn
+            # NO_COLOR and TERM=dumb would hide the VT sequences, so make sure neither is set
+            $null = $si.Environment.Remove("NO_COLOR")
+            $si.Environment["TERM"] = "xterm-256color"
+            $process = RunPowerShell $si
+            $process.StandardInput.Write("'hello'`n")
+            $process.StandardInput.Close()
+            $output = $process.StandardOutput.ReadToEnd()
+            EnsureChildHasExited $process
+            $output | Should -Match "hello"
+            $output | Should -Not -Match "`e"
+        }
+    }
+
     Context "Exception handling" {
         BeforeAll {
             # the default stack size in PowerShell is 10000000, set the stack
