@@ -4814,6 +4814,13 @@ end {
                     new SessionStateAliasEntry("ogv", "Out-GridView", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("shcm", "Show-Command", string.Empty, ReadOnly),
 #endif
+                    // Porting note: service cmdlets are available on Unix and do not conflict
+                    // with native commands there
+#if UNIX
+                    new SessionStateAliasEntry("gsv", "Get-Service", string.Empty, ReadOnly),
+                    new SessionStateAliasEntry("sasv", "Start-Service", string.Empty, ReadOnly),
+                    new SessionStateAliasEntry("spsv", "Stop-Service", string.Empty, ReadOnly),
+#endif
                     // Bash built-ins we purposefully keep even if they override native commands
                     new SessionStateAliasEntry("cd", "Set-Location", string.Empty, AllScope),
                     new SessionStateAliasEntry("dir", "Get-ChildItem", string.Empty, AllScope),
