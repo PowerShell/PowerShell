@@ -4461,7 +4461,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             // The ps1xml file no longer exists in $PSHOME.  Downstream, we expect a resolved path,
                             // which we can't really do b/c the file doesn't exist.
-                            fixedFileName = psHome + "\\" + Path.GetFileName(s);
+                            fixedFileName = Path.Combine(psHome, Path.GetFileName(s));
                         }
                         else if (verifyFilesExist && !File.Exists(fixedFileName))
                         {
