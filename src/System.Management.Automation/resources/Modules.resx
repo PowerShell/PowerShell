@@ -444,6 +444,9 @@
   <data name="PrivateDataValueTypeShouldBeHashTableWarning" xml:space="preserve">
     <value>The PrivateData should be defined as a hashtable, but this module manifest defines it as an object. Please consider wrapping the contents of PrivateData in a hashtable. This will enable you to add the Tags, ProjectUri, LicenseUri, IconUri, and ReleaseNotes properties to the module manifest at a later time.</value>
   </data>
+  <data name="PSDataNotAllowedInPrivateDataError" xml:space="preserve">
+    <value>The PSData property cannot be specified within the PrivateData hashtable. Use the individual cmdlet parameters (Tags, LicenseUri, ProjectUri, IconUri, ReleaseNotes, Prerelease, RequireLicenseAcceptance, ExternalModuleDependencies) instead.</value>
+  </data>
   <data name="InvalidParameterValue" xml:space="preserve">
     <value>The specified value '{0}' is invalid, try again with a valid value.</value>
   </data>
