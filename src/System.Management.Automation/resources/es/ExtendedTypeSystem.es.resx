@@ -396,11 +396,13 @@ PS&gt; [System.Collections.Generic.Comparer``1]::get_Default()
   </data>
   <data name="WDACHashTypeLogMessage" xml:space="preserve">
     <value>La conversión de tipos de HashTable a "{0}" no se permitirá en el modo ConstrainedLanguage.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACTypeConversionLogTitle" xml:space="preserve">
     <value>Conversión de tabla hash del sistema de tipos extendidos</value>
   </data>
   <data name="WDACTypeConversionLogMessage" xml:space="preserve">
     <value>La conversión de tipos de "{0}" a "{1}" no se permitirá en el modo ConstrainedLanguage.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

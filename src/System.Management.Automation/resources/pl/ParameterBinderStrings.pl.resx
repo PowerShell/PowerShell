@@ -250,12 +250,14 @@
     <value>Wywołanie metody lub właściwości jest niedozwolone</value>
   </data>
   <data name="WDACBinderInvocationLogMessage" xml:space="preserve">
-    <value>Wywołanie metody lub właściwości „{0}” w typie „{1}” nie będzie dozwolone w trybie ograniczonego języka dla niezaufanych skryptów.</value>
+    <value>Wywołanie metody lub właściwości '{0}' na typie '{1}' nie będzie dozwolone w trybie ConstrainedLanguage dla niezaufanych skryptów.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACBinderTypeCreationLogTitle" xml:space="preserve">
     <value>Tworzenie typu jest niedozwolone</value>
   </data>
   <data name="WDACBinderTypeCreationLogMessage" xml:space="preserve">
-    <value>Tworzenie typu „{0}” nie będzie dozwolone podczas wiązania parametrów w trybie ograniczonego języka dla niezaufanych skryptów.</value>
+    <value>Tworzenie '{0}' typu nie będzie dozwolone podczas tworzenia powiązania parametrów w trybie ConstrainedLanguage dla niezaufanych skryptów.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>
