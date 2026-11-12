@@ -184,7 +184,8 @@
     <value>Die Sitzung ist ausgelastet. Sie werden mit der Sitzung verbunden, sobald sie verfügbar ist. Um den Enter-PSSession-Befehl abzubrechen, drücken Sie STRG + C.</value>
   </data>
   <data name="NotSupportedOnRestrictedRunspace" xml:space="preserve">
-    <value>Der Befehl kann nicht abgeschlossen werden. Skriptaufrufe werden in dieser Sitzungskonfiguration nicht unterstützt. Dies kann vorkommen, wenn sich die Sitzungskonfiguration im Nur-Sprachmodus befindet.</value>
+    <value>Der Befehl kann nicht abgeschlossen werden. Der Skriptaufruf wird in dieser Sitzungskonfiguration nicht unterstützt. Dies kann vorkommen, wenn sich die Sitzungskonfiguration in NoLanguage Modus befindet.</value>
+    <comment>{StrContains="NoLanguage"}</comment>
   </data>
   <data name="DisconnectConnectNotSupported" xml:space="preserve">
     <value>Für lokale Runspaces können keine Vorgänge zum Trennen und Verbinden verwendet werden.</value>

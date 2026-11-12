@@ -151,7 +151,7 @@
     <value>La version de catalogue n’est pas valide. Nous prenons uniquement en charge la version {0} et la version {1} du catalogue.</value>
   </data>
   <data name="WeakCatalogHashAlgorithm" xml:space="preserve">
-    <value>'{0}' is a version 1 catalog that uses the weak SHA-1 hash algorithm. Consider regenerating this catalog with '-CatalogVersion 2'.</value>
+    <value>« {0} » est un catalogue de version 1 qui utilise l’algorithme de hachage SHA-1, qui n’est pas sécurisé. Envisagez de régénérer ce catalogue avec « -CatalogVersion 2 ».</value>
     <comment>{StrContains="SHA-1"}{StrContains="-CatalogVersion 2"}</comment>
   </data>
   <data name="UnableToOpenCatalogDefinitionFile" xml:space="preserve">
