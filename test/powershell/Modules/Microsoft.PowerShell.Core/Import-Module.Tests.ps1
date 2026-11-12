@@ -165,6 +165,54 @@ Describe "Import-Module for Binary Modules" -Tags 'CI' {
 "@
         Add-Type -TypeDefinition $src -OutputAssembly $TESTDRIVE\System.dll
         Add-Type -TypeDefinition $src -OutputAssembly $TESTDRIVE\System.exe
+
+        $receiveTestJob = {
+            param (
+                [System.Management.Automation.Job] $Job,
+                [string] $Description,
+                [string[]] $Path,
+                [int] $TimeoutSec = 30
+            )
+
+            $completedJob = $Job | Wait-Job -Timeout $TimeoutSec
+            if ($null -eq $completedJob) {
+                $Job | Stop-Job -ErrorAction SilentlyContinue
+                throw "'$Description' timed out after $TimeoutSec seconds. Job state: $($Job.State)."
+            }
+
+            $receiveErrors = @()
+            $output = @($Job | Receive-Job -ErrorVariable receiveErrors -ErrorAction SilentlyContinue)
+            $failureDetails = @(
+                $Job.JobStateInfo.Reason
+                $Job.ChildJobs.JobStateInfo.Reason
+                $Job.ChildJobs.Error
+                $receiveErrors
+            ) | Where-Object { $null -ne $_ } | ForEach-Object ToString | Select-Object -Unique
+
+            if ($Job.State -ne 'Completed' -or $failureDetails.Count -gt 0) {
+                $verboseDetails = @($Job.ChildJobs.Verbose) |
+                    Where-Object { $null -ne $_ } |
+                    ForEach-Object ToString |
+                    Select-Object -Unique
+                $pathDetails = foreach ($itemPath in $Path) {
+                    if (Test-Path -LiteralPath $itemPath) {
+                        try {
+                            "$itemPath (SHA256: $((Get-FileHash -LiteralPath $itemPath -Algorithm SHA256 -ErrorAction Stop).Hash))"
+                        }
+                        catch {
+                            "$itemPath (hash unavailable: $($_.Exception.Message))"
+                        }
+                    }
+                    else {
+                        "$itemPath (missing)"
+                    }
+                }
+
+                throw "'$Description' failed. Job state: $($Job.State). Paths: $($pathDetails -join '; '). Errors: $($failureDetails -join '; '). Verbose: $($verboseDetails -join '; ')"
+            }
+
+            $output
+        }
     }
 
     It "PS should try to load the binary module from a file path with extension: <extension>" -TestCases (
@@ -196,8 +244,8 @@ Describe "Import-Module for Binary Modules" -Tags 'CI' {
         New-ModuleManifest -Path $psdFile -RootModule $exe
 
         try {
-            $job = Start-Job -ScriptBlock { Import-Module $using:psdFile -PassThru }
-            $module = $job | Wait-Job -Timeout 30 | Receive-Job
+            $job = Start-Job -ScriptBlock { Import-Module $using:psdFile -PassThru -ErrorAction Stop -Verbose }
+            $module = & $receiveTestJob -Job $job -Description 'Import executable root module' -Path $psdFile, $exe
         }
         finally {
             $job | Remove-Job -ErrorAction Ignore
@@ -216,12 +264,12 @@ Describe "Import-Module for Binary Modules" -Tags 'CI' {
 
         try {
             $job = Start-Job -ScriptBlock {
-                $module = Import-Module $using:psdFile -PassThru
+                $module = Import-Module $using:psdFile -PassThru -ErrorAction Stop -Verbose
                 # return the module and the nested module assembly location
                 $module
                 $module.NestedModules[0].ImplementingAssembly.Location
             }
-            $module, $location = $job | Wait-Job -Timeout 30 | Receive-Job
+            $module, $location = & $receiveTestJob -Job $job -Description 'Import executable nested module' -Path $psdFile, $exe
         }
         finally {
             $job | Remove-Job -ErrorAction Ignore
