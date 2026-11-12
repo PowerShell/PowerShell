@@ -127,8 +127,11 @@
     <value>The JSON is not valid with the schema: {0} at '{1}'</value>
   </data>
   <data name="JsonSchemaFileOpenFailure" xml:space="preserve">
-    <value>Can not open JSON schema file: {0}</value>
+    <value>Cannot open JSON schema file: {0}</value>
   </data>
+  <data name="JsonSchemaFileNotFound" xml:space="preserve">
+    <value>Cannot find JSON schema file: {0}</value>
+  </data>  
   <data name="InvalidUriScheme" xml:space="preserve">
     <value>URI scheme '{0}' is not supported. Only HTTP(S) and local file system URIs are allowed.</value>
   </data>
