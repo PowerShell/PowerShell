@@ -66,7 +66,7 @@ Describe "Generics support" -Tags "CI" {
     }
 
     It 'Array type works properly' -Skip:$IsCoreCLR{
-        $x = [system.array]::ConvertAll.OverloadDefinitions
+        $x = [array]::ConvertAll.OverloadDefinitions
         $x | Should -Match "static\s+TOutput\[\]\s+ConvertAll\[TInput,\s+TOutput\]\("
     }
 

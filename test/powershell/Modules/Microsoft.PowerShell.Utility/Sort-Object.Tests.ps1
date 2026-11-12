@@ -317,7 +317,7 @@ Describe 'Sort-Object Top and Bottom Unit Tests' -Tags 'CI' {
 	function Compare-SortEntry
 	{
 		param($nSortEntry, $fullSortEntry)
-		if ($nSortEntry -is [System.Array]) {
+		if ($nSortEntry -is [array]) {
 			# Arrays are compared using reference equality to ensure that the original array was
 			# moved to the correct position in both sorts; value equality doesn't verify this
 			[object]::ReferenceEquals($nSortEntry, $fullSortEntry) | Should -BeTrue
