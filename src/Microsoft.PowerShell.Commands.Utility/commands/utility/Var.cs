@@ -243,7 +243,7 @@ namespace Microsoft.PowerShell.Commands
         /// Name of the PSVariable.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public string[] Name
         {
             get

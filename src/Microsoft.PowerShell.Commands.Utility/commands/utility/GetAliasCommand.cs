@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
         /// The Name parameter for the command.
         /// </summary>
         [Parameter(ParameterSetName = "Default", Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public string[] Name
         {
             get { return _names; }
