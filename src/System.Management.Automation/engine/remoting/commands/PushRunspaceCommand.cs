@@ -9,6 +9,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Language;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Runspaces;
 using System.Threading;
@@ -63,9 +64,9 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
         [ValidateNotNullOrEmpty]
-        public override Hashtable Options 
-        { 
-            get 
+        public override Hashtable Options
+        {
+            get
             {
                 return base.Options;
             }
@@ -1174,12 +1175,21 @@ namespace Microsoft.PowerShell.Commands
                         Dbg.Assert(false, "Unrecognized parameter set.");
                         break;
                 }
-
+                // Check if the remoteRunspace targetName contains potentially unwanted PowerShell code, test this against an allowed list of commonly used PowerShell code that doesn't pose a security risk and redact it if necessary, omitting a Warning message if the targetName is redacted.
+                string targetNameRedacted = RedactIfPowerShellCode(targetName);
+                if (!string.Equals(targetName, targetNameRedacted, StringComparison.Ordinal))
+                {
+                    WriteWarning(
+                        StringUtil.Format(
+                            RemotingErrorIdStrings.RemotePromptTargetNameRedacted,
+                            targetName,
+                            targetNameRedacted));
+                }
+                string escapedTargetName = CodeGeneration.EscapeSingleQuotedStringContent(targetNameRedacted);
                 string promptFn = StringUtil.Format(RemotingErrorIdStrings.EnterVMSessionPrompt,
-                    @"function global:prompt { """,
-                    targetName,
-                    @"PS $($executionContext.SessionState.Path.CurrentLocation)> "" }");
-
+                    @"function global:prompt { '",
+                    escapedTargetName,
+                    @"PS ' + $executionContext.SessionState.Path.CurrentLocation + '> ' }");
                 // Set prompt in pushed named pipe runspace.
                 using (System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create())
                 {
@@ -1393,6 +1403,27 @@ namespace Microsoft.PowerShell.Commands
                     ps.EndInvoke(async);
                 }
             }
+        }
+
+        internal static string RedactIfPowerShellCode(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return input;
+            }
+            
+            bool startsWithOrContainsDangerousToken =
+                input.StartsWith('$') ||
+                input.StartsWith("@{") ||
+                input.StartsWith('(') ||
+                input.StartsWith('"') ||
+                input.StartsWith('@') ||
+                input.StartsWith('\'') ||
+                input.Contains('$');
+
+            return startsWithOrContainsDangerousToken
+                ? "REDACTED"
+                : input;
         }
 
         #endregion
