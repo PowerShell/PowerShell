@@ -219,6 +219,28 @@ Describe "Native Command Processor" -tags "Feature" {
         Get-Content $TestDrive/stdout.txt | Should -Be testing
         Get-Content $TestDrive/stderr.txt | Should -Be gnitset
     }
+
+    It 'Reports the real start error when <Script> fails to start' -Skip:(!$IsWindows) -TestCases @(
+        @{ Script = '$null = & $args[0]' }
+        @{ Script = '& $args[0] 2>$null' }
+    ) {
+        param($Script)
+
+        # Not a valid executable, so 'CreateProcess' fails and the ShellExecute fallback is used.
+        $notAnExe = Join-Path $TestDrive 'notAnExe.exe'
+        Set-Content -Path $notAnExe -Value 'not an executable'
+
+        $ps = [powershell]::Create()
+        try {
+            $null = $ps.AddScript($Script).AddArgument($notAnExe).AddCommand('Out-Default').Invoke()
+            $ps.Streams.Error.Count | Should -Be 1
+            $ps.Streams.Error[0].FullyQualifiedErrorId | Should -BeExactly 'NativeCommandFailed'
+            $ps.Streams.Error[0].Exception.InnerException | Should -BeOfType System.ComponentModel.Win32Exception
+        }
+        finally {
+            $ps.Dispose()
+        }
+    }
 }
 
 Describe "Open a text file with NativeCommandProcessor" -tags @("Feature", "RequireAdminOnWindows") {
