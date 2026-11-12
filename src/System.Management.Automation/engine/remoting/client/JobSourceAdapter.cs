@@ -289,8 +289,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="definition">The job definition.</param>
         /// <param name="parameterCollectionList">Collection of sets of parameters to use for the child jobs.</param>
-        [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures",
-            Justification = "This is forced by the interaction of PowerShell and Workflow.")]
         public JobInvocationInfo(JobDefinition definition, IEnumerable<Dictionary<string, object>> parameterCollectionList)
         {
             _definition = definition;
