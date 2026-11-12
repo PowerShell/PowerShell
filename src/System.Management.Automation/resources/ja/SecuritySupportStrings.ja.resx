@@ -164,5 +164,6 @@
   </data>
   <data name="ExternalScriptWDACLogMessage" xml:space="preserve">
     <value>スクリプト ファイル '{0}' は、ポリシーによって信頼されていないため、ConstrainedLanguage モードで実行されます。</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>
