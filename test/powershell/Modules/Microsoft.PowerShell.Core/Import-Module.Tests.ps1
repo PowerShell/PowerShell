@@ -6,9 +6,13 @@ Describe "Import-Module" -Tags "CI" {
         $originalPSModulePath = $env:PSModulePath
         New-Item -ItemType Directory -Path "$testdrive\Modules\TestModule\1.1" -Force > $null
         New-Item -ItemType Directory -Path "$testdrive\Modules\TestModule\2.0" -Force > $null
+        New-Item -ItemType Directory -Path "$testdrive\Modules\TestModule\3.0" -Force > $null # PowerShell version is higher than current version
         $env:PSModulePath += [System.IO.Path]::PathSeparator + "$testdrive\Modules"
         New-ModuleManifest -Path "$testdrive\Modules\TestModule\1.1\TestModule.psd1" -ModuleVersion 1.1
         New-ModuleManifest -Path "$testdrive\Modules\TestModule\2.0\TestModule.psd1" -ModuleVersion 2.0
+        [semver] $psver = $PSVersionTable.PSVersion
+        $nextPowerShellVersion = [version]::new($psver.Major, $psver.Minor + 1)
+        New-ModuleManifest -Path "$testdrive\Modules\TestModule\3.0\TestModule.psd1" -ModuleVersion 3.0 -PowerShellVersion $nextPowerShellVersion
     }
 
     AfterAll {
