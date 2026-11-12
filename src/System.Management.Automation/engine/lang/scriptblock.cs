@@ -1167,7 +1167,12 @@ namespace System.Management.Automation
 
                     if (crt.ErrorOutputPipe != null)
                     {
-                        _pipeline.LinkPipelineErrorOutput(crt.ErrorOutputPipe);
+                        // A calling command that merges its errors into its output, as with 2>&1, takes the pipeline's errors there
+                        // straight from each command, as a script's own commands do, rather than through the commands after it.
+                        Pipe errorPipe = crt.ErrorMergeTo == MshCommandRuntime.MergeDataStream.Output && crt.OutputPipe != null
+                            ? crt.OutputPipe
+                            : crt.ErrorOutputPipe;
+                        _pipeline.LinkPipelineErrorOutput(errorPipe);
                     }
                 }
 
