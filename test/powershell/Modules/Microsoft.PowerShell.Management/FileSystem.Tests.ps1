@@ -928,6 +928,38 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             $childB.Count | Should -BeExactly $childA.Count
             $childB.Name | Should -BeExactly $childA.Name
         }
+
+        It "Remove-Item -WhatIf does not remove a symbolic link to a directory" {
+            $folder = Join-Path $TestDrive "whatif-folder"
+            $file = Join-Path $folder "file"
+            $link = Join-Path $TestDrive "whatif-sym-to-folder"
+            New-Item -ItemType Directory -Path $folder > $null
+            New-Item -ItemType File -Path $file -Value "some content" > $null
+            New-Item -ItemType SymbolicLink -Path $link -Value $folder > $null
+
+            Remove-Item -Path $link -WhatIf
+            (Get-Item -Path $link).LinkType | Should -BeExactly "SymbolicLink"
+
+            Remove-Item -Path $link -Recurse -Force -WhatIf
+            (Get-Item -Path $link).LinkType | Should -BeExactly "SymbolicLink"
+            Test-Path -Path $file | Should -BeTrue
+        }
+
+        It "Remove-Item -WhatIf does not remove a junction to a directory" -Skip:(-not $IsWindows) {
+            $folder = Join-Path $TestDrive "whatif-junction-folder"
+            $file = Join-Path $folder "file"
+            $link = Join-Path $TestDrive "whatif-junction-to-folder"
+            New-Item -ItemType Directory -Path $folder > $null
+            New-Item -ItemType File -Path $file -Value "some content" > $null
+            New-Item -ItemType Junction -Path $link -Value $folder > $null
+
+            Remove-Item -Path $link -WhatIf
+            (Get-Item -Path $link).LinkType | Should -BeExactly "Junction"
+
+            Remove-Item -Path $link -Recurse -Force -WhatIf
+            (Get-Item -Path $link).LinkType | Should -BeExactly "Junction"
+            Test-Path -Path $file | Should -BeTrue
+        }
     }
 
     Context "Show immediate target" {
