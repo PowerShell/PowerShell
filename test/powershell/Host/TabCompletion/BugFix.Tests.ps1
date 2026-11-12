@@ -65,6 +65,20 @@ Describe "Tab completion bug fix" -Tags "CI" {
         }
     }
 
+    It "Issue#24729 - Tab completion does not return duplicate intrinsic method when type-native method exists" {
+        $list = [System.Collections.Generic.List[object]]::new()
+
+        $cmd = '$list.For'
+        $result = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
+        $result.CompletionMatches | Should -HaveCount 1
+        $result.CompletionMatches[0].CompletionText | Should -BeExactly "ForEach("
+
+        $cmd = '$list.PSFor'
+        $result = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
+        $result.CompletionMatches | Should -HaveCount 1
+        $result.CompletionMatches[0].CompletionText | Should -BeExactly "PSForEach("
+    }
+
     Context "Issue#3416 - 'Select-Object'" {
         BeforeAll {
             $DatetimeProperties = @((Get-Date).psobject.baseobject.psobject.properties) | Sort-Object -Property Name

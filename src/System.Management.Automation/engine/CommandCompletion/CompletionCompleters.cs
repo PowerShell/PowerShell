@@ -6962,7 +6962,8 @@ namespace System.Management.Automation
         {
             foreach (var member in s_extensionMethods)
             {
-                if (pattern.IsMatch(member.Item1))
+                if (pattern.IsMatch(member.Item1)
+                    && !results.Any(r => r.ListItemText.Equals(member.Item1, StringComparison.OrdinalIgnoreCase)))
                 {
                     string completionText = addMethodParenthesis ? $"{member.Item1}(" : member.Item1;
                     results.Add(new CompletionResult(completionText, member.Item1, CompletionResultType.Method, member.Item2));
