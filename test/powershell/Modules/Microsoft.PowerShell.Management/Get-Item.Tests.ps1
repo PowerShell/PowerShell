@@ -263,6 +263,13 @@ Describe 'Formatting for FileInfo objects' -Tags 'CI' {
 
         $exe.NameString | Should -BeExactly "$($PSStyle.FileInfo.Executable + $exe.Name + $PSStyle.Reset)"
     }
+
+    It 'Executable extension comparison should be case-insensitive' -Skip:(!$IsWindows) {
+        $exePath = Join-Path -Path $TestDrive -ChildPath 'uppercaseExe.EXE'
+        $exe = New-Item -ItemType File -Path $exePath
+
+        $exe.NameString | Should -BeExactly "$($PSStyle.FileInfo.Executable + $exe.Name + $PSStyle.Reset)"
+    }
 }
 
 Describe 'Formatting for FileInfo requiring admin' -Tags 'CI','RequireAdminOnWindows' {
