@@ -145,13 +145,15 @@
     <value>輸入名稱 "{0}" 無法解析為方法。</value>
   </data>
   <data name="NoMethodInvocationInRestrictedLanguageMode" xml:space="preserve">
-    <value>無法在受限制的語言模式中呼叫方法。</value>
+    <value>無法在 RestrictedLanguage 模式中呼叫方法。</value>
+    <comment>{StrContains="RestrictedLanguage"}</comment>
   </data>
   <data name="NoShouldProcessForScriptBlockSet" xml:space="preserve">
     <value>指令碼區塊不支援 -WhatIf 和 -Confirm 參數。</value>
   </data>
   <data name="OperationNotAllowedInRestrictedLanguageMode" xml:space="preserve">
     <value>在 RestrictedLanguage 模式中，不允許 '{0}' 作業。</value>
+    <comment>{StrContains="RestrictedLanguage"}</comment>
   </data>
   <data name="OperatorNotSpecified" xml:space="preserve">
     <value>需要運算子來比較這兩個指定值。請在命令中加入有效的運算子，然後再試一次。例如，Get-Process | Where-Object -Property Name -eq Idle</value>
@@ -188,6 +190,7 @@ ErrorAction、WarningAction、InformationAction、PipelineVariable</value>
     <value>ForEach-Object Cmdlet</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>在限縮語言模式下執行時，不允許對類型 '{0}' 呼叫方法。</value>
+    <value>在 ConstrainedLanguage 模式下執行時，不允許對類型 '{0}' 呼叫方法。</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

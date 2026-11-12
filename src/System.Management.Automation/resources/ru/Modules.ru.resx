@@ -626,18 +626,20 @@
   </data>
   <data name="ImportPSFileNotAllowedInConstrainedLanguage" xml:space="preserve">
     <value>Импорт файлов *.ps1 в качестве модулей не разрешен в режиме ConstrainedLanguage.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="MismatchedLanguageModes" xml:space="preserve">
-    <value>Произошла ошибка при загрузке модуля сценария {0}, потому что его языковой режим отличается от языкового режима манифеста модуля. Языковой режим манифеста — {1}, а языковой режим модуля — {2}. Убедитесь, что все файлы модуля подписаны или иным образом включены в конфигурацию списка разрешений приложения.</value>
+    <value>Произошла ошибка при загрузке модуля сценария {0}, потому что его режим языка отличается от режима языка манифеста модуля. Режим языка манифеста — {1}, а режим языка модуля — {2}. Убедитесь, что все файлы модуля подписаны или иным образом включены в конфигурацию списка разрешений приложения.</value>
   </data>
   <data name="CannotUseDotSourceWithWildCardFunctionExport" xml:space="preserve">
     <value>В этом модуле используется оператор dot-source при экспорте функций с подстановочными знаками, что запрещено, если в системе применяется принудительная проверка приложений.</value>
   </data>
   <data name="CannotExportMembersAccrossLanguageBoundaries" xml:space="preserve">
-    <value>Нельзя экспортировать элементы модуля из модуля, языковой режим которого отличается от языкового режима текущего сеанса.</value>
+    <value>Нельзя экспортировать элементы модуля из модуля, режим языка которого отличается от режима языка текущего сеанса.</value>
   </data>
   <data name="CannotCreateModuleWithScriptBlock" xml:space="preserve">
     <value>Нельзя создать новый модуль, пока сеанс находится в режиме ConstrainedLanguage.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="CannotFindCoreCompatibleBuiltInModule" xml:space="preserve">
     <value>Не удается найти встроенный модуль "{0}", совместимый с выпуском "Core". Убедитесь, что встроенные модули PowerShell доступны. Обычно они поставляются вместе с пакетом PowerShell в пути $PSHOME к модулю и необходимы для корректной работы PowerShell.</value>
@@ -646,42 +648,49 @@
     <value>Командлет Export-ModuleMember</value>
   </data>
   <data name="WDACExportModuleCommandLogMessage" xml:space="preserve">
-    <value>Экспорт элементов модуля завершится сбоем в ограниченном языковом режиме, так как модуль "{0}" использует языковой режим "{1}", отличный от текущего сеанса "{2}".</value>
+    <value>Экспорт элементов модуля не удастся выполнить в режиме ConstrainedLanguage, так как модуль '{0}' имеет языковой режим '{1}', отличный от текущего сеанса '{2}'.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACImplicitFunctionExportLogTitle" xml:space="preserve">
     <value>Неявный экспорт функций модуля</value>
   </data>
   <data name="WDACImplicitFunctionExportLogMessage" xml:space="preserve">
-    <value>Неявный экспорт функций для модуля "{0}" будет запрещен, так как он является доверенным (работает в полном языковом режиме), а сеанс не является доверенным (работает в ограниченном языковом режиме). Рекомендуется всегда экспортировать функции модуля по отдельности, указывая полное имя.</value>
+    <value>Неявный экспорт функций для модуля "{0}" будет запрещен, так как он является доверенным (работает в режиме FullLanguage), а сеанс не является доверенным (работает в режиме ConstrainedLanguage). Рекомендуется всегда экспортировать функции модуля по отдельности, указывая полное имя.</value>
+    <comment>{StrContains="FullLanguage"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACScriptFileImportLogTitle" xml:space="preserve">
     <value>Импорт файла сценария в виде модуля</value>
   </data>
   <data name="WDACScriptFileImportLogMessage" xml:space="preserve">
     <value>Импорт файла сценария "{0}" в качестве модуля будет запрещен в режиме ConstrainedLanguage.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACModuleDotSourceLogTitle" xml:space="preserve">
     <value>Модуль содержит оператор Dot-Source</value>
   </data>
   <data name="WDACModuleDotSourceLogMessage" xml:space="preserve">
-    <value>Импорт модуля "{0}" завершится сбоем в ограниченном языковом режиме, так как он экспортирует функции с использованием подстановочных знаков и при этом использует оператор dot-source.</value>
+    <value>Импорт модуля "{0}" завершится сбоем в режиме ConstrainedLanguage, так как он экспортирует функции с использованием подстановочных знаков и при этом использует оператор dot-source.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACModuleFnExportWithNestedModulesLogTitle" xml:space="preserve">
-    <value>"Функции, экспортируемые модулем</value>
+    <value>Функции, экспортируемые модулем</value>
   </data>
   <data name="WDACModuleFnExportWithNestedModulesLogMessage" xml:space="preserve">
-    <value>Модуль "{0}" экспортирует функции с использованием подстановочных знаков в именах. Имена всех функций вложенных модулей будут удалены при работе в ограниченном языковом режиме.</value>
+    <value>Модуль "{0}" экспортирует функции с использованием подстановочных знаков в именах. Имена всех функций вложенных модулей будут удалены при работе в режиме ConstrainedLanguage.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACNewModuleCommandLogTitle" xml:space="preserve">
-    <value>"Командлет New-Module</value>
+    <value>Командлет New-Module</value>
   </data>
   <data name="WDACNewModuleCommandLogMessage" xml:space="preserve">
-    <value>Для нового модуля из недоверенного сеанса ограниченного языка будет заблокировано предоставление блока сценария FullLanguage.</value>
+    <value>Для нового модуля из недоверенного сеанса ConstrainedLanguage будет заблокировано предоставление блока сценария FullLanguage.</value>
+    <comment>{StrContains="ConstrainedLanguage"}{StrContains="FullLanguage"}</comment>
   </data>
   <data name="WDACMismatchedLanguageModesTitle" xml:space="preserve">
-    <value>"Несовместимые языковые режимы модуля</value>
+    <value>Несовместимые языковые режимы модуля</value>
   </data>
   <data name="WDACMismatchedLanguageModesMessage" xml:space="preserve">
-    <value>Загружается зависимый модуль с языковым режимом, отличным от режима родительского модуля. В ограниченном языковом режиме это будет запрещено.</value>
+    <value>Загружается зависимый модуль с языковым режимом, отличным от режима родительского модуля. В режиме ConstrainedLanguage это будет запрещено.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>
