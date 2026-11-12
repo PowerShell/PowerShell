@@ -924,8 +924,7 @@ namespace Microsoft.PowerShell.Commands
             if (Credential is not null && Authentication == WebAuthenticationType.None)
             {
                 // Get the relevant NetworkCredential
-                NetworkCredential netCred = Credential.GetNetworkCredential();
-                WebSession.Credentials = netCred;
+                WebSession.SetCredential(Credential.GetNetworkCredential(), CheckProtocol(Uri), PreserveAuthorizationOnRedirect);
 
                 // Supplying a credential overrides the UseDefaultCredentials setting
                 WebSession.UseDefaultCredentials = false;
@@ -937,6 +936,7 @@ namespace Microsoft.PowerShell.Commands
             else if (UseDefaultCredentials)
             {
                 WebSession.UseDefaultCredentials = true;
+                WebSession.SetCredential(CredentialCache.DefaultNetworkCredentials, CheckProtocol(Uri), PreserveAuthorizationOnRedirect);
             }
 
             if (CertificateThumbprint is not null)
