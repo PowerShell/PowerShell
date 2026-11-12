@@ -487,10 +487,22 @@ namespace System.Management.Automation.Remoting
             }
             else if (obj is PSObject && IsGenericIEnumerableOfInt(type))
             {
-                // we cannot create an instance of interface type like IEnumerable
-                // Since a Collection implements IEnumerable, falling back to use
-                // that.
-                return DecodeCollection((PSObject)obj, typeof(Collection<int>));
+                // We cannot create an instance of an interface type like IEnumerable<int>,
+                // so decode into a concrete type that implements it. EncodeObject picks
+                // the wire format from the runtime type so older servers that send an int[]
+                // using the array format while a Collection<int> uses the ArrayList format.
+                PSObject psObject = (PSObject)obj;
+                if (psObject.BaseObject is ArrayList)
+                {
+                    return DecodeCollection(psObject, typeof(Collection<int>));
+                }
+                else if (psObject.Properties[RemoteDataNameStrings.MethodArrayElements] is not null &&
+                    psObject.Properties[RemoteDataNameStrings.MethodArrayLengths] is not null)
+                {
+                    return DecodeArray(psObject, typeof(int[]));
+                }
+
+                throw RemoteHostExceptions.NewRemoteHostDataDecodingNotSupportedException(type);
             }
             else if (obj is PSObject && type == typeof(RemoteHostCall))
             {
