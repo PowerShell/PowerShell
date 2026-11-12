@@ -983,53 +983,63 @@ namespace Microsoft.PowerShell.Commands
                                 // If we want to force setting over a readonly variable
                                 // we have to temporarily mark the variable writable.
 
-                                bool wasReadOnly = false;
-                                if (Force &&
-                                    (matchingVariable.Options & ScopedItemOptions.ReadOnly) != 0)
+                                ScopedItemOptions? optionsToRestore = null;
+                                try
                                 {
-                                    matchingVariable.SetOptions(matchingVariable.Options & ~ScopedItemOptions.ReadOnly, true);
-                                    wasReadOnly = true;
-                                }
-
-                                // Now change the value, options, or description
-                                // and set the variable
-
-                                if (varValue != AutomationNull.Value)
-                                {
-                                    matchingVariable.Value = varValue;
-
-                                    if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+                                    if (Force &&
+                                        (matchingVariable.Options & ScopedItemOptions.ReadOnly) != 0)
                                     {
-                                        // In 'ConstrainedLanguage' we want to monitor untrusted values assigned to 'Global:' variables
-                                        // and 'Script:' variables, because they may be set from 'ConstrainedLanguage' environment and
-                                        // referenced within trusted script block, and thus result in security issues.
-                                        // Here we are setting the value of an existing variable and don't know what scope this variable
-                                        // is from, so we mark the value as untrusted, regardless of the scope.
-                                        ExecutionContext.MarkObjectAsUntrusted(matchingVariable.Value);
+                                        optionsToRestore = matchingVariable.Options;
+                                        matchingVariable.SetOptions(matchingVariable.Options & ~ScopedItemOptions.ReadOnly, true);
+                                    }
+
+                                    // Validate options before changing the value or description. If this
+                                    // fails, finally restores the original options temporarily changed by Force.
+                                    if (_options != null)
+                                    {
+                                        matchingVariable.Options = (ScopedItemOptions)_options;
+                                        optionsToRestore = null;
+                                        if ((matchingVariable.Options & ScopedItemOptions.ReadOnly) != 0)
+                                        {
+                                            optionsToRestore = matchingVariable.Options;
+                                            matchingVariable.SetOptions(matchingVariable.Options & ~ScopedItemOptions.ReadOnly, true);
+                                        }
+                                    }
+
+                                    // Now change the value and description.
+
+                                    if (varValue != AutomationNull.Value)
+                                    {
+                                        matchingVariable.Value = varValue;
+
+                                        if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+                                        {
+                                            // In 'ConstrainedLanguage' we want to monitor untrusted values assigned to 'Global:' variables
+                                            // and 'Script:' variables, because they may be set from 'ConstrainedLanguage' environment and
+                                            // referenced within trusted script block, and thus result in security issues.
+                                            // Here we are setting the value of an existing variable and don't know what scope this variable
+                                            // is from, so we mark the value as untrusted, regardless of the scope.
+                                            ExecutionContext.MarkObjectAsUntrusted(matchingVariable.Value);
+                                        }
+                                    }
+
+                                    if (Description != null)
+                                    {
+                                        matchingVariable.Description = Description;
+                                    }
+
+                                    // If visibility was specified, set it on the variable
+                                    if (_visibility != null)
+                                    {
+                                        matchingVariable.Visibility = Visibility;
                                     }
                                 }
-
-                                if (Description != null)
+                                finally
                                 {
-                                    matchingVariable.Description = Description;
-                                }
-
-                                if (_options != null)
-                                {
-                                    matchingVariable.Options = (ScopedItemOptions)_options;
-                                }
-                                else
-                                {
-                                    if (wasReadOnly)
+                                    if (optionsToRestore.HasValue)
                                     {
-                                        matchingVariable.SetOptions(matchingVariable.Options | ScopedItemOptions.ReadOnly, true);
+                                        matchingVariable.SetOptions(optionsToRestore.Value, true);
                                     }
-                                }
-
-                                // If visibility was specified, set it on the variable
-                                if (_visibility != null)
-                                {
-                                    matchingVariable.Visibility = Visibility;
                                 }
 
                                 result = matchingVariable;
