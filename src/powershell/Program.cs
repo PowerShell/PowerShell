@@ -48,9 +48,6 @@ namespace Microsoft.PowerShell
         private const string LOGIN_ENV_VAR_NAME = "__PWSH_LOGIN_CHECKED";
         private const string LOGIN_ENV_VAR_VALUE = "1";
 
-        // Linux p/Invoke constants
-        private const int LINUX_PATH_MAX = 4096;
-
         // MacOS p/Invoke constants
         private const int MACOS_CTL_KERN = 1;
         private const int MACOS_KERN_ARGMAX = 8;
@@ -113,11 +110,7 @@ namespace Microsoft.PowerShell
                     return;
                 }
 
-                // Read the symlink to the startup executable
-                IntPtr linkPathPtr = Marshal.AllocHGlobal(LINUX_PATH_MAX);
-                IntPtr bufSize = ReadLink("/proc/self/exe", linkPathPtr, (UIntPtr)LINUX_PATH_MAX);
-                pwshPath = Marshal.PtrToStringAnsi(linkPathPtr, (int)bufSize);
-                Marshal.FreeHGlobal(linkPathPtr);
+                pwshPath = Environment.ProcessPath;
 
                 ArgumentNullException.ThrowIfNull(pwshPath);
 
@@ -143,7 +136,7 @@ namespace Microsoft.PowerShell
             }
 
             // Get the PID so we can query this process' args
-            int pid = GetPid();
+            int pid = Environment.ProcessId;
 
             // The following logic is based on https://gist.github.com/nonowarn/770696
 
@@ -317,8 +310,8 @@ namespace Microsoft.PowerShell
             // A null is required by exec.
             execArgs[execArgs.Length - 1] = null;
 
-            // We can't use Environment.SetEnvironmentVariable() here.
-            // See https://github.com/dotnet/corefx/issues/40130#issuecomment-519420648.
+            // Environment.SetEnvironmentVariable() updates the managed environment cache on Unix,
+            // but execv inherits the native libc environment, so setenv is required here.
             ThrowOnFailure("setenv", SetEnv(LOGIN_ENV_VAR_NAME, LOGIN_ENV_VAR_VALUE, overwrite: true));
 
             // On macOS, sh doesn't support login, so we run /bin/zsh in sh emulation mode.
@@ -438,32 +431,6 @@ namespace Microsoft.PowerShell
             CharSet = CharSet.Ansi,
             SetLastError = true)]
         private static extern int Exec(string path, string?[] args);
-
-        /// <summary>
-        /// The `readlink` POSIX syscall we use to read the symlink from /proc/self/exe
-        /// to get the executable path of pwsh on Linux.
-        /// </summary>
-        /// <param name="pathname">The path to the symlink to read.</param>
-        /// <param name="buf">Pointer to a buffer to fill with the result.</param>
-        /// <param name="size">The size of the buffer we have supplied.</param>
-        /// <returns>The number of bytes placed in the buffer.</returns>
-        [DllImport("libc",
-            EntryPoint = "readlink",
-            CallingConvention = CallingConvention.Cdecl,
-            CharSet = CharSet.Ansi,
-            SetLastError = true)]
-        private static extern IntPtr ReadLink(string pathname, IntPtr buf, UIntPtr size);
-
-        /// <summary>
-        /// The `getpid` POSIX syscall we use to quickly get the current process PID on macOS.
-        /// </summary>
-        /// <returns>The pid of the current process.</returns>
-        [DllImport("libc",
-            EntryPoint = "getpid",
-            CallingConvention = CallingConvention.Cdecl,
-            CharSet = CharSet.Ansi,
-            SetLastError = true)]
-        private static extern int GetPid();
 
         /// <summary>
         /// The `setenv` POSIX syscall used to set an environment variable in the process.
