@@ -124,7 +124,7 @@
     <value>Impossible de traiter la boucle d’entrée. ExitCurrentLoop a été appelé alors qu’aucune InputLoop n’était en cours d’exécution.</value>
   </data>
   <data name="DefaultPrompt" xml:space="preserve">
-    <value>SP&gt;</value>
+    <value>PS&gt;</value>
   </data>
   <data name="ShellCannotBeStarted" xml:space="preserve">
     <value>L’interpréteur de commandes ne peut pas être démarré. Une défaillance s’est produite lors de l’initialisation :</value>
