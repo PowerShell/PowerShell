@@ -1,0 +1,135 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using System;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Diagnostics;
+using Xunit;
+
+namespace Microsoft.PowerShell.CmdletAnalyzers.Tests
+{
+    public class EngineExceptionFilterAnalyzerTests
+    {
+        private const string EngineStubs = @"
+namespace System.Management.Automation
+{
+    public abstract class Cmdlet {}
+    public abstract class PSCmdlet : Cmdlet
+    {
+        public static bool IsPowerShellControlFlowException(System.Exception exception) => false;
+    }
+    public class FlowControlException : System.SystemException {}
+    public class BreakException : FlowControlException {}
+    public class ContinueException : FlowControlException {}
+    public class ExitException : FlowControlException {}
+    public class RuntimeException : System.SystemException {}
+    public class CmdletInvocationException : RuntimeException {}
+    public class PipelineStoppedException : RuntimeException {}
+    public class ActionPreferenceStopException : RuntimeException {}
+    public class HaltCommandException : System.SystemException {}
+}";
+
+        [Theory]
+        [InlineData("catch (Exception e) { Console.WriteLine(e); }")]
+        [InlineData("catch (SystemException) { }")]
+        [InlineData("catch { }")]
+        [InlineData("catch (RuntimeException) { }")]
+        [InlineData("catch (FlowControlException) { }")]
+        [InlineData("catch (BreakException) { }")]
+        [InlineData("catch (ContinueException) { }")]
+        [InlineData("catch (ExitException) { }")]
+        [InlineData("catch (CmdletInvocationException) { }")]
+        [InlineData("catch (PipelineStoppedException) { }")]
+        [InlineData("catch (ActionPreferenceStopException) { }")]
+        [InlineData("catch (HaltCommandException) { }")]
+        [InlineData("catch (System.Reflection.TargetInvocationException) { }")]
+        [InlineData("catch (Exception e) when (e.Message.Length > 0) { }")]
+        [InlineData("catch (Exception e) when (IsPowerShellControlFlowException(e)) { }")]
+        [InlineData("catch (Exception e) when (!IsPowerShellControlFlowException(e) || true) { }")]
+        [InlineData("catch (Exception e) when (!IsPowerShellControlFlowException(e.InnerException!)) { }")]
+        [InlineData("catch (Exception e) when (!Fake.IsPowerShellControlFlowException(e)) { }")]
+        public async Task ReportsUnsafeHandlers(string handler)
+        {
+            Diagnostic diagnostic = Assert.Single(await AnalyzeAsync(handler));
+            Assert.Equal(EngineExceptionFilterAnalyzer.DiagnosticId, diagnostic.Id);
+            Assert.Equal(DiagnosticSeverity.Warning, diagnostic.Severity);
+            Assert.Equal("catch", diagnostic.Location.SourceTree!.GetText()
+                .ToString(diagnostic.Location.SourceSpan));
+        }
+
+        [Theory]
+        [InlineData("catch (Exception e) when (!IsPowerShellControlFlowException(e)) { }")]
+        [InlineData("catch (Exception e) when (!PSCmdlet.IsPowerShellControlFlowException(e)) { }")]
+        [InlineData("catch (Exception e) when (!SMA.IsPowerShellControlFlowException(e)) { }")]
+        [InlineData("catch (Exception e) when (!(IsPowerShellControlFlowException((e)))) { }")]
+        [InlineData("catch (Exception e) when (!IsPowerShellControlFlowException(e) && e.Message.Length > 0) { }")]
+        [InlineData("catch (Exception e) when (e.Message.Length > 0 && !IsPowerShellControlFlowException(e)) { }")]
+        [InlineData("catch (Exception e) when (IsPowerShellControlFlowException(e) == false) { }")]
+        [InlineData("catch (Exception e) when (false == IsPowerShellControlFlowException(e)) { }")]
+        [InlineData("catch (InvalidOperationException) { }")]
+        [InlineData("catch (Exception) { throw; }")]
+        [InlineData("catch { throw; }")]
+        public async Task AcceptsSafeHandlers(string handler)
+        {
+            Assert.Empty(await AnalyzeAsync(handler));
+        }
+
+        [Fact]
+        public async Task IgnoresNonCmdletClasses()
+        {
+            Assert.Empty(await AnalyzeAsync("catch (Exception) { }", baseType: "object"));
+        }
+
+        [Theory]
+        [InlineData("Cmdlet")]
+        [InlineData("IntermediateCmdlet")]
+        public async Task RecognizesCmdletBaseClasses(string baseType)
+        {
+            Assert.Single(await AnalyzeAsync("catch (Exception) { }", baseType));
+        }
+
+        [Fact]
+        public async Task IgnoresGeneratedCode()
+        {
+            Assert.Empty(await AnalyzeAsync("catch (Exception) { }", generated: true));
+        }
+
+        private static async Task<ImmutableArray<Diagnostic>> AnalyzeAsync(
+            string handler,
+            string baseType = "PSCmdlet",
+            bool generated = false)
+        {
+            string source = (generated ? "// <auto-generated/>\n" : string.Empty) + @"
+using System;
+using System.Management.Automation;
+using SMA = System.Management.Automation.PSCmdlet;
+using static System.Management.Automation.PSCmdlet;
+class Fake { public static bool IsPowerShellControlFlowException(Exception e) => false; }
+class IntermediateCmdlet : PSCmdlet {}
+class TestCmdlet : " + baseType + @"
+{
+    public void Run()
+    {
+        try { Console.WriteLine(""work""); }
+        " + handler + @"
+    }
+}" + EngineStubs;
+
+            string[] assemblies = ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")!)
+                .Split(System.IO.Path.PathSeparator);
+            var compilation = CSharpCompilation.Create(
+                "AnalyzerTest",
+                new[] { CSharpSyntaxTree.ParseText(source, path: generated ? "Test.g.cs" : "Test.cs") },
+                assemblies.Select(path => MetadataReference.CreateFromFile(path)),
+                new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+            Assert.Empty(compilation.GetDiagnostics().Where(d => d.Severity == DiagnosticSeverity.Error));
+            return await compilation.WithAnalyzers(
+                ImmutableArray.Create<DiagnosticAnalyzer>(new EngineExceptionFilterAnalyzer()))
+                .GetAnalyzerDiagnosticsAsync();
+        }
+    }
+}
