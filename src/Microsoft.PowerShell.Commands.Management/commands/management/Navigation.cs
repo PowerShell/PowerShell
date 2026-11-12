@@ -67,6 +67,11 @@ namespace Microsoft.PowerShell.Commands
         private bool _suppressWildcardExpansion;
 
         /// <summary>
+        /// Gets a value indicating whether dynamic parameter binding errors should be reported.
+        /// </summary>
+        internal virtual bool ShouldReportDynamicParameterBindingErrors => false;
+
+        /// <summary>
         /// A virtual method for retrieving the dynamic parameters for a cmdlet. Derived cmdlets
         /// that require dynamic parameters should override this method and return the
         /// dynamic parameter object.
@@ -243,15 +248,15 @@ namespace Microsoft.PowerShell.Commands
             {
                 _dynamicParameters = GetDynamicParameters(context);
             }
-            catch (ItemNotFoundException)
+            catch (ItemNotFoundException) when (!ShouldReportDynamicParameterBindingErrors)
             {
                 _dynamicParameters = null;
             }
-            catch (ProviderNotFoundException)
+            catch (ProviderNotFoundException) when (!ShouldReportDynamicParameterBindingErrors)
             {
                 _dynamicParameters = null;
             }
-            catch (DriveNotFoundException)
+            catch (DriveNotFoundException) when (!ShouldReportDynamicParameterBindingErrors)
             {
                 _dynamicParameters = null;
             }

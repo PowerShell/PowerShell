@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.Commands
     /// <remarks>
     /// </remarks>
     [Cmdlet(VerbsCommon.Get, "ChildItem", DefaultParameterSetName = "Items", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096492")]
-    public class GetChildItemCommand : CoreCommandBase
+    public class GetChildItemCommand : CoreCommandBase, IReportDynamicParameterBindingErrors
     {
         /// <summary>
         /// The string declaration for the Items parameter set in this command.
@@ -199,6 +199,18 @@ namespace Microsoft.PowerShell.Commands
                 _childNames = value;
             }
         }
+
+        /// <summary>
+        /// Gets a value indicating whether provider-resolution failures should be reported while binding dynamic parameters.
+        /// </summary>
+        bool IReportDynamicParameterBindingErrors.ShouldReportDynamicParameterBindingErrors =>
+            ShouldReportDynamicParameterBindingErrors;
+
+        /// <summary>
+        /// Gets a value indicating whether provider-resolution failures should be reported while binding dynamic parameters.
+        /// </summary>
+        internal override bool ShouldReportDynamicParameterBindingErrors =>
+            ExperimentalFeature.IsEnabled(ExperimentalFeature.PSProviderDynamicParameterBindingErrors);
 
         /// <summary>
         /// A virtual method for retrieving the dynamic parameters for a cmdlet. Derived cmdlets
