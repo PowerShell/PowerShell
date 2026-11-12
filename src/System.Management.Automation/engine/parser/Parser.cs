@@ -7891,16 +7891,18 @@ namespace System.Management.Automation.Language
             // G  argument-list: '(' is passed in lParen
             // G      argument-expression-list:opt   new-lines:opt   ')'
             // G  argument-expression-list:
-            // G      argument-expression
-            // G      argument-expression   new-lines:opt   ','   argument-expression-list
+            // G      argument-label-expression:opt    argument-expression
+            // G      argument-label-expression:opt    argument-expression   new-lines:opt    ','    argument-expression-list
             // G  argument-expression:
             // G      See grammar for expression - the only difference is that an
             // G      array-literal-expression is not allowed - the comma is used
             // G      to separate argument-expressions.
+            // G  argument-label-expression:
+            // G      simple-name    ':'
 
             List<ExpressionAst> arguments = new List<ExpressionAst>();
-            Token comma = null;
             Token rParen = null;
+            Token lastValidToken = null;
 
             bool oldDisableCommaOperator = _disableCommaOperator;
             bool reportedError = false;
@@ -7912,31 +7914,60 @@ namespace System.Management.Automation.Language
                 while (true)
                 {
                     SkipNewlines();
+
+                    StringConstantExpressionAst argumentName = SimpleNameRule(out Token argNameToken);
+                    if (argumentName is not null)
+                    {
+                        Token colon = NextToken();
+                        if (colon.Kind != TokenKind.Colon)
+                        {
+                            UngetToken(colon);
+
+                            ReportIncompleteInput(After(argNameToken),
+                                nameof(ParserStrings.MissingColonAfterArgumentLabel),
+                                ParserStrings.MissingColonAfterArgumentLabel,
+                                argumentName.Extent.ToString(),
+                                colon.Text);
+                            reportedError = true;
+                            lastValidToken = argNameToken;
+                            break;
+                        }
+
+                        lastValidToken = colon;
+                    }
+
                     ExpressionAst argument = ExpressionRule();
                     if (argument == null)
                     {
-                        if (comma != null)
+                        // ErrorRecovery: sync at closing paren or newline.
+                        if (lastValidToken is not null)
                         {
-                            // ErrorRecovery: sync at closing paren or newline.
-
-                            ReportIncompleteInput(After(comma),
+                            ReportIncompleteInput(After(lastValidToken),
                                 nameof(ParserStrings.MissingExpressionAfterToken),
                                 ParserStrings.MissingExpressionAfterToken,
-                                TokenKind.Comma.Text());
+                                lastValidToken.Text);
                             reportedError = true;
                         }
 
                         break;
                     }
 
-                    arguments.Add(argument);
+                    if (argumentName is null)
+                    {
+                        arguments.Add(argument);
+                    }
+                    else
+                    {
+                        IScriptExtent entryExtent = ExtentOf(argumentName, argument);
+                        arguments.Add(new NamedMethodArgumentAst(entryExtent, argumentName, argument));
+                    }
 
                     SkipNewlines();
-                    comma = NextToken();
-                    if (comma.Kind != TokenKind.Comma)
+                    lastValidToken = NextToken();
+                    if (lastValidToken.Kind != TokenKind.Comma)
                     {
-                        UngetToken(comma);
-                        comma = null;
+                        UngetToken(lastValidToken);
+                        lastValidToken = null;
                         break;
                     }
                 }
@@ -7963,7 +7994,7 @@ namespace System.Management.Automation.Language
                 _disableCommaOperator = oldDisableCommaOperator;
             }
 
-            lastExtent = ExtentFromFirstOf(rParen, comma, arguments.LastOrDefault(), lParen);
+            lastExtent = ExtentFromFirstOf(rParen, lastValidToken, arguments.LastOrDefault(), lParen);
             return arguments;
         }
 
@@ -8124,6 +8155,15 @@ namespace System.Management.Automation.Language
             bool incompleteInput = _tokenizer.IsAtEndOfScript(extent, checkCommentsAndWhitespace: true);
             arrayOfOneArg[0] = arg;
             SaveError(extent, errorId, errorMsg, incompleteInput, arrayOfOneArg);
+            return incompleteInput;
+        }
+
+        internal bool ReportIncompleteInput(IScriptExtent extent, string errorId, string errorMsg, params object[] args)
+        {
+            // If the error position isn't at the end of the input, then we don't want to mark the error
+            // as incomplete input.
+            bool incompleteInput = _tokenizer.IsAtEndOfScript(extent, checkCommentsAndWhitespace: true);
+            SaveError(extent, errorId, errorMsg, incompleteInput, args);
             return incompleteInput;
         }
 
