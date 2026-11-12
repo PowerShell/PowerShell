@@ -52,7 +52,8 @@ namespace Microsoft.PowerShell.Commands
                                                      IContentCmdletProvider,
                                                      IPropertyCmdletProvider,
                                                      ISecurityDescriptorCmdletProvider,
-                                                     ICmdletProviderSupportsHelp
+                                                     ICmdletProviderSupportsHelp,
+                                                     IProviderItemObjectFactory
     {
         // 4MB gives the best results without spiking the resources on the remote connection for file transfers between pssessions.
         // NOTE: The script used to copy file data from session (PSCopyFromSessionHelper) has a
@@ -88,6 +89,78 @@ namespace Microsoft.PowerShell.Commands
         {
         }
 
+        bool IProviderItemObjectFactory.TryCreateItemObject(object item, string path, bool? isContainer, out PSObject itemObject)
+        {
+            itemObject = null;
+            if (item is not FileSystemInfo fileSystemInfo
+                || PSDriveInfo == null
+                || (isContainer.HasValue && isContainer.Value != (item is DirectoryInfo))
+                || PSObject.HasInstanceMembers(item, out _))
+            {
+                return false;
+            }
+
+            bool hasNavigationPath = path != null;
+            uint metadataMask = 0;
+            if (hasNavigationPath)
+            {
+                metadataMask |= 1 | 2;
+            }
+
+#if UNIX
+            if (hasNavigationPath)
+            {
+                metadataMask |= 4;
+            }
+#endif
+            metadataMask |= 8;
+            if (isContainer.HasValue)
+            {
+                metadataMask |= 16;
+                providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSIsContainer", isContainer.Value);
+            }
+
+            var metadata = new FileSystemProviderMetadata { Drive = PSDriveInfo };
+#if UNIX
+            if (hasNavigationPath)
+            {
+                try
+                {
+                    // Use LStat so links report information about the link itself.
+                    metadata.UnixStat = Platform.Unix.GetLStat(path);
+                }
+                catch
+                {
+                    // Match the ordinary provider path when stat information is unavailable.
+                    metadata.UnixStat = null;
+                }
+            }
+#endif
+
+            itemObject = new PSObject<FileSystemProviderMetadata>(fileSystemInfo, metadata, metadataMask);
+            itemObject.AttachProviderInstanceMembers((IProviderInstanceMemberSource)itemObject);
+            return true;
+        }
+
+        void IProviderItemObjectFactory.AddItemObjectProperties(PSObject itemObject, object item, string path)
+        {
+#if UNIX
+            if (path != null)
+            {
+                try
+                {
+                    // Use LStat so links report information about the link itself.
+                    itemObject.AddOrSetProperty("UnixStat", Platform.Unix.GetLStat(path));
+                }
+                catch
+                {
+                    // Match the ordinary provider path when stat information is unavailable.
+                    itemObject.AddOrSetProperty("UnixStat", value: null);
+                }
+            }
+#endif
+        }
+
         private Collection<WildcardPattern> _excludeMatcher = null;
 
         private static readonly System.IO.EnumerationOptions _enumerationOptions = new System.IO.EnumerationOptions
@@ -109,6 +182,65 @@ namespace Microsoft.PowerShell.Commands
         internal static string NormalizePath(string path)
         {
             return GetCorrectCasedPath(path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator));
+        }
+
+        // These helpers intentionally operate on the absolute path supplied by FileInfo/DirectoryInfo
+        // without calling NormalizePath, which performs directory enumeration to recover casing.
+        internal static string GetParentPathForMetadata(string path, string root)
+        {
+            path = path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator)
+                .TrimEnd(StringLiterals.DefaultPathSeparator);
+            root = root?.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator) ?? string.Empty;
+
+            string parentPath;
+            if (string.Equals(path, root, StringComparison.OrdinalIgnoreCase))
+            {
+                parentPath = string.Empty;
+            }
+            else
+            {
+                int lastIndex = path.LastIndexOf(StringLiterals.DefaultPathSeparator);
+                if (lastIndex == 0)
+                {
+                    lastIndex++;
+                }
+
+                parentPath = lastIndex == -1 ? string.Empty : path.Substring(0, lastIndex);
+            }
+
+            return ApplyFileSystemParentPathFixes(parentPath, path);
+        }
+
+        private static string ApplyFileSystemParentPathFixes(string parentPath, string path)
+        {
+            if (!Utils.PathIsUnc(path))
+            {
+                parentPath = EnsureDriveIsRooted(parentPath);
+            }
+#if !UNIX
+            else if (parentPath.Equals(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal))
+            {
+                parentPath = "\\\\";
+            }
+
+            if (!parentPath.EndsWith(StringLiterals.DefaultPathSeparator)
+                && Utils.PathIsDevicePath(parentPath)
+                && parentPath.Length - parentPath.Replace(StringLiterals.DefaultPathSeparatorString, string.Empty).Length == 3)
+            {
+                parentPath += StringLiterals.DefaultPathSeparator;
+            }
+#endif
+            return parentPath;
+        }
+
+        internal static string GetChildNameForMetadata(string path)
+        {
+            path = path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator)
+                .TrimEnd(StringLiterals.DefaultPathSeparator);
+            int separatorIndex = path.LastIndexOf(StringLiterals.DefaultPathSeparator);
+            return separatorIndex == -1
+                ? EnsureDriveIsRooted(path)
+                : path.Substring(separatorIndex + 1);
         }
 
         /// <summary>
@@ -5042,27 +5174,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         protected override string GetParentPath(string path, string root)
         {
-            string parentPath = base.GetParentPath(path, root);
-            if (!Utils.PathIsUnc(path))
-            {
-                parentPath = EnsureDriveIsRooted(parentPath);
-            }
-#if !UNIX
-            else if (parentPath.Equals(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal))
-            {
-                // make sure we return two backslashes so it still results in a UNC path
-                parentPath = "\\\\";
-            }
-
-            if (!parentPath.EndsWith(StringLiterals.DefaultPathSeparator)
-                && Utils.PathIsDevicePath(parentPath)
-                && parentPath.Length - parentPath.Replace(StringLiterals.DefaultPathSeparatorString, string.Empty).Length == 3)
-            {
-                // Device paths start with either "\\.\" or "\\?\"
-                // When referring to the root, like: "\\.\CDROM0\" then it needs the trailing separator to be valid.
-                parentPath += StringLiterals.DefaultPathSeparator;
-            }
-#endif
+            string parentPath = ApplyFileSystemParentPathFixes(base.GetParentPath(path, root), path);
             s_tracer.WriteLine("GetParentPath returning '{0}'", parentPath);
             return parentPath;
         }
@@ -5788,27 +5900,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
-            // Normalize the path
-            path = path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
-
-            // Trim trailing back slashes
-            path = path.TrimEnd(StringLiterals.DefaultPathSeparator);
-
-            string result = null;
-
-            int separatorIndex = path.LastIndexOf(StringLiterals.DefaultPathSeparator);
-
-            if (separatorIndex == -1)
-            {
-                // Since there was no path separator return an empty string
-                result = EnsureDriveIsRooted(path);
-            }
-            else
-            {
-                result = path.Substring(separatorIndex + 1);
-            }
-
-            return result;
+            return GetChildNameForMetadata(path);
         }
 
         private static string EnsureDriveIsRooted(string path)

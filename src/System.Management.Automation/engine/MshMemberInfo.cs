@@ -4012,6 +4012,224 @@ namespace System.Management.Automation
         private int _countHidden;
 
         /// <summary>
+        /// Supplies lazy provider notes until the complete member dictionary has been published.
+        /// </summary>
+        private IProviderInstanceMemberSource _providerSource;
+
+        /// <summary>
+        /// Installs provider-generated instance members backed by the wrapper's
+        /// inline metadata. Ordinary PSNoteProperties are created on inspection.
+        /// </summary>
+        /// <param name="providerSource">The source to attach or merge into existing members.</param>
+        /// <exception cref="ArgumentNullException">The source is null.</exception>
+        /// <exception cref="ArgumentException">This collection cannot hold note properties.</exception>
+        /// <remarks>Only an empty collection retains the source; otherwise its notes replace same-name members.</remarks>
+        internal void SetProviderSource(IProviderInstanceMemberSource providerSource)
+        {
+            if (providerSource == null)
+            {
+                throw PSTraceSource.NewArgumentNullException(nameof(providerSource));
+            }
+
+            if (!typeof(T).IsAssignableFrom(typeof(PSNoteProperty)))
+            {
+                throw PSTraceSource.NewArgumentException(nameof(providerSource));
+            }
+
+            lock (this)
+            {
+                if (_members == null && _providerSource == null)
+                {
+                    // Publication keeps the compact source as the live view until
+                    // an operation needs ordinary mutable PSNoteProperty objects.
+                    _providerSource = providerSource;
+                    return;
+                }
+
+                if (_members == null && _providerSource != null)
+                {
+                    MaterializeProviderSource();
+                }
+
+                OrderedDictionary members = Members;
+                lock (members)
+                {
+                    foreach (PSNoteProperty property in providerSource.Materialize())
+                    {
+                        AddToDictionary((T)(PSMemberInfo)property);
+                    }
+                }
+
+                System.Threading.Volatile.Write(ref _providerSource, null);
+            }
+        }
+
+        /// <summary>
+        /// Replaces the lazy source with an ordered dictionary of ordinary note properties.
+        /// </summary>
+        /// <remarks>
+        /// Builds the dictionary before publishing it. If a getter or allocation fails, the source
+        /// remains attached and no partial dictionary is published. Successful promotion snapshots all values.
+        /// </remarks>
+        private void MaterializeProviderSource()
+        {
+            if (_providerSource == null)
+            {
+                return;
+            }
+
+            lock (this)
+            {
+                IProviderInstanceMemberSource providerSource = _providerSource;
+                if (providerSource == null)
+                {
+                    return;
+                }
+
+                var members = new OrderedDictionary(providerSource.Count, StringComparer.OrdinalIgnoreCase);
+                foreach (PSNoteProperty property in providerSource.Materialize())
+                {
+                    members.Add(property.Name, property);
+                }
+
+                // Build privately, then publish the complete dictionary before dropping
+                // the source. If enumeration or allocation throws, the source remains
+                // available and no partial dictionary is observable.
+                System.Threading.Volatile.Write(ref _members, members);
+                System.Threading.Volatile.Write(ref _providerSource, null);
+            }
+        }
+
+        /// <summary>
+        /// Adds or replaces a dictionary entry while maintaining the hidden-member count.
+        /// </summary>
+        /// <param name="member">The member to store.</param>
+        /// <remarks>The caller must hold the dictionary lock and materialize any provider source first.</remarks>
+        private void AddToDictionary(T member)
+        {
+            OrderedDictionary members = Members;
+            if (members[member.Name] is T existingMember)
+            {
+                Replace(existingMember, member);
+            }
+            else
+            {
+                members[member.Name] = member;
+                if (member.IsHidden)
+                {
+                    _countHidden++;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Checks membership without evaluating values or materializing provider notes.
+        /// </summary>
+        /// <param name="name">The member name, compared without regard to case.</param>
+        /// <returns>Whether an ordinary member or active provider descriptor exists.</returns>
+        /// <remarks>Rechecks the dictionary after querying the source to account for concurrent promotion.</remarks>
+        internal bool Contains(string name)
+        {
+            OrderedDictionary members = System.Threading.Volatile.Read(ref _members);
+            if (members != null)
+            {
+                lock (members)
+                {
+                    if (members[name] is T)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            // Contains is a pure membership query: unlike TryGetValue it does not compute
+            // the value, and unlike full inspection it does not create note properties.
+            IProviderInstanceMemberSource providerSource = System.Threading.Volatile.Read(ref _providerSource);
+            if (providerSource != null && providerSource.Contains(name))
+            {
+                return true;
+            }
+
+            members = System.Threading.Volatile.Read(ref _members);
+            if (members == null)
+            {
+                return false;
+            }
+
+            lock (members)
+            {
+                return members[name] is T;
+            }
+        }
+
+        /// <summary>
+        /// Checks only the currently attached provider source for a member.
+        /// </summary>
+        /// <param name="name">The member name to look up.</param>
+        /// <returns>False if the source has been materialized or does not contain the name.</returns>
+        internal bool ContainsProviderSourceMember(string name)
+        {
+            IProviderInstanceMemberSource providerSource = System.Threading.Volatile.Read(ref _providerSource);
+            return providerSource != null && providerSource.Contains(name);
+        }
+
+        /// <summary>
+        /// Reads an ordinary member or lazy provider value without requesting a member object.
+        /// </summary>
+        /// <param name="name">The case-insensitive member name.</param>
+        /// <param name="value">The value on success; otherwise null.</param>
+        /// <returns>True when a member is found, including a member with a null value.</returns>
+        /// <remarks>Getter exceptions propagate. The dictionary is rechecked if the source was promoted during lookup.</remarks>
+        internal bool TryGetValue(string name, out object value)
+        {
+            PSMemberInfo member = null;
+            OrderedDictionary members = System.Threading.Volatile.Read(ref _members);
+            if (members != null)
+            {
+                lock (members)
+                {
+                    member = members[name] as PSMemberInfo;
+                }
+            }
+
+            if (member != null)
+            {
+                value = member.Value;
+                return true;
+            }
+
+            IProviderInstanceMemberSource providerSource = System.Threading.Volatile.Read(ref _providerSource);
+            if (providerSource != null)
+            {
+                // Resolve an existing value directly from inline metadata. This avoids
+                // allocating a PSNoteProperty for ordinary successful property reads.
+                if (providerSource.TryGetValue(name, out value))
+                {
+                    return true;
+                }
+            }
+
+            members = System.Threading.Volatile.Read(ref _members);
+            if (members != null)
+            {
+                member = null;
+                lock (members)
+                {
+                    member = members[name] as PSMemberInfo;
+                }
+
+                if (member != null)
+                {
+                    value = member.Value;
+                    return true;
+                }
+            }
+
+            value = null;
+            return false;
+        }
+
+        /// <summary>
         /// Gets the OrderedDictionary for holding all members.
         /// We use this property to delay initializing _members until we absolutely need to.
         /// </summary>
@@ -4060,10 +4278,16 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds a member to the collection by replacing the one with the same name.
         /// </summary>
-        /// <param name="newMember"></param>
+        /// <param name="newMember">The replacement for an existing member with the same name.</param>
+        /// <remarks>Materializes provider notes before replacing the existing member.</remarks>
         internal void Replace(T newMember)
         {
             Diagnostics.Assert(newMember != null, "called from internal code that checks for new member not null");
+
+            if (_providerSource != null)
+            {
+                MaterializeProviderSource();
+            }
 
             // Save to a local variable to reduce property access.
             var members = Members;
@@ -4095,6 +4319,7 @@ namespace System.Management.Automation
         ///     cause any of the errors normally caught by this method.</param>
         /// <exception cref="ExtendedTypeSystemException">When a member by this name is already present.</exception>
         /// <exception cref="ArgumentException">For invalid arguments.</exception>
+        /// <remarks>Materializes provider notes before adding or replacing a member.</remarks>
         public override void Add(T member, bool preValidated)
         {
             if (member == null)
@@ -4102,22 +4327,13 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(member));
             }
 
+            MaterializeProviderSource();
+
             // Save to a local variable to reduce property access.
             var members = Members;
             lock (members)
             {
-                if (members[member.Name] is T existingMember)
-                {
-                    Replace(existingMember, member);
-                }
-                else
-                {
-                    members[member.Name] = member;
-                    if (member.IsHidden)
-                    {
-                        _countHidden++;
-                    }
-                }
+                AddToDictionary(member);
             }
         }
 
@@ -4127,6 +4343,7 @@ namespace System.Management.Automation
         /// <param name="name">Name of the member to be removed.</param>
         /// <exception cref="ExtendedTypeSystemException">When removing a member with a reserved member name.</exception>
         /// <exception cref="ArgumentException">For invalid arguments.</exception>
+        /// <remarks>A missing provider name leaves the source lazy; removing an active name first materializes all notes.</remarks>
         public override void Remove(string name)
         {
             if (string.IsNullOrEmpty(name))
@@ -4140,6 +4357,17 @@ namespace System.Management.Automation
                     null,
                     ExtendedTypeSystem.ReservedMemberName,
                     name);
+            }
+
+            IProviderInstanceMemberSource providerSource = System.Threading.Volatile.Read(ref _providerSource);
+            if (providerSource != null)
+            {
+                if (!providerSource.Contains(name))
+                {
+                    return;
+                }
+
+                MaterializeProviderSource();
             }
 
             if (_members == null)
@@ -4167,6 +4395,7 @@ namespace System.Management.Automation
         /// <param name="name">Name of the member to look for.</param>
         /// <returns>The member matching name.</returns>
         /// <exception cref="ArgumentException">For invalid arguments.</exception>
+        /// <remarks>A provider-name hit materializes all notes; a missing-name probe does not evaluate getters.</remarks>
         public override T this[string name]
         {
             get
@@ -4176,14 +4405,32 @@ namespace System.Management.Automation
                     throw PSTraceSource.NewArgumentException(nameof(name));
                 }
 
-                if (_members == null)
+                IProviderInstanceMemberSource providerSource = System.Threading.Volatile.Read(ref _providerSource);
+                OrderedDictionary members = System.Threading.Volatile.Read(ref _members);
+                if (members == null)
                 {
-                    return null;
+                    if (providerSource != null)
+                    {
+                        // Avoid creating PSNoteProperties for names that aren't backed by
+                        // provider metadata. This is especially common for CLR method names
+                        // such as ToString when a caller probes the instance member table.
+                        if (providerSource.Contains(name))
+                        {
+                            MaterializeProviderSource();
+                        }
+
+                        members = System.Threading.Volatile.Read(ref _members);
+                    }
+
+                    if (members == null)
+                    {
+                        return null;
+                    }
                 }
 
-                lock (_members)
+                lock (members)
                 {
-                    return _members[name] as T;
+                    return members[name] as T;
                 }
             }
         }
@@ -4240,10 +4487,18 @@ namespace System.Management.Automation
             return new ReadOnlyPSMemberInfoCollection<T>(MemberMatch.Match(internalMembers, name, MemberMatch.GetNamePattern(name), memberTypes));
         }
 
+        /// <summary>
+        /// Materializes provider notes and collects the members allowed by the match options.
+        /// </summary>
+        /// <param name="matchOptions">The visibility options applied to each member.</param>
+        /// <returns>A collection containing the matching member objects.</returns>
         private PSMemberInfoInternalCollection<T> GetInternalMembers(MshMemberMatchOptions matchOptions)
         {
             PSMemberInfoInternalCollection<T> returnValue = new PSMemberInfoInternalCollection<T>();
 
+            // Enumeration and wildcard matching expose member objects, so these APIs
+            // materialize the source; a missing-name indexer probe above stays lazy.
+            MaterializeProviderSource();
             if (_members == null)
             {
                 return returnValue;
@@ -4266,18 +4521,21 @@ namespace System.Management.Automation
         /// <summary>
         /// The number of elements in this collection.
         /// </summary>
+        /// <remarks>Counts active provider descriptors without evaluating getters or creating note properties.</remarks>
         internal int Count
         {
             get
             {
-                if (_members == null)
+                IProviderInstanceMemberSource providerSource = System.Threading.Volatile.Read(ref _providerSource);
+                OrderedDictionary members = System.Threading.Volatile.Read(ref _members);
+                if (members == null)
                 {
-                    return 0;
+                    return providerSource?.Count ?? 0;
                 }
 
-                lock (_members)
+                lock (members)
                 {
-                    return _members.Count;
+                    return members.Count;
                 }
             }
         }
@@ -4285,18 +4543,21 @@ namespace System.Management.Automation
         /// <summary>
         /// The number of elements in this collection not marked as Hidden.
         /// </summary>
+        /// <remarks>Unmaterialized provider descriptors are all visible and can be counted without reading their values.</remarks>
         internal int VisibleCount
         {
             get
             {
-                if (_members == null)
+                IProviderInstanceMemberSource providerSource = System.Threading.Volatile.Read(ref _providerSource);
+                OrderedDictionary members = System.Threading.Volatile.Read(ref _members);
+                if (members == null)
                 {
-                    return 0;
+                    return providerSource?.Count ?? 0;
                 }
 
-                lock (_members)
+                lock (members)
                 {
-                    return _members.Count - _countHidden;
+                    return members.Count - _countHidden;
                 }
             }
         }
@@ -4306,10 +4567,12 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="index">Index of the member to retrieve.</param>
         /// <exception cref="ArgumentException">For invalid arguments.</exception>
+        /// <remarks>Materializes provider notes before retrieving a member by its ordered position.</remarks>
         internal T this[int index]
         {
             get
             {
+                MaterializeProviderSource();
                 if (_members == null)
                 {
                     return null;
@@ -4328,8 +4591,10 @@ namespace System.Management.Automation
         /// interfaces virtually.
         /// </summary>
         /// <returns>The enumerator for this collection.</returns>
+        /// <remarks>Materializes provider notes and enumerates a snapshot of the member references.</remarks>
         public override IEnumerator<T> GetEnumerator()
         {
+            MaterializeProviderSource();
             if (_members == null)
             {
                 return Enumerable.Empty<T>().GetEnumerator();
@@ -4345,8 +4610,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the first member that matches the specified <see cref="MemberNamePredicate"/>.
         /// </summary>
+        /// <remarks>Materializes provider notes before matching because the result exposes a mutable member object.</remarks>
         internal override T FirstOrDefault(MemberNamePredicate predicate)
         {
+            MaterializeProviderSource();
+            if (_members == null)
+            {
+                return null;
+            }
+
             lock (_members)
             {
                 foreach (DictionaryEntry entry in _members)
