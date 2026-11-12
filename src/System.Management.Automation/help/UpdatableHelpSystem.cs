@@ -785,45 +785,35 @@ namespace System.Management.Automation.Help
                 {
                     client.Timeout = _defaultTimeout;
                     // codeql[cs/ssrf] - This is expected Poweshell behavior and the user assumes trust for the module they download and any URIs it references. The URIs are also not executables or scripts that would be invoked by this method.
-                    Task<HttpResponseMessage> responseMsg = client.GetAsync(new Uri(uri), _cancelTokenSource.Token);
-
-                    // TODO: Should I use a continuation to write the stream to a file?
-                    responseMsg.Wait();
-
-                    if (_stopping)
+                    try
                     {
-                        return true;
-                    }
+                        using HttpResponseMessage response = client.GetAsync(new Uri(uri), _cancelTokenSource.Token).GetAwaiter().GetResult();
 
-                    if (!responseMsg.IsCanceled)
-                    {
-                        if (responseMsg.Exception != null)
+                        if (_stopping)
                         {
-                            Errors.Add(new UpdatableHelpSystemException("HelpContentNotFound",
-                                StringUtil.Format(HelpDisplayStrings.HelpContentNotFound),
-                                ErrorCategory.ResourceUnavailable, null, responseMsg.Exception));
+                            return true;
+                        }
+
+                        lock (_syncObject)
+                        {
+                            _progressEvents.Add(new UpdatableHelpProgressEventArgs(CurrentModule, StringUtil.Format(
+                                HelpDisplayStrings.UpdateProgressDownloading), 100));
+                        }
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            WriteResponseToFile(response, fileName);
                         }
                         else
                         {
-                            lock (_syncObject)
-                            {
-                                _progressEvents.Add(new UpdatableHelpProgressEventArgs(CurrentModule, StringUtil.Format(
-                                    HelpDisplayStrings.UpdateProgressDownloading), 100));
-                            }
-
-                            // Write the stream to the specified file to achieve functional parity with WebClient.DownloadFileAsync().
-                            HttpResponseMessage response = responseMsg.Result;
-                            if (response.IsSuccessStatusCode)
-                            {
-                                WriteResponseToFile(response, fileName);
-                            }
-                            else
-                            {
-                                Errors.Add(new UpdatableHelpSystemException("HelpContentNotFound",
-                                    StringUtil.Format(HelpDisplayStrings.HelpContentNotFound),
-                                    ErrorCategory.ResourceUnavailable, null, responseMsg.Exception));
-                            }
+                            Errors.Add(new UpdatableHelpSystemException("HelpContentNotFound",
+                                StringUtil.Format(HelpDisplayStrings.HelpContentNotFound),
+                                ErrorCategory.ResourceUnavailable, null, null));
                         }
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        return false;
                     }
 
                     SendProgressEvents(commandType);
@@ -843,11 +833,13 @@ namespace System.Management.Automation.Help
             // TODO: Settings to use? FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite
             using (FileStream downloadedFileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
             {
-                Task copyStreamOp = response.Content.CopyToAsync(downloadedFileStream);
-                copyStreamOp.Wait();
-                if (copyStreamOp.Exception != null)
+                try
                 {
-                    Errors.Add(copyStreamOp.Exception);
+                    response.Content.CopyToAsync(downloadedFileStream).GetAwaiter().GetResult();
+                }
+                catch (Exception e)
+                {
+                    Errors.Add(e);
                 }
             }
         }
