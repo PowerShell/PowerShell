@@ -6,9 +6,10 @@ Describe "Format-Table" -Tags "CI" {
             $outputRendering = $PSStyle.OutputRendering
             $PSStyle.OutputRendering = 'plaintext'
         }
+        # WindowHeight is 0 without a terminal, or -1 if the terminal's size is unknown (e.g. TERM=dumb)
         $noConsole = $true
         try {
-            if ([Console]::WindowHeight -ne 0) {
+            if ([Console]::WindowHeight -gt 0) {
                 $noConsole = $false
             }
         } catch {
