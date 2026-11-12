@@ -14,12 +14,12 @@ Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
             param(
                 [Parameter(ValueFromPipeline)]
                 [object[]]
-                $input
+                $InputObject
             )
 
-            if ($input -ne 2)
+            if ($InputObject -ne 2)
             {
-                return $input
+                return $InputObject
             }
 
             $exception = [System.Exception]::new("NTERROR")
