@@ -5,12 +5,6 @@ Describe "Localized resource files validation" -Tags "CI" {
 
     BeforeAll {
         $repoSrcDir = (Resolve-Path (Join-Path $PSScriptRoot ../../../../src)).Path
-        $skipSatelliteAssemblyTest = !$IsWindows
-        if (!$skipSatelliteAssemblyTest -and $env:PIPELINE_REPOSITORY_NAME -eq 'Release-Automation') {
-            ## Only MSIX packages include the localized satellite assemblies.
-            $isMSIXApp = Test-Path -Path (Join-Path $PSHOME 'AppxManifest.xml')
-            $skipSatelliteAssemblyTest = -not $isMSIXApp
-        }
 
         # Folders that exist in 'resources' folder but are not a localized resource directory.
         $excludeDirs = @('Graphics')
@@ -30,19 +24,8 @@ Describe "Localized resource files validation" -Tags "CI" {
             'System.Management.Automation'
         )
 
-        $asmNames = $asmDirs | ForEach-Object {
-            if ($_ -eq 'Microsoft.Management.UI.Internal') {
-                'Microsoft.PowerShell.GraphicalHost'
-            } else {
-                $_
-            }
-        }
-
         $testCases1 = @(
             $asmDirs | ForEach-Object { @{ AssemblyDir = $_ } }
-        )
-        $testCases2 = @(
-            $langSet | ForEach-Object { @{ Language = $_ } }
         )
     }
 
@@ -93,7 +76,45 @@ Describe "Localized resource files validation" -Tags "CI" {
         }
     }
 
-    It "Satellite assemblies should be produced for '<Language>'" -TestCases $testCases2 -Skip:$skipSatelliteAssemblyTest {
+}
+
+Describe "Localized satellite assemblies" -Tags "CI", "NotMinSize" {
+    BeforeAll {
+        $skipSatelliteAssemblyTest = !$IsWindows
+        if (!$skipSatelliteAssemblyTest -and $env:PIPELINE_REPOSITORY_NAME -eq 'Release-Automation') {
+            ## Only MSIX packages include the localized satellite assemblies.
+            $isMSIXApp = Test-Path -Path (Join-Path $PSHOME 'AppxManifest.xml')
+            $skipSatelliteAssemblyTest = -not $isMSIXApp
+        }
+
+        $langSet = 'cs', 'de', 'es', 'fr', 'it', 'ja', 'ko', 'pl', 'pt-BR', 'ru', 'tr', 'zh-Hans', 'zh-Hant'
+        $asmDirs = @(
+            'Microsoft.Management.Infrastructure.CimCmdlets'
+            'Microsoft.Management.UI.Internal'
+            'Microsoft.PowerShell.Commands.Diagnostics'
+            'Microsoft.PowerShell.Commands.Management'
+            'Microsoft.PowerShell.Commands.Utility'
+            'Microsoft.PowerShell.ConsoleHost'
+            'Microsoft.PowerShell.CoreCLR.Eventing'
+            'Microsoft.PowerShell.Security'
+            'Microsoft.WSMan.Management'
+            'System.Management.Automation'
+        )
+
+        $asmNames = $asmDirs | ForEach-Object {
+            if ($_ -eq 'Microsoft.Management.UI.Internal') {
+                'Microsoft.PowerShell.GraphicalHost'
+            } else {
+                $_
+            }
+        }
+
+        $testCases = @(
+            $langSet | ForEach-Object { @{ Language = $_ } }
+        )
+    }
+
+    It "Satellite assemblies should be produced for '<Language>'" -TestCases $testCases -Skip:$skipSatelliteAssemblyTest {
         param($Language)
 
         $satDir = Join-Path $PSHOME $Language

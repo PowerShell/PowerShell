@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe "CimInstance cmdlet tests" -Tag @("CI") {
+Describe "CimInstance cmdlet tests" -Tag @("CI", "NotWinPE") {
     BeforeAll {
         if ( ! $IsWindows ) { return }
         $instance = Get-CimInstance CIM_ComputerSystem

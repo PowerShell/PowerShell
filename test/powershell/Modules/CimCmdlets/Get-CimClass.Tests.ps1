@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe 'Get-CimClass' -Tags "CI" {
+Describe 'Get-CimClass' -Tags "CI", "NotWinPE" {
 
     It 'can get CIM_Error CIM class' -Pending:(-not $IsWindows) {
         Get-CimClass -ClassName CIM_Error | Should -Not -BeNullOrEmpty
@@ -23,7 +23,7 @@ Describe 'Get-CimClass' -Tags "CI" {
 }
 
 # feature tests
-Describe 'Get-CimClass' -Tags @("Feature") {
+Describe 'Get-CimClass' -Tags @("Feature", "NotWinPE") {
     It 'can retrieve a class when a method is provided' -Pending:(-not $IsWindows) {
         Get-CimClass -MethodName Reboot | Should -Not -BeNullOrEmpty
     }

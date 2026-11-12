@@ -10,19 +10,10 @@ Describe "Get-PSHostProcessInfo tests" -Tag CI {
         $si.RedirectStandardOutput = $true
         $si.RedirectStandardError = $true
         $pwsh = [System.Diagnostics.Process]::Start($si)
-
-        if ($IsWindows) {
-            $si.FileName = "powershell"
-            $powershell = [System.Diagnostics.Process]::Start($si)
-        }
     }
 
     AfterAll {
         $pwsh | Stop-Process
-
-        if ($IsWindows) {
-            $powershell | Stop-Process
-        }
     }
 
     It "Should return own self" {
@@ -42,16 +33,6 @@ Describe "Get-PSHostProcessInfo tests" -Tag CI {
         $pshosts = Get-PSHostProcessInfo
         $pshosts.Count | Should -BeGreaterOrEqual 1
         $pshosts.ProcessId | Should -Contain $pwsh.Id
-    }
-
-    It "Should list Windows PowerShell process" -Skip:(!$IsWindows) {
-        # Creation of the named pipe is async
-        Wait-UntilTrue {
-            Get-PSHostProcessInfo | Where-Object { $_.ProcessId -eq $powershell.Id }
-        } | Should -BeTrue
-        $psProcess = Get-PSHostProcessInfo | Where-Object { $_.ProcessName -eq "powershell" }
-        $psProcess.Count | Should -BeGreaterOrEqual 1
-        $psProcess.ProcessId | Should -Contain $powershell.id
     }
 
     It "Verifies named pipe filepath get method" {
@@ -97,5 +78,35 @@ Describe "Get-PSHostProcessInfo tests" -Tag CI {
 
         # Verify named pipe file path is removed.
         $psNamedPipePath | Should -Not -Exist
+    }
+}
+
+Describe "Get-PSHostProcessInfo for Windows PowerShell" -Tags "CI", "NotWinPE" {
+    BeforeAll {
+        if ($IsWindows) {
+            $si = [System.Diagnostics.ProcessStartInfo]::new()
+            $si.FileName = "powershell"
+            $si.Arguments = "-noexit"
+            $si.RedirectStandardInput = $true
+            $si.RedirectStandardOutput = $true
+            $si.RedirectStandardError = $true
+            $powershell = [System.Diagnostics.Process]::Start($si)
+        }
+    }
+
+    AfterAll {
+        if ($IsWindows) {
+            $powershell | Stop-Process
+        }
+    }
+
+    It "Should list Windows PowerShell process" -Skip:(!$IsWindows) {
+        # Creation of the named pipe is async
+        Wait-UntilTrue {
+            Get-PSHostProcessInfo | Where-Object { $_.ProcessId -eq $powershell.Id }
+        } | Should -BeTrue
+        $psProcess = Get-PSHostProcessInfo | Where-Object { $_.ProcessName -eq "powershell" }
+        $psProcess.Count | Should -BeGreaterOrEqual 1
+        $psProcess.ProcessId | Should -Contain $powershell.id
     }
 }

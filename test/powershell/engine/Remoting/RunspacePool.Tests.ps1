@@ -4,7 +4,7 @@
 Import-Module HelpersRemoting
 Import-Module HelpersCommon
 
-Describe "Remote runspace pool should expose commands in endpoint configuration" -Tags 'Feature','RequireAdminOnWindows' {
+Describe "Remote runspace pool should expose commands in endpoint configuration" -Tags 'Feature','RequireAdminOnWindows','NotWinPE' {
 
     BeforeAll {
 

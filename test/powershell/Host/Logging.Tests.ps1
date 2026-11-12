@@ -440,7 +440,7 @@ $PID
     }
 }
 
-Describe 'Basic EventLog tests on Windows' -Tag @('CI','RequireAdminOnWindows') {
+Describe 'Basic EventLog tests on Windows' -Tag @('CI','RequireAdminOnWindows','NotWinPE') {
     BeforeAll {
         [bool] $IsSupportedEnvironment = $IsWindows
         [string] $powershell = Join-Path -Path $PSHOME -ChildPath 'pwsh'

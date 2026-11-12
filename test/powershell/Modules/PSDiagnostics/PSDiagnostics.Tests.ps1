@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe "PSDiagnostics cmdlets tests." -Tag "CI", "RequireAdminOnWindows" {
+Describe "PSDiagnostics cmdlets tests." -Tag "CI", "RequireAdminOnWindows", "NotWinPE" {
     BeforeAll {
         $LogType = 'Analytic'
         $OriginalDefaultParameterValues = $PSDefaultParameterValues.Clone()
