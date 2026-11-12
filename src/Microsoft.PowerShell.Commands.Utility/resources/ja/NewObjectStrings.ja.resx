@@ -152,11 +152,13 @@
   </data>
   <data name="TypeWDACLogMessage" xml:space="preserve">
     <value>型 '{0}' は ConstrainedLanguage モードでは作成されません。</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="ComWDACLogTitle" xml:space="preserve">
     <value>New-Object コマンドレットの COM オブジェクトの作成</value>
   </data>
   <data name="ComWDACLogMessage" xml:space="preserve">
     <value>COM オブジェクト '{0}' は ConstrainedLanguage モードでは作成されません。</value>
+    <comment>{StrContains="COM"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>
