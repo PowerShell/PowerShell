@@ -112,6 +112,63 @@ Describe "Get-Process" -Tags "CI" {
 
         $actual | Should -Be $expected
     }
+
+    It "Should return Current Process with -Current" {
+        $currentProcess = Get-Process -Current
+        $currentProcess | Should -HaveCount 1
+        $currentProcess[0].Id | Should -BeExactly $PID
+    }
+
+    It "Should return Current Process with -ThisProcess" {
+        $currentProcess = Get-Process -ThisProcess
+        $currentProcess | Should -HaveCount 1
+        $currentProcess[0].Id | Should -BeExactly $PID
+    }
+
+    It "Should return Current Process with -This" {
+        $currentProcess = Get-Process -This
+        $currentProcess | Should -HaveCount 1
+        $currentProcess[0].Id | Should -BeExactly $PID
+    }
+
+    It "Should return Current Process with -CurrentProcess" {
+        $currentProcess = Get-Process -CurrentProcess
+        $currentProcess | Should -HaveCount 1
+        $currentProcess[0].Id | Should -BeExactly $PID
+    }
+    It "Should return Current Process with -CP" {
+        $currentProcess = Get-Process -CP
+        $currentProcess | Should -HaveCount 1
+        $currentProcess[0].Id | Should -BeExactly $PID
+    }
+
+         It "Should support -Current in RestrictedLanguage" {
+         $runspace = [System.Management.Automation.Runspaces.RunspaceFactory]::CreateRunspace()
+         try {
+             $runspace.Open()
+             $runspace.SessionStateProxy.LanguageMode = [System.Management.Automation.PSLanguageMode]::RestrictedLanguage
+             $ps = [System.Management.Automation.PowerShell]::Create()
+             try {
+                 $ps.Runspace = $runspace
+                 [void]$ps.AddScript('Get-Process -Current | Select-Object -ExpandProperty Id')
+                 $result = $ps.Invoke()
+                 $ps.HadErrors | Should -BeFalse
+                 $result | Should -HaveCount 1
+                 $result[0] | Should -BeExactly $PID
+             }
+             finally {
+                 if ($ps) {
+                     $ps.Dispose()
+                 }
+             }
+         }
+         finally {
+             if ($runspace) {
+                 $runspace.Close()
+                 $runspace.Dispose()
+             }
+         }
+     }
 }
 
 Describe "Get-Process Formatting" -Tags "Feature" {
