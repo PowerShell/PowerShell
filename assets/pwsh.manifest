@@ -23,4 +23,10 @@
             <supportedOS Id="{35138b9a-5d96-4fbd-8e2d-a2440225f93a}"/>
         </application>
     </compatibility>
+    <!-- The asm.v3 xmlns is required for windowsSettings; it is distinct from the root asm.v1 namespace. -->
+    <application xmlns="urn:schemas-microsoft-com:asm.v3">
+        <windowsSettings>
+            <consoleAllocationPolicy xmlns="http://schemas.microsoft.com/SMI/2024/WindowsSettings">detached</consoleAllocationPolicy>
+        </windowsSettings>
+    </application>
 </assembly>
