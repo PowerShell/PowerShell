@@ -314,4 +314,3 @@ if ($env:GITHUB_STEP_SUMMARY) {
     $summaryContent | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
     Write-Verbose -Verbose "Summary written to GitHub Actions step summary"
 }
-

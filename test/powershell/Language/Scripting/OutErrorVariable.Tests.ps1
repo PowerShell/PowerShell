@@ -391,4 +391,3 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
         $script:bar_err | Should -BeExactly @("bar-error", "foo-error", "foo-error")
     }
 }
-
