@@ -16,6 +16,28 @@ namespace System.Management.Automation
     public static partial class Platform
     {
         /// <summary>
+        /// True if the current platform is Android.
+        /// </summary>
+        public static bool IsAndroid
+        {
+            get
+            {
+                return OperatingSystem.IsAndroid();
+            }
+        }
+
+        /// <summary>
+        /// True if the current platform is Browser.
+        /// </summary>
+        public static bool IsBrowser
+        {
+            get
+            {
+                return OperatingSystem.IsBrowser();
+            }
+        }
+        
+        /// <summary>
         /// True if the current platform is Linux.
         /// </summary>
         public static bool IsLinux
@@ -34,6 +56,17 @@ namespace System.Management.Automation
             get
             {
                 return OperatingSystem.IsMacOS();
+            }
+        }
+
+        /// <summary>
+        /// True if the current platform is Wasi.
+        /// </summary>
+        public static bool IsWasi
+        {
+            get
+            {
+                return OperatingSystem.IsWasi();
             }
         }
 
@@ -59,6 +92,17 @@ namespace System.Management.Automation
             }
         }
 
+        /// <summary>
+        /// True if PowerShell was built targeting MonoRuntime .
+        /// </summary>
+        public static bool IsMonoRuntime 
+        {
+            get
+            {
+                return Type.GetType("Mono.RuntimeStructs") != null;
+            }
+        }
+        
         /// <summary>
         /// True if the underlying system is NanoServer.
         /// </summary>
@@ -143,6 +187,18 @@ namespace System.Management.Automation
                 _isWindowsDesktop = !IsNanoServer && !IsIoT;
                 return _isWindowsDesktop.Value;
 #endif
+            }
+        }
+
+        /// <summary>
+        /// True if the underlying system is SingleFile Bundle.
+        /// </summary>
+        public static bool IsSingleFile
+        {
+            get
+            {
+                // if SMA assembly location is null, PowerShell is published as a single file bundle
+                return string.IsNullOrEmpty(typeof(PSObject).Assembly.Location);
             }
         }
 
