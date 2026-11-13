@@ -4,7 +4,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -21,7 +20,6 @@ namespace System.Management.Automation.Runspaces
     /// This exception is used by Formattable constructor to indicate errors
     /// occurred during construction time.
     /// </summary>
-    [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "FormatTable")]
     public class FormatTableLoadException : RuntimeException
     {
         private readonly Collection<string> _errors;
@@ -115,7 +113,6 @@ namespace System.Management.Automation.Runspaces
     /// <summary>
     /// A class that keeps the information from format.ps1xml files in a cache table.
     /// </summary>
-    [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "FormatTable")]
     public sealed class FormatTable
     {
         #region Private Data

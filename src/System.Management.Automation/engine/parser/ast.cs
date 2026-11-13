@@ -4964,7 +4964,6 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Returns true if this handler handles any kind of exception.
         /// </summary>
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "CatchAll")]
         public bool IsCatchAll { get { return CatchTypes.Count == 0; } }
 
         /// <summary>
@@ -10246,7 +10245,6 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The expression/statements represented by this sub-expression.
         /// </summary>
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         public StatementBlockAst SubExpression { get; }
 
         /// <summary>
@@ -10352,7 +10350,6 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// The ast that represents a subexpression, e.g. <c>$(1)</c>.
     /// </summary>
-    [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
     public class SubExpressionAst : ExpressionAst
     {
         /// <summary>
@@ -10378,7 +10375,6 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The expression/statements represented by this sub-expression.  This property is never null.
         /// </summary>
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         public StatementBlockAst SubExpression { get; }
 
         /// <summary>
@@ -10439,7 +10435,6 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The expression represented by this using expression.  This property is never null.
         /// </summary>
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         public ExpressionAst SubExpression { get; }
 
         // Used from code gen to get the value from a well known location.
