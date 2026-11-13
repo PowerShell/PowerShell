@@ -170,7 +170,7 @@ namespace System.Management.Automation.Language
 
         private static bool IsNullDivisor(ExpressionAst operand)
         {
-            if (!(operand is VariableExpressionAst varExpr))
+            if (operand is not VariableExpressionAst varExpr)
             {
                 return false;
             }
@@ -281,7 +281,7 @@ namespace System.Management.Automation.Language
                 return false;
             }
 
-            if (!(memberExpressionAst.Member is StringConstantExpressionAst member))
+            if (memberExpressionAst.Member is not StringConstantExpressionAst member)
             {
                 return false;
             }

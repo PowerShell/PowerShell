@@ -580,7 +580,7 @@ namespace System.Management.Automation.Language
 
         public override bool Equals(object obj)
         {
-            if (!(obj is IScriptExtent otherPosition))
+            if (obj is not IScriptExtent otherPosition)
             {
                 return false;
             }
