@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System.Collections;
 using System.Collections.Generic;
 
 namespace System.Management.Automation
@@ -28,7 +27,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// This hashtable is made case-insensitive so that helpInfo can be retrieved case insensitively.
         /// </remarks>
-        private readonly Hashtable _helpCache = new Hashtable(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, HelpInfo> _helpCache = new(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Exact match help for a target.
@@ -41,9 +40,9 @@ namespace System.Management.Automation
 
             if (!this.HasCustomMatch)
             {
-                if (_helpCache.Contains(target))
+                if (_helpCache.TryGetValue(target, out HelpInfo value))
                 {
-                    yield return (HelpInfo)_helpCache[target];
+                    yield return value;
                 }
             }
             else
@@ -52,7 +51,7 @@ namespace System.Management.Automation
                 {
                     if (CustomMatch(target, key))
                     {
-                        yield return (HelpInfo)_helpCache[key];
+                        yield return _helpCache[key];
                     }
                 }
             }
@@ -60,9 +59,9 @@ namespace System.Management.Automation
             if (!this.CacheFullyLoaded)
             {
                 DoExactMatchHelp(helpRequest);
-                if (_helpCache.Contains(target))
+                if (_helpCache.TryGetValue(target, out HelpInfo value))
                 {
-                    yield return (HelpInfo)_helpCache[target];
+                    yield return value;
                 }
             }
         }
@@ -136,10 +135,10 @@ namespace System.Management.Automation
                 foreach (string key in _helpCache.Keys)
                 {
                     if ((!searchOnlyContent && helpMatcher.IsMatch(key)) ||
-                        (searchOnlyContent && ((HelpInfo)_helpCache[key]).MatchPatternInContent(helpMatcher)))
+                        (searchOnlyContent && _helpCache[key].MatchPatternInContent(helpMatcher)))
                     {
                         countOfHelpInfoObjectsFound++;
-                        yield return (HelpInfo)_helpCache[key];
+                        yield return _helpCache[key];
                         if (helpRequest.MaxResults > 0 && countOfHelpInfoObjectsFound >= helpRequest.MaxResults)
                         {
                             yield break;
@@ -200,7 +199,7 @@ namespace System.Management.Automation
         /// <returns>The HelpInfo in cache corresponding the key specified.</returns>
         internal HelpInfo GetCache(string target)
         {
-            return (HelpInfo)_helpCache[target];
+            return _helpCache[target];
         }
 
         /// <summary>
