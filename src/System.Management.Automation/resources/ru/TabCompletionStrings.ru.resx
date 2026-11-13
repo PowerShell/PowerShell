@@ -1,0 +1,610 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CannotDeserializeTabCompletionResult" xml:space="preserve">
+    <value>Результат автодополнения по клавише Tab не может быть корректно десериализован, поскольку удаленное пространство выполнения не содержит экземпляра TypeTable.</value>
+  </data>
+  <data name="NoAccessToProperties" xml:space="preserve">
+    <value>Невозможно получить доступ к свойствам нулевого экземпляра типа CompletionResult.</value>
+  </data>
+  <data name="bnotOperatorDescription" xml:space="preserve">
+    <value>Побитовое НЕ</value>
+  </data>
+  <data name="notOperatorDescription" xml:space="preserve">
+    <value>Логическое не. Отрицает следующее за ним утверждение.</value>
+  </data>
+  <data name="eqOperatorDescription" xml:space="preserve">
+    <value>Равно - регистр не учитывается. Если левый операнд представляет собой коллекцию, возвращает значения из коллекции, равные правому операнду; в противном случае возвращает TRUE, если левый операнд равен правому операнду.</value>
+  </data>
+  <data name="ieqOperatorDescription" xml:space="preserve">
+    <value>Равно - регистр не учитывается. Если левый операнд представляет собой коллекцию, возвращает значения из коллекции, равные правому операнду; в противном случае возвращает TRUE, если левый операнд равен правому операнду.</value>
+  </data>
+  <data name="ceqOperatorDescription" xml:space="preserve">
+    <value>Равно - регистр имеет значение. Если левый операнд представляет собой коллекцию, возвращает значения из коллекции, равные правому операнду; в противном случае возвращает TRUE, если левый операнд равен правому операнду.</value>
+  </data>
+  <data name="neOperatorDescription" xml:space="preserve">
+    <value>Не равно - регистр не учитывается. Если левый операнд является коллекцией, возвращает значения из коллекции, которые не равны правому операнду; в противном случае возвращает TRUE, если левый операнд не равен правому операнду.</value>
+  </data>
+  <data name="ineOperatorDescription" xml:space="preserve">
+    <value>Не равно - регистр не учитывается. Если левый операнд является коллекцией, возвращает значения из коллекции, которые не равны правому операнду; в противном случае возвращает TRUE, если левый операнд не равен правому операнду.</value>
+  </data>
+  <data name="cneOperatorDescription" xml:space="preserve">
+    <value>Не равно - регистр имеет значение. Если левый операнд является коллекцией, возвращает значения из коллекции, которые не равны правому операнду; в противном случае возвращает TRUE, если левый операнд не равен правому операнду.</value>
+  </data>
+  <data name="geOperatorDescription" xml:space="preserve">
+    <value>Больше или равно - регистр не учитывается. Если левый операнд представляет собой коллекцию, возвращает значения из коллекции, которые больше или равны правому операнду; в противном случае возвращает TRUE, если левый операнд больше или равен правому операнду.</value>
+  </data>
+  <data name="igeOperatorDescription" xml:space="preserve">
+    <value>Больше или равно - регистр не учитывается. Если левый операнд представляет собой коллекцию, возвращает значения из коллекции, которые больше или равны правому операнду; в противном случае возвращает TRUE, если левый операнд больше или равен правому операнду.</value>
+  </data>
+  <data name="cgeOperatorDescription" xml:space="preserve">
+    <value>Больше или равно - регистр имеет значение. Если левый операнд представляет собой коллекцию, возвращает значения из коллекции, которые больше или равны правому операнду; в противном случае возвращает TRUE, если левый операнд больше или равен правому операнду.</value>
+  </data>
+  <data name="gtOperatorDescription" xml:space="preserve">
+    <value>Больше чем - регистр не учитывается. Если левый операнд представляет собой коллекцию, возвращает значения из коллекции, которые больше правого операнда; в противном случае возвращает TRUE, если левый операнд больше правого.</value>
+  </data>
+  <data name="igtOperatorDescription" xml:space="preserve">
+    <value>Больше чем - регистр не учитывается. Если левый операнд представляет собой коллекцию, возвращает значения из коллекции, которые больше правого операнда; в противном случае возвращает TRUE, если левый операнд больше правого.</value>
+  </data>
+  <data name="cgtOperatorDescription" xml:space="preserve">
+    <value>Больше чем - регистр имеет значение. Если левый операнд представляет собой коллекцию, возвращает значения из коллекции, которые больше правого операнда; в противном случае возвращает TRUE, если левый операнд больше правого.</value>
+  </data>
+  <data name="ltOperatorDescription" xml:space="preserve">
+    <value>Меньше чем — без учета регистра. Если левый операнд представляет собой коллекцию, возвращает значения из коллекции, которые меньше правого операнда; в противном случае возвращает TRUE, если левый операнд меньше правого.</value>
+  </data>
+  <data name="iltOperatorDescription" xml:space="preserve">
+    <value>Меньше чем — без учета регистра. Если левый операнд представляет собой коллекцию, возвращает значения из коллекции, которые меньше правого операнда; в противном случае возвращает TRUE, если левый операнд меньше правого.</value>
+  </data>
+  <data name="cltOperatorDescription" xml:space="preserve">
+    <value>Меньше — регистр имеет значение. Если левый операнд представляет собой коллекцию, возвращает значения из коллекции, которые меньше правого операнда; в противном случае возвращает TRUE, если левый операнд меньше правого.</value>
+  </data>
+  <data name="leOperatorDescription" xml:space="preserve">
+    <value>Меньше или равно - регистр не учитывается. Если левый операнд представляет собой коллекцию, возвращает значения из коллекции, которые меньше или равны правому операнду; в противном случае возвращает TRUE, если левый операнд меньше или равен правому операнду.</value>
+  </data>
+  <data name="ileOperatorDescription" xml:space="preserve">
+    <value>Меньше или равно - регистр не учитывается. Если левый операнд представляет собой коллекцию, возвращает значения из коллекции, которые меньше или равны правому операнду; в противном случае возвращает TRUE, если левый операнд меньше или равен правому операнду.</value>
+  </data>
+  <data name="cleOperatorDescription" xml:space="preserve">
+    <value>Меньше или равно - регистр имеет значение. Если левый операнд представляет собой коллекцию, возвращает значения из коллекции, которые меньше или равны правому операнду; в противном случае возвращает TRUE, если левый операнд меньше или равен правому операнду.</value>
+  </data>
+  <data name="likeOperatorDescription" xml:space="preserve">
+    <value>Оператор сопоставления с использованием подстановочных символов — регистр нечувствителен. Если левый операнд представляет собой коллекцию, возвращает значения из коллекции, соответствующие правому операнду; в противном случае возвращает TRUE, если левый операнд соответствует правому операнду.</value>
+  </data>
+  <data name="ilikeOperatorDescription" xml:space="preserve">
+    <value>Оператор сопоставления с использованием подстановочных символов — регистр нечувствителен. Если левый операнд представляет собой коллекцию, возвращает значения из коллекции, соответствующие правому операнду; в противном случае возвращает TRUE, если левый операнд соответствует правому операнду.</value>
+  </data>
+  <data name="clikeOperatorDescription" xml:space="preserve">
+    <value>Оператор сопоставления с подстановочными знаками — регистр имеет значение. Если левый операнд представляет собой коллекцию, возвращает значения из коллекции, соответствующие правому операнду; в противном случае возвращает TRUE, если левый операнд соответствует правому операнду.</value>
+  </data>
+  <data name="notlikeOperatorDescription" xml:space="preserve">
+    <value>Оператор сопоставления с использованием подстановочных символов — регистр нечувствителен. Если левый операнд представляет собой коллекцию, возвращает значения из коллекции, которые не соответствуют правому операнду; в противном случае возвращает TRUE, если левый операнд не соответствует правому операнду.</value>
+  </data>
+  <data name="inotlikeOperatorDescription" xml:space="preserve">
+    <value>Оператор сопоставления с использованием подстановочных символов — регистр нечувствителен. Если левый операнд представляет собой коллекцию, возвращает значения из коллекции, которые не соответствуют правому операнду; в противном случае возвращает TRUE, если левый операнд не соответствует правому операнду.</value>
+  </data>
+  <data name="cnotlikeOperatorDescription" xml:space="preserve">
+    <value>Оператор сопоставления с подстановочными знаками — регистр имеет значение. Если левый операнд представляет собой коллекцию, возвращает значения из коллекции, которые не соответствуют правому операнду; в противном случае возвращает TRUE, если левый операнд не соответствует правому операнду.</value>
+  </data>
+  <data name="matchOperatorDescription" xml:space="preserve">
+    <value>Оператор сопоставления регулярных выражений — без учета регистра. Если левый операнд представляет собой коллекцию, возвращает значения из коллекции, соответствующие правому операнду; в противном случае возвращает TRUE, если левый операнд соответствует правому операнду.</value>
+  </data>
+  <data name="imatchOperatorDescription" xml:space="preserve">
+    <value>Оператор сопоставления регулярных выражений — без учета регистра. Если левый операнд представляет собой коллекцию, возвращает значения из коллекции, соответствующие правому операнду; в противном случае возвращает TRUE, если левый операнд соответствует правому операнду.</value>
+  </data>
+  <data name="cmatchOperatorDescription" xml:space="preserve">
+    <value>Оператор сопоставления регулярных выражений — с учетом регистра. Если левый операнд представляет собой коллекцию, возвращает значения из коллекции, соответствующие правому операнду; в противном случае возвращает TRUE, если левый операнд соответствует правому операнду.</value>
+  </data>
+  <data name="notmatchOperatorDescription" xml:space="preserve">
+    <value>Оператор сопоставления регулярных выражений — без учета регистра. Если левый операнд представляет собой коллекцию, возвращает значения из коллекции, которые не соответствуют правому операнду; в противном случае возвращает TRUE, если левый операнд не соответствует правому операнду.</value>
+  </data>
+  <data name="inotmatchOperatorDescription" xml:space="preserve">
+    <value>Оператор сопоставления регулярных выражений — без учета регистра. Если левый операнд представляет собой коллекцию, возвращает значения из коллекции, которые не соответствуют правому операнду; в противном случае возвращает TRUE, если левый операнд не соответствует правому операнду.</value>
+  </data>
+  <data name="cnotmatchOperatorDescription" xml:space="preserve">
+    <value>Оператор сопоставления регулярных выражений — с учетом регистра. Если левый операнд представляет собой коллекцию, возвращает значения из коллекции, которые не соответствуют правому операнду; в противном случае возвращает TRUE, если левый операнд не соответствует правому операнду.</value>
+  </data>
+  <data name="replaceOperatorDescription" xml:space="preserve">
+    <value>Замена оператора — регистр имеет значение. Изменяет левый операнд. Пример: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
+  </data>
+  <data name="ireplaceOperatorDescription" xml:space="preserve">
+    <value>Замена оператора — регистр имеет значение. Изменяет левый операнд. Пример: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
+  </data>
+  <data name="creplaceOperatorDescription" xml:space="preserve">
+    <value>Замените оператор — регистр имеет значение. Изменяет левый операнд. Пример: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
+  </data>
+  <data name="containsOperatorDescription" xml:space="preserve">
+    <value>Оператор изоляции — регистр нечувствителен. Возвращает TRUE, если тестовое значение (правый операнд) точно совпадает хотя бы с одним из значений левого операнда.</value>
+  </data>
+  <data name="icontainsOperatorDescription" xml:space="preserve">
+    <value>Оператор изоляции — регистр нечувствителен. Возвращает TRUE, если тестовое значение (правый операнд) точно совпадает хотя бы с одним из значений левого операнда.</value>
+  </data>
+  <data name="ccontainsOperatorDescription" xml:space="preserve">
+    <value>Оператор изоляции — регистр имеет значение. Возвращает TRUE только в том случае, если тестовое значение (правый операнд) точно совпадает хотя бы с одним из значений левого операнда.</value>
+  </data>
+  <data name="notcontainsOperatorDescription" xml:space="preserve">
+    <value>Оператор изоляции — регистр нечувствителен. Возвращает TRUE, если тестовое значение (правый операнд) точно не совпадает ни с одним из значений левого операнда.</value>
+  </data>
+  <data name="inotcontainsOperatorDescription" xml:space="preserve">
+    <value>Оператор изоляции — регистр нечувствителен. Возвращает TRUE, если тестовое значение (правый операнд) точно не совпадает ни с одним из значений левого операнда.</value>
+  </data>
+  <data name="cnotcontainsOperatorDescription" xml:space="preserve">
+    <value>Оператор изоляции — регистр имеет значение. Возвращает TRUE, если тестовое значение (правый операнд) точно не совпадает ни с одним из значений левого операнда.</value>
+  </data>
+  <data name="inOperatorDescription" xml:space="preserve">
+    <value>Оператор изоляции — регистр нечувствителен. Возвращает TRUE, если тестовое значение (левый операнд) точно совпадает хотя бы с одним из значений правого операнда.</value>
+  </data>
+  <data name="iinOperatorDescription" xml:space="preserve">
+    <value>Оператор изоляции — регистр нечувствителен. Возвращает TRUE, если тестовое значение (левый операнд) точно совпадает хотя бы с одним из значений правого операнда.</value>
+  </data>
+  <data name="cinOperatorDescription" xml:space="preserve">
+    <value>Оператор изоляции — регистр имеет значение. Возвращает TRUE, если тестовое значение (левый операнд) точно совпадает хотя бы с одним из значений правого операнда.</value>
+  </data>
+  <data name="notinOperatorDescription" xml:space="preserve">
+    <value>Оператор изоляции — регистр имеет значение. Возвращает TRUE, если тестовое значение (левый операнд) точно не совпадает ни с одним из значений в правом операнде.</value>
+  </data>
+  <data name="inotinOperatorDescription" xml:space="preserve">
+    <value>Оператор изоляции — регистр нечувствителен. Возвращает TRUE, если тестовое значение (левый операнд) точно не совпадает ни с одним из значений в правом операнде.</value>
+  </data>
+  <data name="cnotinOperatorDescription" xml:space="preserve">
+    <value>Оператор изоляции — регистр имеет значение. Возвращает TRUE, если тестовое значение (левый операнд) точно не совпадает ни с одним из значений в правом операнде.</value>
+  </data>
+  <data name="splitOperatorDescription" xml:space="preserve">
+    <value>Разделение символов — без учета регистра. Разделить одну или несколько строк на подстроки. 
+-Split &lt;String&gt; 
+
+&lt;String&gt; -Split &lt;Delimiter&gt;[,&lt;Max-substrings&gt;[,"&lt;Options&gt;"]] 
+
+&lt;String&gt; -Split {&lt;ScriptBlock&gt;} [,&lt;Max-substrings&gt;]</value>
+  </data>
+  <data name="isplitOperatorDescription" xml:space="preserve">
+    <value>Разделение символов — без учета регистра. Разделить одну или несколько строк на подстроки. 
+-Split &lt;String&gt; 
+
+&lt;String&gt; -Split &lt;Delimiter&gt;[,&lt;Max-substrings&gt;[,"&lt;Options&gt;"]] 
+
+&lt;String&gt; -Split {&lt;ScriptBlock&gt;} [,&lt;Max-substrings&gt;]</value>
+  </data>
+  <data name="csplitOperatorDescription" xml:space="preserve">
+    <value>Разделение текста — с учетом регистра. Разделить одну или несколько строк на подстроки. 
+-Split &lt;String&gt; 
+
+&lt;String&gt; -Split &lt;Delimiter&gt;[,&lt;Max-substrings&gt;[,"&lt;Options&gt;"]] 
+
+&lt;String&gt; -Split {&lt;ScriptBlock&gt;} [,&lt;Max-substrings&gt;]</value>
+  </data>
+  <data name="isnotOperatorDescription" xml:space="preserve">
+    <value>Возвращает TRUE, если левый операнд не является экземпляром указанного типа .NET Framework (правый операнд).</value>
+  </data>
+  <data name="isOperatorDescription" xml:space="preserve">
+    <value>Возвращает TRUE, если левый операнд является экземпляром указанного типа .NET Framework (правый операнд).</value>
+  </data>
+  <data name="asOperatorDescription" xml:space="preserve">
+    <value>Преобразует левый операнд в указанный тип .NET Framework (правый операнд).</value>
+  </data>
+  <data name="fOperatorDescription" xml:space="preserve">
+    <value>Форматирует строки, используя метод format строковых объектов.</value>
+  </data>
+  <data name="andOperatorDescription" xml:space="preserve">
+    <value>Логическое "И". Возвращает TRUE, если оба утверждения истинны.</value>
+  </data>
+  <data name="bandOperatorDescription" xml:space="preserve">
+    <value>Побитовое И</value>
+  </data>
+  <data name="orOperatorDescription" xml:space="preserve">
+    <value>Логическое или. Истина, когда истинно хотя бы одно из утверждений или оба утверждения.</value>
+  </data>
+  <data name="borOperatorDescription" xml:space="preserve">
+    <value>Побитовое ИЛИ (включительно)</value>
+  </data>
+  <data name="xorOperatorDescription" xml:space="preserve">
+    <value>Логическое исключающее ИЛИ. Возвращает TRUE, если одно из утверждений истинно, а другое ложно.</value>
+  </data>
+  <data name="bxorOperatorDescription" xml:space="preserve">
+    <value>Побитовое ИЛИ (исключающее)</value>
+  </data>
+  <data name="joinOperatorDescription" xml:space="preserve">
+    <value>Join - объединить несколько строк в одну. 
+-Join &lt;String[]&gt; 
+&lt;String[]&gt; -Join &lt;Delimiter&gt;</value>
+  </data>
+  <data name="shlOperatorDescription" xml:space="preserve">
+    <value>Битовый оператор сдвига влево. Вставляет ноль в крайний правый бит.</value>
+  </data>
+  <data name="shrOperatorDescription" xml:space="preserve">
+    <value>Битовый оператор сдвига вправо. Вставляет ноль в самый левый бит. Для знаковых значений знаковый бит сохраняется.</value>
+  </data>
+  <data name="NameHashtableKeyDescription" xml:space="preserve">
+    <value>[строка] 
+Указывает название создаваемого свойства.</value>
+  </data>
+  <data name="LabelHashtableKeyDescription" xml:space="preserve">
+    <value>[строка] 
+Указывает название создаваемого свойства.</value>
+  </data>
+  <data name="ExpressionHashtableKeyDescription" xml:space="preserve">
+    <value>[scriptblock] 
+Блок скрипта, используемый для вычисления значения нового свойства.</value>
+  </data>
+  <data name="AlignmentHashtableKeyDescription" xml:space="preserve">
+    <value>[строка] 
+Определите, как значения отображаются в столбце. 
+Допустимые значения: 'left', 'center' или 'right'.</value>
+  </data>
+  <data name="FormatStringHashtableKeyDescription" xml:space="preserve">
+    <value>[строка] 
+Указывает строку формата, определяющую способ форматирования значения для вывода.</value>
+  </data>
+  <data name="WidthHashtableKeyDescription" xml:space="preserve">
+    <value>[int] 
+Указывает максимальную ширину столбца в таблице при отображении значения. 
+Значение должно быть больше 0.</value>
+  </data>
+  <data name="DepthHashtableKeyDescription" xml:space="preserve">
+    <value>[int] 
+Ключ глубины определяет глубину расширения для каждого свойства.</value>
+  </data>
+  <data name="AscendingHashtableKeyDescription" xml:space="preserve">
+    <value>[bool] 
+Задает порядок сортировки для одного или нескольких свойств.</value>
+  </data>
+  <data name="DescendingHashtableKeyDescription" xml:space="preserve">
+    <value>[bool] 
+Задает порядок сортировки для одного или нескольких свойств.</value>
+  </data>
+  <data name="LogNameHashtableKeyDescription" xml:space="preserve">
+    <value>[String[]]
+Указывает имена журналов, из которых нужно получить события. 
+Поддерживает подстановочные знаки.</value>
+  </data>
+  <data name="ProviderNameHashtableKeyDescription" xml:space="preserve">
+    <value>[String[]]
+Указывает поставщиков журналов событий, от которых следует получать события. 
+Поддерживает подстановочные знаки.</value>
+  </data>
+  <data name="PathHashtableKeyDescription" xml:space="preserve">
+    <value>[String[]]
+Указывает пути к файлам журналов, из которых нужно получать события. 
+Допустимые форматы файлов: .etl, .evt и .evtx</value>
+  </data>
+  <data name="KeywordsHashtableKeyDescription" xml:space="preserve">
+    <value>[Long[]]
+Выбирает события с указанными ключевыми битовыми масками. 
+Ниже приведены стандартные ключевые слова: 
+4503599627370496: AuditFailure 
+9007199254740992: AuditSuccess 
+4503599627370496: CorrelationHint 
+18014398509481984: CorrelationHint2 
+36028797018963968: EventLogClassic 
+281474976710656: ResponseTime
+2251799813685248: Sqm
+562949953421312: WdiContext 
+1125899906842624: WdiDiagnostic</value>
+  </data>
+  <data name="IDHashtableKeyDescription" xml:space="preserve">
+    <value>[int[]] 
+Выбирает события с указанными идентификаторами.</value>
+  </data>
+  <data name="LevelHashtableKeyDescription" xml:space="preserve">
+    <value>[int[]] 
+Выбирает события с указанными уровнями логирования. 
+Допустимы следующие уровни логирования: 
+1: Критический 
+2: Ошибка 
+3: Предупреждение 
+4: Информационный 
+5: Многословный</value>
+  </data>
+  <data name="StartTimeHashtableKeyDescription" xml:space="preserve">
+    <value>[datetime]
+Выбирает события, созданные после указанной даты и времени.</value>
+  </data>
+  <data name="EndTimeHashtableKeyDescription" xml:space="preserve">
+    <value>[datetime]
+Выбирает события, созданные до указанной даты и времени.</value>
+  </data>
+  <data name="UserIDHashtableKeyDescription" xml:space="preserve">
+    <value>[строка] 
+Выбирает события, сгенерированные указанным пользователем. 
+Это может быть либо строковое представление SID, либо домен и имя пользователя в формате DOMAIN\USERNAME или USERNAME@DOMAIN.</value>
+  </data>
+  <data name="DataHashtableKeyDescription" xml:space="preserve">
+    <value>[string[]] 
+Выбирает события, имеющие любое из указанных значений в разделе EventData.</value>
+  </data>
+  <data name="SuppressHashFilterHashtableKeyDescription" xml:space="preserve">
+    <value>[hashtable]
+Исключаются события, соответствующие значениям, указанным в хэш-таблице.</value>
+  </data>
+  <data name="RequiresModulesParameterDescription" xml:space="preserve">
+    <value>[строка] или [хеш-таблица] 
+Указывает массив модулей PowerShell, необходимых для выполнения скрипта. 
+Каждый элемент может быть либо строкой со значением имени модуля, либо хэш-таблицей со следующими ключами: 
+Название: Название модуля 
+GUID: GUID модуля 
+Один из следующих вариантов: 
+ModuleVersion: Указывает минимально допустимую версию модуля. 
+RequiredVersion: Указывает точную, необходимую версию модуля. 
+MaximumVersion: Указывает максимально допустимую версию модуля.</value>
+  </data>
+  <data name="RequiresPSEditionParameterDescription" xml:space="preserve">
+    <value>[строка] 
+Указывает версию PowerShell, необходимую для выполнения скрипта. 
+Допустимые значения: "Core" и "Desktop".</value>
+  </data>
+  <data name="RequiresRunAsAdministratorParameterDescription" xml:space="preserve">
+    <value>[switch]
+Указывает, что PowerShell должен запускаться от имени администратора в Windows. 
+Это должен быть последний параметр в строке оператора #requires.</value>
+  </data>
+  <data name="RequiresVersionParameterDescription" xml:space="preserve">
+    <value>[версия] 
+Указывает минимальную версию PowerShell, необходимую для выполнения скрипта.</value>
+  </data>
+  <data name="RequiresPsEditionCoreDescription" xml:space="preserve">
+    <value>Указывает, что для запуска скрипта требуется PowerShell версии 7+.</value>
+  </data>
+  <data name="RequiresPsEditionDesktopDescription" xml:space="preserve">
+    <value>Указывает, что для запуска скрипта требуется Windows PowerShell 5.1.</value>
+  </data>
+  <data name="RequiresModuleSpecModuleNameDescription" xml:space="preserve">
+    <value>[строка] 
+Обязательно. Указывает имя модуля.</value>
+  </data>
+  <data name="RequiresModuleSpecGUIDDescription" xml:space="preserve">
+    <value>[строка] 
+Необязательно. Указывает GUID модуля.</value>
+  </data>
+  <data name="RequiresModuleSpecModuleVersionDescription" xml:space="preserve">
+    <value>[строка] 
+Указывает минимально допустимую версию модуля.</value>
+  </data>
+  <data name="RequiresModuleSpecRequiredVersionDescription" xml:space="preserve">
+    <value>[строка] 
+Указывает точную, необходимую версию модуля.</value>
+  </data>
+  <data name="RequiresModuleSpecMaximumVersionDescription" xml:space="preserve">
+    <value>[строка] 
+Указывает максимально допустимую версию модуля.</value>
+  </data>
+  <data name="CommentHelpSYNOPSISKeywordDescription" xml:space="preserve">
+    <value>Краткое описание функции или скрипта. 
+Это ключевое слово можно использовать только один раз в каждой теме.</value>
+  </data>
+  <data name="CommentHelpDESCRIPTIONKeywordDescription" xml:space="preserve">
+    <value>Подробное описание функции или скрипта. 
+Это ключевое слово можно использовать только один раз в каждой теме.</value>
+  </data>
+  <data name="CommentHelpPARAMETERKeywordDescription" xml:space="preserve">
+    <value>. PARAMETER &lt;Parameter-Name&gt;
+Описание параметра. 
+Добавьте ключевое слово .PARAMETER для каждого параметра в синтаксисе функции или скрипта.</value>
+  </data>
+  <data name="CommentHelpEXAMPLEKeywordDescription" xml:space="preserve">
+    <value>Пример команды, использующей функцию или скрипт, с возможностью добавления примера вывода и описания. 
+Повторите это ключевое слово для каждого примера.</value>
+  </data>
+  <data name="CommentHelpINPUTSKeywordDescription" xml:space="preserve">
+    <value>Типы объектов .NET, которые можно передавать в функцию или скрипт через конвейер. 
+Вы также можете добавить описание входных объектов.</value>
+  </data>
+  <data name="CommentHelpOUTPUTSKeywordDescription" xml:space="preserve">
+    <value>Тип объектов .NET, возвращаемых командлетом. 
+Вы также можете добавить описание возвращаемых объектов.</value>
+  </data>
+  <data name="CommentHelpNOTESKeywordDescription" xml:space="preserve">
+    <value>Дополнительная информация о функции или скрипте.</value>
+  </data>
+  <data name="CommentHelpLINKKeywordDescription" xml:space="preserve">
+    <value>Название смежной темы. 
+Повторите ключевое слово .LINK для каждой связанной темы. 
+В ключевом содержимом .Link также может содержаться URI на онлайн-версию той же справочной темы.</value>
+  </data>
+  <data name="CommentHelpCOMPONENTKeywordDescription" xml:space="preserve">
+    <value>Название технологии или функции, которую использует данная функция или скрипт, или с которой она связана.</value>
+  </data>
+  <data name="CommentHelpROLEKeywordDescription" xml:space="preserve">
+    <value>Название роли пользователя для данной справочной темы.</value>
+  </data>
+  <data name="CommentHelpFUNCTIONALITYKeywordDescription" xml:space="preserve">
+    <value>Ключевые слова, описывающие предполагаемое использование функции.</value>
+  </data>
+  <data name="CommentHelpFORWARDHELPTARGETNAMEKeywordDescription" xml:space="preserve">
+    <value>.FORWARDHELPTARGETNAME &lt;Command-Name&gt; 
+Перенаправляет на справочную страницу по указанной команде.</value>
+  </data>
+  <data name="CommentHelpFORWARDHELPCATEGORYKeywordDescription" xml:space="preserve">
+    <value>.FORWARDHELPCATEGORY &lt;Category&gt; 
+Указывает категорию справки элемента в .ForwardHelpTargetName</value>
+  </data>
+  <data name="CommentHelpREMOTEHELPRUNSPACEKeywordDescription" xml:space="preserve">
+    <value>.REMOTEHELPRUNSPACE &lt;PSSession-variable&gt; 
+Указывает сессию, содержащую раздел справки. 
+Введите переменную, содержащую объект PSSession.</value>
+  </data>
+  <data name="CommentHelpEXTERNALHELPKeywordDescription" xml:space="preserve">
+    <value>.EXTERNALHELP &lt;XML Help File&gt; 
+Ключевое слово .ExternalHelp обязательно, если функция или скрипт документированы в XML-файлах.</value>
+  </data>
+  <data name="AssemblyKeywordDescription" xml:space="preserve">
+    <value>Указывает путь к загружаемой сборке .NET. 
+
+с использованием сборки &lt;.NET-assembly-path&gt;</value>
+  </data>
+  <data name="ModuleKeywordDescription" xml:space="preserve">
+    <value>Указывает модуль PowerShell, из которого следует загружать классы. 
+
+используя модуль &lt;ModuleName or Path&gt; 
+
+с использованием модуля &lt;ModuleSpecification hashtable&gt;</value>
+  </data>
+  <data name="NamespaceKeywordDescription" xml:space="preserve">
+    <value>Указывает пространство имен .NET для разрешения типов или псевдоним пространства имен. 
+
+using namespace &lt;.NET-namespace&gt; 
+
+using namespace &lt;AliasName&gt; = &lt;.NET-namespace&gt;</value>
+  </data>
+  <data name="TypeKeywordDescription" xml:space="preserve">
+    <value>Указывает псевдоним для типа .NET. 
+
+using type &lt;AliasName&gt; = &lt;.NET-type&gt;</value>
+  </data>
+  <data name="RegistryStringToolTip" xml:space="preserve">
+    <value>Обычная строка.</value>
+  </data>
+  <data name="RegistryExpandStringToolTip" xml:space="preserve">
+    <value>Строка, содержащая неразвернутые ссылки на переменные окружения, которые разворачиваются при получении значения.</value>
+  </data>
+  <data name="RegistryBinaryToolTip" xml:space="preserve">
+    <value>Двоичные данные в любой форме.</value>
+  </data>
+  <data name="RegistryDWordToolTip" xml:space="preserve">
+    <value>32-битное двоичное число.</value>
+  </data>
+  <data name="RegistryMultiStringToolTip" xml:space="preserve">
+    <value>Массив строк.</value>
+  </data>
+  <data name="RegistryQWordToolTip" xml:space="preserve">
+    <value>64-битное двоичное число.</value>
+  </data>
+  <data name="RegistryUnknownToolTip" xml:space="preserve">
+    <value>Неподдерживаемый тип данных реестра.</value>
+  </data>
+  <data name="SeparatorCommaToolTip" xml:space="preserve">
+    <value>',' - Запятая</value>
+  </data>
+  <data name="SeparatorCommaSpaceToolTip" xml:space="preserve">
+    <value>', ' - Запятая-Пробел</value>
+  </data>
+  <data name="SeparatorSemiColonToolTip" xml:space="preserve">
+    <value>';' - точка с запятой</value>
+  </data>
+  <data name="SeparatorSemiColonSpaceToolTip" xml:space="preserve">
+    <value>'; ' - Точка с запятой - Пробел</value>
+  </data>
+  <data name="SeparatorNewlineToolTip" xml:space="preserve">
+    <value>{0} - Новая строка</value>
+  </data>
+  <data name="SeparatorDashToolTip" xml:space="preserve">
+    <value>'-' - Бросаться</value>
+  </data>
+  <data name="SeparatorSpaceToolTip" xml:space="preserve">
+    <value>' ' - Пробел</value>
+  </data>
+</root>

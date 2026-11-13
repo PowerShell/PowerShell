@@ -1,0 +1,610 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CannotDeserializeTabCompletionResult" xml:space="preserve">
+    <value>Výsledek dokončování tabulátorem nelze správně deserializovat, protože vzdálené prostředí runspace neobsahuje instanci TypeTable.</value>
+  </data>
+  <data name="NoAccessToProperties" xml:space="preserve">
+    <value>Nelze získat přístup k vlastnostem instance null typu CompletionResult.</value>
+  </data>
+  <data name="bnotOperatorDescription" xml:space="preserve">
+    <value>Bitový operátor NOT</value>
+  </data>
+  <data name="notOperatorDescription" xml:space="preserve">
+    <value>Logická hodnota Ne. Neguje výrok, který za ním následuje.</value>
+  </data>
+  <data name="eqOperatorDescription" xml:space="preserve">
+    <value>Rovná se – nerozlišují se velká a malá písmena. Pokud je levý operand kolekcí, vrátí hodnoty z kolekce, které se rovnají pravému operandu. V opačném případě vrátí hodnotu TRUE, pokud se levý operand rovná pravému operandu.</value>
+  </data>
+  <data name="ieqOperatorDescription" xml:space="preserve">
+    <value>Rovná se – nerozlišují se velká a malá písmena. Pokud je levý operand kolekcí, vrátí hodnoty z kolekce, které se rovnají pravému operandu. V opačném případě vrátí hodnotu TRUE, pokud se levý operand rovná pravému operandu.</value>
+  </data>
+  <data name="ceqOperatorDescription" xml:space="preserve">
+    <value>Rovná se – rozlišují se velká a malá písmena. Pokud je levý operand kolekcí, vrátí hodnoty z kolekce, které se rovnají pravému operandu. V opačném případě vrátí hodnotu TRUE, pokud se levý operand rovná pravému operandu.</value>
+  </data>
+  <data name="neOperatorDescription" xml:space="preserve">
+    <value>Nerovná se – nerozlišují se velká a malá písmena. Pokud je levý operand kolekcí, vrátí hodnoty z kolekce, které se nerovnají pravému operandu. V opačném případě vrátí hodnotu TRUE, pokud se levý operand nerovná pravému operandu.</value>
+  </data>
+  <data name="ineOperatorDescription" xml:space="preserve">
+    <value>Nerovná se – nerozlišují se velká a malá písmena. Pokud je levý operand kolekcí, vrátí hodnoty z kolekce, které se nerovnají pravému operandu. V opačném případě vrátí hodnotu TRUE, pokud se levý operand nerovná pravému operandu.</value>
+  </data>
+  <data name="cneOperatorDescription" xml:space="preserve">
+    <value>Nerovná se – rozlišují se velká a malá písmena. Pokud je levý operand kolekcí, vrátí hodnoty z kolekce, které se nerovnají pravému operandu. V opačném případě vrátí hodnotu TRUE, pokud se levý operand nerovná pravému operandu.</value>
+  </data>
+  <data name="geOperatorDescription" xml:space="preserve">
+    <value>Větší nebo rovno – nerozlišují se velká a malá písmena. Pokud je levý operand kolekcí, vrátí hodnoty z kolekce, které jsou větší než nebo rovny pravému operandu. V opačném případě vrátí hodnotu TRUE, pokud je levý operand větší než nebo roven pravému operandu.</value>
+  </data>
+  <data name="igeOperatorDescription" xml:space="preserve">
+    <value>Větší nebo rovno – nerozlišují se velká a malá písmena. Pokud je levý operand kolekcí, vrátí hodnoty z kolekce, které jsou větší než nebo rovny pravému operandu. V opačném případě vrátí hodnotu TRUE, pokud je levý operand větší než nebo roven pravému operandu.</value>
+  </data>
+  <data name="cgeOperatorDescription" xml:space="preserve">
+    <value>Větší nebo rovno – rozlišují se velká a malá písmena. Pokud je levý operand kolekcí, vrátí hodnoty z kolekce, které jsou větší než nebo rovny pravému operandu. V opačném případě vrátí hodnotu TRUE, pokud je levý operand větší než nebo roven pravému operandu.</value>
+  </data>
+  <data name="gtOperatorDescription" xml:space="preserve">
+    <value>Větší než – nerozlišují se velká a malá písmena. Pokud je levý operand kolekcí, vrátí hodnoty z kolekce, které jsou větší než pravý operand. V opačném případě vrátí hodnotu TRUE, pokud je levý operand větší než pravý operand.</value>
+  </data>
+  <data name="igtOperatorDescription" xml:space="preserve">
+    <value>Větší než – nerozlišují se velká a malá písmena. Pokud je levý operand kolekcí, vrátí hodnoty z kolekce, které jsou větší než pravý operand. V opačném případě vrátí hodnotu TRUE, pokud je levý operand větší než pravý operand.</value>
+  </data>
+  <data name="cgtOperatorDescription" xml:space="preserve">
+    <value>Větší než – rozlišují se velká a malá písmena. Pokud je levý operand kolekcí, vrátí hodnoty z kolekce, které jsou větší než pravý operand. V opačném případě vrátí hodnotu TRUE, pokud je levý operand větší než pravý operand.</value>
+  </data>
+  <data name="ltOperatorDescription" xml:space="preserve">
+    <value>Menší než – nerozlišují se velká a malá písmena. Pokud je levý operand kolekcí, vrátí hodnoty z kolekce, které jsou menší než pravý operand. V opačném případě vrátí hodnotu TRUE, pokud je levý operand menší než pravý operand.</value>
+  </data>
+  <data name="iltOperatorDescription" xml:space="preserve">
+    <value>Menší než – nerozlišují se velká a malá písmena. Pokud je levý operand kolekcí, vrátí hodnoty z kolekce, které jsou menší než pravý operand. V opačném případě vrátí hodnotu TRUE, pokud je levý operand menší než pravý operand.</value>
+  </data>
+  <data name="cltOperatorDescription" xml:space="preserve">
+    <value>Menší než – rozlišují se malá a velká písmena. Pokud je levý operand kolekcí, vrátí hodnoty z kolekce, které jsou menší než pravý operand. V opačném případě vrátí hodnotu TRUE, pokud je levý operand menší než pravý operand.</value>
+  </data>
+  <data name="leOperatorDescription" xml:space="preserve">
+    <value>Menší nebo rovno – nerozlišují se velká a malá písmena. Pokud je levý operand kolekcí, vrátí hodnoty z kolekce, které jsou menší než nebo rovny pravému operandu. V opačném případě vrátí hodnotu TRUE, pokud je levý operand menší než nebo roven pravému operandu.</value>
+  </data>
+  <data name="ileOperatorDescription" xml:space="preserve">
+    <value>Menší nebo rovno – nerozlišují se velká a malá písmena. Pokud je levý operand kolekcí, vrátí hodnoty z kolekce, které jsou menší než nebo rovny pravému operandu. V opačném případě vrátí hodnotu TRUE, pokud je levý operand menší než nebo roven pravému operandu.</value>
+  </data>
+  <data name="cleOperatorDescription" xml:space="preserve">
+    <value>Menší nebo rovno – rozlišují se velká a malá písmena. Pokud je levý operand kolekcí, vrátí hodnoty z kolekce, které jsou menší než nebo rovny pravému operandu. V opačném případě vrátí hodnotu TRUE, pokud je levý operand menší než nebo roven pravému operandu.</value>
+  </data>
+  <data name="likeOperatorDescription" xml:space="preserve">
+    <value>Operátor porovnávání se zástupnými znaky – nerozlišují se velká a malá písmena. Pokud je levý operand kolekcí, vrátí hodnoty z kolekce, které odpovídají pravému operandu. V opačném případě vrátí hodnotu TRUE, pokud levý operand odpovídá pravému operandu.</value>
+  </data>
+  <data name="ilikeOperatorDescription" xml:space="preserve">
+    <value>Operátor porovnávání se zástupnými znaky – nerozlišují se velká a malá písmena. Pokud je levý operand kolekcí, vrátí hodnoty z kolekce, které odpovídají pravému operandu. V opačném případě vrátí hodnotu TRUE, pokud levý operand odpovídá pravému operandu.</value>
+  </data>
+  <data name="clikeOperatorDescription" xml:space="preserve">
+    <value>Operátor porovnávání pomocí zástupných znaků – rozlišují se velká a malá písmena. Pokud je levý operand kolekcí, vrátí hodnoty z kolekce, které odpovídají pravému operandu. V opačném případě vrátí hodnotu TRUE, pokud levý operand odpovídá pravému operandu.</value>
+  </data>
+  <data name="notlikeOperatorDescription" xml:space="preserve">
+    <value>Operátor porovnávání se zástupnými znaky – nerozlišují se velká a malá písmena. Pokud je levý operand kolekcí, vrátí hodnoty z kolekce, které neodpovídají pravému operandu. V opačném případě vrátí hodnotu TRUE, pokud levý operand neodpovídá pravému operandu.</value>
+  </data>
+  <data name="inotlikeOperatorDescription" xml:space="preserve">
+    <value>Operátor porovnávání se zástupnými znaky – nerozlišují se velká a malá písmena. Pokud je levý operand kolekcí, vrátí hodnoty z kolekce, které neodpovídají pravému operandu. V opačném případě vrátí hodnotu TRUE, pokud levý operand neodpovídá pravému operandu.</value>
+  </data>
+  <data name="cnotlikeOperatorDescription" xml:space="preserve">
+    <value>Operátor porovnávání pomocí zástupných znaků – rozlišují se velká a malá písmena. Pokud je levý operand kolekcí, vrátí hodnoty z kolekce, které neodpovídají pravému operandu. V opačném případě vrátí hodnotu TRUE, pokud levý operand neodpovídá pravému operandu.</value>
+  </data>
+  <data name="matchOperatorDescription" xml:space="preserve">
+    <value>Operátor porovnávání regulárních výrazů – nerozlišují se velká a malá písmena. Pokud je levý operand kolekcí, vrátí hodnoty z kolekce, které odpovídají pravému operandu. V opačném případě vrátí hodnotu TRUE, pokud levý operand odpovídá pravému operandu.</value>
+  </data>
+  <data name="imatchOperatorDescription" xml:space="preserve">
+    <value>Operátor porovnávání regulárních výrazů – nerozlišují se velká a malá písmena. Pokud je levý operand kolekcí, vrátí hodnoty z kolekce, které odpovídají pravému operandu. V opačném případě vrátí hodnotu TRUE, pokud levý operand odpovídá pravému operandu.</value>
+  </data>
+  <data name="cmatchOperatorDescription" xml:space="preserve">
+    <value>Operátor porovnávání regulárních výrazů – rozlišují se velká a malá písmena. Pokud je levý operand kolekcí, vrátí hodnoty z kolekce, které odpovídají pravému operandu. V opačném případě vrátí hodnotu TRUE, pokud levý operand odpovídá pravému operandu.</value>
+  </data>
+  <data name="notmatchOperatorDescription" xml:space="preserve">
+    <value>Operátor porovnávání regulárních výrazů – nerozlišují se velká a malá písmena. Pokud je levý operand kolekcí, vrátí hodnoty z kolekce, které neodpovídají pravému operandu. V opačném případě vrátí hodnotu TRUE, pokud levý operand neodpovídá pravému operandu.</value>
+  </data>
+  <data name="inotmatchOperatorDescription" xml:space="preserve">
+    <value>Operátor porovnávání regulárních výrazů – nerozlišují se velká a malá písmena. Pokud je levý operand kolekcí, vrátí hodnoty z kolekce, které neodpovídají pravému operandu. V opačném případě vrátí hodnotu TRUE, pokud levý operand neodpovídá pravému operandu.</value>
+  </data>
+  <data name="cnotmatchOperatorDescription" xml:space="preserve">
+    <value>Operátor porovnávání regulárních výrazů – rozlišují se velká a malá písmena. Pokud je levý operand kolekcí, vrátí hodnoty z kolekce, které neodpovídají pravému operandu. V opačném případě vrátí hodnotu TRUE, pokud levý operand neodpovídá pravému operandu.</value>
+  </data>
+  <data name="replaceOperatorDescription" xml:space="preserve">
+    <value>Operátor nahrazení – nerozlišují se velká a malá písmena. Změní levý operand. Příklad: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
+  </data>
+  <data name="ireplaceOperatorDescription" xml:space="preserve">
+    <value>Operátor nahrazení – nerozlišují se velká a malá písmena. Změní levý operand. Příklad: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
+  </data>
+  <data name="creplaceOperatorDescription" xml:space="preserve">
+    <value>Operátor nahrazení – rozlišují se velká a malá písmena Změní levý operand. Příklad: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
+  </data>
+  <data name="containsOperatorDescription" xml:space="preserve">
+    <value>Operátor zahrnutí – nerozlišují se velká a malá písmena. Vrátí hodnotu TRUE, pokud testovaná hodnota (pravý operand) přesně odpovídá alespoň jedné z hodnot v levém operandu.</value>
+  </data>
+  <data name="icontainsOperatorDescription" xml:space="preserve">
+    <value>Operátor zahrnutí – nerozlišují se velká a malá písmena. Vrátí hodnotu TRUE, pokud testovaná hodnota (pravý operand) přesně odpovídá alespoň jedné z hodnot v levém operandu.</value>
+  </data>
+  <data name="ccontainsOperatorDescription" xml:space="preserve">
+    <value>Operátor zahrnutí – rozlišují se velká a malá písmena. Vrátí hodnotu TRUE pouze v případě, že testovaná hodnota (pravý operand) přesně odpovídá alespoň jedné z hodnot v levém operandu.</value>
+  </data>
+  <data name="notcontainsOperatorDescription" xml:space="preserve">
+    <value>Operátor zahrnutí – nerozlišují se velká a malá písmena. Vrátí hodnotu TRUE, pokud testovaná hodnota (pravý operand) přesně neodpovídá žádné z hodnot v levém operandu.</value>
+  </data>
+  <data name="inotcontainsOperatorDescription" xml:space="preserve">
+    <value>Operátor zahrnutí – nerozlišují se velká a malá písmena. Vrátí hodnotu TRUE, pokud testovaná hodnota (pravý operand) přesně neodpovídá žádné z hodnot v levém operandu.</value>
+  </data>
+  <data name="cnotcontainsOperatorDescription" xml:space="preserve">
+    <value>Operátor zahrnutí – rozlišují se velká a malá písmena. Vrátí hodnotu TRUE, pokud testovaná hodnota (pravý operand) přesně neodpovídá žádné z hodnot v levém operandu.</value>
+  </data>
+  <data name="inOperatorDescription" xml:space="preserve">
+    <value>Operátor zahrnutí – nerozlišují se velká a malá písmena. Vrátí hodnotu TRUE, pokud testovaná hodnota (levý operand) přesně odpovídá alespoň jedné z hodnot v pravém operandu.</value>
+  </data>
+  <data name="iinOperatorDescription" xml:space="preserve">
+    <value>Operátor zahrnutí – nerozlišují se velká a malá písmena. Vrátí hodnotu TRUE, pokud testovaná hodnota (levý operand) přesně odpovídá alespoň jedné z hodnot v pravém operandu.</value>
+  </data>
+  <data name="cinOperatorDescription" xml:space="preserve">
+    <value>Operátor zahrnutí – rozlišují se velká a malá písmena. Vrátí hodnotu TRUE, pokud testovaná hodnota (levý operand) přesně odpovídá alespoň jedné z hodnot v pravém operandu.</value>
+  </data>
+  <data name="notinOperatorDescription" xml:space="preserve">
+    <value>Operátor zahrnutí – rozlišují se velká a malá písmena. Vrátí hodnotu TRUE, pokud testovaná hodnota (levý operand) přesně neodpovídá žádné z hodnot v pravém operandu.</value>
+  </data>
+  <data name="inotinOperatorDescription" xml:space="preserve">
+    <value>Operátor zahrnutí – nerozlišují se velká a malá písmena. Vrátí hodnotu TRUE, pokud testovaná hodnota (levý operand) přesně neodpovídá žádné z hodnot v pravém operandu.</value>
+  </data>
+  <data name="cnotinOperatorDescription" xml:space="preserve">
+    <value>Operátor zahrnutí – rozlišují se velká a malá písmena. Vrátí hodnotu TRUE, pokud testovaná hodnota (levý operand) přesně neodpovídá žádné z hodnot v pravém operandu.</value>
+  </data>
+  <data name="splitOperatorDescription" xml:space="preserve">
+    <value>Rozdělení – nerozlišují se velká a malá písmena. Rozdělí jeden nebo více řetězců na podřetězce.
+-Split &lt;String&gt;
+
+&lt;String&gt; -Split &lt;Delimiter&gt;[,&lt;Max-substrings&gt;[,"&lt;Options&gt;"]]
+
+&lt;String&gt; -Split {&lt;ScriptBlock&gt;} [,&lt;Max-substrings&gt;]</value>
+  </data>
+  <data name="isplitOperatorDescription" xml:space="preserve">
+    <value>Rozdělení – nerozlišují se velká a malá písmena. Rozdělí jeden nebo více řetězců na podřetězce.
+-Split &lt;String&gt;
+
+&lt;String&gt; -Split &lt;Delimiter&gt;[,&lt;Max-substrings&gt;[,"&lt;Options&gt;"]]
+
+&lt;String&gt; -Split {&lt;ScriptBlock&gt;} [,&lt;Max-substrings&gt;]</value>
+  </data>
+  <data name="csplitOperatorDescription" xml:space="preserve">
+    <value>Rozdělení – rozlišují se velká a malá písmena. Rozdělí jeden nebo více řetězců na podřetězce.
+-Split &lt;String&gt;
+
+&lt;String&gt; -Split &lt;Delimiter&gt;[,&lt;Max-substrings&gt;[,"&lt;Options&gt;"]]
+
+&lt;String&gt; -Split {&lt;ScriptBlock&gt;} [,&lt;Max-substrings&gt;]</value>
+  </data>
+  <data name="isnotOperatorDescription" xml:space="preserve">
+    <value>Vrátí hodnotu TRUE, pokud levý operand není instancí zadaného typu .NET Framework (pravý operand).</value>
+  </data>
+  <data name="isOperatorDescription" xml:space="preserve">
+    <value>Vrátí hodnotu TRUE, pokud levý operand je instancí zadaného typu .NET Framework (pravý operand).</value>
+  </data>
+  <data name="asOperatorDescription" xml:space="preserve">
+    <value>Převede levý operand na zadaný typ .NET Framework (pravý operand).</value>
+  </data>
+  <data name="fOperatorDescription" xml:space="preserve">
+    <value>Formátuje řetězce pomocí metody Format objektů String.</value>
+  </data>
+  <data name="andOperatorDescription" xml:space="preserve">
+    <value>Logické A Vrátí hodnotu TRUE, pokud jsou oba výroky pravdivé.</value>
+  </data>
+  <data name="bandOperatorDescription" xml:space="preserve">
+    <value>Bitový operátor AND</value>
+  </data>
+  <data name="orOperatorDescription" xml:space="preserve">
+    <value>Logické NEBO TRUE, pokud jsou jeden nebo oba výroky TRUE.</value>
+  </data>
+  <data name="borOperatorDescription" xml:space="preserve">
+    <value>Bitový operátor OR (včetně)</value>
+  </data>
+  <data name="xorOperatorDescription" xml:space="preserve">
+    <value>Logické XOR Vrátí hodnotu TRUE, pokud jeden z příkazů vrátí hodnotu TRUE a druhý hodnotu FALSE.</value>
+  </data>
+  <data name="bxorOperatorDescription" xml:space="preserve">
+    <value>Bitový operátor OR (výhradní)</value>
+  </data>
+  <data name="joinOperatorDescription" xml:space="preserve">
+    <value>Spojení – zkombinujte více řetězců do jednoho řetězce.
+-Join &lt;Řetězec[]&gt;
+&lt;Řetězec[]&gt; -Join &lt;Oddělovač&gt;</value>
+  </data>
+  <data name="shlOperatorDescription" xml:space="preserve">
+    <value>Bitový operátor Posun doleva Vloží nulu do nejvíce vpravo umístěné pozice.</value>
+  </data>
+  <data name="shrOperatorDescription" xml:space="preserve">
+    <value>Bitový operátor Posun doprava Vloží nulu do nejvíce vlevo umístěné pozice. U hodnot se znaménkem se zachová znaménkový bit.</value>
+  </data>
+  <data name="NameHashtableKeyDescription" xml:space="preserve">
+    <value>[string]
+Určuje název vytvářené vlastnosti.</value>
+  </data>
+  <data name="LabelHashtableKeyDescription" xml:space="preserve">
+    <value>[string]
+Určuje název vytvářené vlastnosti.</value>
+  </data>
+  <data name="ExpressionHashtableKeyDescription" xml:space="preserve">
+    <value>[scriptblock]
+Blok skriptu použitý k výpočtu hodnoty nové vlastnosti</value>
+  </data>
+  <data name="AlignmentHashtableKeyDescription" xml:space="preserve">
+    <value>[string]
+Definuje způsob zobrazení hodnot ve sloupci.
+Platné hodnoty jsou left, center nebo right.</value>
+  </data>
+  <data name="FormatStringHashtableKeyDescription" xml:space="preserve">
+    <value>[string]
+Určuje formátovací řetězec, který definuje způsob formátování hodnoty pro výstup.</value>
+  </data>
+  <data name="WidthHashtableKeyDescription" xml:space="preserve">
+    <value>[int]
+Určuje maximální šířku sloupce v tabulce při zobrazení hodnoty.
+Hodnota musí být větší než 0.</value>
+  </data>
+  <data name="DepthHashtableKeyDescription" xml:space="preserve">
+    <value>[int]
+Klíč depth určuje hloubku rozbalení jednotlivých vlastností.</value>
+  </data>
+  <data name="AscendingHashtableKeyDescription" xml:space="preserve">
+    <value>[bool]
+Určuje pořadí řazení pro jednu nebo více vlastností.</value>
+  </data>
+  <data name="DescendingHashtableKeyDescription" xml:space="preserve">
+    <value>[bool]
+Určuje pořadí řazení pro jednu nebo více vlastností.</value>
+  </data>
+  <data name="LogNameHashtableKeyDescription" xml:space="preserve">
+    <value>[String[]]
+Určuje názvy protokolů, ze kterých se načítají události.
+Podporuje zástupné znaky.</value>
+  </data>
+  <data name="ProviderNameHashtableKeyDescription" xml:space="preserve">
+    <value>[String[]]
+Určuje poskytovatele protokolů událostí, ze kterých se načítají události.
+Podporuje zástupné znaky.</value>
+  </data>
+  <data name="PathHashtableKeyDescription" xml:space="preserve">
+    <value>[String[]]
+Určuje cesty k souborům protokolů, ze kterých se načítají události.
+Platné formáty souborů jsou: .etl, .evt a .evtx</value>
+  </data>
+  <data name="KeywordsHashtableKeyDescription" xml:space="preserve">
+    <value>[Long[]]
+Vybere události se zadanými bitovými maskami klíčových slov.
+Následují standardní klíčová slova:
+4503599627370496: AuditFailure
+9007199254740992: AuditSuccess
+4503599627370496: CorrelationHint
+18014398509481984: CorrelationHint2
+36028797018963968: EventLogClassic
+281474976710656: ResponseTime
+2251799813685248: Sqm
+562949953421312: WdiContext
+1125899906842624: WdiDiagnostic</value>
+  </data>
+  <data name="IDHashtableKeyDescription" xml:space="preserve">
+    <value>[int[]]
+Vybere události se zadanými ID událostí.</value>
+  </data>
+  <data name="LevelHashtableKeyDescription" xml:space="preserve">
+    <value>[int[]]
+Vybere události se zadanými úrovněmi protokolování.
+Platné úrovně protokolování jsou:
+1: Kritická
+2: Chyba
+3: Upozornění
+4: Informační
+5: Podrobné</value>
+  </data>
+  <data name="StartTimeHashtableKeyDescription" xml:space="preserve">
+    <value>[datetime]
+Vybere události vytvořené po zadaném datu a čase.</value>
+  </data>
+  <data name="EndTimeHashtableKeyDescription" xml:space="preserve">
+    <value>[datetime]
+Vybere události vytvořené před zadaným datem a časem.</value>
+  </data>
+  <data name="UserIDHashtableKeyDescription" xml:space="preserve">
+    <value>[string]
+Vybere události vygenerované zadaným uživatelem.
+Může to být buď řetězcová reprezentace identifikátoru SID, nebo doména a uživatelské jméno ve formátu DOMÉNA\UŽIVATELSKÉ_JMÉNO nebo UŽIVATELSKÉ_JMÉNO@DOMÉNA.</value>
+  </data>
+  <data name="DataHashtableKeyDescription" xml:space="preserve">
+    <value>[string[]]
+Vybere události s některou ze zadaných hodnot v oddílu EventData.</value>
+  </data>
+  <data name="SuppressHashFilterHashtableKeyDescription" xml:space="preserve">
+    <value>[hashtable]
+Vyloučí události, které odpovídají hodnotám zadaným v zatřiďovací tabulce.</value>
+  </data>
+  <data name="RequiresModulesParameterDescription" xml:space="preserve">
+    <value>[string] nebo [hashtable]
+Určuje pole modulů PowerShellu, které skript vyžaduje.
+Každý prvek může být buď řetězec obsahující název modulu jako hodnotu, nebo zatřiďovací tabulka s následujícími klíči: 
+Název: Název modulu
+GUID: GUID modulu
+Jedna z následujících možností:
+ModuleVersion: Určuje minimální přijatelnou verzi modulu.
+RequiredVersion: Určuje přesnou požadovanou verzi modulu.
+MaximumVersion: Určuje nejvyšší přípustnou verzi modulu.</value>
+  </data>
+  <data name="RequiresPSEditionParameterDescription" xml:space="preserve">
+    <value>[string]
+Určuje edici PowerShellu, kterou skript vyžaduje.
+Platné hodnoty jsou Core a Desktop.</value>
+  </data>
+  <data name="RequiresRunAsAdministratorParameterDescription" xml:space="preserve">
+    <value>[switch]
+Určuje, že PowerShell musí být spuštěný jako správce ve Windows.
+Toto musí být poslední parametr na řádku příkazu #requires.</value>
+  </data>
+  <data name="RequiresVersionParameterDescription" xml:space="preserve">
+    <value>[version]
+Určuje minimální verzi PowerShellu, kterou skript vyžaduje.</value>
+  </data>
+  <data name="RequiresPsEditionCoreDescription" xml:space="preserve">
+    <value>Určuje, že skript vyžaduje ke spuštění PowerShell 7+.</value>
+  </data>
+  <data name="RequiresPsEditionDesktopDescription" xml:space="preserve">
+    <value>Určuje, že skript ke spuštění vyžaduje Windows PowerShell 5.1.</value>
+  </data>
+  <data name="RequiresModuleSpecModuleNameDescription" xml:space="preserve">
+    <value>[string]
+Povinné. Určuje název modulu.</value>
+  </data>
+  <data name="RequiresModuleSpecGUIDDescription" xml:space="preserve">
+    <value>[string]
+Volitelné. Určuje identifikátor GUID modulu.</value>
+  </data>
+  <data name="RequiresModuleSpecModuleVersionDescription" xml:space="preserve">
+    <value>[string]
+Určuje minimální přijatelnou verzi modulu.</value>
+  </data>
+  <data name="RequiresModuleSpecRequiredVersionDescription" xml:space="preserve">
+    <value>[string]
+Určuje přesnou požadovanou verzi modulu.</value>
+  </data>
+  <data name="RequiresModuleSpecMaximumVersionDescription" xml:space="preserve">
+    <value>[string]
+Určuje maximální přijatelnou verzi modulu.</value>
+  </data>
+  <data name="CommentHelpSYNOPSISKeywordDescription" xml:space="preserve">
+    <value>Stručný popis funkce nebo skriptu.
+Toto klíčové slovo lze použít v každém tématu jen jednou.</value>
+  </data>
+  <data name="CommentHelpDESCRIPTIONKeywordDescription" xml:space="preserve">
+    <value>Podrobný popis funkce nebo skriptu.
+Toto klíčové slovo lze použít v každém tématu jen jednou.</value>
+  </data>
+  <data name="CommentHelpPARAMETERKeywordDescription" xml:space="preserve">
+    <value>.PARAMETER &lt;Název-parametru&gt;
+Popis parametru
+Pro každý parametr v syntaxi funkce nebo skriptu přidejte klíčové slovo .PARAMETER.</value>
+  </data>
+  <data name="CommentHelpEXAMPLEKeywordDescription" xml:space="preserve">
+    <value>Ukázkový příkaz používající funkci nebo skript, volitelně následovaný ukázkovým výstupem a popisem.
+Toto klíčové slovo opakujte pro každý příklad.</value>
+  </data>
+  <data name="CommentHelpINPUTSKeywordDescription" xml:space="preserve">
+    <value>Typy .NET objektů, které lze předat do funkce nebo skriptu.
+Můžete také zahrnout popis vstupních objektů.</value>
+  </data>
+  <data name="CommentHelpOUTPUTSKeywordDescription" xml:space="preserve">
+    <value>Typ objektů .NET, které rutina vrací.
+Můžete také zahrnout popis vrácených objektů.</value>
+  </data>
+  <data name="CommentHelpNOTESKeywordDescription" xml:space="preserve">
+    <value>Další informace o funkci nebo skriptu</value>
+  </data>
+  <data name="CommentHelpLINKKeywordDescription" xml:space="preserve">
+    <value>Název souvisejícího tématu
+Opakujte klíčové slovo .LINK pro každé související téma.
+Obsah klíčového slova .Link může obsahovat také identifikátor URI odkazující na online verzi stejného tématu nápovědy.</value>
+  </data>
+  <data name="CommentHelpCOMPONENTKeywordDescription" xml:space="preserve">
+    <value>Název technologie nebo funkce, kterou funkce nebo skript používá nebo se kterou souvisí.</value>
+  </data>
+  <data name="CommentHelpROLEKeywordDescription" xml:space="preserve">
+    <value>Název role uživatele pro téma nápovědy</value>
+  </data>
+  <data name="CommentHelpFUNCTIONALITYKeywordDescription" xml:space="preserve">
+    <value>Klíčová slova, která popisují zamýšlené použití funkce</value>
+  </data>
+  <data name="CommentHelpFORWARDHELPTARGETNAMEKeywordDescription" xml:space="preserve">
+    <value>.FORWARDHELPTARGETNAME &lt;Název-Příkazu&gt;
+Přesměruje na téma nápovědy pro zadaný příkaz.</value>
+  </data>
+  <data name="CommentHelpFORWARDHELPCATEGORYKeywordDescription" xml:space="preserve">
+    <value>.FORWARDHELPCATEGORY &lt;Kategorie&gt;
+Určuje kategorii nápovědy položky v .ForwardHelpTargetName.</value>
+  </data>
+  <data name="CommentHelpREMOTEHELPRUNSPACEKeywordDescription" xml:space="preserve">
+    <value>.REMOTEHELPRUNSPACE &lt;proměnná-PSSession&gt;
+Určuje relaci obsahující téma nápovědy.
+Zadejte proměnnou obsahující objekt PSSession.</value>
+  </data>
+  <data name="CommentHelpEXTERNALHELPKeywordDescription" xml:space="preserve">
+    <value>.EXTERNALHELP &lt;Soubor nápovědy XML&gt;
+Klíčové slovo .ExternalHelp je vyžadováno, pokud je funkce nebo skript zdokumentován v souborech XML.</value>
+  </data>
+  <data name="AssemblyKeywordDescription" xml:space="preserve">
+    <value>Určuje cestu k sestavení .NET, které se má načíst.
+
+pomocí sestavení &lt;cesta-k-sestavení.NET&gt;</value>
+  </data>
+  <data name="ModuleKeywordDescription" xml:space="preserve">
+    <value>Určuje modul PowerShellu, ze kterého se načítají třídy.
+
+pomocí modulu &lt;NázevModulu nebo Cesta&gt;
+
+pomocí modulu &lt;ModuleSpecification hashtable&gt;</value>
+  </data>
+  <data name="NamespaceKeywordDescription" xml:space="preserve">
+    <value>Určuje obor názvů .NET pro překládání typů z oboru názvů nebo aliasu oboru názvů.
+
+pomocí oboru názvů &lt;obor-názvů-.NET&gt;
+
+pomocí oboru názvů &lt;NázevAliasu&gt; = &lt;obor-názvů-.NET&gt;</value>
+  </data>
+  <data name="TypeKeywordDescription" xml:space="preserve">
+    <value>Určuje alias pro typ .NET.
+
+pomocí typu &lt;NázevAliasu&gt; = &lt;typ-.NET&gt;</value>
+  </data>
+  <data name="RegistryStringToolTip" xml:space="preserve">
+    <value>Normální řetězec.</value>
+  </data>
+  <data name="RegistryExpandStringToolTip" xml:space="preserve">
+    <value>Řetězec obsahující nerozbalené odkazy na proměnné prostředí, které se rozbalí při načtení hodnoty.</value>
+  </data>
+  <data name="RegistryBinaryToolTip" xml:space="preserve">
+    <value>Binární data v libovolné podobě</value>
+  </data>
+  <data name="RegistryDWordToolTip" xml:space="preserve">
+    <value>32bitové binární číslo.</value>
+  </data>
+  <data name="RegistryMultiStringToolTip" xml:space="preserve">
+    <value>Pole řetězců.</value>
+  </data>
+  <data name="RegistryQWordToolTip" xml:space="preserve">
+    <value>64bitové binární číslo.</value>
+  </data>
+  <data name="RegistryUnknownToolTip" xml:space="preserve">
+    <value>Nepodporovaný datový typ registru</value>
+  </data>
+  <data name="SeparatorCommaToolTip" xml:space="preserve">
+    <value>',' – čárka</value>
+  </data>
+  <data name="SeparatorCommaSpaceToolTip" xml:space="preserve">
+    <value>', ' - čárka a mezera</value>
+  </data>
+  <data name="SeparatorSemiColonToolTip" xml:space="preserve">
+    <value>';' – středník</value>
+  </data>
+  <data name="SeparatorSemiColonSpaceToolTip" xml:space="preserve">
+    <value>'; ' – středník mezera</value>
+  </data>
+  <data name="SeparatorNewlineToolTip" xml:space="preserve">
+    <value>{0} – nový řádek</value>
+  </data>
+  <data name="SeparatorDashToolTip" xml:space="preserve">
+    <value>'-' – pomlčka</value>
+  </data>
+  <data name="SeparatorSpaceToolTip" xml:space="preserve">
+    <value>' ' – mezera</value>
+  </data>
+</root>

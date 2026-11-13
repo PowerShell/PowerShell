@@ -1,0 +1,185 @@
+# Builds and signs the reference assemblies shared by the single-file IL nupkgs (built in
+# nupkg.yml's build_nupkg job) and every RID-specific 'PowerShell' global tool package (built in
+# job/globaltool-rid-job.yml). This used to run inline inside build_nupkg, which forced every
+# consumer to wait for build_nupkg's full, long, sequential job before it could even start.
+# Extracting it into its own small job lets build_nupkg and all 8 per-RID global tool jobs
+# depend on just this one job and then run concurrently afterward.
+#
+# OneBranch pipelines don't allow the 'publish'/PublishPipelineArtifact step -- OneBranch
+# automatically publishes each job's ob_outputDirectory as that job's own artifact at the end of
+# the job (named via ob_artifactBaseName, same pattern as packaging/windows/package.yml's
+# ob_artifactBaseName + sign.yml's matching 'download: current'). So the signed ref assemblies
+# are copied into ob_outputDirectory here instead of being 'published' explicitly.
+
+jobs:
+- job: build_ref_assemblies
+  displayName: 'Build reference assemblies'
+  condition: succeeded()
+  pool:
+    type: windows
+
+  variables:
+    - name: ob_artifactBaseName
+      value: GlobalToolRefAssembly
+    - name: nugetMultiFeedWarnLevel
+      value: none
+    - name: NugetSecurityAnalysisWarningLevel
+      value: none
+    - name: skipNugetSecurityAnalysis
+      value: true
+    - name: ob_outputDirectory
+      value: '$(Build.ArtifactStagingDirectory)\ONEBRANCH_ARTIFACT'
+    - name: ob_sdl_binskim_enabled
+      value: true
+    - name: ob_sdl_tsa_configFile
+      value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+    - name: ob_sdl_credscan_suppressionsFile
+      value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+    - group: mscodehub-feed-read-general
+    - group: mscodehub-feed-read-akv
+    - group: DotNetPrivateBuildAccess
+    - group: certificate_logical_to_actual
+
+  steps:
+  - checkout: self
+    clean: true
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+      CreateJson: no
+
+  - template: /.pipelines/templates/shouldSign.yml@self
+
+  - template: /.pipelines/templates/cloneToOfficialPath.yml@self
+    parameters:
+      nativePathRoot: '$(Agent.TempDirectory)'
+
+  - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
+    parameters:
+      repoRoot: $(PowerShellRoot)
+
+  - template: /.pipelines/templates/install-dotnet.yml@self
+
+  - pwsh: |
+      Set-Location -Path '$(PowerShellRoot)'
+      Import-Module "$(PowerShellRoot)/build.psm1" -Force
+
+      # Locates a project's generated reference assembly (obj/.../refint/<name>.dll) or XML doc
+      # comment file (bin/.../<name>.xml) by searching recursively instead of assuming a fixed
+      # "obj/Release/net11.0/refint/<name>.dll" path. Different SDK versions can insert an extra
+      # path segment (e.g. a RID folder) between the TFM and "refint" for a project built as
+      # part of a RID-specific publish graph, which made the previous hardcoded path brittle.
+      # For .dll lookups, only the immediate parent folder is required to be named "refint";
+      # otherwise this just returns the first/only match under $SearchRoot.
+      function Find-GeneratedFile {
+        param(
+          [Parameter(Mandatory)] [string] $SearchRoot,
+          [Parameter(Mandatory)] [string] $FileName,
+          [string] $RequiredParentFolderName
+        )
+
+        if (-not (Test-Path $SearchRoot)) {
+          return $null
+        }
+
+        $candidates = Get-ChildItem -Path $SearchRoot -Filter $FileName -Recurse -File -ErrorAction SilentlyContinue
+        if ($RequiredParentFolderName) {
+          $candidates = $candidates | Where-Object { $_.Directory.Name -eq $RequiredParentFolderName }
+        }
+
+        return $candidates | Select-Object -First 1
+      }
+
+      $sharedModules = @('Microsoft.PowerShell.Commands.Management',
+                        'Microsoft.PowerShell.Commands.Utility',
+                        'Microsoft.PowerShell.ConsoleHost',
+                        'Microsoft.PowerShell.Security',
+                        'System.Management.Automation'
+                        )
+
+      $winOnlyModules = @('Microsoft.Management.Infrastructure.CimCmdlets',
+                          'Microsoft.PowerShell.Commands.Diagnostics',
+                          'Microsoft.PowerShell.CoreCLR.Eventing',
+                          'Microsoft.WSMan.Management',
+                          'Microsoft.WSMan.Runtime'
+                          )
+
+      $refAssemblyFolder = Join-Path '$(System.ArtifactsDirectory)' 'RefAssembly'
+      $null = New-Item -Path $refAssemblyFolder -Force -Verbose -Type Directory
+
+      Start-PSBuild -Clean -Runtime linux-x64 -Configuration Release -ReleaseTag $(ReleaseTagVar)
+
+      $sharedModules | Foreach-Object {
+        $moduleName = $_
+        $objRoot = "$(PowerShellRoot)\src\$moduleName\obj\Release"
+        $refFile = Find-GeneratedFile -SearchRoot $objRoot -FileName "$moduleName.dll" -RequiredParentFolderName 'refint'
+        if (-not $refFile) {
+          Write-Verbose -Verbose "Reference assembly for $moduleName not found under $objRoot. Dumping obj tree for diagnostics:"
+          Get-ChildItem -Path $objRoot -Recurse -File -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName | Write-Verbose -Verbose
+          throw "Reference assembly for $moduleName was not found under $objRoot (expected a 'refint\$moduleName.dll')."
+        }
+        Write-Verbose -Verbose "RefAssembly: $($refFile.FullName)"
+        Copy-Item -Path $refFile.FullName -Destination "$refAssemblyFolder\$moduleName.dll" -Verbose
+
+        $binRoot = "$(PowerShellRoot)\src\$moduleName\bin\Release"
+        $refDoc = Find-GeneratedFile -SearchRoot $binRoot -FileName "$moduleName.xml"
+        if (-not $refDoc) {
+          Write-Warning "$moduleName.xml not found under $binRoot"
+          Get-ChildItem -Path $binRoot -Recurse -File -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName | Out-String | Write-Verbose -Verbose
+        }
+        else {
+          Copy-Item -Path $refDoc.FullName -Destination "$refAssemblyFolder\$moduleName.xml" -Verbose
+        }
+      }
+
+      Start-PSBuild -Clean -Runtime win7-x64 -Configuration Release -ReleaseTag $(ReleaseTagVar)
+
+      $winOnlyModules | Foreach-Object {
+        $moduleName = $_
+        $objRoot = "$(PowerShellRoot)\src\$moduleName\obj\Release"
+        $refFile = Find-GeneratedFile -SearchRoot $objRoot -FileName "$moduleName.dll" -RequiredParentFolderName 'refint'
+        if (-not $refFile) {
+          Write-Verbose -Verbose "Reference assembly for $moduleName not found under $objRoot. Dumping obj tree for diagnostics:"
+          Get-ChildItem -Path $objRoot -Recurse -File -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName | Write-Verbose -Verbose
+          throw "Reference assembly for $moduleName was not found under $objRoot (expected a 'refint\$moduleName.dll')."
+        }
+        Write-Verbose -Verbose "RefAssembly: $($refFile.FullName)"
+        Copy-Item -Path $refFile.FullName -Destination "$refAssemblyFolder\$moduleName.dll" -Verbose
+
+        $binRoot = "$(PowerShellRoot)\src\$moduleName\bin\Release"
+        $refDoc = Find-GeneratedFile -SearchRoot $binRoot -FileName "$moduleName.xml"
+        if (-not $refDoc) {
+          Write-Warning "$moduleName.xml not found under $binRoot"
+          Get-ChildItem -Path $binRoot -Recurse -File -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName | Out-String | Write-Verbose -Verbose
+        }
+        else {
+          Copy-Item -Path $refDoc.FullName -Destination "$refAssemblyFolder\$moduleName.xml" -Verbose
+        }
+      }
+
+      Get-ChildItem $refAssemblyFolder -Recurse | Out-String | Write-Verbose -Verbose
+    displayName: Build reference assemblies
+    env:
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+      VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: $(VSS_NUGET_EXTERNAL_FEED_ENDPOINTS)
+
+  - task: onebranch.pipeline.signing@1
+    displayName: Sign ref assemblies
+    inputs:
+      command: 'sign'
+      signing_profile: external_distribution
+      files_to_sign: '**\*.dll'
+      search_root: '$(System.ArtifactsDirectory)\RefAssembly'
+
+  # OneBranch disallows the 'publish'/PublishPipelineArtifact step ("Onebranch automatically
+  # upload binaries at the end of the job"). Copy into ob_outputDirectory instead; OneBranch
+  # publishes its contents as this job's own artifact, named via ob_artifactBaseName above.
+  - pwsh: |
+      if (-not (Test-Path '$(ob_outputDirectory)')) {
+        New-Item -ItemType Directory -Path '$(ob_outputDirectory)' -Force
+      }
+      Copy-Item -Path '$(System.ArtifactsDirectory)\RefAssembly\*' -Destination '$(ob_outputDirectory)' -Recurse -Force -Verbose
+    displayName: 'Copy GlobalToolRefAssembly to output directory'

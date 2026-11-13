@@ -103,11 +103,20 @@ Describe "Get-Timezone test cases" -Tags "CI" {
         Assert-ListsSame $selectedTZ $result
     }
 
-    It "Call Get-TimeZone using Name param and singe item" {
-        $timezoneList = Get-TimeZone -ListAvailable
-        $timezoneName = $timezoneList[0].StandardName
-        $observed = Get-TimeZone -Name $timezoneName
-        $observed.StandardName | Should -Be $timezoneName
+    It "Call Get-TimeZone using Name param and single item" {
+        $timezone = $TimeZonesAvailable |
+            Group-Object -Property StandardName |
+            Where-Object Count -EQ 1 |
+            Select-Object -First 1 -ExpandProperty Group
+
+        if ($null -eq $timezone) {
+            Set-ItResult -Skipped -Because "No available time zone has a unique StandardName on this platform."
+            return
+        }
+
+        $observed = Get-TimeZone -Name $timezone.StandardName
+        $observed.Id | Should -Be $timezone.Id
+        $observed.StandardName | Should -Be $timezone.StandardName
     }
 
     It "Call Get-TimeZone using Name param with wild card" {

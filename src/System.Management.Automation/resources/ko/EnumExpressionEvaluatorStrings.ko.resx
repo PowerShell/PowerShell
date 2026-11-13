@@ -1,0 +1,148 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="EmptyInputString" xml:space="preserve">
+    <value>입력 식은 비워 둘 수 없습니다. 각 입력 식에 하나 이상의 식별자 이름을 지정합니다. </value>
+  </data>
+  <data name="EmptyTokenString" xml:space="preserve">
+    <value>빈 식별자 이름을 유효한 열거자 이름과 일치시킬 수 없습니다. 다음 열거자 이름 중 하나를 지정하고 다시 시도하세요. {0}.</value>
+  </data>
+  <data name="InvalidGenericType" xml:space="preserve">
+    <value>식에 지정된 제네릭 형식은 열거형을 나타내야 합니다. 유효한 열거형 형식을 지정하세요. </value>
+  </data>
+  <data name="MultipleEnumNameMatch" xml:space="preserve">
+    <value>식별자 이름 {0}이(가) 다음 열거자 이름과 너무 유사하거나 동일하기 때문에 처리할 수 없습니다. {1}. 보다 구체적인 식별자 이름을 사용하세요.</value>
+  </data>
+  <data name="NoEnumNameMatch" xml:space="preserve">
+    <value>식별자 이름 {0}을(를) 올바른 열거자 이름과 일치시킬 수 없습니다. 다음 열거자 이름 중 하나를 지정하고 다시 시도하세요.
+{1}</value>
+  </data>
+  <data name="NoIdentifierGroupingAllowed" xml:space="preserve">
+    <value>식별자 그룹화가 허용되지 않으므로 식에서 괄호를 사용할 수 없습니다. 괄호를 제거하거나 하위 식이 괄호로 묶인 경우 식을 확장해 보세요.</value>
+  </data>
+  <data name="SyntaxErrorBinaryOperatorExpected" xml:space="preserve">
+    <value>예기치 않은 토큰으로 인해 식을 구문 분석할 수 없습니다. 식별자 이름 뒤에는 OR(,) 연산자 또는 AND(+) 연산자만 필요합니다.</value>
+  </data>
+  <data name="SyntaxErrorIdentifierExpected" xml:space="preserve">
+    <value>NOT(!) 연산자 뒤에 예기치 않은 토큰이 있어서 식을 구문 분석할 수 없습니다. NOT(!) 연산자 뒤에 식별자 이름이 필요합니다.</value>
+  </data>
+  <data name="SyntaxErrorUnexpectedBinaryOperator" xml:space="preserve">
+    <value>예기치 않은 토큰으로 인해 식을 구문 분석할 수 없습니다. 식 시작 시 또는 OR(,) 연산자 또는 AND(+) 연산자 뒤에 식별자 이름 또는 NOT(!) 연산자가 필요합니다. 또한 식은 OR(,), AND(+) 또는 NOT(!) 연산자로 끝나서는 안 됩니다.</value>
+  </data>
+</root>

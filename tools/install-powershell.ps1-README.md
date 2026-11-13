@@ -2,23 +2,28 @@
 
 ## Features of install-powershell.ps1
 
-* Can be called directly from git
-* Optionally allows install of the latest Preview build
-* Optionally allows install of the Daily build
-* Optionally installs using the latest MSI
-* Automatically looks up latest version via git tags
-* Optionally installs silently
-* Optionally adds the install location to Path environment variable
+- Can be called directly from Git
+- Optionally allows install of the latest Preview build
+- Installs the latest stable release by default
+- Optionally installs the latest LTS 7.6.x release using MSI on Windows, which still supports MSI
+- Automatically looks up release versions via the upstream `tools/metadata.json`
+- Optionally installs silently
+- Optionally adds the install location to Path environment variable
 
 ## Examples
 
-### Install PowerShell Core Daily Build
+### Install PowerShell Preview Build
 
 ```PowerShell
-Invoke-Expression "& { $(Invoke-RestMethod 'https://aka.ms/install-powershell.ps1') } -daily"
+Invoke-Expression "& { $(Invoke-RestMethod 'https://aka.ms/install-powershell.ps1') } -Preview"
 ```
 
-### Install PowerShell Core using the MSI installer
+### Install PowerShell using the MSI installer
+
+Without `-Preview`, selects the latest LTS 7.6.x release (`ReleaseTag`), which still supports MSI.
+MSI packages are not available for PowerShell 7.7.0 or later, including preview builds.
+Using `-Preview -UseMSI` fails if the selected preview does not support MSI; omit `-UseMSI`
+to install that preview from an archive instead.
 
 ```PowerShell
 Invoke-Expression "& { $(Invoke-RestMethod 'https://aka.ms/install-powershell.ps1') } -UseMSI"

@@ -213,7 +213,7 @@ dbda : KM
         $o = [PSCustomObject]@{
             double = [double]1234.56789
             float = [float]9876.543
-            decimal = [decimal]4567.123456789
+            decimal = [decimal]4567.123456789d
         }
 
         $expected = @"

@@ -261,6 +261,17 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
+            if (module.Name.Length > UpdatableHelpModuleInfo.MaxModuleNameLength)
+            {
+                if (!noErrors)
+                {
+                    ProcessException(module.Name, null, new UpdatableHelpSystemException(
+                        "ModuleNameTooLong", StringUtil.Format(HelpDisplayStrings.ModuleNameTooLong, module.Name.Length, UpdatableHelpModuleInfo.MaxModuleNameLength),
+                        ErrorCategory.InvalidArgument, null, null));
+                }
+                return;
+            }
+
             var keyTuple2 = new Tuple<string, Version>(module.Name, module.Version);
             if (!helpModules.ContainsKey(keyTuple2))
             {

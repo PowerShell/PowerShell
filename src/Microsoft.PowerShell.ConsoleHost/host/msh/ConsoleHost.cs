@@ -118,31 +118,21 @@ namespace Microsoft.PowerShell
                 throw new ConsoleHostStartupException(ConsoleHostStrings.ShellCannotBeStartedWithConfigConflict);
             }
 
-            // Put PSHOME in front of PATH so that calling `pwsh` within `pwsh` always starts the same running version.
+            // Put pwsh executable home in front of PATH so that calling `pwsh` within `pwsh` always starts the same running version.
+            string psExeHome = GetPSExecutableHome();
             string path = Environment.GetEnvironmentVariable("PATH");
-            string pshome = Utils.DefaultPowerShellAppBase;
-            string dotnetToolsPathSegment = $"{Path.DirectorySeparatorChar}.store{Path.DirectorySeparatorChar}powershell{Path.DirectorySeparatorChar}";
 
-            int index = pshome.IndexOf(dotnetToolsPathSegment, StringComparison.Ordinal);
-            if (index > 0)
-            {
-                // We're running PowerShell global tool. In this case the real entry executable should be the 'pwsh'
-                // or 'pwsh.exe' within the tool folder which should be the path right before the '\.store', not what
-                // PSHome is pointing to.
-                pshome = pshome[0..index];
-            }
-
-            pshome += Path.PathSeparator;
+            psExeHome += Path.PathSeparator;
 
             // To not impact startup perf, we don't remove duplicates, but we avoid adding a duplicate to the front
             // we also don't handle the edge case where PATH only contains $PSHOME
             if (string.IsNullOrEmpty(path))
             {
-                Environment.SetEnvironmentVariable("PATH", pshome);
+                Environment.SetEnvironmentVariable("PATH", psExeHome);
             }
-            else if (!path.StartsWith(pshome, StringComparison.Ordinal))
+            else if (!path.StartsWith(psExeHome, StringComparison.Ordinal))
             {
-                Environment.SetEnvironmentVariable("PATH", pshome + path);
+                Environment.SetEnvironmentVariable("PATH", psExeHome + path);
             }
 
             try
@@ -164,8 +154,6 @@ namespace Microsoft.PowerShell
                 // It's safe to ignore errors, the guarded code is just there to try and
                 // improve startup performance.
             }
-
-            uint exitCode = ExitCodeSuccess;
 
             Thread.CurrentThread.Name = "ConsoleHost main thread";
 
@@ -192,7 +180,7 @@ namespace Microsoft.PowerShell
                     // or start up the engine and retrieve the information via $psversiontable.GitCommitId
                     // but this returns the semantic version and avoids executing a script
                     s_theConsoleHost.UI.WriteLine($"PowerShell {PSVersionInfo.GitCommitId}");
-                    return 0;
+                    return ExitCodeSuccess;
                 }
 
                 // Servermode parameter validation check.
@@ -223,6 +211,14 @@ namespace Microsoft.PowerShell
                     return ExitCodeBadCommandLineParameter;
                 }
 
+                if (serverModeCount is 1 && CommandLineParameterParser.IsFileOnlyEntryEnabled)
+                {
+                    // User facing error message should already be written by the parser,
+                    // so just trace and exit.
+                    s_tracer.TraceError("Server mode cannot be specified when FileOnlyEntry policy is in place.");
+                    return ExitCodeBadCommandLineParameter;
+                }
+
 #if !UNIX
                 TaskbarJumpList.CreateRunAsAdministratorJumpList();
 #endif
@@ -237,9 +233,10 @@ namespace Microsoft.PowerShell
                         configurationName: null,
                         configurationFile: s_cpp.ConfigurationFile,
                         combineErrOutStream: false);
-                    exitCode = 0;
+                    return ExitCodeSuccess;
                 }
-                else if (s_cpp.SSHServerMode)
+
+                if (s_cpp.SSHServerMode)
                 {
                     ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("SSHServer", s_cpp.ParametersUsedAsDouble);
                     ProfileOptimization.StartProfile("StartupProfileData-SSHServerMode");
@@ -249,18 +246,20 @@ namespace Microsoft.PowerShell
                         configurationName: null,
                         configurationFile: s_cpp.ConfigurationFile,
                         combineErrOutStream: true);
-                    exitCode = 0;
+                    return ExitCodeSuccess;
                 }
-                else if (s_cpp.NamedPipeServerMode)
+
+                if (s_cpp.NamedPipeServerMode)
                 {
                     ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("NamedPipe", s_cpp.ParametersUsedAsDouble);
                     ProfileOptimization.StartProfile("StartupProfileData-NamedPipeServerMode");
                     RemoteSessionNamedPipeServer.RunServerMode(
                         configurationName: s_cpp.ConfigurationName);
-                    exitCode = 0;
+                    return ExitCodeSuccess;
                 }
 #if !UNIX
-                else if (s_cpp.V2SocketServerMode)
+
+                if (s_cpp.V2SocketServerMode)
                 {
                     if (s_cpp.Token == null)
                     {
@@ -284,50 +283,43 @@ namespace Microsoft.PowerShell
                         token: s_cpp.Token,
                         tokenCreationTime: s_cpp.UTCTimestamp.Value);
 
-                    exitCode = 0;
+                    return ExitCodeSuccess;
                 }
 #endif
-                else if (s_cpp.SocketServerMode)
+
+                if (s_cpp.SocketServerMode)
                 {
                     ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("SocketServerMode", s_cpp.ParametersUsedAsDouble);
                     ProfileOptimization.StartProfile("StartupProfileData-SocketServerMode");
                     HyperVSocketMediator.Run(
                         initialCommand: s_cpp.InitialCommand,
                         configurationName: s_cpp.ConfigurationName);
-                    exitCode = 0;
+                    return ExitCodeSuccess;
+                }
+
+                // Run PowerShell in normal console mode.
+                if (hostException != null)
+                {
+                    // Unable to create console host.
+                    throw hostException;
+                }
+
+                if (LoadPSReadline())
+                {
+                    ProfileOptimization.StartProfile("StartupProfileData-Interactive");
                 }
                 else
                 {
-                    // Run PowerShell in normal console mode.
-                    if (hostException != null)
-                    {
-                        // Unable to create console host.
-                        throw hostException;
-                    }
-
-                    if (LoadPSReadline())
-                    {
-                        ProfileOptimization.StartProfile("StartupProfileData-Interactive");
-
-                        if (UpdatesNotification.CanNotifyUpdates)
-                        {
-                            // Start a task in the background to check for the update release.
-                            _ = UpdatesNotification.CheckForUpdates();
-                        }
-                    }
-                    else
-                    {
-                        ProfileOptimization.StartProfile("StartupProfileData-NonInteractive");
-                    }
-
-                    s_theConsoleHost.BindBreakHandler();
-                    IsStdOutputRedirected = Console.IsOutputRedirected;
-
-                    // Send startup telemetry for ConsoleHost startup
-                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("Normal", s_cpp.ParametersUsedAsDouble);
-
-                    exitCode = s_theConsoleHost.Run(s_cpp, false);
+                    ProfileOptimization.StartProfile("StartupProfileData-NonInteractive");
                 }
+
+                s_theConsoleHost.BindBreakHandler();
+                IsStdOutputRedirected = Console.IsOutputRedirected;
+
+                // Send startup telemetry for ConsoleHost startup
+                ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("Normal", s_cpp.ParametersUsedAsDouble);
+
+                return unchecked((int)s_theConsoleHost.Run(s_cpp, false));
             }
             finally
             {
@@ -348,11 +340,6 @@ namespace Microsoft.PowerShell
                     s_theConsoleHost.Dispose();
                 }
 #pragma warning restore IDE0031
-            }
-
-            unchecked
-            {
-                return (int)exitCode;
             }
         }
 
@@ -379,6 +366,64 @@ namespace Microsoft.PowerShell
         }
 
         private static readonly CommandLineParameterParser s_cpp = new CommandLineParameterParser();
+
+        private static string GetPSExecutableHome()
+        {
+#if UNIX
+            const string pwshName = "pwsh";
+            const string dotnetToolPathSegment = "/.store/powershell/";
+            const StringComparison procNameCompType = StringComparison.Ordinal;
+#else
+            const string pwshName = "pwsh.exe";
+            const string dotnetToolPathSegment = @"\.store\powershell\";
+            const StringComparison procNameCompType = StringComparison.OrdinalIgnoreCase;
+#endif
+
+            string psExePath = Environment.ProcessPath;
+            string psExeHome = Path.GetDirectoryName(psExePath);
+            string processName = Path.GetFileName(psExePath);
+
+            // Use 'Environment.ProcessPath' if it points to 'pwsh.exe' or 'pwsh'. The 'ProcessPath' on Windows
+            // could be any case as it depends on the `lpCommandLine` argument passed to `CreateProcess`, so we
+            // compare with 'OrdinalIgnoreCase' on Windows.
+            if (pwshName.Equals(processName, procNameCompType))
+            {
+#if !UNIX
+                // When running from an MSIX package, 'psExeHome' points to the MSIX package folder under "Program Files".
+                //
+                // That path contains a version string and will change with every update. Prepending that path to the PATH
+                // environment variable caused a problem for CMake-based build systems: CMake cached the path to 'pwsh.exe'
+                // when running for the first time from the MSIX PowerShell. That cached path became invalid after the MSIX
+                // PowerShell was updated, which broke CMake.
+                //
+                // So, instead of using the "Program Files" package folder path, we need to use the stable path that contains
+                // the execution alias for the specific MSIX package, e.g. use "%LOCALAPPDATA%\Microsoft\WindowsApps\Microsoft.PowerShell_8wekyb3d8bbwe"
+                // instead of "%ProgramFiles%\WindowsApps\Microsoft.PowerShell_7.x.x.0_x64__8wekyb3d8bbwe".
+                if (Utils.IsMSIXInstallation(out string packageFamilyName))
+                {
+                    string localAppDataDir = Environment.GetFolderPath(
+                        Environment.SpecialFolder.LocalApplicationData,
+                        Environment.SpecialFolderOption.DoNotVerify);
+
+                    psExeHome = $"{localAppDataDir}\\Microsoft\\WindowsApps\\{packageFamilyName}";
+                }
+#endif
+                return psExeHome;
+            }
+
+            psExeHome = Utils.DefaultPowerShellAppBase;
+
+            int index = psExeHome.IndexOf(dotnetToolPathSegment, StringComparison.Ordinal);
+            if (index > 0)
+            {
+                // We're running PowerShell dotnet tool. In this case the real entry executable should be the 'pwsh'
+                // or 'pwsh.exe' within the tool folder which should be the path right before the '\.store', because
+                // the pwsh executable under $PSHOME is an x86-64 binary that won't work on non-x86/64 platforms.
+                return psExeHome[0..index];
+            }
+
+            return psExeHome;
+        }
 
 #if UNIX
         /// <summary>

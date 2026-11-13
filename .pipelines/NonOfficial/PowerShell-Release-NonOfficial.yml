@@ -1,6 +1,10 @@
 trigger: none
 
 parameters: # parameters are shown up in ADO UI in a build queue time
+  - name: UseEarlyAccessModules
+    displayName: Use early-access modules
+    type: boolean
+    default: false
   - name: 'debug'
     displayName: 'Enable debug output'
     type: boolean
@@ -29,10 +33,31 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     displayName: Skip MSIX Publish
     type: boolean
     default: false
+  - name: EarlyAccessFeed
+    type: string
+    default: 'net10'
+    values:
+      - 'net8'
+      - 'net9'
+      - 'net10'
+      - 'net11'
+  - name: IsEarlyAccess
+    type: boolean
+    default: false
+  - name: DOTNET_RUNTIME_VERSION
+    displayName: Runtime version of early access build
+    type: string
+    default: ' '
+  - name: DOTNET_SDK_VERSION
+    displayName: SDK version of early access build
+    type: string
+    default: ' '
 
 name: release-$(BUILD.SOURCEBRANCHNAME)-nonofficial-$(Build.BuildId)
 
 variables:
+  - name: UseEarlyAccessModules
+    value: ${{ parameters.UseEarlyAccessModules }}
   - template: /.pipelines/templates/variables/PowerShell-Release-Variables.yml@self
     parameters:
       debug: ${{ parameters.debug }}
@@ -51,7 +76,7 @@ resources:
 
   pipelines:
     - pipeline: CoOrdinatedBuildPipeline
-      source: 'PowerShell-Coordinated_Packages-NonOfficial'
+      source: 'PowerShell-Coordinated Binaries-NonOfficial'
 
     # NOTE: The alias name "PSPackagesOfficial" is intentionally reused here even
     # for the NonOfficial pipeline source. Downstream shared templates (for example,
@@ -104,3 +129,7 @@ extends:
         SkipPublish: ${{ parameters.SkipPublish }}
         SkipPSInfraInstallers: ${{ parameters.SkipPSInfraInstallers }}
         skipMSIXPublish: ${{ parameters.skipMSIXPublish }}
+        IsEarlyAccess: ${{ parameters.IsEarlyAccess }}
+        DOTNET_RUNTIME_VERSION: ${{ parameters.DOTNET_RUNTIME_VERSION }}
+        DOTNET_SDK_VERSION: ${{ parameters.DOTNET_SDK_VERSION }}
+        EarlyAccessFeed: ${{ parameters.EarlyAccessFeed }}

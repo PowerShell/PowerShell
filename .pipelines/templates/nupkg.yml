@@ -1,11 +1,30 @@
+parameters:
+  - name: OfficialBuild
+    type: boolean
+    default: true
+  - name: GlobalToolRids
+    type: object
+    default:
+      - win-x64
+      - win-arm64
+      - linux-x64
+      - linux-arm
+      - linux-arm64
+      - linux-musl-x64
+      - osx-x64
+      - osx-arm64
+
 jobs:
 - job: build_nupkg
   displayName: Package NuPkgs
+  dependsOn: build_ref_assemblies
   condition: succeeded()
   pool:
     type: windows
 
   variables:
+    - name: ps_official_build
+      value: ${{ parameters.OfficialBuild }}
     - name: nugetMultiFeedWarnLevel
       value: none
     - name: NugetSecurityAnalysisWarningLevel
@@ -72,6 +91,19 @@ jobs:
     env:
       ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
+  - download: current
+    artifact: GlobalToolRefAssembly
+    displayName: 'Download GlobalToolRefAssembly'
+    env:
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
+
+  - pwsh: |
+      $refAssemblyFolder = Join-Path '$(Pipeline.Workspace)' 'GlobalToolRefAssembly'
+      Write-Host "##vso[task.setvariable variable=RefAssemblyPath]${refAssemblyFolder}"
+    displayName: 'Set RefAssemblyPath variable'
+    env:
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
+
   - pwsh: |
       Write-Verbose -Verbose "drop_windows_build_windows_fxdependent_release"
       Get-ChildItem -Path $(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_fxdependent_release -Recurse | Out-String | Write-Verbose -Verbose
@@ -93,77 +125,6 @@ jobs:
       repoRoot: $(PowerShellRoot)
 
   - template: /.pipelines/templates/install-dotnet.yml@self
-
-  - pwsh: |
-      Set-Location -Path '$(PowerShellRoot)'
-      Import-Module "$(PowerShellRoot)/build.psm1" -Force
-
-      $sharedModules = @('Microsoft.PowerShell.Commands.Management',
-                        'Microsoft.PowerShell.Commands.Utility',
-                        'Microsoft.PowerShell.ConsoleHost',
-                        'Microsoft.PowerShell.Security',
-                        'System.Management.Automation'
-                        )
-
-      $winOnlyModules = @('Microsoft.Management.Infrastructure.CimCmdlets',
-                          'Microsoft.PowerShell.Commands.Diagnostics',
-                          'Microsoft.PowerShell.CoreCLR.Eventing',
-                          'Microsoft.WSMan.Management',
-                          'Microsoft.WSMan.Runtime'
-                          )
-
-      $refAssemblyFolder = Join-Path '$(System.ArtifactsDirectory)' 'RefAssembly'
-      $null = New-Item -Path $refAssemblyFolder -Force -Verbose -Type Directory
-
-      Start-PSBuild -Clean -Runtime linux-x64 -Configuration Release -ReleaseTag $(ReleaseTagVar)
-
-      $sharedModules | Foreach-Object {
-        $refFile = Get-ChildItem -Path "$(PowerShellRoot)\src\$_\obj\Release\net11.0\refint\$_.dll"
-        Write-Verbose -Verbose "RefAssembly: $refFile"
-        Copy-Item -Path $refFile -Destination "$refAssemblyFolder\$_.dll" -Verbose
-        $refDoc = "$(PowerShellRoot)\src\$_\bin\Release\net11.0\$_.xml"
-        if (-not (Test-Path $refDoc)) {
-          Write-Warning "$refDoc not found"
-          Get-ChildItem -Path "$(PowerShellRoot)\src\$_\bin\Release\net11.0\" | Out-String | Write-Verbose -Verbose
-        }
-        else {
-          Copy-Item -Path $refDoc -Destination "$refAssemblyFolder\$_.xml" -Verbose
-        }
-      }
-
-      Start-PSBuild -Clean -Runtime win7-x64 -Configuration Release -ReleaseTag $(ReleaseTagVar)
-
-      $winOnlyModules | Foreach-Object {
-        $refFile = Get-ChildItem -Path "$(PowerShellRoot)\src\$_\obj\Release\net11.0\refint\*.dll"
-        Write-Verbose -Verbose 'RefAssembly: $refFile'
-        Copy-Item -Path $refFile -Destination "$refAssemblyFolder\$_.dll" -Verbose
-        $refDoc = "$(PowerShellRoot)\src\$_\bin\Release\net11.0\$_.xml"
-        if (-not (Test-Path $refDoc)) {
-          Write-Warning "$refDoc not found"
-          Get-ChildItem -Path "$(PowerShellRoot)\src\$_\bin\Release\net11.0" | Out-String | Write-Verbose -Verbose
-        }
-        else {
-          Copy-Item -Path $refDoc -Destination "$refAssemblyFolder\$_.xml" -Verbose
-        }
-      }
-
-      Get-ChildItem $refAssemblyFolder -Recurse | Out-String | Write-Verbose -Verbose
-
-      # Set RefAssemblyPath path variable
-      $vstsCommandString = "vso[task.setvariable variable=RefAssemblyPath]${refAssemblyFolder}"
-      Write-Host "sending " + $vstsCommandString
-      Write-Host "##$vstsCommandString"
-    displayName: Build reference assemblies
-    env:
-      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
-
-  - task: onebranch.pipeline.signing@1
-    displayName: Sign ref assemblies
-    inputs:
-      command: 'sign'
-      signing_profile: external_distribution
-      files_to_sign: '**\*.dll'
-      search_root: '$(System.ArtifactsDirectory)\RefAssembly'
 
   - pwsh: |
       $files = @(
@@ -241,7 +202,10 @@ jobs:
       $alpineFxdPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_linux_sign_linux_fxd_x64_alpine\Signed-fxdependent-noopt-linux-musl-x64"
 
       # Build global tools which do not have the shims exe generated in build.
-      $packageTypes = @('Unified', 'PowerShell.Linux.Alpine', 'PowerShell.Linux.x64', 'PowerShell.Linux.arm32', 'PowerShell.Linux.arm64')
+      # NOTE: the "PowerShell" (Unified) global tool package is now built and packed via
+      # 'dotnet pack' from src/GlobalTools/PowerShell using RID-specific tool packaging,
+      # replacing the Microsoft.PowerShell.GlobalTool.Shim-based package previously created here.
+      $packageTypes = @('PowerShell.Linux.Alpine', 'PowerShell.Linux.x64', 'PowerShell.Linux.arm32', 'PowerShell.Linux.arm64')
 
       $packageTypes | Foreach-Object {
         $PackageType = $_
@@ -297,3 +261,25 @@ jobs:
       $nupkgOutputPath = '$(ob_outputDirectory)'
       Get-ChildItem -Path $nupkgOutputPath | Out-String | Write-Verbose -Verbose
     displayName: List artifacts
+
+### The jobs below build the RID-specific 'PowerShell' global tool. They are split out from
+### build_nupkg into their own jobs so this work doesn't serialize behind (or duplicate)
+### build_nupkg's unrelated steps. globaltool-rid-job.yml uses a matrix strategy, so all
+### supported RIDs build/sign/pack concurrently as parallel runs of ONE job definition --
+### using a separate job block per RID here previously pushed the compiled pipeline YAML past
+### OneBranch's "Maximum object size exceeded" limit.
+### See job/globaltool-ref-assemblies.yml, job/globaltool-rid-job.yml, and
+### job/globaltool-pointer-job.yml for details.
+### GlobalToolRids drives both the build matrix and the pointer package's artifact collection.
+
+- template: /.pipelines/templates/job/globaltool-ref-assemblies.yml@self
+
+- template: /.pipelines/templates/job/globaltool-rid-job.yml@self
+  parameters:
+    OfficialBuild: ${{ parameters.OfficialBuild }}
+    Rids: ${{ parameters.GlobalToolRids }}
+
+- template: /.pipelines/templates/job/globaltool-pointer-job.yml@self
+  parameters:
+    OfficialBuild: ${{ parameters.OfficialBuild }}
+    Rids: ${{ parameters.GlobalToolRids }}

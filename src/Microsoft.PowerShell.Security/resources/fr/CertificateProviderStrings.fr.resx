@@ -1,0 +1,189 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CertProvidername" xml:space="preserve">
+    <value>Fournisseur de certificat X509</value>
+  </data>
+  <data name="CertificateNotFound" xml:space="preserve">
+    <value>Nous ne pouvons pas trouver le certificat X509 au chemin d’accès {0}.</value>
+  </data>
+  <data name="CertificateStoreNotFound" xml:space="preserve">
+    <value>Nous ne pouvons pas trouver le magasin de certificats X509 au chemin d’accès {0}.</value>
+  </data>
+  <data name="CertificateStoreLocationNotFound" xml:space="preserve">
+    <value>Nous ne pouvons pas trouver le magasin de certificats, car l’emplacement du magasin X509 spécifié {0} n’est pas valide.</value>
+  </data>
+  <data name="InvalidPath" xml:space="preserve">
+    <value>Vous ne pouvez pas traiter le chemin d’accès, car le chemin {0} n’est pas un chemin de fournisseur de certificats valide.</value>
+  </data>
+  <data name="Action_Move" xml:space="preserve">
+    <value>Déplacer un certificat</value>
+  </data>
+  <data name="Action_Remove" xml:space="preserve">
+    <value>Supprimer le certificat</value>
+  </data>
+  <data name="Action_RemoveAndDeleteKey" xml:space="preserve">
+    <value>Supprimez le certificat et sa clé privée.</value>
+  </data>
+  <data name="Action_Invoke" xml:space="preserve">
+    <value>Appeler le gestionnaire de certificats</value>
+  </data>
+  <data name="MoveItemTemplate" xml:space="preserve">
+      <value>Élément : {0} Destination : {1} </value>
+  </data>
+  <data name="CannotMoveContainer" xml:space="preserve">
+      <value>Vous ne pouvez pas déplacer un conteneur de certificats. </value>
+  </data>
+  <data name="CannotMoveCrossContext" xml:space="preserve">
+      <value>Vous ne pouvez pas déplacer un certificat d’un magasin utilisateur vers ou à partir d’un ordinateur. </value>
+  </data>
+  <data name="CannotMoveToSameStore" xml:space="preserve">
+    <value>Vous ne pouvez pas déplacer un certificat vers le même magasin. </value>
+  </data>
+  <data name="CannotCreateItem" xml:space="preserve">
+    <value>Vous ne pouvez pas créer un élément autre qu’un magasin de certificats. </value>
+  </data>
+  <data name="CannotCreateUserStore" xml:space="preserve">
+    <value>La création de magasins de certificats sous CurrentUser n’est pas prise en charge. </value>
+  </data>
+  <data name="CannotDeleteUserStore" xml:space="preserve">
+    <value>La suppression de magasins de certificats sous CurrentUser n’est pas prise en charge. </value>
+  </data>
+  <data name="InvalidDestStore" xml:space="preserve">
+    <value>La destination n’est pas un magasin valide. </value>
+  </data>
+  <data name="RemoveItemTemplate" xml:space="preserve">
+    <value>Élément : {0} </value>
+  </data>
+  <data name="RemoveStoreTemplate" xml:space="preserve">
+    <value>Le magasin {0} est un magasin système intégré et vous ne pouvez pas le supprimer.</value>
+  </data>
+  <data name="CannotRemoveContainer" xml:space="preserve">
+    <value>Vous ne pouvez pas supprimer un conteneur de certificats. </value>
+  </data>
+  <data name="VerboseNoPrivateKey" xml:space="preserve">
+    <value>Clé privée ignorée. Le certificat n’a aucune association de clé privée. </value>
+  </data>
+  <data name="UINotAllowed" xml:space="preserve">
+    <value>L’opération concerne le magasin racine de l’utilisateur et l’interface utilisateur n’est pas autorisée. </value>
+  </data>
+  <data name="RemoteErrorMessage" xml:space="preserve">
+    <value>. L’erreur suivante peut être due à des informations d’identification de l’utilisateur requises sur l’ordinateur distant. Consultez l’aide de la cmdlet Enable-WSManCredSSP pour savoir comment activer et utiliser CredSSP pour la délégation avec la communication à distance de PowerShell. </value>
+  </data>
+</root>

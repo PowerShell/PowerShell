@@ -59,8 +59,8 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -152,11 +152,13 @@
   </data>
   <data name="TypeWDACLogMessage" xml:space="preserve">
     <value>The type '{0}' will not be created in ConstrainedLanguage mode.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="ComWDACLogTitle" xml:space="preserve">
     <value>New-Object Cmdlet COM Object Creation</value>
   </data>
   <data name="ComWDACLogMessage" xml:space="preserve">
     <value>The COM object '{0}' will not be created in ConstrainedLanguage mode.</value>
+    <comment>{StrContains="COM"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

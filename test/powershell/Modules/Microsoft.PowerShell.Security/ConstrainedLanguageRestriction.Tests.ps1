@@ -18,6 +18,41 @@ try
     $defaultParamValues = $PSDefaultParameterValues.Clone()
     $PSDefaultParameterValues["it:Skip"] = !$IsWindows
 
+    Describe "Property setting in constrained language" -Tags 'Feature' {
+
+        It "rejects setting an instance script property" {
+            $obj = [System.Text.StringBuilder]::new()
+            $obj | Add-Member -MemberType NoteProperty -Name Value -Value 0
+            $obj | Add-Member -MemberType ScriptProperty -Name Test -Value { $this.Value } -SecondValue { param($value) $this.Value = $value }
+
+            try
+            {
+                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+                { $obj.Test = 1 } | Should -Throw -ErrorId "PropertySetterNotSupportedInConstrainedLanguage"
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
+            }
+        }
+
+        It "rejects setting an alias property that references a note property" {
+            $obj = [System.Text.StringBuilder]::new()
+            $obj | Add-Member -MemberType NoteProperty -Name Value -Value 0
+            $obj | Add-Member -MemberType AliasProperty -Name Alias -Value Value
+
+            try
+            {
+                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+                { $obj.Alias = 1 } | Should -Throw -ErrorId "PropertySetterNotSupportedInConstrainedLanguage"
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
+            }
+        }
+    }
+
     Describe "Help built-in function should not expose nested module private functions when run on locked down systems" -Tags 'Feature','RequireAdminOnWindows' {
 
         BeforeAll {
@@ -837,6 +872,47 @@ try
             }
 
             $expectedError.FullyQualifiedErrorId | Should -BeExactly "MethodInvocationNotSupportedInConstrainedLanguage"
+        }
+
+        It "Verify ForEach engine intrinsic method cannot set property values for non-core types when in constrained language mode" {
+
+            try
+            {
+                $ExecutionContext.SessionState.LanguageMode = 'ConstrainedLanguage'
+                & {
+                    @($ExecutionContext.SessionState).ForEach('LanguageMode', 'FullLanguage')
+                }
+
+                throw "No Exception!"
+            }
+            catch
+            {
+                $expectedError = $_
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
+            }
+
+            $expectedError.FullyQualifiedErrorId | Should -BeExactly "PropertySetterNotSupportedInConstrainedLanguage"
+        }
+
+        It "Verify ForEach engine intrinsic method correctly allows setting property values for core types in constrained language mode" {
+
+            $validateSet = [ValidateSet]::new('test')
+            try
+            {
+                $ExecutionContext.SessionState.LanguageMode = 'ConstrainedLanguage'
+                & {
+                    @($validateSet).ForEach('ErrorMessage', 'NewMessage')
+                }
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
+            }
+
+            $validateSet.ErrorMessage | Should -BeExactly 'NewMessage'
         }
     }
 

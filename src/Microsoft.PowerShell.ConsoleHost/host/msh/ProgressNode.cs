@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell
 
             this.Style = IsMinimalProgressRenderingEnabled()
                 ? RenderStyle.Ansi
-                : this.Style = RenderStyle.FullPlus;
+                : RenderStyle.FullPlus;
 
             this.SourceId = sourceId;
         }
@@ -111,7 +111,7 @@ namespace Microsoft.PowerShell
                     RenderMinimal(strCollection, indentation, maxWidth, rawUI);
                     break;
                 case RenderStyle.Ansi:
-                    RenderAnsi(strCollection, indentation, maxWidth);
+                    RenderAnsi(strCollection, indentation, maxWidth, rawUI);
                     break;
                 case RenderStyle.Invisible:
                     // do nothing
@@ -368,9 +368,12 @@ namespace Microsoft.PowerShell
         /// <param name="maxWidth">
         /// The maximum number of chars that the rendering is allowed to consume.
         /// </param>
+        /// <param name="rawUI">
+        /// The PSHostRawUserInterface used to gauge string widths in the rendering.
+        /// </param>
         private
         void
-        RenderAnsi(ArrayList strCollection, int indentation, int maxWidth)
+        RenderAnsi(ArrayList strCollection, int indentation, int maxWidth, PSHostRawUserInterface rawUI)
         {
             string indent = StringUtil.Padding(indentation);
             string secRemain = string.Empty;
@@ -389,58 +392,41 @@ namespace Microsoft.PowerShell
 
             // if the activity is really long, only use up to half the width
             string activity;
-            if (Activity.Length > maxWidth / 2)
+            int activityDisplayCellsWidth = rawUI.LengthInBufferCells(Activity);
+            if (activityDisplayCellsWidth > maxWidth / 2)
             {
-                activity = Activity.Substring(0, maxWidth / 2) + PSObjectHelper.Ellipsis;
+                activity = StringUtil.TruncateToBufferCellWidth(rawUI, Activity, (maxWidth / 2) - 1) + PSObjectHelper.Ellipsis;
             }
             else
             {
                 activity = Activity;
             }
 
+            activityDisplayCellsWidth = rawUI.LengthInBufferCells(activity);
+
             // 4 is for the extra space and square brackets below and one extra space
-            int barWidth = maxWidth - activity.Length - indentation - 4;
+            int barWidth = maxWidth - activityDisplayCellsWidth - indentation - 4;
 
             var sb = new StringBuilder();
-            int padding = maxWidth + PSStyle.Instance.Progress.Style.Length + PSStyle.Instance.Reverse.Length + PSStyle.Instance.ReverseOff.Length;
             sb.Append(PSStyle.Instance.Reverse);
 
-            int maxStatusLength = barWidth - secRemainLength - 1;
-            if (maxStatusLength > 0 && StatusDescription.Length > barWidth - secRemainLength)
-            {
-                sb.Append(StatusDescription.AsSpan(0, barWidth - secRemainLength - 1));
-                sb.Append(PSObjectHelper.Ellipsis);
-            }
-            else
-            {
-                sb.Append(StatusDescription);
-            }
+            // Build the status description part
+            int maxStatusWidth = barWidth - secRemainLength;
+            string statusPart = RenderAnsiStatusPart(rawUI, maxStatusWidth, out int statusPartDisplayWidth);
 
-            int emptyPadLength = barWidth + PSStyle.Instance.Reverse.Length - sb.Length - secRemainLength;
+            sb.Append(statusPart);
+
+            // Calculate padding needed
+            int emptyPadLength = barWidth - statusPartDisplayWidth - secRemainLength;
             if (emptyPadLength > 0)
             {
-                sb.Append(string.Empty.PadRight(emptyPadLength));
+                sb.Append(' ', emptyPadLength);
             }
 
             sb.Append(secRemain);
 
-            if (PercentComplete >= 0 && PercentComplete < 100 && barWidth > 0)
-            {
-                int barLength = PercentComplete * barWidth / 100;
-                if (barLength >= barWidth)
-                {
-                    barLength = barWidth - 1;
-                }
-
-                if (barLength < sb.Length)
-                {
-                    sb.Insert(barLength + PSStyle.Instance.Reverse.Length, PSStyle.Instance.ReverseOff);
-                }
-            }
-            else
-            {
-                sb.Append(PSStyle.Instance.ReverseOff);
-            }
+            // Insert ReverseOff at the correct position for the progress bar
+            RenderAnsiReverseOff(sb, rawUI, statusPart, barWidth);
 
             strCollection.Add(
                 StringUtil.Format(
@@ -449,8 +435,86 @@ namespace Microsoft.PowerShell
                     PSStyle.Instance.Progress.Style,
                     activity,
                     sb.ToString(),
-                    PSStyle.Instance.Reset)
-                .PadRight(padding));
+                    PSStyle.Instance.Reset));
+        }
+
+        /// <summary>
+        /// Builds the status-description portion of the Ansi progress bar, truncating it
+        /// with an ellipsis when it would exceed the available status width.
+        /// </summary>
+        /// <param name="rawUI">
+        /// The PSHostRawUserInterface used to gauge string widths.
+        /// </param>
+        /// <param name="maxStatusWidth">
+        /// The maximum number of buffer cells available for the status description.
+        /// </param>
+        /// <param name="statusPartDisplayWidth">
+        /// On return, the width in buffer cells of the produced status part.
+        /// </param>
+        /// <returns>The status description, possibly truncated with an ellipsis.</returns>
+        private string RenderAnsiStatusPart(PSHostRawUserInterface rawUI, int maxStatusWidth, out int statusPartDisplayWidth)
+        {
+            int statusDisplayWidth = rawUI.LengthInBufferCells(StatusDescription);
+
+            if (maxStatusWidth <= 0 || statusDisplayWidth <= maxStatusWidth)
+            {
+                statusPartDisplayWidth = statusDisplayWidth;
+                return StatusDescription;
+            }
+
+            int ellipsisWidth = rawUI.LengthInBufferCells(PSObjectHelper.EllipsisStr);
+            string statusPart = StringUtil.TruncateToBufferCellWidth(rawUI, StatusDescription, maxStatusWidth - ellipsisWidth) + PSObjectHelper.EllipsisStr;
+            statusPartDisplayWidth = rawUI.LengthInBufferCells(statusPart);
+            return statusPart;
+        }
+
+        /// <summary>
+        /// Appends the ReverseOff VT sequence to the rendered bar at the buffer-cell position
+        /// that corresponds to the filled portion of the progress bar, respecting character boundaries.
+        /// </summary>
+        /// <param name="sb">The StringBuilder holding the bar contents built so far.</param>
+        /// <param name="rawUI">
+        /// The PSHostRawUserInterface used to gauge string widths.
+        /// </param>
+        /// <param name="statusPart">The status text at the start of the bar.</param>
+        /// <param name="barWidth">The total width of the progress bar in buffer cells.</param>
+        private void RenderAnsiReverseOff(StringBuilder sb, PSHostRawUserInterface rawUI, string statusPart, int barWidth)
+        {
+            if (PercentComplete < 0 || PercentComplete >= 100 || barWidth <= 0)
+            {
+                sb.Append(PSStyle.Instance.ReverseOff);
+                return;
+            }
+
+            int barLength = PercentComplete * barWidth / 100;
+            if (barLength >= barWidth)
+            {
+                barLength = barWidth - 1;
+            }
+
+            // Calculate the string position where we need to insert ReverseOff.
+            // We need to find the character position that corresponds to barLength buffer cells.
+            int stringPos = PSStyle.Instance.Reverse.Length;
+            int currentCellCount = 0;
+
+            for (int i = 0; i < statusPart.Length && currentCellCount < barLength; i++)
+            {
+                currentCellCount += rawUI.LengthInBufferCells(statusPart[i]);
+                stringPos++;
+            }
+
+            // Add any padding characters.
+            int remainingCells = barLength - currentCellCount;
+            stringPos += Math.Max(0, remainingCells);
+
+            if (stringPos < sb.Length)
+            {
+                sb.Insert(stringPos, PSStyle.Instance.ReverseOff);
+            }
+            else
+            {
+                sb.Append(PSStyle.Instance.ReverseOff);
+            }
         }
 
         /// <summary>

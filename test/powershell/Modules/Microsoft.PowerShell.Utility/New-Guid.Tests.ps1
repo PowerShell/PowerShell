@@ -43,6 +43,12 @@ Describe "New-Guid" -Tags "CI" {
         $observed | Should -Be $guids
     }
 
+    It "Should generate a UUID v7" {
+        $guid = New-Guid
+        # UUID v7 has version nibble '7' at position 14 in the string representation
+        $guid.ToString()[14] | Should -BeExactly '7'
+    }
+
     It "Should return different guids with each call" {
         $guid1 = New-Guid
         $guid2 = New-Guid

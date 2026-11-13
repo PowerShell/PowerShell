@@ -18,6 +18,14 @@ namespace System.Management.Automation.Help
 #endif
         internal static readonly string HelpIntoXmlName = "HelpInfo.xml";
 
+        // Defensive upper bound on the module name length. The module name flows
+        // unmodified into generated help file names (GetHelpContentName /
+        // GetHelpInfoName) and, via ModuleBase (...\Modules\<name>\<version>\), can
+        // appear more than once in a resolved path. This is a defensive cap on the
+        // caller-influenced component; it does not by itself guarantee the full path
+        // stays within any specific OS limit (long paths are honored when enabled).
+        internal const int MaxModuleNameLength = 128;
+
         /// <summary>
         /// Class constructor.
         /// </summary>

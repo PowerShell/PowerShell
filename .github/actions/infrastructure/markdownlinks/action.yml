@@ -40,13 +40,17 @@ runs:
       id: verify
       shell: pwsh
       env:
-        CHANGED_FILES_JSON: ${{ steps.changed-files.outputs.files }}
+        CHANGED_FILES_PATH: ${{ steps.changed-files.outputs.files_path }}
       run: |
         Write-Host "Starting markdown link verification..." -ForegroundColor Cyan
 
-        # Get changed markdown files from environment variable (secure against injection)
-        $changedFilesJson = $env:CHANGED_FILES_JSON
-        $changedFiles = $changedFilesJson | ConvertFrom-Json
+        # Read changed markdown files from temp file to avoid ARG_MAX limits with large PRs
+        $changedFilesPath = $env:CHANGED_FILES_PATH
+        if ($changedFilesPath -and (Test-Path $changedFilesPath)) {
+          $changedFiles = @(Get-Content $changedFilesPath -Raw | ConvertFrom-Json)
+        } else {
+          $changedFiles = @()
+        }
 
         if ($changedFiles.Count -eq 0) {
           Write-Host "No markdown files changed, skipping verification" -ForegroundColor Yellow

@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="SetClipboardContent" xml:space="preserve">
+    <value>文字列 '{0}' をクリップボードに設定します。</value>
+  </data>
+  <data name="AppendClipboardContent" xml:space="preserve">
+    <value>文字列 '{0}' をクリップボードにアペンドします。</value>
+  </data>
+  <data name="SetSingleFileToClipboard" xml:space="preserve">
+    <value>ファイル '{0}' をクリップボードに設定します。</value>
+  </data>
+  <data name="AppendSingleFileToClipboard" xml:space="preserve">
+    <value>ファイル '{0}' をクリップボードに追加します。</value>
+  </data>
+  <data name="SetMultipleFilesToClipboard" xml:space="preserve">
+    <value>{0} ファイルをクリップボードに設定します。</value>
+  </data>
+  <data name="AppendMultipleFilesToClipboard" xml:space="preserve">
+    <value>{0} ファイルをクリップボードにアペンドします。</value>
+  </data>
+  <data name="NoAppendableClipboardContent" xml:space="preserve">
+    <value>クリップボードにコンテンツがないか、コンテンツ形式に互換性がありません。入力オブジェクトをクリップボードに設定します。</value>
+  </data>
+  <data name="ClipboardCleared" xml:space="preserve">
+    <value>クリップボードがクリアされました。</value>
+  </data>
+  <data name="InvalidTypeCombine" xml:space="preserve">
+    <value>TextFormatType はテキスト形式とのみ組み合わせることができます。</value>
+  </data>
+  <data name="InvalidRawCombine" xml:space="preserve">
+    <value>Raw は Text 形式または FileDropList 形式でのみ組み合わせることができます。</value>
+  </data>
+  <data name="InvalidHtmlCombine" xml:space="preserve">
+    <value>HTML は HTML テキスト形式とのみ組み合わせることができます。</value>
+  </data>
+  <data name="UnsupportedFormat" xml:space="preserve">
+    <value>このプラットフォームでは、テキスト形式のみがサポートされています。</value>
+  </data>
+  <data name="UnsupportedPlatform" xml:space="preserve">
+    <value>クリップボードは、このプラットフォームではサポートされていません。</value>
+  </data>
+  <data name="AsHtmlUnsupported" xml:space="preserve">
+    <value>'-AsHtml' スイッチは、このプラットフォームではサポートされていません。</value>
+  </data>
+  <data name="TextFormatUnsupported" xml:space="preserve">
+    <value>'-TextFormatType' パラメーターは、このプラットフォームで 'Text' のみをサポートします。</value>
+  </data>
+  <data name="PathUnsupported" xml:space="preserve">
+    <value>'-Path' パラメーターは、このプラットフォームではサポートされていません。</value>
+  </data>
+  <data name="LiteralPathUnsupported" xml:space="preserve">
+    <value>'-LiteralPath' パラメーターは、このプラットフォームではサポートされていません。</value>
+  </data>
+</root>

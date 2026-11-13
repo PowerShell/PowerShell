@@ -1,6 +1,10 @@
 trigger: none
 
 parameters: # parameters are shown up in ADO UI in a build queue time
+  - name: UseEarlyAccessModules
+    displayName: Use early-access modules
+    type: boolean
+    default: false
   - name: 'debug'
     displayName: 'Enable debug output'
     type: boolean
@@ -29,10 +33,31 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     displayName: Skip MSIX Publish
     type: boolean
     default: false
+  - name: EarlyAccessFeed
+    type: string
+    default: 'net10'
+    values:
+      - 'net8'
+      - 'net9'
+      - 'net10'
+      - 'net11'
+  - name: IsEarlyAccess
+    type: boolean
+    default: false
+  - name: DOTNET_RUNTIME_VERSION
+    displayName: Runtime version of early access build
+    type: string
+    default: ' '
+  - name: DOTNET_SDK_VERSION
+    displayName: SDK version of early access build
+    type: string
+    default: ' '
 
 name: release-$(BUILD.SOURCEBRANCHNAME)-prod-$(Build.BuildId)
 
 variables:
+  - name: UseEarlyAccessModules
+    value: ${{ parameters.UseEarlyAccessModules }}
   - template: templates/variables/PowerShell-Release-Variables.yml
     parameters:
       debug: ${{ parameters.debug }}
@@ -100,3 +125,7 @@ extends:
         SkipPublish: ${{ parameters.SkipPublish }}
         SkipPSInfraInstallers: ${{ parameters.SkipPSInfraInstallers }}
         skipMSIXPublish: ${{ parameters.skipMSIXPublish }}
+        IsEarlyAccess: ${{ parameters.IsEarlyAccess }}
+        DOTNET_RUNTIME_VERSION: ${{ parameters.DOTNET_RUNTIME_VERSION }}
+        DOTNET_SDK_VERSION: ${{ parameters.DOTNET_SDK_VERSION }}
+        EarlyAccessFeed: ${{ parameters.EarlyAccessFeed }}

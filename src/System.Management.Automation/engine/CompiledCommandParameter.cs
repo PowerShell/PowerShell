@@ -4,6 +4,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Reflection;
 
@@ -620,6 +621,13 @@ namespace System.Management.Automation
             if (interfaces.Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDictionary<,>))
                 || (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IDictionary<,>)))
             {
+                return;
+            }
+
+            if (typeof(StringCollection).IsAssignableFrom(type))
+            {
+                ParameterCollectionType = ParameterCollectionType.IList;
+                ElementType = typeof(string);
                 return;
             }
 

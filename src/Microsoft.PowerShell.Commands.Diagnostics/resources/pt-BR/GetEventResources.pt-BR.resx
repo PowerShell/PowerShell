@@ -1,0 +1,315 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CounterNotALogFile" xml:space="preserve">
+    <value>O arquivo {0} não tem a extensão de nome de arquivo esperada. Especifique somente arquivos .blg, .csv ou .tsv ao usar o parâmetro Path.</value>
+  </data>
+  <data name="CounterApiError" xml:space="preserve">
+    <value>Falha na chamada à API interna do contador de desempenho. Erro: {0:x8}.</value>
+  </data>
+  <data name="LogProviderOrPathNeeded" xml:space="preserve">
+    <value>Você deve especificar pelo menos um par chave-valor de Log, Provedor ou Caminho.</value>
+  </data>
+  <data name="NoMatchingProvidersFound" xml:space="preserve">
+    <value>Não há um provedor de eventos no computador {0} que corresponda a "{1}".</value>
+  </data>
+  <data name="NullNotAllowedInHashtable" xml:space="preserve">
+    <value>Um valor nulo foi encontrado na chave da tabela de hash {0}. Valores nulos não são permitidos.</value>
+  </data>
+  <data name="QueryTrace" xml:space="preserve">
+    <value>Consulta estruturada construída:
+{0}.</value>
+  </data>
+  <data name="ProviderLogLink" xml:space="preserve">
+    <value>O provedor {0} grava eventos no log {1}.</value>
+  </data>
+  <data name="CounterInvalidDateRange" xml:space="preserve">
+    <value>O valor do parâmetro StartTime deve ser menor que o valor do parâmetro EndTime.</value>
+  </data>
+  <data name="NoMatchingLogsFound" xml:space="preserve">
+    <value>Não há um log de eventos no computador {0} que corresponda a "{1}".</value>
+  </data>
+  <data name="Vendor" xml:space="preserve">
+    <value>Microsoft</value>
+  </data>
+  <data name="CounterCircularNoMaxSize" xml:space="preserve">
+    <value>O parâmetro Circular será ignorado, a menos que o parâmetro MaxSize também seja especificado.</value>
+  </data>
+  <data name="FileOpenFailed" xml:space="preserve">
+    <value>Não é possível abrir o arquivo {0} para gravação.</value>
+  </data>
+  <data name="KeywordLongExpected" xml:space="preserve">
+    <value>Valor inválido '{0}' especificado para palavra-chave.</value>
+  </data>
+  <data name="CounterExportSampleNotInInitialSet" xml:space="preserve">
+    <value>O contador de desempenho {0} não pode ser exportado para o arquivo {1} porque não fazia parte do primeiro conjunto de amostras.</value>
+  </data>
+  <data name="NoMatchingEventsFound" xml:space="preserve">
+    <value>Não foram encontrados eventos que correspondam aos critérios de seleção especificados.</value>
+  </data>
+  <data name="CounterPathTranslationFailed" xml:space="preserve">
+    <value>Os valores padrão para este comando falharam. Erro: {0:x8}.</value>
+  </data>
+  <data name="CounterNoMixedLogTypes" xml:space="preserve">
+    <value>Não é possível importar diferentes tipos de arquivos de log de desempenho no mesmo comando.  Especifique apenas um tipo de arquivo no parâmetro Path.</value>
+  </data>
+  <data name="NotAFileSystemPath" xml:space="preserve">
+    <value>O {0} caminho não parece ser um caminho do arquivo de log válido. Especifique um caminho válido no sistema de arquivos.</value>
+  </data>
+  <data name="EventIdNotSpecified" xml:space="preserve">
+    <value>Uma ID de Evento válida deve ser especificada.</value>
+  </data>
+  <data name="ProviderMetadataUnavailable" xml:space="preserve">
+    <value>Não foi possível recuperar informações sobre o provedor {0}. Erro: {1}.</value>
+  </data>
+  <data name="SpecifyOldestForLog" xml:space="preserve">
+    <value>O log de eventos {0} pode ser lido somente na ordem cronológica direta porque é um log analítico ou de depuração. Para ver os eventos do log de eventos {0}, use o parâmetro Oldest no comando.</value>
+  </data>
+  <data name="ExportDestPathAmbiguous" xml:space="preserve">
+    <value>O seguinte caminho de destino da exportação é ambíguo: {0}.</value>
+  </data>
+  <data name="CounterPathIsInvalid" xml:space="preserve">
+    <value>O caminho do contador de desempenho {0} não é válido.</value>
+  </data>
+  <data name="CounterSampleDataInvalid" xml:space="preserve">
+    <value>Os dados em uma das amostras do contador de desempenho não são válidos. Exiba a propriedade Status de cada objeto PerformanceCounterSample para verificar se ela contém dados válidos.</value>
+  </data>
+  <data name="PayloadMismatch" xml:space="preserve">
+    <value>O conteúdo fornecido não corresponde ao modelo definido para a ID do evento {0}.
+O modelo definido é o seguinte:
+{1}</value>
+  </data>
+  <data name="NoMatchingCounterSetsFound" xml:space="preserve">
+    <value>Não é possível encontrar nenhum conjunto de contadores de desempenho no computador {0} que corresponda ao seguinte: {1}.</value>
+  </data>
+  <data name="CounterPathsInFilesInvalid" xml:space="preserve">
+    <value>Nenhum caminho de contador válido foi encontrado nos arquivos.</value>
+  </data>
+  <data name="FileCreateFailed" xml:space="preserve">
+    <value>Não é possível criar o arquivo {0}. Verifique se o caminho é válido.</value>
+  </data>
+  <data name="NoCounterSetsOnComputer" xml:space="preserve">
+    <value>Não foi possível encontrar nenhum conjunto de contadores de desempenho no computador {0}: erro {1:x8}. Verifique se o {0} computador existente, se é detectável e se você tem privilégios suficientes para exibir dados do contador de desempenho nesse computador.</value>
+  </data>
+  <data name="IncorrectEventId" xml:space="preserve">
+    <value>O evento não pode ser gravado porque não há eventos definidos com a ID {0} para o provedor {1}.  Corrija a ID do evento e tente novamente.</value>
+  </data>
+  <data name="InvalidContext" xml:space="preserve">
+    <value>O par chave-valor Context {0} não é um SID ou um nome de conta NT válido.</value>
+  </data>
+  <data name="IncorrectEventVersion" xml:space="preserve">
+    <value>O evento não pode ser gravado porque a versão especificada {0} para o evento {1} não está definida para o provedor {2}.  Corrija a versão e tente novamente.</value>
+  </data>
+  <data name="Counter32FileLimit" xml:space="preserve">
+    <value>Não é possível importar mais de 32 arquivos de log do contador .blg em cada comando.</value>
+  </data>
+  <data name="SpecifiedProvidersDontWriteToLog" xml:space="preserve">
+    <value>Os provedores especificados não gravam eventos no log {0}. Este log será ignorado.</value>
+  </data>
+  <data name="InvalidSIDFormat" xml:space="preserve">
+    <value>O valor a seguir não está em um formato SID (identificador de segurança) válido: {0}. Insira um SID válido, como S-1-5-32-544.</value>
+  </data>
+  <data name="NoProviderFound" xml:space="preserve">
+    <value>Nenhum provedor encontrado com o nome {0}.</value>
+  </data>
+  <data name="CounterSetEnumAccessDenied" xml:space="preserve">
+    <value>Não é possível recuperar informações sobre o conjunto de contadores de desempenho {0} porque o acesso foi negado.</value>
+  </data>
+  <data name="VersionNotSpecified" xml:space="preserve">
+    <value>O evento não pode ser gravado porque vários eventos com a ID {0} foram definidos para o provedor {1}.  Forneça uma versão para o evento e tente novamente.</value>
+  </data>
+  <data name="SpecifyOldestForEtlEvt" xml:space="preserve">
+    <value>O arquivo de log de eventos {0} pode ser lido somente na ordem cronológica direta porque é um arquivo .etl ou .evt. Para ver os eventos do log de eventos {0}, use o parâmetro Oldest no comando.</value>
+  </data>
+  <data name="ProviderNotSpecified" xml:space="preserve">
+    <value>O nome do provedor deve ser especificado.</value>
+  </data>
+  <data name="NotALogFile" xml:space="preserve">
+    <value>O arquivo {0} não parece ser um arquivo de log válido. Especifique somente arquivos .evtx, .etl ou .evt como valores do parâmetro Path.</value>
+  </data>
+  <data name="CounterPathInvalidOrNotInFile" xml:space="preserve">
+    <value>O caminho do contador de desempenho {0} não é válido ou não está presente nos seguintes arquivos: {1}.</value>
+  </data>
+  <data name="Timestamp" xml:space="preserve">
+    <value>Carimbo de data/hora</value>
+  </data>
+  <data name="DateTimeExpected" xml:space="preserve">
+    <value>O valor a seguir não está em um formato DateTime válido: {0}.</value>
+  </data>
+  <data name="LogInfoUnavailable" xml:space="preserve">
+    <value>Para acessar o log '{0}' inicie o PowerShell com direitos de usuário elevados.  Erro: {1}</value>
+  </data>
+  <data name="LogInfoNoAccess" xml:space="preserve">
+    <value>Acesso negado ao log: '{0}'.</value>
+  </data>
+  <data name="SuggestElevation" xml:space="preserve">
+    <value>Inicie o PowerShell com direitos de usuário elevados.</value>
+  </data>
+  <data name="NoEventMessage" xml:space="preserve">
+    <value>Não foi possível recuperar o texto da mensagem de evento.</value>
+  </data>
+  <data name="CounterFileExists" xml:space="preserve">
+    <value>O arquivo {0} já existe. Para substituí-lo, use o parâmetro Force no comando Export-Counter.</value>
+  </data>
+  <data name="CounterContinuousOrMaxSamples" xml:space="preserve">
+    <value>Os parâmetros Continuous e MaxSamples não podem ser usados no mesmo comando.</value>
+  </data>
+  <data name="ExportCtrWin7Required" xml:space="preserve">
+    <value>Este cmdlet pode ser executado somente no Microsoft Windows 7 ou posterior.</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Este snap-in do PowerShell contém cmdlets do Contador de Desempenho e Eventos do Windows.</value>
+  </data>
+  <data name="NoMatchingCounterSetsInFile" xml:space="preserve">
+    <value>Não é possível encontrar nenhum conjunto de contadores de desempenho nos arquivos {0} que corresponda ao seguinte: {1}.</value>
+  </data>
+  <data name="LogsAndProvidersDontOverlap" xml:space="preserve">
+    <value>Os provedores especificados não gravam eventos em nenhum dos logs especificados.</value>
+  </data>
+  <data name="CookedValues" xml:space="preserve">
+    <value>Valores preparados</value>
+  </data>
+  <data name="Counter1FileLimit" xml:space="preserve">
+    <value>Não é possível importar mais de um arquivo de contador de desempenho separado por vírgula (.csv) ou por tabulação (.tsv) em cada comando.</value>
+  </data>
+  <data name="LogCountLimitExceeded" xml:space="preserve">
+    <value>A contagem de logs ({0}) excede o limite da API do Log de Eventos do Windows ({1}). Ajuste o filtro para retornar menos nomes de log.</value>
+  </data>
+  <data name="ListLogParamHelp" xml:space="preserve">
+    <value>Especifica os logs de evento. Caracteres curinga são permitidos.</value>
+  </data>
+  <data name="GetLogParamHelp" xml:space="preserve">
+    <value>Especifica os logs de eventos dos quais este cmdlet obtém eventos. Caracteres curinga são permitidos.</value>
+  </data>
+  <data name="ListProviderParamHelp" xml:space="preserve">
+    <value>Especifica os provedores de log de eventos que esse cmdlet obtém.</value>
+  </data>
+  <data name="GetProviderParamHelp" xml:space="preserve">
+    <value>Especifica os provedores de log de eventos dos quais este cmdlet obtém eventos.</value>
+  </data>
+  <data name="PathParamHelp" xml:space="preserve">
+    <value>Especifica o caminho para os arquivos de log de eventos dos quais este cmdlet obtém eventos.</value>
+  </data>
+  <data name="MaxEventsParamHelp" xml:space="preserve">
+    <value>Especifica o número máximo de eventos retornados.</value>
+  </data>
+  <data name="ComputerNameParamHelp" xml:space="preserve">
+    <value>Especifica o nome do computador do qual este cmdlet obtém dados.</value>
+  </data>
+</root>

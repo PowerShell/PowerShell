@@ -1,0 +1,610 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CannotDeserializeTabCompletionResult" xml:space="preserve">
+    <value>リモート実行空間に TypeTable インスタンスが含まれていないため、タブ補完の結果を正しく逆シリアル化できません。</value>
+  </data>
+  <data name="NoAccessToProperties" xml:space="preserve">
+    <value>CompletionResult 型の null インスタンスのプロパティにアクセスできません。</value>
+  </data>
+  <data name="bnotOperatorDescription" xml:space="preserve">
+    <value>ビットごとの NOT</value>
+  </data>
+  <data name="notOperatorDescription" xml:space="preserve">
+    <value>論理 Not。その後のステートメントを否定します。</value>
+  </data>
+  <data name="eqOperatorDescription" xml:space="preserve">
+    <value>等しい - 大文字と小文字を区別しません。左オペランドがコレクションの場合は、右オペランドと等しい値をコレクションから返します。それ以外の場合は、左オペランドが右オペランドと等しい場合は TRUE を返します。</value>
+  </data>
+  <data name="ieqOperatorDescription" xml:space="preserve">
+    <value>等しい - 大文字と小文字を区別しません。左オペランドがコレクションの場合は、右オペランドと等しい値をコレクションから返します。それ以外の場合は、左オペランドが右オペランドと等しい場合は TRUE を返します。</value>
+  </data>
+  <data name="ceqOperatorDescription" xml:space="preserve">
+    <value>等しい - 大文字と小文字を区別します。左オペランドがコレクションの場合は、右オペランドと等しい値をコレクションから返します。それ以外の場合は、左オペランドが右オペランドと等しい場合は TRUE を返します。</value>
+  </data>
+  <data name="neOperatorDescription" xml:space="preserve">
+    <value>等しくない - 大文字と小文字を区別しません。左オペランドがコレクションの場合は、右オペランドと等しくない値をコレクションから返します。それ以外の場合、左オペランドが右オペランドと等しくない場合は TRUE を返します。</value>
+  </data>
+  <data name="ineOperatorDescription" xml:space="preserve">
+    <value>等しくない - 大文字と小文字を区別しません。左オペランドがコレクションの場合は、右オペランドと等しくない値をコレクションから返します。それ以外の場合、左オペランドが右オペランドと等しくない場合は TRUE を返します。</value>
+  </data>
+  <data name="cneOperatorDescription" xml:space="preserve">
+    <value>等しくない - 大文字と小文字が区別されます。左オペランドがコレクションの場合は、右オペランドと等しくない値をコレクションから返します。それ以外の場合、左オペランドが右オペランドと等しくない場合は TRUE を返します。</value>
+  </data>
+  <data name="geOperatorDescription" xml:space="preserve">
+    <value>以上 - 大文字と小文字を区別しません。左オペランドがコレクションの場合は、右オペランド以上の値をコレクションから返します。それ以外の場合、左オペランドが右オペランド以上の場合は TRUE を返します。</value>
+  </data>
+  <data name="igeOperatorDescription" xml:space="preserve">
+    <value>以上 - 大文字と小文字を区別しません。左オペランドがコレクションの場合は、右オペランド以上の値をコレクションから返します。それ以外の場合、左オペランドが右オペランド以上の場合は TRUE を返します。</value>
+  </data>
+  <data name="cgeOperatorDescription" xml:space="preserve">
+    <value>以上 - 大文字と小文字が区別されます。左オペランドがコレクションの場合は、右オペランド以上の値をコレクションから返します。それ以外の場合、左オペランドが右オペランド以上の場合は TRUE を返します。</value>
+  </data>
+  <data name="gtOperatorDescription" xml:space="preserve">
+    <value>より大きい - 大文字と小文字が区別されません。左オペランドがコレクションの場合は、右オペランドより大きい値をコレクションから返します。それ以外の場合、左オペランドが右オペランドより大きい場合は TRUE を返します。</value>
+  </data>
+  <data name="igtOperatorDescription" xml:space="preserve">
+    <value>より大きい - 大文字と小文字が区別されません。左オペランドがコレクションの場合は、右オペランドより大きい値をコレクションから返します。それ以外の場合、左オペランドが右オペランドより大きい場合は TRUE を返します。</value>
+  </data>
+  <data name="cgtOperatorDescription" xml:space="preserve">
+    <value>より大きい - 大文字と小文字が区別されます。左オペランドがコレクションの場合は、右オペランドより大きい値をコレクションから返します。それ以外の場合、左オペランドが右オペランドより大きい場合は TRUE を返します。</value>
+  </data>
+  <data name="ltOperatorDescription" xml:space="preserve">
+    <value>より小さい - 大文字と小文字が区別されません。左オペランドがコレクションの場合、右オペランドより小さい値をコレクションから返します。それ以外の場合、左オペランドが右オペランドより小さい場合は TRUE を返します。</value>
+  </data>
+  <data name="iltOperatorDescription" xml:space="preserve">
+    <value>より小さい - 大文字と小文字が区別されません。左オペランドがコレクションの場合、右オペランドより小さい値をコレクションから返します。それ以外の場合、左オペランドが右オペランドより小さい場合は TRUE を返します。</value>
+  </data>
+  <data name="cltOperatorDescription" xml:space="preserve">
+    <value>より小さい - 大文字と小文字が区別されます。左オペランドがコレクションの場合、右オペランドより小さい値をコレクションから返します。それ以外の場合、左オペランドが右オペランドより小さい場合は TRUE を返します。</value>
+  </data>
+  <data name="leOperatorDescription" xml:space="preserve">
+    <value>以下 - 大文字と小文字を区別しません。左オペランドがコレクションの場合は、右オペランド以下の値をコレクションから返します。それ以外の場合は、左オペランドが右オペランド以下であれば TRUE を返します。</value>
+  </data>
+  <data name="ileOperatorDescription" xml:space="preserve">
+    <value>以下 - 大文字と小文字を区別しません。左オペランドがコレクションの場合は、右オペランド以下の値をコレクションから返します。それ以外の場合は、左オペランドが右オペランド以下であれば TRUE を返します。</value>
+  </data>
+  <data name="cleOperatorDescription" xml:space="preserve">
+    <value>以下 - 大文字と小文字が区別されます。左オペランドがコレクションの場合は、右オペランド以下の値をコレクションから返します。それ以外の場合は、左オペランドが右オペランド以下であれば TRUE を返します。</value>
+  </data>
+  <data name="likeOperatorDescription" xml:space="preserve">
+    <value>ワイルドカード一致演算子 - 大文字と小文字を区別しません。左オペランドがコレクションの場合は、右側のオペランドに一致する値をコレクションから返します。それ以外の場合は、左オペランドが右オペランドと一致する場合は TRUE を返します。</value>
+  </data>
+  <data name="ilikeOperatorDescription" xml:space="preserve">
+    <value>ワイルドカード一致演算子 - 大文字と小文字を区別しません。左オペランドがコレクションの場合は、右側のオペランドに一致する値をコレクションから返します。それ以外の場合は、左オペランドが右オペランドと一致する場合は TRUE を返します。</value>
+  </data>
+  <data name="clikeOperatorDescription" xml:space="preserve">
+    <value>ワイルドカード照合演算子 - 大文字と小文字が区別されます。左オペランドがコレクションの場合は、右側のオペランドに一致する値をコレクションから返します。それ以外の場合は、左オペランドが右オペランドと一致する場合は TRUE を返します。</value>
+  </data>
+  <data name="notlikeOperatorDescription" xml:space="preserve">
+    <value>ワイルドカード一致演算子 - 大文字と小文字を区別しません。左オペランドがコレクションの場合は、右側のオペランドと一致しない値をコレクションから返します。それ以外の場合、左オペランドが右オペランドと一致しない場合は TRUE を返します。</value>
+  </data>
+  <data name="inotlikeOperatorDescription" xml:space="preserve">
+    <value>ワイルドカード一致演算子 - 大文字と小文字を区別しません。左オペランドがコレクションの場合は、右側のオペランドと一致しない値をコレクションから返します。それ以外の場合、左オペランドが右オペランドと一致しない場合は TRUE を返します。</value>
+  </data>
+  <data name="cnotlikeOperatorDescription" xml:space="preserve">
+    <value>ワイルドカード照合演算子 - 大文字と小文字が区別されます。左オペランドがコレクションの場合は、右側のオペランドと一致しない値をコレクションから返します。それ以外の場合、左オペランドが右オペランドと一致しない場合は TRUE を返します。</value>
+  </data>
+  <data name="matchOperatorDescription" xml:space="preserve">
+    <value>正規表現照合演算子 - 大文字と小文字を区別しません。左オペランドがコレクションの場合は、右側のオペランドに一致する値をコレクションから返します。それ以外の場合は、左オペランドが右オペランドと一致する場合は TRUE を返します。</value>
+  </data>
+  <data name="imatchOperatorDescription" xml:space="preserve">
+    <value>正規表現照合演算子 - 大文字と小文字を区別しません。左オペランドがコレクションの場合は、右側のオペランドに一致する値をコレクションから返します。それ以外の場合は、左オペランドが右オペランドと一致する場合は TRUE を返します。</value>
+  </data>
+  <data name="cmatchOperatorDescription" xml:space="preserve">
+    <value>正規表現照合演算子 - 大文字と小文字を区別します。左オペランドがコレクションの場合は、右側のオペランドに一致する値をコレクションから返します。それ以外の場合は、左オペランドが右オペランドと一致する場合は TRUE を返します。</value>
+  </data>
+  <data name="notmatchOperatorDescription" xml:space="preserve">
+    <value>正規表現照合演算子 - 大文字と小文字を区別しません。左オペランドがコレクションの場合は、右側のオペランドと一致しない値をコレクションから返します。それ以外の場合、左オペランドが右オペランドと一致しない場合は TRUE を返します。</value>
+  </data>
+  <data name="inotmatchOperatorDescription" xml:space="preserve">
+    <value>正規表現照合演算子 - 大文字と小文字を区別しません。左オペランドがコレクションの場合は、右側のオペランドと一致しない値をコレクションから返します。それ以外の場合、左オペランドが右オペランドと一致しない場合は TRUE を返します。</value>
+  </data>
+  <data name="cnotmatchOperatorDescription" xml:space="preserve">
+    <value>正規表現照合演算子 - 大文字と小文字を区別します。左オペランドがコレクションの場合は、右側のオペランドと一致しない値をコレクションから返します。それ以外の場合、左オペランドが右オペランドと一致しない場合は TRUE を返します。</value>
+  </data>
+  <data name="replaceOperatorDescription" xml:space="preserve">
+    <value>Replace 演算子 - 大文字と小文字を区別しません。左オペランドを変更します。例: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
+  </data>
+  <data name="ireplaceOperatorDescription" xml:space="preserve">
+    <value>Replace 演算子 - 大文字と小文字を区別しません。左オペランドを変更します。例: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
+  </data>
+  <data name="creplaceOperatorDescription" xml:space="preserve">
+    <value>Replace 演算子 - 大文字と小文字を区別します。左オペランドを変更します。例: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
+  </data>
+  <data name="containsOperatorDescription" xml:space="preserve">
+    <value>Containment 演算子 - 大文字と小文字を区別しません。テスト値 (右オペランド) が左オペランドの少なくとも 1 つの値と完全に一致する場合に TRUE を返します。</value>
+  </data>
+  <data name="icontainsOperatorDescription" xml:space="preserve">
+    <value>Containment 演算子 - 大文字と小文字を区別しません。テスト値 (右オペランド) が左オペランドの少なくとも 1 つの値と完全に一致する場合に TRUE を返します。</value>
+  </data>
+  <data name="ccontainsOperatorDescription" xml:space="preserve">
+    <value>Containment 演算子 - 大文字と小文字を区別します。テスト値 (右オペランド) が左オペランドの少なくとも 1 つの値と完全に一致する場合にのみ TRUE を返します。</value>
+  </data>
+  <data name="notcontainsOperatorDescription" xml:space="preserve">
+    <value>Containment 演算子 - 大文字と小文字を区別しません。テスト値 (右オペランド) が左オペランドの値と完全に一致しない場合に TRUE を返します。</value>
+  </data>
+  <data name="inotcontainsOperatorDescription" xml:space="preserve">
+    <value>Containment 演算子 - 大文字と小文字を区別しません。テスト値 (右オペランド) が左オペランドの値と完全に一致しない場合に TRUE を返します。</value>
+  </data>
+  <data name="cnotcontainsOperatorDescription" xml:space="preserve">
+    <value>Containment 演算子 - 大文字と小文字を区別します。テスト値 (右オペランド) が左オペランドの値と完全に一致しない場合に TRUE を返します。</value>
+  </data>
+  <data name="inOperatorDescription" xml:space="preserve">
+    <value>Containment 演算子 - 大文字と小文字を区別しません。テスト値 (左オペランド) が右オペランドの少なくとも 1 つの値と完全に一致する場合に TRUE を返します。</value>
+  </data>
+  <data name="iinOperatorDescription" xml:space="preserve">
+    <value>Containment 演算子 - 大文字と小文字を区別しません。テスト値 (左オペランド) が右オペランドの少なくとも 1 つの値と完全に一致する場合に TRUE を返します。</value>
+  </data>
+  <data name="cinOperatorDescription" xml:space="preserve">
+    <value>Containment 演算子 - 大文字と小文字を区別します。テスト値 (左オペランド) が右オペランドの少なくとも 1 つの値と完全に一致する場合に TRUE を返します。</value>
+  </data>
+  <data name="notinOperatorDescription" xml:space="preserve">
+    <value>Containment 演算子 - 大文字と小文字を区別します。テスト値 (左オペランド) が右オペランドの値と完全に一致しない場合に TRUE を返します。</value>
+  </data>
+  <data name="inotinOperatorDescription" xml:space="preserve">
+    <value>Containment 演算子 - 大文字と小文字を区別しません。テスト値 (左オペランド) が右オペランドの値と完全に一致しない場合に TRUE を返します。</value>
+  </data>
+  <data name="cnotinOperatorDescription" xml:space="preserve">
+    <value>Containment 演算子 - 大文字と小文字を区別します。テスト値 (左オペランド) が右オペランドの値と完全に一致しない場合に TRUE を返します。</value>
+  </data>
+  <data name="splitOperatorDescription" xml:space="preserve">
+    <value>分割 -大文字と小文字の区別しません。1 つ以上の文字列を部分文字列に分割します。
+-Split &lt;String&gt;
+
+&lt;String&gt; -Split &lt;Delimiter&gt;[,&lt;Max-substrings&gt;[,"&lt;Options&gt;"]]
+
+&lt;String&gt; -Split {&lt;ScriptBlock&gt;} [,&lt;Max-substrings&gt;]</value>
+  </data>
+  <data name="isplitOperatorDescription" xml:space="preserve">
+    <value>分割 -大文字と小文字の区別しません。1 つ以上の文字列を部分文字列に分割します。
+-Split &lt;String&gt;
+
+&lt;String&gt; -Split &lt;Delimiter&gt;[,&lt;Max-substrings&gt;[,"&lt;Options&gt;"]]
+
+&lt;String&gt; -Split {&lt;ScriptBlock&gt;} [,&lt;Max-substrings&gt;]</value>
+  </data>
+  <data name="csplitOperatorDescription" xml:space="preserve">
+    <value>分割 - 大文字と小文字を区別します。1 つ以上の文字列を部分文字列に分割します。
+-Split &lt;String&gt;
+
+&lt;String&gt; -Split &lt;Delimiter&gt;[,&lt;Max-substrings&gt;[,"&lt;Options&gt;"]]
+
+&lt;String&gt; -Split {&lt;ScriptBlock&gt;} [,&lt;Max-substrings&gt;]</value>
+  </data>
+  <data name="isnotOperatorDescription" xml:space="preserve">
+    <value>左オペランドが指定した.NET Framework 型 (右オペランド) のインスタンスでない場合は TRUE を返します。</value>
+  </data>
+  <data name="isOperatorDescription" xml:space="preserve">
+    <value>左オペランドが指定した .NET Framework 型 (右オペランド) のインスタンスである場合は TRUE を返します。</value>
+  </data>
+  <data name="asOperatorDescription" xml:space="preserve">
+    <value>左オペランドを指定した.NET Framework 型 (右オペランド) に変換します。</value>
+  </data>
+  <data name="fOperatorDescription" xml:space="preserve">
+    <value>文字列オブジェクトの format メソッドを使用して文字列を書式設定します。</value>
+  </data>
+  <data name="andOperatorDescription" xml:space="preserve">
+    <value>論理 AND。両方のステートメントが TRUE の場合は TRUE を返します。</value>
+  </data>
+  <data name="bandOperatorDescription" xml:space="preserve">
+    <value>ビットごとの AND</value>
+  </data>
+  <data name="orOperatorDescription" xml:space="preserve">
+    <value>論理 OR。いずれかのステートメントまたは両方のステートメントが TRUE の場合は TRUE です。</value>
+  </data>
+  <data name="borOperatorDescription" xml:space="preserve">
+    <value>ビットごとの OR (両端を含む)</value>
+  </data>
+  <data name="xorOperatorDescription" xml:space="preserve">
+    <value>論理排他的 or。ステートメントの 1 つが TRUE で、もう一方が FALSE の場合は TRUE を返します。</value>
+  </data>
+  <data name="bxorOperatorDescription" xml:space="preserve">
+    <value>ビットごとの OR (排他的)</value>
+  </data>
+  <data name="joinOperatorDescription" xml:space="preserve">
+    <value>結合 - 複数の文字列を 1 つの文字列に結合します。
+-Join &lt;String[]&gt;
+&lt;String[]&gt; -Join &lt;Delimiter&gt;</value>
+  </data>
+  <data name="shlOperatorDescription" xml:space="preserve">
+    <value>左ビット演算子をシフトします。右端のビット位置に 0 を挿入します。</value>
+  </data>
+  <data name="shrOperatorDescription" xml:space="preserve">
+    <value>右ビット演算子をシフトします。左端のビット位置に 0 を挿入します。符号付き値の場合、符号ビットは保持されます。</value>
+  </data>
+  <data name="NameHashtableKeyDescription" xml:space="preserve">
+    <value>[string]
+作成するプロパティの名前を指定します。</value>
+  </data>
+  <data name="LabelHashtableKeyDescription" xml:space="preserve">
+    <value>[string]
+作成するプロパティの名前を指定します。</value>
+  </data>
+  <data name="ExpressionHashtableKeyDescription" xml:space="preserve">
+    <value>[scriptblock]
+新しいプロパティの値を計算するために使用されるスクリプト ブロックです。</value>
+  </data>
+  <data name="AlignmentHashtableKeyDescription" xml:space="preserve">
+    <value>[string]
+列に値を表示する方法を定義します。
+有効な値は、'left'、'center'、または 'right' です。</value>
+  </data>
+  <data name="FormatStringHashtableKeyDescription" xml:space="preserve">
+    <value>[string]
+値を出力用に書式設定する方法を定義する書式指定文字列を指定します。</value>
+  </data>
+  <data name="WidthHashtableKeyDescription" xml:space="preserve">
+    <value>[int]
+値を表示するときのテーブルの列の最大幅を指定します。
+値は 0 より大きくする必要があります。</value>
+  </data>
+  <data name="DepthHashtableKeyDescription" xml:space="preserve">
+    <value>[int]
+深度キーは、プロパティごとの展開の深さを指定します。</value>
+  </data>
+  <data name="AscendingHashtableKeyDescription" xml:space="preserve">
+    <value>[bool]
+1 つ以上のプロパティの並べ替え順序を指定します。</value>
+  </data>
+  <data name="DescendingHashtableKeyDescription" xml:space="preserve">
+    <value>[bool]
+1 つ以上のプロパティの並べ替え順序を指定します。</value>
+  </data>
+  <data name="LogNameHashtableKeyDescription" xml:space="preserve">
+    <value>[String[]]
+イベントを取得するログ名を指定します。
+ワイルドカードがサポートされます。</value>
+  </data>
+  <data name="ProviderNameHashtableKeyDescription" xml:space="preserve">
+    <value>[String[]]
+イベントを取得するイベント ログ プロバイダーを指定します。
+ワイルドカードがサポートされます。</value>
+  </data>
+  <data name="PathHashtableKeyDescription" xml:space="preserve">
+    <value>[String[]]
+イベントを取得するログ ファイルのファイル パスを指定します。
+有効なファイル形式: .etl、.evt、および .evtx</value>
+  </data>
+  <data name="KeywordsHashtableKeyDescription" xml:space="preserve">
+    <value>[Long[]]
+指定したキーワード ビットマスクを持つイベントを選択します。
+標準キーワードは次のとおりです:
+4503599627370496: AuditFailure
+9007199254740992: AuditSuccess
+4503599627370496: CorrelationHint
+18014398509481984: CorrelationHint2
+36028797018963968: EventLogClassic
+281474976710656: ResponseTime
+2251799813685248: Sqm
+562949953421312: WdiContext
+1125899906842624: WdiDiagnostic</value>
+  </data>
+  <data name="IDHashtableKeyDescription" xml:space="preserve">
+    <value>[int[]]
+指定したイベント ID を持つイベントを選択します。</value>
+  </data>
+  <data name="LevelHashtableKeyDescription" xml:space="preserve">
+    <value>[int[]]
+指定したログ レベルのイベントを選択します。
+次のログ レベルが有効です: 
+1: クリティカル
+2: エラー
+3: 警告
+4: 情報
+5: 詳細</value>
+  </data>
+  <data name="StartTimeHashtableKeyDescription" xml:space="preserve">
+    <value>[datetime]
+指定した日時より後に作成されたイベントを選択します。</value>
+  </data>
+  <data name="EndTimeHashtableKeyDescription" xml:space="preserve">
+    <value>[datetime]
+指定した日時より前に作成されたイベントを選択します。</value>
+  </data>
+  <data name="UserIDHashtableKeyDescription" xml:space="preserve">
+    <value>[string]
+指定したユーザーによって生成されたイベントを選択します。
+これは、SID または DOMAIN\USERNAME または USERNAME@DOMAIN の形式のドメイン名とユーザー名を表す文字列のいずれかです</value>
+  </data>
+  <data name="DataHashtableKeyDescription" xml:space="preserve">
+    <value>[string[]]
+EventData セクションで指定した値のいずれかを持つイベントを選択します。</value>
+  </data>
+  <data name="SuppressHashFilterHashtableKeyDescription" xml:space="preserve">
+    <value>[hashtable]
+ハッシュテーブルで指定された値と一致するイベントを除外します。</value>
+  </data>
+  <data name="RequiresModulesParameterDescription" xml:space="preserve">
+    <value>[string] または [hashtable]
+スクリプトに必要な PowerShell モジュールの配列を指定します。
+各要素には、モジュール名を値として含む文字列、または次のキーを持つハッシュテーブルを指定できます:
+名前: モジュールの名前
+GUID: モジュールの GUID
+次のいずれか:
+ModuleVersion: モジュールの最小許容バージョンを指定します。
+RequiredVersion: モジュールの正確で必要なバージョンを指定します。
+MaximumVersion: モジュールの許容される最大バージョンを指定します。</value>
+  </data>
+  <data name="RequiresPSEditionParameterDescription" xml:space="preserve">
+    <value>[string]
+スクリプトに必要な PowerShell エディションを指定します。
+有効な値は "Core" と "Desktop" です</value>
+  </data>
+  <data name="RequiresRunAsAdministratorParameterDescription" xml:space="preserve">
+    <value>[switch]
+PowerShell が Windows で管理者として実行されている必要があることを指定します。
+これは、#requires ステートメント行の最後のパラメーターである必要があります。</value>
+  </data>
+  <data name="RequiresVersionParameterDescription" xml:space="preserve">
+    <value>[version]
+スクリプトに必要な PowerShell の最小バージョンを指定します。</value>
+  </data>
+  <data name="RequiresPsEditionCoreDescription" xml:space="preserve">
+    <value>スクリプトの実行に PowerShell 7 以降が必要であることを指定します。</value>
+  </data>
+  <data name="RequiresPsEditionDesktopDescription" xml:space="preserve">
+    <value>スクリプトの実行に Windows PowerShell 5.1 が必要であることを指定します。</value>
+  </data>
+  <data name="RequiresModuleSpecModuleNameDescription" xml:space="preserve">
+    <value>[string]
+必須です。モジュール名を指定します。</value>
+  </data>
+  <data name="RequiresModuleSpecGUIDDescription" xml:space="preserve">
+    <value>[string]
+省略可能です。モジュールの GUID を指定します。</value>
+  </data>
+  <data name="RequiresModuleSpecModuleVersionDescription" xml:space="preserve">
+    <value>[string]
+モジュールの最小許容バージョンを指定します。</value>
+  </data>
+  <data name="RequiresModuleSpecRequiredVersionDescription" xml:space="preserve">
+    <value>[string]
+モジュールの正確で必要なバージョンを指定します。</value>
+  </data>
+  <data name="RequiresModuleSpecMaximumVersionDescription" xml:space="preserve">
+    <value>[string]
+モジュールの許容される最大バージョンを指定します。</value>
+  </data>
+  <data name="CommentHelpSYNOPSISKeywordDescription" xml:space="preserve">
+    <value>関数またはスクリプトの簡単な説明です。
+このキーワードは、各トピックで 1 回だけ使用できます。</value>
+  </data>
+  <data name="CommentHelpDESCRIPTIONKeywordDescription" xml:space="preserve">
+    <value>関数またはスクリプトの詳細な説明。
+このキーワードは、各トピックで 1 回だけ使用できます。</value>
+  </data>
+  <data name="CommentHelpPARAMETERKeywordDescription" xml:space="preserve">
+    <value>.PARAMETER  &lt;Parameter-Name&gt;
+パラメーターの説明。
+関数またはスクリプトの構文の各パラメーターに .PARAMETER キーワードを追加してください。</value>
+  </data>
+  <data name="CommentHelpEXAMPLEKeywordDescription" xml:space="preserve">
+    <value>関数またはスクリプトを使用するサンプル コマンドです。必要に応じて、サンプル出力と説明が続きます。
+各例に対してこのキーワードを繰り返してください。</value>
+  </data>
+  <data name="CommentHelpINPUTSKeywordDescription" xml:space="preserve">
+    <value>関数またはスクリプトにパイプできる .NET 型のオブジェクトです。
+入力オブジェクトの説明を含めることもできます。</value>
+  </data>
+  <data name="CommentHelpOUTPUTSKeywordDescription" xml:space="preserve">
+    <value>コマンドレットが返すオブジェクトの .NET 型。
+返されるオブジェクトの説明を含めることもできます。</value>
+  </data>
+  <data name="CommentHelpNOTESKeywordDescription" xml:space="preserve">
+    <value>関数またはスクリプトに関する追加情報です。</value>
+  </data>
+  <data name="CommentHelpLINKKeywordDescription" xml:space="preserve">
+    <value>関連トピックの名前。
+関連する各トピックの .LINK キーワードを繰り返します。
+.Link キーワード コンテンツには、同じヘルプ トピックのオンライン バージョンへの URI を含めることもできます。</value>
+  </data>
+  <data name="CommentHelpCOMPONENTKeywordDescription" xml:space="preserve">
+    <value>関数またはスクリプトが使用するテクノロジーまたは機能の名前、または関連するテクノロジーまたは機能の名前です。</value>
+  </data>
+  <data name="CommentHelpROLEKeywordDescription" xml:space="preserve">
+    <value>ヘルプ トピックのユーザー ロールの名前です。</value>
+  </data>
+  <data name="CommentHelpFUNCTIONALITYKeywordDescription" xml:space="preserve">
+    <value>関数の使用目的を説明するキーワードです。</value>
+  </data>
+  <data name="CommentHelpFORWARDHELPTARGETNAMEKeywordDescription" xml:space="preserve">
+    <value>.FORWARDHELPTARGETNAME &lt;Command-Name&gt;
+指定したコマンドのヘルプ トピックにリダイレクトします。</value>
+  </data>
+  <data name="CommentHelpFORWARDHELPCATEGORYKeywordDescription" xml:space="preserve">
+    <value>.FORWARDHELPCATEGORY &lt;Category&gt;
+.ForwardHelpTargetName の項目のヘルプ カテゴリを指定します</value>
+  </data>
+  <data name="CommentHelpREMOTEHELPRUNSPACEKeywordDescription" xml:space="preserve">
+    <value>.REMOTEHELPRUNSPACE &lt;PSSession-variable&gt;
+ヘルプ トピックを含むセッションを指定します。
+PSSession オブジェクトを含む変数を入力してください。</value>
+  </data>
+  <data name="CommentHelpEXTERNALHELPKeywordDescription" xml:space="preserve">
+    <value>.EXTERNALHELP &lt;XML Help File&gt;
+関数またはスクリプトが XML ファイルにドキュメント化されている場合は、.ExternalHelp キーワードが必要です。</value>
+  </data>
+  <data name="AssemblyKeywordDescription" xml:space="preserve">
+    <value>読み込む .NET アセンブリへのパスを指定します。
+
+アセンブリ &lt;NET-assembly-path&gt; を使用します</value>
+  </data>
+  <data name="ModuleKeywordDescription" xml:space="preserve">
+    <value>クラスを読み込む PowerShell モジュールを指定します。
+
+モジュール &lt;ModuleName or Path&gt; を使用しています
+
+モジュール &lt;ModuleSpecification hashtable&gt; を使用しています</value>
+  </data>
+  <data name="NamespaceKeywordDescription" xml:space="preserve">
+    <value>型を解決する .NET 名前空間または名前空間エイリアスを指定します。
+
+名前空間 &lt;NET-namespace&gt; を使用します 
+
+名前空間 &lt;AliasName&gt; = &lt;.NET-namespace&gt; を使用します</value>
+  </data>
+  <data name="TypeKeywordDescription" xml:space="preserve">
+    <value>.NET 型のエイリアスを指定します。
+
+型 &lt;AliasName&gt; = &lt;.NET-type&gt; を使用しています</value>
+  </data>
+  <data name="RegistryStringToolTip" xml:space="preserve">
+    <value>通常の文字列。</value>
+  </data>
+  <data name="RegistryExpandStringToolTip" xml:space="preserve">
+    <value>値が読み出されるときに展開される環境変数の展開されない参照を含む文字列です。</value>
+  </data>
+  <data name="RegistryBinaryToolTip" xml:space="preserve">
+    <value>任意の形式のバイナリ データ。</value>
+  </data>
+  <data name="RegistryDWordToolTip" xml:space="preserve">
+    <value>32 ビットの2 進数。</value>
+  </data>
+  <data name="RegistryMultiStringToolTip" xml:space="preserve">
+    <value>文字列の配列。</value>
+  </data>
+  <data name="RegistryQWordToolTip" xml:space="preserve">
+    <value>64 ビットの 2 進数。</value>
+  </data>
+  <data name="RegistryUnknownToolTip" xml:space="preserve">
+    <value>サポートされていないレジストリ データ型。</value>
+  </data>
+  <data name="SeparatorCommaToolTip" xml:space="preserve">
+    <value>',' - コンマ</value>
+  </data>
+  <data name="SeparatorCommaSpaceToolTip" xml:space="preserve">
+    <value>', ' -コンマと空白</value>
+  </data>
+  <data name="SeparatorSemiColonToolTip" xml:space="preserve">
+    <value>';' - セミコロン</value>
+  </data>
+  <data name="SeparatorSemiColonSpaceToolTip" xml:space="preserve">
+    <value>'; ' - セミコロンと空白</value>
+  </data>
+  <data name="SeparatorNewlineToolTip" xml:space="preserve">
+    <value>{0} - 改行</value>
+  </data>
+  <data name="SeparatorDashToolTip" xml:space="preserve">
+    <value>'-' - ダッシュ</value>
+  </data>
+  <data name="SeparatorSpaceToolTip" xml:space="preserve">
+    <value>' ' - 空白</value>
+  </data>
+</root>

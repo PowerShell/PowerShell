@@ -908,11 +908,11 @@ namespace System.Management.Automation
             return encodedContent;
         }
 
-        internal static readonly string BEGIN_CMS_SIGIL = "-----BEGIN CMS-----";
-        internal static readonly string END_CMS_SIGIL = "-----END CMS-----";
+        internal const string BEGIN_CMS_SIGIL = "-----BEGIN CMS-----";
+        internal const string END_CMS_SIGIL = "-----END CMS-----";
 
-        internal static readonly string BEGIN_CERTIFICATE_SIGIL = "-----BEGIN CERTIFICATE-----";
-        internal static readonly string END_CERTIFICATE_SIGIL = "-----END CERTIFICATE-----";
+        internal const string BEGIN_CERTIFICATE_SIGIL = "-----BEGIN CERTIFICATE-----";
+        internal const string END_CERTIFICATE_SIGIL = "-----END CERTIFICATE-----";
 
         /// <summary>
         /// Adds Ascii armour to a byte stream in Base64 format.
@@ -1088,6 +1088,8 @@ namespace System.Management.Automation
             byte[] messageBytes = null;
             try
             {
+                // The base64 encoded string should represent a single DER-encoded X.509 public certificate.
+                // So we check it against the "BEGIN/END CERTIFICATE" PEM labels.
                 messageBytes = CmsUtils.RemoveAsciiArmor(_identifier, CmsUtils.BEGIN_CERTIFICATE_SIGIL, CmsUtils.END_CERTIFICATE_SIGIL, out startIndex, out endIndex);
             }
             catch (FormatException)
@@ -1105,11 +1107,7 @@ namespace System.Management.Automation
             var certificatesToProcess = new X509Certificate2Collection();
             try
             {
-                #pragma warning disable SYSLIB0057
-                X509Certificate2 newCertificate = new X509Certificate2(messageBytes);
-                #pragma warning restore SYSLIB0057
-
-                certificatesToProcess.Add(newCertificate);
+                certificatesToProcess.Add(X509CertificateLoader.LoadCertificate(messageBytes));
             }
             catch (Exception)
             {

@@ -177,6 +177,25 @@ namespace System.Management.Automation.Remoting
 
         #endregion
 
+        #region Helpers
+
+        /// <summary>
+        /// Gets the partition-specific Hyper-V VM ID that the session server listens on.
+        /// </summary>
+        /// <param name="loopbackMode">
+        /// When <see langword="true"/>, communication stays within the same partition
+        /// (HV_GUID_LOOPBACK); otherwise it targets the parent/host partition (HV_GUID_PARENT).
+        /// </param>
+        /// <returns>The VM ID used to bind the listening socket.</returns>
+        internal static Guid GetListenerVmId(bool loopbackMode)
+        {
+            Guid loopbackId = new Guid("e0e16197-dd56-4a10-9195-5ee7a155a838"); // HV_GUID_LOOPBACK
+            Guid parentId = new Guid("a42e7cda-d03f-480c-9cc2-a4de20abb878"); // HV_GUID_PARENT
+            return loopbackMode ? loopbackId : parentId;
+        }
+
+        #endregion
+
         #region Constructors
 
         public RemoteSessionHyperVSocketServer(bool LoopbackMode)
@@ -188,9 +207,7 @@ namespace System.Management.Automation.Remoting
             try
             {
                 Guid serviceId = new Guid("a5201c21-2770-4c11-a68e-f182edb29220"); // HV_GUID_VM_SESSION_SERVICE_ID_2
-                Guid loopbackId = new Guid("e0e16197-dd56-4a10-9195-5ee7a155a838"); // HV_GUID_LOOPBACK
-                Guid parentId = new Guid("a42e7cda-d03f-480c-9cc2-a4de20abb878"); // HV_GUID_PARENT
-                Guid vmId = LoopbackMode ? loopbackId : parentId;
+                Guid vmId = GetListenerVmId(LoopbackMode);
                 HyperVSocketEndPoint endpoint = new HyperVSocketEndPoint(HyperVSocketEndPoint.AF_HYPERV, vmId, serviceId);
 
                 Socket listenSocket = new Socket(endpoint.AddressFamily, SocketType.Stream, (System.Net.Sockets.ProtocolType)1);
@@ -250,7 +267,11 @@ namespace System.Management.Automation.Remoting
             try
             {
                 Guid serviceId = new Guid("a5201c21-2770-4c11-a68e-f182edb29220"); // HV_GUID_VM_SESSION_SERVICE_ID_2
-                HyperVSocketEndPoint endpoint = new HyperVSocketEndPoint(HyperVSocketEndPoint.AF_HYPERV, Guid.Empty, serviceId);
+
+                // Bind to a partition-specific VM ID (host parent, or local loopback), consistent
+                // with the V1 server constructor above.
+                Guid vmId = GetListenerVmId(LoopbackMode);
+                HyperVSocketEndPoint endpoint = new HyperVSocketEndPoint(HyperVSocketEndPoint.AF_HYPERV, vmId, serviceId);
 
                 Socket listenSocket = new Socket(endpoint.AddressFamily, SocketType.Stream, (System.Net.Sockets.ProtocolType)1);
                 listenSocket.Bind(endpoint);
