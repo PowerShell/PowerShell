@@ -772,8 +772,8 @@ try {
 
         BeforeEach {
             if ($IsNotSkipped) {
-                $group1SID = [String](New-LocalGroup -Name TestGroupRemove1 -Description "Test Group Remove 1 Description" 2>&1).SID
-                $group2SID = [String](New-LocalGroup -Name TestGroupRemove2 -Description "Test Group Remove 2 Description" 2>&1).SID
+                $group1SID = [string](New-LocalGroup -Name TestGroupRemove1 -Description "Test Group Remove 1 Description" 2>&1).SID
+                $group2SID = [string](New-LocalGroup -Name TestGroupRemove2 -Description "Test Group Remove 2 Description" 2>&1).SID
             }
         }
 

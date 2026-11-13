@@ -583,7 +583,7 @@ try {
         BeforeEach {
             if ($IsNotSkipped) {
                 New-LocalUser -Name TestUserSet1 -NoPassword -Description "Test User Set 1 Description" | Out-Null
-                $user1SID = [String](Get-LocalUser -Name TestUserSet1).SID
+                $user1SID = [string](Get-LocalUser -Name TestUserSet1).SID
             }
         }
 
@@ -613,7 +613,7 @@ try {
         BeforeEach {
             if ($IsNotSkipped) {
                 New-LocalUser -Name TestUserSet1 -NoPassword -Description "Test User Set 1 Description" | Out-Null
-                $user1SID = [String](Get-LocalUser -Name TestUserSet1).SID
+                $user1SID = [string](Get-LocalUser -Name TestUserSet1).SID
             }
         }
 
@@ -835,7 +835,7 @@ try {
         BeforeEach {
             if ($IsNotSkipped) {
                 New-LocalUser -Name TestUserRename1 -NoPassword -Description "Test User Rename 1 Description" | Out-Null
-                $user1SID = [String](Get-LocalUser -Name TestUserRename1).SID
+                $user1SID = [string](Get-LocalUser -Name TestUserRename1).SID
             }
         }
 
@@ -865,7 +865,7 @@ try {
         BeforeEach {
             if ($IsNotSkipped) {
                 New-LocalUser -Name TestUserRename1 -NoPassword -Description "Test User Rename 1 Description" | Out-Null
-                $user1SID = [String](Get-LocalUser -Name TestUserRename1).SID
+                $user1SID = [string](Get-LocalUser -Name TestUserRename1).SID
             }
         }
 
@@ -1016,7 +1016,7 @@ try {
         BeforeEach {
             if ($IsNotSkipped) {
                 New-LocalUser -Name TestUserRemove1 -NoPassword -Description "Test User Remove 1 Description" | Out-Null
-                $user1SID = [String](Get-LocalUser -Name TestUserRemove1).SID
+                $user1SID = [string](Get-LocalUser -Name TestUserRemove1).SID
             }
         }
 
@@ -1096,8 +1096,8 @@ try {
 
         BeforeEach {
             if ($IsNotSkipped) {
-                $user1SID = [String](New-LocalUser -Name TestUserRemove1 -NoPassword -Description "Test User Remove 1 Description").SID
-                $user2SID = [String](New-LocalUser -Name TestUserRemove2 -NoPassword -Description "Test User Remove 2 Description").SID
+                $user1SID = [string](New-LocalUser -Name TestUserRemove1 -NoPassword -Description "Test User Remove 1 Description").SID
+                $user2SID = [string](New-LocalUser -Name TestUserRemove2 -NoPassword -Description "Test User Remove 2 Description").SID
             }
         }
 
@@ -1229,7 +1229,7 @@ try {
         BeforeEach {
             if ($IsNotSkipped) {
                 New-LocalUser -Name TestUserDisabled1 -NoPassword -Disabled -Description "Test User Disabled 1 Description" | Out-Null
-                $disabledUser1SID = [String](Get-LocalUser -Name TestUserDisabled1).SID
+                $disabledUser1SID = [string](Get-LocalUser -Name TestUserDisabled1).SID
             }
         }
 
@@ -1261,10 +1261,10 @@ try {
 
         BeforeEach {
             if ($IsNotSkipped) {
-                $enabledUser1SID = [String](New-LocalUser -Name TestUserEnabled1 -NoPassword -Description "Test User Enabled 1 Description").SID
-                $enabledUser2SID = [String](New-LocalUser -Name TestUserEnabled2 -NoPassword -Description "Test User Enabled 2 Description").SID
-                $disabledUser1SID = [String](New-LocalUser -Name TestUserDisabled1 -NoPassword -Description "Test User Disabled 1 Description" -Disabled).SID
-                $disabledUser2SID = [String](New-LocalUser -Name TestUserDisabled2 -NoPassword -Description "Test User Disabled 2 Description" -Disabled).SID
+                $enabledUser1SID = [string](New-LocalUser -Name TestUserEnabled1 -NoPassword -Description "Test User Enabled 1 Description").SID
+                $enabledUser2SID = [string](New-LocalUser -Name TestUserEnabled2 -NoPassword -Description "Test User Enabled 2 Description").SID
+                $disabledUser1SID = [string](New-LocalUser -Name TestUserDisabled1 -NoPassword -Description "Test User Disabled 1 Description" -Disabled).SID
+                $disabledUser2SID = [string](New-LocalUser -Name TestUserDisabled2 -NoPassword -Description "Test User Disabled 2 Description" -Disabled).SID
             }
         }
 
@@ -1400,7 +1400,7 @@ try {
         BeforeEach {
             if ($IsNotSkipped) {
                 New-LocalUser -Name TestUserEnabled1 -NoPassword -Disabled -Description "Test User Enabled 1 Description" | Out-Null
-                $enabledUser1SID = [String](Get-LocalUser -Name TestUserEnabled1).SID
+                $enabledUser1SID = [string](Get-LocalUser -Name TestUserEnabled1).SID
             }
         }
 
@@ -1432,10 +1432,10 @@ try {
 
         BeforeEach {
             if ($IsNotSkipped) {
-                $enabledUser1SID = [String](New-LocalUser -Name TestUserEnabled1 -NoPassword -Description "Test User Enabled 1 Description").SID
-                $enabledUser2SID = [String](New-LocalUser -Name TestUserEnabled2 -NoPassword -Description "Test User Enabled 2 Description").SID
-                $disabledUser1SID = [String](New-LocalUser -Name TestUserDisabled1 -NoPassword -Description "Test User Disabled 1 Description" -Disabled).SID
-                $disabledUser2SID = [String](New-LocalUser -Name TestUserDisabled2 -NoPassword -Description "Test User Disabled 2 Description" -Disabled).SID
+                $enabledUser1SID = [string](New-LocalUser -Name TestUserEnabled1 -NoPassword -Description "Test User Enabled 1 Description").SID
+                $enabledUser2SID = [string](New-LocalUser -Name TestUserEnabled2 -NoPassword -Description "Test User Enabled 2 Description").SID
+                $disabledUser1SID = [string](New-LocalUser -Name TestUserDisabled1 -NoPassword -Description "Test User Disabled 1 Description" -Disabled).SID
+                $disabledUser2SID = [string](New-LocalUser -Name TestUserDisabled2 -NoPassword -Description "Test User Disabled 2 Description" -Disabled).SID
             }
         }
 

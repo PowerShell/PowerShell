@@ -15,7 +15,7 @@ Class WebListener
 
     WebListener () { }
 
-    [String] GetStatus()
+    [string] GetStatus()
     {
         return $this.Job.JobStateInfo.State
     }
@@ -245,9 +245,9 @@ function Get-WebListenerUrl {
             'StallDeflate',
             '/'
         )]
-        [String]$Test,
+        [string]$Test,
 
-        [String]$TestValue,
+        [string]$TestValue,
 
         [System.Collections.IDictionary]$Query
     )

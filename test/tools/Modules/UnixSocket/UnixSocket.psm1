@@ -7,7 +7,7 @@ Class UnixSocket
 
     UnixSocket () { }
 
-    [String] GetStatus()
+    [string] GetStatus()
     {
         return $this.Job.JobStateInfo.State
     }
