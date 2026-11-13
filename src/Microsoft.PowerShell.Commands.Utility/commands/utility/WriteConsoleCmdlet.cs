@@ -52,46 +52,37 @@ namespace Microsoft.PowerShell.Commands
         {
             if (o != null)
             {
-                if (o is string s)
+                switch (o)
                 {
-                    // strings are IEnumerable, so we special case them
-                    if (s.Length > 0)
-                    {
-                        return s;
-                    }
-                }
-                else if (o is XmlNode xmlNode)
-                {
-                    return xmlNode.Name;
-                }
-                else if (o is IEnumerable enumerable)
-                {
-                    // unroll enumerables, including arrays.
-
-                    bool printSeparator = false;
-                    StringBuilder result = new();
-
-                    foreach (object element in enumerable)
-                    {
-                        if (printSeparator && Separator != null)
+                    case string s:
+                        // strings are IEnumerable, so we special case them
+                        if (s.Length > 0)
                         {
-                            result.Append(Separator.ToString());
+                            return s;
+                        }
+                        break;
+                    case XmlNode xmlNode:
+                        return xmlNode.Name;
+                    case IDictionary dictionary:
+                        return dictionary.ToString();
+                    case IEnumerable enumerable:
+                        bool printSeparator = false;
+                        StringBuilder result = new();
+
+                        foreach (object element in enumerable)
+                        {
+                            if (printSeparator && Separator != null)
+                            {
+                                result.Append(Separator.ToString());
+                            }
+
+                            result.Append(ProcessObject(element));
+                            printSeparator = true;
                         }
 
-                        result.Append(ProcessObject(element));
-                        printSeparator = true;
-                    }
-
-                    return result.ToString();
-                }
-                else
-                {
-                    s = o.ToString();
-
-                    if (s.Length > 0)
-                    {
-                        return s;
-                    }
+                        return result.ToString();
+                    default:
+                        return o.ToString();
                 }
             }
 
