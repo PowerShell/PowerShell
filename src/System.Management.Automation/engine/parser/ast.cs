@@ -1556,7 +1556,7 @@ namespace System.Management.Automation.Language
                 string expAttrTypeName = typeof(ExperimentalAttribute).FullName;
                 string attrAstTypeName = attributeAst.TypeName.Name;
 
-                if (TypeAccelerators.Get.TryGetValue(attrAstTypeName, out Type attrType) && attrType == typeof(ExperimentalAttribute))
+                if (TypeAccelerators.TryGetAccelerator(attrAstTypeName, out Type attrType) && attrType == typeof(ExperimentalAttribute))
                 {
                     potentialExpAttr = attributeAst;
                 }

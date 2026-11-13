@@ -4586,16 +4586,41 @@ namespace System.Management.Automation
                 CacheConversion<bool>(typeofString, typeofBool, LanguagePrimitives.ConvertStringToBool, ConversionRank.Language);
                 CacheConversion<bool>(typeof(SwitchParameter), typeofBool, LanguagePrimitives.ConvertSwitchParameterToBool, ConversionRank.Language);
 
-#if !UNIX
-                // Conversions to WMI and ADSI
-                CacheConversion<ManagementObjectSearcher>(typeofString, typeof(ManagementObjectSearcher), LanguagePrimitives.ConvertToWMISearcher, ConversionRank.Language);
-                CacheConversion<ManagementClass>(typeofString, typeof(ManagementClass), LanguagePrimitives.ConvertToWMIClass, ConversionRank.Language);
-                CacheConversion<ManagementObject>(typeofString, typeof(ManagementObject), LanguagePrimitives.ConvertToWMI, ConversionRank.Language);
-                CacheConversion<DirectoryEntry>(typeofString, typeof(DirectoryEntry), LanguagePrimitives.ConvertToADSI, ConversionRank.Language);
-                CacheConversion<DirectorySearcher>(typeofString, typeof(DirectorySearcher), LanguagePrimitives.ConvertToADSISearcher, ConversionRank.Language);
-#endif
             }
         }
+
+#if !UNIX
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static IConversionData FigureWmiConversion(Type fromType, Type toType)
+        {
+            if (toType == typeof(ManagementObjectSearcher))
+            {
+                return CacheConversion<ManagementObjectSearcher>(fromType, toType, ConvertToWMISearcher, ConversionRank.Language);
+            }
+
+            if (toType == typeof(ManagementClass))
+            {
+                return CacheConversion<ManagementClass>(fromType, toType, ConvertToWMIClass, ConversionRank.Language);
+            }
+
+            if (toType == typeof(ManagementObject))
+            {
+                return CacheConversion<ManagementObject>(fromType, toType, ConvertToWMI, ConversionRank.Language);
+            }
+
+            if (toType == typeof(DirectoryEntry))
+            {
+                return CacheConversion<DirectoryEntry>(fromType, toType, ConvertToADSI, ConversionRank.Language);
+            }
+
+            if (toType == typeof(DirectorySearcher))
+            {
+                return CacheConversion<DirectorySearcher>(fromType, toType, ConvertToADSISearcher, ConversionRank.Language);
+            }
+
+            return null;
+        }
+#endif
 
         internal static PSObject SetObjectProperties(object o, PSObject psObject, Type resultType, MemberNotFoundError memberNotFoundErrorAction, MemberSetValueError memberSetValueErrorAction, IFormatProvider formatProvider, bool recursion = false, bool ignoreUnknownMembers = false)
         {
@@ -5645,6 +5670,23 @@ namespace System.Management.Automation
             {
                 return data;
             }
+
+#if !UNIX
+            // Avoid resolving WMI/ADSI types until one of their conversions is requested.
+            if (fromType == typeof(string)
+                && toType.FullName is "System.Management.ManagementObjectSearcher"
+                    or "System.Management.ManagementClass"
+                    or "System.Management.ManagementObject"
+                    or "System.DirectoryServices.DirectoryEntry"
+                    or "System.DirectoryServices.DirectorySearcher")
+            {
+                data = FigureWmiConversion(fromType, toType);
+                if (data != null)
+                {
+                    return data;
+                }
+            }
+#endif
 
             if (fromType == typeof(Null))
             {

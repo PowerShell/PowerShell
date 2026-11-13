@@ -6,6 +6,50 @@ Describe "Type accelerators" -Tags "CI" {
         $TypeAcceleratorsType = [psobject].Assembly.GetType("System.Management.Automation.TypeAccelerators")
         $TypeAccelerators = $TypeAcceleratorsType::Get
     }
+
+    Context "Lazy type accelerator initialization" {
+        It "Does not load optional assemblies for ordinary attributes and core types" {
+            $script = {
+                function Test-CommonAttribute {
+                    [CmdletBinding()]
+                    param([int] $Value)
+                    $Value
+                }
+                $null = Test-CommonAttribute -Value 1
+                foreach ($assembly in [AppDomain]::CurrentDomain.GetAssemblies()) {
+                    [Console]::WriteLine($assembly.GetName().Name)
+                }
+            }.ToString()
+            $startInfo = [System.Diagnostics.ProcessStartInfo]::new((Join-Path $PSHOME 'pwsh'))
+            $startInfo.UseShellExecute = $false
+            $startInfo.RedirectStandardOutput = $true
+            $startInfo.RedirectStandardError = $true
+            $startInfo.Environment['DOTNET_MultiCoreJitMinNumCpus'] = '1000'
+            foreach ($argument in @('-nologo', '-noprofile', '-EncodedCommand', [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($script)))) {
+                $startInfo.ArgumentList.Add($argument)
+            }
+
+            $child = [System.Diagnostics.Process]::Start($startInfo)
+            try {
+                $outputTask = $child.StandardOutput.ReadToEndAsync()
+                $errorTask = $child.StandardError.ReadToEndAsync()
+                $child.WaitForExit(15000) | Should -BeTrue
+                $child.ExitCode | Should -Be 0
+                $errorTask.GetAwaiter().GetResult() | Should -BeNullOrEmpty
+                $assemblyNames = $outputTask.GetAwaiter().GetResult() -split '\r?\n'
+                foreach ($name in @('System.DirectoryServices', 'System.Management', 'System.Net.NetworkInformation')) {
+                    $assemblyNames | Should -Not -Contain $name
+                }
+            }
+            finally {
+                if (-not $child.HasExited) {
+                    $child.Kill($true)
+                    $child.WaitForExit()
+                }
+                $child.Dispose()
+            }
+        }
+    }
     Context 'BuiltIn Accelerators' {
         BeforeAll {
 

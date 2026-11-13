@@ -190,7 +190,7 @@ namespace System.Management.Automation.Language
                     currentScope = currentScope.Parent;
                 }
 
-                if (TypeAccelerators.builtinTypeAccelerators.TryGetValue(typeName.Name, out result))
+                if (TypeAccelerators.TryGetBuiltinAccelerator(typeName.Name, out result))
                 {
                     return result;
                 }
@@ -747,12 +747,8 @@ namespace System.Management.Automation
                     { typeof(int),                                         new[] { "int", "int32" } },
                     { typeof(short),                                       new[] { "short", "int16" } },
                     { typeof(long),                                        new[] { "long", "int64" } },
-                    { typeof(CimInstance),                                 new[] { "ciminstance" } },
-                    { typeof(CimClass),                                    new[] { "cimclass" } },
-                    { typeof(Microsoft.Management.Infrastructure.CimType), new[] { "cimtype" } },
                     { typeof(CimConverter),                                new[] { "cimconverter" } },
                     { typeof(ModuleSpecification),                         null },
-                    { typeof(IPEndPoint),                                  new[] { "IPEndpoint" } },
                     { typeof(NoRunspaceAffinityAttribute),                 new[] { "NoRunspaceAffinity" } },
                     { typeof(NullString),                                  new[] { "NullString" } },
                     { typeof(OutputTypeAttribute),                         new[] { "OutputType" } },
@@ -760,7 +756,6 @@ namespace System.Management.Automation
                     { typeof(ObjectSecurity),                              new[] { "ObjectSecurity" } },
                     { typeof(OrderedDictionary),                           new[] { "ordered" } },
                     { typeof(ParameterAttribute),                          new[] { "Parameter" } },
-                    { typeof(PhysicalAddress),                             new[] { "PhysicalAddress" } },
                     { typeof(PSCredential),                                new[] { "pscredential" } },
                     { typeof(PSDefaultValueAttribute),                     new[] { "PSDefaultValue" } },
                     { typeof(PSListModifier),                              new[] { "pslistmodifier" } },
@@ -796,24 +791,36 @@ namespace System.Management.Automation
                     { typeof(ValidateUserDriveAttribute),                  new[] { "ValidateUserDrive"} },
                     { typeof(Version),                                     new[] { "version" } },
                     { typeof(void),                                        new[] { "void" } },
-                    { typeof(IPAddress),                                   new[] { "ipaddress" } },
                     { typeof(DscLocalConfigurationManagerAttribute),       new[] {"DscLocalConfigurationManager"}},
                     { typeof(WildcardPattern),                             new[] { "WildcardPattern" } },
                     { typeof(X509Certificate),                             new[] { "X509Certificate" } },
                     { typeof(X500DistinguishedName),                       new[] { "X500DistinguishedName" } },
                     { typeof(XmlDocument),                                 new[] { "xml" } },
-                    { typeof(CimSession),                                  new[] { "CimSession" } },
-                    { typeof(MailAddress),                                 new[] { "mailaddress" } },
                     { typeof(SemanticVersion),                             new[] { "semver" } },
-#if !UNIX
-                    { typeof(DirectoryEntry),                              new[] { "adsi" } },
-                    { typeof(DirectorySearcher),                           new[] { "adsisearcher" } },
-                    { typeof(ManagementClass),                             new[] { "wmiclass" } },
-                    { typeof(ManagementObject),                            new[] { "wmi" } },
-                    { typeof(ManagementObjectSearcher),                    new[] { "wmisearcher" } }
-#endif
                 }
             );
+
+        // Keep optional assemblies out of the common lookup path. The factories still
+        // establish exact type identity before granting core-type privileges.
+        internal static readonly Dictionary<string, (Func<Type> Resolve, string[] Accelerators)> DeferredTypes =
+            new Dictionary<string, (Func<Type>, string[])>(StringComparer.Ordinal)
+            {
+                { "Microsoft.Management.Infrastructure.CimInstance", (() => typeof(CimInstance), new[] { "ciminstance" }) },
+                { "Microsoft.Management.Infrastructure.CimClass", (() => typeof(CimClass), new[] { "cimclass" }) },
+                { "Microsoft.Management.Infrastructure.CimType", (() => typeof(Microsoft.Management.Infrastructure.CimType), new[] { "cimtype" }) },
+                { "Microsoft.Management.Infrastructure.CimSession", (() => typeof(CimSession), new[] { "CimSession" }) },
+                { "System.Net.IPEndPoint", (() => typeof(IPEndPoint), new[] { "IPEndpoint" }) },
+                { "System.Net.IPAddress", (() => typeof(IPAddress), new[] { "ipaddress" }) },
+                { "System.Net.NetworkInformation.PhysicalAddress", (() => typeof(PhysicalAddress), new[] { "PhysicalAddress" }) },
+                { "System.Net.Mail.MailAddress", (() => typeof(MailAddress), new[] { "mailaddress" }) },
+#if !UNIX
+                { "System.DirectoryServices.DirectoryEntry", (() => typeof(DirectoryEntry), new[] { "adsi" }) },
+                { "System.DirectoryServices.DirectorySearcher", (() => typeof(DirectorySearcher), new[] { "adsisearcher" }) },
+                { "System.Management.ManagementClass", (() => typeof(ManagementClass), new[] { "wmiclass" }) },
+                { "System.Management.ManagementObject", (() => typeof(ManagementObject), new[] { "wmi" }) },
+                { "System.Management.ManagementObjectSearcher", (() => typeof(ManagementObjectSearcher), new[] { "wmisearcher" }) },
+#endif
+            };
 
         internal static bool Contains(Type inputType)
         {
@@ -823,6 +830,13 @@ namespace System.Management.Automation
             }
 
             if (inputType.IsEnum)
+            {
+                return true;
+            }
+
+            if (inputType.FullName != null
+                && DeferredTypes.TryGetValue(inputType.FullName, out var deferredType)
+                && inputType == deferredType.Resolve())
             {
                 return true;
             }
@@ -846,6 +860,8 @@ namespace System.Management.Automation
         // builtins are not exposed publicly in a direct manner so they can't be changed at all
         internal static readonly Dictionary<string, Type> builtinTypeAccelerators = new Dictionary<string, Type>(64, StringComparer.OrdinalIgnoreCase);
 
+        private static readonly Dictionary<string, Func<Type>> s_deferredTypeAccelerators = new Dictionary<string, Func<Type>>(StringComparer.OrdinalIgnoreCase);
+
         // users can add to user added accelerators (but not currently remove any.)  Keeping a separate
         // list allows us to add removing in the future w/o worrying about breaking the builtins.
         internal static readonly Dictionary<string, Type> userTypeAccelerators = new Dictionary<string, Type>(64, StringComparer.OrdinalIgnoreCase);
@@ -868,6 +884,14 @@ namespace System.Management.Automation
                 }
             }
 
+            foreach (var deferredType in CoreTypes.DeferredTypes.Values)
+            {
+                foreach (string accelerator in deferredType.Accelerators)
+                {
+                    s_deferredTypeAccelerators.Add(accelerator, deferredType.Resolve);
+                }
+            }
+
             // Add additional utility types that are useful as type accelerators, but aren't
             // fundamentally "core language", or may be unsafe to expose to untrusted input.
             builtinTypeAccelerators.Add("scriptblock", typeof(ScriptBlock));
@@ -886,6 +910,40 @@ namespace System.Management.Automation
             builtinTypeAccelerators.Add("psvariableproperty", typeof(PSVariableProperty));
         }
 
+        internal static bool TryGetBuiltinAccelerator(string name, out Type type)
+        {
+            if (builtinTypeAccelerators.TryGetValue(name, out type))
+            {
+                return true;
+            }
+
+            if (s_deferredTypeAccelerators.TryGetValue(name, out Func<Type> resolve))
+            {
+                type = resolve();
+                return true;
+            }
+
+            return false;
+        }
+
+        internal static bool TryGetAccelerator(string name, out Type type)
+        {
+            lock (userTypeAccelerators)
+            {
+                if (s_allTypeAccelerators != null)
+                {
+                    return s_allTypeAccelerators.TryGetValue(name, out type);
+                }
+
+                if (userTypeAccelerators.TryGetValue(name, out type))
+                {
+                    return true;
+                }
+            }
+
+            return TryGetBuiltinAccelerator(name, out type);
+        }
+
         internal static string FindBuiltinAccelerator(Type type, string expectedKey = null)
         {
             // Taking attributes as special case. In this case, we only want to return the
@@ -899,11 +957,18 @@ namespace System.Management.Automation
                         return entry.Key;
                     }
                 }
+
+                if (type.FullName != null
+                    && CoreTypes.DeferredTypes.TryGetValue(type.FullName, out var deferredType)
+                    && type == deferredType.Resolve())
+                {
+                    return deferredType.Accelerators[0];
+                }
             }
             else
             {
                 Type resultType = null;
-                builtinTypeAccelerators.TryGetValue(expectedKey, out resultType);
+                TryGetBuiltinAccelerator(expectedKey, out resultType);
                 if (resultType != null && resultType == type)
                 {
                     return expectedKey;
@@ -919,10 +984,13 @@ namespace System.Management.Automation
         /// <param name="type">The type of the type accelerator.</param>
         public static void Add(string typeName, Type type)
         {
-            userTypeAccelerators[typeName] = type;
-            if (s_allTypeAccelerators != null)
+            lock (userTypeAccelerators)
             {
-                s_allTypeAccelerators[typeName] = type;
+                userTypeAccelerators[typeName] = type;
+                if (s_allTypeAccelerators != null)
+                {
+                    s_allTypeAccelerators[typeName] = type;
+                }
             }
         }
 
@@ -933,8 +1001,11 @@ namespace System.Management.Automation
         /// <param name="typeName">The accelerator to remove.</param>
         public static bool Remove(string typeName)
         {
-            userTypeAccelerators.Remove(typeName);
-            s_allTypeAccelerators?.Remove(typeName);
+            lock (userTypeAccelerators)
+            {
+                userTypeAccelerators.Remove(typeName);
+                s_allTypeAccelerators?.Remove(typeName);
+            }
 
             return true;
         }
@@ -954,13 +1025,17 @@ namespace System.Management.Automation
         {
             get
             {
-                if (s_allTypeAccelerators == null)
+                lock (userTypeAccelerators)
                 {
-                    s_allTypeAccelerators = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
-                    FillCache(s_allTypeAccelerators);
-                }
+                    if (s_allTypeAccelerators == null)
+                    {
+                        var cache = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
+                        FillCache(cache);
+                        s_allTypeAccelerators = cache;
+                    }
 
-                return s_allTypeAccelerators;
+                    return s_allTypeAccelerators;
+                }
             }
         }
 
@@ -969,6 +1044,11 @@ namespace System.Management.Automation
             foreach (KeyValuePair<string, Type> val in builtinTypeAccelerators)
             {
                 cache.Add(val.Key, val.Value);
+            }
+
+            foreach (KeyValuePair<string, Func<Type>> val in s_deferredTypeAccelerators)
+            {
+                cache.Add(val.Key, val.Value());
             }
 
             foreach (KeyValuePair<string, Type> val in userTypeAccelerators)
