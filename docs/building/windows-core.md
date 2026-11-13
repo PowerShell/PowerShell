@@ -16,12 +16,6 @@ Using Git requires it to be set up correctly; refer to the
 
 This guide assumes that you have recursively cloned the PowerShell repository and `cd`ed into it.
 
-### Visual Studio
-
-Install [Visual Studio 2019](https://visualstudio.microsoft.com/downloads/). The Community edition is available free of charge.
-
-The PowerShell/PowerShell repository requires at least Visual Studio 2019 16.7.
-
 ### Visual Studio Code
 
 Building PowerShell using [Visual Studio Code](https://code.visualstudio.com/) depends on the PowerShell executable to be called `pwsh` which means
