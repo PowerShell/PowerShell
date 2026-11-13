@@ -408,9 +408,25 @@ namespace System.Management.Automation.Configuration
                         fileLock.EnterReadLock();
 
                         using var stream = OpenFileStreamWithRetry(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                        using var jsonReader = new JsonTextReader(new StreamReader(stream));
+                        using var jsonReader = new JsonTextReader(new StreamReader(stream)) { MaxDepth = 10 };
 
-                        configData = serializer.Deserialize<JObject>(jsonReader) ?? emptyConfig;
+                        // Load the DOM directly to avoid serializer contract discovery during startup.
+                        // Empty, comment-only, and JSON null files still represent an empty configuration.
+                        configData = emptyConfig;
+                        while (jsonReader.Read())
+                        {
+                            if (jsonReader.TokenType == JsonToken.Comment)
+                            {
+                                continue;
+                            }
+
+                            if (jsonReader.TokenType != JsonToken.Null)
+                            {
+                                configData = JObject.Load(jsonReader);
+                            }
+
+                            break;
+                        }
                     }
                     catch (Exception exc) when (
                         scope == ConfigScope.CurrentUser &&
