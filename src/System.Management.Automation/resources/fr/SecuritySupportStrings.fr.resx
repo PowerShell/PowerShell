@@ -164,5 +164,6 @@
   </data>
   <data name="ExternalScriptWDACLogMessage" xml:space="preserve">
     <value>Le fichier de script «{0}» n’est pas approuvé par la stratégie et s’exécutera en mode ConstrainedLanguage.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

@@ -653,5 +653,6 @@
   </data>
   <data name="WDACSessionStateVarLogMessage" xml:space="preserve">
     <value>変数 '{0}' スコープを AllScope に変更または作成することは、ConstrainedLanguage モードでは禁止されます。</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

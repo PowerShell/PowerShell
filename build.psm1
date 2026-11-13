@@ -695,7 +695,6 @@ Fix steps:
         Push-Location $Options.Top
 
         if ($Options.Runtime -notlike 'fxdependent*' -or $Options.Runtime -match $optimizedFddRegex) {
-            Write-Verbose "Building without shim" -Verbose
             $sdkToUse = 'Microsoft.NET.Sdk'
             if (($Options.Runtime -like 'win7-*' -or $Options.Runtime -eq 'win-arm64') -and !$ForMinimalSize) {
                 ## WPF/WinForm and the PowerShell GraphicalHost assemblies are included
@@ -709,9 +708,6 @@ Fix steps:
             Start-NativeExecution { dotnet $Arguments }
             Write-Log -message "PowerShell output: $($Options.Output)"
         } else {
-            Write-Verbose "Building with shim" -Verbose
-            $globalToolSrcFolder = Resolve-Path (Join-Path $Options.Top "../Microsoft.PowerShell.GlobalTool.Shim") | Select-Object -ExpandProperty Path
-
             if ($Options.Runtime -eq 'fxdependent' -or $Options.Runtime -eq 'fxdependent-noopt-linux-musl-x64') {
                 $Arguments += "/property:SDKToUse=Microsoft.NET.Sdk"
             } elseif ($Options.Runtime -eq 'fxdependent-win-desktop') {
@@ -721,25 +717,6 @@ Fix steps:
             Write-Log -message "Run dotnet $Arguments from $PWD"
             Start-NativeExecution { dotnet $Arguments }
             Write-Log -message "PowerShell output: $($Options.Output)"
-
-            try {
-                Push-Location $globalToolSrcFolder
-
-                if ($Options.Runtime -like 'fxdependent*') {
-                    if ($Arguments -contains '/property:UseAppHost=true') {
-                        $Arguments = @($Arguments | Where-Object { $_ -notlike '/property:UseAppHost=true' })
-                    }
-                }
-
-                if ($Arguments -notcontains '--output') {
-                    $Arguments += "--output", $publishPath
-                }
-                Write-Log -message "Run dotnet $Arguments from $PWD to build global tool entry point"
-                Start-NativeExecution { dotnet $Arguments }
-            }
-            finally {
-                Pop-Location
-            }
         }
     } finally {
         Pop-Location
@@ -1083,10 +1060,6 @@ function Restore-PSPackage
     if (-not $ProjectDirs)
     {
         $ProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen", "$PSScriptRoot/src/Modules", "$PSScriptRoot/tools/wix")
-
-        if ($Options.Runtime -like 'fxdependent*') {
-            $ProjectDirs += "$PSScriptRoot/src/Microsoft.PowerShell.GlobalTool.Shim"
-        }
     }
 
     if ($Force -or (-not (Test-Path "$($Options.Top)/obj/project.assets.json"))) {

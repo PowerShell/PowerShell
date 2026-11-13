@@ -205,6 +205,7 @@
     <value>コンパイル済みスクリプト ブロックのドット ソース</value>
   </data>
   <data name="WDACCompiledScriptBlockLogMessage" xml:space="preserve">
-    <value>現在のスコープへのスクリプト ブロック '{0}' の呼び出しは、制限付き言語モードでは許可されません。スクリプト言語モード: {1}、コンテキスト言語モード: {2}。</value>
+    <value>現在のスコープへのスクリプト ブロック '{0}' の呼び出しは、ConstrainedLanguage モードでは許可されません。スクリプト言語モード: {1}、コンテキスト言語モード: {2}。</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

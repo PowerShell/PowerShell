@@ -148,5 +148,6 @@
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
     <value>I comandi aggiuntivi supportati (tramite il parametro SupportedCommand) non sono consentiti in modalità ConstrainedLanguage.</value>
+    <comment>{StrContains="SupportedCommand"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

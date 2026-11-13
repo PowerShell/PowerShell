@@ -232,12 +232,14 @@ Reviewed by TArcher on 2010-07-20
     <value>脚本块处理点源检查</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>脚本块“{0}”的点源处理将会在受约束语言模式下失败，因为其语言模式“{1}”与当前语言模式“{2}”不匹配。</value>
+    <value>在 ConstrainedLanguage 模式下，脚本块 '{0}' 的点源处理将会失败，因为其语言模式 '{1}' 与当前语言模式 '{2}' 不匹配。</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="SearcherWDACLogTitle" xml:space="preserve">
     <value>命令搜索器</value>
   </data>
   <data name="SearcherWDACLogMessage" xml:space="preserve">
     <value>模块“{1}”中的命令“{0}”不受信任，无法在 ConstrainedLanguage 模式下访问。</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>
