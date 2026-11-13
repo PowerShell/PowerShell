@@ -801,7 +801,7 @@ namespace Microsoft.PowerShell.Commands
                 // should not be done.
                 if (textElement.Contains(charactersThatNeedEscaping))
                 {
-                    // This text element needs espacing
+                    // This text element needs escaping
                     result.Append('`');
                 }
 
@@ -850,7 +850,7 @@ namespace Microsoft.PowerShell.Commands
                 // should not be done.
                 if (textElement.Contains(charactersThatNeedEscaping))
                 {
-                    // This text element needs espacing
+                    // This text element needs escaping
                     result.Append('`');
                 }
 
@@ -1825,8 +1825,19 @@ namespace Microsoft.PowerShell.Commands
                     notePropertyName = LocalizedDefaultToken;
                 }
 
-                propertyResults.Properties.Add(new PSNoteProperty(notePropertyName, key.GetValue(valueName)));
-                valueAdded = true;
+                try
+                {
+                    propertyResults.Properties.Add(new PSNoteProperty(notePropertyName, key.GetValue(valueName)));
+                    valueAdded = true;
+                }
+                catch (InvalidCastException invalidCast)
+                {
+                    WriteError(new ErrorRecord(
+                        invalidCast,
+                        invalidCast.GetType().FullName,
+                        ErrorCategory.ReadError,
+                        path));
+                }
             }
 
             key.Close();

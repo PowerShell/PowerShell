@@ -256,7 +256,10 @@ namespace Microsoft.PowerShell.Commands
                 {
                     foreach (Job childJob in job.ChildJobs)
                     {
-                        if (childJob.JobStateInfo.State != ChildJobState) continue;
+                        if (childJob.JobStateInfo.State != ChildJobState)
+                        {
+                            continue;
+                        }
 
                         matches.Add(childJob);
                     }

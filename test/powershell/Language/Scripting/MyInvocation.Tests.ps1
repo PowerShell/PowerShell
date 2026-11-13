@@ -23,6 +23,25 @@ Describe 'Testing of MyInvocation' -Tags "CI" {
         { & myfilter } | Should -Not -Throw
     }
 
+    Context 'MyInvocation works with multi-line invocations' {
+        It 'MyInvocation.Statement works in & Script block' {
+            $a = & {
+                $MyInvocation.Statement
+            }
+            $a.IndexOf('& {
+                $MyInvocation.Statement
+            }') |Should -BeGreaterThan -1
+        }
+        It 'MyInvocation.Statement works in dot sourced Script block' {
+            $a = . {
+                $MyInvocation.Statement
+            }
+            $a.IndexOf('. {
+                $MyInvocation.Statement
+            }') |Should -BeGreaterThan -1
+        }
+    }
+
     Context 'MyInvocation works in Script block' {
 
         It 'MyInvocation works in dot sourced Script block' {

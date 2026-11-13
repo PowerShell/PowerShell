@@ -1,0 +1,9 @@
+# Set PowerShell profile content
+$schema: https://aka.ms/dsc/schemas/v3/bundled/config/document.json
+resources:
+- name: PSProfile
+  type: Microsoft.PowerShell/Profile
+  properties:
+    profileType: CurrentUserCurrentHost
+    content: ''
+    _exist: true

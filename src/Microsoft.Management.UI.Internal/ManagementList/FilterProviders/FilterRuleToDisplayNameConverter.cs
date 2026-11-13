@@ -11,7 +11,6 @@ namespace Microsoft.Management.UI.Internal
     /// The FilterRuleToDisplayNameConverter is responsible for converting
     /// a FilterRule value to its DisplayName.
     /// </summary>
-    [Serializable]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     public class FilterRuleToDisplayNameConverter : IValueConverter
     {

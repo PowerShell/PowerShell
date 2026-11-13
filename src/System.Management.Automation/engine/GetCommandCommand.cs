@@ -12,6 +12,7 @@ using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
+using static System.Management.Automation.Verbs;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands
@@ -71,6 +72,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the verb parameter to the cmdlet.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true, ParameterSetName = "CmdletSet")]
+        [ArgumentCompleter(typeof(VerbArgumentCompleter))]
         public string[] Verb
         {
             get
@@ -137,6 +139,28 @@ namespace Microsoft.PowerShell.Commands
 
         private string[] _modules = Array.Empty<string>();
         private bool _isModuleSpecified = false;
+
+        /// <summary>
+        /// Gets or sets the ExcludeModule parameter to the cmdlet.
+        /// </summary>
+        [Parameter()]
+        public string[] ExcludeModule
+        {
+            get
+            {
+                return _excludedModules;
+            }
+
+            set
+            {
+                value ??= Array.Empty<string>();
+
+                _excludedModules = value;
+                _excludedModulePatterns = null;
+            }
+        }
+
+        private string[] _excludedModules = Array.Empty<string>();
 
         /// <summary>
         /// Gets or sets the FullyQualifiedModule parameter to the cmdlet.
@@ -402,6 +426,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Initialize the module patterns
             _modulePatterns ??= SessionStateUtilities.CreateWildcardsFromStrings(Module, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
+            _excludedModulePatterns ??= SessionStateUtilities.CreateWildcardsFromStrings(ExcludeModule, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
 
             switch (ParameterSetName)
             {
@@ -564,7 +589,7 @@ namespace Microsoft.PowerShell.Commands
 
             // No telemetry here - capturing the name of a command which we are not familiar with
             // may be confidential customer information
-            // We want telementry on commands people look for but don't exist - this should give us an idea
+            // We want telemetry on commands people look for but don't exist - this should give us an idea
             // what sort of commands people expect but either don't exist, or maybe should be installed by default.
             // The StartsWith is to avoid logging telemetry when suggestion mode checks the
             // current directory for scripts/exes in the current directory and '.' is not in the path.
@@ -614,7 +639,12 @@ namespace Microsoft.PowerShell.Commands
                 switch (command)
                 {
                     case ExternalScriptInfo externalScript:
-                        replacedSyntax = string.Create(CultureInfo.InvariantCulture, $"{aliasName} (alias) -> {externalScript.Path}{Environment.NewLine}{Environment.NewLine}{command.Syntax.Replace(command.Name, aliasName)}");
+                        replacedSyntax = string.Format(
+                            "{0} (alias) -> {1}{2}{3}",
+                            aliasName,
+                            string.Format("{0}{1}", externalScript.Path, Environment.NewLine),
+                            Environment.NewLine,
+                            command.Syntax.Replace(command.Name, aliasName));
                         break;
                     case ApplicationInfo app:
                         replacedSyntax = app.Path;
@@ -626,7 +656,12 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            replacedSyntax = string.Create(CultureInfo.InvariantCulture, $"{aliasName} (alias) -> {command.Name}{Environment.NewLine}{command.Syntax.Replace(command.Name, aliasName)}");
+                            replacedSyntax = string.Format(
+                                "{0} (alias) -> {1}{2}{3}",
+                                aliasName,
+                                command.Name,
+                                Environment.NewLine,
+                                command.Syntax.Replace(command.Name, aliasName));
                         }
 
                         break;
@@ -690,6 +725,13 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!string.IsNullOrEmpty(command.ModuleName))
                 {
+                    if (_excludedModulePatterns is not null
+                        && _excludedModulePatterns.Count > 0
+                        && SessionStateUtilities.MatchesAnyWildcardPattern(command.ModuleName, _excludedModulePatterns, true))
+                    {
+                        break;
+                    }
+
                     if (_isFullyQualifiedModuleSpecified)
                     {
                         if (!_moduleSpecifications.Any(
@@ -844,10 +886,9 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if (TotalCount < 0 || count < TotalCount)
                             {
-                                IEnumerable<CommandInfo> commands;
                                 if (UseFuzzyMatching)
                                 {
-                                    foreach (var commandScore in ModuleUtils.GetFuzzyMatchingCommands(
+                                    foreach (CommandScore commandScore in ModuleUtils.GetFuzzyMatchingCommands(
                                         plainCommandName,
                                         Context,
                                         MyInvocation.CommandOrigin,
@@ -855,37 +896,48 @@ namespace Microsoft.PowerShell.Commands
                                         rediscoverImportedModules: true,
                                         moduleVersionRequired: _isFullyQualifiedModuleSpecified))
                                     {
-                                        _commandScores.Add(commandScore);
-                                    }
+                                        CommandInfo current = commandScore.Command;
+                                        if (IsCommandMatch(ref current, out isDuplicate) && !IsCommandInResult(current) && IsParameterMatch(current))
+                                        {
+                                            _accumulatedResults.Add(current);
+                                            _commandScores.Add(new CommandScore(current, commandScore.Score));
 
-                                    commands = _commandScores.Select(static x => x.Command);
+                                            // Make sure we don't exceed the TotalCount parameter
+                                            ++count;
+
+                                            if (TotalCount >= 0 && count >= TotalCount)
+                                            {
+                                                break;
+                                            }
+                                        }
+                                    }
                                 }
                                 else
                                 {
-                                    commands = ModuleUtils.GetMatchingCommands(
+                                    IEnumerable<CommandInfo> commands = ModuleUtils.GetMatchingCommands(
                                         plainCommandName,
                                         Context,
                                         MyInvocation.CommandOrigin,
                                         rediscoverImportedModules: true,
                                         moduleVersionRequired: _isFullyQualifiedModuleSpecified,
                                         useAbbreviationExpansion: UseAbbreviationExpansion);
-                                }
 
-                                foreach (CommandInfo command in commands)
-                                {
-                                    // Cannot pass in "command" by ref (foreach iteration variable)
-                                    CommandInfo current = command;
-
-                                    if (IsCommandMatch(ref current, out isDuplicate) && (!IsCommandInResult(current)) && IsParameterMatch(current))
+                                    foreach (CommandInfo command in commands)
                                     {
-                                        _accumulatedResults.Add(current);
+                                        // Cannot pass in "command" by ref (foreach iteration variable)
+                                        CommandInfo current = command;
 
-                                        // Make sure we don't exceed the TotalCount parameter
-                                        ++count;
-
-                                        if (TotalCount >= 0 && count >= TotalCount)
+                                        if (IsCommandMatch(ref current, out isDuplicate) && (!IsCommandInResult(current)) && IsParameterMatch(current))
                                         {
-                                            break;
+                                            _accumulatedResults.Add(current);
+
+                                            // Make sure we don't exceed the TotalCount parameter
+                                            ++count;
+
+                                            if (TotalCount >= 0 && count >= TotalCount)
+                                            {
+                                                break;
+                                            }
                                         }
                                     }
                                 }
@@ -1259,6 +1311,13 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
+                    if (_excludedModulePatterns is not null
+                        && _excludedModulePatterns.Count > 0
+                        && SessionStateUtilities.MatchesAnyWildcardPattern(current.ModuleName, _excludedModulePatterns, true))
+                    {
+                        return false;
+                    }
+
                     if (_isFullyQualifiedModuleSpecified)
                     {
                         bool foundModuleMatch = false;
@@ -1518,6 +1577,7 @@ namespace Microsoft.PowerShell.Commands
         private Collection<WildcardPattern> _verbPatterns;
         private Collection<WildcardPattern> _nounPatterns;
         private Collection<WildcardPattern> _modulePatterns;
+        private Collection<WildcardPattern> _excludedModulePatterns;
 
 #if LEGACYTELEMETRY
         private Stopwatch _timer = new Stopwatch();
@@ -1644,40 +1704,50 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
+    /// Provides argument completion for Noun parameter.
     /// </summary>
     public class NounArgumentCompleter : IArgumentCompleter
     {
-        /// <summary>
         /// </summary>
-        public IEnumerable<CompletionResult> CompleteArgument(string commandName, string parameterName, string wordToComplete, CommandAst commandAst, IDictionary fakeBoundParameters)
+        /// Returns completion results for Noun parameter.
+        /// </summary>
+        /// <param name="commandName">The command name.</param>
+        /// <param name="parameterName">The parameter name.</param>
+        /// <param name="wordToComplete">The word to complete.</param>
+        /// <param name="commandAst">The command AST.</param>
+        /// <param name="fakeBoundParameters">The fake bound parameters.</param>
+        /// <returns>List of completion results.</returns>
+        public IEnumerable<CompletionResult> CompleteArgument(
+            string commandName,
+            string parameterName,
+            string wordToComplete,
+            CommandAst commandAst,
+            IDictionary fakeBoundParameters) => CompletionHelpers.GetMatchingResults(
+                wordToComplete,
+                possibleCompletionValues: GetCommandNouns(fakeBoundParameters));
+
+        /// <summary>
+        /// Get sorted set of command nouns using Get-Command.
+        /// </summary>
+        /// <param name="fakeBoundParameters">The fake bound parameters.</param>
+        /// <returns>Sorted set of command nouns.</returns>
+        private static SortedSet<string> GetCommandNouns(IDictionary fakeBoundParameters)
         {
-            if (fakeBoundParameters == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(fakeBoundParameters));
-            }
+            Collection<CommandInfo> commands = CompletionCompleters.GetCommandInfo(fakeBoundParameters, "Module", "Verb");
+            SortedSet<string> nouns = new(StringComparer.OrdinalIgnoreCase);
 
-            var commandInfo = new CmdletInfo("Get-Command", typeof(GetCommandCommand));
-            var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace)
-                .AddCommand(commandInfo)
-                .AddParameter("Noun", wordToComplete + "*");
-
-            if (fakeBoundParameters.Contains("Module"))
+            foreach (CommandInfo command in commands)
             {
-                ps.AddParameter("Module", fakeBoundParameters["Module"]);
-            }
-
-            HashSet<string> nouns = new HashSet<string>();
-            var results = ps.Invoke<CommandInfo>();
-            foreach (var result in results)
-            {
-                var dash = result.Name.IndexOf('-');
-                if (dash != -1)
+                string commandName = command.Name;
+                int dashIndex = commandName.IndexOf('-');
+                if (dashIndex != -1)
                 {
-                    nouns.Add(result.Name.Substring(dash + 1));
+                    string noun = commandName.Substring(dashIndex + 1);
+                    nouns.Add(noun);
                 }
             }
 
-            return nouns.Order().Select(static noun => new CompletionResult(noun, noun, CompletionResultType.Text, noun));
+            return nouns;
         }
     }
 }

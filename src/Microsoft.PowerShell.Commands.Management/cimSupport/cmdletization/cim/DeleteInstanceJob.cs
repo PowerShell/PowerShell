@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     /// <summary>
     /// Job wrapping invocation of a DeleteInstance intrinsic CIM method.
     /// </summary>
-    internal class DeleteInstanceJob : MethodInvocationJobBase<object>
+    internal sealed class DeleteInstanceJob : MethodInvocationJobBase<object>
     {
         private readonly CimInstance _objectToDelete;
 

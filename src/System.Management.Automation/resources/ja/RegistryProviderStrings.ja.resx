@@ -1,0 +1,333 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="SetItemAction" xml:space="preserve">
+    <value>項目の設定</value>
+  </data>
+  <data name="SetItemResourceTemplate" xml:space="preserve">
+    <value>項目: {0} 値: {1}</value>
+  </data>
+  <data name="ClearItemAction" xml:space="preserve">
+    <value>項目のクリア</value>
+  </data>
+  <data name="ClearItemResourceTemplate" xml:space="preserve">
+    <value>項目: {0}</value>
+  </data>
+  <data name="NewItemAction" xml:space="preserve">
+    <value>新しい項目</value>
+  </data>
+  <data name="NewItemResourceTemplate" xml:space="preserve">
+    <value>項目: {0}</value>
+  </data>
+  <data name="RemoveKeyAction" xml:space="preserve">
+    <value>キーの削除</value>
+  </data>
+  <data name="RemoveKeyResourceTemplate" xml:space="preserve">
+    <value>項目: {0}</value>
+  </data>
+  <data name="CopyKeyAction" xml:space="preserve">
+    <value>キーのコピー</value>
+  </data>
+  <data name="CopyKeyResourceTemplate" xml:space="preserve">
+    <value>項目: {0} 宛先: {1}</value>
+  </data>
+  <data name="RenameItemAction" xml:space="preserve">
+    <value>項目名の変更</value>
+  </data>
+  <data name="RenameItemResourceTemplate" xml:space="preserve">
+    <value>項目: {0} NewName: {1}</value>
+  </data>
+  <data name="MoveItemAction" xml:space="preserve">
+    <value>項目の移動</value>
+  </data>
+  <data name="MoveItemResourceTemplate" xml:space="preserve">
+    <value>項目: {0} 宛先: {1}</value>
+  </data>
+  <data name="SetPropertyAction" xml:space="preserve">
+    <value>プロパティの設定</value>
+  </data>
+  <data name="SetPropertyResourceTemplate" xml:space="preserve">
+    <value>項目: {0} プロパティ: {1}</value>
+  </data>
+  <data name="ClearPropertyAction" xml:space="preserve">
+    <value>プロパティをクリア</value>
+  </data>
+  <data name="ClearPropertyResourceTemplate" xml:space="preserve">
+    <value>項目: {0} プロパティ: {1}</value>
+  </data>
+  <data name="NewPropertyAction" xml:space="preserve">
+    <value>新しいプロパティ</value>
+  </data>
+  <data name="NewPropertyResourceTemplate" xml:space="preserve">
+    <value>項目: {0} プロパティ: {1}</value>
+  </data>
+  <data name="RemovePropertyAction" xml:space="preserve">
+    <value>プロパティの削除</value>
+  </data>
+  <data name="RemovePropertyResourceTemplate" xml:space="preserve">
+    <value>項目: {0} プロパティ: {1}</value>
+  </data>
+  <data name="RenamePropertyAction" xml:space="preserve">
+    <value>プロパティ名を変更します。</value>
+  </data>
+  <data name="RenamePropertyResourceTemplate" xml:space="preserve">
+    <value>項目: {0} SourceProperty: {1} DestinationProperty: {2}</value>
+  </data>
+  <data name="CopyPropertyAction" xml:space="preserve">
+    <value>プロパティのコピー</value>
+  </data>
+  <data name="CopyPropertyResourceTemplate" xml:space="preserve">
+    <value>項目: {0} SourceProperty: {1} DestinationItem: {2} DestinationProperty: {3}</value>
+  </data>
+  <data name="MovePropertyAction" xml:space="preserve">
+    <value>プロパティの移動</value>
+  </data>
+  <data name="MovePropertyResourceTemplate" xml:space="preserve">
+    <value>項目: {0} SourceProperty: {1} DestinationItem: {2} DestinationProperty: {3}</value>
+  </data>
+  <data name="ContainerInvalidOperationTemplate" xml:space="preserve">
+    <value>操作は処理されませんでした。指定された場所では、この操作は許可されていません。</value>
+  </data>
+  <data name="SourceContainerInvalidOperationTemplate" xml:space="preserve">
+    <value>ソースの場所に対する操作は許可されていません。</value>
+  </data>
+  <data name="DestinationContainerInvalidOperationTemplate" xml:space="preserve">
+    <value>この操作は、宛先の場所では許可されていません。</value>
+  </data>
+  <data name="HKLMDriveDescription" xml:space="preserve">
+    <value>ローカル コンピューターの構成設定</value>
+  </data>
+  <data name="HKCUDriveDescription" xml:space="preserve">
+    <value>現在のユーザーのソフトウェア設定</value>
+  </data>
+  <data name="KeyAlreadyExists" xml:space="preserve">
+    <value>このパスには既にキーが存在します。</value>
+  </data>
+  <data name="DestinationChildOfSource" xml:space="preserve">
+    <value>宛先パスがソース パスの下位にあるため、操作を実行できません。</value>
+  </data>
+  <data name="PropertyAlreadyExists" xml:space="preserve">
+    <value>プロパティは既に存在します。</value>
+  </data>
+  <data name="PropertyNotAtPath" xml:space="preserve">
+    <value>プロパティ {0} はパス {1} に存在しません。</value>
+  </data>
+  <data name="KeyDoesNotExist" xml:space="preserve">
+    <value>指定されたパスのレジストリ キーが存在しません。</value>
+  </data>
+  <data name="TypeParameterBindingFailure" xml:space="preserve">
+    <value>パラメーター 'Type' をバインドできませんでした。"{0}" を "{1}" に変換できませんでした。使用可能な列挙値は、"String、ExpandString、Binary、DWord、MultiString、QWord、Unknown" です。</value>
+  </data>
+  <data name="KeyCreatedValueFailed" xml:space="preserve">
+    <value>キー {0} は作成されましたが、既定値を設定できませんでした。</value>
+  </data>
+  <data name="NewDriveRootDoesNotExist" xml:space="preserve">
+    <value>指定されたルートを持つドライブを作成できません。ルート パスが存在しません。</value>
+  </data>
+  <data name="RenameItemAlreadyExists" xml:space="preserve">
+    <value>同じコンテナーに同じ名前の項目が既に存在するため、項目の名前を変更できません。</value>
+  </data>
+  <data name="Arg_RegInvalidKeyName" xml:space="preserve">
+    <value>レジストリ キー名は、有効なベース キー名で始まる必要があります。</value>
+  </data>
+  <data name="ArgRegKeyDelHive" xml:space="preserve">
+    <value>サブキーの引数が無効です。</value>
+  </data>
+  <data name="Arg_RegSubKeyAbsent" xml:space="preserve">
+    <value>サブキーが存在しないため、サブキー ツリーを削除できません。</value>
+  </data>
+  <data name="Arg_RegSubKeyValueAbsent" xml:space="preserve">
+    <value>その名前の値は存在しません。</value>
+  </data>
+  <data name="Arg_EnumIllegalVal" xml:space="preserve">
+    <value>列挙値 {0} が無効です。</value>
+  </data>
+  <data name="Arg_Value" xml:space="preserve">
+    <value>値引数を指定する必要があります。</value>
+  </data>
+  <data name="Arg_Name" xml:space="preserve">
+    <value>名前引数を指定する必要があります。</value>
+  </data>
+  <data name="Arg_RegBadKeyKind" xml:space="preserve">
+    <value>指定された RegistryValueKind は無効な値です。</value>
+  </data>
+  <data name="Arg_RegSetStrArrNull" xml:space="preserve">
+    <value>RegistryKey.SetValue では、null 値の文字列参照を含む String[] は許可されていません。</value>
+  </data>
+  <data name="Arg_RegKeyStrLenBug" xml:space="preserve">
+    <value>レジストリ サブキーは 255 文字以下にする必要があります。</value>
+  </data>
+  <data name="Arg_RegKeyStrEmpty" xml:space="preserve">
+    <value>空でないサブキー名を指定する必要があります。</value>
+  </data>
+  <data name="Arg_RegSetMismatchedKind" xml:space="preserve">
+    <value>値オブジェクトの型が指定された RegistryValueKind と一致しなかったか、オブジェクトを正しく変換できませんでした。</value>
+  </data>
+  <data name="Arg_RegSetBadArrType" xml:space="preserve">
+    <value>RegistryKey.SetValue では型 '{0}' の配列はサポートされていません。サポートされているのは Byte[] と String[] のみです。</value>
+  </data>
+  <data name="Arg_RegKeyNotFound" xml:space="preserve">
+    <value>指定されたレジストリ キーが存在しません。</value>
+  </data>
+  <data name="Arg_RegValueNameStrLenBug" xml:space="preserve">
+    <value>指定された値の名前の長さが最大 16383 文字を超えています。</value>
+  </data>
+  <data name="Arg_ValueDataLenBug" xml:space="preserve">
+    <value>指定された値データのサイズが最大の 1 MB を超えています。</value>
+  </data>
+  <data name="ArgumentException_RegSubKeyAbsent" xml:space="preserve">
+    <value>指定されたレジストリ サブキーは存在しません。</value>
+  </data>
+  <data name="Argument_InvalidRegistryKeyPermissionCheck" xml:space="preserve">
+    <value>指定された RegistryKeyPermissionCheck 値が無効です。</value>
+  </data>
+  <data name="InvalidOperation_RegRemoveSubKey" xml:space="preserve">
+    <value>レジストリ キーにはサブキーがあります。再帰的な削除は、このメソッドではサポートされていません。</value>
+  </data>
+  <data name="InvalidOperation_NeedTransaction" xml:space="preserve">
+    <value>Transaction.Current または指定したトランザクションがないと、KTM ハンドルを作成できません。</value>
+  </data>
+  <data name="InvalidOperation_MustUseSameTransaction" xml:space="preserve">
+    <value>指定されたトランザクションまたは Transaction.Current は、この TransactedRegistryKey の作成またはオープンに使用されたトランザクションと一致している必要があります。</value>
+  </data>
+  <data name="InvalidOperation_NotAssociatedWithTransaction" xml:space="preserve">
+    <value>TransactedRegistryKey オブジェクトは、あらかじめ定義されたキー用であるため、トランザクションに関連付けられていません。</value>
+  </data>
+  <data name="Security_RegistryPermission" xml:space="preserve">
+    <value>要求されたレジストリ アクセスは許可されていません。</value>
+  </data>
+  <data name="UnauthorizedAccess_RegistryKeyGeneric_Key" xml:space="preserve">
+    <value>レジストリ キー '{0}' へのアクセスが拒否されました。</value>
+  </data>
+  <data name="UnauthorizedAccess_RegistryNoWrite" xml:space="preserve">
+    <value>レジストリ キーに書き込めません。</value>
+  </data>
+  <data name="ObjectDisposed_RegKeyClosed" xml:space="preserve">
+    <value>閉じているレジストリ キーにはアクセスできません。</value>
+  </data>
+  <data name="UnknownError_Num" xml:space="preserve">
+    <value>不明なエラー: {0}。</value>
+  </data>
+  <data name="NotSupported_KernelTransactions" xml:space="preserve">
+    <value>レジストリ トランザクションは、このプラットフォームではサポートされていません。</value>
+  </data>
+  <data name="AccessControl_InvalidHandle" xml:space="preserve">
+    <value>指定されたハンドルが無効です。</value>
+  </data>
+</root>

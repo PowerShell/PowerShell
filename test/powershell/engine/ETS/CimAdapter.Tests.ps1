@@ -3,6 +3,8 @@
 
 Describe "CIM Objects are adapted properly" -Tag @("CI") {
     BeforeAll {
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+        
         function getIndex
         {
             param([string[]]$strings,[string]$pattern)
@@ -32,7 +34,7 @@ Describe "CIM Objects are adapted properly" -Tag @("CI") {
         }
     }
     AfterAll {
-        $PSDefaultParameterValues.Remove("it:pending")
+        $global:PSDefaultParameterValues = $originalDefaultParameterValues
     }
 
     It "Namespace-qualified Win32_Process is present" -Skip:(!$IsWindows) {

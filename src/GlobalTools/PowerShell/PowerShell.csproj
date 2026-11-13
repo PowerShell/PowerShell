@@ -1,0 +1,84 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net11.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PackAsTool>true</PackAsTool>
+    <!--
+      RID-specific tool packaging (available starting with .NET SDK 10) replaces the
+      Microsoft.PowerShell.GlobalTool.Shim runtime-selection shim: instead of shipping a single
+      package that bundles the Windows and Unix payloads together and picks between them (and
+      re-invokes "dotnet" without a resolved path) at run time, 'dotnet pack' produces one
+      RID-specific, self-describing sub-package per entry below plus a RID-agnostic pointer
+      package. 'dotnet tool install' picks the correct sub-package for the current machine at
+      install time, and each sub-package's entry point is a native, SDK-generated apphost shim
+      that resolves the dotnet muxer the same way pwsh.exe/dotnet.exe itself would.
+    -->
+    <ToolPackageRuntimeIdentifiers>win-x64;win-arm64;linux-x64;linux-arm;linux-arm64;linux-musl-x64;osx-x64;osx-arm64</ToolPackageRuntimeIdentifiers>
+    <ToolCommandName>pwsh</ToolCommandName>
+    <!--
+      ToolCommandName only controls the *command* used to invoke the tool (e.g. "dotnet tool
+      run pwsh"); it does NOT rename the produced apphost/dll for RID-specific tool packaging.
+      Without an explicit AssemblyName, the output assembly (and therefore the installed native
+      apphost executable) is named after the project file, i.e. "PowerShell.exe", which is not
+      the desired installed binary name. Setting AssemblyName here renames the apphost/dll to
+      "pwsh"/"pwsh.exe", while PackageId is pinned explicitly so the NuGet/dotnet-tool package
+      id stays "PowerShell" (PackageId would otherwise default to AssemblyName).
+    -->
+    <AssemblyName>pwsh</AssemblyName>
+    <PackageId>PowerShell</PackageId>
+    <Version>$(PackageVersion)</Version>
+    <!--
+      This project does not import PowerShell.Common.props (unlike most other projects in this
+      repo), so SignAssembly must be set explicitly here: DelaySign/AssemblyOriginatorKeyFile are
+      no-ops unless SignAssembly=true, since the compiler only applies delay-signing when
+      SignAssembly is on.
+    -->
+    <SignAssembly>true</SignAssembly>
+    <DelaySign>true</DelaySign>
+    <AssemblyOriginatorKeyFile>../../signing/visualstudiopublic.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
+  <!-- Program.cs includes Unix login-shell support, including unsafe native calls. -->
+  <PropertyGroup Condition="$(RuntimeIdentifier.StartsWith('linux-')) Or $(RuntimeIdentifier.StartsWith('osx-'))">
+    <DefineConstants>$(DefineConstants);UNIX</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\powershell\Program.cs" Exclude="bin\**;obj\**;**\*.xproj;packages\**" />
+    <None Include="..\PowerShell.Windows.x64\Powershell_64.png" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+  <!-- Windows-only content: the Windows RID packages ship the Windows Modules folder. -->
+  <ItemGroup Condition="$(RuntimeIdentifier.StartsWith('win'))">
+    <Content Include="..\..\Modules\Windows\**\*;..\..\Modules\Shared\**\*">
+      <Link>Modules\%(RecursiveDir)\%(FileName)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <!-- Non-Windows content: the Linux/macOS RID packages ship the Unix Modules folder. -->
+  <ItemGroup Condition="!$(RuntimeIdentifier.StartsWith('win'))">
+    <Content Include="..\..\Modules\Unix\**\*;..\..\Modules\Shared\**\*">
+      <Link>Modules\%(RecursiveDir)\%(FileName)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Microsoft.PowerShell.SDK\Microsoft.PowerShell.SDK.csproj" />
+  </ItemGroup>
+
+  <!-- WSMan/CIM/Diagnostics cmdlets only apply on Windows. -->
+  <ItemGroup Condition="$(RuntimeIdentifier.StartsWith('win'))">
+    <ProjectReference Include="..\..\Microsoft.PowerShell.Commands.Diagnostics\Microsoft.PowerShell.Commands.Diagnostics.csproj" />
+    <ProjectReference Include="..\..\Microsoft.Management.Infrastructure.CimCmdlets\Microsoft.Management.Infrastructure.CimCmdlets.csproj" />
+    <ProjectReference Include="..\..\Microsoft.WSMan.Management\Microsoft.WSMan.Management.csproj" />
+  </ItemGroup>
+
+</Project>

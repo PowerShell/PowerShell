@@ -1,0 +1,201 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddBreakHandlerExceptionMessage" xml:space="preserve">
+    <value>新增中斷處理常式時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 支援服務。</value>
+  </data>
+  <data name="RemoveBreakHandlerExceptionTemplate" xml:space="preserve">
+    <value>嘗試移除中斷處理常式時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
+  </data>
+  <data name="GetInputModeExceptionTemplate" xml:space="preserve">
+    <value>取得主控台控制代碼的輸入時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
+  </data>
+  <data name="GetActiveScreenBufferHandleExceptionTemplate" xml:space="preserve">
+    <value>擷取使用中主控台輸出緩衝區的控制代碼時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
+  </data>
+  <data name="GetModeExceptionTemplate" xml:space="preserve">
+    <value>取得主控台模式時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
+  </data>
+  <data name="SetModeExceptionTemplate" xml:space="preserve">
+    <value>設定主控台模式時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
+  </data>
+  <data name="ReadConsoleExceptionTemplate" xml:space="preserve">
+    <value>從主控台輸入緩衝區讀取字元時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
+  </data>
+  <data name="ReadConsoleInputExceptionTemplate" xml:space="preserve">
+    <value>從主控台輸入緩衝區讀取輸入記錄時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
+  </data>
+  <data name="PeekConsoleInputExceptionTemplate" xml:space="preserve">
+    <value>讀取主控台輸入緩衝區的內容時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
+  </data>
+  <data name="GetNumberOfConsoleInputEventsExceptionTemplate" xml:space="preserve">
+    <value>取得主控台輸入緩衝區中的事件數目時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
+  </data>
+  <data name="FlushConsoleInputBufferExceptionTemplate" xml:space="preserve">
+    <value>排清主控台輸入緩衝區時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
+  </data>
+  <data name="GetConsoleScreenBufferInfoExceptionTemplate" xml:space="preserve">
+    <value>取得主控台輸出緩衝區資訊時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
+  </data>
+  <data name="SetConsoleScreenBufferSizeExceptionTemplate" xml:space="preserve">
+    <value>設定主控台輸出緩衝區大小時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
+  </data>
+  <data name="WriteConsoleOutputExceptionTemplate" xml:space="preserve">
+    <value>寫入主控台輸出緩衝區時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
+  </data>
+  <data name="ReadConsoleOutputExceptionTemplate" xml:space="preserve">
+    <value>讀取主控台輸出緩衝區時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
+  </data>
+  <data name="FillConsoleOutputCharacterExceptionTemplate" xml:space="preserve">
+    <value>填入主控台輸出緩衝區字元時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
+  </data>
+  <data name="FillConsoleOutputAttributeExceptionTemplate" xml:space="preserve">
+    <value>填入主控台輸出緩衝區屬性時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
+  </data>
+  <data name="ScrollConsoleScreenBufferExceptionTemplate" xml:space="preserve">
+    <value>捲動主控台輸出緩衝區時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
+  </data>
+  <data name="SetConsoleWindowInfoExceptionTemplate" xml:space="preserve">
+    <value>設定主控台視窗資訊時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
+  </data>
+  <data name="GetLargestConsoleWindowSizeExceptionTemplate" xml:space="preserve">
+    <value>取得最大主控台視窗大小時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
+  </data>
+  <data name="SetConsoleWindowTitleExceptionTemplate" xml:space="preserve">
+    <value>設定主控台視窗標題時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
+  </data>
+  <data name="WriteConsoleExceptionTemplate" xml:space="preserve">
+    <value>在目前游標位置寫入主控台輸出緩衝區時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
+  </data>
+  <data name="SetConsoleTextAttributeExceptionTemplate" xml:space="preserve">
+    <value>設定主控台輸出緩衝區字元屬性時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
+  </data>
+  <data name="GetConsoleCursorInfoExceptionTemplate" xml:space="preserve">
+    <value>取得游標資訊時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
+  </data>
+  <data name="SetConsoleCursorInfoExceptionTemplate" xml:space="preserve">
+    <value>設定游標資訊時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
+  </data>
+  <data name="GetConsoleFontInfoExceptionTemplate" xml:space="preserve">
+    <value>取得主控台字型資訊時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
+  </data>
+  <data name="SendKeyPressInputExceptionTemplate" xml:space="preserve">
+    <value>傳送鍵盤輸入時發生 Win32 內部錯誤 "{0}" 0x{1:X}。請連絡 Microsoft 客戶支援服務。</value>
+  </data>
+</root>

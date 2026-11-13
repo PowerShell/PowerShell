@@ -151,6 +151,16 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
         $module.NestedModules | Should -HaveCount 1
         $module.NestedModules.Name | Should -BeExactly "Foo"
     }
+
+    It 'Works for manifest specified as UNC path' -Skip:(!$IsWindows) {
+        # chance the testdrive path to a UNC path
+
+        $testModulePath = '\\localhost\' + "$testDrive\test.psd1".Replace(':', '$')
+        New-Item -ItemType File -Path testdrive:/foo.psm1 > $null
+        New-ModuleManifest -Path $testModulePath -RootModule "foo.psm1"
+        $module = Test-ModuleManifest -Path $testModulePath
+        $module.RootModule | Should -Be "foo.psm1"
+    }
 }
 
 Describe "Tests for circular references in required modules" -tags "CI" {

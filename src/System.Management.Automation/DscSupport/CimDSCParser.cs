@@ -525,9 +525,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
     public static class DscClassCache
     {
         private const string InboxDscResourceModulePath = "WindowsPowershell\\v1.0\\Modules\\PsDesiredStateConfiguration";
-        private const string reservedDynamicKeywords = "^(Synchronization|Certificate|IIS|SQL)$";
-
-        private const string reservedProperties = "^(Require|Trigger|Notify|Before|After|Subscribe)$";
 
         private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("DSC", "DSC Class Cache");
 
@@ -807,7 +804,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         {
             foreach (string moduleDir in modulePathList)
             {
-                if (!Directory.Exists(moduleDir)) continue;
+                if (!Directory.Exists(moduleDir))
+                {
+                    continue;
+                }
 
                 var dscResourcesPath = Path.Combine(moduleDir, "DscResources");
                 if (Directory.Exists(dscResourcesPath))
@@ -1261,13 +1261,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             parser.ValidateInstanceText(instanceText);
         }
 
-        private static bool IsMagicProperty(string propertyName)
-        {
-            return System.Text.RegularExpressions.Regex.Match(propertyName,
-                "^(ResourceId|SourceInfo|ModuleName|ModuleVersion|ConfigurationName)$",
-                System.Text.RegularExpressions.RegexOptions.IgnoreCase).Success;
-        }
-
         private static string GetFriendlyName(CimClass cimClass)
         {
             try
@@ -1364,7 +1357,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             //
             // Skip all of the base, meta, registration and other classes that are not intended to be used directly by a script author
             //
-            if (System.Text.RegularExpressions.Regex.Match(keywordString, "^OMI_Base|^OMI_.*Registration", System.Text.RegularExpressions.RegexOptions.IgnoreCase).Success)
+            if (keywordString.StartsWith("OMI_Base", StringComparison.OrdinalIgnoreCase) ||
+                (keywordString.StartsWith("OMI_", StringComparison.OrdinalIgnoreCase) && keywordString.IndexOf("Registration", 4, StringComparison.OrdinalIgnoreCase) >= 0))
             {
                 return null;
             }
@@ -1380,7 +1374,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             };
 
             // If it's one of reserved dynamic keyword, mark it
-            if (System.Text.RegularExpressions.Regex.Match(keywordString, reservedDynamicKeywords, System.Text.RegularExpressions.RegexOptions.IgnoreCase).Success)
+            if (IsReservedDynamicKeyword(keywordString))
             {
                 keyword.IsReservedKeyword = true;
             }
@@ -1438,7 +1432,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     }
                 }
                 // If it's one of our reserved properties, save it for error reporting
-                if (System.Text.RegularExpressions.Regex.Match(prop.Name, reservedProperties, System.Text.RegularExpressions.RegexOptions.IgnoreCase).Success)
+                if (IsReservedProperty(prop.Name))
                 {
                     keyword.HasReservedProperties = true;
                     continue;
@@ -1537,6 +1531,27 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             UpdateKnownRestriction(keyword);
 
             return keyword;
+
+            static bool IsMagicProperty(string propertyName) =>
+                string.Equals(propertyName, "ResourceId", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(propertyName, "SourceInfo", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(propertyName, "ModuleName", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(propertyName, "ModuleVersion", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(propertyName, "ConfigurationName", StringComparison.OrdinalIgnoreCase);
+
+            static bool IsReservedDynamicKeyword(string keyword) =>
+                string.Equals(keyword, "Synchronization", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(keyword, "Certificate", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(keyword, "IIS", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(keyword, "SQL", StringComparison.OrdinalIgnoreCase);
+
+            static bool IsReservedProperty(string name) =>
+                string.Equals(name, "Require", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(name, "Trigger", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(name, "Notify", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(name, "Before", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(name, "After", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(name, "Subscribe", StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -1932,8 +1947,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 object evalResultObject;
                 if (IsConstantValueVisitor.IsConstant(pair.Item1, out evalResultObject, forAttribute: false, forRequires: false))
                 {
-                    var presentName = evalResultObject as string;
-                    if (presentName != null)
+                    if (evalResultObject is string presentName)
                     {
                         if (mandatoryPropertiesNames.Remove(presentName) && mandatoryPropertiesNames.Count == 0)
                         {
@@ -2295,8 +2309,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         internal static string MapTypeNameToMofType(ITypeName typeName, string memberName, string className, out bool isArrayType, out string embeddedInstanceType, List<object> embeddedInstanceTypes, ref string[] enumNames)
         {
             TypeName propTypeName;
-            var arrayTypeName = typeName as ArrayTypeName;
-            if (arrayTypeName != null)
+            if (typeName is ArrayTypeName arrayTypeName)
             {
                 isArrayType = true;
                 propTypeName = arrayTypeName.ElementType as TypeName;
@@ -2359,15 +2372,13 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             while (bases.Count > 0)
             {
                 var b = bases.Dequeue();
-                var tc = b as TypeConstraintAst;
 
-                if (tc != null)
+                if (b is TypeConstraintAst tc)
                 {
                     b = tc.TypeName.GetReflectionType();
                     if (b == null)
                     {
-                        var td = tc.TypeName as TypeName;
-                        if (td != null && td._typeDefinitionAst != null)
+                        if (tc.TypeName is TypeName td && td._typeDefinitionAst != null)
                         {
                             ProcessMembers(sb, embeddedInstanceTypes, td._typeDefinitionAst, className);
                             foreach (var b1 in td._typeDefinitionAst.BaseTypes)
@@ -2409,8 +2420,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             methodsLinePosition = new Dictionary<string, int>();
             foreach (var member in typeDefinitionAst.Members)
             {
-                var functionMemberAst = member as FunctionMemberAst;
-                if (functionMemberAst != null)
+                if (member is FunctionMemberAst functionMemberAst)
                 {
                     if (functionMemberAst.Name.Equals(getMethodName, StringComparison.OrdinalIgnoreCase))
                     {
@@ -2490,9 +2500,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         {
             foreach (var member in typeDefinitionAst.Members)
             {
-                var property = member as PropertyMemberAst;
-
-                if (property == null || property.IsStatic ||
+                if (member is not PropertyMemberAst property || property.IsStatic ||
                     property.Attributes.All(a => a.TypeName.GetReflectionAttributeType() != typeof(DscPropertyAttribute)))
                 {
                     continue;
@@ -2532,9 +2540,12 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         out embeddedInstanceType, embeddedInstanceTypes, ref enumNames);
                 }
 
+                string mofAttr = MapAttributesToMof(enumNames, attributes, embeddedInstanceType);
                 string arrayAffix = isArrayType ? "[]" : string.Empty;
 
-                sb.Append(CultureInfo.InvariantCulture, $"    {MapAttributesToMof(enumNames, attributes, embeddedInstanceType)}{mofType} {member.Name}{arrayAffix};\n");
+                sb.Append(
+                    CultureInfo.InvariantCulture,
+                    $"    {mofAttr}{mofType} {member.Name}{arrayAffix};\n");
             }
         }
 
@@ -2592,13 +2603,15 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
             resourceDefinitions = ast.FindAll(n =>
             {
-                var typeAst = n as TypeDefinitionAst;
-                if (typeAst != null)
+                if (n is TypeDefinitionAst typeAst)
                 {
                     for (int i = 0; i < typeAst.Attributes.Count; i++)
                     {
                         var a = typeAst.Attributes[i];
-                        if (a.TypeName.GetReflectionAttributeType() == typeof(DscResourceAttribute)) return true;
+                        if (a.TypeName.GetReflectionAttributeType() == typeof(DscResourceAttribute))
+                        {
+                            return true;
+                        }
                     }
                 }
 
@@ -2652,7 +2665,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     }
                 }
 
-                if (skip) continue;
+                if (skip)
+                {
+                    continue;
+                }
 
                 // Parse the Resource Attribute to see if RunAs behavior is specified for the resource.
                 DSCResourceRunAsCredential runAsBehavior = DSCResourceRunAsCredential.Default;
@@ -2662,13 +2678,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     {
                         foreach (var na in attr.NamedArguments)
                         {
-                            if (na.ArgumentName.Equals("RunAsCredential", StringComparison.OrdinalIgnoreCase))
+                            if (na.ArgumentName.Equals("RunAsCredential", StringComparison.OrdinalIgnoreCase) && attr.GetAttribute() is DscResourceAttribute dscResourceAttribute)
                             {
-                                var dscResourceAttribute = attr.GetAttribute() as DscResourceAttribute;
-                                if (dscResourceAttribute != null)
-                                {
-                                    runAsBehavior = dscResourceAttribute.RunAsCredential;
-                                }
+                                runAsBehavior = dscResourceAttribute.RunAsCredential;
                             }
                         }
                     }
@@ -2902,42 +2914,40 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             bool needComma = false;
             foreach (var attr in customAttributes)
             {
-                var dscProperty = attr as DscPropertyAttribute;
-                if (dscProperty != null)
+                if (attr is DscPropertyAttribute dscProperty)
                 {
                     if (dscProperty.Key)
                     {
-                        sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}key");
+                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}key", needComma ? ", " : string.Empty);
                         needComma = true;
                     }
 
                     if (dscProperty.Mandatory)
                     {
-                        sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}required");
+                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}required", needComma ? ", " : string.Empty);
                         needComma = true;
                     }
 
                     if (dscProperty.NotConfigurable)
                     {
-                        sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}read");
+                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}read", needComma ? ", " : string.Empty);
                         needComma = true;
                     }
 
                     continue;
                 }
 
-                var validateSet = attr as ValidateSetAttribute;
-                if (validateSet != null)
+                if (attr is ValidateSetAttribute validateSet)
                 {
                     bool valueMapComma = false;
                     StringBuilder sbValues = new(", Values{");
-                    sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}ValueMap{{");
+                    sb.AppendFormat(CultureInfo.InvariantCulture, "{0}ValueMap{{", needComma ? ", " : string.Empty);
                     needComma = true;
 
                     foreach (var value in validateSet.ValidValues)
                     {
-                        sb.Append(CultureInfo.InvariantCulture, $"{(valueMapComma ? ", " : string.Empty)}\"{value}\"");
-                        sbValues.Append(CultureInfo.InvariantCulture, $"{(valueMapComma ? ", " : string.Empty)}\"{value}\"");
+                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}\"{1}\"", valueMapComma ? ", " : string.Empty, value);
+                        sbValues.AppendFormat(CultureInfo.InvariantCulture, "{0}\"{1}\"", valueMapComma ? ", " : string.Empty, value);
                         valueMapComma = true;
                     }
 
@@ -2956,11 +2966,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
             if (enumNames != null)
             {
-                sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}ValueMap{{");
+                sb.AppendFormat(CultureInfo.InvariantCulture, "{0}ValueMap{{", needComma ? ", " : string.Empty);
                 needComma = false;
                 foreach (var name in enumNames)
                 {
-                    sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}\"{name}\"");
+                    sb.AppendFormat(CultureInfo.InvariantCulture, "{0}\"{1}\"", needComma ? ", " : string.Empty, name);
                     needComma = true;
                 }
 
@@ -2968,7 +2978,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 needComma = false;
                 foreach (var name in enumNames)
                 {
-                    sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}\"{name}\"");
+                    sb.AppendFormat(CultureInfo.InvariantCulture, "{0}\"{1}\"", needComma ? ", " : string.Empty, name);
                     needComma = true;
                 }
 
@@ -2976,7 +2986,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             }
             else if (embeddedInstanceType != null)
             {
-                sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}EmbeddedInstance(\"{embeddedInstanceType}\")");
+                sb.AppendFormat(CultureInfo.InvariantCulture, "{0}EmbeddedInstance(\"{1}\")", needComma ? ", " : string.Empty, embeddedInstanceType);
             }
 
             sb.Append(']');
@@ -3082,16 +3092,21 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 }
 
                 // TODO - validate type and name
-                bool isArrayType;
-                string embeddedInstanceType;
-                string mofType = MapTypeToMofType(memberType, member.Name, className, out isArrayType, out embeddedInstanceType,
+                string mofType = MapTypeToMofType(
+                    memberType,
+                    member.Name,
+                    className,
+                    out bool isArrayType,
+                    out string embeddedInstanceType,
                     embeddedInstanceTypes);
+
+                var enumNames = memberType.IsEnum ? Enum.GetNames(memberType) : null;
+                string mofAttr = MapAttributesToMof(enumNames, member.GetCustomAttributes(true), embeddedInstanceType);
                 string arrayAffix = isArrayType ? "[]" : string.Empty;
 
-                var enumNames = memberType.IsEnum
-                    ? Enum.GetNames(memberType)
-                    : null;
-                sb.Append(CultureInfo.InvariantCulture, $"    {MapAttributesToMof(enumNames, member.GetCustomAttributes(true), embeddedInstanceType)}{mofType} {member.Name}{arrayAffix};\n");
+                sb.Append(
+                    CultureInfo.InvariantCulture,
+                    $"    {mofAttr}{mofType} {member.Name}{arrayAffix};\n");
             }
         }
 
@@ -3122,7 +3137,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     }
                 }
 
-                if (skip) continue;
+                if (skip)
+                {
+                    continue;
+                }
 
                 var mof = GenerateMofForType(r);
 
@@ -3246,7 +3264,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         string tempSchemaFilepath = schemaFiles.FirstOrDefault();
 
                         Debug.Assert(schemaFiles.Count() == 1, "A valid DSCResource module can have only one schema mof file");
-                        
+
                         if (tempSchemaFilepath is not null)
                         {
                             var classes = GetCachedClassByFileName(tempSchemaFilepath) ?? ImportClasses(tempSchemaFilepath, new Tuple<string, Version>(module.Name, module.Version), errors);

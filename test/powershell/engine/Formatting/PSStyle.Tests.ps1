@@ -89,6 +89,10 @@ Describe 'Tests for $PSStyle automatic variable' -Tag 'CI' {
         $PSStyle.OutputRendering | Should -BeExactly 'Host'
     }
 
+    It '$PSStyle default view includes AutoSizeDefaultFormatting' {
+        $PSStyle | Out-String | Should -Match 'AutoSizeDefaultFormatting'
+    }
+
     It '$PSStyle has correct defaults for style <key>' -TestCases (Get-TestCases $styleDefaults) {
         param($key, $value)
 
@@ -488,7 +492,7 @@ Billy Bob… Senior DevOps …  13
         $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
     }
 
-    It "Word wrapping for string with escape sequences" {
+    It "Word wrapping for string with escape sequences (1)" {
        $expected = @"
 `e[32;1mLongDescription : `e[0m`e[33mPowerShell `e[0m
                   `e[33mscripting `e[0m
@@ -501,7 +505,46 @@ Billy Bob… Senior DevOps …  13
         $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
     }
 
-    It "Splitting multi-line string with escape sequences" {
+    It "Word wrapping for string with escape sequences (2)" {
+       $expected = @"
+`e[32;1mLongDescription : `e[0m`e[33mPowerShell`e[0m 
+                  scripting 
+                  language
+"@
+        $obj = [pscustomobject] @{ LongDescription = "`e[33mPowerShell`e[0m scripting language" }
+        $obj | Format-List | Out-String -Width 35 | Out-File $outFile
+
+        $text = Get-Content $outFile -Raw
+        $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
+    }
+
+    It "Word wrapping for string with escape sequences (3)" {
+       $expected = @"
+`e[32;1mLongDescription : `e[0m`e[33mPowerShell`e[0m 
+                  `e[32mscripting `e[0m
+                  `e[32mlanguage`e[0m
+"@
+        $obj = [pscustomobject] @{ LongDescription = "`e[33mPowerShell`e[0m `e[32mscripting language" }
+        $obj | Format-List | Out-String -Width 35 | Out-File $outFile
+
+        $text = Get-Content $outFile -Raw
+        $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
+    }
+
+    It "Word wrapping for string with escape sequences (4)" {
+       $expected = @"
+`e[32;1mLongDescription : `e[0m`e[33mPowerShell`e[0m 
+                  `e[32mscripting`e[0m 
+                  language
+"@
+        $obj = [pscustomobject] @{ LongDescription = "`e[33mPowerShell`e[0m `e[32mscripting`e[0m language" }
+        $obj | Format-List | Out-String -Width 35 | Out-File $outFile
+
+        $text = Get-Content $outFile -Raw
+        $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
+    }
+
+    It "Splitting multi-line string with escape sequences (1)" {
         $expected = @"
 `e[32;1mb : `e[0m`e[33mPowerShell is a task automation and configuration management program from Microsoft,`e[0m
     `e[33mconsisting of a command-line shell and the associated scripting language`e[0m
@@ -513,16 +556,217 @@ Billy Bob… Senior DevOps …  13
         $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
     }
 
+    It "Splitting multi-line string with escape sequences (2)" {
+        $expected = @"
+`e[32;1mb : `e[0m`e[33mPowerShell is a task automation and configuration management program from Microsoft,`e[0m
+    consisting of a command-line shell and the associated scripting language
+"@
+        $obj = [pscustomobject] @{ b = "`e[33mPowerShell is a task automation and configuration management program from Microsoft,`e[0m`nconsisting of a command-line shell and the associated scripting language" }
+        $obj | Format-List | Out-File $outFile
+
+        $text = Get-Content $outFile -Raw
+        $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
+    }
+
+    It "Splitting multi-line string with escape sequences (3)" {
+        $expected = @"
+`e[32;1mb : `e[0m`e[33mPowerShell is a task automation and configuration management program from Microsoft,`e[0m
+    `e[32mconsisting of a command-line shell and the associated scripting language`e[0m
+"@
+        $obj = [pscustomobject] @{ b = "`e[33mPowerShell is a task automation and configuration management program from Microsoft,`e[0m`n`e[32mconsisting of a command-line shell and the associated scripting language" }
+        $obj | Format-List | Out-File $outFile
+
+        $text = Get-Content $outFile -Raw
+        $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
+    }
+
     It "Wrapping long word with escape sequences" {
         $expected = @"
 `e[32;1mb : `e[0m`e[33mC:\repos\PowerShell\src\powershell-w`e[0m
-    `e[33min-core\bin\Debug\net7.0\win7-x64\pu`e[0m
+    `e[33min-core\bin\Debug\net8.0\win7-x64\pu`e[0m
     `e[33mblish\pwsh.exe`e[0m
 "@
-        $obj = [pscustomobject] @{ b = "`e[33mC:\repos\PowerShell\src\powershell-win-core\bin\Debug\net7.0\win7-x64\publish\pwsh.exe" }
+        $obj = [pscustomobject] @{ b = "`e[33mC:\repos\PowerShell\src\powershell-win-core\bin\Debug\net8.0\win7-x64\publish\pwsh.exe" }
         $obj | Format-List | Out-String -Width 40 | Out-File $outFile
 
         $text = Get-Content $outFile -Raw
         $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
+    }
+
+    It "Format 'MatchInfo' object correctly" {
+        $expected = @"
+`e[32;1mb : `e[0mmouclass     `e[7mMouse`e[0m Class Driver     Mouse Class Driver     Kernel        Manual     Running    OK         TRUE        FALSE        12,288         `e[0m
+       32,768      0                                 C:\WINDOWS\system32\drivers\mouclass.sys         4,096
+"@
+
+        ## This string mimics the VT decorated string for a 'MatchInfo' object that matches the word 'mouse'.
+        $str = "mouclass     `e[7mMouse`e[0m Class Driver     Mouse Class Driver     Kernel        Manual     Running    OK         TRUE        FALSE        12,288            32,768      0                                 C:\WINDOWS\system32\drivers\mouclass.sys         4,096"
+        $obj = [pscustomobject] @{ b = $str }
+        $text = $obj | Format-List | Out-String -Width 150
+
+        $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
+    }
+}
+
+Describe 'Default formatting AutoSize override' -Tag 'CI' {
+    BeforeAll {
+        $formatFile = Join-Path $TestDrive 'AutoSizeDefaultFormatting.format.ps1xml'
+        @'
+<Configuration>
+  <ViewDefinitions>
+    <View>
+      <Name>AutoSizeWide</Name>
+      <ViewSelectedBy>
+        <TypeName>Test.AutoSizeWide</TypeName>
+      </ViewSelectedBy>
+      <WideControl>
+        <WideEntries>
+          <WideEntry>
+            <WideItem>
+              <PropertyName>Name</PropertyName>
+            </WideItem>
+          </WideEntry>
+        </WideEntries>
+      </WideControl>
+    </View>
+    <View>
+      <Name>AutoSizeComplex</Name>
+      <ViewSelectedBy>
+        <TypeName>Test.AutoSizeComplex</TypeName>
+      </ViewSelectedBy>
+      <CustomControl>
+        <CustomEntries>
+          <CustomEntry>
+            <CustomItem>
+              <Text>Item</Text>
+              <NewLine />
+            </CustomItem>
+          </CustomEntry>
+        </CustomEntries>
+      </CustomControl>
+    </View>
+  </ViewDefinitions>
+</Configuration>
+'@ | Set-Content -Path $formatFile
+    }
+
+    It "Forces default table formatting to use 'AutoSize'" {
+        $oldOutputRendering = $PSStyle.OutputRendering
+        $oldAutoSizeDefaultFormatting = $PSStyle.AutoSizeDefaultFormatting
+
+        try {
+            $PSStyle.OutputRendering = 'PlainText'
+            $PSStyle.AutoSizeDefaultFormatting = $false
+            $defaultOutput = Get-Command Import-Module | Out-String
+            $PSStyle.AutoSizeDefaultFormatting = $true
+            $autoSizedOutput = Get-Command Import-Module | Out-String
+
+            $defaultOutput = $defaultOutput.Trim().Split("`n")
+            $autoSizedOutput = $autoSizedOutput.Trim().Split("`n")
+
+            $defaultOutput.Count | Should -BeExactly $autoSizedOutput.Count
+            for ($i = 0; $i -lt $defaultOutput.Count; $i++) {
+                $defaultOutput[$i].Length | Should -BeGreaterThan $autoSizedOutput[$i].Length
+                $elements_1 = $defaultOutput[$i].Split(' ', [System.StringSplitOptions]::RemoveEmptyEntries)
+                $elements_2 = $autoSizedOutput[$i].Split(' ', [System.StringSplitOptions]::RemoveEmptyEntries)
+                $elements_1 -join ' ' | Should -BeExactly ($elements_2 -join ' ')
+            }
+        }
+        finally {
+            $PSStyle.AutoSizeDefaultFormatting = $oldAutoSizeDefaultFormatting
+            $PSStyle.OutputRendering = $oldOutputRendering
+        }
+    }
+
+    It "Forces default wide formatting to use 'AutoSize'" {
+        $powerShell = [PowerShell]::Create()
+
+        try {
+            $result = $powerShell.AddScript({
+                param($Path)
+
+                Update-FormatData -PrependPath $Path
+                $oldOutputRendering = $PSStyle.OutputRendering
+                $oldAutoSizeDefaultFormatting = $PSStyle.AutoSizeDefaultFormatting
+
+                try {
+                    $PSStyle.OutputRendering = 'PlainText'
+                    $items = 1..6 | ForEach-Object {
+                        [pscustomobject]@{ PSTypeName = 'Test.AutoSizeWide'; Name = "Item$_" }
+                    }
+
+                    $PSStyle.AutoSizeDefaultFormatting = $false
+                    $defaultOutput = $items | Out-String -Width 40
+                    $PSStyle.AutoSizeDefaultFormatting = $true
+                    $autoSizedOutput = $items | Out-String -Width 40
+
+                    [pscustomobject]@{
+                        DefaultOutput = $defaultOutput
+                        AutoSizedOutput = $autoSizedOutput
+                    }
+                }
+                finally {
+                    $PSStyle.AutoSizeDefaultFormatting = $oldAutoSizeDefaultFormatting
+                    $PSStyle.OutputRendering = $oldOutputRendering
+                }
+            }).AddArgument($formatFile).Invoke()
+
+            $powerShell.HadErrors | Should -BeFalse
+            $defaultLines = $result.DefaultOutput.Trim().Split("`n")
+            $autoSizedLines = $result.AutoSizedOutput.Trim().Split("`n")
+            $defaultLines | Should -HaveCount 3
+            $autoSizedLines | Should -HaveCount 1
+            $autoSizedLines[0].Split(' ', [System.StringSplitOptions]::RemoveEmptyEntries) | Should -HaveCount 6
+        }
+        finally {
+            $powerShell.Dispose()
+        }
+    }
+
+    It 'Does not buffer default <ViewType> formatting until pipeline completion' -TestCases @(
+        @{ ViewType = 'List' }
+        @{ ViewType = 'Complex' }
+    ) {
+        param($ViewType)
+
+        $powerShell = [PowerShell]::Create()
+
+        try {
+            $producerFinished = $powerShell.AddScript({
+                param($Path, $ViewType)
+
+                Update-FormatData -PrependPath $Path
+                $oldAutoSizeDefaultFormatting = $PSStyle.AutoSizeDefaultFormatting
+
+                try {
+                    $PSStyle.AutoSizeDefaultFormatting = $true
+                    $inputObject = $ViewType -eq 'List' ? $PSStyle : [pscustomobject]@{ PSTypeName = 'Test.AutoSizeComplex'; Name = 'Item' }
+
+                    $script:producerFinished = $false
+                    & {
+                        $inputObject
+                        $script:producerFinished = $true
+                    } |
+                        Out-String -Stream |
+                        Where-Object { -not [string]::IsNullOrWhiteSpace($_) } |     ## Ignore the newline written out by 'Out-String'
+                        Select-Object -First 1 |
+                        Out-Null
+
+                    $script:producerFinished
+                }
+                finally {
+                    $PSStyle.AutoSizeDefaultFormatting = $oldAutoSizeDefaultFormatting
+                }
+            }).AddArgument($formatFile).AddArgument($ViewType).Invoke()
+
+            $powerShell.HadErrors | Should -BeFalse
+            # When rendering streams, the first non-whitespace string reaches 'Select-Object' before '$script:producerFinished = $true' runs. 'Select-Object -First 1' then stops
+            # the upstream script, so that assignment is never evaluated and '$producerFinished' remains false.
+            # If rendering is buffered, 'Out-String' emits no non-whitespace payload until the upstream script finishes and the assignment runs, making '$producerFinished' true.
+            $producerFinished | Should -BeFalse
+        }
+        finally {
+            $powerShell.Dispose()
+        }
     }
 }

@@ -1,9 +1,9 @@
 [
-  "PSCommandNotFoundSuggestion",
-  "PSCustomTableHeaderLabelDecoration",
+  "PSFeedbackProvider",
   "PSLoadAssemblyFromNativeCode",
-  "PSNativeCommandErrorActionPreference",
-  "PSSubsystemPluginModel",
-  "PSModuleAutoLoadSkipOfflineFiles",
-  "PSFeedbackProvider"
+  "PSNativeWindowsTildeExpansion",
+  "PSProfileDSCResource",
+  "PSSerializeJSONLongEnumAsNumber",
+  "PSRedirectToVariable",
+  "PSSubsystemPluginModel"
 ]

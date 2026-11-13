@@ -68,7 +68,10 @@ namespace System.Management.Automation.Interpreter
 
         public bool IsBetterThan(ExceptionHandler other)
         {
-            if (other == null) return true;
+            if (other == null)
+            {
+                return true;
+            }
 
             Debug.Assert(StartIndex == other.StartIndex && EndIndex == other.EndIndex, "we only need to compare handlers for the same try block");
             return HandlerStartIndex < other.HandlerStartIndex;
@@ -92,7 +95,14 @@ namespace System.Management.Automation.Interpreter
 
         public override string ToString()
         {
-            return string.Create(CultureInfo.InvariantCulture, $"{(IsFault ? "fault" : "catch(" + ExceptionType.Name + ")")} [{StartIndex}-{EndIndex}] [{HandlerStartIndex}->{HandlerEndIndex}]");
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "{0} [{1}-{2}] [{3}->{4}]",
+                IsFault ? "fault" : "catch(" + ExceptionType.Name + ")",
+                StartIndex,
+                EndIndex,
+                HandlerStartIndex,
+                HandlerEndIndex);
         }
     }
 
@@ -177,7 +187,6 @@ namespace System.Management.Automation.Interpreter
     {
     }
 
-    [Serializable]
     internal class DebugInfo
     {
         // TODO: readonly
@@ -227,18 +236,17 @@ namespace System.Management.Automation.Interpreter
         {
             if (IsClear)
             {
-                return string.Create(CultureInfo.InvariantCulture, $"{Index}: clear");
+                return string.Format(CultureInfo.InvariantCulture, "{0}: clear", Index);
             }
             else
             {
-                return string.Create(CultureInfo.InvariantCulture, $"{Index}: [{StartLine}-{EndLine}] '{FileName}'");
+                return string.Format(CultureInfo.InvariantCulture, "{0}: [{1}-{2}] '{3}'", Index, StartLine, EndLine, FileName);
             }
         }
     }
 
     // TODO:
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1815:OverrideEqualsAndOperatorEqualsOnValueTypes")]
-    [Serializable]
     internal readonly struct InterpretedFrameInfo
     {
         public readonly string MethodName;
@@ -1290,7 +1298,7 @@ namespace System.Management.Automation.Interpreter
 
         private void DefineBlockLabels(Expression node)
         {
-            if (!(node is BlockExpression block))
+            if (node is not BlockExpression block)
             {
                 return;
             }
@@ -1349,7 +1357,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         // TODO: remove (replace by true fault support)
-        private bool EndsWithRethrow(Expression expr)
+        private static bool EndsWithRethrow(Expression expr)
         {
             if (expr.NodeType == ExpressionType.Throw)
             {

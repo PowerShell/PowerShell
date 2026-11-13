@@ -1,8 +1,11 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+#nullable enable
+
 using System;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 
 namespace System.Management.Automation.ComInterop
 {
@@ -33,7 +36,7 @@ namespace System.Management.Automation.ComInterop
     internal static class Requires
     {
         [System.Diagnostics.Conditional("DEBUG")]
-        internal static void NotNull(object value, string paramName)
+        internal static void NotNull(object value, [CallerArgumentExpression("value")] string? paramName = null)
         {
             ArgumentNullException.ThrowIfNull(value, paramName);
         }

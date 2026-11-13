@@ -45,17 +45,19 @@ namespace Microsoft.PowerShell.Commands
         public abstract PSObject InputObject { get; set; }
 
         /// <summary>
-        /// IncludeTypeInformation : The #TYPE line should be generated. Default is false. Cannot specify with NoTypeInformation.
+        /// IncludeTypeInformation : The #TYPE line should be generated. Default is false.
         /// </summary>
         [Parameter]
         [Alias("ITI")]
         public SwitchParameter IncludeTypeInformation { get; set; }
 
         /// <summary>
-        /// NoTypeInformation : The #TYPE line should not be generated. Default is true. Cannot specify with IncludeTypeInformation.
+        /// Gets or sets a value indicating whether to suppress the #TYPE line.
+        /// This parameter is obsolete and has no effect. It is retained for backward compatibility only.
         /// </summary>
         [Parameter(DontShow = true)]
         [Alias("NTI")]
+        [Obsolete("This parameter is obsolete and has no effect. The default behavior is to not include type information. Use -IncludeTypeInformation to include type information.")]
         public SwitchParameter NoTypeInformation { get; set; } = true;
 
         /// <summary>
@@ -71,6 +73,12 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [Alias("UQ")]
         public QuoteKind UseQuotes { get; set; } = QuoteKind.Always;
+
+        /// <summary>
+        /// Gets or sets property that writes csv file with no headers.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter NoHeader { get; set; }
 
         #endregion Command Line Parameters
 
@@ -112,18 +120,6 @@ namespace Microsoft.PowerShell.Commands
                 InvalidOperationException exception = new(CsvCommandStrings.CannotSpecifyQuoteFieldsAndUseQuotes);
                 ErrorRecord errorRecord = new(exception, "CannotSpecifyQuoteFieldsAndUseQuotes", ErrorCategory.InvalidData, null);
                 this.ThrowTerminatingError(errorRecord);
-            }
-
-            if (this.MyInvocation.BoundParameters.ContainsKey(nameof(IncludeTypeInformation)) && this.MyInvocation.BoundParameters.ContainsKey(nameof(NoTypeInformation)))
-            {
-                InvalidOperationException exception = new(CsvCommandStrings.CannotSpecifyIncludeTypeInformationAndNoTypeInformation);
-                ErrorRecord errorRecord = new(exception, "CannotSpecifyIncludeTypeInformationAndNoTypeInformation", ErrorCategory.InvalidData, null);
-                this.ThrowTerminatingError(errorRecord);
-            }
-
-            if (this.MyInvocation.BoundParameters.ContainsKey(nameof(IncludeTypeInformation)))
-            {
-                NoTypeInformation = !IncludeTypeInformation;
             }
 
             Delimiter = ImportExportCSVHelper.SetDelimiter(this, ParameterSetName, Delimiter, UseCulture);
@@ -212,8 +208,8 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets encoding optional flag.
         /// </summary>
         [Parameter]
-        [ArgumentToEncodingTransformationAttribute]
-        [ArgumentEncodingCompletionsAttribute]
+        [ArgumentToEncodingTransformation]
+        [ArgumentEncodingCompletions]
         [ValidateNotNullOrEmpty]
         public Encoding Encoding
         {
@@ -264,6 +260,14 @@ namespace Microsoft.PowerShell.Commands
                 this.ThrowTerminatingError(errorRecord);
             }
 
+            // Validate that Append and NoHeader are not specified together.
+            if (Append && NoHeader)
+            {
+                InvalidOperationException exception = new(CsvCommandStrings.CannotSpecifyAppendAndNoHeader);
+                ErrorRecord errorRecord = new(exception, "CannotSpecifyBothAppendAndNoHeader", ErrorCategory.InvalidData, null);
+                this.ThrowTerminatingError(errorRecord);
+            }
+
             _shouldProcess = ShouldProcess(Path);
             if (!_shouldProcess)
             {
@@ -301,9 +305,9 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // write headers (row1: typename + row2: column names)
-                if (!_isActuallyAppending)
+                if (!_isActuallyAppending && !NoHeader.IsPresent)
                 {
-                    if (NoTypeInformation == false)
+                    if (IncludeTypeInformation)
                     {
                         WriteCsvLine(ExportCsvHelper.GetTypeString(InputObject));
                     }
@@ -314,7 +318,6 @@ namespace Microsoft.PowerShell.Commands
 
             string csv = _helper.ConvertPSObjectToCSV(InputObject, _propertyNames);
             WriteCsvLine(csv);
-            _sw.Flush();
         }
 
         /// <summary>
@@ -416,7 +419,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_sw != null)
                 {
-                    _sw.Flush();
                     _sw.Dispose();
                     _sw = null;
                 }
@@ -598,8 +600,8 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets encoding optional flag.
         /// </summary>
         [Parameter]
-        [ArgumentToEncodingTransformationAttribute]
-        [ArgumentEncodingCompletionsAttribute]
+        [ArgumentToEncodingTransformation]
+        [ArgumentEncodingCompletions]
         [ValidateNotNullOrEmpty]
         public Encoding Encoding
         {
@@ -727,16 +729,20 @@ namespace Microsoft.PowerShell.Commands
             if (_propertyNames == null)
             {
                 _propertyNames = ExportCsvHelper.BuildPropertyNames(InputObject, _propertyNames);
-                if (NoTypeInformation == false)
-                {
-                    WriteCsvLine(ExportCsvHelper.GetTypeString(InputObject));
-                }
 
-                // Write property information
-                string properties = _helper.ConvertPropertyNamesCSV(_propertyNames);
-                if (!properties.Equals(string.Empty))
+                if (!NoHeader.IsPresent)
                 {
-                    WriteCsvLine(properties);
+                    if (IncludeTypeInformation)
+                    {
+                        WriteCsvLine(ExportCsvHelper.GetTypeString(InputObject));
+                    }
+
+                    // Write property information
+                    string properties = _helper.ConvertPropertyNamesCSV(_propertyNames);
+                    if (!properties.Equals(string.Empty))
+                    {
+                        WriteCsvLine(properties);
+                    }
                 }
             }
 
@@ -877,7 +883,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Helper class for Export-Csv and ConvertTo-Csv.
     /// </summary>
-    internal class ExportCsvHelper : IDisposable
+    internal sealed class ExportCsvHelper : IDisposable
     {
         private readonly char _delimiter;
         private readonly BaseCsvWritingCommand.QuoteKind _quoteKind;
@@ -951,7 +957,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Converted string.</returns>
         internal string ConvertPropertyNamesCSV(IList<string> propertyNames)
         {
-            ArgumentNullException.ThrowIfNull(propertyNames); 
+            ArgumentNullException.ThrowIfNull(propertyNames);
 
             _outputString.Clear();
             bool first = true;
@@ -986,7 +992,7 @@ namespace Microsoft.PowerShell.Commands
                             AppendStringWithEscapeAlways(_outputString, propertyName);
                             break;
                         case BaseCsvWritingCommand.QuoteKind.AsNeeded:
-                            
+
                             if (propertyName.AsSpan().IndexOfAny(_delimiter, '\n', '"') != -1)
                             {
                                 AppendStringWithEscapeAlways(_outputString, propertyName);
@@ -1015,7 +1021,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         internal string ConvertPSObjectToCSV(PSObject mshObject, IList<string> propertyNames)
         {
-            ArgumentNullException.ThrowIfNull(propertyNames); 
+            ArgumentNullException.ThrowIfNull(propertyNames);
 
             _outputString.Clear();
             bool first = true;
@@ -1036,7 +1042,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (dictionary.Contains(propertyName))
                     {
-                        value = dictionary[propertyName].ToString();
+                        value = dictionary[propertyName]?.ToString();
                     }
                     else if (mshObject.Properties[propertyName] is PSPropertyInfo property)
                     {
@@ -1101,7 +1107,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>ToString() value.</returns>
         internal static string GetToStringValueForProperty(PSPropertyInfo property)
         {
-            ArgumentNullException.ThrowIfNull(property); 
+            ArgumentNullException.ThrowIfNull(property);
 
             string value = null;
             try
@@ -1216,7 +1222,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Helper class to import single CSV file.
     /// </summary>
-    internal class ImportCsvHelper
+    internal sealed class ImportCsvHelper
     {
         #region constructor
 
@@ -1263,8 +1269,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal ImportCsvHelper(PSCmdlet cmdlet, char delimiter, IList<string> header, string typeName, StreamReader streamReader)
         {
-            ArgumentNullException.ThrowIfNull(cmdlet); 
-
+            ArgumentNullException.ThrowIfNull(cmdlet);
             ArgumentNullException.ThrowIfNull(streamReader);
 
             _cmdlet = cmdlet;
@@ -1412,11 +1417,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (!string.IsNullOrEmpty(currentHeader))
                         {
-                            if (!headers.Contains(currentHeader))
-                            {
-                                headers.Add(currentHeader);
-                            }
-                            else
+                            if (!headers.Add(currentHeader))
                             {
                                 // throw a terminating error as there are duplicate headers in the input.
                                 string memberAlreadyPresentMsg =

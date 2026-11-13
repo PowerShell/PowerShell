@@ -431,14 +431,31 @@ namespace System.Management.Automation.Security
     /// <summary>
     /// Application white listing security policies only affect Windows OSs.
     /// </summary>
-    internal sealed class SystemPolicy
+    public sealed class SystemPolicy
     {
         private SystemPolicy() { }
 
         /// <summary>
+        /// Writes to PowerShell WDAC Audit mode ETW log.
+        /// </summary>
+        /// <param name="context">Current execution context.</param>
+        /// <param name="title">Audit message title.</param>
+        /// <param name="message">Audit message message.</param>
+        /// <param name="fqid">Fully Qualified ID.</param>
+        /// <param name="dropIntoDebugger">Stops code execution and goes into debugger mode.</param>
+        internal static void LogWDACAuditMessage(
+            ExecutionContext context,
+            string title,
+            string message,
+            string fqid,
+            bool dropIntoDebugger = false)
+        {
+        }
+
+        /// <summary>
         /// Gets the system lockdown policy.
         /// </summary>
-        /// <remarks>Always return SystemEnforcementMode.None in CSS (trusted)</remarks>
+        /// <remarks>Always return SystemEnforcementMode.None on non-Windows platforms.</remarks>
         public static SystemEnforcementMode GetSystemLockdownPolicy()
         {
             return SystemEnforcementMode.None;
@@ -447,7 +464,7 @@ namespace System.Management.Automation.Security
         /// <summary>
         /// Gets lockdown policy as applied to a file.
         /// </summary>
-        /// <remarks>Always return SystemEnforcementMode.None in CSS (trusted)</remarks>
+        /// <remarks>Always return SystemEnforcementMode.None on non-Windows platforms.</remarks>
         public static SystemEnforcementMode GetLockdownPolicy(string path, System.Runtime.InteropServices.SafeHandle handle)
         {
             return SystemEnforcementMode.None;
@@ -476,7 +493,7 @@ namespace System.Management.Automation.Security
     /// <summary>
     /// How the policy is being enforced.
     /// </summary>
-    internal enum SystemEnforcementMode
+    public enum SystemEnforcementMode
     {
         /// Not enforced at all
         None = 0,
@@ -511,7 +528,12 @@ namespace System.Management.Automation.Security
         /// <summary>
         /// Script file is allowed to run in ConstrainedLanguage mode only.
         /// </summary>
-        AllowConstrained = 3
+        AllowConstrained = 3,
+
+        /// <summary>
+        /// Script file is allowed to run in FullLanguage mode but will emit ConstrainedLanguage restriction audit logs.
+        /// </summary>
+        AllowConstrainedAudit = 4
     }
 }
 

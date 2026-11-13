@@ -170,11 +170,7 @@ namespace System.Management.Automation
             {
                 string fileName = Path.GetFileName(file);
 
-                if (!fileNameHash.Contains(fileName))
-                {
-                    fileNameHash.Add(fileName);
-                }
-                else
+                if (!fileNameHash.Add(fileName))
                 {
                     // If the file need to be removed, add it to matchedFilesToRemove, if not already present.
                     if (!matchedFilesToRemove.Contains(file))

@@ -238,7 +238,7 @@ Describe 'Generic Method invocation' -Tags 'CI' {
             }
         )
 
-        $result.GetType().Name | Should -BeExactly 'SelectListIterator`2'
+        $result.GetType().Name | Should -BeExactly 'ListSelectIterator`2'
         $typeArgs = $result.GetType().GenericTypeArguments
         $typeArgs[0] | Should -Be ([int])
         $typeArgs[1] | Should -Be ([float])

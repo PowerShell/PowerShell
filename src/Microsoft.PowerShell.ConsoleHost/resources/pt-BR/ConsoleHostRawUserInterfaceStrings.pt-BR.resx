@@ -1,0 +1,177 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CoordinateOutOfBufferErrorTemplate" xml:space="preserve">
+    <value>Não é possível processar a operação porque a coordenada fornecida não é válida. Especifique uma coordenada dentro da área de buffer de {0}.</value>
+  </data>
+  <data name="InvalidBufferSizeError" xml:space="preserve">
+    <value>Não é possível definir o tamanho do buffer porque o tamanho especificado é muito grande ou muito pequeno.</value>
+  </data>
+  <data name="InvalidConsoleColorError" xml:space="preserve">
+    <value>Não é possível definir a cor do console porque o valor especificado não é válido. Especifique uma cor válida conforme definido pelo tipo System.ConsoleColor.</value>
+  </data>
+  <data name="InvalidCursorSizeError" xml:space="preserve">
+    <value>Não é possível processar CursorSize porque o tamanho do cursor especificado não é válido.</value>
+  </data>
+  <data name="InvalidReadKeyOptionsError" xml:space="preserve">
+    <value>Não é possível ler as opções da chave. Para ler as opções, defina uma ou ambas as opções a seguir: IncludeKeyDown, IncludeKeyUp.</value>
+  </data>
+  <data name="InvalidRegionErrorTemplate" xml:space="preserve">
+    <value>{0} deve ser maior ou igual a {1}.</value>
+  </data>
+  <data name="InvalidXWindowPositionError" xml:space="preserve">
+    <value>Não é possível usar a posição da Janela X (coluna) especificada porque ela se estende além da largura do buffer de tela. Especifique outra posição X, começando com 0 como a coluna mais à esquerda do buffer.</value>
+  </data>
+  <data name="InvalidYWindowPositionError" xml:space="preserve">
+    <value>Não é possível usar a posição da Janela Y (linha) especificada porque ela se estende além da altura do buffer de tela. Especifique outra posição Y, começando com 0 como a linha mais alta do buffer.</value>
+  </data>
+  <data name="WindowWidthTooSmallError" xml:space="preserve">
+    <value>A largura da janela não pode ser menor que 1.</value>
+  </data>
+  <data name="WindowHeightTooSmallError" xml:space="preserve">
+    <value>A altura da janela deve ser pelo menos 1.</value>
+  </data>
+  <data name="WindowWidthLargerThanBufferError" xml:space="preserve">
+    <value>A janela não pode ser maior do que o buffer da tela.</value>
+  </data>
+  <data name="WindowHeightLargerThanBufferError" xml:space="preserve">
+    <value>A janela não pode ser mais alta do que o buffer de tela.</value>
+  </data>
+  <data name="WindowWidthTooLargeErrorTemplate" xml:space="preserve">
+    <value>A janela não pode ser maior que {0}.</value>
+  </data>
+  <data name="WindowHeightTooLargeErrorTemplate" xml:space="preserve">
+    <value>A janela não pode ser mais alta do que {0}.</value>
+  </data>
+  <data name="WindowTooNarrowError" xml:space="preserve">
+    <value>O tamanho da janela é muito estreito.</value>
+  </data>
+  <data name="WindowTooShortError" xml:space="preserve">
+    <value>O tamanho da janela é muito curto.</value>
+  </data>
+  <data name="WindowTitleTooShortError" xml:space="preserve">
+    <value>O título da janela não pode ficar vazio.</value>
+  </data>
+  <data name="WindowTitleTooLongErrorTemplate" xml:space="preserve">
+    <value>O título da janela não pode ter mais de {0} caracteres.</value>
+  </data>
+  <data name="WindowTitleElevatedPrefix" xml:space="preserve">
+    <value>Administrador: </value>
+  </data>
+</root>

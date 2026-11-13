@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Commands
             // make sure we've got the latest time zone settings
             TimeZoneInfo.ClearCachedData();
 
-            if (this.ParameterSetName.Equals("ListAvailable", StringComparison.OrdinalIgnoreCase))
+            if (ListAvailable)
             {
                 // output the list of all available time zones
                 WriteObject(TimeZoneInfo.GetSystemTimeZones(), true);

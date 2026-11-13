@@ -222,7 +222,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = StartJobCommand.FilePathComputerNameParameterSet)]
         [Parameter(ParameterSetName = StartJobCommand.ComputerNameParameterSet)]
         [Parameter(ParameterSetName = StartJobCommand.LiteralFilePathComputerNameParameterSet)]
-        [Credential()]
+        [Credential]
         public override PSCredential Credential
         {
             get
@@ -277,7 +277,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Overriding to suppress this parameter.
         /// </summary>
-        public override Int32 ThrottleLimit
+        public override int ThrottleLimit
         {
             get
             {
@@ -646,7 +646,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // If we're in ConstrainedLanguage mode and the system is in lockdown mode,
             // ensure that they haven't specified a ScriptBlock or InitScript - as
-            // we can't protect that boundary
+            // we can't protect that boundary.
             if ((Context.LanguageMode == PSLanguageMode.ConstrainedLanguage) &&
                 (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Enforce) &&
                 ((ScriptBlock != null) || (InitializationScript != null)))

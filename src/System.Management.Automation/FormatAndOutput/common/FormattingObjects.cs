@@ -18,7 +18,7 @@
 // representation that mig have been introduced by serialization.
 //
 // There is also the need to preserve type information across serialization
-// boundaries, therefore the objects provide a GUID based machanism to
+// boundaries, therefore the objects provide a GUID based mechanism to
 // preserve the information.
 //
 

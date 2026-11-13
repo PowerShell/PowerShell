@@ -10,9 +10,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Text;
 using System.Threading;
-
 using Microsoft.PowerShell.Commands;
-using Microsoft.Win32;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -39,18 +37,22 @@ namespace System.Management.Automation
         private static readonly string s_windowsPowerShellPSHomeModulePath =
             Path.Combine(System.Environment.SystemDirectory, "WindowsPowerShell", "v1.0", "Modules");
 
+        static ModuleIntrinsics()
+        {
+            // Initialize the module path.
+            SetModulePath();
+        }
+
         internal ModuleIntrinsics(ExecutionContext context)
         {
             _context = context;
-
-            // And initialize the module path...
-            SetModulePath();
+            ModuleTable = new Dictionary<string, PSModuleInfo>(StringComparer.OrdinalIgnoreCase);
         }
 
         private readonly ExecutionContext _context;
 
         // Holds the module collection...
-        internal Dictionary<string, PSModuleInfo> ModuleTable { get; } = new Dictionary<string, PSModuleInfo>(StringComparer.OrdinalIgnoreCase);
+        internal Dictionary<string, PSModuleInfo> ModuleTable { get; }
 
         private const int MaxModuleNestingDepth = 10;
 
@@ -176,11 +178,9 @@ namespace System.Management.Automation
 
                         sb.SessionState = ss;
                     }
-                    else
+                    else if (moduleCode is string sbText)
                     {
-                        var sbText = moduleCode as string;
-                        if (sbText != null)
-                            sb = ScriptBlock.Create(_context, sbText);
+                        sb = ScriptBlock.Create(_context, sbText);
                     }
                 }
 
@@ -859,7 +859,10 @@ namespace System.Management.Automation
                         foreach (Hashtable feature in features)
                         {
                             string featureName = feature["Name"] as string;
-                            if (string.IsNullOrEmpty(featureName)) { continue; }
+                            if (string.IsNullOrEmpty(featureName))
+                            {
+                                continue;
+                            }
 
                             if (ExperimentalFeature.IsModuleFeatureName(featureName, moduleName))
                             {
@@ -964,7 +967,9 @@ namespace System.Management.Automation
 #if UNIX
             return Platform.SelectProductNameForDirectory(Platform.XDG_Type.USER_MODULES);
 #else
-            string myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            string myDocumentsPath = InternalTestHooks.SetMyDocumentsSpecialFolderToBlank
+                ? string.Empty
+                : Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.DoNotVerify);
             return string.IsNullOrEmpty(myDocumentsPath) ? null : Path.Combine(myDocumentsPath, Utils.ModuleDirectory);
 #endif
         }
@@ -1080,86 +1085,118 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Checks if a particular string (path) is a member of 'combined path' string (like %Path% or %PSModulePath%)
-        /// </summary>
-        /// <param name="pathToScan">'Combined path' string to analyze; can not be null.</param>
-        /// <param name="pathToLookFor">Path to search for; can not be another 'combined path' (semicolon-separated); can not be null.</param>
-        /// <returns>Index of pathToLookFor in pathToScan; -1 if not found.</returns>
-        private static int PathContainsSubstring(string pathToScan, string pathToLookFor)
-        {
-            // we don't support if any of the args are null - parent function should ensure this; empty values are ok
-            Diagnostics.Assert(pathToScan != null, "pathToScan should not be null according to contract of the function");
-            Diagnostics.Assert(pathToLookFor != null, "pathToLookFor should not be null according to contract of the function");
-
-            int pos = 0; // position of the current substring in pathToScan
-            string[] substrings = pathToScan.Split(Path.PathSeparator, StringSplitOptions.None); // we want to process empty entries
-            string goodPathToLookFor = pathToLookFor.Trim().TrimEnd(Path.DirectorySeparatorChar); // trailing backslashes and white-spaces will mess up equality comparison
-            foreach (string substring in substrings)
-            {
-                string goodSubstring = substring.Trim().TrimEnd(Path.DirectorySeparatorChar);  // trailing backslashes and white-spaces will mess up equality comparison
-
-                // We have to use equality comparison on individual substrings (as opposed to simple 'string.IndexOf' or 'string.Contains')
-                // because of cases like { pathToScan="C:\Temp\MyDir\MyModuleDir", pathToLookFor="C:\Temp" }
-
-                if (string.Equals(goodSubstring, goodPathToLookFor, StringComparison.OrdinalIgnoreCase))
-                {
-                    return pos; // match found - return index of it in the 'pathToScan' string
-                }
-                else
-                {
-                    pos += substring.Length + 1; // '1' is for trailing semicolon
-                }
-            }
-            // if we are here, that means a match was not found
-            return -1;
-        }
-
-        /// <summary>
         /// Adds paths to a 'combined path' string (like %Path% or %PSModulePath%) if they are not already there.
         /// </summary>
         /// <param name="basePath">Path string (like %Path% or %PSModulePath%).</param>
-        /// <param name="pathToAdd">Collection of individual paths to add.</param>
+        /// <param name="pathToAdd">An individual path to add, or multiple paths separated by the path separator character.</param>
         /// <param name="insertPosition">-1 to append to the end; 0 to insert in the beginning of the string; etc...</param>
         /// <returns>Result string.</returns>
-        private static string AddToPath(string basePath, string pathToAdd, int insertPosition)
+        private static string UpdatePath(string basePath, string pathToAdd, ref int insertPosition)
         {
             // we don't support if any of the args are null - parent function should ensure this; empty values are ok
-            Diagnostics.Assert(basePath != null, "basePath should not be null according to contract of the function");
-            Diagnostics.Assert(pathToAdd != null, "pathToAdd should not be null according to contract of the function");
+            Dbg.Assert(basePath != null, "basePath should not be null according to contract of the function");
+            Dbg.Assert(pathToAdd != null, "pathToAdd should not be null according to contract of the function");
 
-            StringBuilder result = new StringBuilder(basePath);
+            // The 'pathToAdd' could be a 'combined path' (path-separator-separated).
+            string[] newPaths = pathToAdd.Split(
+                Path.PathSeparator,
+                StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
-            if (!string.IsNullOrEmpty(pathToAdd)) // we don't want to append empty paths
+            if (newPaths.Length is 0)
             {
-                foreach (string subPathToAdd in pathToAdd.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries)) // in case pathToAdd is a 'combined path' (semicolon-separated)
-                {
-                    int position = PathContainsSubstring(result.ToString(), subPathToAdd); // searching in effective 'result' value ensures that possible duplicates in pathsToAdd are handled correctly
-                    if (position == -1) // subPathToAdd not found - add it
-                    {
-                        if (insertPosition == -1) // append subPathToAdd to the end
-                        {
-                            bool endsWithPathSeparator = false;
-                            if (result.Length > 0) endsWithPathSeparator = (result[result.Length - 1] == Path.PathSeparator);
+                // The 'pathToAdd' doesn't really contain any paths to add.
+                return basePath;
+            }
 
-                            if (endsWithPathSeparator)
-                                result.Append(subPathToAdd);
-                            else
-                                result.Append(Path.PathSeparator + subPathToAdd);
-                        }
-                        else if (insertPosition > result.Length)
-                        {
-                            // handle case where path is a singleton with no path seperator already
-                            result.Append(Path.PathSeparator).Append(subPathToAdd);
-                        }
-                        else // insert at the requested location (this is used by DSC (<Program Files> location) and by 'user-specific location' (SpecialFolder.MyDocuments or EVT.User))
-                        {
-                            result.Insert(insertPosition, subPathToAdd + Path.PathSeparator);
-                        }
-                    }
+            var result = new StringBuilder(basePath, capacity: basePath.Length + pathToAdd.Length + newPaths.Length);
+            var addedPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            string[] initialPaths = basePath.Split(
+                Path.PathSeparator,
+                StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+            foreach (string p in initialPaths)
+            {
+                // Remove the trailing directory separators.
+                // Trailing white spaces were already removed by 'StringSplitOptions.TrimEntries'.
+                addedPaths.Add(Path.TrimEndingDirectorySeparator(p));
+            }
+
+            foreach (string subPathToAdd in newPaths)
+            {
+                // Remove the trailing directory separators.
+                // Trailing white spaces were already removed by 'StringSplitOptions.TrimEntries'.
+                string normalizedPath = Path.TrimEndingDirectorySeparator(subPathToAdd);
+                if (addedPaths.Contains(normalizedPath))
+                {
+                    // The normalized sub path was already added - skip it.
+                    continue;
                 }
+
+                // The normalized sub path was not found - add it.
+                if (insertPosition is -1 || insertPosition >= result.Length)
+                {
+                    // Append the normalized sub path to the end.
+                    if (result.Length > 0 && result[^1] != Path.PathSeparator)
+                    {
+                        result.Append(Path.PathSeparator);
+                    }
+
+                    result.Append(normalizedPath);
+                    // Next insertion should happen at the end.
+                    insertPosition = result.Length;
+                }
+                else
+                {
+                    // Insert at the requested location.
+                    // This is used by the user-specific module path, the shared module path (<Program Files> location), and the PSHome module path.
+                    string strToInsert = normalizedPath + Path.PathSeparator;
+                    result.Insert(insertPosition, strToInsert);
+
+                    // Next insertion should happen after the just inserted string.
+                    insertPosition += strToInsert.Length;
+                }
+
+                // Add it to the set.
+                addedPaths.Add(normalizedPath);
             }
 
             return result.ToString();
+        }
+
+        /// <summary>
+        /// The available module path scopes.
+        /// </summary>
+        public enum PSModulePathScope
+        {
+            /// <summary>The users module path.</summary>
+            User,
+
+            /// <summary>The Builtin module path. This is where PowerShell is installed (PSHOME).</summary>
+            Builtin,
+
+            /// <summary>The machine module path. This is the shared location for all users of the system.</summary>
+            Machine
+        }
+
+        /// <summary>
+        /// Retrieve the current PSModulePath for the specified scope.
+        /// </summary>
+        /// <param name="scope">The scope of module path to retrieve. This can be User, Builtin, or Machine.</param>
+        /// <returns>The string representing the requested module path type.</returns>
+        public static string GetPSModulePath(PSModulePathScope scope)
+        {
+            if (scope == PSModulePathScope.User)
+            {
+                return GetPersonalModulePath();
+            }
+            else if (scope == PSModulePathScope.Builtin)
+            {
+                return GetPSHomeModulePath();
+            }
+            else
+            {
+                return GetSharedModulePath();
+            }
         }
 
         /// <summary>
@@ -1172,7 +1209,7 @@ namespace System.Management.Automation
             string psHomeModulePath = GetPSHomeModulePath(); // $PSHome\Modules location
 
             // If the variable isn't set, then set it to the default value
-            if (currentProcessModulePath == null)  // EVT.Process does Not exist - really corner case
+            if (string.IsNullOrEmpty(currentProcessModulePath))  // EVT.Process does Not exist - really corner case
             {
                 // Handle the default case...
                 if (string.IsNullOrEmpty(hkcuUserModulePath)) // EVT.User does Not exist -> set to <SpecialFolder.MyDocuments> location
@@ -1213,23 +1250,12 @@ namespace System.Management.Automation
                 // personalModulePath
                 // sharedModulePath
                 // systemModulePath
+
                 int insertIndex = 0;
-                if (!string.IsNullOrEmpty(personalModulePathToUse))
-                {
-                    currentProcessModulePath = AddToPath(currentProcessModulePath, personalModulePathToUse, insertIndex);
-                    insertIndex = PathContainsSubstring(currentProcessModulePath, personalModulePathToUse) + personalModulePathToUse.Length + 1;
-                }
 
-                if (!string.IsNullOrEmpty(sharedModulePath))
-                {
-                    currentProcessModulePath = AddToPath(currentProcessModulePath, sharedModulePath, insertIndex);
-                    insertIndex = PathContainsSubstring(currentProcessModulePath, sharedModulePath) + sharedModulePath.Length + 1;
-                }
-
-                if (!string.IsNullOrEmpty(systemModulePathToUse))
-                {
-                    currentProcessModulePath = AddToPath(currentProcessModulePath, systemModulePathToUse, insertIndex);
-                }
+                currentProcessModulePath = UpdatePath(currentProcessModulePath, personalModulePathToUse, ref insertIndex);
+                currentProcessModulePath = UpdatePath(currentProcessModulePath, sharedModulePath, ref insertIndex);
+                currentProcessModulePath = UpdatePath(currentProcessModulePath, systemModulePathToUse, ref insertIndex);
             }
 
             return currentProcessModulePath;
@@ -1248,7 +1274,7 @@ namespace System.Management.Automation
 
 #if !UNIX
         /// <summary>
-        /// Returns a PSModulePath suiteable for Windows PowerShell by removing PowerShell's specific
+        /// Returns a PSModulePath suitable for Windows PowerShell by removing PowerShell's specific
         /// paths from current PSModulePath.
         /// </summary>
         /// <returns>
@@ -1308,11 +1334,16 @@ namespace System.Management.Automation
         {
             string currentModulePath = GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.Process);
 #if !UNIX
-            // if the current process and user env vars are the same, it means we need to append the machine one as it's incomplete
-            // otherwise, the user modified it and we should use the process one
+            // if the current process and user env vars are the same, it means we need to append the machine one as it's incomplete.
+            // Otherwise, the user modified it and we should use the process one.
             if (string.CompareOrdinal(GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.User), currentModulePath) == 0)
             {
-                currentModulePath = currentModulePath + Path.PathSeparator + GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.Machine);
+                string machineScopeValue = GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.Machine);
+                currentModulePath = string.IsNullOrEmpty(currentModulePath)
+                    ? machineScopeValue
+                    : string.IsNullOrEmpty(machineScopeValue)
+                        ? currentModulePath
+                        : string.Concat(currentModulePath, Path.PathSeparator, machineScopeValue);
             }
 #endif
             string allUsersModulePath = PowerShellConfig.Instance.GetModulePath(ConfigScope.AllUsers);
@@ -1434,19 +1465,6 @@ namespace System.Management.Automation
             }
 
             return null;
-        }
-
-        /// <summary>
-        /// Removes all functions not belonging to the parent module.
-        /// </summary>
-        /// <param name="module">Parent module.</param>
-        internal static void RemoveNestedModuleFunctions(PSModuleInfo module)
-        {
-            var input = module.SessionState?.Internal?.ExportedFunctions;
-            if ((input == null) || (input.Count == 0))
-            { return; }
-
-            input.RemoveAll(fnInfo => !module.Name.Equals(fnInfo.ModuleName, StringComparison.OrdinalIgnoreCase));
         }
 
 #nullable enable
@@ -1711,7 +1729,7 @@ namespace System.Management.Automation
         /// <summary>Module version was greater than the maximum version.</summary>
         MaximumVersion,
 
-        /// <summary>The module specifcation passed in was null.</summary>
+        /// <summary>The module specification passed in was null.</summary>
         NullModuleSpecification,
     }
 

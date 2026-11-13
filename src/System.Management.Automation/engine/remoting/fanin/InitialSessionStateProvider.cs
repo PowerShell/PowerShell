@@ -340,7 +340,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Tracer for Server Remote session.
         /// </summary>
-        [TraceSourceAttribute("ServerRemoteSession", "ServerRemoteSession")]
+        [TraceSource("ServerRemoteSession", "ServerRemoteSession")]
         private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("ServerRemoteSession", "ServerRemoteSession");
         #endregion tracer
 
@@ -812,8 +812,12 @@ namespace System.Management.Automation.Remoting
         public override InitialSessionState GetInitialSessionState(PSSenderInfo senderInfo)
         {
             InitialSessionState result = InitialSessionState.CreateDefault2();
+
             // TODO: Remove this after RDS moved to $using
-            if (senderInfo.ConnectionString != null && senderInfo.ConnectionString.Contains("MSP=7a83d074-bb86-4e52-aa3e-6cc73cc066c8")) { PSSessionConfigurationData.IsServerManager = true; }
+            if (senderInfo.ConnectionString != null && senderInfo.ConnectionString.Contains("MSP=7a83d074-bb86-4e52-aa3e-6cc73cc066c8"))
+            {
+                PSSessionConfigurationData.IsServerManager = true;
+            }
 
             return result;
         }
@@ -852,7 +856,10 @@ namespace System.Management.Automation.Remoting
             }
 
             // TODO: Remove this after RDS moved to $using
-            if (senderInfo.ConnectionString != null && senderInfo.ConnectionString.Contains("MSP=7a83d074-bb86-4e52-aa3e-6cc73cc066c8")) { PSSessionConfigurationData.IsServerManager = true; }
+            if (senderInfo.ConnectionString != null && senderInfo.ConnectionString.Contains("MSP=7a83d074-bb86-4e52-aa3e-6cc73cc066c8"))
+            {
+                PSSessionConfigurationData.IsServerManager = true;
+            }
 
             return sessionState;
         }
@@ -2829,7 +2836,7 @@ namespace System.Management.Automation.Remoting
 
                     for (int i = 0; i < hashArray.Length; i++)
                     {
-                        if (!(objArray[i] is Hashtable hash))
+                        if (objArray[i] is not Hashtable hash)
                         {
                             return null;
                         }
@@ -2983,7 +2990,7 @@ namespace System.Management.Automation.Remoting
 #endif
 
         // These are configuration options for WSMan (WinRM) endpoint configurations, that
-        // appearand in .pssc files, but are not part of PowerShell InitialSessionState.
+        // appear in .pssc files, but are not part of PowerShell InitialSessionState.
         private static readonly HashSet<string> UnsupportedConfigOptions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             "GroupManagedServiceAccount",

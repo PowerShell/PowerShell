@@ -199,14 +199,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             StackTrace trace = new();
             StackFrame frame = trace.GetFrame(depth);
-            // if (withFileName)
-            // {
-            //    return string.Create(CultureInfo.CurrentUICulture, $"{frame.GetFileName().}#{frame.GetFileLineNumber()}:{frame.GetMethod().Name}:");
-            // }
-            // else
-            // {
-            //    return string.Create(CultureInfo.CurrentUICulture, $"{frame.GetMethod()}:");
-            // }
 
             return string.Create(CultureInfo.CurrentUICulture, $"{frame.GetMethod().DeclaringType.Name}::{frame.GetMethod().Name}        ");
         }

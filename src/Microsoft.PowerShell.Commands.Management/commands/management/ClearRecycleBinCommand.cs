@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Property that sets force parameter. This will allow to clear the recyclebin.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Force
         {
             get

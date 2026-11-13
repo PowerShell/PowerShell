@@ -107,3 +107,16 @@ finally
     Disable-Testhook -testhookName $restartTesthookName
     Set-TesthookResult -testhookName $restartTesthookResultName -value 0
 }
+
+Describe 'Non-admin on Unix' {
+    BeforeAll {
+        $skip = $false
+        if ($IsWindows -or [environment]::IsPrivilegedProcess -or ($null -eq (Get-Command shutdown -CommandType Application -ErrorAction Ignore))) {
+            $skip = $true
+        }
+    }
+
+    It 'Reports error if not run under sudo' -Skip:($skip) {
+        { Restart-Computer -ErrorAction Stop } | Should -Throw -ErrorId "CommandFailed,Microsoft.PowerShell.Commands.RestartComputerCommand"
+    }
+}

@@ -58,10 +58,25 @@ namespace System.Management.Automation.ComInterop
         internal static Type GetStructType(int args)
         {
             Debug.Assert(args >= 0);
-            if (args <= 1) return typeof(VariantArray1);
-            if (args <= 2) return typeof(VariantArray2);
-            if (args <= 4) return typeof(VariantArray4);
-            if (args <= 8) return typeof(VariantArray8);
+            if (args <= 1)
+            {
+                return typeof(VariantArray1);
+            }
+
+            if (args <= 2)
+            {
+                return typeof(VariantArray2);
+            }
+
+            if (args <= 4)
+            {
+                return typeof(VariantArray4);
+            }
+
+            if (args <= 8)
+            {
+                return typeof(VariantArray8);
+            }
 
             int size = 1;
             while (args > size)

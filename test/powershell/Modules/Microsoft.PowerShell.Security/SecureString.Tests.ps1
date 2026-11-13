@@ -41,4 +41,14 @@ Describe "SecureString conversion tests" -Tags "CI" {
         $ss2 = $encodedStr | ConvertTo-SecureString -Key $key
         $ss2 | ConvertFrom-SecureString -AsPlainText | Should -BeExactly $testString
     }
+
+    It "Using invalid secure string with ConvertFrom-SecureString produces an exception message without value" {
+        $ex = { ConvertFrom-SecureString "1234" } | Should -Throw -ErrorId "CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.ConvertFromSecureStringCommand" -PassThru
+        $ex.Exception.Message | Should -Not -Match "1234"
+    }
+
+    It "Using invalid securestring with cast produces an exception message without value" {
+        $ex = { [securestring]"1234" } | Should -Throw -ErrorId "ConvertToFinalInvalidCastException" -PassThru
+        $ex.Exception.Message | Should -Not -Match "1234"
+    }
 }

@@ -147,6 +147,20 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Emit an advisory warning when using legacy catalog version 1 (SHA-1).
+        /// Advisory only: does not fail catalog generation/validation for compatibility.
+        /// Automation validating catalogs can check CatalogInformation.HashAlgorithm (Test-FileCatalog -Detailed)
+        /// to detect SHA-1 programmatically.
+        /// </summary>
+        private static void WarnIfLegacyCatalogVersion(string catalogFilePath, int catalogVersion)
+        {
+            if (catalogVersion < 2)
+            {
+                _cmdlet.WriteWarning(StringUtil.Format(CatalogStrings.WeakCatalogHashAlgorithm, catalogFilePath));
+            }
+        }
+
+        /// <summary>
         /// Generate the Catalog Definition File representing files and folders.
         /// </summary>
         /// <param name="Path">Path of expected output .cdf file.</param>
@@ -220,9 +234,8 @@ namespace System.Management.Automation
                 relativePath = fileToHash.Name;
             }
 
-            if (!relativePaths.Contains(relativePath))
+            if (relativePaths.Add(relativePath))
             {
-                relativePaths.Add(relativePath);
                 if (fileToHash.Length != 0)
                 {
                     cdfFilesContent += "<HASH>" + fileToHash.FullName + "=" + fileToHash.FullName + Environment.NewLine;
@@ -332,6 +345,8 @@ namespace System.Management.Automation
             _cmdlet = cmdlet;
             string hashAlgorithm = GetCatalogHashAlgorithm(catalogVersion);
 
+            WarnIfLegacyCatalogVersion(catalogFilePath, catalogVersion);
+
             if (!string.IsNullOrEmpty(hashAlgorithm))
             {
                 // Generate Path for Catalog Definition File
@@ -423,7 +438,7 @@ namespace System.Management.Automation
             FileStream fileStream;
             try
             {
-                fileStream = File.Open(filePath, FileMode.Open, FileAccess.Read);
+                fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
             }
             catch (Exception e)
             {
@@ -457,7 +472,7 @@ namespace System.Management.Automation
                     _cmdlet.ThrowTerminatingError(errorRecord);
                 }
 
-                hashValue = BitConverter.ToString(hashBytes).Replace("-", string.Empty);
+                hashValue = Convert.ToHexString(hashBytes);
             }
 
             return hashValue;
@@ -689,8 +704,8 @@ namespace System.Management.Automation
             List<string> relativePathsFromFolder = pathItems.Keys.ToList();
             List<string> relativePathsFromCatalog = catalogItems.Keys.ToList();
 
-            // Find entires those are not in both list lists. These should be empty lists for success
-            // Hashes in Catalog should be exact similar to the ones from folder
+            // Find entries that are not in both lists. These should be empty lists for success
+            // Hashes in Catalog should be exactly similar to the ones from folder
             List<string> relativePathsNotInFolder = relativePathsFromFolder.Except(relativePathsFromCatalog, StringComparer.CurrentCultureIgnoreCase).ToList();
             List<string> relativePathsNotInCatalog = relativePathsFromCatalog.Except(relativePathsFromFolder, StringComparer.CurrentCultureIgnoreCase).ToList();
 
@@ -733,6 +748,8 @@ namespace System.Management.Automation
             int catalogVersion = 0;
             Dictionary<string, string> catalogHashes = GetHashesFromCatalog(catalogFilePath, excludedPatterns, out catalogVersion);
             string hashAlgorithm = GetCatalogHashAlgorithm(catalogVersion);
+
+            WarnIfLegacyCatalogVersion(catalogFilePath, catalogVersion);
 
             if (!string.IsNullOrEmpty(hashAlgorithm))
             {

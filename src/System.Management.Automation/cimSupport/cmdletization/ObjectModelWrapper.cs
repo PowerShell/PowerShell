@@ -18,15 +18,10 @@ namespace Microsoft.PowerShell.Cmdletization
         internal void Initialize(PSCmdlet cmdlet, string className, string classVersion, IDictionary<string, string> privateData)
         {
             ArgumentNullException.ThrowIfNull(cmdlet);
-
-            if (string.IsNullOrEmpty(className))
-            {
-                throw new ArgumentNullException(nameof(className));
-            }
+            ArgumentException.ThrowIfNullOrEmpty(className);
 
             // possible and ok to have classVersion==string.Empty
             ArgumentNullException.ThrowIfNull(classVersion);
-
             ArgumentNullException.ThrowIfNull(privateData);
 
             _cmdlet = cmdlet;
@@ -34,8 +29,7 @@ namespace Microsoft.PowerShell.Cmdletization
             _classVersion = classVersion;
             _privateData = privateData;
 
-            var compiledScript = this.Cmdlet as PSScriptCmdlet;
-            if (compiledScript != null)
+            if (this.Cmdlet is PSScriptCmdlet compiledScript)
             {
                 compiledScript.StoppingEvent += delegate { this.StopProcessing(); };
                 compiledScript.DisposingEvent +=

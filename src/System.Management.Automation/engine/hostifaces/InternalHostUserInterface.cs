@@ -209,7 +209,14 @@ namespace System.Management.Automation.Internal.Host
                 return;
             }
 
-            _externalUI.Write(foregroundColor, backgroundColor, value);
+            if (PSStyle.Instance.OutputRendering == OutputRendering.PlainText)
+            {
+                _externalUI.Write(value);
+            }
+            else
+            {
+                _externalUI.Write(foregroundColor, backgroundColor, value);
+            }
         }
 
         /// <summary>
@@ -303,7 +310,14 @@ namespace System.Management.Automation.Internal.Host
                 return;
             }
 
-            _externalUI.WriteLine(foregroundColor, backgroundColor, value);
+            if (PSStyle.Instance.OutputRendering == OutputRendering.PlainText)
+            {
+                _externalUI.WriteLine(value);
+            }
+            else
+            {
+                _externalUI.WriteLine(foregroundColor, backgroundColor, value);
+            }
         }
 
         /// <summary>
@@ -495,7 +509,7 @@ namespace System.Management.Automation.Internal.Host
                         break;
 
                     case 3:
-                        // No to All means that we want to stop everytime WriteDebug is called. Since No throws an error, I
+                        // No to All means that we want to stop every time WriteDebug is called. Since No throws an error, I
                         // think that ordinarily, the caller will terminate.  So I don't think the caller will ever get back
                         // calling WriteDebug again, and thus "No to All" might not be a useful option to have.
 
@@ -652,12 +666,21 @@ namespace System.Management.Automation.Internal.Host
 
         internal static bool IsSecuritySensitiveType(string typeName)
         {
-            if (typeName.Equals(nameof(PSCredential), StringComparison.OrdinalIgnoreCase))
+            string effectiveName = typeName;
+            int suffixIndex = effectiveName.IndexOfAny(new char[] { '[', ',' });
+            if (suffixIndex >= 0)
+            {
+                effectiveName = effectiveName.Substring(0, suffixIndex);
+            }
+
+            if (effectiveName.Equals(nameof(PSCredential), StringComparison.OrdinalIgnoreCase) ||
+                effectiveName.Equals(typeof(PSCredential).FullName, StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
 
-            if (typeName.Equals(nameof(SecureString), StringComparison.OrdinalIgnoreCase))
+            if (effectiveName.Equals(nameof(SecureString), StringComparison.OrdinalIgnoreCase) ||
+                effectiveName.Equals(typeof(SecureString).FullName, StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }

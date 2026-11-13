@@ -41,7 +41,7 @@ There is a special hosting scenario for native hosts,
 where Trusted Platform Assemblies (TPA) do not include PowerShell assemblies,
 such as the in-box `powershell.exe` in Nano Server and the Azure DSC host.
 
-For such hosting scenarios, the native host needs to bootstrap by calling [`PowerShellAssemblyLoadContextInitializer.SetPowerShellAssemblyLoadContext`](https://docs.microsoft.com/dotnet/api/system.management.automation.powershellassemblyloadcontextinitializer.setpowershellassemblyloadcontext).
+For such hosting scenarios, the native host needs to bootstrap by calling [`PowerShellAssemblyLoadContextInitializer.SetPowerShellAssemblyLoadContext`](https://learn.microsoft.com/dotnet/api/system.management.automation.powershellassemblyloadcontextinitializer.setpowershellassemblyloadcontext).
 When using this API, the native host can pass in the path to the directory that contains PowerShell assemblies.
 A handler will then be registered to the [`Resolving`](https://github.com/dotnet/corefx/blob/d6678e9653defe3cdfff26b2ff62135b6b22c77f/src/System.Runtime.Loader/ref/System.Runtime.Loader.cs#L38)
 event of the default load context to deal with the loading of assemblies from that directory.

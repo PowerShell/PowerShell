@@ -47,8 +47,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// it will select the item under it, but if you keep the mouse button down and move the mouse
         /// (if the list supported drag and drop, the mouse action would be the same as dragging) it
         /// will select other list items.
-        /// If the first selection change causes  details for the item to be displayed and resizes the list
-        /// the selection can skip to another list item it happend to be over as the list got resized.
+        /// If the first selection change causes details for the item to be displayed and resizes the list,
+        /// the selection can skip to another list item that happens to be over as the list got resized.
         /// In summary, resizing the list on selection can cause a selection bug. If the user selects an
         /// item in the end of the list the next item downwards can be selected.
         /// The WPF drag-and-select feature is not a standard win32 list behavior, and we can do without it

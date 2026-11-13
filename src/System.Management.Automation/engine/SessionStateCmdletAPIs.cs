@@ -35,7 +35,7 @@ namespace System.Management.Automation
         /// The name of the cmdlet value to retrieve.
         /// </param>
         /// <param name="origin">
-        /// The origin of hte command trying to retrieve this cmdlet.
+        /// The origin of the command trying to retrieve this cmdlet.
         /// </param>
         /// <returns>
         /// The CmdletInfo representing the cmdlet.

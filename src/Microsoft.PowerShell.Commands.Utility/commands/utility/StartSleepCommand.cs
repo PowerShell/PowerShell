@@ -44,14 +44,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "Seconds", ValueFromPipeline = true,
                    ValueFromPipelineByPropertyName = true)]
-        [ValidateRangeAttribute(0.0, (double)(int.MaxValue / 1000))]
+        [ValidateRange(0.0, (double)(int.MaxValue / 1000))]
         public double Seconds { get; set; }
 
         /// <summary>
         /// Allows sleep time to be specified in milliseconds.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "Milliseconds", ValueFromPipelineByPropertyName = true)]
-        [ValidateRangeAttribute(0, int.MaxValue)]
+        [ValidateRange(0, int.MaxValue)]
         [Alias("ms")]
         public int Milliseconds { get; set; }
 
@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
                 case "Milliseconds":
                     sleepTime = Milliseconds;
                     break;
-                
+
                 case "FromTimeSpan":
                     if (Duration.TotalMilliseconds > int.MaxValue)
                     {

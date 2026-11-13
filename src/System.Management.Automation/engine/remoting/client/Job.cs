@@ -93,7 +93,6 @@ namespace System.Management.Automation
     /// Defines exception which is thrown when state of the PSJob is different
     /// from the expected state.
     /// </summary>
-    [Serializable]
     public class InvalidJobStateException : SystemException
     {
         /// <summary>
@@ -191,10 +190,11 @@ namespace System.Management.Automation
         /// The <see cref="StreamingContext"/> that contains contextual information
         /// about the source or destination.
         /// </param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected
         InvalidJobStateException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
+            throw new NotSupportedException();
         }
 
         #endregion
@@ -752,10 +752,10 @@ namespace System.Management.Automation
 
         private static Exception GetExceptionFromErrorRecord(ErrorRecord errorRecord)
         {
-            if (!(errorRecord.Exception is RuntimeException runtimeException))
+            if (errorRecord.Exception is not RuntimeException runtimeException)
                 return null;
 
-            if (!(runtimeException is RemoteException remoteException))
+            if (runtimeException is not RemoteException remoteException)
                 return null;
 
             PSPropertyInfo wasThrownFromThrow =
@@ -1011,11 +1011,17 @@ namespace System.Management.Automation
         /// </summary>
         public void LoadJobStreams()
         {
-            if (_jobStreamsLoaded) return;
+            if (_jobStreamsLoaded)
+            {
+                return;
+            }
 
             lock (syncObject)
             {
-                if (_jobStreamsLoaded) return;
+                if (_jobStreamsLoaded)
+                {
+                    return;
+                }
 
                 _jobStreamsLoaded = true;
             }
@@ -1905,7 +1911,7 @@ namespace System.Management.Automation
 
             foreach (Job j in ChildJobs)
             {
-                if (!(j is PSRemotingChildJob child)) continue;
+                if (j is not PSRemotingChildJob child) continue;
                 if (string.Equals(child.Runspace.ConnectionInfo.ComputerName, computerName,
                                 StringComparison.OrdinalIgnoreCase))
                 {
@@ -1928,7 +1934,7 @@ namespace System.Management.Automation
 
             foreach (Job j in ChildJobs)
             {
-                if (!(j is PSRemotingChildJob child)) continue;
+                if (j is not PSRemotingChildJob child) continue;
                 if (child.Runspace.InstanceId.Equals(runspace.InstanceId))
                 {
                     returnJobList.Add(child);
@@ -1951,7 +1957,7 @@ namespace System.Management.Automation
 
             foreach (Job j in ChildJobs)
             {
-                if (!(j is PSRemotingChildJob child)) continue;
+                if (j is not PSRemotingChildJob child) continue;
                 if (child.Helper.Equals(helper))
                 {
                     returnJobList.Add(child);

@@ -1,0 +1,393 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="NotSupported" xml:space="preserve">
+    <value>Tato funkce není v tomto operačním systému podporována.</value>
+  </data>
+  <data name="NotEnabled" xml:space="preserve">
+    <value>Nelze povolit jednotku {0}.</value>
+  </data>
+  <data name="InvalidDrive" xml:space="preserve">
+    <value>Příkaz nemůže zapnout infrastrukturu obnovení počítače na zadaném počítači, protože zadaná jednotka není platná. Zadejte do parametru Drive platnou jednotku a zkuste to znovu.</value>
+  </data>
+  <data name="NoSystemDrive" xml:space="preserve">
+    <value>Do seznamu jednotek zahrňte systémovou jednotku.</value>
+  </data>
+  <data name="NotValidDrive" xml:space="preserve">
+    <value>Příkaz nemůže vypnout infrastrukturu obnovení počítače, protože zadaná jednotka není platná. Zadejte do parametru Drive platnou jednotku a zkuste to znovu.</value>
+  </data>
+  <data name="NotDisabled" xml:space="preserve">
+    <value>Příkaz nemůže zakázat obnovení systému na jednotce {0} . Tuto operaci nemůžete provést, protože k tomu nemáte dostatečná oprávnění.</value>
+  </data>
+  <data name="ServiceDisabled" xml:space="preserve">
+    <value>Služba SystemRestore je zakázaná.</value>
+  </data>
+  <data name="RestorePointNotCreated" xml:space="preserve">
+    <value>Infrastruktura obnovení systému nemůže vytvořit bod obnovení.</value>
+  </data>
+  <data name="RestoreFailed" xml:space="preserve">
+    <value>Poslední pokus o obnovení počítače se nezdařil.</value>
+  </data>
+  <data name="RestoreSuccess" xml:space="preserve">
+    <value>Počítač byl obnoven do zadaného bodu obnovení.</value>
+  </data>
+  <data name="RestoreInterrupted" xml:space="preserve">
+    <value>Poslední pokus o obnovení počítače byl přerušen.</value>
+  </data>
+  <data name="NoRestorePoint" xml:space="preserve">
+    <value>Příkaz nemůže najít bod obnovení {0}. Ověřte pořadové číslo {0} a potom příkaz spusťte znovu.</value>
+  </data>
+  <data name="DoubleComputerName" xml:space="preserve">
+    <value>{0} ({1})</value>
+  </data>
+  <data name="RestartcomputerFailed" xml:space="preserve">
+    <value>Restartování počítače {0} se nezdařilo s následující chybovou zprávou: {1}.</value>
+  </data>
+  <data name="OperationFailed" xml:space="preserve">
+    <value>Tento příkaz nelze spustit na cílovém počítači ({1}) kvůli následující chybě: {0}. {2}</value>
+  </data>
+  <data name="StopcomputerFailed" xml:space="preserve">
+    <value>Počítač {0} se nepodařilo zastavit. Chybová zpráva: {1}.</value>
+  </data>
+  <data name="InvalidRestorePoint" xml:space="preserve">
+    <value>Příkaz nemůže obnovit počítač, protože {0} není nastaven jako platný bod obnovení. Zadejte platný bod obnovení do parametru RestorePoint a zkuste to znovu.</value>
+  </data>
+  <data name="RestartNeeded" xml:space="preserve">
+    <value>Změny se projeví po restartování počítače {1}.</value>
+  </data>
+  <data name="RemoveComputerConfirm" xml:space="preserve">
+    <value>Po opuštění domény budete muset znát heslo místního účtu správce, abyste se mohli přihlásit k tomuto počítači. Chcete pokračovat?</value>
+  </data>
+  <data name="InvalidComputerNameFormat" xml:space="preserve">
+    <value>Následující název počítače není platný: {0}. Ujistěte se, že název počítače není delší než 255 znaků, neobsahuje dvě nebo více po sobě jdoucích teček, nezačíná tečkou, neobsahuje pouze číselné znaky a neobsahuje žádný z následujících znaků: 
+{{|}}~[\]^:;&lt;=&gt;?@!"#$%^`()+/,</value>
+  </data>
+  <data name="InvalidDomainNameFormat" xml:space="preserve">
+    <value>Doména v názvu počítače {0} není platná. Ujistěte se, že doména existuje a že název je platný název domény.</value>
+  </data>
+  <data name="ComputerNamesAreEqual" xml:space="preserve">
+    <value>Hodnota zadaná pro parametr NewComputerName je stejná jako hodnota parametru ComputerName. Zadejte pro parametr NewComputerName jinou hodnotu.</value>
+  </data>
+  <data name="ResetComputerMachinePassword" xml:space="preserve">
+    <value>Heslo zabezpečeného kanálu mezi {0} a {1} bylo resetováno.</value>
+  </data>
+  <data name="SystemRestoreServiceDisabled" xml:space="preserve">
+    <value>Tento příkaz nelze spustit kvůli následující chybě: Službu nelze spustit, protože je zakázaná nebo nemá povolená přidružená zařízení.</value>
+  </data>
+  <data name="ProgressActivity" xml:space="preserve">
+    <value>Vytváří se bod obnovení systému...</value>
+  </data>
+  <data name="ProgressStatusCreatingRestorePoint" xml:space="preserve">
+    <value>Vytváří se bod obnovení systému... {0} % dokončeno.</value>
+  </data>
+  <data name="ProgressStatusCompleted" xml:space="preserve">
+    <value>Dokončeno.</value>
+  </data>
+  <data name="NetworkPathNotFound" xml:space="preserve">
+    <value>Zkuste použít níže uvedené možnosti a spusťte příkaz znovu.
+1. Ověřte, zda je cílový počítač ({0}) spuštěn.
+2. Zadejte úplný název cílového počítače ({0}).</value>
+  </data>
+  <data name="PrivilegeNotEnabled" xml:space="preserve">
+    <value>Restartování počítače {0} se nezdařilo. Oprávnění přístupu {1} nelze pro volající proces povolit.</value>
+  </data>
+  <data name="RestartComputerAction" xml:space="preserve">
+    <value>Povolte {0} a restartujte počítač.</value>
+  </data>
+  <data name="LocalShutdownPrivilege" xml:space="preserve">
+    <value>Přístupová práva k místnímu vypnutí</value>
+  </data>
+  <data name="RemoteShutdownPrivilege" xml:space="preserve">
+    <value>Přístupová práva ke vzdálenému vypnutí</value>
+  </data>
+  <data name="CannotWaitLocalComputer" xml:space="preserve">
+    <value>Nelze čekat na restart místního počítače. Při zadání parametru Wait se místní počítač ignoruje.</value>
+  </data>
+  <data name="RestartComputerInvalidParameter" xml:space="preserve">
+    <value>Parametry Timeout, For a Delay jsou platné pouze tehdy, když je zadán parametr Wait.</value>
+  </data>
+  <data name="RestartMultipleComputersActivity" xml:space="preserve">
+    <value> Restartují se počítače...</value>
+  </data>
+  <data name="RestartSingleComputerActivity" xml:space="preserve">
+    <value> Restartování počítače {0}</value>
+  </data>
+  <data name="WaitForMultipleComputers" xml:space="preserve">
+    <value>Dokončeno: {0}/{1}</value>
+  </data>
+  <data name="VerifyRebootStage" xml:space="preserve">
+    <value>Ověřuje se, zda se počítač restartoval...</value>
+  </data>
+  <data name="WaitForPowerShell" xml:space="preserve">
+    <value>Čeká se na připojení PowerShellu...</value>
+  </data>
+  <data name="WaitForRestartToBegin" xml:space="preserve">
+    <value>Čeká se na zahájení restartování...</value>
+  </data>
+  <data name="WaitForWinRM" xml:space="preserve">
+    <value>Čeká se na připojení WinRM...</value>
+  </data>
+  <data name="WaitForWMI" xml:space="preserve">
+    <value>Čeká se na připojení rozhraní WMI...</value>
+  </data>
+  <data name="RestartComplete" xml:space="preserve">
+    <value>Restartování je dokončeno</value>
+  </data>
+  <data name="NoSupportForCombinedServiceType" xml:space="preserve">
+    <value>Kombinované typy služeb se v současné době nepodporují.</value>
+  </data>
+  <data name="CannotResolveComputerName" xml:space="preserve">
+    <value>Název počítače {0} nelze přeložit s následující výjimkou: {1}.</value>
+  </data>
+  <data name="IncorrectNewNameNumber" xml:space="preserve">
+    <value>Počet nových názvů neodpovídá počtu cílových počítačů.</value>
+  </data>
+  <data name="InvalidNewName" xml:space="preserve">
+    <value>Přeskočit počítač {0} s novým názvem {1}, protože nový název není platný. Zadaný nový název počítače nemá správný formát. Standardní názvy mohou obsahovat písmena (a-z, A-Z), číslice (0-9) a spojovníky (-), ale ne mezery ani tečky (.). Název nesmí být tvořen pouze číslicemi a nesmí být delší než 63 znaků.</value>
+  </data>
+  <data name="NewNameIsOldName" xml:space="preserve">
+    <value>Přeskočit počítač {0} s novým názvem {1}, protože nový název je stejný jako aktuální název.</value>
+  </data>
+  <data name="ComputerNotInDomain" xml:space="preserve">
+    <value>Počítač {0} nelze odebrat, protože není v doméně.</value>
+  </data>
+  <data name="FailToJoinWorkGroup" xml:space="preserve">
+    <value>Počítač {0} se nepodařilo připojit k pracovní skupině {1}. Chybová zpráva: {2}.</value>
+  </data>
+  <data name="NetworkDown" xml:space="preserve">
+    <value>Počítače nelze odebrat z domény, protože místní síť není dostupná.</value>
+  </data>
+  <data name="FailToRename" xml:space="preserve">
+    <value>Přejmenování počítače {0} na {1} se nezdařilo kvůli následující výjimce: {2}.</value>
+  </data>
+  <data name="AddComputerActionDomain" xml:space="preserve">
+    <value>Připojit k doméně {0}</value>
+  </data>
+  <data name="AddComputerActionWorkgroup" xml:space="preserve">
+    <value>Připojit k pracovní skupině {0}</value>
+  </data>
+  <data name="AddComputerToSameDomain" xml:space="preserve">
+    <value>Počítač {0} nelze přidat do domény {1}, protože už je její součástí.</value>
+  </data>
+  <data name="AddComputerToSameWorkgroup" xml:space="preserve">
+    <value>Počítač {0} nelze přidat do pracovní skupiny {1}, protože už je její součástí.</value>
+  </data>
+  <data name="FailToRenameAfterJoinWorkgroup" xml:space="preserve">
+    <value>Počítač {0} byl úspěšně připojen k pracovní skupině {1}, ale nepodařilo se ho přejmenovat na {2}. Chybová zpráva: {3}.</value>
+  </data>
+  <data name="FailToSwitchFromDomainToWorkgroup" xml:space="preserve">
+    <value>Počítač {0} byl úspěšně odpojen od domény {1}, ale nepodařilo se ho připojit k pracovní skupině {2}. Chybová zpráva: {3}.</value>
+  </data>
+  <data name="FailToUnjoinDomain" xml:space="preserve">
+    <value>Počítač {0} se nepodařilo odpojit od domény {1}. Chybová zpráva: {2}.</value>
+  </data>
+  <data name="FailToConnectToComputer" xml:space="preserve">
+    <value>K počítači {0} se nepodařilo navázat připojení WMI. Chybová zpráva: {1}</value>
+  </data>
+  <data name="FailToJoinDomainFromWorkgroup" xml:space="preserve">
+    <value>Počítači {0} se nepodařilo připojit k doméně {1} z aktuální pracovní skupiny {2} s následující chybovou zprávou: {3}.</value>
+  </data>
+  <data name="FailToJoinNewDomainAfterUnjoinOldDomain" xml:space="preserve">
+    <value>Počítač {0} byl úspěšně odpojen od domény {1}, ale nepodařilo se ho připojit k nové doméně {2}. Chybová zpráva: {3}.</value>
+  </data>
+  <data name="FailToRenameAfterJoinDomain" xml:space="preserve">
+    <value>Počítač {0} byl úspěšně připojen k nové doméně {1}, ale nepodařilo se ho přejmenovat na {2}. Chybová zpráva: {3}.</value>
+  </data>
+  <data name="InvalidJoinOptions" xml:space="preserve">
+    <value>Příznak {0} je platný pouze v případě, že je zadán příznak {1}.</value>
+  </data>
+  <data name="CannotRenameMultipleComputers" xml:space="preserve">
+    <value>Nelze přejmenovat více počítačů. Parametr -NewName je platný pouze v případě, že je zadán jeden počítač.</value>
+  </data>
+  <data name="CannotFindMachineAccountFromDomain" xml:space="preserve">
+    <value>Účet místního počítače v doméně {0} se nepodařilo najít.</value>
+  </data>
+  <data name="CannotFindMachineAccountFromServer" xml:space="preserve">
+    <value>Účet počítače pro místní počítač se nepodařilo najít na řadiči domény {0}.</value>
+  </data>
+  <data name="FailToGetDomainInformation" xml:space="preserve">
+    <value>Informace o doméně místního počítače nelze získat kvůli následující výjimce: {0}.</value>
+  </data>
+  <data name="FailToResetPasswordOnDomain" xml:space="preserve">
+    <value>Heslo zabezpečeného kanálu pro účet počítače v doméně nelze resetovat. Operace se nezdařila s následujícím výjimkou: {0}.</value>
+  </data>
+  <data name="FailToResetPasswordOnLocalMachine" xml:space="preserve">
+    <value>Resetování hesla zabezpečeného kanálu pro místní počítač se nezdařilo s následující chybovou zprávou: {0}.</value>
+  </data>
+  <data name="NeedAdminPrivilegeToResetPassword" xml:space="preserve">
+    <value>K resetování hesla zabezpečeného kanálu na místním počítači jsou vyžadována oprávnění správce. Přístup byl odepřen.</value>
+  </data>
+  <data name="ResetComputerNotInDomain" xml:space="preserve">
+    <value>Heslo zabezpečeného kanálu pro účet místního počítače nelze resetovat. Místní počítač momentálně není součástí domény.</value>
+  </data>
+  <data name="TruncateNetBIOSName" xml:space="preserve">
+    <value>Název počítače NetBIOS je omezen na 15 bajtů, což v tomto případě představuje 15 znaků. Název pro rozhraní NetBIOS bude zkrácen na {0}, což může způsobit konflikty při překladu názvů rozhraní NetBIOS. Chcete pokračovat?</value>
+  </data>
+  <data name="TruncateNetBIOSNameCaption" xml:space="preserve">
+    <value>Název pro rozhraní NetBIOS bude zkrácen.</value>
+  </data>
+  <data name="CannotResolveServerName" xml:space="preserve">
+    <value>Zadaný název serveru {0} nelze přeložit.</value>
+  </data>
+  <data name="CannotCreateRestorePointWarning" xml:space="preserve">
+    <value>Nový bod obnovení systému nelze vytvořit, protože již byl vytvořen během posledních {0} minut. Frekvenci vytváření bodů obnovení lze změnit vytvořením hodnoty DWORD SystemRestorePointCreationFrequency v klíči registru HKLM\Software\Microsoft\Windows NT\CurrentVersion\SystemRestore. Hodnota tohoto klíče registru určuje požadovaný časový interval (v minutách) mezi vytvořením dvou bodů obnovení. Výchozí hodnota je 1440 minut (24 hodin).</value>
+  </data>
+  <data name="CannotGetOperatingSystemObject" xml:space="preserve">
+    <value>Objekt WMI Win32_OperatingSystem nelze načíst.</value>
+  </data>
+  <data name="RestartComputerSkipped" xml:space="preserve">
+    <value>Počítač {0} je přeskočen. Nepodařilo se načíst hodnotu LastBootUpTime prostřednictvím služby WMI. Chybová zpráva: {1}.</value>
+  </data>
+  <data name="FailToTestSecureChannel" xml:space="preserve">
+    <value>Zabezpečený kanál pro místní počítač nelze ověřit. Operace se nezdařila s následujícím výjimkou: {0}.</value>
+  </data>
+  <data name="RepairSecureChannelFail" xml:space="preserve">
+    <value>Pokus o opravu zabezpečeného kanálu mezi místním počítačem a doménou {0} se nezdařil.</value>
+  </data>
+  <data name="RepairSecureChannelSucceed" xml:space="preserve">
+    <value>Zabezpečený kanál mezi místním počítačem a doménou {0} byl úspěšně opraven.</value>
+  </data>
+  <data name="SecureChannelAlive" xml:space="preserve">
+    <value>Zabezpečený kanál mezi místním počítačem a doménou {0} je v pořádku.</value>
+  </data>
+  <data name="SecureChannelBroken" xml:space="preserve">
+    <value>Zabezpečený kanál mezi místním počítačem a doménou {0} je poškozen.</value>
+  </data>
+  <data name="TestComputerNotInDomain" xml:space="preserve">
+    <value>Nelze ověřit heslo zabezpečeného kanálu pro místní počítač. Místní počítač momentálně není součástí domény.</value>
+  </data>
+  <data name="SystemRestoreNotSupported" xml:space="preserve">
+    <value>Operaci nelze provést, protože rozhraní API pro obnovení systému nejsou na platformě Advanced RISC Machine (ARM) podporována.</value>
+  </data>
+  <data name="TimeoutError" xml:space="preserve">
+    <value>Restartování počítače nebylo dokončeno v zadaném časovém limitu.</value>
+  </data>
+  <data name="FailToRetrieveLastRestorePoint" xml:space="preserve">
+    <value>Časový interval pro vytvoření bodu obnovení nelze ověřit. Nepodařilo se načíst poslední bod obnovení. Chybová zpráva: {0}.</value>
+  </data>
+  <data name="InvalidParameterSetAsJob" xml:space="preserve">
+    <value>Sada parametrů AsJob není podporována.</value>
+  </data>
+  <data name="InvalidParameterForCoreClr" xml:space="preserve">
+    <value>Parametr {0} se pro CoreCLR nepodporuje.</value>
+  </data>
+  <data name="ShutdownCommandNotFound" xml:space="preserve">
+    <value>Požadovaný nativní příkaz shutdown nebyl nalezen.</value>
+  </data>
+</root>

@@ -98,7 +98,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         /// <summary>
-        /// Gets the managed type that an object needs to be coverted to in order for it to be able
+        /// Gets the managed type that an object needs to be converted to in order for it to be able
         /// to be represented as a Variant.
         ///
         /// In general, there is a many-to-many mapping between Type and VarEnum. However, this method
@@ -352,7 +352,7 @@ namespace System.Management.Automation.ComInterop
         // We will try VT_DISPATCH and then call GetNativeVariantForObject.
         private const VarEnum VT_DEFAULT = VarEnum.VT_RECORD;
 
-        private VarEnum GetComType(ref Type argumentType)
+        private static VarEnum GetComType(ref Type argumentType)
         {
             if (argumentType == typeof(Missing))
             {
@@ -429,9 +429,9 @@ namespace System.Management.Automation.ComInterop
         }
 
         /// <summary>
-        /// Get the COM Variant type that argument should be marshaled as for a call to COM.
+        /// Get the COM Variant type that argument should be marshalled as for a call to COM.
         /// </summary>
-        private VariantBuilder GetVariantBuilder(Type argumentType)
+        private static VariantBuilder GetVariantBuilder(Type argumentType)
         {
             //argumentType is coming from MarshalType, null means the dynamic object holds
             //a null value and not byref
@@ -455,7 +455,7 @@ namespace System.Management.Automation.ComInterop
                 if (elementType == typeof(object) || elementType == typeof(DBNull))
                 {
                     //no meaningful value to pass ByRef.
-                    //perhaps the calee will replace it with something.
+                    //perhaps the callee will replace it with something.
                     //need to pass as a variant reference
                     elementVarEnum = VarEnum.VT_VARIANT;
                 }

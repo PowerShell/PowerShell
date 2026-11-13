@@ -291,7 +291,7 @@ namespace Microsoft.PowerShell.Commands
             return false;
         }
 
-        private void GetAllNestedModules(PSModuleInfo module, ref List<PSModuleInfo> nestedModulesWithNoCircularReference)
+        private static void GetAllNestedModules(PSModuleInfo module, ref List<PSModuleInfo> nestedModulesWithNoCircularReference)
         {
             List<PSModuleInfo> nestedModules = new List<PSModuleInfo>();
             if (module.NestedModules != null && module.NestedModules.Count > 0)

@@ -10,6 +10,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Primitives;
 using mvc.Models;
@@ -38,7 +39,7 @@ namespace mvc.Controllers
             {
                 Response.StatusCode = (int)status;
                 url = $"{url}?type={type.FirstOrDefault()}";
-                Response.Headers.Add("Location", url);
+                Response.Headers.Append("Location", url);
             }
             else if (typeIsPresent && string.Equals(type.FirstOrDefault(), "relative", StringComparison.InvariantCultureIgnoreCase))
             {
@@ -48,7 +49,7 @@ namespace mvc.Controllers
             else if (destinationIsPresent)
             {
                 Response.StatusCode = 302;
-                Response.Headers.Add("Location", url);
+                Response.Headers.Append("Location", url);
             }
             else
             {

@@ -6,7 +6,7 @@ using System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
-    internal class ExpressionColumnInfo : ColumnInfo
+    internal sealed class ExpressionColumnInfo : ColumnInfo
     {
         private readonly PSPropertyExpression _expression;
 

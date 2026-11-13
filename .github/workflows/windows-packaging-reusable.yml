@@ -1,0 +1,92 @@
+name: Windows Packaging (Reusable)
+
+on:
+  workflow_call:
+
+env:
+  GIT_CONFIG_PARAMETERS: "'core.autocrlf=false'"
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  POWERSHELL_TELEMETRY_OPTOUT: 1
+  DOTNET_NOLOGO: 1
+  __SuppressAnsiEscapeSequences: 1
+  nugetMultiFeedWarnLevel: none
+  SYSTEM_ARTIFACTSDIRECTORY: ${{ github.workspace }}/artifacts
+  BUILD_ARTIFACTSTAGINGDIRECTORY: ${{ github.workspace }}/artifacts
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    name: ${{ matrix.architecture }} - ${{ matrix.channel }}
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - architecture: x64
+            channel: preview
+            runtimePrefix: win7
+          - architecture: x86
+            channel: stable
+            runtimePrefix: win7
+          - architecture: x86
+            channel: preview
+            runtimePrefix: win7
+          - architecture: arm64
+            channel: preview
+            runtimePrefix: win
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 1000
+
+      - name: Capture Environment
+        if: success() || failure()
+        run: |
+          Import-Module .\tools\ci.psm1
+          Show-Environment
+        shell: pwsh
+
+      - name: Capture PowerShell Version Table
+        if: success() || failure()
+        run: |
+          $PSVersionTable
+        shell: pwsh
+
+      - name: Switch to Public Feeds
+        if: success()
+        run: |
+          Import-Module .\tools\ci.psm1
+          Switch-PSNugetConfig -Source Public
+        shell: pwsh
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: ./global.json
+
+      - name: Bootstrap
+        if: success()
+        run: |
+          Import-Module .\tools\ci.psm1
+          Invoke-CIInstall -SkipUser
+        shell: pwsh
+
+      - name: Build and Package
+        run: |
+          Import-Module .\tools\ci.psm1
+          New-CodeCoverageAndTestPackage
+          Invoke-CIFinish -Runtime ${{ matrix.runtimePrefix }}-${{ matrix.architecture }} -channel ${{ matrix.channel }}
+        shell: pwsh
+
+      - name: Upload Build Artifacts
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: windows-packaging-${{ matrix.architecture }}-${{ matrix.channel }}
+          path: |
+            ${{ github.workspace }}/artifacts/**/*
+            !${{ github.workspace }}/artifacts/**/*.pdb

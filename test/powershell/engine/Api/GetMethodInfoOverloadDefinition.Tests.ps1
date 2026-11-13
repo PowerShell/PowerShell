@@ -175,4 +175,50 @@ namespace TestParameterizedPropertyDefinition {
             $result.Definition | Should -BeExactly "int TheItem(int i) {get;}"
         }
     }
+
+    Context "Verify Definition of CodeMethod" {
+        BeforeAll {
+            Add-Type -TypeDefinition @"
+using System.Management.Automation;
+
+namespace TestCodeMethodDefinition;
+
+public static class TestClass1
+{
+    public static T Generic1<T>(PSObject obj, T val) => val;
+
+    public static T1 Generic2<T1, T2>(PSObject obj, T1 val, T2 dummy) => val;
+}
+"@
+
+            $mi1 = [TestCodeMethodDefinition.TestClass1].GetMethod("Generic1")
+            $mi2 = [TestCodeMethodDefinition.TestClass1].GetMethod("Generic2")
+
+            $obj = [PSCustomObject]@{}
+            $obj | Add-Member -MemberType CodeMethod -Name Generic1 -Value $mi1
+            $obj | Add-Member -MemberType CodeMethod -Name Generic2 -Value $mi2
+            $obj | Add-Member -MemberType CodeMethod -Name FromGeneric1 -Value $mi1.MakeGenericMethod(@([int]))
+            $obj | Add-Member -MemberType CodeMethod -Name FromGeneric2 -Value $mi2.MakeGenericMethod(@([string], [int]))
+        }
+
+        It "Get definition of CodeMethod with generic method of 1 type" {
+            $result = $obj | Get-Member -Name Generic1
+            $result.Definition | Should -BeExactly "static T Generic1[T](psobject obj, T val)"
+        }
+
+        It "Get definition of CodeMethod with generic method of 2 types" {
+            $result = $obj | Get-Member -Name Generic2
+            $result.Definition | Should -BeExactly "static T1 Generic2[T1, T2](psobject obj, T1 val, T2 dummy)"
+        }
+
+        It "Get definition of CodeMethod with constructed generic method of 1 type" {
+            $result = $obj | Get-Member -Name FromGeneric1
+            $result.Definition | Should -BeExactly "static int Generic1[int](psobject obj, int val)"
+        }
+
+        It "Get definition of CodeMethod with constructed generic method of 2 types" {
+            $result = $obj | Get-Member -Name FromGeneric2
+            $result.Definition | Should -BeExactly "static string Generic2[string, int](psobject obj, string val, int dummy)"
+        }
+    }
 }

@@ -11,13 +11,17 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Management.Automation.Internal;
-using System.Management.Automation.Runspaces;
-using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Xml;
+using Microsoft.PowerShell.Commands;
+using Microsoft.PowerShell.Telemetry;
+using Microsoft.Win32;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
@@ -131,12 +135,11 @@ namespace System.Management.Automation
         }
     }
 
-    #nullable enable
+#nullable enable
     /// <summary>
     /// This exception is used by the NativeCommandProcessor to indicate an error
-    /// when a native command retuns a non-zero exit code.
+    /// when a native command returns a non-zero exit code.
     /// </summary>
-    [Serializable]
     public sealed class NativeCommandExitException : RuntimeException
     {
         // NOTE:
@@ -168,44 +171,7 @@ namespace System.Management.Automation
             ProcessId = processId;
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="NativeCommandExitException"/> class with serialized data.
-        /// </summary>
-        /// <param name="info"></param>
-        /// <param name="context"></param>
-        private NativeCommandExitException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-            if (info is null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            Path = info.GetString(nameof(Path));
-            ExitCode = info.GetInt32(nameof(ExitCode));
-            ProcessId = info.GetInt32(nameof(ProcessId));
-        }
-
         #endregion Constructors
-
-        /// <summary>
-        /// Serializes the exception data.
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info is null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-
-            info.AddValue(nameof(Path), Path);
-            info.AddValue(nameof(ExitCode), ExitCode);
-            info.AddValue(nameof(ProcessId), ProcessId);
-        }
 
         /// <summary>
         /// Gets the path of the native command.
@@ -223,34 +189,218 @@ namespace System.Management.Automation
         public int ProcessId { get; }
 
     }
-    #nullable restore
+#nullable restore
 
     /// <summary>
     /// Provides way to create and execute native commands.
     /// </summary>
     internal class NativeCommandProcessor : CommandProcessorBase
     {
-        // This is the list of files which will trigger Legacy behavior if
-        // PSNativeCommandArgumentPassing is set to "Windows".
-        private static readonly IReadOnlySet<string> s_legacyFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-        {
-            ".js",
-            ".wsf",
-            ".cmd",
-            ".bat",
-            ".vbs",
-        };
+        /// <summary>
+        /// This is the list of files which will trigger Legacy behavior if 'PSNativeCommandArgumentPassing' is set to "Windows".
+        /// </summary>
+        private static readonly HashSet<string> s_legacyFileExtensions = new(StringComparer.OrdinalIgnoreCase)
+            {
+                ".js",
+                ".wsf",
+                ".cmd",
+                ".bat",
+                ".vbs",
+            };
 
-        // The following native commands have non-standard behavior with regard to argument passing,
-        // so we use Legacy argument parsing for them when PSNativeCommandArgumentPassing is set to Windows.
-        private static readonly IReadOnlySet<string> s_legacyCommands = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        /// <summary>
+        /// This is the list of native commands that have non-standard behavior with regard to argument passing.
+        /// We use Legacy argument parsing for them when 'PSNativeCommandArgumentPassing' is set to "Windows".
+        /// </summary>
+        private static readonly HashSet<string> s_legacyCommands = new(StringComparer.OrdinalIgnoreCase)
+            {
+                "cmd",
+                "cscript",
+                "find",
+                "sqlcmd",
+                "wscript",
+            };
+
+#if !UNIX
+        /// <summary>
+        /// List of known package managers pulled from the registry.
+        /// </summary>
+        private static readonly HashSet<string> s_knownPackageManagers = GetPackageManagerListFromRegistry();
+
+        /// <summary>
+        /// Indicates whether the Path Update feature is enabled in a given session.
+        /// PowerShell sessions could reuse the same thread, so we cannot cache the value with a thread static variable.
+        /// </summary>
+        private static readonly ConditionalWeakTable<ExecutionContext, string> s_pathUpdateFeatureEnabled = new();
+
+        private readonly bool _isPackageManager;
+        private string _originalUserEnvPath;
+        private string _originalSystemEnvPath;
+
+        /// <summary>
+        /// Gets the known package managers from the registry.
+        /// </summary>
+        private static HashSet<string> GetPackageManagerListFromRegistry()
         {
-            "cmd",
-            "cscript",
-            "find",
-            "sqlcmd",
-            "wscript",
-        };
+            // We only account for the first 8 package managers. This is the same behavior as in CMD.
+            const int MaxPackageManagerCount = 8;
+            const string RegKeyPath = @"Software\Microsoft\Command Processor\KnownPackageManagers";
+
+            string[] subKeyNames = null;
+            HashSet<string> retSet = null;
+
+            try
+            {
+                using RegistryKey key = Registry.LocalMachine.OpenSubKey(RegKeyPath);
+                subKeyNames = key?.GetSubKeyNames();
+            }
+            catch
+            {
+                return null;
+            }
+
+            if (subKeyNames is { Length: > 0 })
+            {
+                IEnumerable<string> names = subKeyNames.Length <= MaxPackageManagerCount
+                    ? subKeyNames
+                    : subKeyNames.Take(MaxPackageManagerCount);
+
+                retSet = new(names, StringComparer.OrdinalIgnoreCase);
+            }
+
+            return retSet;
+        }
+
+        /// <summary>
+        /// Check if the given name is a known package manager from the registry list.
+        /// </summary>
+        private static bool IsKnownPackageManager(string name)
+        {
+            if (s_knownPackageManagers is null)
+            {
+                return false;
+            }
+
+            if (s_knownPackageManagers.Contains(name))
+            {
+                return true;
+            }
+
+            int lastDotIndex = name.LastIndexOf('.');
+            if (lastDotIndex > 0)
+            {
+                string nameWithoutExt = name[..lastDotIndex];
+                if (s_knownPackageManagers.Contains(nameWithoutExt))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Check if the Path Update feature is enabled for the given session.
+        /// </summary>
+        private static bool IsPathUpdateFeatureEnabled(ExecutionContext context)
+        {
+            // We check only once per session.
+            if (s_pathUpdateFeatureEnabled.TryGetValue(context, out string value))
+            {
+                // The feature is enabled if the value is not null.
+                return value is { };
+            }
+
+            // Disable Path Update if 'EnvironmentProvider' is disabled in the current session, or the current session is restricted.
+            bool enabled = context.EngineSessionState.Providers.ContainsKey(EnvironmentProvider.ProviderName)
+                && !Utils.IsSessionRestricted(context);
+
+            // - Use the static empty string instance to indicate that the feature is enabled.
+            // - Use the null value to indicate that the feature is disabled.
+            s_pathUpdateFeatureEnabled.TryAdd(context, enabled ? string.Empty : null);
+            return enabled;
+        }
+
+        /// <summary>
+        /// Gets the added part of the new string compared to the old string.
+        /// </summary>
+        private static ReadOnlySpan<char> GetAddedPartOfString(string oldString, string newString)
+        {
+            if (oldString.Length >= newString.Length)
+            {
+                // Nothing added or something removed.
+                return ReadOnlySpan<char>.Empty;
+            }
+
+            int index = newString.IndexOf(oldString);
+            if (index is -1)
+            {
+                // The new and old strings are drastically different. Stop trying in this case.
+                return ReadOnlySpan<char>.Empty;
+            }
+
+            if (index > 0)
+            {
+                // Found the old string at non-zero offset, so something was prepended to the old string.
+                return newString.AsSpan(0, index);
+            }
+            else
+            {
+                // Found the old string at the beginning of the new string, so something was appended to the old string.
+                return newString.AsSpan(oldString.Length);
+            }
+        }
+
+        /// <summary>
+        /// Update the process-scope environment variable Path based on the changes in the user-scope and system-scope Path.
+        /// </summary>
+        /// <param name="oldUserPath">The old value of the user-scope Path retrieved from registry.</param>
+        /// <param name="oldSystemPath">The old value of the system-scope Path retrieved from registry.</param>
+        private static void UpdateProcessEnvPath(string oldUserPath, string oldSystemPath)
+        {
+            string newUserEnvPath = Environment.GetEnvironmentVariable("Path", EnvironmentVariableTarget.User);
+            string newSystemEnvPath = Environment.GetEnvironmentVariable("Path", EnvironmentVariableTarget.Machine);
+            string procEnvPath = Environment.GetEnvironmentVariable("Path");
+
+            ReadOnlySpan<char> userPathChange = GetAddedPartOfString(oldUserPath, newUserEnvPath).Trim(';');
+            ReadOnlySpan<char> systemPathChange = GetAddedPartOfString(oldSystemPath, newSystemEnvPath).Trim(';');
+
+            // Add 2 to account for the path separators we may need to add.
+            int maxLength = procEnvPath.Length + userPathChange.Length + systemPathChange.Length + 2;
+            StringBuilder newPath = null;
+
+            if (userPathChange.Length > 0)
+            {
+                CreateNewProcEnvPath(userPathChange);
+            }
+
+            if (systemPathChange.Length > 0)
+            {
+                CreateNewProcEnvPath(systemPathChange);
+            }
+
+            if (newPath is { Length: > 0 })
+            {
+                // Update the process env Path.
+                Environment.SetEnvironmentVariable("Path", newPath.ToString());
+            }
+
+            // Helper method to create a new env Path string.
+            void CreateNewProcEnvPath(ReadOnlySpan<char> newChange)
+            {
+                newPath ??= new StringBuilder(procEnvPath, capacity: maxLength);
+
+                if (newPath.Length is 0 || newPath[^1] is ';')
+                {
+                    newPath.Append(newChange);
+                }
+                else
+                {
+                    newPath.Append(';').Append(newChange);
+                }
+            }
+        }
+#endif
 
         #region ctor/native command properties
 
@@ -298,7 +448,11 @@ namespace System.Management.Automation
             // Create input writer for providing input to the process.
             _inputWriter = new ProcessInputWriter(Command);
 
-            _isTranscribing = this.Command.Context.EngineHostInterface.UI.IsTranscribing;
+            _isTranscribing = context.EngineHostInterface.UI.IsTranscribing;
+
+#if !UNIX
+            _isPackageManager = IsKnownPackageManager(_applicationInfo.Name) && IsPathUpdateFeatureEnabled(context);
+#endif
         }
 
         /// <summary>
@@ -338,15 +492,15 @@ namespace System.Management.Automation
             }
         }
 
+        internal NativeCommandProcessor DownStreamNativeCommand { get; set; }
+
+        internal bool UpstreamIsNativeCommand { get; set; }
+
+        internal BytePipe StdOutDestination { get; set; }
+
         #endregion ctor/native command properties
 
         #region parameter binder
-
-        /// <summary>
-        /// Variable which is set to true when prepare is called.
-        /// Parameter Binder should only be created after Prepare method is called.
-        /// </summary>
-        private bool _isPreparedCalled = false;
 
         /// <summary>
         /// Parameter binder used by this command processor.
@@ -364,8 +518,6 @@ namespace System.Management.Automation
         /// </returns>
         internal ParameterBinderController NewParameterBinderController(InternalCommand command)
         {
-            Dbg.Assert(_isPreparedCalled, "parameter binder should not be created before prepared is called");
-
             if (_isMiniShell)
             {
                 _nativeParameterBinderController =
@@ -404,8 +556,6 @@ namespace System.Management.Automation
         /// </summary>
         internal override void Prepare(IDictionary psDefaultParameterValues)
         {
-            _isPreparedCalled = true;
-
             // Check if the application is minishell
             _isMiniShell = IsMiniShell();
 
@@ -435,9 +585,14 @@ namespace System.Management.Automation
         {
             try
             {
-                while (Read())
+                // If upstream is a native command it'll be writing directly to our stdin stream
+                // so we can skip reading here.
+                if (!UpstreamIsNativeCommand)
                 {
-                    _inputWriter.Add(Command.CurrentPipelineObject);
+                    while (Read())
+                    {
+                        _inputWriter.Add(Command.CurrentPipelineObject);
+                    }
                 }
 
                 ConsumeAvailableNativeProcessOutput(blocking: false);
@@ -453,7 +608,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Process object for the invoked application.
         /// </summary>
-        private System.Diagnostics.Process _nativeProcess;
+        private Process _nativeProcess;
 
         /// <summary>
         /// This is used for writing input to the process.
@@ -495,6 +650,59 @@ namespace System.Management.Automation
         /// </summary>
         private readonly object _sync = new object();
 
+        private SemaphoreSlim _processInitialized;
+
+        internal async Task WaitForProcessInitializationAsync(CancellationToken cancellationToken)
+        {
+            SemaphoreSlim processInitialized = _processInitialized;
+            if (processInitialized is null)
+            {
+                lock (_sync)
+                {
+                    processInitialized = _processInitialized ??= new SemaphoreSlim(0, 1);
+                }
+            }
+
+            try
+            {
+                await processInitialized.WaitAsync(cancellationToken);
+            }
+            finally
+            {
+                processInitialized.Release();
+            }
+        }
+
+        /// <summary>
+        /// Creates a pipe representing the streaming of unprocessed bytes.
+        /// </summary>
+        /// <param name="stdout">
+        /// The stream that the pipe should represent. <see langword="true" />
+        /// for stdout, <see langword="false" /> for stdin.
+        /// </param>
+        /// <returns>A new byte pipe representing the specified stream.</returns>
+        internal BytePipe CreateBytePipe(bool stdout) => new NativeCommandProcessorBytePipe(this, stdout);
+
+        /// <summary>
+        /// Gets the specified base <see cref="Stream" /> for the underlying
+        /// <see cref="Process" />.
+        /// </summary>
+        /// <param name="stdout">
+        /// The stream that should be retrieved. <see langword="true" /> for
+        /// stdout, <see langword="false" /> for stdin.
+        /// </param>
+        /// <returns>The specified <see cref="Stream" />.</returns>
+        internal Stream GetStream(bool stdout)
+        {
+            Debug.Assert(
+                _nativeProcess is not null,
+                "Caller should verify that initialization has completed before attempting to get the underlying stream.");
+
+            return stdout
+                ? _nativeProcess.StandardOutput.BaseStream
+                : _nativeProcess.StandardInput.BaseStream;
+        }
+
         /// <summary>
         /// Executes the native command once all of the input has been gathered.
         /// </summary>
@@ -526,6 +734,11 @@ namespace System.Management.Automation
             // Get the start info for the process.
             ProcessStartInfo startInfo = GetProcessStartInfo(redirectOutput, redirectError, redirectInput, soloCommand);
 
+            // Send Telemetry indicating what argument passing mode we are in.
+            ApplicationInsightsTelemetry.SendExperimentalUseData(
+                "PSWindowsNativeCommandArgPassing",
+                NativeParameterBinderController.ArgumentPassingStyle.ToString());
+
 #if !UNIX
             string commandPath = this.Path.ToLowerInvariant();
             if (commandPath.EndsWith("powershell.exe") || commandPath.EndsWith("powershell_ise.exe"))
@@ -536,6 +749,12 @@ namespace System.Management.Automation
 
                 // must set UseShellExecute to false if we modify the environment block
                 startInfo.UseShellExecute = false;
+            }
+
+            if (_isPackageManager)
+            {
+                _originalUserEnvPath = Environment.GetEnvironmentVariable("Path", EnvironmentVariableTarget.User);
+                _originalSystemEnvPath = Environment.GetEnvironmentVariable("Path", EnvironmentVariableTarget.Machine);
             }
 #endif
 
@@ -612,6 +831,7 @@ namespace System.Management.Automation
                             bool useSpecialArgumentPassing = UseSpecialArgumentPassing(oldFileName);
                             if (useSpecialArgumentPassing)
                             {
+                                // codeql[cs/microsoft/command-line-injection] - This is expected PowerShell behavior where user inputted paths are supported for the context of this method and the path portion of the argument is escaped. The user assumes trust for the file path specified on the user's system to start process for, and in the case of remoting, restricted remoting security guidelines should be used.
                                 startInfo.Arguments = "\"" + oldFileName + "\" " + startInfo.Arguments;
                             }
                             else
@@ -635,6 +855,8 @@ namespace System.Management.Automation
                                 {
                                     startInfo.ArgumentList.RemoveAt(0);
                                 }
+
+                                // codeql[cs/microsoft/command-line-injection-shell-execution] - This is expected PowerShell behavior where user inputted paths are supported for the context of this method. The user assumes trust for the file path specified on the user's system to retrieve process info for, and in the case of remoting, restricted remoting security guidelines should be used.
                                 startInfo.FileName = oldFileName;
                             }
                         }
@@ -657,6 +879,12 @@ namespace System.Management.Automation
                             }
                         }
 #endif
+                    }
+
+                    if (UpstreamIsNativeCommand)
+                    {
+                        _processInitialized ??= new SemaphoreSlim(0, 1);
+                        _processInitialized.Release();
                     }
                 }
 
@@ -690,7 +918,7 @@ namespace System.Management.Automation
 
                         lock (_sync)
                         {
-                            if (!_stopped)
+                            if (!_stopped && !UpstreamIsNativeCommand)
                             {
                                 _inputWriter.Start(_nativeProcess, inputFormat);
                             }
@@ -739,6 +967,8 @@ namespace System.Management.Automation
             }
         }
 
+        private AsyncByteStreamTransfer _stdOutByteTransfer;
+
         private void InitOutputQueue()
         {
             // if output is redirected, start reading output of process in queue.
@@ -748,9 +978,32 @@ namespace System.Management.Automation
                 {
                     if (!_stopped)
                     {
+                        if (CommandRuntime.ErrorMergeTo is MshCommandRuntime.MergeDataStream.Output)
+                        {
+                            StdOutDestination = null;
+                            if (DownStreamNativeCommand is not null)
+                            {
+                                DownStreamNativeCommand.UpstreamIsNativeCommand = false;
+                                DownStreamNativeCommand = null;
+                            }
+                        }
+
                         _nativeProcessOutputQueue = new BlockingCollection<ProcessOutputObject>();
                         // we don't assign the handler to anything, because it's used only for objects marshaling
-                        new ProcessOutputHandler(_nativeProcess, _nativeProcessOutputQueue);
+                        BytePipe stdOutDestination = StdOutDestination ?? DownStreamNativeCommand?.CreateBytePipe(stdout: false);
+
+                        BytePipe stdOutSource = null;
+                        if (stdOutDestination is not null)
+                        {
+                            stdOutSource = CreateBytePipe(stdout: true);
+                        }
+
+                        _ = new ProcessOutputHandler(
+                            _nativeProcess,
+                            _nativeProcessOutputQueue,
+                            stdOutDestination,
+                            stdOutSource,
+                            out _stdOutByteTransfer);
                     }
                 }
             }
@@ -781,12 +1034,9 @@ namespace System.Management.Automation
 
                 return null;
             }
-            else
-            {
-                ProcessOutputObject record = null;
-                _nativeProcessOutputQueue.TryTake(out record);
-                return record;
-            }
+
+            _nativeProcessOutputQueue.TryTake(out ProcessOutputObject record);
+            return record;
         }
 
         /// <summary>
@@ -794,21 +1044,38 @@ namespace System.Management.Automation
         /// </summary>
         private void ConsumeAvailableNativeProcessOutput(bool blocking)
         {
-            if (!_isRunningInBackground)
+            if (_isRunningInBackground)
             {
-                if (_nativeProcess.StartInfo.RedirectStandardOutput || _nativeProcess.StartInfo.RedirectStandardError)
-                {
-                    ProcessOutputObject record;
-                    while ((record = DequeueProcessOutput(blocking)) != null)
-                    {
-                        if (this.Command.Context.CurrentPipelineStopping)
-                        {
-                            this.StopProcessing();
-                            return;
-                        }
+                return;
+            }
 
-                        ProcessOutputRecord(record);
+            bool stdOutRedirected = _nativeProcess.StartInfo.RedirectStandardOutput;
+            bool stdErrRedirected = _nativeProcess.StartInfo.RedirectStandardError;
+            if (stdOutRedirected && _stdOutByteTransfer is not null)
+            {
+                if (blocking)
+                {
+                    _stdOutByteTransfer.EOF.GetAwaiter().GetResult();
+                }
+
+                if (!stdErrRedirected)
+                {
+                    return;
+                }
+            }
+
+            if (stdOutRedirected || stdErrRedirected)
+            {
+                ProcessOutputObject record;
+                while ((record = DequeueProcessOutput(blocking)) != null)
+                {
+                    if (this.Command.Context.CurrentPipelineStopping)
+                    {
+                        this.StopProcessing();
+                        return;
                     }
+
+                    ProcessOutputRecord(record);
                 }
             }
         }
@@ -821,11 +1088,21 @@ namespace System.Management.Automation
                 if (!_isRunningInBackground)
                 {
                     // Wait for input writer to finish.
-                    _inputWriter.Done();
+                    if (!UpstreamIsNativeCommand || _nativeProcess.StartInfo.RedirectStandardError)
+                    {
+                        _inputWriter.Done();
+                    }
 
                     // read all the available output in the blocking way
                     ConsumeAvailableNativeProcessOutput(blocking: true);
                     _nativeProcess.WaitForExit();
+
+#if !UNIX
+                    if (_isPackageManager)
+                    {
+                        UpdateProcessEnvPath(_originalUserEnvPath, _originalSystemEnvPath);
+                    }
+#endif
 
                     // Capture screen output if we are transcribing and running stand alone
                     if (_isTranscribing && (s_supportScreenScrape == true) && _runStandAlone)
@@ -872,18 +1149,46 @@ namespace System.Management.Automation
 
                     this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
 
-                    if (!ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandErrorActionPreferenceFeatureName)
-                        || !Command.Context.GetBooleanPreference(SpecialVariables.PSNativeCommandUseErrorActionPreferenceVarPath, defaultPref: false, out _))
+                    // We send telemetry information only if the feature is enabled.
+                    // This shouldn't be done once, because it's a run-time check we should send telemetry every time.
+                    // Report on the following conditions:
+                    // - The variable is not present
+                    // - The value is not set (variable is null)
+                    // - The value is set to true or false
+                    bool useDefaultSetting;
+                    bool nativeErrorActionPreferenceSetting = Command.Context.GetBooleanPreference(
+                        SpecialVariables.PSNativeCommandUseErrorActionPreferenceVarPath,
+                        defaultPref: false,
+                        out useDefaultSetting);
+
+                    // The variable is unset
+                    if (useDefaultSetting)
+                    {
+                        ApplicationInsightsTelemetry.SendExperimentalUseData("PSNativeCommandErrorActionPreference", "unset");
+                        return;
+                    }
+
+                    // Send the value that was set.
+                    ApplicationInsightsTelemetry.SendExperimentalUseData("PSNativeCommandErrorActionPreference", nativeErrorActionPreferenceSetting.ToString());
+
+                    // if it was explicitly set to false, return
+                    if (!nativeErrorActionPreferenceSetting)
                     {
                         return;
                     }
 
                     const string errorId = nameof(CommandBaseStrings.ProgramExitedWithNonZeroCode);
+#if UNIX
+                    string hexFormatStr = "0x{0:X2}";
+#else
+                    string hexFormatStr = "0x{0:X8}";
+#endif
 
                     string errorMsg = StringUtil.Format(
                         CommandBaseStrings.ProgramExitedWithNonZeroCode,
                         NativeCommandName,
-                        _nativeProcess.ExitCode);
+                        _nativeProcess.ExitCode,
+                        string.Format(CultureInfo.InvariantCulture, hexFormatStr, _nativeProcess.ExitCode));
 
                     var exception = new NativeCommandExitException(
                         Path,
@@ -1146,7 +1451,11 @@ namespace System.Management.Automation
         {
             lock (_sync)
             {
-                if (_stopped) return;
+                if (_stopped)
+                {
+                    return;
+                }
+
                 _stopped = true;
             }
 
@@ -1155,8 +1464,12 @@ namespace System.Management.Automation
                 if (!_runStandAlone)
                 {
                     // Stop input writer
-                    _inputWriter.Stop();
+                    if (!UpstreamIsNativeCommand)
+                    {
+                        _inputWriter.Stop();
+                    }
 
+                    _stdOutByteTransfer?.Dispose();
                     KillProcess(_nativeProcess);
                 }
             }
@@ -1295,6 +1608,7 @@ namespace System.Management.Automation
         {
             var startInfo = new ProcessStartInfo
             {
+                // codeql[cs/microsoft/command-line-injection-shell-execution] - This is expected PowerShell behavior where user inputted paths are supported for the context of this method. The user assumes trust for the file path specified on the user's system to retrieve process info for, and in the case of remoting, restricted remoting security guidelines should be used.
                 FileName = this.Path
             };
 
@@ -1332,16 +1646,17 @@ namespace System.Management.Automation
                 startInfo.UseShellExecute = false;
                 startInfo.RedirectStandardInput = redirectInput;
 
+                Encoding outputEncoding = GetOutputEncoding();
                 if (redirectOutput)
                 {
                     startInfo.RedirectStandardOutput = true;
-                    startInfo.StandardOutputEncoding = Console.OutputEncoding;
+                    startInfo.StandardOutputEncoding = outputEncoding;
                 }
 
                 if (redirectError)
                 {
                     startInfo.RedirectStandardError = true;
-                    startInfo.StandardErrorEncoding = Console.OutputEncoding;
+                    startInfo.StandardErrorEncoding = outputEncoding;
                 }
             }
 
@@ -1364,6 +1679,7 @@ namespace System.Management.Automation
                 {
                     using (ParameterBinderBase.bindingTracer.TraceScope("BIND argument [{0}]", NativeParameterBinderController.Arguments))
                     {
+                        // codeql[cs/microsoft/command-line-injection ] - This is intended PowerShell behavior as NativeParameterBinderController.Arguments is what the native parameter binder generates based on the user input when invoking the command and cannot be injected externally.
                         startInfo.Arguments = NativeParameterBinderController.Arguments;
                     }
                 }
@@ -1397,6 +1713,20 @@ namespace System.Management.Automation
 
             return startInfo;
         }
+
+#nullable enable
+        /// <summary>
+        /// Gets the encoding to use for a process' output/error pipes.
+        /// </summary>
+        /// <returns>The encoding to use for the process output.</returns>
+        private Encoding GetOutputEncoding()
+        {
+            Encoding? applicationOutputEncoding = Context.GetVariableValue(
+                    SpecialVariables.PSApplicationOutputEncodingVarPath) as Encoding;
+
+            return applicationOutputEncoding ?? Console.OutputEncoding;
+        }
+#nullable disable
 
         /// <summary>
         /// Determine if we have a special file which will change the way native argument passing
@@ -1470,15 +1800,19 @@ namespace System.Management.Automation
                 //    $powershell.AddScript('ipconfig.exe')
                 //    $powershell.AddCommand('Out-Default')
                 //    $powershell.Invoke())
-                // we should not count it as a redirection.
-                if (IsDownstreamOutDefault(this.commandRuntime.OutputPipe))
+                // we should not count it as a redirection. Unless the native command has its stdout redirected
+                // for example:
+                //    cmd.exe /c "echo test" > somefile.log
+                // in that case we want to keep output redirection even though Out-Default is the only
+                // downstream command.
+                if (IsDownstreamOutDefault(this.commandRuntime.OutputPipe) && StdOutDestination is null)
                 {
                     redirectOutput = false;
                 }
             }
 
             // See if the error output stream has been redirected, either through an explicit 2> foo.txt or
-            // my merging error into output through 2>&1.
+            // by merging error into output through 2>&1.
             if (CommandRuntime.ErrorMergeTo != MshCommandRuntime.MergeDataStream.Output)
             {
                 // If the error output pipe is the default outputter, for example, calling the native command from command-line host,
@@ -1488,7 +1822,9 @@ namespace System.Management.Automation
                 //    $powershell.AddScript('ipconfig.exe')
                 //    $powershell.AddCommand('Out-Default')
                 //    $powershell.Invoke())
-                // we should not count that as a redirection.
+                // we should not count that as a redirection. We do not need to worry
+                // about StdOutDestination here as if error is redirected then it's assumed
+                // to be text based and Out-File will be added to the pipeline instead.
                 if (IsDownstreamOutDefault(this.commandRuntime.ErrorOutputPipe))
                 {
                     redirectError = false;
@@ -1536,6 +1872,9 @@ namespace System.Management.Automation
             {
                 if (s_supportScreenScrape == null)
                 {
+#if UNIX
+                    s_supportScreenScrape = false;
+#else
                     try
                     {
                         _startPosition = this.Command.Context.EngineHostInterface.UI.RawUI.CursorPosition;
@@ -1547,6 +1886,7 @@ namespace System.Management.Automation
                     {
                         s_supportScreenScrape = false;
                     }
+#endif
                 }
 
                 // if screen scraping isn't supported, we enable redirection so that the output is still transcribed
@@ -1600,6 +1940,7 @@ namespace System.Management.Automation
         #region Minishell Interop
 
         private bool _isMiniShell = false;
+
         /// <summary>
         /// Returns true if native command being invoked is mini-shell.
         /// </summary>
@@ -1642,7 +1983,19 @@ namespace System.Management.Automation
         private bool _isXmlCliError;
         private readonly string _processFileName;
 
+        private readonly AsyncByteStreamTransfer _stdOutDrainer;
+
         public ProcessOutputHandler(Process process, BlockingCollection<ProcessOutputObject> queue)
+            : this(process, queue, null, null, out _)
+        {
+        }
+
+        public ProcessOutputHandler(
+            Process process,
+            BlockingCollection<ProcessOutputObject> queue,
+            BytePipe stdOutDestination,
+            BytePipe stdOutSource,
+            out AsyncByteStreamTransfer stdOutDrainer)
         {
             Debug.Assert(process.StartInfo.RedirectStandardOutput || process.StartInfo.RedirectStandardError, "Caller should redirect at least one stream");
             _refCount = 0;
@@ -1651,19 +2004,17 @@ namespace System.Management.Automation
 
             // we incrementing refCount on the same thread and before running any processing
             // so it's safe to do it without Interlocked.
-            if (process.StartInfo.RedirectStandardOutput) { _refCount++; }
-
-            if (process.StartInfo.RedirectStandardError) { _refCount++; }
-
-            // once we have _refCount, we can start processing
-            if (process.StartInfo.RedirectStandardOutput)
+            if (process.StartInfo.RedirectStandardOutput && stdOutDestination is null)
             {
-                _isFirstOutput = true;
-                _isXmlCliOutput = false;
-                process.OutputDataReceived += OutputHandler;
-                process.BeginOutputReadLine();
+                _refCount++;
             }
 
+            if (process.StartInfo.RedirectStandardError)
+            {
+                _refCount++;
+            }
+
+            // once we have _refCount, we can start processing
             if (process.StartInfo.RedirectStandardError)
             {
                 _isFirstError = true;
@@ -1671,6 +2022,25 @@ namespace System.Management.Automation
                 process.ErrorDataReceived += ErrorHandler;
                 process.BeginErrorReadLine();
             }
+
+            stdOutDrainer = null;
+
+            if (!process.StartInfo.RedirectStandardOutput)
+            {
+                return;
+            }
+
+            if (stdOutDestination is null)
+            {
+                _isFirstOutput = true;
+                _isXmlCliOutput = false;
+                process.OutputDataReceived += OutputHandler;
+                process.BeginOutputReadLine();
+                return;
+            }
+
+            stdOutDrainer = _stdOutDrainer = stdOutDestination.Bind(stdOutSource);
+            stdOutDrainer.BeginReadChunks();
         }
 
         private void decrementRefCount()
@@ -1909,14 +2279,27 @@ namespace System.Management.Automation
                 return;
             }
 
-            if (_inputFormat == NativeCommandIOFormat.Text)
-            {
-                AddTextInput(input);
-            }
-            else // Xml
+            if (_inputFormat is not NativeCommandIOFormat.Text)
             {
                 AddXmlInput(input);
+                return;
             }
+
+            object baseObjInput = PSObject.Base(input);
+
+            if (baseObjInput is byte[] bytes)
+            {
+                _streamWriter.BaseStream.Write(bytes, 0, bytes.Length);
+                return;
+            }
+
+            if (baseObjInput is byte b)
+            {
+                _streamWriter.BaseStream.WriteByte(b);
+                return;
+            }
+
+            AddTextInput(input);
         }
 
         private void AddTextInput(object input)
@@ -2142,8 +2525,6 @@ namespace System.Management.Automation
     /// This remote instance of PowerShell can be in a separate process,
     /// appdomain or machine.
     /// </remarks>
-    [Serializable]
-    [SuppressMessage("Microsoft.Usage", "CA2240:ImplementISerializableCorrectly")]
     public class RemoteException : RuntimeException
     {
         /// <summary>
@@ -2219,9 +2600,10 @@ namespace System.Management.Automation
         /// The <see cref="StreamingContext"/> that contains contextual information
         /// about the source or destination.
         /// </param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected RemoteException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
+            throw new NotSupportedException();
         }
 
         #endregion

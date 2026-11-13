@@ -161,7 +161,7 @@ namespace System.Management.Automation
                         foreach (HelpInfo helpInfo in ExactMatchHelp(exactMatchHelpRequest))
                         {
                             // Component/Role/Functionality match is done only for SearchHelp
-                            // as "get-help * -category alias" should not forwad help to
+                            // as "get-help * -category alias" should not forward help to
                             // CommandHelpProvider..(ExactMatchHelp does forward help to
                             // CommandHelpProvider)
                             if (!Match(helpInfo, helpRequest))
@@ -208,7 +208,7 @@ namespace System.Management.Automation
                         foreach (HelpInfo helpInfo in ExactMatchHelp(exactMatchHelpRequest))
                         {
                             // Component/Role/Functionality match is done only for SearchHelp
-                            // as "get-help * -category alias" should not forwad help to
+                            // as "get-help * -category alias" should not forward help to
                             // CommandHelpProvider..(ExactMatchHelp does forward help to
                             // CommandHelpProvider)
                             if (!Match(helpInfo, helpRequest))

@@ -616,7 +616,7 @@ namespace System.Management.Automation
                         {
                             // This named parameter from splatting is also explicitly specified by the user,
                             // which was successfully bound, so we ignore the one from splatting because it
-                            // is superceded by the explicit one. For example:
+                            // is superseded by the explicit one. For example:
                             //   $splat = @{ Path = $path1 }
                             //   dir @splat -Path $path2
                             continue;

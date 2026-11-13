@@ -44,7 +44,7 @@ Describe "Configuration file locations" -tags "CI","Slow" {
         }
 
         It @ItArgs "PSModulePath should contain the correct path" {
-            $env:PSModulePath = ""
+            $env:PSModulePath = $null
             $actual = & $powershell -noprofile -c `$env:PSModulePath
             $actual | Should -Match ([regex]::Escape($expectedModule))
         }
@@ -94,7 +94,7 @@ Describe "Configuration file locations" -tags "CI","Slow" {
         }
 
         It @ItArgs "PSModulePath should respect XDG_DATA_HOME" {
-            $env:PSModulePath = ""
+            $env:PSModulePath = $null
             $env:XDG_DATA_HOME = $TestDrive
             $expected = [IO.Path]::Combine($TestDrive, "powershell", "Modules")
             $actual = & $powershell -noprofile -c `$env:PSModulePath

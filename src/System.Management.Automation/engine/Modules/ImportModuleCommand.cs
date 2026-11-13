@@ -619,7 +619,7 @@ namespace Microsoft.PowerShell.Commands
                 // avoid double reporting for WinCompat modules that go through CommandDiscovery\AutoloadSpecifiedModule
                 if (!foundModule.IsWindowsPowerShellCompatModule)
                 {
-                    ApplicationInsightsTelemetry.SendModuleTelemetryMetric(TelemetryType.ModuleLoad, foundModule.Name, foundModule.Version?.ToString());
+                    ApplicationInsightsTelemetry.SendModuleTelemetryMetric(TelemetryType.ModuleLoad, foundModule);
 #if LEGACYTELEMETRY
                     TelemetryAPI.ReportModuleLoad(foundModule);
 #endif
@@ -893,7 +893,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (foundModule != null)
             {
-                ApplicationInsightsTelemetry.SendModuleTelemetryMetric(TelemetryType.ModuleLoad, foundModule.Name, foundModule.Version?.ToString());
+                ApplicationInsightsTelemetry.SendModuleTelemetryMetric(TelemetryType.ModuleLoad, foundModule);
                 SetModuleBaseForEngineModules(foundModule.Name, this.Context);
             }
 
@@ -935,7 +935,7 @@ namespace Microsoft.PowerShell.Commands
             // Send telemetry on the imported modules
             foreach (PSModuleInfo moduleInfo in remotelyImportedModules)
             {
-                ApplicationInsightsTelemetry.SendModuleTelemetryMetric(usingWinCompat ? TelemetryType.WinCompatModuleLoad : TelemetryType.ModuleLoad, moduleInfo.Name, moduleInfo.Version?.ToString());
+                ApplicationInsightsTelemetry.SendModuleTelemetryMetric(usingWinCompat ? TelemetryType.WinCompatModuleLoad : TelemetryType.ModuleLoad, moduleInfo);
             }
 
             return remotelyImportedModules;
@@ -1371,7 +1371,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private bool IsPs1xmlFileHelper_IsPresentInEntries(RemoteDiscoveryHelper.CimModuleFile cimModuleFile, IEnumerable<string> manifestEntries)
+        private bool IsPs1xmlFileHelper_IsPresentInEntries(RemoteDiscoveryHelper.CimModuleFile cimModuleFile, List<string> manifestEntries)
         {
             const string ps1xmlExt = ".ps1xml";
             string fileName = cimModuleFile.FileName;
@@ -1780,28 +1780,16 @@ namespace Microsoft.PowerShell.Commands
         #region IDisposable Members
 
         /// <summary>
-        /// Releases resources associated with this object.
+        /// Release all resources.
         /// </summary>
         public void Dispose()
-        {
-            this.Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Releases resources associated with this object.
-        /// </summary>
-        private void Dispose(bool disposing)
         {
             if (_disposed)
             {
                 return;
             }
 
-            if (disposing)
-            {
-                _cancellationTokenSource.Dispose();
-            }
+            _cancellationTokenSource.Dispose();
 
             _disposed = true;
         }
@@ -1866,7 +1854,7 @@ namespace Microsoft.PowerShell.Commands
                 // of doing Get-Module -list
                 foreach (PSModuleInfo module in ModuleInfo)
                 {
-                    ApplicationInsightsTelemetry.SendModuleTelemetryMetric(TelemetryType.ModuleLoad, module.Name, module.Version?.ToString());
+                    ApplicationInsightsTelemetry.SendModuleTelemetryMetric(TelemetryType.ModuleLoad, module);
                     RemoteDiscoveryHelper.DispatchModuleInfoProcessing(
                         module,
                         localAction: () =>
@@ -1926,7 +1914,7 @@ namespace Microsoft.PowerShell.Commands
                 ImportModule_RemotelyViaPsrpSession(importModuleOptions, null, FullyQualifiedName, this.PSSession);
                 foreach (ModuleSpecification modulespec in FullyQualifiedName)
                 {
-                    ApplicationInsightsTelemetry.SendModuleTelemetryMetric(TelemetryType.ModuleLoad, modulespec.Name, modulespec.Version?.ToString());
+                    ApplicationInsightsTelemetry.SendModuleTelemetryMetric(TelemetryType.ModuleLoad, modulespec.Name);
                 }
             }
             else if (this.ParameterSetName.Equals(ParameterSet_ViaWinCompat, StringComparison.OrdinalIgnoreCase)

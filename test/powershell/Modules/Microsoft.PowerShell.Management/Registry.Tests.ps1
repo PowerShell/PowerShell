@@ -471,6 +471,47 @@ Describe "Extended Registry Provider Tests" -Tags @("Feature", "RequireAdminOnWi
             }
         }
     }
+
+    Context "Validate Get-ItemProperty Cast Exception" {
+        BeforeAll {
+            if ($IsWindows) {
+                $registrySubkeyPath = 'HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\badreg'
+
+                # Below will import .reg file with 64 bit integer in 32 bit DWORD
+                $badRegistryContent = @"
+Windows Registry Editor Version 5.00
+
+[$registrySubkeyPath]
+"NoModify"=hex(4):01,00,00,00,00,00,00,00
+"@
+
+                $badRegistryPath = Join-Path -Path $TestDrive -ChildPath badreg.reg
+                $badRegistryContent | Set-Content -Path $badRegistryPath
+                reg.exe import $badRegistryPath
+
+                $registryProviderSubkeyPath = 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\badreg'
+            }
+        }
+
+        It "Validate non-terminating error for cast" {
+            Get-ItemProperty -Path $registryProviderSubkeyPath -ErrorVariable err -ErrorAction SilentlyContinue
+            $err | Should -HaveCount 1
+            $err[0].Exception | Should -BeOfType [System.InvalidCastException]
+            $err[0].TargetObject | Should -BeExactly $registrySubkeyPath
+            $err[0].CategoryInfo.Category | Should -BeExactly 'ReadError'
+            $err[0].FullyQualifiedErrorId | Should -BeExactly 'System.InvalidCastException,Microsoft.PowerShell.Commands.GetItemPropertyCommand'
+        }
+
+        It "Validate terminating error for cast" {
+            { Get-ItemProperty -Path $registryProviderSubkeyPath -ErrorAction Stop } | Should -Throw -ErrorId 'System.InvalidCastException,Microsoft.PowerShell.Commands.GetItemPropertyCommand'
+        }
+
+        AfterAll {
+            if ($IsWindows) {
+                reg.exe delete $registrySubkeyPath /f
+            }
+        }
+    }
 }
 
 } finally {

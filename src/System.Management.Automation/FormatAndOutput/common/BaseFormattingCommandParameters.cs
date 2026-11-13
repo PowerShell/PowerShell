@@ -70,6 +70,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// Extension mechanism for shape specific parameters.
         /// </summary>
         internal ShapeSpecificParameters shapeParameters = null;
+
+        /// <summary>
+        /// Filter for excluding properties from formatting.
+        /// </summary>
+        internal PSPropertyExpressionFilter excludePropertyFilter = null;
     }
 
     /// <summary>
@@ -176,15 +181,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             // need to check the type:
             // it can be a string or a script block
-            ScriptBlock sb = val as ScriptBlock;
-            if (sb != null)
+            if (val is ScriptBlock sb)
             {
                 PSPropertyExpression ex = new PSPropertyExpression(sb);
                 return ex;
             }
 
-            string s = val as string;
-            if (s != null)
+            if (val is string s)
             {
                 if (string.IsNullOrEmpty(s))
                 {

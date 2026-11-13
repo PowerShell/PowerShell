@@ -11,7 +11,7 @@ namespace Microsoft.Management.UI.Internal
 {
 
     /// <summary>
-    /// A popup which child controls can signal to be dimissed.
+    /// A popup which child controls can signal to be dismissed.
     /// </summary>
     /// <remarks>
     /// If a control wants to dismiss the popup then they should execute the DismissPopupCommand on a target in the popup window.

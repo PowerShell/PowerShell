@@ -38,7 +38,7 @@ namespace System.Management.Automation
     internal abstract class Adapter
     {
         /// <summary>
-        /// Tracer for this and derivate classes.
+        /// Tracer for this and derivative classes.
         /// </summary>
         [TraceSource("ETS", "Extended Type System")]
         protected static PSTraceSource tracer = PSTraceSource.GetTracer("ETS", "Extended Type System");
@@ -1723,7 +1723,7 @@ namespace System.Management.Automation
                     // It still might be an PSObject wrapping an PSReference
                     if (originalArgumentReference == null)
                     {
-                        if (!(originalArgument is PSObject originalArgumentObj))
+                        if (originalArgument is not PSObject originalArgumentObj)
                         {
                             continue;
                         }
@@ -1826,7 +1826,7 @@ namespace System.Management.Automation
             }
 
             // We are going to put all the remaining arguments into an array
-            // and convert them to the propper type, if necessary to be the
+            // and convert them to the proper type, if necessary to be the
             // one argument for this last parameter
             int remainingArgumentCount = arguments.Length - parametersLength + 1;
             if (remainingArgumentCount == 1 && arguments[arguments.Length - 1] == null)
@@ -1878,7 +1878,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Auxiliary method in MethodInvoke to set newArguments[index] with the propper value.
+        /// Auxiliary method in MethodInvoke to set newArguments[index] with the proper value.
         /// </summary>
         /// <param name="methodName">Used for the MethodException that might be thrown.</param>
         /// <param name="arguments">The complete array of arguments.</param>
@@ -2230,7 +2230,7 @@ namespace System.Management.Automation
             // be thrown when converting arguments to the ByRef-like parameter types.
             //
             // So when reaching here, we only care about (1) if the method return type is
-            // BeRef-like; (2) if it's a constrcutor of a ByRef-like type.
+            // BeRef-like; (2) if it's a constructor of a ByRef-like type.
 
             if (method is ConstructorInfo ctor)
             {
@@ -2835,7 +2835,7 @@ namespace System.Management.Automation
 
                 // Get the public or protected getter
                 MethodInfo propertyGetter = property.GetGetMethod(true);
-                if (propertyGetter != null && (propertyGetter.IsPublic || propertyGetter.IsFamily))
+                if (propertyGetter != null && (propertyGetter.IsPublic || propertyGetter.IsFamily || propertyGetter.IsFamilyOrAssembly))
                 {
                     this.isStatic = propertyGetter.IsStatic;
                     // Delegate is initialized later to avoid jit if it's not called
@@ -2847,7 +2847,7 @@ namespace System.Management.Automation
 
                 // Get the public or protected setter
                 MethodInfo propertySetter = property.GetSetMethod(true);
-                if (propertySetter != null && (propertySetter.IsPublic || propertySetter.IsFamily))
+                if (propertySetter != null && (propertySetter.IsPublic || propertySetter.IsFamily || propertySetter.IsFamilyOrAssembly))
                 {
                     this.isStatic = propertySetter.IsStatic;
                 }
@@ -3860,7 +3860,7 @@ namespace System.Management.Automation
 
         private static bool PropertyIsStatic(PSProperty property)
         {
-            if (!(property.adapterData is PropertyCacheEntry entry))
+            if (property.adapterData is not PropertyCacheEntry entry)
             {
                 return false;
             }
@@ -4365,7 +4365,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This is a flavor of MethodInvokeDotNet to deal with a peculiarity of property setters:
-        /// Tthe setValue is always the last parameter. This enables a parameter after a varargs or optional
+        /// The setValue is always the last parameter. This enables a parameter after a varargs or optional
         /// parameters and GetBestMethodAndArguments is not prepared for that.
         /// This method disregards the last parameter in its call to GetBestMethodAndArguments used in this case
         /// more for its "Arguments" side than for its "BestMethod" side, since there is only one method.
@@ -4441,7 +4441,7 @@ namespace System.Management.Automation
             }
 
             builder.Append(memberName ?? methodEntry.Name);
-            if (methodEntry.IsGenericMethodDefinition)
+            if (methodEntry.IsGenericMethodDefinition || methodEntry.IsGenericMethod)
             {
                 builder.Append('[');
 
@@ -5440,7 +5440,7 @@ namespace System.Management.Automation
             }
 
             XmlNodeList nodeChildren = node.ChildNodes;
-            // nodeChildren will not be null as we already verified iff the node has children.
+            // nodeChildren will not be null as we already verified that the node has children.
             if ((nodeChildren.Count == 1) && (nodeChildren[0].NodeType == XmlNodeType.Text))
             {
                 return node.InnerText;

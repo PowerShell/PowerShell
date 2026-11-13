@@ -195,7 +195,7 @@ namespace System.Management.Automation.Remoting
     {
         #region tracer
 
-        [TraceSourceAttribute("Transport", "Traces BaseWSManTransportManager")]
+        [TraceSource("Transport", "Traces BaseWSManTransportManager")]
         private static readonly PSTraceSource s_baseTracer = PSTraceSource.GetTracer("Transport", "Traces BaseWSManTransportManager");
 
         #endregion
@@ -213,7 +213,7 @@ namespace System.Management.Automation.Remoting
 
         // This value instructs the server to use whatever setting it has for idle timeout.
         internal const int UseServerDefaultIdleTimeout = -1;
-        internal const uint UseServerDefaultIdleTimeoutUInt = UInt32.MaxValue;
+        internal const uint UseServerDefaultIdleTimeoutUInt = uint.MaxValue;
 
         // Minimum allowed idle timeout time is 60 seconds.
         internal const int MinimumIdleTimeout = 60 * 1000;
@@ -363,8 +363,12 @@ namespace System.Management.Automation.Remoting
             if (!shouldProcess)
             {
                 // we dont support this stream..so ignore the data
-                Dbg.Assert(false,
-                    string.Create(CultureInfo.InvariantCulture, $"Data should be from one of the streams : {WSManNativeApi.WSMAN_STREAM_ID_STDIN} or {WSManNativeApi.WSMAN_STREAM_ID_STDOUT} or {WSManNativeApi.WSMAN_STREAM_ID_PROMPTRESPONSE}"));
+                Dbg.Assert(false, string.Format(
+                    CultureInfo.InvariantCulture,
+                    "Data should be from one of the streams : {0} or {1} or {2}",
+                    WSManNativeApi.WSMAN_STREAM_ID_STDIN,
+                    WSManNativeApi.WSMAN_STREAM_ID_STDOUT,
+                    WSManNativeApi.WSMAN_STREAM_ID_PROMPTRESPONSE));
                 s_baseTracer.WriteLine("{0} is not a valid stream", stream);
             }
             // process data
@@ -386,9 +390,9 @@ namespace System.Management.Automation.Remoting
                                                   PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                                                   remoteObject.RunspacePoolId.ToString(),
                                                   remoteObject.PowerShellId.ToString(),
-                                                  (UInt32)(remoteObject.Destination),
-                                                  (UInt32)(remoteObject.DataType),
-                                                  (UInt32)(remoteObject.TargetInterface));
+                                                  (uint)(remoteObject.Destination),
+                                                  (uint)(remoteObject.DataType),
+                                                  (uint)(remoteObject.TargetInterface));
 
             // This might throw exceptions which the caller handles.
             PowerShellGuidObserver.SafeInvoke(remoteObject.PowerShellId, EventArgs.Empty);
@@ -468,7 +472,7 @@ namespace System.Management.Automation.Remoting.Client
     public abstract class BaseClientTransportManager : BaseTransportManager, IDisposable
     {
         #region Tracer
-        [TraceSourceAttribute("ClientTransport", "Traces ClientTransportManager")]
+        [TraceSource("ClientTransport", "Traces ClientTransportManager")]
         internal static PSTraceSource tracer = PSTraceSource.GetTracer("ClientTransport", "Traces ClientTransportManager");
         #endregion
 
@@ -1410,8 +1414,8 @@ namespace System.Management.Automation.Remoting.Server
                 _runspacePoolInstanceId.ToString(),
                 _powerShellInstanceId.ToString(),
                 dataToSend.Length.ToString(CultureInfo.InvariantCulture),
-                (UInt32)_dataType,
-                (UInt32)_targetInterface);
+                (uint)_dataType,
+                (uint)_targetInterface);
 
             SendDataToClient(dataToSend, isEndFragment && _shouldFlushData, _reportAsPending, isEndFragment);
         }

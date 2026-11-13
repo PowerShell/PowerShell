@@ -68,8 +68,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal void Process(object o)
         {
             PacketInfoData formatData = o as PacketInfoData;
-            FormatEntryData fed = formatData as FormatEntryData;
-            if (fed != null)
+            if (formatData is FormatEntryData fed)
             {
                 OutputContext ctx = null;
 

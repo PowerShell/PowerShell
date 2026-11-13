@@ -1,0 +1,610 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CannotDeserializeTabCompletionResult" xml:space="preserve">
+    <value>Uzak çalışma alanı bir TypeTable örneği içermediğinden sekme tamamlama sonucu düzgün şekilde seri durumdan çıkarılamıyor.</value>
+  </data>
+  <data name="NoAccessToProperties" xml:space="preserve">
+    <value>CompletionResult türünün null örneğindeki özelliklere erişilemez.</value>
+  </data>
+  <data name="bnotOperatorDescription" xml:space="preserve">
+    <value>Bit düzeyinde NOT</value>
+  </data>
+  <data name="notOperatorDescription" xml:space="preserve">
+    <value>Mantıksal NOT. Ardından gelen ifadeyi olumsuz yapar.</value>
+  </data>
+  <data name="eqOperatorDescription" xml:space="preserve">
+    <value>Eşittir - büyük/küçük harfe duyarsız. Sol işlenen bir koleksiyon olduğunda, sağ işlenene eşit olan koleksiyondan değerler döndürür, aksi takdirde sol işlenen sağ işlenene eşitse TRUE döndürür.</value>
+  </data>
+  <data name="ieqOperatorDescription" xml:space="preserve">
+    <value>Eşittir - büyük/küçük harfe duyarsız. Sol işlenen bir koleksiyon olduğunda, sağ işlenene eşit olan koleksiyondan değerler döndürür, aksi takdirde sol işlenen sağ işlenene eşitse TRUE döndürür.</value>
+  </data>
+  <data name="ceqOperatorDescription" xml:space="preserve">
+    <value>Eşittir - büyük/küçük harfe duyarlı. Sol işlenen bir koleksiyon olduğunda, sağ işlenene eşit olan koleksiyondan değerler döndürür, aksi takdirde sol işlenen sağ işlenene eşitse TRUE döndürür.</value>
+  </data>
+  <data name="neOperatorDescription" xml:space="preserve">
+    <value>Eşit değildir - büyük/küçük harfe duyarsız. Sol işlenen bir koleksiyon olduğunda koleksiyondaki sağ işlenenle eşit olmayan değerleri döndürür. Aksi halde sol işlenen sağ işlenenle eşit değilse TRUE döndürür.</value>
+  </data>
+  <data name="ineOperatorDescription" xml:space="preserve">
+    <value>Eşit değildir - büyük/küçük harfe duyarsız. Sol işlenen bir koleksiyon olduğunda koleksiyondaki sağ işlenenle eşit olmayan değerleri döndürür. Aksi halde sol işlenen sağ işlenenle eşit değilse TRUE döndürür.</value>
+  </data>
+  <data name="cneOperatorDescription" xml:space="preserve">
+    <value>Eşit değildir - büyük/küçük harfe duyarlı. Sol işlenen bir koleksiyon olduğunda koleksiyondaki sağ işlenenle eşit olmayan değerleri döndürür. Aksi halde sol işlenen sağ işlenenle eşit değilse TRUE döndürür.</value>
+  </data>
+  <data name="geOperatorDescription" xml:space="preserve">
+    <value>Büyüktür veya eşittir - büyük/küçük harfe duyarsız. Sol işlenen bir koleksiyon olduğunda, koleksiyondan sağ işlenenden büyük veya ona eşit değerleri döndürür. Aksi halde, sol işlenen sağ işlenenden büyük veya ona eşitse TRUE döndürür.</value>
+  </data>
+  <data name="igeOperatorDescription" xml:space="preserve">
+    <value>Büyüktür veya eşittir - büyük/küçük harfe duyarsız. Sol işlenen bir koleksiyon olduğunda, koleksiyondan sağ işlenenden büyük veya ona eşit değerleri döndürür. Aksi halde, sol işlenen sağ işlenenden büyük veya ona eşitse TRUE döndürür.</value>
+  </data>
+  <data name="cgeOperatorDescription" xml:space="preserve">
+    <value>Küçüktür veya eşittir - büyük/küçük harfe duyarlı. Sol işlenen bir koleksiyon olduğunda, koleksiyondan sağ işlenenden büyük veya ona eşit değerleri döndürür. Aksi halde, sol işlenen sağ işlenenden büyük veya ona eşitse TRUE döndürür.</value>
+  </data>
+  <data name="gtOperatorDescription" xml:space="preserve">
+    <value>Büyüktür - büyük/küçük harfe duyarlı değil. Sol işlenen bir koleksiyon olduğunda, sağ işlenenden büyük olan koleksiyondan değerler döndürür, aksi takdirde sol işlenen sağ işlenenden büyükse TRUE döndürür.</value>
+  </data>
+  <data name="igtOperatorDescription" xml:space="preserve">
+    <value>Büyüktür - büyük/küçük harfe duyarlı değil. Sol işlenen bir koleksiyon olduğunda, sağ işlenenden büyük olan koleksiyondan değerler döndürür, aksi takdirde sol işlenen sağ işlenenden büyükse TRUE döndürür.</value>
+  </data>
+  <data name="cgtOperatorDescription" xml:space="preserve">
+    <value>Büyüktür - büyük/küçük harfe duyarlı. Sol işlenen bir koleksiyon olduğunda, sağ işlenenden büyük olan koleksiyondan değerler döndürür, aksi takdirde sol işlenen sağ işlenenden büyükse TRUE döndürür.</value>
+  </data>
+  <data name="ltOperatorDescription" xml:space="preserve">
+    <value>Küçüktür - büyük/küçük harfe duyarlı değil. Sol işlenen bir koleksiyon olduğunda, sağ işlenenden küçük olan koleksiyondan değerler döndürür, aksi takdirde sol işlenen sağ işlenenden küçükse TRUE döndürür.</value>
+  </data>
+  <data name="iltOperatorDescription" xml:space="preserve">
+    <value>Küçüktür - büyük/küçük harfe duyarlı değil. Sol işlenen bir koleksiyon olduğunda, sağ işlenenden küçük olan koleksiyondan değerler döndürür, aksi takdirde sol işlenen sağ işlenenden küçükse TRUE döndürür.</value>
+  </data>
+  <data name="cltOperatorDescription" xml:space="preserve">
+    <value>Küçüktür - büyük/küçük harfe duyarlı. Sol işlenen bir koleksiyon olduğunda, sağ işlenenden küçük olan koleksiyondan değerler döndürür, aksi takdirde sol işlenen sağ işlenenden küçükse TRUE döndürür.</value>
+  </data>
+  <data name="leOperatorDescription" xml:space="preserve">
+    <value>Küçüktür veya eşittir - büyük/küçük harfe duyarsız. Sol işlenen bir koleksiyon olduğunda, koleksiyondan sağ işlenenden küçük veya ona eşit değerleri döndürür. Aksi halde, sol işlenen sağ işlenenden küçük veya ona eşitse TRUE döndürür.</value>
+  </data>
+  <data name="ileOperatorDescription" xml:space="preserve">
+    <value>Küçüktür veya eşittir - büyük/küçük harfe duyarsız. Sol işlenen bir koleksiyon olduğunda, koleksiyondan sağ işlenenden küçük veya ona eşit değerleri döndürür. Aksi halde, sol işlenen sağ işlenenden küçük veya ona eşitse TRUE döndürür.</value>
+  </data>
+  <data name="cleOperatorDescription" xml:space="preserve">
+    <value>Küçüktür veya eşittir - büyük/küçük harfe duyarlı. Sol işlenen bir koleksiyon olduğunda, koleksiyondan sağ işlenenden küçük veya ona eşit değerleri döndürür. Aksi halde, sol işlenen sağ işlenenden küçük veya ona eşitse TRUE döndürür.</value>
+  </data>
+  <data name="likeOperatorDescription" xml:space="preserve">
+    <value>Joker karakter eşleştirme işleci - büyük/küçük harfe duyarsız. Sol işlenen bir koleksiyon olduğunda koleksiyondaki sağ taraftaki işlenenle eşleşen değerleri döndürür. Aksi halde sol işlenen sağ işlenenle eşleşiyorsa TRUE döndürür.</value>
+  </data>
+  <data name="ilikeOperatorDescription" xml:space="preserve">
+    <value>Joker karakter eşleştirme işleci - büyük/küçük harfe duyarsız. Sol işlenen bir koleksiyon olduğunda koleksiyondaki sağ taraftaki işlenenle eşleşen değerleri döndürür. Aksi halde sol işlenen sağ işlenenle eşleşiyorsa TRUE döndürür.</value>
+  </data>
+  <data name="clikeOperatorDescription" xml:space="preserve">
+    <value>Joker karakter eşleştirme işleci - büyük/küçük harfe duyarlı. Sol işlenen bir koleksiyon olduğunda koleksiyondaki sağ taraftaki işlenenle eşleşen değerleri döndürür. Aksi halde sol işlenen sağ işlenenle eşleşiyorsa TRUE döndürür.</value>
+  </data>
+  <data name="notlikeOperatorDescription" xml:space="preserve">
+    <value>Joker karakter eşleştirme işleci - büyük/küçük harfe duyarsız. Sol işlenen bir koleksiyon olduğunda koleksiyondaki sağ taraftaki işlenenle eşleşmeyen değerleri döndürür. Aksi halde sol işlenen sağ işlenenle eşleşmiyorsa TRUE döndürür.</value>
+  </data>
+  <data name="inotlikeOperatorDescription" xml:space="preserve">
+    <value>Joker karakter eşleştirme işleci - büyük/küçük harfe duyarsız. Sol işlenen bir koleksiyon olduğunda koleksiyondaki sağ taraftaki işlenenle eşleşmeyen değerleri döndürür. Aksi halde sol işlenen sağ işlenenle eşleşmiyorsa TRUE döndürür.</value>
+  </data>
+  <data name="cnotlikeOperatorDescription" xml:space="preserve">
+    <value>Joker karakter eşleştirme işleci - büyük/küçük harfe duyarlı. Sol işlenen bir koleksiyon olduğunda koleksiyondaki sağ taraftaki işlenenle eşleşmeyen değerleri döndürür. Aksi halde sol işlenen sağ işlenenle eşleşmiyorsa TRUE döndürür.</value>
+  </data>
+  <data name="matchOperatorDescription" xml:space="preserve">
+    <value>Normal ifade eşleştirme işleci - büyük/küçük harfe duyarsız. Sol işlenen bir koleksiyon olduğunda koleksiyondaki sağ taraftaki işlenenle eşleşen değerleri döndürür. Aksi halde sol işlenen sağ işlenenle eşleşiyorsa TRUE döndürür.</value>
+  </data>
+  <data name="imatchOperatorDescription" xml:space="preserve">
+    <value>Normal ifade eşleştirme işleci - büyük/küçük harfe duyarsız. Sol işlenen bir koleksiyon olduğunda koleksiyondaki sağ taraftaki işlenenle eşleşen değerleri döndürür. Aksi halde sol işlenen sağ işlenenle eşleşiyorsa TRUE döndürür.</value>
+  </data>
+  <data name="cmatchOperatorDescription" xml:space="preserve">
+    <value>Normal ifade eşleştirme işleci - büyük/küçük harfe duyarlı. Sol işlenen bir koleksiyon olduğunda koleksiyondaki sağ taraftaki işlenenle eşleşen değerleri döndürür. Aksi halde sol işlenen sağ işlenenle eşleşiyorsa TRUE döndürür.</value>
+  </data>
+  <data name="notmatchOperatorDescription" xml:space="preserve">
+    <value>Normal ifade eşleştirme işleci - büyük/küçük harfe duyarsız. Sol işlenen bir koleksiyon olduğunda koleksiyondaki sağ taraftaki işlenenle eşleşmeyen değerleri döndürür. Aksi halde sol işlenen sağ işlenenle eşleşmiyorsa TRUE döndürür.</value>
+  </data>
+  <data name="inotmatchOperatorDescription" xml:space="preserve">
+    <value>Normal ifade eşleştirme işleci - büyük/küçük harfe duyarsız. Sol işlenen bir koleksiyon olduğunda koleksiyondaki sağ taraftaki işlenenle eşleşmeyen değerleri döndürür. Aksi halde sol işlenen sağ işlenenle eşleşmiyorsa TRUE döndürür.</value>
+  </data>
+  <data name="cnotmatchOperatorDescription" xml:space="preserve">
+    <value>Normal ifade eşleştirme işleci - büyük/küçük harfe duyarlı. Sol işlenen bir koleksiyon olduğunda koleksiyondaki sağ taraftaki işlenenle eşleşmeyen değerleri döndürür. Aksi halde sol işlenen sağ işlenenle eşleşmiyorsa TRUE döndürür.</value>
+  </data>
+  <data name="replaceOperatorDescription" xml:space="preserve">
+    <value>Değiştirme işleci - büyük/küçük harfe duyarsız. Sol işleneni değiştirir. Örnek: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
+  </data>
+  <data name="ireplaceOperatorDescription" xml:space="preserve">
+    <value>Değiştirme işleci - büyük/küçük harfe duyarsız. Sol işleneni değiştirir. Örnek: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
+  </data>
+  <data name="creplaceOperatorDescription" xml:space="preserve">
+    <value>Değiştirme işleci - büyük/küçük harfe duyarlı. Sol işleneni değiştirir. Örnek: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
+  </data>
+  <data name="containsOperatorDescription" xml:space="preserve">
+    <value>Kapsama işleci - büyük/küçük harfe duyarsız. Test değeri (sağ işlenen) sol işlenendeki değerlerden en az biriyle tam olarak eşleştiğinde TRUE değerini döndürür.</value>
+  </data>
+  <data name="icontainsOperatorDescription" xml:space="preserve">
+    <value>Kapsama işleci - büyük/küçük harfe duyarsız. Test değeri (sağ işlenen) sol işlenendeki değerlerden en az biriyle tam olarak eşleştiğinde TRUE değerini döndürür.</value>
+  </data>
+  <data name="ccontainsOperatorDescription" xml:space="preserve">
+    <value>Kapsama işleci - büyük/küçük harfe duyarlı. Yalnızca test değeri (sağ işlenen) sol işlenendeki değerlerden en az biriyle tam olarak eşleştiğinde TRUE değerini döndürür.</value>
+  </data>
+  <data name="notcontainsOperatorDescription" xml:space="preserve">
+    <value>Kapsama işleci - büyük/küçük harfe duyarsız. Test değeri (sağ işlenen) sol işlenendeki değerlerden hiçbiriyle tam olarak eşleşmediğinde TRUE değerini döndürür.</value>
+  </data>
+  <data name="inotcontainsOperatorDescription" xml:space="preserve">
+    <value>Kapsama işleci - büyük/küçük harfe duyarsız. Test değeri (sağ işlenen) sol işlenendeki değerlerden hiçbiriyle tam olarak eşleşmediğinde TRUE değerini döndürür.</value>
+  </data>
+  <data name="cnotcontainsOperatorDescription" xml:space="preserve">
+    <value>Kapsama işleci - büyük/küçük harfe duyarlı. Test değeri (sağ işlenen) sol işlenendeki değerlerden hiçbiriyle tam olarak eşleşmediğinde TRUE değerini döndürür.</value>
+  </data>
+  <data name="inOperatorDescription" xml:space="preserve">
+    <value>Kapsama işleci - büyük/küçük harfe duyarsız. Test değeri (sol işlenen) sağ işlenendeki değerlerden en az biriyle tam olarak eşleştiğinde TRUE değerini döndürür.</value>
+  </data>
+  <data name="iinOperatorDescription" xml:space="preserve">
+    <value>Kapsama işleci - büyük/küçük harfe duyarsız. Test değeri (sol işlenen) sağ işlenendeki değerlerden en az biriyle tam olarak eşleştiğinde TRUE değerini döndürür.</value>
+  </data>
+  <data name="cinOperatorDescription" xml:space="preserve">
+    <value>Kapsama işleci - büyük/küçük harfe duyarlı. Test değeri (sol işlenen) sağ işlenendeki değerlerden en az biriyle tam olarak eşleştiğinde TRUE değerini döndürür.</value>
+  </data>
+  <data name="notinOperatorDescription" xml:space="preserve">
+    <value>Kapsama işleci - büyük/küçük harfe duyarlı. Test değeri (sol işlenen) sağ işlenendeki değerlerden hiçbiriyle tam olarak eşleşmediğinde TRUE değerini döndürür.</value>
+  </data>
+  <data name="inotinOperatorDescription" xml:space="preserve">
+    <value>Kapsama işleci - büyük/küçük harfe duyarsız. Test değeri (sol işlenen) sağ işlenendeki değerlerden hiçbiriyle tam olarak eşleşmediğinde TRUE değerini döndürür.</value>
+  </data>
+  <data name="cnotinOperatorDescription" xml:space="preserve">
+    <value>Kapsama işleci - büyük/küçük harfe duyarlı. Test değeri (sol işlenen) sağ işlenendeki değerlerden hiçbiriyle tam olarak eşleşmediğinde TRUE değerini döndürür.</value>
+  </data>
+  <data name="splitOperatorDescription" xml:space="preserve">
+    <value>Bölme - Büyük/küçük harfe duyarsız. Bir ya da daha fazla dizeyi alt dizelere böler.
+-Split &lt;String&gt;
+
+&lt;String&gt; -Split &lt;Delimiter&gt;[,&lt;Max-substrings&gt;[,"&lt;Options&gt;"]]
+
+&lt;String&gt; -Split {&lt;ScriptBlock&gt;} [,&lt;Max-substrings&gt;]</value>
+  </data>
+  <data name="isplitOperatorDescription" xml:space="preserve">
+    <value>Bölme - Büyük/küçük harfe duyarsız. Bir ya da daha fazla dizeyi alt dizelere böler.
+-Split &lt;String&gt;
+
+&lt;String&gt; -Split &lt;Delimiter&gt;[,&lt;Max-substrings&gt;[,"&lt;Options&gt;"]]
+
+&lt;String&gt; -Split {&lt;ScriptBlock&gt;} [,&lt;Max-substrings&gt;]</value>
+  </data>
+  <data name="csplitOperatorDescription" xml:space="preserve">
+    <value>Bölme - Büyük/küçük harfe duyarlı. Bir ya da daha fazla dizeyi alt dizelere böler.
+-Split &lt;String&gt;
+
+&lt;String&gt; -Split &lt;Delimiter&gt;[,&lt;Max-substrings&gt;[,"&lt;Options&gt;"]]
+
+&lt;String&gt; -Split {&lt;ScriptBlock&gt;} [,&lt;Max-substrings&gt;]</value>
+  </data>
+  <data name="isnotOperatorDescription" xml:space="preserve">
+    <value>Sol işlenen belirtilen .NET Framework türünün (sağ işlenen) bir örneği değilse TRUE döndürür.</value>
+  </data>
+  <data name="isOperatorDescription" xml:space="preserve">
+    <value>Sol işlenen belirtilen .NET Framework türünün (sağ işlenen) bir örneğiyse TRUE döndürür.</value>
+  </data>
+  <data name="asOperatorDescription" xml:space="preserve">
+    <value>Sol işleneni belirtilen .NET Framework türüne (sağ işlenen) dönüştürür.</value>
+  </data>
+  <data name="fOperatorDescription" xml:space="preserve">
+    <value>Dize nesnelerinin biçim yöntemini kullanarak dizeleri biçimlendirir.</value>
+  </data>
+  <data name="andOperatorDescription" xml:space="preserve">
+    <value>Mantıksal AND. Her iki ifade de TRUE olduğunda TRUE döndürür.</value>
+  </data>
+  <data name="bandOperatorDescription" xml:space="preserve">
+    <value>Bit düzeyinde AND</value>
+  </data>
+  <data name="orOperatorDescription" xml:space="preserve">
+    <value>Mantıksal OR. Deyimlerden biri ya da her ikisi TRUE olduğunda TRUE döndürür.</value>
+  </data>
+  <data name="borOperatorDescription" xml:space="preserve">
+    <value>Bit düzeyinde OR (dahil)</value>
+  </data>
+  <data name="xorOperatorDescription" xml:space="preserve">
+    <value>Mantıksal dışlayıcı OR. Deyimlerden biri TRUE diğeri FALSE olduğunda TRUE döndürür.</value>
+  </data>
+  <data name="bxorOperatorDescription" xml:space="preserve">
+    <value>Bit düzeyinde OR (dışlayıcı)</value>
+  </data>
+  <data name="joinOperatorDescription" xml:space="preserve">
+    <value>Birleştir - birden çok dizeyi tek bir dizede birleştirir.
+-Join &lt;String[]&gt;
+&lt;String[]&gt; -Join &lt;Delimiter&gt;</value>
+  </data>
+  <data name="shlOperatorDescription" xml:space="preserve">
+    <value>Sola Kaydırma bit işleci. En sağdaki bit konumuna sıfır ekler.</value>
+  </data>
+  <data name="shrOperatorDescription" xml:space="preserve">
+    <value>Sağa Kaydırma bit işleci. En soldaki bit konumuna sıfır ekler. İşaretli değerler için işaret biti korunur.</value>
+  </data>
+  <data name="NameHashtableKeyDescription" xml:space="preserve">
+    <value>[string]
+Oluşturulan özelliğin adını belirtir.</value>
+  </data>
+  <data name="LabelHashtableKeyDescription" xml:space="preserve">
+    <value>[string]
+Oluşturulan özelliğin adını belirtir.</value>
+  </data>
+  <data name="ExpressionHashtableKeyDescription" xml:space="preserve">
+    <value>[scriptblock]
+Yeni özelliğin değerini hesaplamak için kullanılan bir betik bloğu.</value>
+  </data>
+  <data name="AlignmentHashtableKeyDescription" xml:space="preserve">
+    <value>[string]
+Değerlerin bir sütunda nasıl görüntüleneceğini tanımlar.
+Geçerli değerler 'left', 'center' veya 'right' değerleridir.</value>
+  </data>
+  <data name="FormatStringHashtableKeyDescription" xml:space="preserve">
+    <value>[string]
+Değerin çıkış için nasıl biçimlendirileceğini tanımlayan bir biçim dizesi belirtir.</value>
+  </data>
+  <data name="WidthHashtableKeyDescription" xml:space="preserve">
+    <value>[int]
+Değer görüntülendiğinde tablodaki en fazla sütun genişliğini belirtir.
+Değer 0'dan büyük olmalıdır.</value>
+  </data>
+  <data name="DepthHashtableKeyDescription" xml:space="preserve">
+    <value>[int]
+Derinlik anahtarı, özellik başına genişletme derinliğini belirtir.</value>
+  </data>
+  <data name="AscendingHashtableKeyDescription" xml:space="preserve">
+    <value>[bool]
+Bir veya daha fazla özellik için sıralama düzenini belirtir.</value>
+  </data>
+  <data name="DescendingHashtableKeyDescription" xml:space="preserve">
+    <value>[bool]
+Bir veya daha fazla özellik için sıralama düzenini belirtir.</value>
+  </data>
+  <data name="LogNameHashtableKeyDescription" xml:space="preserve">
+    <value>[String[]]
+Olayların alınacağı günlük adlarını belirtir.
+Joker karakterleri destekler.</value>
+  </data>
+  <data name="ProviderNameHashtableKeyDescription" xml:space="preserve">
+    <value>[String[]]
+Olayların alınacağı olay günlüğü sağlayıcılarını belirtir.
+Joker karakterleri destekler.</value>
+  </data>
+  <data name="PathHashtableKeyDescription" xml:space="preserve">
+    <value>[String[]]
+Olayların alınacağı günlük dosyalarının dosya yollarını belirtir.
+Geçerli dosya biçimleri: .etl, .evt ve .evtx</value>
+  </data>
+  <data name="KeywordsHashtableKeyDescription" xml:space="preserve">
+    <value>[Long[]]
+Belirtilen anahtar sözcük bit maskelerine sahip olayları seçer.
+Aşağıdakiler standart anahtar sözcüklerdir:
+4503599627370496: AuditFailure
+9007199254740992: AuditSuccess
+4503599627370496: CorrelationHint
+18014398509481984: CorrelationHint2
+36028797018963968: EventLogClassic
+281474976710656: ResponseTime
+2251799813685248: Sqm
+562949953421312: WdiContext
+1125899906842624: WdiDiagnostic</value>
+  </data>
+  <data name="IDHashtableKeyDescription" xml:space="preserve">
+    <value>[int[]]
+Belirtilen günlük düzeylerine sahip olayları seçer.</value>
+  </data>
+  <data name="LevelHashtableKeyDescription" xml:space="preserve">
+    <value>[int[]]
+Belirtilen günlük düzeylerine sahip olayları seçer.
+Aşağıdaki günlük düzeyleri geçerlidir:
+1: Kritik
+2: Hata
+3: Uyarı
+4: Bilgilendirici
+5: Ayrıntılı</value>
+  </data>
+  <data name="StartTimeHashtableKeyDescription" xml:space="preserve">
+    <value>[datetime]
+Belirtilen tarih ve saatten sonra oluşturulan olayları seçer.</value>
+  </data>
+  <data name="EndTimeHashtableKeyDescription" xml:space="preserve">
+    <value>[datetime]
+Belirtilen tarih ve saatten sonra oluşturulan olayları seçer.</value>
+  </data>
+  <data name="UserIDHashtableKeyDescription" xml:space="preserve">
+    <value>[string]
+Belirtilen kullanıcı tarafından oluşturulan olayları seçer.
+Bu, bir SID'nin dize gösterimi ya da ETKİALANI\KULLANICIADI veya KULLANICIADI@ETKİALANI biçiminde etki alanı ve kullanıcı adı olabilir</value>
+  </data>
+  <data name="DataHashtableKeyDescription" xml:space="preserve">
+    <value>[string[]]
+EventData bölümünde belirtilen değerlerden herhangi birini içeren olayları seçer.</value>
+  </data>
+  <data name="SuppressHashFilterHashtableKeyDescription" xml:space="preserve">
+    <value>[hashtable]
+Hashtable'da belirtilen değerlerle eşleşen olayları dışlar.</value>
+  </data>
+  <data name="RequiresModulesParameterDescription" xml:space="preserve">
+    <value>[string] veya [hashtable]
+Betiğin gerektirdiği PowerShell modüllerinden oluşan bir diziyi belirtir.
+Her öğe, modül adını değer olarak içeren bir dize ya da aşağıdaki anahtarları içeren bir hashtable olabilir:
+Ad: Modülün adı
+GUID: Modülün GUID'si
+Aşağıdakilerden biri:
+ModuleVersion: Modülün kabul edilebilir en düşük sürümünü belirtir.
+RequiredVersion: Modülün kesin ve gerekli bir sürümünü belirtir.
+MaximumVersion: Modülün kabul edilebilir en yüksek sürümünü belirtir.</value>
+  </data>
+  <data name="RequiresPSEditionParameterDescription" xml:space="preserve">
+    <value>[string]
+Betiğin gerektirdiği bir PowerShell sürümünü belirtir.
+Geçerli değerler "Core" ve "Desktop"</value>
+  </data>
+  <data name="RequiresRunAsAdministratorParameterDescription" xml:space="preserve">
+    <value>[switch]
+PowerShell'in Windows üzerinde yönetici olarak çalışıyor olması gerektiğini belirtir.
+Bu, #requires deyimi satırındaki son parametre olmalıdır.</value>
+  </data>
+  <data name="RequiresVersionParameterDescription" xml:space="preserve">
+    <value>[version]
+Betiğin gerektirdiği en düşük PowerShell sürümünü belirtir.</value>
+  </data>
+  <data name="RequiresPsEditionCoreDescription" xml:space="preserve">
+    <value>Betiğin çalışması için PowerShell 7+ gerektirdiğini belirtir.</value>
+  </data>
+  <data name="RequiresPsEditionDesktopDescription" xml:space="preserve">
+    <value>Betiğin çalışması için Windows PowerShell 5.1 gerektirdiğini belirtir.</value>
+  </data>
+  <data name="RequiresModuleSpecModuleNameDescription" xml:space="preserve">
+    <value>[string]
+Gereklidir. Modül adını belirtir.</value>
+  </data>
+  <data name="RequiresModuleSpecGUIDDescription" xml:space="preserve">
+    <value>[string]
+İsteğe bağlıdır. Modülün GUID'sini belirtir.</value>
+  </data>
+  <data name="RequiresModuleSpecModuleVersionDescription" xml:space="preserve">
+    <value>[string]
+Modülün kabul edilebilir en düşük sürümünü belirtir.</value>
+  </data>
+  <data name="RequiresModuleSpecRequiredVersionDescription" xml:space="preserve">
+    <value>[string]
+Modülün kesin ve gerekli bir sürümünü belirtir.</value>
+  </data>
+  <data name="RequiresModuleSpecMaximumVersionDescription" xml:space="preserve">
+    <value>[string]
+Modülün kabul edilebilir en yüksek sürümünü belirtir.</value>
+  </data>
+  <data name="CommentHelpSYNOPSISKeywordDescription" xml:space="preserve">
+    <value>İşlevin veya betiğin kısa açıklaması.
+Bu anahtar sözcük her konuda yalnızca bir kez kullanılabilir.</value>
+  </data>
+  <data name="CommentHelpDESCRIPTIONKeywordDescription" xml:space="preserve">
+    <value>İşlevin veya betiğin ayrıntılı açıklaması.
+Bu anahtar sözcük her konuda yalnızca bir kez kullanılabilir.</value>
+  </data>
+  <data name="CommentHelpPARAMETERKeywordDescription" xml:space="preserve">
+    <value>.PARAMETER  &lt;Parameter-Name&gt;
+Bir parametrenin açıklaması.
+İşlev veya betik söz dizimindeki her parametre için bir .PARAMETER anahtar sözcüğü ekleyin.</value>
+  </data>
+  <data name="CommentHelpEXAMPLEKeywordDescription" xml:space="preserve">
+    <value>İşlevi veya betiği kullanan örnek komut, isteğe bağlı olarak ardından örnek çıkış ve açıklama gelir.
+Bu anahtar sözcüğü her örnek için yineleyin.</value>
+  </data>
+  <data name="CommentHelpINPUTSKeywordDescription" xml:space="preserve">
+    <value>İşleve veya betiğe gönderilebilecek .NET nesne türleri.
+Giriş nesnelerinin açıklamasını da ekleyebilirsiniz.</value>
+  </data>
+  <data name="CommentHelpOUTPUTSKeywordDescription" xml:space="preserve">
+    <value>Cmdlet'in döndürdüğü nesnelerin .NET türü.
+Döndürülen nesnelerin açıklamasını da ekleyebilirsiniz.</value>
+  </data>
+  <data name="CommentHelpNOTESKeywordDescription" xml:space="preserve">
+    <value>İşlev veya betik hakkında ek bilgiler.</value>
+  </data>
+  <data name="CommentHelpLINKKeywordDescription" xml:space="preserve">
+    <value>İlgili bir konunun adı.
+Her ilgili konu için .LINK anahtar sözcüğünü yineleyin.
+.Link anahtar sözcüğü içeriğine aynı yardım konusunun çevrimiçi sürümüne yönelik bir URI de eklenebilir.</value>
+  </data>
+  <data name="CommentHelpCOMPONENTKeywordDescription" xml:space="preserve">
+    <value>İşlevin veya betiğin kullandığı ya da ilişkili olduğu teknoloji ya da özelliğin adı.</value>
+  </data>
+  <data name="CommentHelpROLEKeywordDescription" xml:space="preserve">
+    <value>Yardım konusu için kullanıcı rolünün adı.</value>
+  </data>
+  <data name="CommentHelpFUNCTIONALITYKeywordDescription" xml:space="preserve">
+    <value>İşlevin amaçlanan kullanımını açıklayan anahtar sözcükler.</value>
+  </data>
+  <data name="CommentHelpFORWARDHELPTARGETNAMEKeywordDescription" xml:space="preserve">
+    <value>.FORWARDHELPTARGETNAME &lt;Command-Name&gt;
+Belirtilen komutun yardım konusuna yönlendirir.</value>
+  </data>
+  <data name="CommentHelpFORWARDHELPCATEGORYKeywordDescription" xml:space="preserve">
+    <value>.FORWARDHELPCATEGORY &lt;Category&gt;
+.ForwardHelpTargetName içindeki öğenin yardım kategorisini belirtir</value>
+  </data>
+  <data name="CommentHelpREMOTEHELPRUNSPACEKeywordDescription" xml:space="preserve">
+    <value>.REMOTEHELPRUNSPACE &lt;PSSession-variable&gt;
+Yardım konusunu içeren bir oturumu belirtir.
+PSSession nesnesi içeren bir değişken girin.</value>
+  </data>
+  <data name="CommentHelpEXTERNALHELPKeywordDescription" xml:space="preserve">
+    <value>.EXTERNALHELP &lt;XML Help File&gt;
+Bir işlev veya betik XML dosyalarında belgelendiğinde .ExternalHelp anahtar sözcüğü gereklidir.</value>
+  </data>
+  <data name="AssemblyKeywordDescription" xml:space="preserve">
+    <value>Yüklenecek .NET derlemesinin yolunu belirtir.
+
+&lt;.NET-assembly-path&gt; derlemesi kullanılıyor</value>
+  </data>
+  <data name="ModuleKeywordDescription" xml:space="preserve">
+    <value>Sınıfların yükleneceği PowerShell modülünü belirtir.
+
+using module &lt;ModuleName or Path&gt;
+
+using module &lt;ModuleSpecification hashtable&gt;</value>
+  </data>
+  <data name="NamespaceKeywordDescription" xml:space="preserve">
+    <value>Türlerin çözümleneceği bir .NET ad alanı veya bir ad alanı diğer adı belirtir.
+
+using namespace &lt;.NET-namespace&gt;
+
+using namespace &lt;AliasName&gt; = &lt;.NET-namespace&gt;</value>
+  </data>
+  <data name="TypeKeywordDescription" xml:space="preserve">
+    <value>Bir .NET Türü için bir diğer ad belirtir.
+
+using type &lt;AliasName&gt; = &lt;.NET-type&gt;</value>
+  </data>
+  <data name="RegistryStringToolTip" xml:space="preserve">
+    <value>Normal bir dize.</value>
+  </data>
+  <data name="RegistryExpandStringToolTip" xml:space="preserve">
+    <value>Değer alındığında genişletilen ortam değişkenlerine genişletilmemiş başvurular içeren bir dize.</value>
+  </data>
+  <data name="RegistryBinaryToolTip" xml:space="preserve">
+    <value>Herhangi bir biçimde ikili veri.</value>
+  </data>
+  <data name="RegistryDWordToolTip" xml:space="preserve">
+    <value>32 bitlik bir ikili sayı.</value>
+  </data>
+  <data name="RegistryMultiStringToolTip" xml:space="preserve">
+    <value>Dize dizisi.</value>
+  </data>
+  <data name="RegistryQWordToolTip" xml:space="preserve">
+    <value>64 bitlik bir ikili sayı.</value>
+  </data>
+  <data name="RegistryUnknownToolTip" xml:space="preserve">
+    <value>Desteklenmeyen bir kayıt defteri veri türü.</value>
+  </data>
+  <data name="SeparatorCommaToolTip" xml:space="preserve">
+    <value>',' - Virgül</value>
+  </data>
+  <data name="SeparatorCommaSpaceToolTip" xml:space="preserve">
+    <value>', ' - Comma-Space</value>
+  </data>
+  <data name="SeparatorSemiColonToolTip" xml:space="preserve">
+    <value>';' - Noktalı Virgül</value>
+  </data>
+  <data name="SeparatorSemiColonSpaceToolTip" xml:space="preserve">
+    <value>'; ' - Noktalı Virgül-Boşluk</value>
+  </data>
+  <data name="SeparatorNewlineToolTip" xml:space="preserve">
+    <value>{0} - Yeni satır</value>
+  </data>
+  <data name="SeparatorDashToolTip" xml:space="preserve">
+    <value>'-' - Kısa çizgi</value>
+  </data>
+  <data name="SeparatorSpaceToolTip" xml:space="preserve">
+    <value>' ' - Boşluk</value>
+  </data>
+</root>

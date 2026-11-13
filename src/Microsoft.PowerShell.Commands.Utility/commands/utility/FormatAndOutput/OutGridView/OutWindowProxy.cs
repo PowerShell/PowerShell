@@ -13,7 +13,7 @@ using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace Microsoft.PowerShell.Commands
 {
-    internal class OutWindowProxy : IDisposable
+    internal sealed class OutWindowProxy : IDisposable
     {
         private const string OutGridViewWindowClassName = "Microsoft.Management.UI.Internal.OutGridViewWindow";
         private const string OriginalTypePropertyName = "OriginalType";
@@ -71,8 +71,7 @@ namespace Microsoft.PowerShell.Commands
             catch (TargetInvocationException ex)
             {
                 // Verify if this is an error loading the System.Core dll.
-                FileNotFoundException fileNotFoundEx = ex.InnerException as FileNotFoundException;
-                if (fileNotFoundEx != null && fileNotFoundEx.FileName.Contains("System.Core"))
+                if (ex.InnerException is FileNotFoundException fileNotFoundEx && fileNotFoundEx.FileName.Contains("System.Core"))
                 {
                     _parentCmdlet.ThrowTerminatingError(
                         new ErrorRecord(new InvalidOperationException(

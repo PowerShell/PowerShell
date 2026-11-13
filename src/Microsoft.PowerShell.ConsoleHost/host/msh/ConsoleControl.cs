@@ -211,41 +211,6 @@ namespace Microsoft.PowerShell
             internal DWORD fsCsb1;
         }
 
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct CHARSETINFO
-        {
-            // From public\sdk\inc\wingdi.h
-            internal uint ciCharset;   // Character set value.
-            internal uint ciACP;       // ANSI code-page identifier.
-            internal FONTSIGNATURE fs;
-        }
-
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-        internal struct TEXTMETRIC
-        {
-            // From public\sdk\inc\wingdi.h
-            public int tmHeight;
-            public int tmAscent;
-            public int tmDescent;
-            public int tmInternalLeading;
-            public int tmExternalLeading;
-            public int tmAveCharWidth;
-            public int tmMaxCharWidth;
-            public int tmWeight;
-            public int tmOverhang;
-            public int tmDigitizedAspectX;
-            public int tmDigitizedAspectY;
-            public char tmFirstChar;
-            public char tmLastChar;
-            public char tmDefaultChar;
-            public char tmBreakChar;
-            public byte tmItalic;
-            public byte tmUnderlined;
-            public byte tmStruckOut;
-            public byte tmPitchAndFamily;
-            public byte tmCharSet;
-        }
-
         #region SentInput Data Structures
 
         [StructLayout(LayoutKind.Sequential)]
@@ -2799,7 +2764,7 @@ namespace Microsoft.PowerShell
                  ((uint)(c - 0xffe0) <= (0xffe6 - 0xffe0)));
 
             // We can ignore these ranges because .Net strings use surrogate pairs
-            // for this range and we do not handle surrogage pairs.
+            // for this range and we do not handle surrogate pairs.
             // (c >= 0x20000 && c <= 0x2fffd) ||
             // (c >= 0x30000 && c <= 0x3fffd)
             return 1 + (isWide ? 1 : 0);

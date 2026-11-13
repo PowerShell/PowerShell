@@ -33,13 +33,12 @@ namespace Microsoft.PowerShell
             {
                 try
                 {
-                    TaskbarJumpList.CreateElevatedEntry(ConsoleHostStrings.RunAsAdministrator);
+                    CreateElevatedEntry(ConsoleHostStrings.RunAsAdministrator);
                 }
-                catch (Exception exception)
+                catch (Exception)
                 {
                     // Due to COM threading complexity there might still be sporadic failures but they can be
                     // ignored as creating the JumpList is not critical and persists after its first creation.
-                    Debug.Fail($"Creating 'Run as Administrator' JumpList failed. {exception}");
                 }
             });
 
@@ -48,7 +47,7 @@ namespace Microsoft.PowerShell
                 thread.SetApartmentState(ApartmentState.STA);
                 thread.Start();
             }
-            catch (System.Threading.ThreadStartException)
+            catch (ThreadStartException)
             {
                 // STA may not be supported on some platforms
             }
@@ -117,7 +116,6 @@ namespace Microsoft.PowerShell
                     var CLSID_EnumerableObjectCollection = new Guid(@"2d3468c1-36a7-43b6-ac24-d3f02fd9607a");
                     const uint CLSCTX_INPROC_HANDLER = 2;
                     const uint CLSCTX_INPROC = CLSCTX_INPROC_SERVER | CLSCTX_INPROC_HANDLER;
-                    var ComSvrInterface_GUID = new Guid(@"555E2D2B-EE00-47AA-AB2B-39F953F6B339");
                     hResult = CoCreateInstance(ref CLSID_EnumerableObjectCollection, null, CLSCTX_INPROC, ref IID_IUnknown, out object instance);
                     if (hResult < 0)
                     {

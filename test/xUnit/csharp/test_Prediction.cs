@@ -79,7 +79,7 @@ namespace PSTests.Sequential
             {
                 // The delay is exaggerated to make the test reliable.
                 // xUnit must spin up a lot tasks, which makes the test unreliable when the time difference between 'delay' and 'timeout' is small.
-                Thread.Sleep(2000);
+                Thread.Sleep(3000);
             }
 
             // You can get the user input from the AST.

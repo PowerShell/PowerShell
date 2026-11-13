@@ -840,7 +840,7 @@ namespace System.Management.Automation.Provider
         ///
         /// The <paramref name="newItemValue"/> parameter can be any type of object that the provider can use
         /// to create the item. It is recommended that the provider accept at a minimum strings, and an instance
-        /// of the type of object that would be returned from GetItem() for this path. <see cref="LanguagePrimitives.ConvertTo(System.Object, System.Type)"/>
+        /// of the type of object that would be returned from GetItem() for this path. <see cref="LanguagePrimitives.ConvertTo(object, System.Type)"/>
         /// can be used to convert some types to the desired type.
         ///
         /// The default implementation of this method throws an <see cref="System.Management.Automation.PSNotSupportedException"/>.

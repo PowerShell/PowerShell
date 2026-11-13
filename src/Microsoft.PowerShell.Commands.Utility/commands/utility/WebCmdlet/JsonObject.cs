@@ -8,8 +8,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Language;
+using System.Numerics;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using System.Threading;
 
 using Newtonsoft.Json;
@@ -151,8 +151,57 @@ namespace Microsoft.PowerShell.Commands
         /// if the <paramref name="returnHashtable"/> parameter is true.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Justification = "Preferring Json over JSON")]
         public static object ConvertFromJson(string input, bool returnHashtable, int? maxDepth, out ErrorRecord error)
+            => ConvertFromJson(input, returnHashtable, maxDepth, jsonDateKind: JsonDateKind.Default, out error);
+
+        /// <summary>
+        /// Convert a JSON string back to an object of type <see cref="System.Management.Automation.PSObject"/> or
+        /// <see cref="System.Collections.Hashtable"/> depending on parameter <paramref name="returnHashtable"/>.
+        /// </summary>
+        /// <param name="input">The JSON text to convert.</param>
+        /// <param name="returnHashtable">True if the result should be returned as a <see cref="System.Collections.Hashtable"/>
+        /// instead of a <see cref="System.Management.Automation.PSObject"/>.</param>
+        /// <param name="maxDepth">The max depth allowed when deserializing the json input. Set to null for no maximum.</param>
+        /// <param name="jsonDateKind">Controls how DateTime values are to be converted.</param>
+        /// <param name="error">An error record if the conversion failed.</param>
+        /// <returns>A <see cref="System.Management.Automation.PSObject"/> or a <see cref="System.Collections.Hashtable"/>
+        /// if the <paramref name="returnHashtable"/> parameter is true.</returns>
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Justification = "Preferring Json over JSON")]
+        internal static object ConvertFromJson(string input, bool returnHashtable, int? maxDepth, JsonDateKind jsonDateKind, out ErrorRecord error)
         {
             ArgumentNullException.ThrowIfNull(input);
+
+            DateParseHandling dateParseHandling;
+            DateTimeZoneHandling dateTimeZoneHandling;
+            switch (jsonDateKind)
+            {
+                case JsonDateKind.Default:
+                    dateParseHandling = DateParseHandling.DateTime;
+                    dateTimeZoneHandling = DateTimeZoneHandling.RoundtripKind;
+                    break;
+
+                case JsonDateKind.Local:
+                    dateParseHandling = DateParseHandling.DateTime;
+                    dateTimeZoneHandling = DateTimeZoneHandling.Local;
+                    break;
+
+                case JsonDateKind.Utc:
+                    dateParseHandling = DateParseHandling.DateTime;
+                    dateTimeZoneHandling = DateTimeZoneHandling.Utc;
+                    break;
+
+                case JsonDateKind.Offset:
+                    dateParseHandling = DateParseHandling.DateTimeOffset;
+                    dateTimeZoneHandling = DateTimeZoneHandling.Unspecified;
+                    break;
+
+                case JsonDateKind.String:
+                    dateParseHandling = DateParseHandling.None;
+                    dateTimeZoneHandling = DateTimeZoneHandling.Unspecified;
+                    break;
+
+                default:
+                    throw new ArgumentException($"Unknown JsonDateKind value requested '{jsonDateKind}'");
+            }
 
             error = null;
             try
@@ -161,6 +210,9 @@ namespace Microsoft.PowerShell.Commands
                     input,
                     new JsonSerializerSettings
                     {
+                        DateParseHandling = dateParseHandling,
+                        DateTimeZoneHandling = dateTimeZoneHandling,
+
                         // This TypeNameHandling setting is required to be secure.
                         TypeNameHandling = TypeNameHandling.None,
                         MetadataPropertyHandling = MetadataPropertyHandling.Ignore,
@@ -236,11 +288,11 @@ namespace Microsoft.PowerShell.Commands
                     return null;
                 }
 
-                // Array
                 switch (entry.Value)
                 {
                     case JArray list:
                         {
+                            // Array
                             var listResult = PopulateFromJArray(list, out error);
                             if (error != null)
                             {
@@ -280,45 +332,44 @@ namespace Microsoft.PowerShell.Commands
         {
             error = null;
             var result = new object[list.Count];
+            var i = 0;
 
-            for (var index = 0; index < list.Count; index++)
+            foreach (var element in list)
             {
-                var element = list[index];
                 switch (element)
                 {
                     case JArray subList:
+                        // Array
+                        result[i++] = PopulateFromJArray(subList, out error);
+                        if (error != null)
                         {
-                            // Array
-                            var listResult = PopulateFromJArray(subList, out error);
-                            if (error != null)
-                            {
-                                return null;
-                            }
-
-                            result[index] = listResult;
-                            break;
+                            return null;
                         }
+
+                        break;
+
                     case JObject dic:
+                        // Dictionary
+                        result[i++] = PopulateFromJDictionary(dic, new DuplicateMemberHashSet(dic.Count), out error);
+                        if (error != null)
                         {
-                            // Dictionary
-                            var dicResult = PopulateFromJDictionary(dic, new DuplicateMemberHashSet(dic.Count), out error);
-                            if (error != null)
-                            {
-                                return null;
-                            }
+                            return null;
+                        }
 
-                            result[index] = dicResult;
-                            break;
-                        }
+                        break;
+
                     case JValue value:
+                        if (value.Type != JTokenType.Comment)
                         {
-                            result[index] = value.Value;
-                            break;
+                            result[i++] = value.Value;
                         }
+
+                        break;
                 }
             }
 
-            return result;
+            // In the common case of not having any comments, return the original array, otherwise create a sliced copy.
+            return i == list.Count ? result : result[..i];
         }
 
         // This function is a clone of PopulateFromDictionary using JObject as an input.
@@ -383,46 +434,44 @@ namespace Microsoft.PowerShell.Commands
         {
             error = null;
             var result = new object[list.Count];
+            var i = 0;
 
-            for (var index = 0; index < list.Count; index++)
+            foreach (var element in list)
             {
-                var element = list[index];
-
                 switch (element)
                 {
-                    case JArray array:
+                    case JArray subList:
+                        // Array
+                        result[i++] = PopulateHashTableFromJArray(subList, out error);
+                        if (error != null)
                         {
-                            // Array
-                            var listResult = PopulateHashTableFromJArray(array, out error);
-                            if (error != null)
-                            {
-                                return null;
-                            }
-
-                            result[index] = listResult;
-                            break;
+                            return null;
                         }
+
+                        break;
+
                     case JObject dic:
+                        // Dictionary
+                        result[i++] = PopulateHashTableFromJDictionary(dic, out error);
+                        if (error != null)
                         {
-                            // Dictionary
-                            var dicResult = PopulateHashTableFromJDictionary(dic, out error);
-                            if (error != null)
-                            {
-                                return null;
-                            }
+                            return null;
+                        }
 
-                            result[index] = dicResult;
-                            break;
-                        }
+                        break;
+
                     case JValue value:
+                        if (value.Type != JTokenType.Comment)
                         {
-                            result[index] = value.Value;
-                            break;
+                            result[i++] = value.Value;
                         }
+
+                        break;
                 }
             }
 
-            return result;
+            // In the common case of not having any comments, return the original array, otherwise create a sliced copy.
+            return i == list.Count ? result : result[..i];
         }
 
         #endregion ConvertFromJson
@@ -511,7 +560,8 @@ namespace Microsoft.PowerShell.Commands
                     || obj is Uri
                     || obj is double
                     || obj is float
-                    || obj is decimal)
+                    || obj is decimal
+                    || obj is BigInteger)
             {
                 rv = obj;
             }
@@ -523,7 +573,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 Type t = obj.GetType();
 
-                if (t.IsPrimitive)
+                if (t.IsPrimitive || (t.IsEnum && ExperimentalFeature.IsEnabled(ExperimentalFeature.PSSerializeJSONLongEnumAsNumber)))
                 {
                     rv = obj;
                 }
@@ -571,15 +621,13 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        IDictionary dict = obj as IDictionary;
-                        if (dict != null)
+                        if (obj is IDictionary dict)
                         {
                             rv = ProcessDictionary(dict, currentDepth, in context);
                         }
                         else
                         {
-                            IEnumerable enumerable = obj as IEnumerable;
-                            if (enumerable != null)
+                            if (obj is IEnumerable enumerable)
                             {
                                 rv = ProcessEnumerable(enumerable, currentDepth, in context);
                             }
@@ -614,7 +662,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         private static object AddPsProperties(object psObj, object obj, int depth, bool isPurePSObj, bool isCustomObj, in ConvertToJsonContext context)
         {
-            if (!(psObj is PSObject pso))
+            if (psObj is not PSObject pso)
             {
                 return obj;
             }
@@ -626,9 +674,8 @@ namespace Microsoft.PowerShell.Commands
             }
 
             bool wasDictionary = true;
-            IDictionary dict = obj as IDictionary;
 
-            if (dict == null)
+            if (obj is not IDictionary dict)
             {
                 wasDictionary = false;
                 dict = new Dictionary<string, object>();

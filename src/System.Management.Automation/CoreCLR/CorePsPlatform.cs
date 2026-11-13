@@ -69,7 +69,10 @@ namespace System.Management.Automation
 #if UNIX
                 return false;
 #else
-                if (_isNanoServer.HasValue) { return _isNanoServer.Value; }
+                if (_isNanoServer.HasValue)
+                {
+                    return _isNanoServer.Value;
+                }
 
                 _isNanoServer = false;
                 using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Server\ServerLevels"))
@@ -99,7 +102,10 @@ namespace System.Management.Automation
 #if UNIX
                 return false;
 #else
-                if (_isIoT.HasValue) { return _isIoT.Value; }
+                if (_isIoT.HasValue)
+                {
+                    return _isIoT.Value;
+                }
 
                 _isIoT = false;
                 using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion"))
@@ -129,7 +135,10 @@ namespace System.Management.Automation
 #if UNIX
                 return false;
 #else
-                if (_isWindowsDesktop.HasValue) { return _isWindowsDesktop.Value; }
+                if (_isWindowsDesktop.HasValue)
+                {
+                    return _isWindowsDesktop.Value;
+                }
 
                 _isWindowsDesktop = !IsNanoServer && !IsIoT;
                 return _isWindowsDesktop.Value;
@@ -158,16 +167,24 @@ namespace System.Management.Automation
         internal static readonly string ConfigDirectory = Platform.SelectProductNameForDirectory(Platform.XDG_Type.CONFIG);
 #else
         // Gets the location for cache and config folders.
-        internal static readonly string CacheDirectory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Microsoft\PowerShell";
-        internal static readonly string ConfigDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\PowerShell";
+        internal static readonly string CacheDirectory = SafeDeriveFromSpecialFolder(
+            Environment.SpecialFolder.LocalApplicationData,
+            @"Microsoft\PowerShell");
+
+        internal static readonly string ConfigDirectory = SafeDeriveFromSpecialFolder(
+            Environment.SpecialFolder.Personal,
+            @"PowerShell");
 
         private static readonly Lazy<bool> _isStaSupported = new Lazy<bool>(() =>
         {
             int result = Interop.Windows.CoInitializeEx(IntPtr.Zero, Interop.Windows.COINIT_APARTMENTTHREADED);
 
-            // If 0 is returned the thread has been initialized for the first time
-            // as an STA and thus supported and needs to be uninitialized.
-            if (result > 0)
+            // Per COM documentation: Each successful call to CoInitializeEx (including S_FALSE)
+            // must be balanced by a corresponding call to CoUninitialize.
+            //  - S_OK (0) means we initialized for the first time.
+            //  - S_FALSE (1) means already initialized, but still increments the reference count.
+            // Both require CoUninitialize to decrement the reference count.
+            if (result >= 0)
             {
                 Interop.Windows.CoUninitialize();
             }
@@ -179,6 +196,30 @@ namespace System.Management.Automation
         private static bool? _isIoT = null;
         private static bool? _isWindowsDesktop = null;
 #endif
+
+        internal static bool TryDeriveFromCache(string path1, out string result)
+        {
+            if (CacheDirectory is null or [])
+            {
+                result = null;
+                return false;
+            }
+
+            result = Path.Combine(CacheDirectory, path1);
+            return true;
+        }
+
+        internal static bool TryDeriveFromCache(string path1, string path2, out string result)
+        {
+            if (CacheDirectory is null or [])
+            {
+                result = null;
+                return false;
+            }
+
+            result = Path.Combine(CacheDirectory, path1, path2);
+            return true;
+        }
 
         // format files
         internal static readonly string[] FormatFileNames = new string[]
@@ -209,11 +250,22 @@ namespace System.Management.Automation
 #endif
         }
 
+        private static string SafeDeriveFromSpecialFolder(Environment.SpecialFolder specialFolder, string subPath)
+        {
+            string basePath = Environment.GetFolderPath(specialFolder, Environment.SpecialFolderOption.DoNotVerify);
+            if (string.IsNullOrWhiteSpace(basePath))
+            {
+                return string.Empty;
+            }
+
+            return Path.Join(basePath, subPath);
+        }
+
 #if UNIX
         private static string s_tempHome = null;
 
         /// <summary>
-        /// Get the 'HOME' environment variable or create a temporary home diretory if the environment variable is not set.
+        /// Get the 'HOME' environment variable or create a temporary home directory if the environment variable is not set.
         /// </summary>
         private static string GetHomeOrCreateTempHome()
         {
@@ -228,7 +280,17 @@ namespace System.Management.Automation
             try
             {
                 s_tempHome = Path.Combine(Path.GetTempPath(), StringUtil.Format(tempHomeFolderName, Environment.UserName));
-                Directory.CreateDirectory(s_tempHome);
+
+                // Create the temporary home directory with the user-only permission.
+                UnixFileMode userOnlyMode = UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute;
+                var dirInfo = Directory.CreateDirectory(s_tempHome, userOnlyMode);
+                if (dirInfo.UnixFileMode != userOnlyMode)
+                {
+                    // The permission is not as expected, which indicates the directory may be pre-created by a different user.
+                    // Throw an exception and fail PowerShell in this case for security reason.
+                    throw new InvalidOperationException(
+                        StringUtil.Format(CoreClrStubResources.TempHomeDirectoryUnsafePermission, s_tempHome));
+                }
             }
             catch (UnauthorizedAccessException)
             {
@@ -351,7 +413,7 @@ namespace System.Management.Automation
                 _ => throw new NotSupportedException()
             };
 #else
-            return Environment.GetFolderPath(folder);
+            return Environment.GetFolderPath(folder, Environment.SpecialFolderOption.DoNotVerify);
 #endif
         }
 
@@ -585,81 +647,72 @@ namespace System.Management.Automation
                 private const char CanRead = 'r';
                 private const char CanWrite = 'w';
                 private const char CanExecute = 'x';
-
-                // helper for getting unix mode
-                private readonly Dictionary<StatMask, char> modeMap = new()
-                {
-                        { StatMask.OwnerRead, CanRead },
-                        { StatMask.OwnerWrite, CanWrite },
-                        { StatMask.OwnerExecute, CanExecute },
-                        { StatMask.GroupRead, CanRead },
-                        { StatMask.GroupWrite, CanWrite },
-                        { StatMask.GroupExecute, CanExecute },
-                        { StatMask.OtherRead, CanRead },
-                        { StatMask.OtherWrite, CanWrite },
-                        { StatMask.OtherExecute, CanExecute },
-                };
-
-                private readonly StatMask[] permissions = new StatMask[]
-                {
-                    StatMask.OwnerRead,
-                    StatMask.OwnerWrite,
-                    StatMask.OwnerExecute,
-                    StatMask.GroupRead,
-                    StatMask.GroupWrite,
-                    StatMask.GroupExecute,
-                    StatMask.OtherRead,
-                    StatMask.OtherWrite,
-                    StatMask.OtherExecute
-                };
+                private const char NoPerm = '-';
+                private const char SetAndExec = 's';
+                private const char SetAndNotExec = 'S';
+                private const char StickyAndExec = 't';
+                private const char StickyAndNotExec = 'T';
 
                 // The item type and the character representation for the first element in the stat string
-                private readonly Dictionary<ItemType, char> itemTypeTable = new()
+                private static readonly Dictionary<ItemType, char> itemTypeTable = new()
                 {
-                    { ItemType.BlockDevice, 'b' },
+                    { ItemType.BlockDevice,     'b' },
                     { ItemType.CharacterDevice, 'c' },
-                    { ItemType.Directory, 'd' },
-                    { ItemType.File, '-' },
-                    { ItemType.NamedPipe, 'p' },
-                    { ItemType.Socket, 's' },
-                    { ItemType.SymbolicLink, 'l' },
+                    { ItemType.Directory,       'd' },
+                    { ItemType.File,            '-' },
+                    { ItemType.NamedPipe,       'p' },
+                    { ItemType.Socket,          's' },
+                    { ItemType.SymbolicLink,    'l' },
                 };
+
+                // We'll create a few common mode strings here to reduce allocations and improve performance a bit.
+                private const string OwnerReadGroupReadOtherRead = "-r--r--r--";
+                private const string OwnerReadWriteGroupReadOtherRead = "-rw-r--r--";
+                private const string DirectoryOwnerFullGroupReadExecOtherReadExec = "drwxr-xr-x";
 
                 /// <summary>Convert the mode to a string which is usable in our formatting.</summary>
                 /// <returns>The mode converted into a Unix style string similar to the output of ls.</returns>
                 public string GetModeString()
                 {
-                    int offset = 0;
-                    char[] modeCharacters = new char[10];
-                    modeCharacters[offset++] = itemTypeTable[ItemType];
-
-                    foreach (StatMask permission in permissions)
+                    // On an Ubuntu system (docker), these 3 are roughly 70% of all the permissions
+                    if ((Mode & 0xFFF) == 292)
                     {
-                        // determine whether we are setuid, sticky, or the usual rwx.
-                        if ((Mode & (int)permission) == (int)permission)
-                        {
-                            if ((permission == StatMask.OwnerExecute && IsSetUid) || (permission == StatMask.GroupExecute && IsSetGid))
-                            {
-                                // Check for setuid and add 's'
-                                modeCharacters[offset] = 's';
-                            }
-                            else if (permission == StatMask.OtherExecute && IsSticky && (ItemType == ItemType.Directory))
-                            {
-                                // Directories are sticky, rather than setuid
-                                modeCharacters[offset] = 't';
-                            }
-                            else
-                            {
-                                modeCharacters[offset] = modeMap[permission];
-                            }
-                        }
-                        else
-                        {
-                            modeCharacters[offset] = '-';
-                        }
-
-                        offset++;
+                        return OwnerReadGroupReadOtherRead;
                     }
+
+                    if ((Mode & 0xFFF) == 420)
+                    {
+                       return OwnerReadWriteGroupReadOtherRead;
+                    }
+
+                    if (ItemType == ItemType.Directory & (Mode & 0xFFF) == 493)
+                    {
+                        return DirectoryOwnerFullGroupReadExecOtherReadExec;
+                    }
+
+                    UnixFileMode modeInfo = (UnixFileMode)Mode;
+
+                    Span<char> modeCharacters = [
+                        itemTypeTable[ItemType],
+
+                        modeInfo.HasFlag(UnixFileMode.UserRead) ? CanRead : NoPerm,
+                        modeInfo.HasFlag(UnixFileMode.UserWrite) ? CanWrite : NoPerm,
+                        modeInfo.HasFlag(UnixFileMode.SetUser) ?
+                            (modeInfo.HasFlag(UnixFileMode.UserExecute) ? SetAndExec : SetAndNotExec) :
+                            (modeInfo.HasFlag(UnixFileMode.UserExecute) ? CanExecute : NoPerm),
+
+                        modeInfo.HasFlag(UnixFileMode.GroupRead) ? CanRead : NoPerm,
+                        modeInfo.HasFlag(UnixFileMode.GroupWrite) ? CanWrite : NoPerm,
+                        modeInfo.HasFlag(UnixFileMode.SetGroup) ?
+                            (modeInfo.HasFlag(UnixFileMode.GroupExecute) ? SetAndExec : SetAndNotExec) :
+                            (modeInfo.HasFlag(UnixFileMode.GroupExecute) ? CanExecute : NoPerm),
+
+                        modeInfo.HasFlag(UnixFileMode.OtherRead) ? CanRead : NoPerm,
+                        modeInfo.HasFlag(UnixFileMode.OtherWrite) ? CanWrite : NoPerm,
+                        modeInfo.HasFlag(UnixFileMode.StickyBit) ?
+                            (modeInfo.HasFlag(UnixFileMode.OtherExecute) ? StickyAndExec : StickyAndNotExec) :
+                            (modeInfo.HasFlag(UnixFileMode.OtherExecute) ? CanExecute : NoPerm),
+                    ];
 
                     return new string(modeCharacters);
                 }
@@ -898,7 +951,7 @@ namespace System.Management.Automation
                 private const string psLib = "libpsl-native";
 
                 // Ansi is a misnomer, it is hardcoded to UTF-8 on Linux and macOS
-                // C bools are 1 byte and so must be marshaled as I1
+                // C bools are 1 byte and so must be marshalled as I1
 
                 [LibraryImport(psLib)]
                 internal static partial int GetErrorCategory(int errno);
@@ -923,8 +976,10 @@ namespace System.Management.Automation
                 [LibraryImport(psLib)]
                 internal static partial int WaitPid(int pid, [MarshalAs(UnmanagedType.Bool)] bool nohang);
 
-                // This is a struct tm from <time.h>.
-                [StructLayout(LayoutKind.Sequential)]
+                // This is the struct `private_tm` from setdate.h in libpsl-native.
+                // Packing is set to 4 to match the unmanaged declaration.
+                // https://github.com/PowerShell/PowerShell-Native/blob/c5575ceb064e60355b9fee33eabae6c6d2708d14/src/libpsl-native/src/setdate.h#L23
+                [StructLayout(LayoutKind.Sequential, Pack = 4)]
                 internal unsafe struct UnixTm
                 {
                     /// <summary>Seconds (0-60).</summary>
@@ -971,7 +1026,7 @@ namespace System.Management.Automation
                     return tm;
                 }
 
-                [LibraryImport(psLib)]
+                [LibraryImport(psLib, SetLastError = true)]
                 internal static unsafe partial int SetDate(UnixTm* tm);
 
                 [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]

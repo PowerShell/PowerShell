@@ -101,7 +101,7 @@ namespace System.Management.Automation
         /// </exception>
         internal ParameterBinderController NewParameterBinderController(InternalCommand command)
         {
-            if (!(command is Cmdlet cmdlet))
+            if (command is not Cmdlet cmdlet)
             {
                 throw PSTraceSource.NewArgumentException(nameof(command));
             }
@@ -227,6 +227,7 @@ namespace System.Management.Automation
                     Context.LanguageMode = scriptCmdletInfo.ScriptBlock.LanguageMode.Value;
 
                     // If it's from ConstrainedLanguage to FullLanguage, indicate the transition before parameter binding takes place.
+                    // When transitioning to FullLanguage mode, we don't want any ConstrainedLanguage restrictions or incorrect Audit messages.
                     if (oldLanguageMode == PSLanguageMode.ConstrainedLanguage && Context.LanguageMode == PSLanguageMode.FullLanguage)
                     {
                         oldLangModeTransitionStatus = Context.LanguageModeTransitionInParameterBinding;
@@ -686,7 +687,7 @@ namespace System.Management.Automation
         /// If the constructor for the cmdlet threw an exception.
         /// </exception>
         /// <exception cref="MemberAccessException">
-        /// The type referenced by <paramref name="cmdletInformation"/> refered to an
+        /// The type referenced by <paramref name="cmdletInformation"/> referred to an
         /// abstract type or them member was invoked via a late-binding mechanism.
         /// </exception>
         /// <exception cref="TypeLoadException">
@@ -777,9 +778,11 @@ namespace System.Management.Automation
             InitCommon();
 
             // If the script has been dotted, throw an error if it's from a different language mode.
-            if (!this.UseLocalScope)
+            // Unless it was a script loaded through -File, in which case the danger of dotting other
+            // language modes (getting internal functions in the user's state) isn't a danger.
+            if (!this.UseLocalScope && !scriptCmdlet.ShouldRethrowExitException)
             {
-                ValidateCompatibleLanguageMode(scriptCommandInfo.ScriptBlock, _context.LanguageMode, Command.MyInvocation);
+                ValidateCompatibleLanguageMode(scriptCommandInfo.ScriptBlock, _context, Command.MyInvocation);
             }
         }
 

@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8' standalone='yes'?>
 <?Copyright (c) Microsoft Corporation.?>
-<!-- See MSDN docs about 'region of interest': https://docs.microsoft.com/windows-hardware/test/wpt/regions-of-interest -->
+<!-- See MSDN docs about 'region of interest': https://learn.microsoft.com/windows-hardware/test/wpt/regions-of-interest -->
 <InstrumentationManifest>
    <Instrumentation>
       <Regions>
@@ -316,4 +316,3 @@
       </Regions>
    </Instrumentation>
 </InstrumentationManifest>
-

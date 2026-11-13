@@ -35,7 +35,7 @@ namespace Microsoft.PowerShell.Commands
         /// An instance of the PSTraceSource class used for trace output
         /// using "FileSystemContentStream" as the category.
         /// </summary>
-        [Dbg.TraceSourceAttribute(
+        [Dbg.TraceSource(
             "FileSystemContentStream",
             "The provider content reader and writer for the file system")]
         private static readonly Dbg.PSTraceSource s_tracer =
@@ -709,7 +709,7 @@ namespace Microsoft.PowerShell.Commands
             // We've reached the end of file or end of line.
             if (_currentLineContent.Length > 0)
             {
-                // Add the block read to the ouptut array list, trimming a trailing delimiter, if present.
+                // Add the block read to the output array list, trimming a trailing delimiter, if present.
                 // Note: If -Tail was specified, we get here in the course of 2 distinct passes:
                 //  - Once while reading backward simply to determine the appropriate *start position* for later forward reading, ignoring the content of the blocks read (in reverse).
                 //  - Then again during forward reading, for regular output processing; it is only then that trimming the delimiter is necessary.
@@ -1474,26 +1474,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return _byteCount;
-        }
-
-        private static class NativeMethods
-        {
-            // Default values
-            private const int MAX_DEFAULTCHAR = 2;
-            private const int MAX_LEADBYTES = 12;
-
-            [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-            internal struct CPINFO
-            {
-                [MarshalAs(UnmanagedType.U4)]
-                internal int MaxCharSize;
-
-                [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DEFAULTCHAR)]
-                public byte[] DefaultChar;
-
-                [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_LEADBYTES)]
-                public byte[] LeadBytes;
-            }
         }
     }
 

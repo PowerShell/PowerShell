@@ -23,6 +23,12 @@ jobs:
   displayName: ${{ parameters.name }} Test - ${{ parameters.purpose }} - ${{ parameters.tagSet }}
 
   steps:
+    - task: UseDotNet@2
+      displayName: 'Use .NET Core sdk'
+      inputs:
+        useGlobalJson: true
+        packageType: 'sdk'
+
     - template: ./nix-test-steps.yml
       parameters:
         purpose: ${{ parameters.purpose }}

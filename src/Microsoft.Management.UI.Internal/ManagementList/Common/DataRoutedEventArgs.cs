@@ -11,7 +11,7 @@ namespace Microsoft.Management.UI.Internal
 {
     /// <summary>
     /// Routed event args which provide the ability to attach an
-    /// arbitrary peice of data.
+    /// arbitrary piece of data.
     /// </summary>
     /// <typeparam name="T">There are no restrictions on type T.</typeparam>
     [SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]

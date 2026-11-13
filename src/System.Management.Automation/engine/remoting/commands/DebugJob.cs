@@ -226,7 +226,10 @@ namespace Microsoft.PowerShell.Commands
                 foreach (var cJob in _job.ChildJobs)
                 {
                     debuggableJobFound = GetJobDebuggable(cJob);
-                    if (debuggableJobFound) { break; }
+                    if (debuggableJobFound)
+                    {
+                        break;
+                    }
                 }
             }
 

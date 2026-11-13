@@ -226,12 +226,12 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         #endregion
 
         /// <summary>
-        /// Gets the delimited poarameter if it needs delimitation and is not delimited.
+        /// Gets the delimited parameter if it needs delimitation and is not delimited.
         /// </summary>
         /// <param name="parameterValue">Value needing delimitation.</param>
         /// <param name="openDelimiter">Open delimitation.</param>
         /// <param name="closeDelimiter">Close delimitation.</param>
-        /// <returns>The delimited poarameter if it needs delimitation and is not delimited.</returns>
+        /// <returns>The delimited parameter if it needs delimitation and is not delimited.</returns>
         private static string GetDelimitedParameter(string parameterValue, string openDelimiter, string closeDelimiter)
         {
             string parameterValueTrimmed = parameterValue.Trim();
@@ -363,13 +363,11 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <param name="propertyName">The changed property.</param>
         private void OnNotifyPropertyChanged(string propertyName)
         {
-            #pragma warning disable IDE1005 // IDE1005: Delegate invocation can be simplified.
             PropertyChangedEventHandler handler = this.PropertyChanged;
             if (handler != null)
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
-            #pragma warning restore IDE1005
         }
 
         /// <summary>

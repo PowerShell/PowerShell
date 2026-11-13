@@ -59,8 +59,8 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -188,6 +188,9 @@
   </data>
   <data name="InvalidCastException" xml:space="preserve">
     <value>Cannot convert the "{0}" value of type "{1}" to type "{2}".</value>
+  </data>
+  <data name="InvalidCastExceptionWithoutValue" xml:space="preserve">
+    <value>Cannot convert the value of type "{0}" to type "{1}".</value>
   </data>
   <data name="InvalidCastExceptionWithInnerException" xml:space="preserve">
     <value>Cannot convert value "{0}" to type "{1}". Error: "{2}"</value>
@@ -387,5 +390,19 @@ PS&gt; [System.Collections.Generic.Comparer``1]::get_Default()
   </data>
   <data name="CannotInstantiateBoxedByRefLikeType" xml:space="preserve">
     <value>Cannot create an instance of the ByRef-like type "{0}". ByRef-like types are not supported in PowerShell.</value>
+  </data>
+  <data name="WDACHashTypeLogTitle" xml:space="preserve">
+    <value>Extended Type System Hashtable Conversion</value>
+  </data>
+  <data name="WDACHashTypeLogMessage" xml:space="preserve">
+    <value>Type conversion from HashTable to '{0}' will not be allowed in ConstrainedLanguage mode.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
+  </data>
+  <data name="WDACTypeConversionLogTitle" xml:space="preserve">
+    <value>Extended Type System Hashtable Conversion</value>
+  </data>
+  <data name="WDACTypeConversionLogMessage" xml:space="preserve">
+    <value>Type conversion from '{0}' to '{1}' will not be allowed in ConstrainedLanguage mode.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

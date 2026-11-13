@@ -16,6 +16,8 @@ function script:Start-NativeExecution {
     $ErrorActionPreference = "Continue"
     Write-Verbose "Executing: $ScriptBlock"
     try {
+        $cwd = Get-Location
+
         if ($VerboseOutputOnError.IsPresent) {
             $output = & $ScriptBlock 2>&1
         } else {
@@ -36,10 +38,10 @@ function script:Start-NativeExecution {
                 $callerFile = $callerLocationParts[0]
                 $callerLine = $callerLocationParts[1]
 
-                $errorMessage = "Execution of {$ScriptBlock} by ${callerFile}: line $callerLine failed with exit code $LASTEXITCODE"
+                $errorMessage = "Execution of {$ScriptBlock} in '$cwd' by ${callerFile}: line $callerLine failed with exit code $LASTEXITCODE"
                 throw $errorMessage
             }
-            throw "Execution of {$ScriptBlock} failed with exit code $LASTEXITCODE"
+            throw "Execution of {$ScriptBlock} in '$cwd' failed with exit code $LASTEXITCODE"
         }
     } finally {
         $ErrorActionPreference = $backupEAP

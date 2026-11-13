@@ -238,14 +238,7 @@ namespace System.Management.Automation
 
             if (parameter.ParameterType == typeof(SwitchParameter))
             {
-                if (parameter.IsMandatory)
-                {
-                    result.Append($"-{parameter.Name}");
-                }
-                else
-                {
-                    result.Append($"[-{parameter.Name}]");
-                }
+                result.AppendFormat(CultureInfo.InvariantCulture, parameter.IsMandatory ? "-{0}" : "[-{0}]", parameter.Name);
             }
             else
             {
@@ -253,25 +246,19 @@ namespace System.Management.Automation
 
                 if (parameter.IsMandatory)
                 {
-                    if (parameter.Position != int.MinValue)
-                    {
-                        result.Append($"[-{parameter.Name}] <{parameterTypeString}>");
-                    }
-                    else
-                    {
-                        result.Append($"-{parameter.Name} <{parameterTypeString}>");
-                    }
+                    result.AppendFormat(
+                        CultureInfo.InvariantCulture,
+                        parameter.Position != int.MinValue ? "[-{0}] <{1}>" : "-{0} <{1}>",
+                        parameter.Name,
+                        parameterTypeString);
                 }
                 else
                 {
-                    if (parameter.Position != int.MinValue)
-                    {
-                        result.Append($"[[-{parameter.Name}] <{parameterTypeString}>]");
-                    }
-                    else
-                    {
-                        result.Append($"[-{parameter.Name} <{parameterTypeString}>]");
-                    }
+                    result.AppendFormat(
+                        CultureInfo.InvariantCulture,
+                        parameter.Position != int.MinValue ? "[[-{0}] <{1}>]" : "[-{0} <{1}>]",
+                        parameter.Name,
+                        parameterTypeString);
                 }
             }
         }

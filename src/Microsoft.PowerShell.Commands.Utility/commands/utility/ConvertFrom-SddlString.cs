@@ -81,9 +81,8 @@ namespace Microsoft.PowerShell.Commands
                 foreach (string memberName in Enum.GetNames(accessRightType))
                 {
                     int memberValue = (int)Enum.Parse(accessRightType, memberName);
-                    if (!foundAccessRightValues.Contains(memberValue))
+                    if (foundAccessRightValues.Add(memberValue))
                     {
-                        foundAccessRightValues.Add(memberValue);
                         if ((accessMask & memberValue) == memberValue)
                         {
                             foundAccessRightNames.Add(memberName);

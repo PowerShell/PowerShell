@@ -137,7 +137,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                  ((uint)(c - 0xffe0) <= (0xffe6 - 0xffe0)));
 
             // We can ignore these ranges because .Net strings use surrogate pairs
-            // for this range and we do not handle surrogage pairs.
+            // for this range and we do not handle surrogate pairs.
             // (c >= 0x20000 && c <= 0x2fffd) ||
             // (c >= 0x30000 && c <= 0x3fffd)
             return 1 + (isWide ? 1 : 0);

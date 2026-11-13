@@ -535,9 +535,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 if (this.curCimSessionsById.ContainsKey(id))
                 {
-                    if (!sessionIds.Contains(id))
+                    if (sessionIds.Add(id))
                     {
-                        sessionIds.Add(id);
                         sessions.Add(this.curCimSessionsById[id].GetPSObject());
                     }
                 }

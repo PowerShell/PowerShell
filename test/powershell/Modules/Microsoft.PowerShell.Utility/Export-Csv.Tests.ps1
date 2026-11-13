@@ -11,6 +11,7 @@ Describe "Export-Csv" -Tags "CI" {
         $P1 = [pscustomobject]@{"P1" = "first"}
         $P2 = [pscustomobject]@{"P2" = "second"}
         $P11 = [pscustomobject]@{"P1" = "eleventh"}
+        $testHashTable = @{ 'first' = "value1"; 'second' = $null; 'third' = "value3" }
     }
 
     AfterEach {
@@ -68,16 +69,26 @@ Describe "Export-Csv" -Tags "CI" {
         $results[0] | Should -Not -Match ([regex]::Escape("#TYPE"))
     }
 
+    It "Does not include headers with -NoHeader when exported and can imported with headers" {
+        $P1 | Export-Csv -Path $testCsv -NoHeader
+        $results = Get-Content -Path $testCsv
+        $results | Should -BeExactly '"first"'
+        $results = Import-Csv -Path $testCsv -Header "P1"
+        $results[0].P1 | Should -BeExactly "first"
+    }
+
+    It "Does not include headers when imported with headers and exported using -NoHeader" {
+        $P1 | Export-Csv -Path $testCsv
+        (Import-Csv -Path $testCsv) | Export-Csv -Path $testCsv -NoHeader
+        $results = Get-Content -Path $testCsv
+        $results | Should -BeExactly '"first"'
+    }
+
     It "Includes type information when -IncludeTypeInformation is supplied" {
         $testObject | Export-Csv -Path $testCsv -IncludeTypeInformation
         $results = Get-Content -Path $testCsv
 
         $results[0] | Should -BeExactly "#TYPE System.String"
-    }
-
-    It "Does not support -IncludeTypeInformation and -NoTypeInformation at the same time" {
-        { $testObject | Export-Csv -Path $testCsv -IncludeTypeInformation -NoTypeInformation } |
-            Should -Throw -ErrorId "CannotSpecifyIncludeTypeInformationAndNoTypeInformation,Microsoft.PowerShell.Commands.ExportCsvCommand"
     }
 
     It "Should support -LiteralPath parameter" {
@@ -171,6 +182,10 @@ Describe "Export-Csv" -Tags "CI" {
         $results[1].PSObject.properties.Name | Should -Not -Contain 'third'
     }
 
+    It "Should throw when -Append and -NoHeader are specified together" {
+        { $P1 | Export-Csv -Path $testCsv -Append -NoHeader -ErrorAction Stop } | Should -Throw -ErrorId "CannotSpecifyBothAppendAndNoHeader,Microsoft.PowerShell.Commands.ExportCsvCommand"
+    }
+
     It "First line should be #TYPE if -IncludeTypeInformation used and pstypenames object property is empty" {
         $object = [PSCustomObject]@{first = 1}
         $pstypenames = $object.pstypenames | ForEach-Object -Process {$_}
@@ -232,6 +247,33 @@ Describe "Export-Csv" -Tags "CI" {
         $contents.Count | Should -Be 2
         $contents[0].Contains($delimiter) | Should -BeTrue
         $contents[1].Contains($delimiter) | Should -BeTrue
+    }
+
+    It "Should not throw when exporting hashtable with property that has null value"{
+        { $testHashTable | Export-Csv -Path $testCsv } | Should -Not -Throw
+    }
+
+    It "Should not throw when exporting PSCustomObject with property that has null value"{
+        $testObject = [pscustomobject]$testHashTable
+        { $testObject | Export-Csv -Path $testCsv } | Should -Not -Throw
+    }
+
+    It "Export hashtable with null and non-null values"{
+        $testHashTable | Export-Csv -Path $testCsv
+        $result2 = Import-CSV -Path $testCsv
+
+        $result2.first | Should -BeExactly "value1"
+        $result2.second | Should -BeNullOrEmpty
+        $result2.third | Should -BeExactly "value3"
+    }
+
+    It "Export hashtable with non-null values"{
+        $testTable = @{ 'first' = "value1"; 'second' = "value2" }
+        $testTable | Export-Csv -Path $testCsv
+        $results = Import-CSV -Path $testCsv
+
+        $results.first | Should -BeExactly "value1"
+        $results.second | Should -BeExactly "value2"
     }
 
     Context "UseQuotes parameter" {

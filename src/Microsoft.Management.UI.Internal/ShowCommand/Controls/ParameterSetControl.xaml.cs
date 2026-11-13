@@ -363,7 +363,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Creates a Lable control and add it to MainGrid.
+        /// Creates a Label control and add it to MainGrid.
         /// </summary>
         /// <param name="parameterViewModel">DataContext object.</param>
         /// <param name="rowNumber">Row number.</param>

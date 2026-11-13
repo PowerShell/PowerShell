@@ -32,13 +32,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Returned data structure is a Hashtable instead a CustomPSObject.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter AsHashtable { get; set; }
 
         /// <summary>
         /// Gets or sets the maximum depth the JSON input is allowed to have. By default, it is 1024.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [ValidateRange(ValidateRangeKind.Positive)]
         public int Depth { get; set; } = 1024;
 
@@ -48,6 +48,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         public SwitchParameter NoEnumerate { get; set; }
+
+        /// <summary>
+        /// Gets or sets the switch to control how DateTime values are to be parsed as a dotnet object.
+        /// </summary>
+        [Parameter]
+        public JsonDateKind DateKind { get; set; } = JsonDateKind.Default;
 
         #endregion parameters
 
@@ -113,7 +119,7 @@ namespace Microsoft.PowerShell.Commands
         private bool ConvertFromJsonHelper(string input)
         {
             ErrorRecord error = null;
-            object result = JsonObject.ConvertFromJson(input, AsHashtable.IsPresent, Depth, out error);
+            object result = JsonObject.ConvertFromJson(input, AsHashtable.IsPresent, Depth, DateKind, out error);
 
             if (error != null)
             {

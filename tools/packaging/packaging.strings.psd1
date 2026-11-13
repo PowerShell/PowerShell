@@ -166,7 +166,7 @@ open {0}
             <files include="**/*" buildAction="None" copyToOutput="true" flatten="false" />
         </contentFiles>
         <dependencies>
-            <group targetFramework="net7.0"></group>
+            <group targetFramework="net11.0"></group>
         </dependencies>
     </metadata>
 </package>
@@ -195,12 +195,82 @@ open {0}
 </package>
 '@
 
+    WindowsX64GlobalToolNuspec = @'
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+    <metadata>
+        <id>PowerShelll.Windows.x64</id>
+        <version>{0}</version>
+        <authors>Microsoft</authors>
+        <owners>Microsoft,PowerShell</owners>
+        <projectUrl>https://github.com/PowerShell/PowerShell</projectUrl>
+        <icon>Powershell_64.png</icon>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>PowerShell global tool</description>
+        <license type="expression">MIT</license>
+        <tags>PowerShell</tags>
+        <language>en-US</language>
+        <copyright>&#169; Microsoft Corporation. All rights reserved.</copyright>
+        <packageTypes>
+            <packageType name="DotnetTool" />
+        </packageTypes>
+    </metadata>
+</package>
+'@
+
     GlobalToolSettingsFile = @'
 <?xml version="1.0" encoding="utf-8"?>
 <DotNetCliTool Version="1">
     <Commands>
         <Command Name="pwsh" EntryPoint="{0}" Runner="dotnet" />
     </Commands>
+</DotNetCliTool>
+'@
+
+    # RID-agnostic pointer package nuspec for the RID-specific 'PowerShell' global tool.
+    # {0} = package id ("PowerShell"), {1} = package version, {2} = icon file name.
+    # This replaces the shim-based "Unified" package: 'dotnet tool install' resolves the
+    # correct RID-specific sub-package listed in DotnetToolSettings.xml (see
+    # GlobalToolPointerSettingsFile below) instead of downloading every platform's payload
+    # and picking one at run time via Microsoft.PowerShell.GlobalTool.Shim.
+    GlobalToolPointerNuSpec = @'
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+    <metadata>
+        <id>{0}</id>
+        <version>{1}</version>
+        <authors>Microsoft</authors>
+        <owners>Microsoft,PowerShell</owners>
+        <projectUrl>https://github.com/PowerShell/PowerShell</projectUrl>
+        <icon>{2}</icon>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>PowerShell global tool</description>
+        <license type="expression">MIT</license>
+        <tags>PowerShell</tags>
+        <language>en-US</language>
+        <copyright>&#169; Microsoft Corporation. All rights reserved.</copyright>
+        <packageTypes>
+            <packageType name="DotnetTool" />
+        </packageTypes>
+    </metadata>
+</package>
+'@
+
+    # DotNetCliTool schema version 2: maps each supported RID to its sub-package id.
+    # NOTE: the RID-specific sub-packages themselves (e.g. "PowerShell.win-x64") are produced
+    # directly by 'dotnet pack -r <rid> --no-build' against src/GlobalTools/PowerShell, which
+    # generates its own nuspec/DotnetToolSettings.xml (with a native apphost "Runner=executable"
+    # entry point) -- they are not hand-authored here.
+    # {0} = XML fragment of <RuntimeIdentifierPackage .../> elements, one per supported RID.
+    GlobalToolPointerSettingsFile = @'
+<?xml version="1.0" encoding="utf-8"?>
+<DotNetCliTool Version="2">
+    <Commands>
+        <Command Name="pwsh" />
+    </Commands>
+    <RuntimeIdentifierPackages>
+{0}
+    </RuntimeIdentifierPackages>
 </DotNetCliTool>
 '@
 

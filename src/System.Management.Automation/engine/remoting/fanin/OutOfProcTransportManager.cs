@@ -75,7 +75,15 @@ namespace System.Management.Automation.Remoting
 
         internal static string CreateDataPacket(byte[] data, DataPriorityType streamType, Guid psGuid)
         {
-            string result = string.Create(CultureInfo.InvariantCulture, $"<{PS_OUT_OF_PROC_DATA_TAG} {PS_OUT_OF_PROC_STREAM_ATTRIBUTE}='{streamType}' {PS_OUT_OF_PROC_PSGUID_ATTRIBUTE}='{psGuid}'>{Convert.ToBase64String(data)}</{PS_OUT_OF_PROC_DATA_TAG}>");
+            string result = string.Format(
+                CultureInfo.InvariantCulture,
+                "<{0} {1}='{2}' {3}='{4}'>{5}</{0}>",
+                PS_OUT_OF_PROC_DATA_TAG,
+                PS_OUT_OF_PROC_STREAM_ATTRIBUTE,
+                streamType.ToString(),
+                PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
+                psGuid.ToString(),
+                Convert.ToBase64String(data));
 
             return result;
         }
@@ -124,7 +132,12 @@ namespace System.Management.Automation.Remoting
         /// <returns></returns>
         private static string CreatePSGuidPacket(string element, Guid psGuid)
         {
-            string result = string.Create(CultureInfo.InvariantCulture, $"<{element} {PS_OUT_OF_PROC_PSGUID_ATTRIBUTE}='{psGuid}' />");
+            string result = string.Format(
+                CultureInfo.InvariantCulture,
+                "<{0} {1}='{2}' />",
+                element,
+                PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
+                psGuid.ToString());
 
             return result;
         }
@@ -1001,7 +1014,7 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         #endregion
-    
+
         #region Protected Methods
 
         /// <summary>
@@ -1531,8 +1544,9 @@ namespace System.Management.Automation.Remoting.Client
         /// </summary>
         public override void CreateAsync()
         {
-            _client = new RemoteSessionHyperVSocketClient(_vmGuid, true);
-            if (!_client.Connect(_networkCredential, _configurationName, true))
+            // isFirstConnection: true - specifies to use VM_SESSION_SERVICE_ID socket.
+            _client = new RemoteSessionHyperVSocketClient(_vmGuid, useBackwardsCompatibleMode: false, isFirstConnection: true);
+            if (!_client.Connect(_networkCredential, _configurationName, isFirstConnection: true))
             {
                 _client.Dispose();
                 throw new PSInvalidOperationException(
@@ -1542,11 +1556,14 @@ namespace System.Management.Automation.Remoting.Client
                     ErrorCategory.InvalidOperation,
                     null);
             }
+            bool useBackwardsCompatibleMode = _client.UseBackwardsCompatibleMode;
+            string token = _client.AuthenticationToken;
 
-            // TODO: remove below 3 lines when Hyper-V socket duplication is supported in .NET framework.
             _client.Dispose();
-            _client = new RemoteSessionHyperVSocketClient(_vmGuid, false);
-            if (!_client.Connect(_networkCredential, _configurationName, false))
+
+            // isFirstConnection: false - specifies to use the SESSION_SERVICE_ID_2 socket.
+            _client = new RemoteSessionHyperVSocketClient(_vmGuid, useBackwardsCompatibleMode: useBackwardsCompatibleMode, isFirstConnection: false, authenticationToken: token);
+            if (!_client.Connect(_networkCredential, _configurationName, isFirstConnection: false))
             {
                 _client.Dispose();
                 throw new PSInvalidOperationException(
@@ -1604,7 +1621,9 @@ namespace System.Management.Automation.Remoting.Client
         /// </summary>
         public override void CreateAsync()
         {
-            _client = new RemoteSessionHyperVSocketClient(_targetGuid, false, true);
+            // Container scenario is not working.
+            // When we fix it we need to setup the token in ContainerConnectionInfo and use it here.
+            _client = new RemoteSessionHyperVSocketClient(_targetGuid, isFirstConnection: false, useBackwardsCompatibleMode: false, isContainer: true);
             if (!_client.Connect(null, string.Empty, false))
             {
                 _client.Dispose();
@@ -1703,7 +1722,7 @@ namespace System.Management.Automation.Remoting.Client
             // Start connection timeout timer if requested.
             // Timer callback occurs only once after timeout time.
             _connectionTimer = new Timer(
-                callback: (_) => 
+                callback: (_) =>
                 {
                     if (_connectionEstablished)
                     {
@@ -1714,7 +1733,7 @@ namespace System.Management.Automation.Remoting.Client
                     bool sshTerminated = false;
                     try
                     {
-                        using (var sshProcess = System.Diagnostics.Process.GetProcessById(_sshProcessId))
+                        using (var sshProcess = Process.GetProcessById(_sshProcessId))
                         {
                             sshTerminated = sshProcess == null || sshProcess.Handle == IntPtr.Zero || sshProcess.HasExited;
                         }
@@ -1828,7 +1847,7 @@ namespace System.Management.Automation.Remoting.Client
                         // Messages in error stream from ssh are unreliable, and may just be warnings or
                         // banner text.
                         // So just report the messages but don't act on them.
-                        System.Console.WriteLine(error);
+                        Console.WriteLine(error);
                     }
                     catch (IOException)
                     { }
@@ -1888,10 +1907,10 @@ namespace System.Management.Automation.Remoting.Client
                         break;
                     }
 
-                    if (data.StartsWith(System.Management.Automation.Remoting.Server.FormattedErrorTextWriter.ErrorPrefix, StringComparison.OrdinalIgnoreCase))
+                    if (data.StartsWith(OutOfProcessTextWriter.ErrorPrefix, StringComparison.OrdinalIgnoreCase))
                     {
                         // Error message from the server.
-                        string errorData = data.Substring(System.Management.Automation.Remoting.Server.FormattedErrorTextWriter.ErrorPrefix.Length);
+                        string errorData = data.Substring(OutOfProcessTextWriter.ErrorPrefix.Length);
                         HandleErrorDataReceived(errorData);
                     }
                     else
@@ -2492,7 +2511,7 @@ namespace System.Management.Automation.Remoting.Server
             _stdErrWriter = errWriter;
             _cmdTransportManagers = new Dictionary<Guid, OutOfProcessServerTransportManager>();
 
-            this.WSManTransportErrorOccured += (object sender, TransportErrorOccuredEventArgs e) => 
+            this.WSManTransportErrorOccured += (object sender, TransportErrorOccuredEventArgs e) =>
             {
                 string msg = e.Exception.TransportMessage ?? e.Exception.InnerException?.Message ?? string.Empty;
                 _stdErrWriter.WriteLine(StringUtil.Format(RemotingErrorIdStrings.RemoteTransportError, msg));

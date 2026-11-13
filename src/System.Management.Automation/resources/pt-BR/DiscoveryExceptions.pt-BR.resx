@@ -1,0 +1,231 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CmdletFormatInvalid" xml:space="preserve">
+    <value>O nome do cmdlet "{0}" não pode ser validado porque não está no formato correto. Os nomes de cmdlet devem incluir um verbo e um substantivo separados por um "-", como "Get-Process".</value>
+  </data>
+  <data name="ParameterDeclaredInParameterSetMultipleTimes" xml:space="preserve">
+    <value>O parâmetro "{0}" é declarado várias vezes no conjunto de parâmetros "{1}".</value>
+  </data>
+  <data name="AliasDeclaredMultipleTimes" xml:space="preserve">
+    <value>O alias "{0}" é declarado várias vezes.</value>
+  </data>
+  <data name="CompiledCommandParameterMemberMustBeFieldOrProperty" xml:space="preserve">
+    <value>Não foi possível declarar o parâmetro. Os parâmetros podem ser declarados somente em campos e propriedades.</value>
+  </data>
+  <data name="InvalidCmdletNameFormat" xml:space="preserve">
+    <value>Não é possível processar o cmdlet. Um nome de cmdlet deve consistir em um par verbo e substantivo separado por "-".</value>
+  </data>
+  <data name="CommandNotFoundException" xml:space="preserve">
+    <value>O termo "{0}" não é reconhecido como um nome de um cmdlet, função, arquivo de script ou programa executável.
+Verifique a ortografia do nome ou, se um caminho foi incluído, verifique se o caminho está correto e tente novamente.</value>
+  </data>
+  <data name="CmdletNotFoundException" xml:space="preserve">
+    <value>O argumento "{0}" não é reconhecido como um cmdlet: {1}</value>
+  </data>
+  <data name="CmdletDoesNotDeriveFromCmdletType" xml:space="preserve">
+    <value>O argumento "{0}" não é reconhecido como um cmdlet, possivelmente porque não deriva das classes cmdlet ou PSCmdlet: {1}</value>
+  </data>
+  <data name="AliasNotResolvedException" xml:space="preserve">
+    <value>Não é possível resolver o alias "{0}" porque ele se refere ao termo "{1}", que não é reconhecido como um cmdlet, função, programa executável ou arquivo de script. Verifique o termo e tente novamente.</value>
+  </data>
+  <data name="CommandNameNotCmdlet" xml:space="preserve">
+    <value>O parâmetro "{0}" com o valor "{1}" não pode ser processado porque não é um cmdlet e não pode ser processado pelo CommandProcessor.</value>
+  </data>
+  <data name="DuplicateCmdletName" xml:space="preserve">
+    <value>Já existe um cmdlet chamado "{0}". Os cmdlets devem ter nomes exclusivos.</value>
+  </data>
+  <data name="DuplicateCmdletProviderName" xml:space="preserve">
+    <value>Já existe um provedor de cmdlet chamado "{0}". Os provedores de cmdlets devem ter nomes exclusivos.</value>
+  </data>
+  <data name="DuplicateAssemblyName" xml:space="preserve">
+    <value>Já existe um assembly chamado "{0}". Os assemblies devem ter nomes exclusivos.</value>
+  </data>
+  <data name="DuplicateScriptName" xml:space="preserve">
+    <value>Já existe um script chamado "{0}". Os scripts devem ter nomes exclusivos.</value>
+  </data>
+  <data name="ScriptRequiresInvalidFormat" xml:space="preserve">
+    <value>Não é possível processar a instrução #requires porque ela não está no formato correto.
+A instrução #requires deve estar em um dos seguintes formatos:
+ "#requires -shellid &lt;shellID&gt;"
+ "#requires -version &lt;major.minor&gt;"
+ "#requires -psedition &lt;edition&gt;"
+ "#requires -pssnapin &lt;psSnapInName&gt; [-version &lt;major.minor&gt;]"
+ "#requires -modules &lt;ModuleSpecification&gt;"
+ "#requires -runasadministrator"</value>
+  </data>
+  <data name="RequiresInterpreterNotCompatible" xml:space="preserve">
+    <value>O script "{0}" não pode ser executado porque continha uma instrução "#requires" com uma ID de shell {1} incompatível com o shell atual. Para executar esse script, você deve usar o shell localizado em "{2}".</value>
+  </data>
+  <data name="RequiresInterpreterNotCompatibleNoPath" xml:space="preserve">
+    <value>O script "{0}" não pode ser executado porque continha uma instrução "#requires" com uma ID de shell {1} incompatível com o shell atual.</value>
+  </data>
+  <data name="RequiresPSVersionNotCompatible" xml:space="preserve">
+    <value>O script "{0}" não pode ser executado porque continha uma instrução "#requires" para o PowerShell {1}. A versão do PowerShell exigida pelo script não corresponde à versão em execução no momento do PowerShell {2}.</value>
+  </data>
+  <data name="RequiresPSEditionNotCompatible" xml:space="preserve">
+    <value>O script "{0}" não pode ser executado porque continha uma instrução "#requires" para as edições do PowerShell "{1}". A edição do PowerShell exigida pelo script não corresponde à edição do PowerShell {2} em execução no momento.</value>
+  </data>
+  <data name="RequiresMissingPSSnapIns" xml:space="preserve">
+    <value>O script "{0}" não pode ser executado porque os seguintes snap-ins especificados pelas instruções "#requires" do script estão ausentes: {1}.</value>
+  </data>
+  <data name="RequiresShellIDInvalidForSingleShell" xml:space="preserve">
+    <value>A #requires statement has specified only a shellID. #Requires statements must specify a required PowerShell snap-in when running in PowerShell.</value>
+  </data>
+  <data name="RequiresElevation" xml:space="preserve">
+    <value>O script "{0}" não pode ser executado porque contém uma instrução "#requires" para execução como Administrador. A sessão atual do PowerShell não está sendo executada como Administrador. Inicie o PowerShell usando a opção Executar como Administrador e tente executar o script novamente.</value>
+  </data>
+  <data name="PSSnapInNameVersion" xml:space="preserve">
+    <value>{0} (Versão {1})</value>
+  </data>
+  <data name="CommandArgsOnlyForSingleCmdlet" xml:space="preserve">
+    <value>Não foi possível recuperar o comando porque o parâmetro ArgumentList só pode ser especificado ao recuperar um único cmdlet ou script.</value>
+  </data>
+  <data name="ReservedParameterName" xml:space="preserve">
+    <value>O nome do parâmetro "{0}" está reservado para uso futuro.</value>
+  </data>
+  <data name="RequiresMissingModules" xml:space="preserve">
+    <value>O script "{0}" não pode ser executado porque os seguintes módulos especificados pelas instruções "#requires" do script estão ausentes: {1}.</value>
+  </data>
+  <data name="CouldNotAutoImportMatchingModule" xml:space="preserve">
+    <value>O comando "{0}" foi encontrado no módulo "{1}", mas o módulo não pôde ser carregado. Para obter mais informações, execute "Import-Module {1}".</value>
+  </data>
+  <data name="CouldNotAutoImportMatchingModuleWithErrorMessage" xml:space="preserve">
+    <value>O comando "{0}" foi encontrado no módulo "{1}", mas o módulo não pôde ser carregado devido ao seguinte erro: [{2}]
+Para obter mais informações, execute "Import-Module {1}".</value>
+  </data>
+  <data name="CouldNotAutoImportModule" xml:space="preserve">
+    <value>Não foi possível carregar o módulo "{0}". Para obter mais informações, execute "Import-Module {0}".</value>
+  </data>
+  <data name="CommandParameterNotFound" xml:space="preserve">
+    <value>Nenhum comando correspondente inclui um parâmetro chamado "{0}".  Verifique a ortografia do nome do parâmetro e tente novamente.</value>
+  </data>
+  <data name="DotSourceNotSupported" xml:space="preserve">
+    <value>Não é possível usar dot-source neste comando porque ele foi definido em um modo de linguagem diferente. Para invocar esse comando sem importar seu conteúdo, omita o operador ".".</value>
+  </data>
+  <data name="GetCommandShowCommandInfoParamError" xml:space="preserve">
+    <value>Os parâmetros ShowCommandInfo e Syntax não podem ser especificados juntos.</value>
+  </data>
+  <data name="ScriptDisabledWhenFeatureOn" xml:space="preserve">
+    <value>Esse comando de script é desabilitado quando o recurso experimental "{0}" é ativado.</value>
+  </data>
+  <data name="ScriptDisabledWhenFeatureOff" xml:space="preserve">
+    <value>Esse comando de script é desabilitado quando o recurso experimental "{0}" foi desativado.</value>
+  </data>
+</root>

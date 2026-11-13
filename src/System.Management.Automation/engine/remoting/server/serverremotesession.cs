@@ -69,7 +69,7 @@ namespace System.Management.Automation.Remoting
     /// </summary>
     internal class ServerRemoteSession : RemoteSession
     {
-        [TraceSourceAttribute("ServerRemoteSession", "ServerRemoteSession")]
+        [TraceSource("ServerRemoteSession", "ServerRemoteSession")]
         private static readonly PSTraceSource s_trace = PSTraceSource.GetTracer("ServerRemoteSession", "ServerRemoteSession");
 
         private readonly PSSenderInfo _senderInfo;
@@ -973,35 +973,21 @@ namespace System.Management.Automation.Remoting
 
             if (onConnect)
             {
-                bool connectSupported = false;
-
-                // Win10 server can support reconstruct/reconnect for all 2.x protocol versions
-                // that support reconstruct/reconnect, Protocol 2.2+
-                // Major protocol version differences (2.x -> 3.x) are not supported.
-                // A reconstruct can only be initiated by a client that understands disconnect (2.2+),
-                // so we only need to check major versions from client and this server for compatibility.
-                if (clientProtocolVersion.Major == RemotingConstants.ProtocolVersion.Major)
+                // PS v7.6 server can support reconstruct/reconnect for all 2.x protocol versions that support reconstruct/reconnect (v2.2+).
+                // Major protocol version differences (2.x -> 3.x) are not supported. A reconstruct can only be initiated by a client that understands disconnect (v2.2+).
+                if (clientProtocolVersion == RemotingConstants.ProtocolVersion_2_2 ||
+                    clientProtocolVersion == RemotingConstants.ProtocolVersion_2_3)
                 {
-                    if (clientProtocolVersion.Minor == RemotingConstants.ProtocolVersionWin8RTM.Minor)
-                    {
-                        // Report that server is Win8 version to the client
-                        // Protocol: 2.2
-                        connectSupported = true;
-                        serverProtocolVersion = RemotingConstants.ProtocolVersionWin8RTM;
-                        Context.ServerCapability.ProtocolVersion = serverProtocolVersion;
-                    }
-                    else if (clientProtocolVersion.Minor > RemotingConstants.ProtocolVersionWin8RTM.Minor)
-                    {
-                        // All other minor versions are supported and the server returns its full capability
-                        // Protocol: 2.3, 2.4, 2.5 ...
-                        connectSupported = true;
-                    }
+                    // Report the server as the same version to the client.
+                    // Client protocol: v2.2, v2.3
+                    serverProtocolVersion = clientProtocolVersion;
+                    Context.ServerCapability.ProtocolVersion = serverProtocolVersion;
                 }
-
-                if (!connectSupported)
+                else if (!(clientProtocolVersion.Major == serverProtocolVersion.Major &&
+                           clientProtocolVersion.Minor >= serverProtocolVersion.Minor))
                 {
                     // Throw for protocol versions 2.x that don't support disconnect/reconnect.
-                    // Protocol: < 2.2
+                    // Client protocol: < 2.2
                     PSRemotingDataStructureException reasonOfFailure =
                         new PSRemotingDataStructureException(RemotingErrorIdStrings.ServerConnectFailedOnNegotiation,
                             RemoteDataNameStrings.PS_STARTUP_PROTOCOL_VERSION_NAME,
@@ -1010,47 +996,23 @@ namespace System.Management.Automation.Remoting
                             RemotingConstants.ProtocolVersion);
                     throw reasonOfFailure;
                 }
+
+                // All other minor versions are supported and the server returns its full capability.
+                // Client protocol: v2.4, v2.5 ...
             }
             else
             {
-                // Win10 server can support Win8 client
-                if (clientProtocolVersion == RemotingConstants.ProtocolVersionWin8RTM &&
-                    (
-                        (serverProtocolVersion == RemotingConstants.ProtocolVersionWin10RTM)
-                    ))
+                if (clientProtocolVersion == RemotingConstants.ProtocolVersion_2_0 ||
+                    clientProtocolVersion == RemotingConstants.ProtocolVersion_2_1 ||
+                    clientProtocolVersion == RemotingConstants.ProtocolVersion_2_2 ||
+                    clientProtocolVersion == RemotingConstants.ProtocolVersion_2_3)
                 {
-                    // - report that server is Win8 version to the client
-                    serverProtocolVersion = RemotingConstants.ProtocolVersionWin8RTM;
+                    // We support the those client versions and report the server as the same version to the client.
+                    serverProtocolVersion = clientProtocolVersion;
                     Context.ServerCapability.ProtocolVersion = serverProtocolVersion;
                 }
-
-                // Win8, Win10 server can support Win7 client
-                if (clientProtocolVersion == RemotingConstants.ProtocolVersionWin7RTM &&
-                    (
-                        (serverProtocolVersion == RemotingConstants.ProtocolVersionWin8RTM) ||
-                        (serverProtocolVersion == RemotingConstants.ProtocolVersionWin10RTM)
-                    ))
-                {
-                    // - report that server is Win7 version to the client
-                    serverProtocolVersion = RemotingConstants.ProtocolVersionWin7RTM;
-                    Context.ServerCapability.ProtocolVersion = serverProtocolVersion;
-                }
-
-                // Win7, Win8, Win10 server can support Win7 RC client
-                if (clientProtocolVersion == RemotingConstants.ProtocolVersionWin7RC &&
-                    (
-                        (serverProtocolVersion == RemotingConstants.ProtocolVersionWin7RTM) ||
-                        (serverProtocolVersion == RemotingConstants.ProtocolVersionWin8RTM) ||
-                        (serverProtocolVersion == RemotingConstants.ProtocolVersionWin10RTM)
-                    ))
-                {
-                    // - report that server is RC version to the client
-                    serverProtocolVersion = RemotingConstants.ProtocolVersionWin7RC;
-                    Context.ServerCapability.ProtocolVersion = serverProtocolVersion;
-                }
-
-                if (!((clientProtocolVersion.Major == serverProtocolVersion.Major) &&
-                      (clientProtocolVersion.Minor >= serverProtocolVersion.Minor)))
+                else if (!(clientProtocolVersion.Major == serverProtocolVersion.Major &&
+                           clientProtocolVersion.Minor >= serverProtocolVersion.Minor))
                 {
                     PSRemotingDataStructureException reasonOfFailure =
                         new PSRemotingDataStructureException(RemotingErrorIdStrings.ServerNegotiationFailed,

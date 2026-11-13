@@ -1569,13 +1569,9 @@ namespace System.Management.Automation.Runspaces
                 string assembly = ss.Assemblies[i].FileName;
                 if (!string.IsNullOrEmpty(assembly))
                 {
-                    if (assemblyList.Contains(assembly))
+                    if (!assemblyList.Add(assembly))
                     {
                         ss.Assemblies.RemoveItem(i);
-                    }
-                    else
-                    {
-                        assemblyList.Add(assembly);
                     }
                 }
             }
@@ -2128,7 +2124,7 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        private HashSet<string> _startupScripts = new HashSet<string>();
+        private HashSet<string> _startupScripts;
 
         private readonly object _syncObject = new object();
 
@@ -2434,7 +2430,7 @@ namespace System.Management.Automation.Runspaces
                 }
 
                 // Specify the source only if this is for module loading.
-                // The source is used for porper cleaning of the assembly cache when a module is unloaded.
+                // The source is used for proper cleaning of the assembly cache when a module is unloaded.
                 Assembly asm = context.AddAssembly(ssae.Module?.Name, ssae.Name, ssae.FileName, out Exception error);
 
                 if (asm == null || error != null)
@@ -2864,7 +2860,7 @@ namespace System.Management.Automation.Runspaces
             // Ensure that user name contains no invalid path characters.
             // MSDN indicates that logon names cannot contain any of these invalid characters,
             // but this check will ensure safety.
-            if (userName.IndexOfAny(System.IO.Path.GetInvalidPathChars()) > -1)
+            if (PathUtils.ContainsInvalidPathChars(userName))
             {
                 throw new PSInvalidOperationException(RemotingErrorIdStrings.InvalidUserDriveName);
             }
@@ -2921,7 +2917,7 @@ namespace System.Management.Automation.Runspaces
             }
             finally
             {
-                // Restore the langauge mode, but not if it was altered by the startup script itself.
+                // Restore the language mode, but not if it was altered by the startup script itself.
                 if (initializedRunspace.SessionStateProxy.LanguageMode == PSLanguageMode.FullLanguage)
                 {
                     initializedRunspace.SessionStateProxy.LanguageMode = originalLanguageMode;
@@ -2966,13 +2962,20 @@ namespace System.Management.Automation.Runspaces
             HashSet<string> unresolvedCmdsToExpose)
         {
             RunspaceOpenModuleLoadException exceptionToReturn = null;
+            List<PSModuleInfo> processedModules = new List<PSModuleInfo>();
 
             foreach (object module in moduleList)
             {
                 string moduleName = module as string;
                 if (moduleName != null)
                 {
-                    exceptionToReturn = ProcessOneModule(initializedRunspace, moduleName, null, path, publicCommands);
+                    exceptionToReturn = ProcessOneModule(
+                        initializedRunspace: initializedRunspace,
+                        name: moduleName,
+                        moduleInfoToLoad: null,
+                        path: path,
+                        publicCommands: publicCommands,
+                        processedModules: processedModules);
                 }
                 else
                 {
@@ -2983,7 +2986,13 @@ namespace System.Management.Automation.Runspaces
                         {
                             // if only name is specified in the module spec, just try import the module
                             // ie., don't take the performance overhead of calling GetModule.
-                            exceptionToReturn = ProcessOneModule(initializedRunspace, moduleSpecification.Name, null, path, publicCommands);
+                            exceptionToReturn = ProcessOneModule(
+                                initializedRunspace: initializedRunspace,
+                                name: moduleSpecification.Name,
+                                moduleInfoToLoad: null,
+                                path: path,
+                                publicCommands: publicCommands,
+                                processedModules: processedModules);
                         }
                         else
                         {
@@ -2991,7 +3000,13 @@ namespace System.Management.Automation.Runspaces
 
                             if (moduleInfos != null && moduleInfos.Count > 0)
                             {
-                                exceptionToReturn = ProcessOneModule(initializedRunspace, moduleSpecification.Name, moduleInfos[0], path, publicCommands);
+                                exceptionToReturn = ProcessOneModule(
+                                    initializedRunspace: initializedRunspace,
+                                    name: moduleSpecification.Name,
+                                    moduleInfoToLoad: moduleInfos[0],
+                                    path: path,
+                                    publicCommands: publicCommands,
+                                    processedModules: processedModules);
                             }
                             else
                             {
@@ -3040,7 +3055,11 @@ namespace System.Management.Automation.Runspaces
                     string commandToMakeVisible = Utils.ParseCommandName(unresolvedCommand, out moduleName);
                     bool found = false;
 
-                    foreach (CommandInfo cmd in LookupCommands(commandToMakeVisible, moduleName, initializedRunspace.ExecutionContext))
+                    foreach (CommandInfo cmd in LookupCommands(
+                        commandPattern: commandToMakeVisible,
+                        moduleName: moduleName,
+                        context: initializedRunspace.ExecutionContext,
+                        processedModules: processedModules))
                     {
                         if (!found)
                         {
@@ -3091,11 +3110,13 @@ namespace System.Management.Automation.Runspaces
         /// <param name="commandPattern"></param>
         /// <param name="moduleName"></param>
         /// <param name="context"></param>
+        /// <param name="processedModules"></param>
         /// <returns></returns>
         private static IEnumerable<CommandInfo> LookupCommands(
             string commandPattern,
             string moduleName,
-            ExecutionContext context)
+            ExecutionContext context,
+            List<PSModuleInfo> processedModules)
         {
             bool isWildCardPattern = WildcardPattern.ContainsWildcardCharacters(commandPattern);
             var searchOptions = isWildCardPattern ?
@@ -3109,7 +3130,11 @@ namespace System.Management.Automation.Runspaces
             CommandOrigin cmdOrigin = CommandOrigin.Runspace;
             while (true)
             {
-                foreach (CommandInfo commandInfo in context.SessionState.InvokeCommand.GetCommands(commandPattern, CommandTypes.All, searchOptions, cmdOrigin))
+                foreach (CommandInfo commandInfo in context.SessionState.InvokeCommand.GetCommands(
+                    name: commandPattern,
+                    commandTypes: CommandTypes.All,
+                    options: searchOptions,
+                    commandOrigin: cmdOrigin))
                 {
                     // If module name is provided then use it to restrict returned results.
                     if (haveModuleName && !moduleName.Equals(commandInfo.ModuleName, StringComparison.OrdinalIgnoreCase))
@@ -3139,13 +3164,43 @@ namespace System.Management.Automation.Runspaces
                 // Next try internal search.
                 cmdOrigin = CommandOrigin.Internal;
             }
+
+            // If the command is associated with a module, try finding the command in the imported module list.
+            // The SessionState function table holds only one command name, and if two or more modules contain
+            // a command with the same name, only one of them will appear in the function table search above.
+            if (!found && haveModuleName)
+            {
+                var pattern = new WildcardPattern(commandPattern);
+
+                foreach (PSModuleInfo moduleInfo in processedModules)
+                {
+                    if (moduleInfo.Name.Equals(moduleName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        foreach (var cmd in moduleInfo.ExportedCommands.Values)
+                        {
+                            if (pattern.IsMatch(cmd.Name))
+                            {
+                                yield return cmd;
+                            }
+                        }
+
+                        break;
+                    }
+                }
+            }
         }
 
         /// <summary>
         /// If <paramref name="moduleInfoToLoad"/> is null, import module using <paramref name="name"/>. Otherwise,
         /// import module using <paramref name="moduleInfoToLoad"/>
         /// </summary>
-        private RunspaceOpenModuleLoadException ProcessOneModule(Runspace initializedRunspace, string name, PSModuleInfo moduleInfoToLoad, string path, HashSet<CommandInfo> publicCommands)
+        private RunspaceOpenModuleLoadException ProcessOneModule(
+            Runspace initializedRunspace,
+            string name,
+            PSModuleInfo moduleInfoToLoad,
+            string path,
+            HashSet<CommandInfo> publicCommands,
+            List<PSModuleInfo> processedModules)
         {
             using (PowerShell pse = PowerShell.Create())
             {
@@ -3182,6 +3237,11 @@ namespace System.Management.Automation.Runspaces
                     c = new CmdletInfo("Out-Default", typeof(OutDefaultCommand), null, null, initializedRunspace.ExecutionContext);
                     pse.AddCommand(new Command(c));
                 }
+                else
+                {
+                    // For runspace init module processing, pass back the PSModuleInfo to the output pipeline.
+                    cmd.Parameters.Add("PassThru");
+                }
 
                 pse.Runspace = initializedRunspace;
                 // Module import should be run in FullLanguage mode since it is running in
@@ -3190,7 +3250,10 @@ namespace System.Management.Automation.Runspaces
                 pse.Runspace.ExecutionContext.LanguageMode = PSLanguageMode.FullLanguage;
                 try
                 {
-                    pse.Invoke();
+                    // For runspace init module processing, collect the imported PSModuleInfo returned in the output pipeline.
+                    // In other cases, this collection will be empty.
+                    Collection<PSModuleInfo> moduleInfos = pse.Invoke<PSModuleInfo>();
+                    processedModules.AddRange(moduleInfos);
                 }
                 finally
                 {
@@ -3977,6 +4040,7 @@ namespace System.Management.Automation.Runspaces
 [OutputType([System.Management.Automation.CommandCompletion])]
 Param(
     [Parameter(ParameterSetName = 'ScriptInputSet', Mandatory = $true, Position = 0)]
+    [AllowEmptyString()]
     [string] $inputScript,
 
     [Parameter(ParameterSetName = 'ScriptInputSet', Position = 1)]
@@ -4014,7 +4078,7 @@ End
             <#options#>          $options)
     }
 }
-        ";
+";
 
         /// <summary>
         /// This is the default function to use for clear-host.
@@ -4058,16 +4122,7 @@ Switch-Process -WithCommand $args
         }
 #endif
 
-        /// <summary>
-        /// This is the default function to use for man/help. It uses
-        /// splatting to pass in the parameters.
-        /// </summary>
-        internal static string GetHelpPagingFunctionText()
-        {
-            // We used to generate the text for this function so you could add a parameter
-            // to Get-Help and not worry about adding it here.  That was a little slow at
-            // startup, so it's hard coded, with a test to make sure the parameters match.
-            return @"
+        internal const string WindowsHelpFunctionText = @"
 <#
 .FORWARDHELPTARGETNAME Get-Help
 .FORWARDHELPCATEGORY Cmdlet
@@ -4141,14 +4196,132 @@ param(
     elseif ($help -ne $null)
     {
         # By default use more on Windows and less on Linux.
-        if ($IsWindows) {
-            $pagerCommand = 'more.com'
-            $pagerArgs = $null
+        $pagerCommand = 'more.com'
+        $pagerArgs = $null
+
+        # Respect PAGER environment variable which allows user to specify a custom pager.
+        # Ignore a pure whitespace PAGER value as that would cause the tokenizer to return 0 tokens.
+        if (![string]::IsNullOrWhitespace($env:PAGER)) {
+            if (Get-Command $env:PAGER -ErrorAction Ignore) {
+                # Entire PAGER value corresponds to a single command.
+                $pagerCommand = $env:PAGER
+                $pagerArgs = $null
+            }
+            else {
+                # PAGER value is not a valid command, check if PAGER command and arguments have been specified.
+                # Tokenize the specified $env:PAGER value. Ignore tokenizing errors since any errors may be valid
+                # argument syntax for the paging utility.
+                $errs = $null
+                $tokens = [System.Management.Automation.PSParser]::Tokenize($env:PAGER, [ref]$errs)
+
+                $customPagerCommand = $tokens[0].Content
+                if (!(Get-Command $customPagerCommand -ErrorAction Ignore)) {
+                    # Custom pager command is invalid, issue a warning.
+                    Write-Warning ""Custom-paging utility command not found. Ignoring command specified in `$env:PAGER: $env:PAGER""
+                }
+                else {
+                    # This approach will preserve all the pagers args.
+                    $pagerCommand = $customPagerCommand
+                    $pagerArgs = if ($tokens.Count -gt 1) {
+                        $env:PAGER.Substring($tokens[1].Start)
+                    }
+                    else {
+                        $null
+                    }
+                }
+            }
+        }
+
+        $pagerCommandInfo = Get-Command -Name $pagerCommand -ErrorAction Ignore
+        if ($pagerCommandInfo -eq $null) {
+            $help
+        }
+        elseif ($pagerCommandInfo.CommandType -eq 'Application') {
+            # If the pager is an application, format the output width before sending to the app.
+            $consoleWidth = [System.Math]::Max([System.Console]::WindowWidth, 20)
+
+            if ($pagerArgs) {
+                $help | Out-String -Stream -Width ($consoleWidth - 1) | & $pagerCommand $pagerArgs
+            }
+            else {
+                $help | Out-String -Stream -Width ($consoleWidth - 1) | & $pagerCommand
+            }
         }
         else {
-            $pagerCommand = 'less'
-            $pagerArgs = '-s','-P','Page %db?B of %D:.\. Press h for help or q to quit\.'
+            # The pager command is a PowerShell function, script or alias, so pipe directly into it.
+            $help | & $pagerCommand $pagerArgs
         }
+    }
+";
+
+        internal const string UnixHelpFunctionText = @"
+<#
+.FORWARDHELPTARGETNAME Get-Help
+.FORWARDHELPCATEGORY Cmdlet
+#>
+[CmdletBinding(DefaultParameterSetName='AllUsersView', HelpUri='https://go.microsoft.com/fwlink/?LinkID=113316')]
+param(
+    [Parameter(Position=0, ValueFromPipelineByPropertyName=$true)]
+    [string]
+    ${Name},
+
+    [string]
+    ${Path},
+
+    [ValidateSet('Alias','Cmdlet','Provider','General','FAQ','Glossary','HelpFile','ScriptCommand','Function','Filter','ExternalScript','All','DefaultHelp','DscResource','Class','Configuration')]
+    [string[]]
+    ${Category},
+
+    [Parameter(ParameterSetName='DetailedView', Mandatory=$true)]
+    [switch]
+    ${Detailed},
+
+    [Parameter(ParameterSetName='AllUsersView')]
+    [switch]
+    ${Full},
+
+    [Parameter(ParameterSetName='Examples', Mandatory=$true)]
+    [switch]
+    ${Examples},
+
+    [Parameter(ParameterSetName='Parameters', Mandatory=$true)]
+    [string[]]
+    ${Parameter},
+
+    [string[]]
+    ${Component},
+
+    [string[]]
+    ${Functionality},
+
+    [string[]]
+    ${Role},
+
+    [Parameter(ParameterSetName='Online', Mandatory=$true)]
+    [switch]
+    ${Online})
+
+    # Display the full help topic by default but only for the AllUsersView parameter set.
+    if (($psCmdlet.ParameterSetName -eq 'AllUsersView') -and !$Full) {
+        $PSBoundParameters['Full'] = $true
+    }
+
+    # Linux need the default
+    $OutputEncoding = [System.Console]::OutputEncoding
+
+    $help = Get-Help @PSBoundParameters
+
+    # If a list of help is returned or AliasHelpInfo (because it is small), don't pipe to more
+    $psTypeNames = ($help | Select-Object -First 1).PSTypeNames
+    if ($psTypeNames -Contains 'HelpInfoShort' -Or $psTypeNames -Contains 'AliasHelpInfo')
+    {
+        $help
+    }
+    elseif ($help -ne $null)
+    {
+        # By default use more on Windows and less on Linux.
+        $pagerCommand = 'less'
+        $pagerArgs = '-s','-P','Page %db?B of %D:.\. Press h for help or q to quit\.'
 
         # Respect PAGER environment variable which allows user to specify a custom pager.
         # Ignore a pure whitespace PAGER value as that would cause the tokenizer to return 0 tokens.
@@ -4199,7 +4372,30 @@ param(
         }
     }
 ";
+
+        /// <summary>
+        /// This is the default function to use for man/help. It uses
+        /// splatting to pass in the parameters.
+        /// </summary>
+#if !UNIX
+        internal static string GetHelpPagingFunctionText()
+        {
+            // We used to generate the text for this function so you could add a parameter
+            // to Get-Help and not worry about adding it here.  That was a little slow at
+            // startup, so it's hard coded, with a test to make sure the parameters match.
+            return WindowsHelpFunctionText;
         }
+
+#else
+        internal static string GetHelpPagingFunctionText()
+        {
+            // We used to generate the text for this function so you could add a parameter
+            // to Get-Help and not worry about adding it here.  That was a little slow at
+            // startup, so it's hard coded, with a test to make sure the parameters match.
+            // This version removes the -ShowWindow parameter since it is not supported on Linux.
+            return UnixHelpFunctionText;
+        }
+#endif
 
         internal static string GetMkdirFunctionText()
         {
@@ -4331,6 +4527,14 @@ end {
                     ScopedItemOptions.None,
                     new ArgumentTypeConverterAttribute(typeof(System.Text.Encoding))),
 
+                // Variable which controls the encoding for decoding data from a NativeCommand
+                new SessionStateVariableEntry(
+                    SpecialVariables.PSApplicationOutputEncoding,
+                    null,
+                    RunspaceInit.PSApplicationOutputEncodingDescription,
+                    ScopedItemOptions.None,
+                    new ArgumentTypeConverterAttribute(typeof(Encoding))),
+
                 // Preferences
                 //
                 // NTRAID#Windows Out Of Band Releases-931461-2006/03/13
@@ -4452,21 +4656,18 @@ end {
                 #endregion
             };
 
-            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandErrorActionPreferenceFeatureName))
-            {
-                builtinVariables.Add(
-                    new SessionStateVariableEntry(
-                        SpecialVariables.PSNativeCommandUseErrorActionPreference,
-                        value: true,    // when this feature is changed to stable, this should default to `false`
-                        RunspaceInit.PSNativeCommandUseErrorActionPreferenceDescription,
-                        ScopedItemOptions.None,
-                        new ArgumentTypeConverterAttribute(typeof(bool))));
-            }
+            builtinVariables.Add(
+                new SessionStateVariableEntry(
+                    SpecialVariables.PSNativeCommandUseErrorActionPreference,
+                    value: false,
+                    RunspaceInit.PSNativeCommandUseErrorActionPreferenceDescription,
+                    ScopedItemOptions.None,
+                    new ArgumentTypeConverterAttribute(typeof(bool))));
 
             builtinVariables.Add(
                 new SessionStateVariableEntry(
                     SpecialVariables.NativeArgumentPassing,
-                    Platform.IsWindows ? NativeArgumentPassingStyle.Windows : NativeArgumentPassingStyle.Standard,
+                    GetPassingStyle(),
                     RunspaceInit.NativeCommandArgumentPassingDescription,
                     ScopedItemOptions.None,
                     new ArgumentTypeConverterAttribute(typeof(NativeArgumentPassingStyle))));
@@ -4474,10 +4675,24 @@ end {
             BuiltInVariables = builtinVariables.ToArray();
         }
 
+        /// <summary>
+        /// Assigns the default behavior for native argument passing.
+        /// If the system is non-Windows, we will return Standard.
+        /// Otherwise, we will return Windows.
+        /// </summary>
+        private static NativeArgumentPassingStyle GetPassingStyle()
+        {
+#if UNIX
+            return NativeArgumentPassingStyle.Standard;
+#else
+            return NativeArgumentPassingStyle.Windows;
+#endif
+        }
+
         internal static readonly SessionStateVariableEntry[] BuiltInVariables;
 
         /// <summary>
-        /// Returns a new array of alias entries everytime it's called. This
+        /// Returns a new array of alias entries every time it's called. This
         /// can't be static because the elements may be mutated in different session
         /// state objects so each session state must have a copy of the entry.
         /// </summary>
@@ -4686,7 +4901,7 @@ end {
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd..", "Set-Location ..", isProductCode: true, languageMode: systemLanguageMode),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd\\", "Set-Location \\", isProductCode: true, languageMode: systemLanguageMode),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd~", "Set-Location ~", isProductCode: true, languageMode: systemLanguageMode),
-            // Win8: 320909. Retaining the original definition to ensure backward compatability.
+            // Win8: 320909. Retaining the original definition to ensure backward compatibility.
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Pause",
                 string.Concat("$null = Read-Host '", CodeGeneration.EscapeSingleQuotedStringContent(RunspaceInit.PauseDefinitionString), "'"), isProductCode: true, languageMode: systemLanguageMode),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("help", GetHelpPagingFunctionText(), isProductCode: true, languageMode: systemLanguageMode),
@@ -5164,7 +5379,11 @@ end {
                             // the users of the cmdlet, instead of the author, should have control of what options applied to an alias
                             // ('ScopedItemOptions.ReadOnly' and/or 'ScopedItemOptions.AllScopes').
                             var aliasEntry = new SessionStateAliasEntry(alias, cmdletName, description: string.Empty, ScopedItemOptions.None);
-                            if (psSnapInInfo != null) { aliasEntry.SetPSSnapIn(psSnapInInfo); }
+
+                            if (psSnapInInfo != null)
+                            {
+                                aliasEntry.SetPSSnapIn(psSnapInInfo);
+                            }
 
                             if (moduleInfo != null)
                             {
@@ -5259,6 +5478,7 @@ end {
                 { "Get-Module",                        new SessionStateCmdletEntry("Get-Module", typeof(GetModuleCommand), helpFile) },
                 { "Get-PSHostProcessInfo",             new SessionStateCmdletEntry("Get-PSHostProcessInfo", typeof(GetPSHostProcessInfoCommand), helpFile) },
                 { "Get-PSSession",                     new SessionStateCmdletEntry("Get-PSSession", typeof(GetPSSessionCommand), helpFile) },
+                { "Get-PSSubsystem",                   new SessionStateCmdletEntry("Get-PSSubsystem", typeof(Subsystem.GetPSSubsystemCommand), helpFile) },
                 { "Import-Module",                     new SessionStateCmdletEntry("Import-Module", typeof(ImportModuleCommand), helpFile) },
                 { "Invoke-Command",                    new SessionStateCmdletEntry("Invoke-Command", typeof(InvokeCommandCommand), helpFile) },
                 { "Invoke-History",                    new SessionStateCmdletEntry("Invoke-History", typeof(InvokeHistoryCommand), helpFile) },
@@ -5298,11 +5518,6 @@ end {
                 { "Out-LineOutput",                    new SessionStateCmdletEntry("Out-LineOutput", typeof(OutLineOutputCommand), helpFile) },
                 { "Format-Default",                    new SessionStateCmdletEntry("Format-Default", typeof(FormatDefaultCommand), helpFile) },
             };
-
-            if (ExperimentalFeature.IsEnabled("PSSubsystemPluginModel"))
-            {
-                cmdlets.Add("Get-PSSubsystem", new SessionStateCmdletEntry("Get-PSSubsystem", typeof(Subsystem.GetPSSubsystemCommand), helpFile));
-            }
 
 #if UNIX
             cmdlets.Add("Switch-Process", new SessionStateCmdletEntry("Switch-Process", typeof(SwitchProcessCommand), helpFile));

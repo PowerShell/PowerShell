@@ -2,7 +2,7 @@
   <Import Project="..\..\PowerShell.Common.props" />
   <PropertyGroup>
     <Description>PowerShell's System.Management.Automation project</Description>
-    <NoWarn>$(NoWarn);CS1570;CS1734;CA1416</NoWarn>
+    <NoWarn>$(NoWarn);CS1570;CS1734;CA1416;CA2022</NoWarn>
     <AssemblyName>System.Management.Automation</AssemblyName>
   </PropertyGroup>
 
@@ -19,9 +19,7 @@
     <CompilerVisibleProperty Include="PowerShellVersion" />
     <CompilerVisibleProperty Include="ReleaseTag" />
 
-    <ProjectReference Include="SourceGenerators\PSVersionInfoGenerator\PSVersionInfoGenerator.csproj"
-                      OutputItemType="Analyzer"
-                      ReferenceOutputAssembly="false" />
+    <ProjectReference Include="SourceGenerators\PSVersionInfoGenerator\PSVersionInfoGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(IsWindows)' == 'true' ">
@@ -30,58 +28,30 @@
 
   <ItemGroup>
     <!-- the following package(s) are from https://github.com/JamesNK/Newtonsoft.Json -->
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <!-- the Application Insights package -->
-    <PackageReference Include="Microsoft.ApplicationInsights" Version="2.21.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights" Version="2.23.0" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="7.0.0" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="7.0.0" />
-    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="7.0.0" />
-    <PackageReference Include="System.DirectoryServices" Version="7.0.0" />
-    <!--PackageReference Include="System.IO.FileSystem.AccessControl" Version="6.0.0-preview.5.21301.5" /-->
-    <PackageReference Include="System.Management" Version="7.0.0" />
-    <PackageReference Include="System.Security.AccessControl" Version="6.0.2-mauipre.1.22102.15" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="7.0.0" />
-    <PackageReference Include="System.Security.Permissions" Version="7.0.0" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="11.0.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="11.0.0" />
+    <PackageReference Include="System.DirectoryServices" Version="11.0.0" />
+    <PackageReference Include="System.Management" Version="11.0.0" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="11.0.0" />
+    <PackageReference Include="System.Security.Permissions" Version="11.0.0" />
     <!-- the following package(s) are from the powershell org -->
-    <PackageReference Include="Microsoft.Management.Infrastructure" Version="2.0.0" />
-    <PackageReference Include="Microsoft.PowerShell.Native" Version="7.4.0-preview.2" />
+    <PackageReference Include="Microsoft.Management.Infrastructure" Version="3.0.0" />
+    <PackageReference Include="Microsoft.PowerShell.Native" Version="700.0.2" />
     <!-- Signing APIs -->
-    <PackageReference Include="Microsoft.Security.Extensions" Version="1.2.0" />
+    <PackageReference Include="Microsoft.Security.Extensions" Version="1.4.0" />
   </ItemGroup>
-
-  <PropertyGroup>
-    <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
-  </PropertyGroup>
 
   <ItemGroup>
     <!-- exclude code of source generators from compilation and IDEs (e.g. vscode and visual studio) -->
     <Compile Remove="SourceGenerators\**\*.cs" />
-
-    <Compile Remove="cimSupport\cmdletization\xml\cmdlets-over-objects.objectModel.autogen.cs" />
-    <Compile Remove="cimSupport\cmdletization\xml\cmdlets-over-objects.xmlSerializer.autogen.cs" />
-    <Compile Remove="engine\TransactedString.cs" />
-    <Compile Remove="engine\TransactionManager.cs" />
-    <Compile Remove="engine\hostifaces\NativeCultureResolver.cs" />
-    <Compile Remove="engine\hostifaces\RunspaceInvoke.cs" />
-    <Compile Remove="engine\remoting\commands\ResumeJob.cs" />
-    <Compile Remove="engine\remoting\commands\SuspendJob.cs" />
-    <Compile Remove="namespaces\SafeTransactionHandle.cs" />
-    <Compile Remove="namespaces\SafeRegistryHandle.cs" />
-    <Compile Remove="namespaces\TransactedRegistry.cs" />
-    <Compile Remove="namespaces\TransactedRegistryKey.cs" />
-    <Compile Remove="namespaces\TransactedRegistrySecurity.cs" />
-    <Compile Remove="utils\BackgroundDispatcher.cs" />
-    <Compile Remove="utils\perfCounters\CounterSetInstanceBase.cs" />
-    <Compile Remove="utils\perfCounters\CounterSetRegistrarBase.cs" />
-    <Compile Remove="utils\perfCounters\PSPerfCountersMgr.cs" />
-    <Compile Remove="gen\CoreMshSnapinResources.cs" />
-    <Compile Remove="gen\ErrorPackageRemoting.cs" />
+    <!-- exclude the generated code for EventResource.resx, which is not directly used -->
     <Compile Remove="gen\EventResource.cs" />
 
-    <EmbeddedResource Remove="resources\CoreMshSnapinResources.resx" />
-    <EmbeddedResource Remove="resources\ErrorPackageRemoting.resx" />
+    <EmbeddedResource Include="cimSupport\cmdletization\xml\cmdlets-over-objects.xsd" LogicalName="cmdlets-over-objects.xsd" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(IsWindows)' != 'true' ">
@@ -99,5 +69,11 @@
 
   <ItemGroup Condition=" '$(IsWindows)' == 'true' ">
     <Compile Remove="engine\Interop\Unix\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="resources\*\*.resx">
+      <ManifestResourceName>$(RootNamespace).resources.%(Filename)</ManifestResourceName>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

@@ -60,6 +60,8 @@ Describe "Write-Host with TestHostCS" -Tags "CI" {
             @{ Name = '-Separator, colors and -NoNewLine'; Command = "Write-Host a,b,c -Separator ',' -ForegroundColor Yellow -BackgroundColor DarkBlue -NoNewline"; returnCount = 1; returnValue = @("Yellow:DarkBlue:a,b,c:NoNewLine"); returnInfo = @("a,b,c") }
             @{ Name = '-NoNewline:$true and colors';       Command = "Write-Host a,b -NoNewline:`$true -ForegroundColor Red -BackgroundColor Green;Write-Host a,b";  returnCount = 2; returnValue = @("Red:Green:a b:NoNewLine", "White:Black:a b:NewLine"); returnInfo = @("a b", "a b") }
             @{ Name = '-NoNewline:$false and colors';      Command = "Write-Host a,b -NoNewline:`$false -ForegroundColor Red -BackgroundColor Green;Write-Host a,b"; returnCount = 2; returnValue = @("Red:Green:a b:NewLine","White:Black:a b:NewLine"); returnInfo = @("a b", "a b") }
+            @{ Name = 'XMLElement';                        Command = "Write-Host ([xml] '<OhElement>Where art thou?</OhElement>').DocumentElement";                  returnCount = 1; returnValue = @("White:Black:OhElement:NewLine"); returnInfo = @("OhElement") }
+            @{ Name = 'XMLDocument';                        Command = "Write-Host ([system.xml.xmldocument] '<OhElement>Where art thou?</OhElement>').DocumentElement";                  returnCount = 1; returnValue = @("White:Black:OhElement:NewLine"); returnInfo = @("OhElement") }
         )
 
     }

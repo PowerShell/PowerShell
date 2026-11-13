@@ -1,0 +1,240 @@
+parameters:
+  buildArchitecture: 'x64'
+  dotnetArch: 'osx-x64'
+jobs:
+- job: build_macOS_${{ parameters.buildArchitecture }}
+  displayName: Build macOS ${{ parameters.buildArchitecture }}
+  condition: succeeded()
+  pool:
+    type: linux
+    isCustom: true
+    name: Azure Pipelines
+    vmImage: 'macOS-latest'
+
+  variables:
+  - name: HOMEBREW_NO_ANALYTICS
+    value: 1
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - group: DotNetPrivateBuildAccess
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: PowerShellRoot
+    value: $(Build.SourcesDirectory)
+
+  steps:
+  - checkout: self
+    clean: true
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+  - pwsh: |
+      # create folder
+      sudo mkdir "$(Agent.TempDirectory)/PowerShell"
+      # make the current user the owner
+      sudo chown $env:USER "$(Agent.TempDirectory)/PowerShell"
+    displayName: 'Create $(Agent.TempDirectory)/PowerShell'
+
+    ## We cross compile for arm64, so the arch is always x64
+  - template: /.pipelines/templates/install-dotnet.yml@self
+    parameters:
+      architecture: ${{ parameters.dotnetArch }}
+
+  - pwsh: |
+      Import-Module $(PowerShellRoot)/build.psm1 -Force
+      Start-PSBootstrap -Scenario Package
+    displayName: 'Bootstrap VM'
+    env:
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+
+  - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
+    parameters:
+      repoRoot: $(PowerShellRoot)
+  - pwsh: |
+      $env:AzDevOpsFeedPAT2 = '$(powershellPackageReadPat)'
+      # Add -SkipReleaseChecks as a mitigation to unblock release.
+      # macos-10.15 does not allow creating a folder under root. Hence, moving the folder.
+
+      Import-Module ./build.psm1 -Force
+
+      $ReleaseTagParam = @{}
+
+      if ($env:RELEASETAGVAR) {
+        $ReleaseTagParam['ReleaseTag'] = $env:RELEASETAGVAR
+      }
+
+      Start-PSBuild -Runtime 'osx-${{ parameters.buildArchitecture }}' -Configuration Release -PSModuleRestore -Clean -Output $(OB_OUTPUTDIRECTORY) @ReleaseTagParam
+      $artifactName = "macosBinResults-${{ parameters.buildArchitecture }}"
+
+      $psOptPath = "$(OB_OUTPUTDIRECTORY)/psoptions.json"
+      Save-PSOptions -PSOptionsPath $psOptPath
+
+      $entitlements = "$(PowerShellRoot)/assets/macos-entitlements.plist"
+      $pwshBin = "$(OB_OUTPUTDIRECTORY)/pwsh"
+      Write-Verbose -Verbose "Applying entitlements to $pwshBin"
+      codesign --sign - --force --options runtime --entitlements $entitlements $pwshBin
+      if ($LASTEXITCODE -ne 0) {
+        throw "codesign failed with exit code $LASTEXITCODE"
+      }
+
+      # Since we are using custom pool for macOS, we need to use artifact.upload to publish the artifacts
+      Write-Host "##vso[artifact.upload containerfolder=$artifactName;artifactname=$artifactName]$(OB_OUTPUTDIRECTORY)"
+
+      $env:AzDevOpsFeedPAT2 = $null
+    displayName: 'Build'
+    env:
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+      VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: $(VSS_NUGET_EXTERNAL_FEED_ENDPOINTS)
+
+  - template: /.pipelines/templates/step/finalize.yml@self
+
+- job: sign_${{ parameters.buildArchitecture }}
+  displayName: Sign_macOS_${{ parameters.buildArchitecture }}
+  condition: succeeded()
+  dependsOn: build_macOS_${{ parameters.buildArchitecture }}
+  pool:
+    type: windows
+  variables:
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - group: DotNetPrivateBuildAccess
+  - group: certificate_logical_to_actual
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: ob_sdl_codeSignValidation_enabled
+    value: true
+  - name: ob_sdl_tsa_configFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+  - name: ob_sdl_credscan_suppressionsFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+  - name: BuildArchitecture
+    value: ${{ parameters.buildArchitecture }}
+  - name: ob_sdl_codeql_compiled_enabled
+    value: false
+  - name: ob_sdl_sbom_packageName
+    value: 'Microsoft.Powershell.MacOS.${{parameters.buildArchitecture}}'
+
+  steps:
+  - checkout: self
+    clean: true
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+
+  - template: /.pipelines/templates/cloneToOfficialPath.yml@self
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifact: 'macosBinResults-$(BuildArchitecture)'
+      path: '$(Pipeline.Workspace)\Symbols'
+    displayName: Download build
+
+  - pwsh: |
+        Get-ChildItem "$(Pipeline.Workspace)\*" -Recurse
+    displayName: 'Capture Downloaded Artifacts'
+    # Diagnostics is not critical it passes every time it runs
+    continueOnError: true
+
+  - pwsh: |
+      $runtime = '$(BuildArchitecture)'
+      Write-Host "sending.. vso[task.setvariable variable=Runtime]$runtime"
+      Write-Host "##vso[task.setvariable variable=Runtime]$runtime"
+
+      $rootPath = "$(Pipeline.Workspace)\Symbols"
+      Write-Verbose -Verbose "Setting vso[task.setvariable variable=DropRootPath]$rootPath"
+      Write-Host "##vso[task.setvariable variable=DropRootPath]$rootPath"
+    displayName: Expand symbols zip
+
+  - template: /.pipelines/templates/obp-file-signing.yml@self
+    parameters:
+      binPath: $(DropRootPath)
+      OfficialBuild: $(ps_official_build)
+
+  # Apple-sign the Mach-O binaries inside the signed output.
+  - pwsh: |
+      $signedDir = "$(ob_outputDirectory)/Signed-$(Runtime)"
+      $zipFile = "$(Pipeline.Workspace)/macho-$(BuildArchitecture).zip"
+      Compress-Archive -Path "$signedDir/*" -DestinationPath $zipFile -Force
+    displayName: Compress signed folder for Apple signing
+
+  - task: onebranch.pipeline.signing@1
+    displayName: Apple CodeSign Mach-O binaries
+    inputs:
+      command: 'sign'
+      files_to_sign: 'macho-$(BuildArchitecture).zip'
+      search_root: '$(Pipeline.Workspace)'
+      inline_operation: |
+        [
+          {
+            "KeyCode": "$(apple_cert_id)",
+            "OperationCode": "MacAppDeveloperSign",
+            "ToolName": "sign",
+            "ToolVersion": "1.0",
+            "Parameters": {
+              "Hardening": "--options=runtime"
+            }
+          }
+        ]
+
+  - pwsh: |
+      $signedDir = "$(ob_outputDirectory)/Signed-$(Runtime)"
+      $zipFile = "$(Pipeline.Workspace)/macho-$(BuildArchitecture).zip"
+      Expand-Archive -Path $zipFile -DestinationPath $signedDir -Force -Verbose
+    displayName: Expand Apple-signed Mach-O binaries into signed output
+
+  - pwsh: |
+      $signedDir = "$(ob_outputDirectory)/Signed-$(Runtime)"
+      $officialBuild = [System.Convert]::ToBoolean('$(ps_official_build)')
+      $officialSignature = 'Developer ID Application: Microsoft Corporation'
+      $codeDirectoryMagic = [byte[]](0xfa, 0xde, 0x0c, 0x02)
+      $missing = @()
+      Get-ChildItem $signedDir -Recurse -Include 'pwsh', '*.dylib' | ForEach-Object {
+        $bytes = [System.IO.File]::ReadAllBytes($_.FullName)
+        $text = [System.Text.Encoding]::Latin1.GetString($bytes)
+        $hasOfficialSignature = $text.Contains($officialSignature)
+        $hasAdHocSignature = $false
+
+        if (-not $officialBuild -and -not $hasOfficialSignature) {
+          # The package stage runs codesign --verify; here the Windows signing job
+          # verifies that unofficial output contains an ad-hoc CodeDirectory.
+          for ($offset = 0; $offset -le $bytes.Length - 16; $offset++) {
+            if ($bytes[$offset] -eq $codeDirectoryMagic[0] -and
+                $bytes[$offset + 1] -eq $codeDirectoryMagic[1] -and
+                $bytes[$offset + 2] -eq $codeDirectoryMagic[2] -and
+                $bytes[$offset + 3] -eq $codeDirectoryMagic[3] -and
+                ($bytes[$offset + 15] -band 0x02) -ne 0) {
+              $hasAdHocSignature = $true
+              break
+            }
+          }
+        }
+
+        if (-not $hasOfficialSignature -and ($officialBuild -or -not $hasAdHocSignature)) {
+          $missing += $_.FullName
+          $expectedSignature = if ($officialBuild) {
+            "'$officialSignature'"
+          } else {
+            'a Developer ID signature or ad-hoc CodeDirectory'
+          }
+          Write-Host "##[error]Missing $expectedSignature in $($_.FullName)"
+        } else {
+          $signatureDescription = if ($hasOfficialSignature) {
+            'a Developer ID signature'
+          } else {
+            'an ad-hoc CodeDirectory'
+          }
+          Write-Host "OK: $($_.FullName) contains $signatureDescription"
+        }
+      }
+      if ($missing.Count -gt 0) {
+        throw "The expected Apple signature was not found in $($missing.Count) file(s): $($missing -join ', ')"
+      }
+    displayName: 'Verify Apple signature on Mach-O binaries'
+
+  - template: /.pipelines/templates/step/finalize.yml@self

@@ -418,11 +418,7 @@ namespace Microsoft.Management.UI.Internal
         public static T GetOptionalTemplateChild<T>(Control templateParent, string childName) where T : FrameworkElement
         {
             ArgumentNullException.ThrowIfNull(templateParent);
-
-            if (string.IsNullOrEmpty(childName))
-            {
-                throw new ArgumentNullException("childName");
-            }
+            ArgumentException.ThrowIfNullOrEmpty(childName);
 
             object templatePart = templateParent.Template.FindName(childName, templateParent);
             T item = templatePart as T;

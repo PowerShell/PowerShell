@@ -141,7 +141,21 @@ namespace System.Management.Automation.Tracing
             int querySuccess,
             int queryResult)
         {
-            provider.LogWDACQueryEvent(queryName, fileName, querySuccess, queryResult);
+            provider.LogWDACQueryEvent(queryName, fileName ?? string.Empty, querySuccess, queryResult);
+        }
+
+        /// <summary>
+        /// Provider interface function for logging WDAC audit event.
+        /// </summary>
+        /// <param name="title">Title of WDAC audit event.</param>
+        /// <param name="message">WDAC audit event message.</param>
+        /// <param name="fqid">FullyQualifiedId of WDAC audit event.</param>
+        internal static void LogWDACAuditEvent(
+            string title,
+            string message,
+            string fqid)
+        {
+            provider.LogWDACAuditEvent(title, message, fqid);
         }
 
         /// <summary>
@@ -244,8 +258,8 @@ namespace System.Management.Automation.Tracing
         {
             if (provider.IsEnabled(PSLevel.Verbose, keyword))
             {
-                string payLoadData = BitConverter.ToString(fragmentData.blob, fragmentData.offset, fragmentData.length);
-                payLoadData = string.Create(CultureInfo.InvariantCulture, $"0x{payLoadData.Replace("-", string.Empty)}");
+                string payLoadData = Convert.ToHexString(fragmentData.blob, fragmentData.offset, fragmentData.length);
+                payLoadData = string.Create(CultureInfo.InvariantCulture, $"0x{payLoadData}");
 
                 provider.WriteEvent(id, PSChannel.Analytic, opcode, PSLevel.Verbose, task, keyword,
                                     objectId, fragmentId, isStartFragment, isEndFragment, fragmentLength,

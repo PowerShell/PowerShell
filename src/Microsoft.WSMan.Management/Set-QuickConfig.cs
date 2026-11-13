@@ -56,7 +56,7 @@ namespace Microsoft.WSMan.Management
         /// Property that sets force parameter. This will allow
         /// configuring WinRM without prompting the user.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Force
         {
             get { return force; }
@@ -69,7 +69,7 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// Property that will allow configuring WinRM with Public profile exception enabled.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter SkipNetworkProfileCheck
         {
             get { return skipNetworkProfileCheck; }

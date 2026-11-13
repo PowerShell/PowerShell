@@ -93,6 +93,10 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
     }
 
     It "Clear-Host does not injects data into PowerShell output stream" {
+        if (Test-IsWindowsArm64) {
+            Set-ItResult -Pending -Because "ARM64 runs in non-interactively mode and Clear-Host does not work."
+        }
+
         & { Clear-Host; 'hi' } | Should -BeExactly 'hi'
     }
 
@@ -123,7 +127,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         }
         foreach ($x in "--help", "-help", "-h", "-?", "--he", "-hel", "--HELP", "-hEl") {
             It "Accepts '$x' as a parameter for help" {
-                & $powershell -noprofile $x | Where-Object { $_ -match "pwsh[.exe] -Help | -? | /?" } | Should -Not -BeNullOrEmpty
+                & $powershell -noprofile $x | Where-Object { $_ -match 'pwsh\[\.exe\] -h \| -Help \| -\? \| /\?' } | Should -Not -BeNullOrEmpty
             }
         }
 
@@ -170,7 +174,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         It "-File should fail for script without .ps1 extension" -Skip:(!$IsWindows) {
             $Filename = 'test.xxx'
             Set-Content -Path $testdrive/$Filename -Value "'hello'"
-            & $powershell -NoProfile -File $testdrive/$Filename > $null
+            & $powershell -NoProfile -File $testdrive/$Filename 2>&1 $null
             $LASTEXITCODE | Should -Be 64
         }
 
@@ -382,6 +386,33 @@ export $envVarName='$guid'
         }
     }
 
+    Context "-SettingsFile Commandline switch set 'PSModulePath'" {
+
+        BeforeAll {
+            $CustomSettingsFile = Join-Path -Path $TestDrive -ChildPath 'powershell.test.json'
+            $mPath1 = Join-Path $PSHOME 'Modules'
+            $mPath2 = Join-Path $TestDrive 'NonExist'
+            $pathSep = [System.IO.Path]::PathSeparator
+
+            ## Use multiple paths in the setting.
+            $ModulePath = "${mPath1}${pathSep}${mPath2}".Replace('\', "\\")
+            Set-Content -Path $CustomSettingsfile -Value "{`"Microsoft.PowerShell:ExecutionPolicy`":`"Unrestricted`", `"PSModulePath`": `"$ModulePath`" }" -ErrorAction Stop
+        }
+
+        It "Verify PowerShell PSModulePath should contain paths from config file" {
+            $psModulePath = & $powershell -NoProfile -SettingsFile $CustomSettingsFile -Command '$env:PSModulePath'
+
+            ## $mPath1 already exists in the value of env PSModulePath, so it won't be added again.
+            $index = $psModulePath.IndexOf("${mPath1}${pathSep}", [System.StringComparison]::OrdinalIgnoreCase)
+            $index | Should -BeGreaterThan 0
+            $index += $mPath1.Length
+            $psModulePath.IndexOf($mPath1, $index, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeExactly -1
+
+            ## $mPath2 should be added at the index position 0.
+            $psModulePath.StartsWith("${mPath2}${pathSep}", [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
+        }
+    }
+
     Context "Pipe to/from powershell" {
         BeforeAll {
             if ($null -ne $PSStyle) {
@@ -430,6 +461,27 @@ export $envVarName='$guid'
             $out | Should -Not -BeNullOrEmpty
             $out = $out.Split([Environment]::NewLine)[0]
             [System.Management.Automation.Internal.StringDecorated]::new($out).ToString("PlainText") | Should -BeExactly "Exception: boom"
+        }
+
+        It "Progress is not emitted when stdout is redirected" {
+            $ps = [powershell]::Create()
+            $null = $ps.AddScript('$a = & ([Environment]::ProcessPath) -Command "Write-Progress -Activity progress"; $a')
+            $actual = $ps.Invoke()
+
+            $ps.HadErrors | Should -BeFalse
+            $actual | Should -BeNullOrEmpty
+            $ps.Streams.Progress | Should -BeNullOrEmpty
+        }
+
+        It "Progress is still emitted with redireciton with XML output" {
+            $ps = [powershell]::Create()
+            $null = $ps.AddScript('$a = & ([Environment]::ProcessPath) -OutputFormat xml -Command "Write-Progress -Activity progress"; $a')
+            $actual = $ps.Invoke()
+
+            $ps.HadErrors | Should -BeFalse
+            $actual | Should -BeNullOrEmpty
+            $ps.Streams.Progress.Count | Should -Be 1
+            $ps.Streams.Progress[0].Activity | Should -Be progress
         }
     }
 
@@ -693,8 +745,8 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
     }
 
     Context "PATH environment variable" {
-        It "`$PSHOME should be in front so that pwsh.exe starts current running PowerShell" {
-            & $powershell -v | Should -Match $PSVersionTable.GitCommitId
+        It "Running 'pwsh' should start the currently running PowerShell" {
+            pwsh -v | Should -Match $PSVersionTable.GitCommitId
         }
 
         It "powershell starts if PATH is not set" -Skip:($IsWindows) {
@@ -808,6 +860,8 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
     Context "ApartmentState WPF tests" -Tag Slow {
 
         It "WPF requires STA and will work" -Skip:(!$IsWindows -or [System.Management.Automation.Platform]::IsNanoServer) {
+            Set-ItResult -Pending -Because "Disabled due to issue - https://github.com/dotnet/wpf/issues/11651 in .NET 11 Preview 5"
+
             Add-Type -AssemblyName presentationframework
 
             $xaml = [xml]@"
@@ -866,10 +920,6 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
             $inputPath  = "Temp:\StartupBannerTest-Input.txt"
             "exit" > $inputPath
 
-            # Not testing update notification banner text here
-            $oldPowerShellUpdateCheck = $env:POWERSHELL_UPDATECHECK
-            $env:POWERSHELL_UPDATECHECK = "Off"
-
             # Set TERM to "dumb" to avoid DECCKM codes in the output
             $oldTERM = $env:TERM
             $env:TERM = "dumb"
@@ -890,7 +940,6 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
         }
         AfterAll {
             $env:TERM = $oldTERM
-            $env:POWERSHELL_UPDATECHECK = $oldPowerShellUpdateCheck
 
             Remove-Item $inputPath -Force -ErrorAction Ignore
             Remove-Item $outputPath -Force -ErrorAction Ignore
@@ -939,6 +988,12 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
             $out | Should -Be $expected
         }
     }
+
+    It 'Errors for invalid ExecutionPolicy string' {
+        $out = pwsh -nologo -noprofile -executionpolicy NonExistingExecutionPolicy -c 'exit 0' 2>&1
+        $out | Should -Not -BeNullOrEmpty
+        $LASTEXITCODE | Should -Be $ExitCodeBadCommandLineParameter
+    }
 }
 
 Describe "WindowStyle argument" -Tag Feature {
@@ -954,7 +1009,12 @@ public static WINDOWPLACEMENT GetPlacement(IntPtr hwnd)
 {
     WINDOWPLACEMENT placement = new WINDOWPLACEMENT();
     placement.length = Marshal.SizeOf(placement);
-    GetWindowPlacement(hwnd, ref placement);
+
+    if (!GetWindowPlacement(hwnd, ref placement))
+    {
+        throw new System.ComponentModel.Win32Exception();
+    }
+
     return placement;
 }
 
@@ -990,12 +1050,16 @@ public enum ShowWindowCommands : int
         $global:PSDefaultParameterValues = $defaultParamValues
     }
 
-    It "-WindowStyle <WindowStyle> should work on Windows" -TestCases @(
+    It "-WindowStyle <WindowStyle> should work on Windows" -Pending -TestCases @(
             @{WindowStyle="Normal"},
             @{WindowStyle="Minimized"},
             @{WindowStyle="Maximized"}  # hidden doesn't work in CI/Server Core
         ) {
         param ($WindowStyle)
+
+        if (Test-IsWindowsArm64) {
+            Set-ItResult -Pending -Because "All windows are showing up as hidden or ARM64"
+        }
 
         try {
             $ps = Start-Process $powershell -ArgumentList "-WindowStyle $WindowStyle -noexit -interactive" -PassThru
@@ -1121,11 +1185,23 @@ Describe 'Pwsh startup and PATH' -Tag CI {
         $version | Should -BeExactly "PowerShell $($PSVersionTable.GitCommitId)"
     }
 
-    It 'pwsh starts even if PATH is not defined' {
+    It 'pwsh updates PATH correctly even if PATH is not defined' {
         $pwsh = Join-Path -Path $PSHOME -ChildPath "pwsh"
         Remove-Item Env:\PATH
         $path = & $pwsh -noprofile -command '$env:PATH'
-        $path | Should -BeExactly ($PSHOME + [System.IO.Path]::PathSeparator)
+
+        $ExpectedPath = $PSHOME
+        if ($PSHOME.StartsWith("$env:ProgramFiles\WindowsApps\Microsoft.PowerShell")) {
+            # MSIX installed PowerShell uses the stable path instead of PSHOME.
+            $ExpectedPath = $PSHOME.Replace($env:ProgramFiles, "$env:LOCALAPPDATA\Microsoft")
+
+            # Remove the version-specific part from the expected path.
+            $version = $PSVersionTable.PSVersion
+            $verStrRegex = "$($version.Major)\.$($version.Minor)\.$($version.Build).+__"
+            $ExpectedPath = $ExpectedPath -replace $verStrRegex, ''
+        }
+
+        $path | Should -BeExactly ($ExpectedPath + [System.IO.Path]::PathSeparator)
     }
 }
 
@@ -1167,5 +1243,20 @@ Describe 'TERM env var' -Tag CI {
         finally {
             $env:NO_COLOR = $null
         }
+    }
+
+    It 'No_COLOR should be respected for redirected output' {
+        $psi =  [System.Diagnostics.ProcessStartInfo] @{
+            FileName  = 'pwsh'
+            # Pass a command that succeeds and normally produces colored output, and one that produces error output.
+            Arguments = '-NoProfile -Command Get-Item .; Get-Content \nosuch123'
+            # Redirect (capture) both stdout and stderr.
+            RedirectStandardOutput = $true
+            RedirectStandardError = $true
+          }
+        $psi.Environment.Add('NO_COLOR', 1)
+        ($ps = [System.Diagnostics.Process]::Start($psi)).WaitForExit()
+        $ps.StandardOutput.ReadToEnd() | Should -Not -Contain '\e'
+        $ps.StandardError.ReadToEnd() | Should -Not -Contain '\e'
     }
 }

@@ -225,7 +225,7 @@ namespace System.Management.Automation.Internal
         /// This parameter configures the number of objects to buffer before calling the downstream Cmdlet
         /// </remarks>
         [Parameter]
-        [ValidateRangeAttribute(0, Int32.MaxValue)]
+        [ValidateRange(0, Int32.MaxValue)]
         [Alias("ob")]
         public int OutBuffer
         {

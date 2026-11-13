@@ -387,12 +387,18 @@ namespace System.Management.Automation.Remoting
             isHostNull = false;
 
             // Verify that the UI is not null.
-            if (host.UI == null) { return; }
+            if (host.UI == null)
+            {
+                return;
+            }
 
             isHostUINull = false;
 
             // Verify that the raw UI is not null.
-            if (host.UI.RawUI == null) { return; }
+            if (host.UI.RawUI == null)
+            {
+                return;
+            }
 
             isHostRawUINull = false;
         }

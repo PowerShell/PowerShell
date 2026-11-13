@@ -32,6 +32,10 @@ Describe "Set-Date for admin" -Tag @('CI', 'RequireAdminOnWindows', 'RequireSudo
 
 Describe "Set-Date" -Tag 'CI' {
     It "Set-Date should produce an error in a non-elevated context" {
+        if (Test-IsElevated) {
+            Set-ItResult -Skipped -Because "must NOT be run as admin"
+        }
+
         { Get-Date | Set-Date } | Should -Throw -ErrorId "System.ComponentModel.Win32Exception,Microsoft.PowerShell.Commands.SetDateCommand"
     }
 }

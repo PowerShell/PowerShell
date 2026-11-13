@@ -32,6 +32,7 @@ adityapatwardhan
 ADOPTERS.md
 aetos382
 aiello
+Aishat452
 al-cheb
 alepauly
 alexandair
@@ -94,6 +95,8 @@ beta.6
 beta.7
 beta.8
 beta.9
+beta.406
+beta.507
 beta2
 bgelens
 Bhaal22
@@ -258,7 +261,7 @@ dlwyatt
 dockerbasedbuild
 dockerfile
 dockerfiles
-docs.microsoft.com
+learn.microsoft.com
 doctordns
 don'ts
 dongbo
@@ -307,6 +310,7 @@ export-clixml
 export-csv
 export-formatdata
 export-modulemember
+fabricbot.json
 failurecode
 failurecount
 farmerau
@@ -395,6 +399,7 @@ glachancecmaisonneuve
 global.json
 globbing
 GoogleTest
+gregsdennis
 GUIs
 gzip
 hackathons
@@ -440,6 +445,7 @@ includeusername
 informationrecord
 initializers
 InitialSessionState.cs
+InlineAsTypeCheck
 install-packageprovider
 IntelliSense
 interactivetesting
@@ -471,11 +477,13 @@ joeltankam
 joeyaiello
 jokajak
 JohnLBevan
+josea
 joshuacooper
 journalctl
 jpsnover
 json
 jsonconfigfileaccessor
+JsonSchema.Net
 judgement
 jumplist
 jwmoss
@@ -531,6 +539,7 @@ macos
 macports
 maertendmsft
 mahawar
+mailmap
 Markdig.Signed
 markdown.yml
 manifest.spdx.json
@@ -585,6 +594,7 @@ mikeTWC1984
 mirichmo
 mjanko5
 mkdir
+mkht
 mklement0
 ModuleCmdletBase.cs
 MohiTheFish
@@ -608,9 +618,11 @@ NameObscurerTelemetryInitializer
 namespace
 nano
 nanoserver
+NativeCommandProcessor.cs
 NativeCultureResolver
 nativeexecution
 net5.0
+net10.0
 netcoreapp5.0
 netip.ps1.
 netstandard.dll
@@ -639,6 +651,7 @@ NextTurn
 ngharo
 Newtonsoft.Json
 NJsonSchema
+nohwnd
 NoMoreFood
 non-22
 non-cim
@@ -693,6 +706,7 @@ perfview
 perfview.exe
 peter-evans
 petseral
+PingPathCommand.cs
 pinvoke
 pinvokes
 plaintext
@@ -759,6 +773,7 @@ preview1-24530-04
 preview1.22217.1
 preview7
 ProcessorArchitecture
+ProductCode
 productversion
 program.cs
 prototyyppi
@@ -780,6 +795,7 @@ psobjects
 psoptions.json
 psproxyjobs
 psreadline
+psresourceget
 psrp.windows
 psscriptanalyzer
 pssessionconfiguration
@@ -796,6 +812,7 @@ pwsh
 pwsh.deps.json
 qmfrederik
 raghav710
+Random.Shared
 RandomNoun7
 RandomNumberGenerator.Fill
 raspbian
@@ -831,6 +848,7 @@ register-packagesource
 register-psrepository
 registryprovider
 relationlink
+releaseTools.psm1
 RemoteSessionNamedPipe
 remotesigned
 remoting
@@ -870,6 +888,7 @@ robo210
 ronn
 rpalo
 rpolley
+runas
 runspace
 runspaceinit
 runspaces
@@ -989,6 +1008,7 @@ test1.txt
 test2.txt
 testcase
 testdrive
+TestPathCommand.cs
 tests.zip
 tgz
 theflyingcorpse
@@ -1031,6 +1051,7 @@ ubuntu22.04
 uint
 un-versioned
 unicode
+UnixSocket
 unregister-event
 unregister-packagesource
 unregister-psrepository
@@ -1046,6 +1067,7 @@ update-typedata
 uri
 urizen-source
 urls
+UseMU
 userdata
 uservoice
 utf-8
@@ -1060,6 +1082,7 @@ v0.4.0
 v0.5.0
 v0.6.0
 v141
+v2
 v3
 v4
 v5
@@ -1124,6 +1147,7 @@ win32-openssh
 win7
 win8
 windos
+windows.json
 windowspsmodulepath
 windowsversion
 winrm
@@ -1281,6 +1305,48 @@ CommonCommandParameters.cs
 preview.6.22352.1
 v2.2.6
 ResultsComparer
+pre-defined
+System.Runtime.CompilerServices.Unsafe
+TabExpansion
+PSv2
+System.Data.SqlClient
+Microsoft.CSharp
+v7.2.10
+7.2.x
+v7.3.3
+http
+webcmdlet
+argumentexception.throwifnullorempty
+bitconverter.tostring
+convert.tohexstring
+requires.notnullorempty
+argumentoutofrangeexception.throwifnegativeorzero
+callerargumentexpression
+requires.notnull
+argumentnullexception
+throwifnull
+process.cs
+setrequestcontent
+streamhelper.cs
+invokerestmethodcommand.common.cs
+gethttpmethod
+httpmethod
+removenulls
+notnull
+argumentnullexception.throwifnull
+disable_telemetry
+langversion
+microsoft.extensions.objectpool
+microsoft.codeanalysis.analyzers
+benchmarkdotnet
+winforms
+MicrosoftDocs
+about_Scripts
+debugging-from-commandline
+about_Object_Creation
+about_Functions_Advanced
+Microsoft.PowerShell.SDK
+NuGet.org.
  - CHANGELOG.md
 aavdberg
 asrosent
@@ -1632,7 +1698,6 @@ Start-PSBootStrap
 precheck
 SKUs
 powershell.config.json
-Microsoft.PowerShell.GlobalTool.Shim.csproj
 InvokeCommand
 UseDotNet
 vmImage
@@ -1663,5 +1728,29 @@ ci.psm1
 jcotton42
 centos-7
 Security.types.ps1xml
+optout
  - ADOPTERS.md
 MicrosoftPowerBIMgmt
+ - tools/clearlyDefined/readme.md
+ClearlyDefined
+ - CHANGELOG/preview.md
+stevenebutler
+spaette
+syntax-tm
+URIs
+typeDataXmlLoader.cs
+GetResponseObject
+ContentHelper
+BasicHtmlWebResponseObject
+WebRequestSession.cs
+dkattan
+preview.3.23178.7
+PoolNames
+techguy16
+sdwheeler
+MicrosoftDocs
+about_Scripts
+about_Object_Creation
+about_Functions_Advanced
+Microsoft.PowerShell.SDK
+NuGet.org.

@@ -730,7 +730,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Stop the running pipeline.
         /// </summary>
-        /// <param name="syncCall">If true pipeline is stoped synchronously
+        /// <param name="syncCall">If true pipeline is stopped synchronously
         /// else asynchronously.</param>
         protected override void ImplementStop(bool syncCall)
         {
@@ -969,7 +969,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// This method sets streams to their orignal states from execution context.
+        /// This method sets streams to their original states from execution context.
         /// This is done when Pipeline is completed/failed/stopped ie., termination state.
         /// </summary>
         private void ClearStreams()
@@ -1067,9 +1067,9 @@ namespace System.Management.Automation.Runspaces
         /// ExecutionContext, if it available in TLS
         /// Null, if ExecutionContext is not available in TLS
         /// </returns>
-        internal static System.Management.Automation.ExecutionContext GetExecutionContextFromTLS()
+        internal static ExecutionContext GetExecutionContextFromTLS()
         {
-            System.Management.Automation.Runspaces.Runspace runspace = Runspace.DefaultRunspace;
+            Runspace runspace = Runspace.DefaultRunspace;
             if (runspace == null)
             {
                 return null;

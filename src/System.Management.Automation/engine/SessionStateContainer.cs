@@ -1323,52 +1323,7 @@ namespace System.Management.Automation
 
                 try
                 {
-                    // If we're recursing, do some path fixups to match user
-                    // expectations, but only if the last part is a file and not a directory:
-                    if (recurse && !path.EndsWith(Path.DirectorySeparatorChar) && !path.EndsWith(Path.AltDirectorySeparatorChar))
-                    {
-                        string childName = GetChildName(path, context);
-
-                        // If -File or -Directory is specified and path is ended with '*', we should include the parent path as search path
-
-                        bool isFileOrDirectoryPresent = false;
-
-                        if (context.DynamicParameters is Microsoft.PowerShell.Commands.GetChildDynamicParameters dynParam)
-                        {
-                            isFileOrDirectoryPresent = dynParam.File.IsPresent || dynParam.Directory.IsPresent;
-                        }
-
-                        if (string.Equals(childName, "*", StringComparison.OrdinalIgnoreCase) && isFileOrDirectoryPresent)
-                        {
-                            string parentName = path.Substring(0, path.Length - childName.Length);
-                            path = parentName;
-                        }
-                        // dir c:\tem* -include *.ps1 -rec => No change
-                        if ((context.Include == null) || (context.Include.Count == 0))
-                        {
-                            // dir c:\tem* -rec => dir c:\ -include tem* -rec
-                            // dir tem* -rec => dir -include tem* -rec
-                            // dir temp -rec
-
-                            // Should glob paths and files that match tem*, but then
-                            // recurse into all subdirectories and do the same for
-                            // those directories.
-                            if (!string.IsNullOrEmpty(path) && !IsItemContainer(path))
-                            {
-                                if (!string.Equals(childName, "*", StringComparison.OrdinalIgnoreCase))
-                                {
-                                    if (context.Include != null)
-                                    {
-                                        context.Include.Add(childName);
-                                        modifiedInclude = true;
-                                    }
-                                }
-
-                                string parentName = path.Substring(0, path.Length - childName.Length);
-                                path = parentName;
-                            }
-                        }
-                    }
+                    modifiedInclude = NormalizePathForChildItemRecursion(ref path, recurse, context);
 
                     // Save the include and exclude filters so that we can ignore
                     // them when doing recursion
@@ -1497,7 +1452,7 @@ namespace System.Management.Automation
                     // include and exclude filters
                     try
                     {
-                        // Temeporary set literal path as false to apply filter
+                        // Temporary set literal path as false to apply filter
                         context.SuppressWildcardExpansion = false;
                         ProcessPathItems(providerInstance, path, recurse, depth, context, out _, ProcessMode.Enumerate);
                     }
@@ -1527,6 +1482,63 @@ namespace System.Management.Automation
                     throw pathNotFound;
                 }
             }
+        }
+
+        private bool NormalizePathForChildItemRecursion(
+            ref string path,
+            bool recurse,
+            CmdletProviderContext context)
+        {
+            bool modifiedInclude = false;
+
+            // If we're recursing, do some path fixups to match user
+            // expectations, but only if the last part is a file and not a directory:
+            if (recurse && !path.EndsWith(Path.DirectorySeparatorChar) && !path.EndsWith(Path.AltDirectorySeparatorChar))
+            {
+                string childName = GetChildName(path, context);
+
+                // If -File or -Directory is specified and path is ended with '*', we should include the parent path as search path
+
+                bool isFileOrDirectoryPresent = false;
+
+                if (context.DynamicParameters is Microsoft.PowerShell.Commands.GetChildDynamicParameters dynParam)
+                {
+                    isFileOrDirectoryPresent = dynParam.File.IsPresent || dynParam.Directory.IsPresent;
+                }
+
+                if (string.Equals(childName, "*", StringComparison.OrdinalIgnoreCase) && isFileOrDirectoryPresent)
+                {
+                    string parentName = path.Substring(0, path.Length - childName.Length);
+                    path = parentName;
+                }
+                // dir c:\tem* -include *.ps1 -rec => No change
+                if ((context.Include == null) || (context.Include.Count == 0))
+                {
+                    // dir c:\tem* -rec => dir c:\ -include tem* -rec
+                    // dir tem* -rec => dir -include tem* -rec
+                    // dir temp -rec
+
+                    // Should glob paths and files that match tem*, but then
+                    // recurse into all subdirectories and do the same for
+                    // those directories.
+                    if (!string.IsNullOrEmpty(path) && !IsItemContainer(path))
+                    {
+                        if (!string.Equals(childName, "*", StringComparison.OrdinalIgnoreCase))
+                        {
+                            if (context.Include != null)
+                            {
+                                context.Include.Add(childName);
+                                modifiedInclude = true;
+                            }
+                        }
+
+                        string parentName = path.Substring(0, path.Length - childName.Length);
+                        path = parentName;
+                    }
+                }
+            }
+
+            return modifiedInclude;
         }
 
         /// <summary>
@@ -1839,7 +1851,7 @@ namespace System.Management.Automation
                         return;
                     }
 
-                    if (!(childNameObjects[index].BaseObject is string childName))
+                    if (childNameObjects[index].BaseObject is not string childName)
                     {
                         continue;
                     }
@@ -2229,6 +2241,10 @@ namespace System.Management.Automation
             }
 
             CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+            context.SetFilters(
+                include: new Collection<string>(),
+                exclude: new Collection<string>(),
+                filter: null);
             context.Force = force;
             context.SuppressWildcardExpansion = literalPath;
 
@@ -2319,6 +2335,33 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
+            bool modifiedInclude = false;
+
+            try
+            {
+                if ((recurse && !context.SuppressWildcardExpansion) || LocationGlobber.ShouldPerformGlobbing(path, context))
+                {
+                    modifiedInclude = NormalizePathForChildItemRecursion(ref path, recurse, context);
+                }
+
+                GetChildNamesCore(path, returnContainers, recurse, depth, context);
+            }
+            finally
+            {
+                if (modifiedInclude)
+                {
+                    context.Include.Clear();
+                }
+            }
+        }
+
+        private void GetChildNamesCore(
+            string path,
+            ReturnContainers returnContainers,
+            bool recurse,
+            uint depth,
+            CmdletProviderContext context)
+        {
             // Construct the include filter
 
             Collection<WildcardPattern> includeMatcher =
@@ -2584,7 +2627,7 @@ namespace System.Management.Automation
                         return;
                     }
 
-                    if (!(result.BaseObject is string name))
+                    if (result.BaseObject is not string name)
                     {
                         continue;
                     }
@@ -2632,7 +2675,7 @@ namespace System.Management.Automation
                                 return;
                             }
 
-                            if (!(result.BaseObject is string name))
+                            if (result.BaseObject is not string name)
                             {
                                 continue;
                             }
@@ -3497,37 +3540,7 @@ namespace System.Management.Automation
                             throw PSTraceSource.NewArgumentNullException(nameof(content), SessionStateStrings.NewLinkTargetNotSpecified, path);
                         }
 
-                        ProviderInfo targetProvider = null;
-                        CmdletProvider targetProviderInstance = null;
-
-                        var globbedTarget = Globber.GetGlobbedProviderPathsFromMonadPath(
-                            targetPath,
-                            allowNonexistingPath,
-                            context,
-                            out targetProvider,
-                            out targetProviderInstance);
-
-                        if (!string.Equals(targetProvider.Name, "filesystem", StringComparison.OrdinalIgnoreCase))
-                        {
-                            throw PSTraceSource.NewNotSupportedException(SessionStateStrings.MustBeFileSystemPath);
-                        }
-
-                        if (globbedTarget.Count > 1)
-                        {
-                            throw PSTraceSource.NewInvalidOperationException(SessionStateStrings.PathResolvedToMultiple, targetPath);
-                        }
-
-                        if (globbedTarget.Count == 0)
-                        {
-                            throw PSTraceSource.NewInvalidOperationException(SessionStateStrings.PathNotFound, targetPath);
-                        }
-
-                        // If the original target was a relative path, we want to leave it as relative if it did not require
-                        // globbing to resolve.
-                        if (WildcardPattern.ContainsWildcardCharacters(targetPath))
-                        {
-                            content = globbedTarget[0];
-                        }
+                        content = targetPath;
                     }
 
                     NewItemPrivate(providerInstance, composedPath, type, content, context);

@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Collections.ObjectModel;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -134,6 +135,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private void InitializeAutoSize()
         {
+            // Only Table and Wide views support autosize.
+            if (this is not (TableViewGenerator or WideViewGenerator))
+            {
+                return;
+            }
+
             // check the autosize flag first
             if (parameters != null && parameters.autosize.HasValue)
             {
@@ -141,13 +148,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return;
             }
             // check if we have a view with autosize checked
-            if (this.dataBaseInfo.view != null && this.dataBaseInfo.view.mainControl != null)
+            if (this.dataBaseInfo.view != null && this.dataBaseInfo.view.mainControl != null
+                && this.dataBaseInfo.view.mainControl is ControlBody controlBody && controlBody.autosize.HasValue)
             {
-                ControlBody controlBody = this.dataBaseInfo.view.mainControl as ControlBody;
-                if (controlBody != null && controlBody.autosize.HasValue)
-                {
-                    _autosize = controlBody.autosize.Value;
-                }
+                _autosize = controlBody.autosize.Value;
             }
         }
 
@@ -219,7 +223,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 if (formatErrorObject != null && formatErrorObject.exception != null)
                 {
-                    // if we did no thave any errors in the expression evaluation
+                    // if we did not have any errors in the expression evaluation
                     // we might have errors in the formatting, if present
                     _errorManager.LogStringFormatError(formatErrorObject);
                     if (_errorManager.DisplayFormatErrorString)
@@ -350,8 +354,50 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         protected DataBaseInfo dataBaseInfo = new DataBaseInfo();
 
-        protected List<MshResolvedExpressionParameterAssociation> activeAssociationList = null;
-        protected FormattingCommandLineParameters inputParameters = null;
+        /// <summary>
+        /// Builds the raw association list for the given object.
+        /// Subclasses override this to provide cmdlet-specific property expansion logic.
+        /// </summary>
+        /// <param name="so">The object to build the association list for.</param>
+        /// <param name="propertyList">The list of properties specified by the user, or null if not specified.</param>
+        /// <returns>The raw association list, or null if not applicable.</returns>
+        protected virtual List<MshResolvedExpressionParameterAssociation> BuildRawAssociationList(PSObject so, List<MshParameter> propertyList)
+        {
+            return null;
+        }
+
+        /// <summary>
+        /// Builds the active association list for the given object, with ExcludeProperty filter applied.
+        /// </summary>
+        /// <param name="so">The object to build the association list for.</param>
+        /// <returns>The filtered association list.</returns>
+        protected List<MshResolvedExpressionParameterAssociation> BuildActiveAssociationList(PSObject so)
+        {
+            var propertyList = parameters?.mshParameterList;
+            var excludeFilter = parameters?.excludePropertyFilter;
+            var rawList = BuildRawAssociationList(so, propertyList);
+            return ApplyExcludeFilter(rawList, excludeFilter);
+        }
+
+        /// <summary>
+        /// Applies the ExcludeProperty filter to the given association list.
+        /// </summary>
+        /// <param name="associationList">The list to filter.</param>
+        /// <param name="excludeFilter">The exclude filter to apply.</param>
+        /// <returns>The filtered list, or the original list if no filter is specified.</returns>
+        internal static List<MshResolvedExpressionParameterAssociation> ApplyExcludeFilter(
+            List<MshResolvedExpressionParameterAssociation> associationList,
+            PSPropertyExpressionFilter excludeFilter)
+        {
+            if (associationList is null || excludeFilter is null)
+            {
+                return associationList;
+            }
+
+            return associationList
+                .Where(item => !excludeFilter.IsMatch(item.ResolvedExpression))
+                .ToList();
+        }
 
         protected string GetExpressionDisplayValue(PSObject so, int enumerationLimit, PSPropertyExpression ex,
                     FieldFormattingDirective directive)
@@ -387,7 +433,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 else if (formatErrorObject != null && formatErrorObject.exception != null)
                 {
-                    // if we did no thave any errors in the expression evaluation
+                    // if we did not have any errors in the expression evaluation
                     // we might have errors in the formatting, if present
                     _errorManager.LogStringFormatError(formatErrorObject);
                     if (_errorManager.DisplayErrorStrings)
@@ -439,17 +485,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (formatTokenList.Count != 0)
             {
                 FormatToken token = formatTokenList[0];
-                FieldPropertyToken fpt = token as FieldPropertyToken;
-                if (fpt != null)
+                if (token is FieldPropertyToken fpt)
                 {
                     PSPropertyExpression ex = this.expressionFactory.CreateFromExpressionToken(fpt.expression, this.dataBaseInfo.view.loadingInfo);
                     fpf.propertyValue = this.GetExpressionDisplayValue(so, enumerationLimit, ex, fpt.fieldFormattingDirective, out result);
                 }
-                else
+                else if (token is TextToken tt)
                 {
-                    TextToken tt = token as TextToken;
-                    if (tt != null)
-                        fpf.propertyValue = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(tt);
+                    fpf.propertyValue = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(tt);
                 }
             }
             else

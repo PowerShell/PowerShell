@@ -44,7 +44,6 @@ namespace System.Management.Automation
     /// but there is no established scenario for doing this, nor has it been tested.
     /// </remarks>
     [TypeDescriptionProvider(typeof(PSObjectTypeDescriptionProvider))]
-    [Serializable]
     public class PSObject : IFormattable, IComparable, ISerializable, IDynamicMetaObjectProvider
     {
         #region constructors
@@ -593,7 +592,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
 
-            if (!(info.GetValue("CliXml", typeof(string)) is string serializedData))
+            if (info.GetValue("CliXml", typeof(string)) is not string serializedData)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
@@ -981,7 +980,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static object Base(object obj)
         {
-            if (!(obj is PSObject mshObj))
+            if (obj is not PSObject mshObj)
             {
                 return obj;
             }
@@ -1065,7 +1064,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal static object GetKeyForResurrectionTables(object obj)
         {
-            if (!(obj is PSObject pso))
+            if (obj is not PSObject pso)
             {
                 return obj;
             }
@@ -1612,7 +1611,7 @@ namespace System.Management.Automation
             bool needToReAddInstanceMembersAndTypeNames = !object.ReferenceEquals(GetKeyForResurrectionTables(this), GetKeyForResurrectionTables(returnValue));
             if (needToReAddInstanceMembersAndTypeNames)
             {
-                Diagnostics.Assert(!returnValue.InstanceMembers.Any(), "needToReAddInstanceMembersAndTypeNames should mean that the new object has a fresh/empty list of instance members");
+                Diagnostics.Assert(returnValue.InstanceMembers.Count == 0, "needToReAddInstanceMembersAndTypeNames should mean that the new object has a fresh/empty list of instance members");
                 foreach (PSMemberInfo member in this.InstanceMembers)
                 {
                     if (member.IsHidden)
@@ -1852,7 +1851,7 @@ namespace System.Management.Automation
                 settings.ReplicateInstance(ownerObject);
             }
 
-            if (!(settings.Members[noteName] is PSNoteProperty note))
+            if (settings.Members[noteName] is not PSNoteProperty note)
             {
                 return defaultValue;
             }

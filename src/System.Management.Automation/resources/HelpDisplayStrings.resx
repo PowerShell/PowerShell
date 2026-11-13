@@ -59,8 +59,8 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -346,6 +346,9 @@
   <data name="ModuleNameNullOrEmpty" xml:space="preserve">
     <value>The following parameter must not be null or empty: Module.</value>
   </data>
+  <data name="ModuleNameTooLong" xml:space="preserve">
+    <value>The module name exceeds the maximum supported length of {1} characters (actual length: {0}).</value>
+  </data>
   <data name="PathNullOrEmpty" xml:space="preserve">
     <value>The following parameter must not be null or empty: Path.</value>
   </data>
@@ -391,6 +394,9 @@ English-US help content is available and can be saved using: Save-Help -UICultur
   <data name="FailedToUpdateHelpForModuleWithCulture" xml:space="preserve">
     <value>Failed to update Help for the module(s) '{0}' with UI culture(s) {{{1}}} : {2}.
 English-US help content is available and can be installed using: Update-Help -UICulture en-US.</value>
+  </data>
+  <data name="FailedToUpdateHelpWithLocaleNoUICulture" xml:space="preserve">
+    <value>Your current culture is ({0}), which is not associated with any language, consider changing your system culture or install the English-US help content using: Update-Help -UICulture en-US.</value>
   </data>
   <data name="FalseShort" xml:space="preserve">
     <value>false</value>

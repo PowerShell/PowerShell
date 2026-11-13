@@ -95,7 +95,7 @@ namespace System.Management.Automation
             SetCommandCollection(_commands);
 
             // Create event which will be signalled when pipeline execution
-            // is completed/failed/stoped.
+            // is completed/failed/stopped.
             // Note:Runspace.Close waits for all the running pipeline
             // to finish.  This Event must be created before pipeline is
             // added to list of running pipelines. This avoids the race condition
@@ -599,7 +599,7 @@ namespace System.Management.Automation
                         break;
 
                     // If pipeline execution has failed or completed or
-                    // stoped, return silently.
+                    // stopped, return silently.
                     case PipelineState.Stopped:
                     case PipelineState.Completed:
                     case PipelineState.Failed:
@@ -1018,7 +1018,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// ManualResetEvent which is signaled when pipeline execution is
-        /// completed/failed/stoped.
+        /// completed/failed/stopped.
         /// </summary>
         internal ManualResetEvent PipelineFinishedEvent { get; }
 

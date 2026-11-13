@@ -1,0 +1,186 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="UpdateData_WrongProviderError" xml:space="preserve">
+    <value>Die Datei kann nicht geöffnet werden, da der aktuelle Anbieter „{0}“ ist, und dieser Befehl eine Datei erfordert.</value>
+  </data>
+  <data name="UpdateData_WrongExtension" xml:space="preserve">
+    <value>Die Datei „{0}“ kann nicht gelesen werden, da sie nicht die Dateinamenerweiterung „{1}“ hat.</value>
+  </data>
+  <data name="UpdateTypeDataAction" xml:space="preserve">
+    <value>TypeData aktualisieren</value>
+  </data>
+  <data name="UpdateFormatDataAction" xml:space="preserve">
+    <value>FormatData aktualisieren</value>
+  </data>
+  <data name="UpdateTarget" xml:space="preserve">
+    <value>FileName: {0}</value>
+  </data>
+  <data name="CannotUpdateMemberType" xml:space="preserve">
+    <value>Ein Member vom Typ „{0}“ kann nicht aktualisiert werden. Geben Sie für den Parameter MemberType einen anderen Typ an.</value>
+  </data>
+  <data name="ShouldBeSpecified" xml:space="preserve">
+    <value>Der {0}-Parameter ist für den Typ „{1}“ erforderlich. Geben Sie den {0}-Parameter an.</value>
+  </data>
+  <data name="ShouldNotBeNull" xml:space="preserve">
+    <value>Der {0}-Parameter darf für einen Member vom Typ „{1}“ nicht NULL oder eine leere Zeichenfolge sein. Geben Sie beim Aktualisieren dieses Membertyps für den {0}-Parameter einen Wert ungleich NULL an.</value>
+  </data>
+  <data name="ShouldNotBeSpecified" xml:space="preserve">
+    <value>Der {0}-Parameter ist für einen Member vom Typ „{1}“ nicht erforderlich und sollte nicht angegeben werden. Geben Sie den {0}-Parameter nicht an, wenn Sie diesen Membertyp aktualisieren.</value>
+  </data>
+  <data name="TypeDataEmpty" xml:space="preserve">
+    <value>Für die Aktualisierung des Typs „{0}“ ist kein Member angegeben.</value>
+  </data>
+  <data name="TargetTypeNameEmpty" xml:space="preserve">
+    <value>Der Zieltypname darf nicht NULL oder leer sein oder nur Leerzeichen enthalten.</value>
+  </data>
+  <data name="Value1AndValue2AreNotBothNull" xml:space="preserve">
+    <value>Die Value- und SecondValue-Parameter dürfen für einen Member vom Typ „{0}“ nicht beide NULL sein. Geben Sie für einen der beiden Parameter einen Wert ungleich NULL an.</value>
+  </data>
+  <data name="WrongMemberCount" xml:space="preserve">
+    <value>Es kann nur ein Membertyp angegeben werden. Die angegebenen Membertypen sind: „{0}“. Aktualisieren Sie den Typ nur mit einem Membertyp.</value>
+  </data>
+  <data name="MemberTypeIsMissing" xml:space="preserve">
+    <value>Die MemberName-, Value- und SecondValue-Parameter können nicht ohne den MemberType-Parameter angegeben werden.</value>
+  </data>
+  <data name="RemoveTypeDataAction" xml:space="preserve">
+    <value>TypeData entfernen</value>
+  </data>
+  <data name="RemoveTypeDataTarget" xml:space="preserve">
+    <value>Name des zu entfernenden Typs: {0}</value>
+  </data>
+  <data name="UpdateTypeDataTarget" xml:space="preserve">
+    <value>Zu aktualisierender Typ: {0}</value>
+  </data>
+  <data name="RemoveTypeFileAction" xml:space="preserve">
+    <value>Typdatei entfernen</value>
+  </data>
+  <data name="TypeFileNotExistsInCurrentSession" xml:space="preserve">
+    <value>Die Datei „{0}“ wird nicht in die aktuelle Sitzung importiert.</value>
+  </data>
+  <data name="FormatUpdatesDisabled" xml:space="preserve">
+    <value>Das Aktualisieren von Formatdaten ist in diesem Runspace nicht zulässig. Die Eigenschaft „DisableFormatUpdates“ wird beim Erstellen des Runspace auf TRUE festgelegt.</value>
+  </data>
+  <data name="CannotUpdateFormatWithFormatTable" xml:space="preserve">
+    <value>Die Formatdaten können nicht mithilfe einer Instanz der FormatTable aktualisiert werden.</value>
+  </data>
+  <data name="CannotUpdateTypeWithTypeTable" xml:space="preserve">
+    <value>Die Typdaten können nicht mithilfe einer TypeTable-Instanz aktualisiert werden.</value>
+  </data>
+</root>

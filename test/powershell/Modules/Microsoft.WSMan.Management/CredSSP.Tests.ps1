@@ -113,6 +113,10 @@ Describe "CredSSP cmdlet error cases tests" -Tags 'Feature' {
     ) {
         param ($cmdline, $cmd)
 
+        if (Test-IsWindowsArm64) {
+            Set-ItResult -Pending -Because "WSManCredSSP results in InvalidOperationException on ARM64."
+        }
+
         $scriptBlock = [scriptblock]::Create($cmdline)
         $scriptBlock | Should -Throw -ErrorId "System.InvalidOperationException,Microsoft.WSMan.Management.$cmd"
     }

@@ -1,0 +1,159 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="FileSmallerThan4Bytes" xml:space="preserve">
+    <value>{0} dosyasının boyutu 4 bayttan küçük olduğundan dosya dijital olarak imzalanamıyor. Dosyaların dijital olarak imzalanabilmesi için en az 4 bayt olması gerekir.</value>
+  </data>
+  <data name="OperationNotSupportedOnPath" xml:space="preserve">
+    <value>İşlem, {0} yolunda bulunan nesnede desteklenmediğinden gerçekleştirilemiyor.</value>
+  </data>
+  <data name="GetMethodNotFound" xml:space="preserve">
+    <value>Gerekli GetSecurityDescriptor yöntemi mevcut olmadığından ACL alınamıyor.</value>
+  </data>
+  <data name="SetMethodNotFound" xml:space="preserve">
+    <value>Çağrılması gereken SetSecurityDescriptor yöntemi mevcut olmadığından ACL ayarlanamıyor.</value>
+  </data>
+  <data name="MethodInvokeFail" xml:space="preserve">
+    <value>Yöntem çağrısı sırasında özel durum oluştuğundan işlem gerçekleştirilemedi.</value>
+  </data>
+  <data name="GetSaclWithCapIdFail" xml:space="preserve">
+    <value>Belirtilen merkezi erişim ilkesiyle bir SACL oluşturulamadı.</value>
+  </data>
+  <data name="GetEmptySaclFail" xml:space="preserve">
+    <value>Boş bir SACL oluşturulamadı.</value>
+  </data>
+  <data name="GetTokenWithEnabledPrivilegeFail" xml:space="preserve">
+    <value>SeSecurityPrivilege etkinleştirilemedi.</value>
+  </data>
+  <data name="SetCentralAccessPolicyFail" xml:space="preserve">
+    <value>Merkezi erişim ilkesi ayarlanamadı.</value>
+  </data>
+  <data name="InvalidCentralAccessPolicyParameters" xml:space="preserve">
+    <value>ClearCentralAccessPolicy ve CentralAccessPolicy parametreleri aynı anda kullanılamaz.</value>
+  </data>
+  <data name="InvalidCentralAccessPolicyIdentifier" xml:space="preserve">
+    <value>Merkezi erişim ilkesi tanımlayıcısı veya adı geçerli değil. Tanımlayıcı belirtiyorsanız S-1-17 ile başlamalıdır. Ad belirtiyorsanız ilke hedef makineye uygulanmalıdır.</value>
+  </data>
+  <data name="PromptForCredential_DefaultCaption" xml:space="preserve">
+    <value>PowerShell kimlik bilgisi isteği</value>
+  </data>
+  <data name="PromptForCredential_DefaultMessage" xml:space="preserve">
+    <value>Kimlik bilgilerinizi girin.</value>
+  </data>
+</root>

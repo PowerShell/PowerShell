@@ -44,7 +44,7 @@ namespace Microsoft.PowerShell.Commands
         /// certificate.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true, Mandatory = true, ParameterSetName = "ByLiteralPath")]
-        [Alias("PSPath")]
+        [Alias("PSPath", "LP")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] LiteralPath
         {
@@ -208,8 +208,11 @@ namespace Microsoft.PowerShell.Commands
 
         private static X509Certificate2 GetCertFromPfxFile(string path, SecureString password)
         {
+            // No overload found in X509CertificateLoader that takes SecureString
+            #pragma warning disable SYSLIB0057
             var cert = new X509Certificate2(path, password, X509KeyStorageFlags.DefaultKeySet);
             return cert;
+            #pragma warning restore SYSLIB0057
         }
     }
 }

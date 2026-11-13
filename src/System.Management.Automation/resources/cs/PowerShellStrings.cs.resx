@@ -1,0 +1,180 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="InvalidPowerShellStateGeneral" xml:space="preserve">
+    <value>Stav aktuální instance PowerShellu není pro tuto operaci platný.</value>
+  </data>
+  <data name="ExecutionAlreadyStarted" xml:space="preserve">
+    <value>Operaci nejde provést, protože příkaz už byl spuštěný. Počkejte na dokončení příkazu nebo ho zastavte a potom operaci zopakujte.</value>
+  </data>
+  <data name="NoCommandToInvoke" xml:space="preserve">
+    <value>Nejsou zadané žádné příkazy.</value>
+  </data>
+  <data name="InvalidStateCreateNested" xml:space="preserve">
+    <value>Instance PowerShellu není ve správném stavu pro vytvoření vnořené instance PowerShellu. Vnořené instance PowerShellu se mají vytvářet jen ve spuštěné instanci PowerShellu.</value>
+  </data>
+  <data name="InvalidRunspaceState" xml:space="preserve">
+    <value>Operaci nejde provést, protože prostředí runspace není ve stavu {0}. Aktuální stav prostředí runspace je {1}.</value>
+  </data>
+  <data name="NestedPowerShellInvokeAsync" xml:space="preserve">
+    <value>Vnořené instance PowerShellu nejde vyvolat asynchronně. Použijte metodu Invoke.</value>
+  </data>
+  <data name="AsyncResultNotOwned" xml:space="preserve">
+    <value>Objekt {0} nebyl vytvořený voláním {1} v této instanci PowerShellu.</value>
+  </data>
+  <data name="ApartmentStateMismatch" xml:space="preserve">
+    <value>Když je prostředí runspace nastavené na opakované použití vlákna, musí stav apartmentu v nastavení vyvolání odpovídat prostředí runspace.</value>
+  </data>
+  <data name="ApartmentStateMismatchCurrentThread" xml:space="preserve">
+    <value>Když je prostředí runspace nastavené na použití aktuálního vlákna, musí stav apartmentu v nastavení vyvolání odpovídat aktuálnímu vláknu.</value>
+  </data>
+  <data name="ParameterRequiresCommand" xml:space="preserve">
+    <value>K přidání parametru je nutný příkaz. Před přidáním parametru je potřeba do instance PowerShellu přidat příkaz.</value>
+  </data>
+  <data name="KeyMustBeString" xml:space="preserve">
+    <value>Klíče ve slovníku musí být řetězce.</value>
+  </data>
+  <data name="CommandInvokedFromWrongThreadWithCommand" xml:space="preserve">
+    <value>V tomto vlákně není k dispozici žádné prostředí Runspace pro spouštění příkazů. Můžete ho zadat ve vlastnosti DefaultRunspace typu System.Management.Automation.Runspaces.Runspace. Pokusili jste se vyvolat tento příkaz: {0}</value>
+  </data>
+  <data name="CannotConnect" xml:space="preserve">
+    <value>Tento objekt PowerShellu nejde připojit, protože není přidružený ke vzdálenému prostředí runspace ani fondu runspace.</value>
+  </data>
+  <data name="DiscOnSyncCommand" xml:space="preserve">
+    <value>Spuštěný příkaz byl odpojený, ale na vzdáleném serveru stále běží.  Znovu se připojte, abyste získali stav operace příkazu a výstupní data.</value>
+  </data>
+  <data name="ExecutionDisconnected" xml:space="preserve">
+    <value>Operaci nejde provést, protože aktuální relace PowerShellu je ve stavu Disconnected.  Připojte tuto relaci PowerShellu a potom počkejte na dokončení příkazu nebo příkaz zastavte.</value>
+  </data>
+  <data name="IsDisconnected" xml:space="preserve">
+    <value>Operaci nejde provést, protože aktuální relace PowerShellu je ve stavu Disconnected.  Připojte tuto relaci PowerShellu a zkuste to znovu.</value>
+  </data>
+  <data name="ConnectFailed" xml:space="preserve">
+    <value>Pokus o připojení ke vzdálenému příkazu selhal.</value>
+  </data>
+  <data name="ExecutionStopping" xml:space="preserve">
+    <value>Operaci nejde provést, protože se příkaz právě zastavuje. Počkejte, až se příkaz zastaví, a potom operaci zopakujte.</value>
+  </data>
+  <data name="CommandInvokedFromWrongThreadWithoutCommand" xml:space="preserve">
+    <value>V tomto vlákně není k dispozici žádné prostředí Runspace pro spouštění příkazů. Můžete ho zadat ve vlastnosti DefaultRunspace typu System.Management.Automation.Runspaces.Runspace. Aktuální instance PowerShellu neobsahuje žádný příkaz k vyvolání.</value>
+  </data>
+  <data name="NoDefaultRunspaceForPSCreate" xml:space="preserve">
+    <value>Objekt PowerShellu, který používá aktuální prostředí runspace, nejde vytvořit, protože žádné aktuální prostředí runspace není k dispozici.  Aktuální prostředí runspace se možná spouští, například když bylo vytvořené s počátečním stavem relace.</value>
+  </data>
+</root>

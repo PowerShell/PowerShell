@@ -1,0 +1,315 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CounterNotALogFile" xml:space="preserve">
+    <value>{0} 文件没有预期的文件扩展名。使用 Path 参数时，只能指定 .blg、.csv 或 .tsv 文件。</value>
+  </data>
+  <data name="CounterApiError" xml:space="preserve">
+    <value>内部性能计数器 API 调用失败。错误: {0:x8}。</value>
+  </data>
+  <data name="LogProviderOrPathNeeded" xml:space="preserve">
+    <value>你必须至少指定一个 Log、Provider 或 Path 键值对。</value>
+  </data>
+  <data name="NoMatchingProvidersFound" xml:space="preserve">
+    <value>{0} 计算机上没有与“{1}”匹配的事件提供程序。</value>
+  </data>
+  <data name="NullNotAllowedInHashtable" xml:space="preserve">
+    <value>在 {0} 哈希表键中遇到 null 值。不允许 null 值。</value>
+  </data>
+  <data name="QueryTrace" xml:space="preserve">
+    <value>构造的结构化查询: 
+{0}。</value>
+  </data>
+  <data name="ProviderLogLink" xml:space="preserve">
+    <value>{0} 提供程序会将事件写入 {1} 日志。</value>
+  </data>
+  <data name="CounterInvalidDateRange" xml:space="preserve">
+    <value>StartTime 参数的值必须小于 EndTime 参数的值。</value>
+  </data>
+  <data name="NoMatchingLogsFound" xml:space="preserve">
+    <value>{0} 计算机上没有与“{1}”匹配的事件日志。</value>
+  </data>
+  <data name="Vendor" xml:space="preserve">
+    <value>Microsoft</value>
+  </data>
+  <data name="CounterCircularNoMaxSize" xml:space="preserve">
+    <value>除非同时指定 MaxSize 参数，否则将忽略 Circular 参数。</value>
+  </data>
+  <data name="FileOpenFailed" xml:space="preserve">
+    <value>无法打开 {0} 文件进行写入。</value>
+  </data>
+  <data name="KeywordLongExpected" xml:space="preserve">
+    <value>为关键字指定的值 "{0}" 无效。</value>
+  </data>
+  <data name="CounterExportSampleNotInInitialSet" xml:space="preserve">
+    <value>无法将 {0} 性能计数器导出到 {1} 文件，因为它不属于第一个样本集。</value>
+  </data>
+  <data name="NoMatchingEventsFound" xml:space="preserve">
+    <value>找不到与指定的选择条件匹配的事件。</value>
+  </data>
+  <data name="CounterPathTranslationFailed" xml:space="preserve">
+    <value>此命令的默认值失败。错误: {0:x8}。</value>
+  </data>
+  <data name="CounterNoMixedLogTypes" xml:space="preserve">
+    <value>不能在同一命令中导入不同类型的性能日志文件。 请在 Path 参数中只指定一种类型的文件。</value>
+  </data>
+  <data name="NotAFileSystemPath" xml:space="preserve">
+    <value>{0} 路径似乎不是有效的日志文件路径。请指定有效的文件系统路径。</value>
+  </data>
+  <data name="EventIdNotSpecified" xml:space="preserve">
+    <value>必须指定有效的事件 ID。</value>
+  </data>
+  <data name="ProviderMetadataUnavailable" xml:space="preserve">
+    <value>无法检索 {0} 提供程序的有关信息。错误: {1}。</value>
+  </data>
+  <data name="SpecifyOldestForLog" xml:space="preserve">
+    <value>{0} 事件日志是分析日志或调试日志，因此只能按时间正序读取。若要查看 {0} 事件日志中的事件，请在命令中使用 Oldest 参数。</value>
+  </data>
+  <data name="ExportDestPathAmbiguous" xml:space="preserve">
+    <value>以下导出目标路径不明确: {0}。</value>
+  </data>
+  <data name="CounterPathIsInvalid" xml:space="preserve">
+    <value>{0} 性能计数器路径无效。</value>
+  </data>
+  <data name="CounterSampleDataInvalid" xml:space="preserve">
+    <value>其中一个性能计数器样本中的数据无效。请查看每个 PerformanceCounterSample 对象的 Status 属性，以确保其中包含有效数据。</value>
+  </data>
+  <data name="PayloadMismatch" xml:space="preserve">
+    <value>提供的有效负载与为事件 ID {0} 定义的模板不匹配。
+定义的模板如下: 
+{1}</value>
+  </data>
+  <data name="NoMatchingCounterSetsFound" xml:space="preserve">
+    <value>在 {0} 文件中找不到任何与以下内容匹配的性能计数器集: {1}。</value>
+  </data>
+  <data name="CounterPathsInFilesInvalid" xml:space="preserve">
+    <value>在文件中未找到有效的计数器路径。</value>
+  </data>
+  <data name="FileCreateFailed" xml:space="preserve">
+    <value>无法创建 {0} 文件。请确保该路径有效。</value>
+  </data>
+  <data name="NoCounterSetsOnComputer" xml:space="preserve">
+    <value>在 {0} 计算机上找不到任何性能计数器集: 错误 {1:x8}。请验证 {0} 计算机是否存在、是否可发现，以及你是否有足够的权限查看该计算机上的性能计数器数据。</value>
+  </data>
+  <data name="IncorrectEventId" xml:space="preserve">
+    <value>无法写入事件，因为没有为提供程序 {0} 定义 ID 为 {1} 的事件。 请更正事件 ID，然后重试。</value>
+  </data>
+  <data name="InvalidContext" xml:space="preserve">
+    <value>{0} 上下文键值不是有效的 SID 或 NT 帐户名。</value>
+  </data>
+  <data name="IncorrectEventVersion" xml:space="preserve">
+    <value>无法写入事件，因为没有为提供程序“{2}”定义事件“{1}”的指定版本 {0}。 请更正版本，然后重试。</value>
+  </data>
+  <data name="Counter32FileLimit" xml:space="preserve">
+    <value>每个命令中不能导入超过 32 个 .blg 计数器日志文件。</value>
+  </data>
+  <data name="SpecifiedProvidersDontWriteToLog" xml:space="preserve">
+    <value>指定的提供程序不会将事件写入 {0} 日志。将忽略此日志。</value>
+  </data>
+  <data name="InvalidSIDFormat" xml:space="preserve">
+    <value>以下值不是有效的安全标识符(SID)格式: {0}。请输入有效的 SID，例如 S-1-5-32-544。</value>
+  </data>
+  <data name="NoProviderFound" xml:space="preserve">
+    <value>未找到名为“{0}”的提供程序。</value>
+  </data>
+  <data name="CounterSetEnumAccessDenied" xml:space="preserve">
+    <value>无法检索有关 {0} 性能计数器集的信息，因为访问被拒绝。</value>
+  </data>
+  <data name="VersionNotSpecified" xml:space="preserve">
+    <value>无法写入事件，因为为提供程序 {1} 定义了多个 ID 为 {0} 的事件。 请为该事件提供版本，然后重试。</value>
+  </data>
+  <data name="SpecifyOldestForEtlEvt" xml:space="preserve">
+    <value>{0} 事件日志文件是分 .etl 日志或 .evt 日志，因此只能按时间正序读取。若要查看 {0} 事件日志中的事件，请在命令中使用 Oldest 参数。</value>
+  </data>
+  <data name="ProviderNotSpecified" xml:space="preserve">
+    <value>必须指定提供程序名称。</value>
+  </data>
+  <data name="NotALogFile" xml:space="preserve">
+    <value>{0} 文件似乎不是有效的日志文件。仅将 .evtx、.etl 或 .evt 文件指定为 Path 参数的值。</value>
+  </data>
+  <data name="CounterPathInvalidOrNotInFile" xml:space="preserve">
+    <value>{0} 性能计数器路径无效，或在以下文件中不存在: {1}。</value>
+  </data>
+  <data name="Timestamp" xml:space="preserve">
+    <value>时间戳</value>
+  </data>
+  <data name="DateTimeExpected" xml:space="preserve">
+    <value>以下值的日期/时间格式无效: {0}。</value>
+  </data>
+  <data name="LogInfoUnavailable" xml:space="preserve">
+    <value>若要访问“{0}”日志，请以提升的用户权限启动 PowerShell。 错误: {1}</value>
+  </data>
+  <data name="LogInfoNoAccess" xml:space="preserve">
+    <value>拒绝访问文件: {0}。</value>
+  </data>
+  <data name="SuggestElevation" xml:space="preserve">
+    <value>以提升的用户权限启动 PowerShell。</value>
+  </data>
+  <data name="NoEventMessage" xml:space="preserve">
+    <value>无法检索事件消息文本。</value>
+  </data>
+  <data name="CounterFileExists" xml:space="preserve">
+    <value>{0} 文件已存在。若要覆盖此文件，请在 Export-Counter 命令中使用 Force 参数。</value>
+  </data>
+  <data name="CounterContinuousOrMaxSamples" xml:space="preserve">
+    <value>Continuous 参数和 MaxSamples 参数不能用在同一命令中。</value>
+  </data>
+  <data name="ExportCtrWin7Required" xml:space="preserve">
+    <value>此 cmdlet 只能在 Microsoft Windows 7 及更高版本上运行。</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>此 PowerShell 管理单元包含 Windows 事件和性能计数器 cmdlet。</value>
+  </data>
+  <data name="NoMatchingCounterSetsInFile" xml:space="preserve">
+    <value>在 {0} 文件中找不到任何与以下内容匹配的性能计数器集: {1}。</value>
+  </data>
+  <data name="LogsAndProvidersDontOverlap" xml:space="preserve">
+    <value>指定的提供程序不会将事件写入任何指定的日志。</value>
+  </data>
+  <data name="CookedValues" xml:space="preserve">
+    <value>计算值</value>
+  </data>
+  <data name="Counter1FileLimit" xml:space="preserve">
+    <value>每个命令中不能导入多个以逗号分隔的(.csv)或以制表符分隔的(.tsv)性能计数器文件。</value>
+  </data>
+  <data name="LogCountLimitExceeded" xml:space="preserve">
+    <value>日志计数({0})超出了 Windows 事件日志 API 限制({1})。请调整筛选器，以返回更少的日志名称。</value>
+  </data>
+  <data name="ListLogParamHelp" xml:space="preserve">
+    <value>指定事件日志。允许使用通配符。</value>
+  </data>
+  <data name="GetLogParamHelp" xml:space="preserve">
+    <value>指定此 cmdlet 从中获取事件的事件日志。允许使用通配符。</value>
+  </data>
+  <data name="ListProviderParamHelp" xml:space="preserve">
+    <value>指定此 cmdlet 获取的事件日志提供程序。</value>
+  </data>
+  <data name="GetProviderParamHelp" xml:space="preserve">
+    <value>指定此 cmdlet 从中获取事件的事件日志提供程序。</value>
+  </data>
+  <data name="PathParamHelp" xml:space="preserve">
+    <value>指定此 cmdlet 从中获取事件的事件日志文件路径。</value>
+  </data>
+  <data name="MaxEventsParamHelp" xml:space="preserve">
+    <value>指定要返回的最大事件数。</value>
+  </data>
+  <data name="ComputerNameParamHelp" xml:space="preserve">
+    <value>指定此 cmdlet 从中获取数据的计算机名称。</value>
+  </data>
+</root>

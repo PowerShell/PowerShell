@@ -24,7 +24,6 @@ using System.Text;
 using System.Threading;
 using Microsoft.PowerShell.Commands;
 using Microsoft.Win32;
-using Microsoft.Win32.SafeHandles;
 
 using TypeTable = System.Management.Automation.Runspaces.TypeTable;
 
@@ -476,15 +475,43 @@ namespace System.Management.Automation
 
             return string.Empty;
         }
+
+        private static string s_packageFamilyName;
+        private static bool? s_isMSIXInstallation;
+
+        /// <summary>
+        /// Determine whether the current process has package (MSIX) identity, caching the result
+        /// so the native API is only called once.
+        /// </summary>
+        /// <param name="packageFamilyName">Receives the package family name when the process has package identity; otherwise null.</param>
+        /// <returns>True if the current process has package (MSIX) identity; otherwise false.</returns>
+        internal static bool IsMSIXInstallation(out string packageFamilyName)
+        {
+            if (s_isMSIXInstallation is null)
+            {
+                s_packageFamilyName = Interop.Windows.GetCurrentPackageFamilyName();
+                s_isMSIXInstallation = s_packageFamilyName is not null;
+            }
+
+            packageFamilyName = s_packageFamilyName;
+            return s_isMSIXInstallation.Value;
+        }
 #endif
 
         internal static string DefaultPowerShellAppBase => GetApplicationBase(DefaultPowerShellShellID);
 
         internal static string GetApplicationBase(string shellId)
         {
-            // Use the location of SMA.dll as the application base.
-            Assembly assembly = typeof(PSObject).Assembly;
-            return Path.GetDirectoryName(assembly.Location);
+            // Use the location of SMA.dll as the application base if it exists,
+            // otherwise, use the base directory from `AppContext`.
+            var baseDirectory = Path.GetDirectoryName(typeof(PSObject).Assembly.Location);
+            if (string.IsNullOrEmpty(baseDirectory))
+            {
+                // Need to remove any trailing directory separator characters
+                baseDirectory = AppContext.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar);
+            }
+
+            return baseDirectory;
         }
 
         private static string[] s_productFolderDirectories;
@@ -1241,13 +1268,23 @@ namespace System.Management.Automation
             }
 
             // handle special cases like '\\wsl$\ubuntu', '\\?\', and '\\.\pipe\' which aren't a UNC path, but we can say it is so the filesystemprovider can use it
-            if (!networkOnly && (path.StartsWith(WslRootPath, StringComparison.OrdinalIgnoreCase) || path.StartsWith("\\\\?\\") || path.StartsWith("\\\\.\\")))
+            if (!networkOnly && (path.StartsWith(WslRootPath, StringComparison.OrdinalIgnoreCase) || PathIsDevicePath(path)))
             {
                 return true;
             }
 
             Uri uri;
             return Uri.TryCreate(path, UriKind.Absolute, out uri) && uri.IsUnc;
+#endif
+        }
+
+        internal static bool PathIsDevicePath(string path)
+        {
+#if UNIX
+            return false;
+#else
+            // device paths can be network paths, we would need windows to parse it.
+            return path.StartsWith(@"\\.\") || path.StartsWith(@"\\?\") || path.StartsWith(@"\\;");
 #endif
         }
 
@@ -1415,6 +1452,7 @@ namespace System.Management.Automation
 
         internal static class Separators
         {
+            internal static readonly char[] Backslash = new char[] { '\\' };
             internal static readonly char[] Directory = new char[] { '\\', '/' };
             internal static readonly char[] DirectoryOrDrive = new char[] { '\\', '/', ':' };
             internal static readonly char[] SpaceOrTab = new char[] { ' ', '\t' };
@@ -1460,27 +1498,40 @@ namespace System.Management.Automation
         /// <returns>The current ExecutionContext language mode.</returns>
         internal static PSLanguageMode EnforceSystemLockDownLanguageMode(ExecutionContext context)
         {
-            if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce)
+            switch (SystemPolicy.GetSystemLockdownPolicy())
             {
-                switch (context.LanguageMode)
-                {
-                    case PSLanguageMode.FullLanguage:
-                        context.LanguageMode = PSLanguageMode.ConstrainedLanguage;
-                        break;
+                case SystemEnforcementMode.Enforce:
+                    switch (context.LanguageMode)
+                    {
+                        case PSLanguageMode.FullLanguage:
+                            context.LanguageMode = PSLanguageMode.ConstrainedLanguage;
+                            break;
 
-                    case PSLanguageMode.RestrictedLanguage:
-                        context.LanguageMode = PSLanguageMode.NoLanguage;
-                        break;
+                        case PSLanguageMode.RestrictedLanguage:
+                            context.LanguageMode = PSLanguageMode.NoLanguage;
+                            break;
 
-                    case PSLanguageMode.ConstrainedLanguage:
-                    case PSLanguageMode.NoLanguage:
-                        break;
+                        case PSLanguageMode.ConstrainedLanguage:
+                        case PSLanguageMode.NoLanguage:
+                            break;
 
-                    default:
-                        Diagnostics.Assert(false, "Unexpected PSLanguageMode");
-                        context.LanguageMode = PSLanguageMode.NoLanguage;
-                        break;
-                }
+                        default:
+                            Diagnostics.Assert(false, "Unexpected PSLanguageMode");
+                            context.LanguageMode = PSLanguageMode.NoLanguage;
+                            break;
+                    }
+                    break;
+
+                case SystemEnforcementMode.Audit:
+                    switch (context.LanguageMode)
+                    {
+                        case PSLanguageMode.FullLanguage:
+                            // Set to ConstrainedLanguage mode.  But no restrictions are applied in audit mode
+                            // and only audit messages will be emitted to logs.
+                            context.LanguageMode = PSLanguageMode.ConstrainedLanguage;
+                            break;
+                    }
+                    break;
             }
 
             return context.LanguageMode;
@@ -1500,6 +1551,89 @@ namespace System.Management.Automation
                 _ => $"0 Bytes",
             };
         }
+
+        /// <summary>
+        /// Returns true if the current session is restricted (JEA or similar sessions)
+        /// </summary>
+        /// <param name="context">ExecutionContext.</param>
+        /// <returns>True if the session is restricted.</returns>
+        internal static bool IsSessionRestricted(ExecutionContext context)
+        {
+            CmdletInfo cmdletInfo = context.SessionState.InvokeCommand.GetCmdlet("Microsoft.PowerShell.Core\\Import-Module");
+            // if import-module is visible, then the session is not restricted,
+            // because the user can load arbitrary code.
+            if (cmdletInfo != null && cmdletInfo.Visibility == SessionStateEntryVisibility.Public)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Determine whether the environment variable is set and how.
+        /// </summary>
+        /// <param name="name">The name of the environment variable.</param>
+        /// <param name="defaultValue">If the environment variable is not set, use this as the default value.</param>
+        /// <returns>A boolean representing the value of the environment variable.</returns>
+        internal static bool GetEnvironmentVariableAsBool(string name, bool defaultValue)
+        {
+            var str = Environment.GetEnvironmentVariable(name);
+            if (string.IsNullOrEmpty(str))
+            {
+                return defaultValue;
+            }
+
+            var boolStr = str.AsSpan();
+
+            if (boolStr.Length == 1)
+            {
+                if (boolStr[0] == '1')
+                {
+                    return true;
+                }
+
+                if (boolStr[0] == '0')
+                {
+                    return false;
+                }
+            }
+
+            if (boolStr.Length == 3 &&
+                (boolStr[0] == 'y' || boolStr[0] == 'Y') &&
+                (boolStr[1] == 'e' || boolStr[1] == 'E') &&
+                (boolStr[2] == 's' || boolStr[2] == 'S'))
+            {
+                return true;
+            }
+
+            if (boolStr.Length == 2 &&
+                (boolStr[0] == 'n' || boolStr[0] == 'N') &&
+                (boolStr[1] == 'o' || boolStr[1] == 'O'))
+            {
+                return false;
+            }
+
+            if (boolStr.Length == 4 &&
+                (boolStr[0] == 't' || boolStr[0] == 'T') &&
+                (boolStr[1] == 'r' || boolStr[1] == 'R') &&
+                (boolStr[2] == 'u' || boolStr[2] == 'U') &&
+                (boolStr[3] == 'e' || boolStr[3] == 'E'))
+            {
+                return true;
+            }
+
+            if (boolStr.Length == 5 &&
+                (boolStr[0] == 'f' || boolStr[0] == 'F') &&
+                (boolStr[1] == 'a' || boolStr[1] == 'A') &&
+                (boolStr[2] == 'l' || boolStr[2] == 'L') &&
+                (boolStr[3] == 's' || boolStr[3] == 'S') &&
+                (boolStr[4] == 'e' || boolStr[4] == 'E'))
+            {
+                return false;
+            }
+
+            return defaultValue;
+        }
     }
 }
 
@@ -1514,10 +1648,13 @@ namespace System.Management.Automation.Internal
         internal static bool UseDebugAmsiImplementation;
         internal static bool BypassAppLockerPolicyCaching;
         internal static bool BypassOnlineHelpRetrieval;
-        internal static bool ThrowHelpCultureNotSupported;
         internal static bool ForcePromptForChoiceDefaultOption;
         internal static bool NoPromptForPassword;
         internal static bool ForceFormatListFixedLabelWidth;
+
+        // Update-Help tests
+        internal static bool ThrowHelpCultureNotSupported;
+        internal static CultureInfo CurrentUICulture;
 
         // Stop/Restart/Rename Computer tests
         internal static bool TestStopComputer;
@@ -1533,6 +1670,9 @@ namespace System.Management.Automation.Internal
         internal static bool DisableGACLoading;
         internal static bool SetConsoleWidthToZero;
         internal static bool SetConsoleHeightToZero;
+
+        // Simulate 'MyDocuments' returning empty string
+        internal static bool SetMyDocumentsSpecialFolderToBlank;
 
         internal static bool SetDate;
 
@@ -1554,6 +1694,9 @@ namespace System.Management.Automation.Internal
         internal static bool OneDriveTestOn;
         internal static bool OneDriveTestRecurseOn;
         internal static string OneDriveTestSymlinkName = "link-Beta";
+
+        // Test out smaller connection buffer size when calling WNetGetConnection.
+        internal static int WNetGetConnectionBufferSize = -1;
 
         /// <summary>This member is used for internal test purposes.</summary>
         public static void SetTestHook(string property, object value)
@@ -1733,34 +1876,11 @@ namespace System.Management.Automation.Internal
     /// </summary>
     internal static class Requires
     {
-        internal static void NotNull(object value, string paramName)
-        {
-            ArgumentNullException.ThrowIfNull(value, paramName);
-        }
-
-        internal static void NotNullOrEmpty(string value, string paramName)
-        {
-            if (string.IsNullOrEmpty(value))
-            {
-                throw new ArgumentNullException(paramName);
-            }
-        }
-
         internal static void NotNullOrEmpty(ICollection value, string paramName)
         {
-            ArgumentNullException.ThrowIfNull(value, paramName);
-
-            if (value.Count == 0)
+            if (value is null || value.Count == 0)
             {
                 throw new ArgumentNullException(paramName);
-            }
-        }
-
-        internal static void Condition([DoesNotReturnIf(false)] bool precondition, string paramName)
-        {
-            if (!precondition)
-            {
-                throw new ArgumentException(paramName);
             }
         }
     }

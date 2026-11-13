@@ -26,7 +26,7 @@ namespace System.Management.Automation
         /// using "SessionState" as the category.
         /// This is the same category as the SessionState tracer class.
         /// </summary>
-        [Dbg.TraceSourceAttribute(
+        [Dbg.TraceSource(
              "PSDriveInfo",
              "The namespace navigation tracer")]
         private static readonly Dbg.PSTraceSource s_tracer =

@@ -148,8 +148,16 @@ namespace System.Management.Automation.Language
 
         public object VisitStatementBlock(StatementBlockAst statementBlockAst)
         {
-            if (statementBlockAst.Traps != null) return false;
-            if (statementBlockAst.Statements.Count > 1) return false;
+            if (statementBlockAst.Traps != null) 
+            {
+                return false;
+            }
+
+            if (statementBlockAst.Statements.Count > 1)
+            {
+                return false;
+            }
+
             var pipeline = statementBlockAst.Statements.FirstOrDefault();
             return pipeline != null && (bool)pipeline.Accept(this);
         }

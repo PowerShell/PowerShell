@@ -105,7 +105,10 @@ namespace System.Management.Automation
                 for (int i = 0; i < typeattr.cFuncs; i++)
                 {
                     COM.FUNCDESC funcdesc = GetFuncDesc(_typeinfo, i);
-                    if (funcdesc.memid == DISPID_NEWENUM) { NewEnumInvokeKind = funcdesc.invkind; }
+                    if (funcdesc.memid == DISPID_NEWENUM)
+                    {
+                        NewEnumInvokeKind = funcdesc.invkind;
+                    }
 
                     if ((funcdesc.wFuncFlags & 0x1) == 0x1)
                     {

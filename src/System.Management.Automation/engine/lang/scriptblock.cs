@@ -104,7 +104,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="script">The string to compile.</param>
         public static ScriptBlock Create(string script) => Create(
-            parser: new Language.Parser(),
+            parser: new Parser(),
             fileName: null,
             fileContents: script);
 
@@ -1138,9 +1138,10 @@ namespace System.Management.Automation
         /// <param name="command">The command you're calling this from (i.e. instance of PSCmdlet or value of $PSCmdlet variable).</param>
         public void Begin(InternalCommand command)
         {
-            ArgumentNullException.ThrowIfNull(command);
-
-            ArgumentNullException.ThrowIfNull(command.MyInvocation, nameof(command));
+            if (command is null || command.MyInvocation is null)
+            {
+                throw new ArgumentNullException(nameof(command));
+            }
 
             Begin(command.MyInvocation.ExpectingInput, command.commandRuntime);
         }
@@ -1275,14 +1276,16 @@ namespace System.Management.Automation
         /// Clean resources for script commands of this steppable pipeline.
         /// </summary>
         /// <remarks>
-        /// The way we handle 'Clean' blocks in a steppable pipeline makes sure that:
-        ///  1. The 'Clean' blocks get to run if any exception is thrown from 'Begin/Process/End'.
-        ///  2. The 'Clean' blocks get to run if 'End' finished successfully.
+        /// <para>
+        /// The way we handle 'Clean' blocks in a steppable pipeline makes sure that:</para>
+        /// <para>1. The 'Clean' blocks get to run if any exception is thrown from 'Begin/Process/End'.</para>
+        /// <para>2. The 'Clean' blocks get to run if 'End' finished successfully.</para>
+        /// <para>
         /// However, this is not enough for a steppable pipeline, because the function, where the steppable
         /// pipeline gets used, may fail (think about a proxy function). And that may lead to the situation
         /// where "no exception was thrown from the steppable pipeline" but "the steppable pipeline didn't
         /// run to the end". In that case, 'Clean' won't run unless it's triggered explicitly on the steppable
-        /// pipeline. This method allows a user to do that from the 'Clean' block of the proxy function.
+        /// pipeline. This method allows a user to do that from the 'Clean' block of the proxy function.</para>
         /// </remarks>
         public void Clean()
         {
@@ -1332,7 +1335,6 @@ namespace System.Management.Automation
     /// Defines the exception thrown when conversion from ScriptBlock to PowerShell is forbidden
     /// (i.e. when the script block has undeclared variables or more than one statement)
     /// </summary>
-    [Serializable]
     public class ScriptBlockToPowerShellNotSupportedException : RuntimeException
     {
         #region ctor
@@ -1359,7 +1361,7 @@ namespace System.Management.Automation
         /// Initializes a new instance of ScriptBlockToPowerShellNotSupportedException setting the message and innerException.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        /// <param name="innerException">The exceptions's inner exception.</param>
+        /// <param name="innerException">The exception's inner exception.</param>
         public ScriptBlockToPowerShellNotSupportedException(string message, Exception innerException)
             : base(message, innerException)
         {
@@ -1386,9 +1388,10 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected ScriptBlockToPowerShellNotSupportedException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
+            throw new NotSupportedException();
         }
         #endregion Serialization
 

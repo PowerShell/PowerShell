@@ -289,7 +289,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
 
         protected Exception CreateUnknownTypeException(XmlQualifiedName type)
         {
-            return new InvalidOperationException(string.Create(CultureInfo.CurrentCulture, $"XmlUnknownType. Name: {type.Name}, Namespace {type.Namespace}, CurrentTag: {CurrentTag()}"));
+            return new InvalidOperationException(string.Create(CultureInfo.CurrentCulture, $"XmlUnknownType. Name: {type.Name}, Namespace: {type.Namespace}, CurrentTag: {CurrentTag()}"));
         }
 
         protected Exception CreateUnknownConstantException(string value, Type enumType)

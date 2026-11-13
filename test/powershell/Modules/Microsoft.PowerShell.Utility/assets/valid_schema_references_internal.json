@@ -1,0 +1,23 @@
+{
+    "description": "A person",
+    "type": "object",
+    "definitions": {
+        "name": {
+            "type": "string"
+        },
+        "hobbies": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        }
+    },
+    "properties": {
+        "name": {
+            "$ref": "#/definitions/name"
+        },
+        "hobbies": {
+            "$ref": "#/definitions/hobbies"
+        }
+    }
+}

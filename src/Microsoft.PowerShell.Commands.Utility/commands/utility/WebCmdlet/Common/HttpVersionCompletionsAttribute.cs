@@ -46,6 +46,6 @@ namespace Microsoft.PowerShell.Commands
         /// <inheritdoc/>
         public HttpVersionCompletionsAttribute() : base(AllowedVersions)
         {
-        } 
+        }
     }
 }

@@ -23,7 +23,7 @@ namespace System.Management.Automation.Runspaces.Internal
     /// Class which supports pooling remote powerShell runspaces
     /// on the client.
     /// </summary>
-    internal class RemoteRunspacePoolInternal : RunspacePoolInternal, IDisposable
+    internal sealed class RemoteRunspacePoolInternal : RunspacePoolInternal
     {
         #region Constructor
 
@@ -291,7 +291,7 @@ namespace System.Management.Automation.Runspaces.Internal
             // version 2.3 or greater.
             Version remoteProtocolVersionDeclaredByServer = PSRemotingProtocolVersion;
             if ((remoteProtocolVersionDeclaredByServer == null) ||
-                (remoteProtocolVersionDeclaredByServer < RemotingConstants.ProtocolVersionWin10RTM))
+                (remoteProtocolVersionDeclaredByServer < RemotingConstants.ProtocolVersion_2_3))
             {
                 throw PSTraceSource.NewInvalidOperationException(RunspacePoolStrings.ResetRunspaceStateNotSupportedOnServer);
             }
@@ -733,7 +733,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 {
                     // Disconnect/Connect support is currently only provided by the WSMan transport
                     // that is running PSRP protocol version 2.2 and greater.
-                    return (remoteProtocolVersionDeclaredByServer >= RemotingConstants.ProtocolVersionWin8RTM &&
+                    return (remoteProtocolVersionDeclaredByServer >= RemotingConstants.ProtocolVersion_2_2 &&
                             DataStructureHandler.EndpointSupportsDisconnect);
                 }
 
@@ -1237,7 +1237,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
         internal static RunspacePool[] GetRemoteRunspacePools(RunspaceConnectionInfo connectionInfo, PSHost host, TypeTable typeTable)
         {
-            if (!(connectionInfo is WSManConnectionInfo wsmanConnectionInfoParam))
+            if (connectionInfo is not WSManConnectionInfo wsmanConnectionInfoParam)
             {
                 // Disconnect-Connect currently only supported by WSMan.
                 throw new NotSupportedException();
@@ -1894,20 +1894,10 @@ namespace System.Management.Automation.Runspaces.Internal
         #region IDisposable
 
         /// <summary>
-        /// Public method for Dispose.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
         /// Release all resources.
         /// </summary>
         /// <param name="disposing">If true, release all managed resources.</param>
-        public override void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             // dispose the base class before disposing dataStructure handler.
             base.Dispose(disposing);

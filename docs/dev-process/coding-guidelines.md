@@ -88,7 +88,7 @@ We also run the [.NET code formatter tool](https://github.com/dotnet/codeformatt
 
 ### Documentation comments
 
-* Create documentation using [XML documentation comments](https://docs.microsoft.com/dotnet/csharp/language-reference/xmldoc/) so that Visual Studio and other IDEs can use IntelliSense to show quick information about types or members.
+* Create documentation using [XML documentation comments](https://learn.microsoft.com/dotnet/csharp/language-reference/xmldoc/) so that Visual Studio and other IDEs can use IntelliSense to show quick information about types or members.
 
 * Publicly visible types and their members must be documented.
   Internal and private members may use doc comments but it is not required.
@@ -189,16 +189,16 @@ See [CODEOWNERS](../../.github/CODEOWNERS) for more information about the area e
 * Consider using the `Interlocked` class instead of the `lock` statement to atomically change simple states. The `Interlocked` class provides better performance for updates that must be atomic.
 
 * Here are some useful links for your reference:
-  * [Framework Design Guidelines](https://docs.microsoft.com/dotnet/standard/design-guidelines/index) - Naming, Design and Usage guidelines including:
-    * [Arrays](https://docs.microsoft.com/dotnet/standard/design-guidelines/arrays)
-    * [Collections](https://docs.microsoft.com/dotnet/standard/design-guidelines/guidelines-for-collections)
-    * [Exceptions](https://docs.microsoft.com/dotnet/standard/design-guidelines/exceptions)
-  * [Best Practices for Developing World-Ready Applications](https://docs.microsoft.com/dotnet/core/extensions/best-practices-for-developing-world-ready-apps) - Unicode, Culture, Encoding and Localization.
-  * [Best Practices for Exceptions](https://docs.microsoft.com/dotnet/standard/exceptions/best-practices-for-exceptions)
-  * [Best Practices for Using Strings in .NET](https://docs.microsoft.com/dotnet/standard/base-types/best-practices-strings)
-  * [Best Practices for Regular Expressions in .NET](https://docs.microsoft.com/dotnet/standard/base-types/best-practices)
-  * [Serialization Guidelines](https://docs.microsoft.com/dotnet/standard/serialization/serialization-guidelines)
-  * [Managed Threading Best Practices](https://docs.microsoft.com/dotnet/standard/threading/managed-threading-best-practices)
+  * [Framework Design Guidelines](https://learn.microsoft.com/dotnet/standard/design-guidelines/index) - Naming, Design and Usage guidelines including:
+    * [Arrays](https://learn.microsoft.com/dotnet/standard/design-guidelines/arrays)
+    * [Collections](https://learn.microsoft.com/dotnet/standard/design-guidelines/guidelines-for-collections)
+    * [Exceptions](https://learn.microsoft.com/dotnet/standard/design-guidelines/exceptions)
+  * [Best Practices for Developing World-Ready Applications](https://learn.microsoft.com/dotnet/core/extensions/best-practices-for-developing-world-ready-apps) - Unicode, Culture, Encoding and Localization.
+  * [Best Practices for Exceptions](https://learn.microsoft.com/dotnet/standard/exceptions/best-practices-for-exceptions)
+  * [Best Practices for Using Strings in .NET](https://learn.microsoft.com/dotnet/standard/base-types/best-practices-strings)
+  * [Best Practices for Regular Expressions in .NET](https://learn.microsoft.com/dotnet/standard/base-types/best-practices)
+  * [Serialization Guidelines](https://learn.microsoft.com/dotnet/standard/serialization/serialization-guidelines)
+  * [Managed Threading Best Practices](https://learn.microsoft.com/dotnet/standard/threading/managed-threading-best-practices)
 
 ## Portable Code
 

@@ -1,6 +1,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConvertToSecureStringWithPlainText', '')]
+[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '')]
+param()
+
 Class WebListener
 {
     [int]$HttpPort
@@ -122,7 +126,7 @@ function Start-WebListener
             return $runningListener
         }
 
-        $initTimeoutSeconds  = 15
+        $initTimeoutSeconds  = 25
         $appExe              = (Get-Command WebListener).Path
         $serverPfx           = 'ServerCert.pfx'
         $serverPfxPassword   = New-RandomHexString
@@ -235,6 +239,10 @@ function Get-WebListenerUrl {
             'ResponseHeaders',
             'Resume',
             'Retry',
+            'Stall',
+            'StallGZip',
+            'StallBrotli',
+            'StallDeflate',
             '/'
         )]
         [String]$Test,

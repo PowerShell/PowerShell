@@ -82,6 +82,21 @@ Describe "ComparisonOperator" -Tag "CI" {
         param($lhs, $operator, $rhs)
         Invoke-Expression "$lhs $operator $rhs" | Should -BeFalse
     }
+
+    It "Should be <result> for backtick comparison <lhs> <operator> <rhs>" -TestCases @(
+        @{ lhs = 'abc`def'; operator = '-like'; rhs = 'abc`def'; result = $false }
+        @{ lhs = 'abc`def'; operator = '-like'; rhs = 'abc``def'; result = $true }
+        @{ lhs = 'abc`def'; operator = '-like'; rhs = 'abc````def'; result = $false }
+        @{ lhs = 'abc``def'; operator = '-like'; rhs = 'abc````def'; result = $true }
+        @{ lhs = 'abc`def'; operator = '-like'; rhs = [WildcardPattern]::Escape('abc`def'); result = $true }
+        @{ lhs = 'abc`def'; operator = '-like'; rhs = [WildcardPattern]::Escape('abc``def'); result = $false }
+        @{ lhs = 'abc``def'; operator = '-like'; rhs = [WildcardPattern]::Escape('abc``def'); result = $true }
+        @{ lhs = 'abc``def'; operator = '-like'; rhs = [WildcardPattern]::Escape('abc````def'); result = $false }
+    ) {
+        param($lhs, $operator, $rhs, $result)
+        $expression = "'$lhs' $operator '$rhs'"
+        Invoke-Expression $expression | Should -Be $result
+    }
 }
 
 Describe "Bytewise Operator" -Tag "CI" {

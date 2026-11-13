@@ -111,7 +111,7 @@ Describe "Get-Item" -Tags "CI" {
             {
                 return
             }
-            $altStreamPath = "$TESTDRIVE/altStream.txt"
+            $altStreamPath = "$TESTDRIVE\altStream.txt"
             $altStreamDirectory = "$TESTDRIVE/altstreamdir"
             $noAltStreamDirectory = "$TESTDRIVE/noaltstreamdir"
             $stringData = "test data"
@@ -143,6 +143,10 @@ Describe "Get-Item" -Tags "CI" {
         It "Should find zero alt streams and not fail on a directory with a wildcard stream name if no alt streams are present" -Skip:$skipNotWindows {
             $result = Get-Item $noAltStreamDirectory -Stream * -ErrorAction Stop
             $result | Should -BeExactly $null
+        }
+        It "Should return filename property correctly" -Skip:$skipNotWindows {
+            $result = (Get-Item -Path $altStreamPath -Stream $streamName).FileName
+            $result | Should -BeExactly $altStreamPath
         }
     }
 
@@ -231,6 +235,18 @@ Describe 'Formatting for FileInfo objects' -Tags 'CI' {
         $dirPath = Join-Path -Path $TestDrive -ChildPath 'myDir'
         $dir = New-Item -ItemType Directory -Path $dirPath
         $dir.NameString | Should -BeExactly "$($PSStyle.FileInfo.Directory + $dir.Name + $PSStyle.Reset)"
+    }
+
+    It 'NameString should not query link metadata for a cached non-reparse point' -Skip:(-not $IsWindows) {
+        $testFile = Join-Path -Path $TestDrive -ChildPath 'cached-metadata'
+        $file = New-Item -ItemType File -Path $testFile
+        $null = $file.Attributes
+
+        # Removing the file makes an unnecessary second filesystem query observable.
+        [System.IO.File]::Delete($testFile)
+
+        # Without the cached-attributes check, NameString queries the deleted path for link metadata and throws.
+        [Microsoft.PowerShell.Commands.FileSystemProvider]::NameString($file) | Should -BeExactly $file.Name
     }
 
     It 'Executable should have correct color' {

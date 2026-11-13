@@ -10,7 +10,7 @@ using ComTypes = System.Runtime.InteropServices.ComTypes;
 namespace System.Management.Automation.ComInterop
 {
     /// <summary>
-    /// This is similar to ComTypes.EXCEPINFO, but lets us do our own custom marshaling.
+    /// This is similar to ComTypes.EXCEPINFO, but lets us do our own custom marshalling.
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     internal struct ExcepInfo

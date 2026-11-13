@@ -402,7 +402,10 @@ namespace Microsoft.PowerShell.CustomNamedPipeConnection
             PSRemotingCryptoHelper cryptoHelper)
             : base(runspaceId, cryptoHelper)
         {
-            if (connectionInfo == null) { throw new PSArgumentException("connectionInfo"); }
+            if (connectionInfo == null)
+            {
+                throw new PSArgumentException("connectionInfo");
+            }
 
             _connectionInfo = connectionInfo;
         }

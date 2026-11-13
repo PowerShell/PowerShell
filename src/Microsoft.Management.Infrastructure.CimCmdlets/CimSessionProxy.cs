@@ -1493,7 +1493,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// The CimSession object managed by this proxy object,
         /// which is either created by constructor OR passed in by caller.
         /// The session will be closed while disposing this proxy object
-        /// if it is created by constuctor.
+        /// if it is created by constructor.
         /// </summary>
         internal CimSession CimSession { get; private set; }
 
@@ -2041,7 +2041,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             CimWriteResultObject writeResultObject = args.Action as CimWriteResultObject;
-            if (!(writeResultObject.Result is CimClass cimClass))
+            if (writeResultObject.Result is not CimClass cimClass)
             {
                 return true;
             }
@@ -2200,7 +2200,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             CimWriteResultObject writeResultObject = args.Action as CimWriteResultObject;
-            if (!(writeResultObject.Result is CimInstance cimInstance))
+            if (writeResultObject.Result is not CimInstance cimInstance)
             {
                 return true;
             }

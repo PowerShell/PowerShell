@@ -144,13 +144,10 @@ namespace System.Management.Automation
         Assert = 0x00004000,
 
         /// <summary>
-        /// A combination of flags that trace the execution flow will
-        /// be traced.
-        /// </summary>
-        /// <remarks>
+        /// A combination of flags that trace the execution flow.
         /// The methods associated with the flags; Constructor, Dispose,
-        /// Finalizer, Method, Delegates, and Events will be enabled
-        /// </remarks>
+        /// Finalizer, Method, Delegates, and Events will be enabled.
+        /// </summary>
         ExecutionFlow =
             Constructor |
             Dispose |
@@ -161,13 +158,10 @@ namespace System.Management.Automation
             Scope,
 
         /// <summary>
-        /// A combination of flags that trace the data will be traced
-        /// be traced.
-        /// </summary>
-        /// <remarks>
+        /// A combination of flags that trace the data.
         /// The methods associated with the flags; Constructor, Dispose,
-        /// Finalizer, Property, and WriteLine will be enabled
-        /// </remarks>
+        /// Finalizer, Property, and WriteLine will be enabled.
+        /// </summary>
         Data =
             Constructor |
             Dispose |
@@ -178,22 +172,17 @@ namespace System.Management.Automation
 
         /// <summary>
         /// A combination of flags that trace the errors.
-        /// </summary>
-        /// <remarks>
         /// The methods associated with the flags; Error,
-        /// and Exception will be enabled
-        /// </remarks>
+        /// and Exception will be enabled.
+        /// </summary>
         Errors =
             Error |
             Exception,
 
         /// <summary>
-        /// All combination of trace flags will be set
-        /// be traced.
-        /// </summary>
-        /// <remarks>
+        /// All combination of trace flags will be set.
         /// All methods for tracing will be enabled.
-        /// </remarks>
+        /// </summary>
         All =
             Constructor |
             Dispose |
@@ -269,13 +258,7 @@ namespace System.Management.Automation
         /// </param>
         internal PSTraceSource(string fullName, string name, string description, bool traceHeaders)
         {
-            if (string.IsNullOrEmpty(fullName))
-            {
-                // 2005/04/13-JonN In theory this should be ArgumentException,
-                // but I don't want to deal with loading the string in this
-                // low-level code.
-                throw new ArgumentNullException(nameof(fullName));
-            }
+            ArgumentException.ThrowIfNullOrEmpty(fullName);
 
             try
             {

@@ -179,39 +179,38 @@ namespace System.Management.Automation.Runspaces
         #region Dispose
 
         /// <summary>
-        /// Implementing the <see cref="IDisposable"/> interface.
+        /// Release all resources.
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        private void Dispose(bool disposing)
-        {
-            if (_isDisposed) return;
-            lock (_syncObject)
+            if (_isDisposed)
             {
-                if (_isDisposed) return;
-                _isDisposed = true;
+                return;
             }
 
-            if (disposing)
+            lock (_syncObject)
             {
-                try
+                if (_isDisposed)
                 {
-                    if (Process != null && !Process.HasExited)
-                        Process.Kill();
+                    return;
                 }
-                catch (InvalidOperationException)
-                {
-                }
-                catch (Win32Exception)
-                {
-                }
-                catch (NotSupportedException)
-                {
-                }
+
+                _isDisposed = true;
+            }
+            
+            try
+            {
+                if (Process != null && !Process.HasExited)
+                    Process.Kill();
+            }
+            catch (InvalidOperationException)
+            {
+            }
+            catch (Win32Exception)
+            {
+            }
+            catch (NotSupportedException)
+            {
             }
         }
 

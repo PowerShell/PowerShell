@@ -1,0 +1,179 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CommandProcessorAlreadyUsed" xml:space="preserve">
+    <value>Não é possível processar a instância do cmdlet porque ela está sendo usada por outro pipeline. Contate os Serviços de Atendimento ao Cliente da Microsoft.</value>
+  </data>
+  <data name="ExecutionAlreadyStarted" xml:space="preserve">
+    <value>Não é possível executar a operação porque o pipeline já foi iniciado. Pare o pipeline e tente a operação novamente.</value>
+  </data>
+  <data name="ActionPreferenceStop" xml:space="preserve">
+    <value>Não é possível continuar executando o cmdlet porque a política Stop impediu a execução de cmdlets.</value>
+  </data>
+  <data name="FirstCommandCannotHaveInput" xml:space="preserve">
+    <value>Não é possível executar o pipeline porque o primeiro cmdlet do pipeline está tentando ler a entrada dos resultados de um cmdlet anterior. Modifique o primeiro cmdlet, remova-o ou adicione ao pipeline o cmdlet cuja saída é necessária para o primeiro cmdlet e tente executar o pipeline novamente.</value>
+  </data>
+  <data name="InvalidCommandNumber" xml:space="preserve">
+    <value>Não é possível processar o número do cmdlet. A função ReadFromCommand deve especificar a ID de um cmdlet que já tenha sido adicionado ao pipeline. Contate os Serviços de Atendimento ao Cliente da Microsoft.</value>
+  </data>
+  <data name="PipeAlreadyTaken" xml:space="preserve">
+    <value>Não é possível ler a saída das funções ReadFromCommand e ReadErrorQueue porque outro cmdlet já está lendo essa saída. Contate os Serviços de Atendimento ao Cliente da Microsoft.</value>
+  </data>
+  <data name="PipelineExecuteRequiresAtLeastOneCommand" xml:space="preserve">
+    <value>Não é possível executar o pipeline porque não há comandos. Adicione pelo menos um comando ao pipeline e execute-o novamente.</value>
+  </data>
+  <data name="PipelineNotStarted" xml:space="preserve">
+    <value>Não é possível concluir a operação de pipeline porque ela ainda não foi iniciada. Você deve chamar o método Begin() antes de chamar End() em um pipeline em etapas.</value>
+  </data>
+  <data name="WriteNotPermitted" xml:space="preserve">
+    <value>Os métodos WriteObject e WriteError não podem ser chamados de fora das substituições dos métodos BeginProcessing, ProcessRecord e EndProcessing, e só podem ser chamados na mesma thread. Verifique se o cmdlet faz essas chamadas corretamente ou entre em contato com o Atendimento ao cliente da Microsoft.</value>
+  </data>
+  <data name="SecondFailure" xml:space="preserve">
+    <value>Um cmdlet gerou uma exceção depois de chamar ThrowTerminatingError.
+A primeira exceção foi "{0}", com rastreamento de pilha "{1}".
+A segunda exceção foi "{2}", com rastreamento de pilha "{3}".</value>
+  </data>
+  <data name="WriteToClosedPipeline" xml:space="preserve">
+    <value>Os métodos WriteObject e WriteError não podem ser chamados depois que o pipeline foi fechado. Contate os Serviços de Atendimento ao Cliente da Microsoft.</value>
+  </data>
+  <data name="PipelineExecutionInformation" xml:space="preserve">
+    <value>CommandInvocation({0}): "{1}"</value>
+  </data>
+  <data name="PipelineExecutionNonTerminatingError" xml:space="preserve">
+    <value>NonTerminatingError({0}): "{1}"</value>
+  </data>
+  <data name="PipelineExecutionTerminatingError" xml:space="preserve">
+    <value>TerminatingError({0}): "{1}"</value>
+  </data>
+  <data name="PipelineExecutionParameterBinding" xml:space="preserve">
+    <value>ParameterBinding({0}): name="{1}"; value="{2}"</value>
+  </data>
+  <data name="CannotCreatePipeline" xml:space="preserve">
+    <value>Ocorreu um erro ao criar o pipeline.</value>
+  </data>
+  <data name="ConnectNotSupported" xml:space="preserve">
+    <value>Este pipeline não dá suporte à semântica de desconexão e reconexão.</value>
+  </data>
+  <data name="PipelineNotDisconnected" xml:space="preserve">
+    <value>Não é possível conectar este pipeline porque ele não está no estado desconectado.</value>
+  </data>
+  <data name="InvalidRemoteCommand" xml:space="preserve">
+    <value>O objeto runspace tem um comando remoto nulo associado a ele.  Não é possível criar um objeto RemotePipeline desconectado porque não há nenhum comando remoto especificado.</value>
+  </data>
+</root>

@@ -115,6 +115,11 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
         { Start-Process -FilePath $pingCommand -NoNewWindow -WindowStyle Normal -ErrorAction Stop } | Should -Throw -ErrorId "InvalidOperationException,Microsoft.PowerShell.Commands.StartProcessCommand"
     }
 
+    It "ExitCode returns with -NoNewWindow, -PassThru and -Wait" {
+        $process = Start-Process -FilePath $pingCommand -ArgumentList $pingParam -NoNewWindow -PassThru -Wait -ErrorAction Stop
+        $process.ExitCode | Should -Be 0
+    }
+
     It "Should start cmd.exe with Verb 'open' and WindowStyle 'Minimized'" -Skip:(!$isFullWin) {
         $fileToWrite = Join-Path $TestDrive "VerbTest.txt"
         $process = Start-Process cmd.exe -ArgumentList "/c echo abc > $fileToWrite" -Verb open -WindowStyle Minimized -PassThru
@@ -181,7 +186,7 @@ Describe "Start-Process tests requiring admin" -Tags "Feature","RequireAdminOnWi
     }
 }
 
-Describe "Start-Process" -Tags "Feature" {
+Describe "Environment Tests" -Tags "Feature" {
 
     It "UseNewEnvironment parameter should reset environment variables for child process" {
 
@@ -205,5 +210,48 @@ Describe "Start-Process" -Tags "Feature" {
         } finally {
             $env:TestEnvVariable = $null
         }
+    }
+
+    It '-Environment adds or replaces environment variables to child process' {
+        $outputfile = Join-Path -Path $TestDrive -ChildPath output.txt
+        Start-Process pwsh -ArgumentList '-NoProfile','-Nologo','-OutputFormat xml','-Command get-childitem env:' -Wait -Environment @{ a = 1; B = 'hello'; TERM = 'dumb'; PATH = 'mine' } -RedirectStandardOutput $outputfile
+        $out = Import-Clixml $outputfile
+        ($out | Where-Object { $_.Name -eq 'a' }).Value | Should -Be 1
+        ($out | Where-Object { $_.Name -eq 'B' }).Value | Should -BeExactly 'hello'
+        ($out | Where-Object { $_.Name -eq 'TERM' }).Value | Should -BeExactly 'dumb'
+        $pathSeparator = [System.IO.Path]::PathSeparator
+        if ($IsWindows) {
+            ($out | Where-Object { $_.Name -eq 'PATH' }).Value | Should -BeLike "*${pathSeparator}mine${pathSeparator}*"
+        } else {
+            ($out | Where-Object { $_.Name -eq 'PATH' }).Value | Should -BeLike "*${pathSeparator}mine"
+        }
+    }
+
+    It '-Environment can remove an environment variable from child process' {
+        try {
+            $env:existing = 1 # set a variable that we will remove
+            $env:nonexisting = $null # validate that removing a non-existing variable is a no-op
+            $outputfile = Join-Path -Path $TestDrive -ChildPath output.txt
+            Start-Process pwsh -ArgumentList '-NoProfile','-Nologo','-OutputFormat xml','-Command get-childitem env:' -Wait -Environment @{ existing = $null; nonexisting = $null } -RedirectStandardOutput $outputfile
+            $out = Import-Clixml $outputfile
+            $out | Where-Object { $_.Name -eq 'existing' } | Should -BeNullOrEmpty
+            $out | Where-Object { $_.Name -eq 'nonexisting' } | Should -BeNullOrEmpty
+        } finally {
+            $env:existing = $null
+        }
+    }
+}
+
+Describe "Bug fixes" -Tags "CI" {
+
+    ## https://github.com/PowerShell/PowerShell/issues/24986
+    It "Error redirection along with '-NoNewWindow' should work for Start-Process" -Skip:(!$IsWindows) {
+        $errorFile = Join-Path -Path $TestDrive -ChildPath error.txt
+        $out = pwsh -noprofile -c "Start-Process -Wait -NoNewWindow -RedirectStandardError $errorFile -FilePath cmd -ArgumentList '/C echo Hello'"
+
+        ## 'Hello' should be sent to standard output; 'error.txt' file should be created but empty.
+        $out | Should -BeExactly "Hello"
+        Test-Path -Path $errorFile | Should -BeTrue
+        (Get-Item $errorFile).Length | Should -Be 0
     }
 }

@@ -1,0 +1,420 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Add" xml:space="preserve">
+    <value>Ajoute une ressource à un conteneur ou attache un élément à un autre élément</value>
+  </data>
+  <data name="Approve" xml:space="preserve">
+    <value>Confirme ou accepte l’état d’une ressource ou d’un processus</value>
+  </data>
+  <data name="Assert" xml:space="preserve">
+    <value>Affirme l’état d’une ressource</value>
+  </data>
+  <data name="Backup" xml:space="preserve">
+    <value>Stocke des données en les répliquant</value>
+  </data>
+  <data name="Block" xml:space="preserve">
+    <value>Restreint l’accès à une ressource</value>
+  </data>
+  <data name="Build" xml:space="preserve">
+    <value>Crée un artefact (généralement un fichier binaire ou un document) à partir d’un ensemble de fichiers d’entrée (généralement du code source ou des documents déclaratifs)</value>
+  </data>
+  <data name="Checkpoint" xml:space="preserve">
+    <value>Crée une capture instantanée de l’état actuel des données ou de leur configuration</value>
+  </data>
+  <data name="Clear" xml:space="preserve">
+    <value>Supprime toutes les ressources d’un conteneur, mais ne supprime pas le conteneur</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Change l’état d’une ressource afin de la rendre inaccessible, indisponible ou inutilisable</value>
+  </data>
+  <data name="Compare" xml:space="preserve">
+    <value>Évalue les données d’une ressource par rapport aux données d’une autre ressource</value>
+  </data>
+  <data name="Complete" xml:space="preserve">
+    <value>Conclut une opération</value>
+  </data>
+  <data name="Compress" xml:space="preserve">
+    <value>Compacte les données d’une ressource</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Accuse réception, vérifie ou valide l’état d’une ressource ou d’un processus</value>
+  </data>
+  <data name="Connect" xml:space="preserve">
+    <value>Crée un lien entre une source et une destination</value>
+  </data>
+  <data name="Convert" xml:space="preserve">
+    <value>Change les données d’une représentation en une autre lorsque la cmdlet prend en charge la conversion bidirectionnelle ou la conversion entre plusieurs types de données</value>
+  </data>
+  <data name="ConvertFrom" xml:space="preserve">
+    <value>Convertit un type principal d’entrée (le nom de la cmdlet indique l’entrée) en un ou plusieurs types de sortie pris en charge</value>
+  </data>
+  <data name="ConvertTo" xml:space="preserve">
+    <value>Convertit à partir d’un ou plusieurs types d’entrée en un type de sortie principal (le substantif de l’applet de commande indique le type de sortie)</value>
+  </data>
+  <data name="Copy" xml:space="preserve">
+    <value>Copie une ressource vers un autre nom ou un autre conteneur</value>
+  </data>
+  <data name="Debug" xml:space="preserve">
+    <value>Examine une ressource pour diagnostiquer les problèmes opérationnels</value>
+  </data>
+  <data name="Deny" xml:space="preserve">
+    <value>Refuse, objecte, bloque ou s’oppose à l’état d’une ressource ou d’un processus</value>
+  </data>
+  <data name="Deploy" xml:space="preserve">
+    <value>Envoie une application, un site web ou une solution à une ou plusieurs cibles distantes de manière à ce qu’un consommateur de cette solution puisse y accéder une fois le déploiement terminé</value>
+  </data>
+  <data name="Disable" xml:space="preserve">
+    <value>Configure une ressource à un état indisponible ou inactif</value>
+  </data>
+  <data name="Disconnect" xml:space="preserve">
+    <value>Rompt le lien entre une source et une destination</value>
+  </data>
+  <data name="Dismount" xml:space="preserve">
+    <value>Détache une entité nommée d’un emplacement</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Modifie des données existantes en ajoutant ou en supprimant du contenu</value>
+  </data>
+  <data name="Enable" xml:space="preserve">
+    <value>Configure une ressource à un état disponible ou actif</value>
+  </data>
+  <data name="Enter" xml:space="preserve">
+    <value>Spécifie une action qui permet à l’utilisateur de se placer dans une ressource</value>
+  </data>
+  <data name="Exit" xml:space="preserve">
+    <value>Définit l’environnement ou le contexte utilisé comme contexte le plus utilisé</value>
+  </data>
+  <data name="Expand" xml:space="preserve">
+    <value>Restaure l’état d’origine des données d’une ressource qui a été compressée</value>
+  </data>
+  <data name="Export" xml:space="preserve">
+    <value>Encapsule l’entrée principale dans un magasin de données persistant, tel qu’un fichier, ou dans un format d’échange</value>
+  </data>
+  <data name="Find" xml:space="preserve">
+    <value>Recherche un objet dans un conteneur inconnu, implicite, facultatif ou spécifié</value>
+  </data>
+  <data name="Format" xml:space="preserve">
+    <value>Organise des objets sous une forme ou dans une disposition spécifiée</value>
+  </data>
+  <data name="Get" xml:space="preserve">
+    <value>Spécifie une action qui récupère une ressource</value>
+  </data>
+  <data name="Grant" xml:space="preserve">
+    <value>Autorise l’accès à une ressource</value>
+  </data>
+  <data name="Group" xml:space="preserve">
+    <value>Organise ou associe une ou plusieurs ressources</value>
+  </data>
+  <data name="Hide" xml:space="preserve">
+    <value>Rend une ressource indétectable</value>
+  </data>
+  <data name="Import" xml:space="preserve">
+    <value>Crée une ressource à partir de données stockées dans un magasin de données persistant (tel qu’un fichier) ou dans un format d’échange</value>
+  </data>
+  <data name="Initialize" xml:space="preserve">
+    <value>Prépare une ressource en vue de l’utiliser et lui affecte un état par défaut</value>
+  </data>
+  <data name="Install" xml:space="preserve">
+    <value>Place une ressource dans un emplacement et l’initialise éventuellement</value>
+  </data>
+  <data name="Invoke" xml:space="preserve">
+    <value>Effectue une action, telle que l’exécution d’une commande ou d’une méthode</value>
+  </data>
+  <data name="Join" xml:space="preserve">
+    <value>Combine des ressources en une seule ressource</value>
+  </data>
+  <data name="Limit" xml:space="preserve">
+    <value>Applique des contraintes à une ressource</value>
+  </data>
+  <data name="Lock" xml:space="preserve">
+    <value>Sécurise une ressource</value>
+  </data>
+  <data name="Measure" xml:space="preserve">
+    <value>Identifie les ressources qui sont consommées par une opération spécifiée ou récupère des statistiques sur une ressource</value>
+  </data>
+  <data name="Merge" xml:space="preserve">
+    <value>Crée une ressource unique à partir de plusieurs ressources</value>
+  </data>
+  <data name="Mount" xml:space="preserve">
+    <value>Attache une entité nommée à un emplacement</value>
+  </data>
+  <data name="Move" xml:space="preserve">
+    <value>Déplace une ressource d’un emplacement à un autre</value>
+  </data>
+  <data name="New" xml:space="preserve">
+    <value>Crée une ressource</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Change l’état d’une ressource afin de la rendre accessible, disponible ou utilisable</value>
+  </data>
+  <data name="Optimize" xml:space="preserve">
+    <value>Augmente l’efficacité d’une ressource</value>
+  </data>
+  <data name="Out" xml:space="preserve">
+    <value>Envoie des données à partir de l’environnement</value>
+  </data>
+  <data name="Ping" xml:space="preserve">
+    <value>Utiliser le verbe Tester</value>
+  </data>
+  <data name="Pop" xml:space="preserve">
+    <value>Supprime un élément du haut d’une pile</value>
+  </data>
+  <data name="Protect" xml:space="preserve">
+    <value>Protège une ressource contre les attaques ou pertes</value>
+  </data>
+  <data name="Publish" xml:space="preserve">
+    <value>Met une ressource à la disposition d’autres utilisateurs</value>
+  </data>
+  <data name="Push" xml:space="preserve">
+    <value>Ajoute un élément en haut d’une pile</value>
+  </data>
+  <data name="Read" xml:space="preserve">
+    <value>Acquiert des informations à partir d’une source</value>
+  </data>
+  <data name="Receive" xml:space="preserve">
+    <value>Accepte les informations envoyées à partir d’une source</value>
+  </data>
+  <data name="Redo" xml:space="preserve">
+    <value>Réinitialise une ressource à l’état qui a été annulé</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>Crée une entrée pour une ressource dans un référentiel tel qu’une base de données</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Supprime une ressource d’un conteneur</value>
+  </data>
+  <data name="Rename" xml:space="preserve">
+    <value>Change le nom d’une ressource</value>
+  </data>
+  <data name="Repair" xml:space="preserve">
+    <value>Restaure une ressource dans une condition utilisable</value>
+  </data>
+  <data name="Request" xml:space="preserve">
+    <value>Demande une ressource ou des autorisations</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Restaure une ressource à son état d’origine</value>
+  </data>
+  <data name="Resize" xml:space="preserve">
+    <value>Change la taille d’une ressource</value>
+  </data>
+  <data name="Resolve" xml:space="preserve">
+    <value>Mappe une représentation abrégée d’une ressource à une représentation plus complète</value>
+  </data>
+  <data name="Restart" xml:space="preserve">
+    <value>Arrête une opération, puis la redémarre</value>
+  </data>
+  <data name="Restore" xml:space="preserve">
+    <value>Affecte à une ressource un état prédéfini, tel qu’un état défini par un point de contrôle</value>
+  </data>
+  <data name="Resume" xml:space="preserve">
+    <value>Démarre une opération qui a été suspendue</value>
+  </data>
+  <data name="Revoke" xml:space="preserve">
+    <value>Spécifie une action qui n’autorise pas l’accès à une ressource</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Préserve des données afin d’éviter toute perte</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Crée une référence à une ressource dans un conteneur</value>
+  </data>
+  <data name="Select" xml:space="preserve">
+    <value>Localise une ressource dans un conteneur</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>Envoie des informations à une destination</value>
+  </data>
+  <data name="Set" xml:space="preserve">
+    <value>Remplace des données sur une ressource existante ou crée une ressource qui contient des données</value>
+  </data>
+  <data name="Show" xml:space="preserve">
+    <value>Rend une ressource visible par l’utilisateur</value>
+  </data>
+  <data name="Sync" xml:space="preserve">
+    <value>Garantit que deux ressources ou plus sont dans le même état</value>
+  </data>
+  <data name="Skip" xml:space="preserve">
+    <value>Ignore une ou plusieurs ressources ou un ou plusieurs points dans une séquence</value>
+  </data>
+  <data name="Split" xml:space="preserve">
+    <value>Sépare les parties d’une ressource</value>
+  </data>
+  <data name="Start" xml:space="preserve">
+    <value>Lance une opération</value>
+  </data>
+  <data name="Step" xml:space="preserve">
+    <value>Passe au point suivant ou à la ressource suivante dans une séquence</value>
+  </data>
+  <data name="Stop" xml:space="preserve">
+    <value>Interrompt une activité</value>
+  </data>
+  <data name="Submit" xml:space="preserve">
+    <value>Présente une ressource pour approbation</value>
+  </data>
+  <data name="Suspend" xml:space="preserve">
+    <value>Suspend une activité</value>
+  </data>
+  <data name="Switch" xml:space="preserve">
+    <value>Spécifie une action qui alterne entre deux ressources, telles que le changement entre deux emplacements, responsabilités ou états</value>
+  </data>
+  <data name="Test" xml:space="preserve">
+    <value>Vérifie l’opération ou la cohérence d’une ressource</value>
+  </data>
+  <data name="Trace" xml:space="preserve">
+    <value>Effectue le suivi des activités d’une ressource</value>
+  </data>
+  <data name="Unblock" xml:space="preserve">
+    <value>Supprime les restrictions applicables à une ressource</value>
+  </data>
+  <data name="Undo" xml:space="preserve">
+    <value>Définit une ressource à son état précédent</value>
+  </data>
+  <data name="Uninstall" xml:space="preserve">
+    <value>Supprime une ressource d’un emplacement indiqué</value>
+  </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>Libère une ressource qui a été verrouillée</value>
+  </data>
+  <data name="Unprotect" xml:space="preserve">
+    <value>Supprime les mesures de sécurité d’une ressource qui ont été ajoutées pour la protéger contre les attaques ou pertes</value>
+  </data>
+  <data name="Unpublish" xml:space="preserve">
+    <value>Rend une ressource inaccessible à d’autres personnes</value>
+  </data>
+  <data name="Unregister" xml:space="preserve">
+    <value>Supprime l’entrée d’une ressource d’un référentiel</value>
+  </data>
+  <data name="Update" xml:space="preserve">
+    <value>Met à jour une ressource afin de maintenir son état, son exactitude ou sa conformité</value>
+  </data>
+  <data name="Use" xml:space="preserve">
+    <value>Utilise ou inclut une ressource pour effectuer une opération</value>
+  </data>
+  <data name="Wait" xml:space="preserve">
+    <value>Suspend une opération jusqu’à ce qu’un événement spécifié se produise</value>
+  </data>
+  <data name="Watch" xml:space="preserve">
+    <value>Inspecte ou supervise en permanence une ressource afin de détecter les modifications</value>
+  </data>
+  <data name="Write" xml:space="preserve">
+    <value>Ajoute des informations à une cible</value>
+  </data>
+</root>

@@ -28,7 +28,7 @@ internal static partial class Interop
 #endif
 
             Span<char> buffer = stackalloc char[StartLength + 1];
-            Span<char> fullDeviceName = stackalloc char[3] { deviceName, ':', '\0' };
+            Span<char> fullDeviceName = [deviceName, ':', '\0'];
             char[]? rentedArray = null;
 
             try
@@ -41,7 +41,7 @@ internal static partial class Interop
                     {
                         if (buffer.StartsWith("\\??\\"))
                         {
-                            // QueryDosDevice always return array of NULL-terinating strings with additional final NULL
+                            // QueryDosDevice always return array of NULL-terminating strings with additional final NULL
                             // so the buffer has always two NULL-s on end.
                             //
                             // "\\??\\UNC\\localhost\\c$\\tmp\0\0" -> "UNC\\localhost\\c$\\tmp\0\0"

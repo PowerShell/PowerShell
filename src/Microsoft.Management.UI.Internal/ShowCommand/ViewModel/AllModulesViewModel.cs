@@ -529,7 +529,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 return;
             }
 
-            // If there are more modules, create an additional module to agregate all commands
+            // If there are more modules, create an additional module to aggregate all commands
             ModuleViewModel allCommandsModule = new ModuleViewModel(ShowCommandResources.All, null);
             this.modules.Add(allCommandsModule);
             allCommandsModule.SetAllModules(this);

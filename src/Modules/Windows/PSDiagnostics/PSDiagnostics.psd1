@@ -10,5 +10,5 @@
     FunctionsToExport="Disable-PSTrace","Disable-PSWSManCombinedTrace","Disable-WSManTrace","Enable-PSTrace","Enable-PSWSManCombinedTrace","Enable-WSManTrace","Get-LogProperties","Set-LogProperties","Start-Trace","Stop-Trace"
     CmdletsToExport = @()
     AliasesToExport = @()
-    HelpInfoUri="https://aka.ms/powershell73-help"
+    HelpInfoUri="https://aka.ms/powershell75-help"
 }

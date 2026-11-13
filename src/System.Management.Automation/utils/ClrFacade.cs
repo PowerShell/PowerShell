@@ -22,13 +22,23 @@ namespace System.Management.Automation
     {
         /// <summary>
         /// Initialize powershell AssemblyLoadContext and register the 'Resolving' event, if it's not done already.
-        /// If powershell is hosted by a native host such as DSC, then PS ALC might be initialized via 'SetPowerShellAssemblyLoadContext' before loading S.M.A.
+        /// If powershell is hosted by a native host such as DSC, then PS ALC may be initialized via 'SetPowerShellAssemblyLoadContext' before loading S.M.A.
         /// </summary>
+        /// <remarks>
+        /// We do this both here and during the initialization of the 'RunspaceBase' type.
+        /// This is because we want to make sure the assembly/library resolvers are:
+        ///  1. registered before any script/cmdlet can run.
+        ///  2. registered before 'ClrFacade' gets used for assembly related operations.
+        ///
+        /// The 'ClrFacade' type may be used without a Runspace created, for example, by calling type conversion methods in the 'LanguagePrimitive' type.
+        /// And at the mean time, script or cmdlet may run without the 'ClrFacade' type initialized.
+        /// That's why we attempt to create the singleton of 'PowerShellAssemblyLoadContext' at both places.
+        /// </remarks>
         static ClrFacade()
         {
-            if (PowerShellAssemblyLoadContext.Instance == null)
+            if (PowerShellAssemblyLoadContext.Instance is null)
             {
-                PowerShellAssemblyLoadContext.InitializeSingleton(string.Empty);
+                PowerShellAssemblyLoadContext.InitializeSingleton(string.Empty, throwOnReentry: false);
             }
         }
 
@@ -260,12 +270,18 @@ namespace System.Management.Automation
                     else
                     {
                         Match match = Regex.Match(line, @"^ZoneId\s*=\s*(.*)", RegexOptions.IgnoreCase);
-                        if (!match.Success) { continue; }
+                        if (!match.Success)
+                        {
+                            continue;
+                        }
 
                         // Match found. Validate ZoneId value.
                         string zoneIdRawValue = match.Groups[1].Value;
                         match = Regex.Match(zoneIdRawValue, @"^[+-]?\d+", RegexOptions.IgnoreCase);
-                        if (!match.Success) { return SecurityZone.NoZone; }
+                        if (!match.Success)
+                        {
+                            return SecurityZone.NoZone;
+                        }
 
                         string zoneId = match.Groups[0].Value;
                         SecurityZone result;

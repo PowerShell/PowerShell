@@ -59,8 +59,8 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -164,9 +164,6 @@ End time: {0:yyyyMMddHHmmss}
   <data name="DebuggerSourceCodeFormat" xml:space="preserve">
     <value>{0}:{1,-3} {2}</value>
   </data>
-  <data name="CommandFailed" xml:space="preserve">
-    <value>An error occurred while running '{0}': {1}</value>
-  </data>
   <data name="SessionDoesNotSupportDebugger" xml:space="preserve">
     <value>
 The current session does not support debugging; execution will continue.
@@ -184,5 +181,11 @@ The current session does not support debugging; execution will continue.
   </data>
   <data name="RunAsAdministrator" xml:space="preserve">
     <value>Run as Administrator</value>
+  </data>
+  <data name="PushRunspaceNotRemote" xml:space="preserve">
+    <value>PushRunspace can only push a remote runspace.</value>
+  </data>
+  <data name="MissingMandatoryParameter" xml:space="preserve">
+    <value>The '{0}' parameter is mandatory and must be specified when using the '{1}' parameter.</value>
   </data>
 </root>

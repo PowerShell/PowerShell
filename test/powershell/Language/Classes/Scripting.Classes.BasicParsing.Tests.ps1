@@ -833,7 +833,7 @@ class Derived : Base
 [Derived]::new().foo()
 '@)
 
-        $iss = [System.Management.Automation.Runspaces.initialsessionstate]::CreateDefault2()
+        $iss = [initialsessionstate]::CreateDefault2()
         $iss.Commands.Add($ssfe)
 
         $ps = [powershell]::Create($iss)
@@ -929,7 +929,7 @@ class A : Foo.Bar
 return [A]::new()
 '@)
 
-        $iss = [System.Management.Automation.Runspaces.initialsessionstate]::CreateDefault()
+        $iss = [initialsessionstate]::CreateDefault()
         $iss.Commands.Add($ssfe)
 
         $ps = [powershell]::Create($iss)

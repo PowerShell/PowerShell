@@ -545,7 +545,10 @@ namespace System.Management.Automation
                 // If the module is not binary, it may also have functions...
                 if (DeclaredFunctionExports != null)
                 {
-                    if (DeclaredFunctionExports.Count == 0) { return exports; }
+                    if (DeclaredFunctionExports.Count == 0)
+                    {
+                        return exports;
+                    }
 
                     foreach (string fn in DeclaredFunctionExports)
                     {
@@ -707,7 +710,10 @@ namespace System.Management.Automation
 
                 if (DeclaredCmdletExports != null)
                 {
-                    if (DeclaredCmdletExports.Count == 0) { return exports; }
+                    if (DeclaredCmdletExports.Count == 0)
+                    {
+                        return exports;
+                    }
 
                     foreach (string fn in DeclaredCmdletExports)
                     {
@@ -1302,10 +1308,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         public PSVariable GetVariableFromCallersModule(string variableName)
         {
-            if (string.IsNullOrEmpty(variableName))
-            {
-                throw new ArgumentNullException(nameof(variableName));
-            }
+            ArgumentException.ThrowIfNullOrEmpty(variableName);
 
             var context = LocalPipeline.GetExecutionContextFromTLS();
             SessionState callersSessionState = null;

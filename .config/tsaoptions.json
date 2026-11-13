@@ -1,0 +1,12 @@
+{
+    "codebaseName": "TFSMSAzure_PowerShell",
+    "instanceUrl": "https://msazure.visualstudio.com",
+    "projectName": "One",
+    "areaPath": "One\\MGMT\\Compute\\Powershell\\Powershell\\PowerShell Core\\pwsh",
+    "notificationAliases": [
+        "adityap@microsoft.com",
+        "dongbow@microsoft.com",
+        "pmeinecke@microsoft.com",
+        "tplunk@microsoft.com"
+    ]
+}

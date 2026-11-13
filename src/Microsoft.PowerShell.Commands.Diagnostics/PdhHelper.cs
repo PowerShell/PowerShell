@@ -190,7 +190,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         public string InstanceName;
     }
 
-    internal class PdhHelper : IDisposable
+    internal sealed class PdhHelper : IDisposable
     {
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         private struct PDH_COUNTER_PATH_ELEMENTS
@@ -1071,6 +1071,9 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 if (res == PdhResults.PDH_MORE_DATA)
                 {
                     Marshal.FreeHGlobal(localizedPathPtr);
+
+                    // Set the value to 'IntPtr.Zero' so a reallocation failure won't cause the stale pointer to be double-freed in the finally block below.
+                    localizedPathPtr = IntPtr.Zero;
                     localizedPathPtr = Marshal.AllocHGlobal(strSize * sizeof(char));
                     res = PdhLookupPerfNameByIndex(machineName, index, localizedPathPtr, ref strSize);
                 }

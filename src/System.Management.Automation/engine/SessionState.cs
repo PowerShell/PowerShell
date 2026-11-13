@@ -27,7 +27,7 @@ namespace System.Management.Automation
         /// An instance of the PSTraceSource class used for trace output
         /// using "SessionState" as the category.
         /// </summary>
-        [Dbg.TraceSourceAttribute(
+        [Dbg.TraceSource(
              "SessionState",
              "SessionState Class")]
         private static readonly Dbg.PSTraceSource s_tracer =
@@ -337,10 +337,9 @@ namespace System.Management.Automation
             this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);
 
             // $PID
-            Process currentProcess = Process.GetCurrentProcess();
             v = new PSVariable(
                     SpecialVariables.PID,
-                    currentProcess.Id,
+                    Environment.ProcessId,
                     ScopedItemOptions.Constant | ScopedItemOptions.AllScope,
                     RunspaceInit.PIDDescription);
             this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);
@@ -391,14 +390,27 @@ namespace System.Management.Automation
 
         private static SessionStateEntryVisibility checkPathVisibility(List<string> list, string path)
         {
-            if (list == null || list.Count == 0) return SessionStateEntryVisibility.Private;
-            if (string.IsNullOrEmpty(path)) return SessionStateEntryVisibility.Private;
+            if (list == null || list.Count == 0)
+            {
+                return SessionStateEntryVisibility.Private;
+            }
 
-            if (list.Contains("*")) return SessionStateEntryVisibility.Public;
+            if (string.IsNullOrEmpty(path))
+            {
+                return SessionStateEntryVisibility.Private;
+            }
+
+            if (list.Contains("*"))
+            {
+                return SessionStateEntryVisibility.Public;
+            }
+
             foreach (string p in list)
             {
                 if (string.Equals(p, path, StringComparison.OrdinalIgnoreCase))
+                {
                     return SessionStateEntryVisibility.Public;
+                }
 
                 if (WildcardPattern.ContainsWildcardCharacters(p))
                 {

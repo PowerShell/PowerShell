@@ -317,18 +317,13 @@ namespace System.Management.Automation.Remoting.Client
         #endregion
 
         #region Private Data
+
         // operation handles are owned by WSMan
-        [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private IntPtr _wsManSessionHandle;
-
-        [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private IntPtr _wsManShellOperationHandle;
-
-        [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private IntPtr _wsManReceiveOperationHandle;
-
-        [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private IntPtr _wsManSendOperationHandle;
+
         // this is used with WSMan callbacks to represent a session transport manager.
         private long _sessionContextID;
 
@@ -925,7 +920,12 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     // WSMan expects the data to be in XML format (which is text + xml tags)
                     // so convert byte[] into base64 encoded format
-                    string base64EncodedDataInXml = string.Create(CultureInfo.InvariantCulture, $"<{WSManNativeApi.PS_CONNECT_XML_TAG} xmlns=\"{WSManNativeApi.PS_XML_NAMESPACE}\">{Convert.ToBase64String(additionalData)}</{WSManNativeApi.PS_CONNECT_XML_TAG}>");
+                    string base64EncodedDataInXml = string.Format(
+                        CultureInfo.InvariantCulture,
+                        "<{0} xmlns=\"{1}\">{2}</{0}>",
+                        WSManNativeApi.PS_CONNECT_XML_TAG,
+                        WSManNativeApi.PS_XML_NAMESPACE,
+                        Convert.ToBase64String(additionalData));
                     _openContent = new WSManNativeApi.WSManData_ManToUn(base64EncodedDataInXml);
                 }
 
@@ -1093,7 +1093,12 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     // WSMan expects the data to be in XML format (which is text + xml tags)
                     // so convert byte[] into base64 encoded format
-                    string base64EncodedDataInXml = string.Create(CultureInfo.InvariantCulture, $"<{WSManNativeApi.PS_CREATION_XML_TAG} xmlns=\"{WSManNativeApi.PS_XML_NAMESPACE}\">{Convert.ToBase64String(additionalData)}</{WSManNativeApi.PS_CREATION_XML_TAG}>");
+                    string base64EncodedDataInXml = string.Format(
+                        CultureInfo.InvariantCulture,
+                        "<{0} xmlns=\"{1}\">{2}</{0}>",
+                        WSManNativeApi.PS_CREATION_XML_TAG,
+                        WSManNativeApi.PS_XML_NAMESPACE,
+                        Convert.ToBase64String(additionalData));
                     _openContent = new WSManNativeApi.WSManData_ManToUn(base64EncodedDataInXml);
                 }
             }
@@ -1248,7 +1253,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <param name="serverProtocolVersion">Server negotiated protocol version.</param>
         internal void AdjustForProtocolVariations(Version serverProtocolVersion)
         {
-            if (serverProtocolVersion <= RemotingConstants.ProtocolVersionWin7RTM)
+            if (serverProtocolVersion <= RemotingConstants.ProtocolVersion_2_1)
             {
                 int maxEnvSize;
                 WSManNativeApi.WSManGetSessionOptionAsDword(_wsManSessionHandle,
@@ -1392,17 +1397,27 @@ namespace System.Management.Automation.Remoting.Client
             if (string.IsNullOrEmpty(connectionUri.Query))
             {
                 // if there is no query string already, create one..see RFC 3986
-                connectionStr = string.Create(CultureInfo.InvariantCulture, $"{connectionStr.TrimEnd('/')}?PSVersion={PSVersionInfo.PSVersion}{additionalUriSuffixString}");
+                connectionStr = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "{0}?PSVersion={1}{2}",
                     // Trimming the last '/' as this will allow WSMan to
                     // properly apply URLPrefix.
                     // Ex: http://localhost?PSVersion=2.0 will be converted
                     // to http://localhost:<port>/<urlprefix>?PSVersion=2.0
                     // by WSMan
+                    connectionStr.TrimEnd('/'),
+                    PSVersionInfo.PSVersion,
+                    additionalUriSuffixString);
             }
             else
             {
                 // if there is already a query string, append using & .. see RFC 3986
-                connectionStr = string.Create(CultureInfo.InvariantCulture, $"{connectionStr};PSVersion={PSVersionInfo.PSVersion}{additionalUriSuffixString}");
+                connectionStr = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "{0};PSVersion={1}{2}",
+                    connectionStr,
+                    PSVersionInfo.PSVersion,
+                    additionalUriSuffixString);
             }
 
             WSManNativeApi.BaseWSManAuthenticationCredentials authCredentials;
@@ -1764,7 +1779,10 @@ namespace System.Management.Automation.Remoting.Client
         /// <returns>True if a session create retry has been started.</returns>
         private bool RetrySessionCreation(int sessionCreateErrorCode)
         {
-            if (_connectionRetryCount >= ConnectionInfo.MaxConnectionRetryCount) { return false; }
+            if (_connectionRetryCount >= ConnectionInfo.MaxConnectionRetryCount)
+            {
+                return false;
+            }
 
             bool retryConnect;
             switch (sessionCreateErrorCode)
@@ -2597,7 +2615,10 @@ namespace System.Management.Automation.Remoting.Client
         private void DisposeWSManAPIDataAsync()
         {
             WSManAPIDataCommon tempWSManApiData = WSManAPIData;
-            if (tempWSManApiData == null) { return; }
+            if (tempWSManApiData == null)
+            {
+                return;
+            }
 
             WSManAPIData = null;
 
@@ -2617,7 +2638,6 @@ namespace System.Management.Automation.Remoting.Client
         /// </summary>
         internal class WSManAPIDataCommon : IDisposable
         {
-            [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             private IntPtr _handle;
             // if any
             private WSManNativeApi.WSManStreamIDSet_ManToUn _inputStreamSet;
@@ -2700,7 +2720,10 @@ namespace System.Management.Automation.Remoting.Client
             {
                 lock (_syncObject)
                 {
-                    if (_isDisposed) { return; }
+                    if (_isDisposed)
+                    {
+                        return;
+                    }
 
                     _isDisposed = true;
                 }
@@ -2762,18 +2785,11 @@ namespace System.Management.Automation.Remoting.Client
 
         // operation handles
         private readonly IntPtr _wsManShellOperationHandle;
-
-        [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private IntPtr _wsManCmdOperationHandle;
-
-        [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private IntPtr _cmdSignalOperationHandle;
-
-        [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private IntPtr _wsManReceiveOperationHandle;
-
-        [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private IntPtr _wsManSendOperationHandle;
+
         // this is used with WSMan callbacks to represent a command transport manager.
         private long _cmdContextId;
 

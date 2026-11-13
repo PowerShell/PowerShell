@@ -123,6 +123,45 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Serializes list of objects into PowerShell CliXml.
+        /// </summary>
+        /// <param name="source">The input objects to serialize.</param>
+        /// <param name="depth">The depth of the members to serialize.</param>
+        /// <param name="enumerate">Enumerates input objects and serializes one at a time.</param>
+        /// <returns>The serialized object, as CliXml.</returns>
+        internal static string Serialize(IList<object> source, int depth, bool enumerate)
+        {
+            StringBuilder sb = new();
+
+            XmlWriterSettings xmlSettings = new()
+            {
+                CloseOutput = true,
+                Encoding = Encoding.Unicode,
+                Indent = true,
+                OmitXmlDeclaration = true
+            };
+
+            XmlWriter xw = XmlWriter.Create(sb, xmlSettings);
+            Serializer serializer = new(xw, depth, useDepthFromTypes: true);
+
+            if (enumerate)
+            {
+                foreach (object item in source)
+                {
+                    serializer.Serialize(item);
+                }
+            }
+            else
+            {
+                serializer.Serialize(source);
+            }
+
+            serializer.Done();
+
+            return sb.ToString();
+        }
+
+        /// <summary>
         /// Deserializes PowerShell CliXml into an object.
         /// </summary>
         /// <param name="source">The CliXml the represents the object to deserialize.</param>
@@ -733,7 +772,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets a new collection of typenames without "Deserialization." prefix
-        /// in the typename. This will allow to map type info/format info of the orignal type
+        /// in the typename. This will allow to map type info/format info of the original type
         /// for deserialized objects.
         /// </summary>
         /// <param name="typeNames"></param>
@@ -1979,7 +2018,7 @@ namespace System.Management.Automation
 
             foreach (PSMemberInfo info in propertyCollection)
             {
-                if (!(info is PSProperty prop))
+                if (info is not PSProperty prop)
                 {
                     continue;
                 }
@@ -2159,7 +2198,10 @@ namespace System.Management.Automation
                     }
 
                     Dbg.Assert(key != null, "Dictionary keys should never be null");
-                    if (key == null) break;
+                    if (key == null)
+                    {
+                        break;
+                    }
 
                     WriteStartElement(SerializationStrings.DictionaryEntryTag);
                     WriteOneObject(key, null, SerializationStrings.DictionaryKey, depth);
@@ -3331,28 +3373,28 @@ namespace System.Management.Automation
 
                 PSObject psoDeserializedClass = PSObject.AsPSObject(deserializedClass);
 
-                if (!(psoDeserializedClass.InstanceMembers[InternalDeserializer.CimNamespaceProperty] is PSPropertyInfo namespaceProperty))
+                if (psoDeserializedClass.InstanceMembers[InternalDeserializer.CimNamespaceProperty] is not PSPropertyInfo namespaceProperty)
                 {
                     return null;
                 }
 
                 string cimNamespace = namespaceProperty.Value as string;
 
-                if (!(psoDeserializedClass.InstanceMembers[InternalDeserializer.CimClassNameProperty] is PSPropertyInfo classNameProperty))
+                if (psoDeserializedClass.InstanceMembers[InternalDeserializer.CimClassNameProperty] is not PSPropertyInfo classNameProperty)
                 {
                     return null;
                 }
 
                 string cimClassName = classNameProperty.Value as string;
 
-                if (!(psoDeserializedClass.InstanceMembers[InternalDeserializer.CimServerNameProperty] is PSPropertyInfo computerNameProperty))
+                if (psoDeserializedClass.InstanceMembers[InternalDeserializer.CimServerNameProperty] is not PSPropertyInfo computerNameProperty)
                 {
                     return null;
                 }
 
                 string computerName = computerNameProperty.Value as string;
 
-                if (!(psoDeserializedClass.InstanceMembers[InternalDeserializer.CimHashCodeProperty] is PSPropertyInfo hashCodeProperty))
+                if (psoDeserializedClass.InstanceMembers[InternalDeserializer.CimHashCodeProperty] is not PSPropertyInfo hashCodeProperty)
                 {
                     return null;
                 }
@@ -3469,7 +3511,7 @@ namespace System.Management.Automation
             {
                 foreach (PSMemberInfo deserializedMemberInfo in deserializedObject.AdaptedMembers)
                 {
-                    if (!(deserializedMemberInfo is PSPropertyInfo deserializedProperty))
+                    if (deserializedMemberInfo is not PSPropertyInfo deserializedProperty)
                     {
                         continue;
                     }
@@ -3489,7 +3531,7 @@ namespace System.Management.Automation
             // process properties that were originally "extended" properties
             foreach (PSMemberInfo deserializedMemberInfo in deserializedObject.InstanceMembers)
             {
-                if (!(deserializedMemberInfo is PSPropertyInfo deserializedProperty))
+                if (deserializedMemberInfo is not PSPropertyInfo deserializedProperty)
                 {
                     continue;
                 }
@@ -3988,7 +4030,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Utilitily class for ReadDictionary(), supporting ordered or non-ordered Dictionaty methods.
+        /// Utility class for ReadDictionary(), supporting ordered or non-ordered Dictionary methods.
         /// </summary>
         private class PSDictionary
         {
@@ -4949,7 +4991,7 @@ namespace System.Management.Automation
 
         #endregion misc
 
-        [TraceSourceAttribute("InternalDeserializer", "InternalDeserializer class")]
+        [TraceSource("InternalDeserializer", "InternalDeserializer class")]
         private static readonly PSTraceSource s_trace = PSTraceSource.GetTracer("InternalDeserializer", "InternalDeserializer class");
     }
 
@@ -5119,7 +5161,7 @@ namespace System.Management.Automation
 
     /// <summary>
     /// A class for identifying types which are treated as KnownType by Monad.
-    /// A KnownType is guranteed to be available on machine on which monad is
+    /// A KnownType is guaranteed to be available on machine on which monad is
     /// running.
     /// </summary>
     internal static class KnownTypes
@@ -5907,7 +5949,6 @@ namespace System.Management.Automation
     /// 2) values that can be serialized and deserialized during PowerShell remoting handshake
     ///    (in major-version compatible versions of PowerShell remoting)
     /// </summary>
-    [Serializable]
     public sealed class PSPrimitiveDictionary : Hashtable
     {
         #region Constructors
@@ -6005,7 +6046,7 @@ namespace System.Management.Automation
                 typeof(PSPrimitiveDictionary)
             };
 
-        private void VerifyValue(object value)
+        private static void VerifyValue(object value)
         {
             // null is a primitive type
             if (value == null)
@@ -6063,7 +6104,7 @@ namespace System.Management.Automation
         public override void Add(object key, object value)
         {
             string keyAsString = VerifyKey(key);
-            this.VerifyValue(value);
+            VerifyValue(value);
             base.Add(keyAsString, value);
         }
 
@@ -6091,7 +6132,7 @@ namespace System.Management.Automation
             set
             {
                 string keyAsString = VerifyKey(key);
-                this.VerifyValue(value);
+                VerifyValue(value);
                 base[keyAsString] = value;
             }
         }
@@ -6119,7 +6160,7 @@ namespace System.Management.Automation
 
             set
             {
-                this.VerifyValue(value);
+                VerifyValue(value);
                 base[key] = value;
             }
         }
@@ -6523,7 +6564,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// If originalHash contains PSVersionTable, then just returns the Cloned copy of
-        /// the original hash. Othewise, creates a clone copy and add PSVersionInfo.GetPSVersionTable
+        /// the original hash. Otherwise, creates a clone copy and add PSVersionInfo.GetPSVersionTable
         /// to the clone and returns.
         /// </summary>
         /// <param name="originalHash"></param>
@@ -7251,7 +7292,7 @@ namespace Microsoft.PowerShell
         private static System.Security.Cryptography.X509Certificates.X509Certificate2 RehydrateX509Certificate2(PSObject pso)
         {
             byte[] rawData = GetPropertyValue<byte[]>(pso, "RawData");
-            return new System.Security.Cryptography.X509Certificates.X509Certificate2(rawData);
+            return System.Security.Cryptography.X509Certificates.X509CertificateLoader.LoadCertificate(rawData);
         }
 
         private static System.Security.Cryptography.X509Certificates.X500DistinguishedName RehydrateX500DistinguishedName(PSObject pso)
@@ -7302,7 +7343,7 @@ namespace Microsoft.PowerShell
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
-            if (!(instance.BaseObject is ParameterSetMetadata parameterSetMetadata))
+            if (instance.BaseObject is not ParameterSetMetadata parameterSetMetadata)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
@@ -7323,7 +7364,7 @@ namespace Microsoft.PowerShell
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
-            if (!(instance.BaseObject is DebuggerStopEventArgs dbgStopEventArgs))
+            if (instance.BaseObject is not DebuggerStopEventArgs dbgStopEventArgs)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
@@ -7582,7 +7623,7 @@ namespace Microsoft.PowerShell
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
-            if (!(instance.BaseObject is FormatViewDefinition formatViewDefinition))
+            if (instance.BaseObject is not FormatViewDefinition formatViewDefinition)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }

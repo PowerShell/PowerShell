@@ -141,7 +141,7 @@ namespace Microsoft.PowerShell.Commands
                 // the solution is to:
                 //
                 //     - First attempt to copy the entire security descriptor as we did in V1.
-                //       This ensures backward compatability for administrator scripts that currently
+                //       This ensures backward compatibility for administrator scripts that currently
                 //       work.
                 //     - If the attempt fails due to a PrivilegeNotHeld exception, try again with
                 //       an estimate of the minimum required subset. This is an estimate, since the
@@ -168,13 +168,15 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // Get the security descriptor of the destination path
                     ObjectSecurity existingDescriptor = new FileInfo(path).GetAccessControl();
-                    Type ntAccountType = typeof(System.Security.Principal.NTAccount);
+                    // Use SecurityIdentifier to avoid having the below comparison steps
+                    // fail when dealing with an untranslatable SID in the SD
+                    Type identityType = typeof(System.Security.Principal.SecurityIdentifier);
 
                     AccessControlSections sections = AccessControlSections.All;
 
                     // If they didn't modify any audit information, don't try to set
                     // the audit section.
-                    int auditRuleCount = sd.GetAuditRules(true, true, ntAccountType).Count;
+                    int auditRuleCount = sd.GetAuditRules(true, true, identityType).Count;
                     if ((auditRuleCount == 0) &&
                         (sd.AreAuditRulesProtected == existingDescriptor.AreAccessRulesProtected))
                     {
@@ -182,13 +184,13 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     // If they didn't modify the owner, don't try to set that section.
-                    if (sd.GetOwner(ntAccountType) == existingDescriptor.GetOwner(ntAccountType))
+                    if (sd.GetOwner(identityType) == existingDescriptor.GetOwner(identityType))
                     {
                         sections &= ~AccessControlSections.Owner;
                     }
 
                     // If they didn't modify the group, don't try to set that section.
-                    if (sd.GetGroup(ntAccountType) == existingDescriptor.GetGroup(ntAccountType))
+                    if (sd.GetGroup(identityType) == existingDescriptor.GetGroup(identityType))
                     {
                         sections &= ~AccessControlSections.Group;
                     }

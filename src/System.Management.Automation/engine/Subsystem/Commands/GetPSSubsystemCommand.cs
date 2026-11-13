@@ -8,7 +8,6 @@ namespace System.Management.Automation.Subsystem
     /// <summary>
     /// Implementation of 'Get-PSSubsystem' cmdlet.
     /// </summary>
-    [Experimental("PSSubsystemPluginModel", ExperimentAction.Show)]
     [Cmdlet(VerbsCommon.Get, "PSSubsystem", DefaultParameterSetName = AllSet)]
     [OutputType(typeof(SubsystemInfo))]
     public sealed class GetPSSubsystemCommand : PSCmdlet

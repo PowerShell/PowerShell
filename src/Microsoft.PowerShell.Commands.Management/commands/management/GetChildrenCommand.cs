@@ -122,7 +122,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the recurse switch.
         /// </summary>
         [Parameter]
-        [Alias("s")]
+        [Alias("s", "r")]
         public SwitchParameter Recurse
         {
             get

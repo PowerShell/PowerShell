@@ -244,7 +244,7 @@ namespace Microsoft.PowerShell.Commands
         /// as they get written to the pipeline. An instance of this cache class is
         /// only valid for a single path.
         /// </summary>
-        internal class ContentPathsCache
+        internal sealed class ContentPathsCache
         {
             /// <summary>
             /// Constructs a content cache item.

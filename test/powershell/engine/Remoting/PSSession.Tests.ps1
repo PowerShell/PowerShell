@@ -5,6 +5,9 @@
 # PSSession tests for non-Windows platforms
 #
 
+[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConvertToSecureStringWithPlainText', '')]
+param()
+
 function GetRandomString()
 {
     return [System.IO.Path]::GetFileNameWithoutExtension([System.IO.Path]::GetRandomFileName())
@@ -86,5 +89,50 @@ Describe "SkipCACheck and SkipCNCheck PSSession options are required for New-PSS
 
         $er = { & $scriptBlock } | Should -Throw -ErrorId 'System.Management.Automation.Remoting.PSRemotingDataStructureException,Microsoft.PowerShell.Commands.NewPSSessionCommand' -PassThru
         $er.Exception.ErrorCode | Should -Be $expectedErrorCode
+    }
+}
+
+Describe "New-PSSession -UseWindowsPowerShell switch parameter" -Tag "CI" {
+
+    BeforeAll {
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+
+        if (-not $IsWindows) {
+            $PSDefaultParameterValues['it:skip'] = $true
+        }
+    }
+
+    AfterAll {
+        $global:PSDefaultParameterValues = $originalDefaultParameterValues
+    }
+
+    It "Should respect explicit -UseWindowsPowerShell:`$false parameter value" {
+        # Test 1: -UseWindowsPowerShell:$true should create a Windows PowerShell 5.1 session
+        $sessionWithTrue = $null
+        try {
+            { $script:sessionWithTrue = New-PSSession -UseWindowsPowerShell:$true } | Should -Not -Throw
+            $script:sessionWithTrue | Should -Not -BeNullOrEmpty
+
+            # Verify it's Windows PowerShell 5.1
+            $version = Invoke-Command -Session $script:sessionWithTrue -ScriptBlock { $PSVersionTable.PSVersion }
+            $version.Major | Should -Be 5
+            $version.Minor | Should -Be 1
+        }
+        finally {
+            if ($script:sessionWithTrue) { Remove-PSSession $script:sessionWithTrue -ErrorAction SilentlyContinue }
+        }
+
+        # Test 2: -UseWindowsPowerShell:$false should use WSMan transport (not Process)
+        $sessionWithFalse = $null
+        try {
+            { $script:sessionWithFalse = New-PSSession -UseWindowsPowerShell:$false } | Should -Not -Throw
+            $script:sessionWithFalse | Should -Not -BeNullOrEmpty
+
+            # Transport should be WSMan, not Process
+            $script:sessionWithFalse.Transport | Should -Be 'WSMan'
+        }
+        finally {
+            if ($script:sessionWithFalse) { Remove-PSSession $script:sessionWithFalse -ErrorAction SilentlyContinue }
+        }
     }
 }

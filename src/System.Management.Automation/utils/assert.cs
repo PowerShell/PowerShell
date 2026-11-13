@@ -120,13 +120,7 @@ namespace System.Management.Automation
         // not expecting these methods to exist.
         [System.Diagnostics.Conditional("DEBUG")]
         [System.Diagnostics.Conditional("ASSERTIONS_TRACE")]
-#if RESHARPER_ATTRIBUTES
-        [JetBrains.Annotations.AssertionMethod]
-#endif
         internal static void Assert(
-#if RESHARPER_ATTRIBUTES
-            [JetBrains.Annotations.AssertionCondition(JetBrains.Annotations.AssertionConditionType.IS_TRUE)]
-#endif
             [DoesNotReturnIf(false)]
             bool condition,
             string whyThisShouldNeverHappen)
@@ -153,20 +147,17 @@ namespace System.Management.Automation
         // not expecting these methods to exist.
         [System.Diagnostics.Conditional("DEBUG")]
         [System.Diagnostics.Conditional("ASSERTIONS_TRACE")]
-#if RESHARPER_ATTRIBUTES
-        [JetBrains.Annotations.AssertionMethod]
-#endif
-        internal static void
-        Assert(
-#if RESHARPER_ATTRIBUTES
-            [JetBrains.Annotations.AssertionCondition(JetBrains.Annotations.AssertionConditionType.IS_TRUE)]
-#endif
+        internal static void Assert(
             [DoesNotReturnIf(false)]
             bool condition,
-            string whyThisShouldNeverHappen, string detailMessage)
+            string whyThisShouldNeverHappen,
+            string detailMessage)
         {
             // Early out avoids some slower code below (mostly the locking done in ThrowInsteadOfAssert).
-            if (condition) return;
+            if (condition)
+            {
+                return;
+            }
 
 #if ASSERTIONS_TRACE
             if (!condition)

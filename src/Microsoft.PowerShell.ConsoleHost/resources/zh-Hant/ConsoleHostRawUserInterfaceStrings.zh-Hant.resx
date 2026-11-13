@@ -1,0 +1,177 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CoordinateOutOfBufferErrorTemplate" xml:space="preserve">
+    <value>無法處理作業，因為提供的座標無效。請指定位於 {0} 緩衝區域內的座標。</value>
+  </data>
+  <data name="InvalidBufferSizeError" xml:space="preserve">
+    <value>無法設定緩衝區大小，因為指定的大小太大或太小。</value>
+  </data>
+  <data name="InvalidConsoleColorError" xml:space="preserve">
+    <value>無法設定主控台色彩，因為指定的值無效。請指定 System.ConsoleColor 型別定義的有效色彩。</value>
+  </data>
+  <data name="InvalidCursorSizeError" xml:space="preserve">
+    <value>無法處理 CursorSize，因為指定的游標大小無效。</value>
+  </data>
+  <data name="InvalidReadKeyOptionsError" xml:space="preserve">
+    <value>無法讀取索引鍵選項。若要讀取選項，請設定下列其中一個或兩個: IncludeKeyDown、IncludeKeyUp。</value>
+  </data>
+  <data name="InvalidRegionErrorTemplate" xml:space="preserve">
+    <value>{0} 應大於或等於 {1}。</value>
+  </data>
+  <data name="InvalidXWindowPositionError" xml:space="preserve">
+    <value>無法使用指定的 Window X (資料行) 位置，因為它超出螢幕緩衝區的寬度。請指定另一個 X 位置，從 0 作為緩衝區最左邊的資料行開始。</value>
+  </data>
+  <data name="InvalidYWindowPositionError" xml:space="preserve">
+    <value>無法使用指定的 Window Y (資料列) 位置，因為它超出螢幕緩衝區的高度。請指定另一個 Y 位置，從 0 作為緩衝區最上方的資料列開始。</value>
+  </data>
+  <data name="WindowWidthTooSmallError" xml:space="preserve">
+    <value>視窗寬度不可小於 1。</value>
+  </data>
+  <data name="WindowHeightTooSmallError" xml:space="preserve">
+    <value>視窗高度必須至少為 1。</value>
+  </data>
+  <data name="WindowWidthLargerThanBufferError" xml:space="preserve">
+    <value>視窗寬度不能超過螢幕緩衝區。</value>
+  </data>
+  <data name="WindowHeightLargerThanBufferError" xml:space="preserve">
+    <value>視窗高度不能超過螢幕緩衝區。</value>
+  </data>
+  <data name="WindowWidthTooLargeErrorTemplate" xml:space="preserve">
+    <value>視窗寬度不能超過 {0}。</value>
+  </data>
+  <data name="WindowHeightTooLargeErrorTemplate" xml:space="preserve">
+    <value>視窗高度不可超過 {0}。</value>
+  </data>
+  <data name="WindowTooNarrowError" xml:space="preserve">
+    <value>視窗大小太窄。</value>
+  </data>
+  <data name="WindowTooShortError" xml:space="preserve">
+    <value>視窗大小太短。</value>
+  </data>
+  <data name="WindowTitleTooShortError" xml:space="preserve">
+    <value>視窗標題不可為空白。</value>
+  </data>
+  <data name="WindowTitleTooLongErrorTemplate" xml:space="preserve">
+    <value>視窗標題長度不得超過 {0} 個字元。</value>
+  </data>
+  <data name="WindowTitleElevatedPrefix" xml:space="preserve">
+    <value>系統管理員:</value>
+  </data>
+</root>

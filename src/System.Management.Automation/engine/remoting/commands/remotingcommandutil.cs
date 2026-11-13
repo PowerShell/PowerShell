@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                // the following registry key defines WSMan compatability
+                // the following registry key defines WSMan compatibility
                 // HKLM\Software\Microsoft\Windows\CurrentVersion\WSMAN\ServiceStackVersion
                 string wsManStackValue = null;
                 RegistryKey wsManKey = Registry.LocalMachine.OpenSubKey(WSManKeyPath);

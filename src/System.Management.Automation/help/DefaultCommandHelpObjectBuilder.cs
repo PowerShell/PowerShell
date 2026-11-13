@@ -605,9 +605,7 @@ namespace System.Management.Automation.Help
 
                     foreach (ParameterAttribute attrib in attribs)
                     {
-                        if (attrib.ValueFromPipeline ||
-                            attrib.ValueFromPipelineByPropertyName ||
-                            attrib.ValueFromRemainingArguments)
+                        if (attrib.ValueFromPipeline || attrib.ValueFromPipelineByPropertyName)
                         {
                             if (!inputs.Contains(parameter.Value.ParameterType.FullName))
                             {

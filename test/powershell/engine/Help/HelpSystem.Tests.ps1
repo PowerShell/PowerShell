@@ -30,7 +30,7 @@ function UpdateHelpFromLocalContentPath {
         throw "Unable to find help content at '$helpContentPath'"
     }
 
-    # Test files are 'en-US', set explicit culture so test does not help on non-US systems
+    # Test files are 'en-US', set explicit culture so test does not fail on non-US systems
     Update-Help -Module $ModuleName -SourcePath $helpContentPath -UICulture 'en-US' -Force -ErrorAction Stop -Scope $Scope
 }
 
@@ -69,6 +69,10 @@ Describe "Validate that <pshome>/<culture>/default.help.txt is present" -Tags @(
 Describe "Validate that the Help function can Run in strict mode" -Tags @('CI') {
 
     It "Help doesn't fail when strict mode is on" {
+        if (Test-IsWindowsArm64) {
+            Set-ItResult -Pending -Because "IOException: The handle is invalid."
+        }
+
 
         $help = & {
             # run in nested scope to keep strict mode from affecting other tests
@@ -107,6 +111,15 @@ Describe "Validate that get-help works for CurrentUserScope" -Tags @('CI') {
             $help = Get-Help -Name $cmdletName
             $help.Description | Out-String | Should -Match $cmdletName
             $help.Examples | Out-String | Should -Match $cmdletName
+        }
+
+        It "Validate 'Aliases' is present in help content formatting" {
+            ## The parameter help content should be formatted with the following section:
+            ##   Accept pipeline input?       xxxx
+            ##   Aliases                      NoOverwrite
+            ##   Accept wildcard characters?  xxxx
+            $output = Get-Help Import-Module -Parameter NoClobber | Out-String
+            $output | Should -Match "Accept pipeline input\?.*\n\s+Aliases\s+NoOverwrite.*\n\s+Accept wildcard characters\?.*"
         }
     }
 }
@@ -404,16 +417,28 @@ Describe "Get-Help should find pattern alias" -Tags "CI" {
 
 Describe "help function uses full view by default" -Tags "CI" {
     It "help should return full view without -Full switch" {
+        if (Test-IsWindowsArm64) {
+            Set-ItResult -Pending -Because "IOException: The handle is invalid."
+        }
+
         $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process)
         $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should -Not -BeNullOrEmpty
     }
 
     It "help should return full view even with -Full switch" {
+        if (Test-IsWindowsArm64) {
+            Set-ItResult -Pending -Because "IOException: The handle is invalid."
+        }
+
         $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process -Full)
         $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should -Not -BeNullOrEmpty
     }
 
     It "help should not append -Full when not using AllUsersView parameter set" {
+        if (Test-IsWindowsArm64) {
+            Set-ItResult -Pending -Because "IOException: The handle is invalid."
+        }
+
         $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process -Parameter Name)
         $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should -BeNullOrEmpty
     }
@@ -617,5 +642,74 @@ Describe 'help renders when using a PAGER with a space in the path' -Tags 'CI' {
 
     It 'help renders when using a PAGER with a space in the path' {
         help Get-Command | Should -Be "R2V0LUNvbW1hbmQ="
+    }
+}
+
+Describe 'Update-Help allows partial culture matches' -Tags 'CI' {
+    BeforeAll {
+        function Test-UpdateHelpAux($UICulture, $Pass)
+        {
+            # If null (in system culture tests), omit entirely
+            $CultureArg = $UICulture ? @{ UICulture = $UICulture } : @{}
+            $Args = @{
+                Module = 'Microsoft.PowerShell.Core'
+                SourcePath = Join-Path $PSScriptRoot 'assets'
+                Force = $true
+                ErrorAction = $Pass ? 'Stop' : 'SilentlyContinue'
+                ErrorVariable = 'ErrorVariable'
+            }
+
+            Update-Help @Args @CultureArg
+
+            if (-not $Pass) {
+                $ErrorVariable | Should -Match 'Failed to update Help for the module.*'
+            }
+        }
+    }
+
+    AfterEach {
+        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('CurrentUICulture', $null)
+    }
+
+    It 'Checks culture match against en-US: <UICulture>' -TestCases @(
+        @{ UICulture = 'en-US' }
+        @{ UICulture = 'en' }
+        @{ UICulture = 'en-GB'; Pass = $false }
+        @{ UICulture = 'de-DE'; Pass = $false }
+    ) {
+        param($UICulture, $Pass = $true)
+
+        Test-UpdateHelpAux $UICulture $Pass
+    }
+
+    # When using system culture, "en-GB" will use "en" as fallback, so passes
+    It 'Checks system culture match against en-US: <UICulture>' -TestCases @(
+        @{ UICulture = 'en-US' }
+        @{ UICulture = 'en' }
+        @{ UICulture = 'en-GB' }
+        @{ UICulture = 'de-DE'; Pass = $false }
+    ) {
+        param($UICulture, $Pass = $true)
+
+        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('CurrentUICulture', [System.Globalization.CultureInfo]::new($UICulture))
+        Test-UpdateHelpAux $null $Pass
+    }
+}
+
+Describe 'InputTypes accurately describe pipelinable input' {
+    BeforeAll {
+        function invoke-inputtypetest {
+            [CmdletBinding()]
+            param (
+            [Parameter(Position=0,Mandatory=$true,ValueFromPipeline=$true)][string]$a,
+            [Parameter(Position=1,ValueFromRemainingArguments=$true)][object[]]$c)
+            Process { "$a $c" }
+        }
+    }
+
+    It 'Should have only 1 input type' {
+        $inputTypes = (Get-Help -full invoke-inputtypetest).inputtypes.inputtype.type.name.trim().split("`n")
+        $inputTypes.Count | Should -Be 1
+        $inputTypes | Should -Be "System.String"
     }
 }

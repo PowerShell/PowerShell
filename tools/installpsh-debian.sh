@@ -176,7 +176,7 @@ fi
 case $DISTRIB_ID in
     ubuntu|linuxmint)
         case $DISTRIB_RELEASE in
-            20.04|18.04|16.10|16.04|15.10|14.04)
+            22.04|20.04|18.04|16.10|16.04|15.10|14.04)
                 curl https://packages.microsoft.com/config/ubuntu/$DISTRIB_RELEASE/prod.list | $SUDO tee /etc/apt/sources.list.d/microsoft.list
             ;;
             *)

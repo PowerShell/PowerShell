@@ -67,7 +67,7 @@ namespace System.Management.Automation.Subsystem
         /// </summary>
         /// <remarks>
         /// Design point:
-        /// The implemnentation proxy object is not supposed to expose to users.
+        /// The implementation proxy object is not supposed to expose to users.
         /// Users shouldn't depend on a implementation proxy object directly, but instead should depend on PowerShell APIs.
         /// <para/>
         /// Example: if a user want to use prediction functionality, he/she should use the PowerShell prediction API instead of

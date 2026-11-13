@@ -1,0 +1,31 @@
+parameters:
+- name: nativePathRoot
+  default: ''
+- name: ob_restore_phase
+  type: boolean
+  default: true
+
+steps:
+- powershell: |
+    $dirSeparatorChar = [system.io.path]::DirectorySeparatorChar
+    $nativePath = "${{parameters.nativePathRoot }}${dirSeparatorChar}PowerShell"
+    Write-Host "##vso[task.setvariable variable=PowerShellRoot]$nativePath"
+    if ((Test-Path "$nativePath")) {
+      Remove-Item -Path "$nativePath" -Force -Recurse -Verbose -ErrorAction ignore
+    }
+    else {
+      Write-Verbose -Verbose -Message "No cleanup required."
+    }
+    # REPOROOT must be set by the pipeline - this is where the repository was checked out
+    $sourceDir = $env:REPOROOT
+    if (-not $sourceDir) { throw "REPOROOT environment variable is not set. This step depends on REPOROOT being configured in the pipeline." }
+
+    $buildModulePath = Join-Path $sourceDir "build.psm1"
+    if (-not (Test-Path $buildModulePath)) { throw "build.psm1 not found at: $buildModulePath. REPOROOT must point to the PowerShell repository root." }
+
+    Write-Verbose -Verbose -Message "Cloning from: $sourceDir to $nativePath"
+    git clone --quiet $sourceDir $nativePath
+  displayName: Clone PowerShell Repo to /PowerShell
+  errorActionPreference: silentlycontinue
+  env:
+    ob_restore_phase: ${{ parameters.ob_restore_phase }}

@@ -12,6 +12,15 @@ namespace System.Management.Automation
 {
     internal static class ArrayOps
     {
+        internal static object AddObjectArray(object[] lhs, object rhs)
+        {
+            int newIdx = lhs.Length;
+            Array.Resize(ref lhs, newIdx + 1);
+            lhs[newIdx] = rhs;
+
+            return lhs;
+        }
+
         internal static object[] SlicingIndex(object target, object[] indexes, Func<object, object, object> indexer)
         {
             var result = new object[indexes.Length];

@@ -78,8 +78,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "File")]
         [Parameter(ParameterSetName = "LiteralFile")]
-        [ArgumentToEncodingTransformationAttribute]
-        [ArgumentEncodingCompletionsAttribute]
+        [ArgumentToEncodingTransformation]
+        [ArgumentEncodingCompletions]
         [ValidateNotNullOrEmpty]
         public Encoding Encoding { get; set; } = Encoding.Default;
 
@@ -140,26 +140,20 @@ namespace Microsoft.PowerShell.Commands
             _commandWrapper.ShutDown();
         }
 
-        private void Dispose(bool isDisposing)
+        /// <summary>
+        /// Release all resources.
+        /// </summary>
+        public void Dispose()
         {
             if (!_alreadyDisposed)
             {
                 _alreadyDisposed = true;
-                if (isDisposing && _commandWrapper != null)
+                if (_commandWrapper != null)
                 {
                     _commandWrapper.Dispose();
                     _commandWrapper = null;
                 }
             }
-        }
-
-        /// <summary>
-        /// Dispose method in IDisposable.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         #region private

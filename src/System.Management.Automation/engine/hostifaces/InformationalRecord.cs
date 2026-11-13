@@ -13,7 +13,7 @@ namespace System.Management.Automation
     /// A PSInformationalRecord consists of a string Message and the InvocationInfo and pipeline state corresponding
     /// to the command that created the record.
     /// </summary>
-    [DataContract()]
+    [DataContract]
     public abstract class InformationalRecord
     {
         /// <remarks>
@@ -159,7 +159,7 @@ namespace System.Management.Automation
             }
         }
 
-        [DataMember()]
+        [DataMember]
         private string _message;
 
         private InvocationInfo _invocationInfo;
@@ -170,7 +170,7 @@ namespace System.Management.Automation
     /// <summary>
     /// A warning record in the PSInformationalBuffers.
     /// </summary>
-    [DataContract()]
+    [DataContract]
     public class WarningRecord : InformationalRecord
     {
         /// <summary>
@@ -226,7 +226,7 @@ namespace System.Management.Automation
     /// <summary>
     /// A debug record in the PSInformationalBuffers.
     /// </summary>
-    [DataContract()]
+    [DataContract]
     public class DebugRecord : InformationalRecord
     {
         /// <summary>
@@ -247,7 +247,7 @@ namespace System.Management.Automation
     /// <summary>
     /// A verbose record in the PSInformationalBuffers.
     /// </summary>
-    [DataContract()]
+    [DataContract]
     public class VerboseRecord : InformationalRecord
     {
         /// <summary>
