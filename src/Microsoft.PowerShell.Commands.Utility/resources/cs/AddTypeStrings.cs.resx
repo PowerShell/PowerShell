@@ -155,5 +155,6 @@
   </data>
   <data name="AddTypeLogMessage" xml:space="preserve">
     <value>Rutina Add-Type nebude v režimu ConstrainedLanguage povolena.</value>
+    <comment>{StrContains="Add-Type"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

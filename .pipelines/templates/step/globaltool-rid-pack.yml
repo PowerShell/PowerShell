@@ -1,0 +1,222 @@
+# DRAFT template - publish/pack steps have been validated against a real pipeline run; the
+# cross-RID PowerShell.SDK build and OneBranch non-Windows signing risks below are still open.
+#
+# Publishes, signs, and packs ONE RID-specific sub-package of the RID-specific 'PowerShell'
+# global tool (src/GlobalTools/PowerShell/PowerShell.csproj). This generalizes the existing,
+# working "Pack Windows.x64 global tool" recipe in windows-hosted-build.yml (publish -> sign the
+# publish output in place -> sign the handful of obj files pack needs -> 'dotnet pack -r <rid>
+# --no-build' -> inject signed Gallery modules/ref assemblies/powershell.config.json -> re-zip)
+# to every RID supported by the consolidated project, instead of one dedicated project per RID.
+#
+# Instantiated once per RID, as a step block inside its own job (see
+# ../job/globaltool-rid-job.yml), so all RIDs build/sign/pack in parallel instead of as
+# sequential steps in nupkg.yml's single 'build_nupkg' job.
+#
+# Prerequisites expected from the calling job (see job/globaltool-rid-job.yml):
+#  - $(PowerShellRoot), $(Version), $(ReleaseTagVar), $(ps_official_build) pipeline variables
+#    already set, and the CoOrdinatedBuildPipeline Modules artifact + GlobalToolRefAssembly
+#    artifact already downloaded (RefAssemblyPath points at the latter).
+#  - The .NET SDK pinned in global.json has been installed onto disk by an earlier step
+#    (e.g. install-dotnet.yml's Install-Dotnet call). Each step below calls Find-Dotnet itself
+#    to put it on PATH, since PATH/DOTNET_ROOT changes do not persist across pipeline steps
+#    (each step is a separate process) -- this bit a first draft of this template, which
+#    assumed Find-Dotnet from an earlier step would still apply and failed with "A compatible
+#    .NET SDK was not found" on 'dotnet publish'.
+#  - certificate_logical_to_actual / DotNetPrivateBuildAccess variable groups are in scope
+#    (required by obp-file-signing.yml and the nuget_cert_id signing task, same as elsewhere
+#    in this file).
+#
+# Known open risks / TODO before relying on this in production:
+#  - Confirm 'dotnet publish -r <rid>' / 'dotnet pack -r <rid> --no-build', run on a Windows
+#    agent for linux-*/osx-* RIDs, correctly restores every native asset. This was validated
+#    for a trivial console tool in a local spike (cross-OS framework-dependent publish worked
+#    fine from Windows), but has not been validated against the full PowerShell.SDK project
+#    graph.
+#  - Confirm OneBranch signing accepts non-Windows binaries signed from this pool. The existing
+#    Sign_Linux_* and Sign_Package_macOS_* jobs already do this successfully for the "regular"
+#    pwsh binaries via the same onebranch.pipeline.signing@1 task and 'type: windows' pool, so
+#    this is expected to work the same way here -- but verify end to end.
+#  - Confirm the obj-folder "essential files" allowlist (apphost stub, dll, pdb,
+#    project.assets.json) is correct for every RID; Windows.x64 established this list, but the
+#    apphost stub file name may differ for non-Windows RIDs (no '.exe' extension).
+
+parameters:
+  Rid: ''                    # e.g. 'win-x64', 'linux-arm64', 'osx-arm64'
+  ModulesSourcePath: ''      # folder containing the Gallery modules to inject (PowerShellGet, PSReadLine, etc.)
+  RefAssemblyPath: '$(RefAssemblyPath)'
+  ArtifactsRoot: '$(Pipeline.Workspace)/globaltool-multirid-artifacts'
+  OutputPath: '$(Pipeline.Workspace)/globaltool-multirid'
+
+steps:
+- pwsh: |
+    # Each pipeline step runs in its own process, so PATH/DOTNET_ROOT changes made by
+    # Find-Dotnet in an earlier step (e.g. install-dotnet.yml) do not carry over here --
+    # every step that invokes 'dotnet' directly must call Find-Dotnet itself first.
+    Import-Module -Name '$(PowerShellRoot)/build.psm1' -Force
+    Find-DotNet
+
+    $rid = '${{ parameters.Rid }}'
+    $projDir = Join-Path '$(PowerShellRoot)' 'src' 'GlobalTools' 'PowerShell'
+    $artifactsPath = Join-Path '${{ parameters.ArtifactsRoot }}' $rid
+
+    if ($env:RELEASETAGVAR) {
+      $ReleaseTagToUse = $env:RELEASETAGVAR -Replace '^v'
+    }
+
+    Push-Location $projDir
+    try {
+      # src/GlobalTools/PowerShell references System.Management.Automation and
+      # Microsoft.PowerShell.CoreCLR.Eventing, both of which need source files generated from
+      # resx/dependency-list inputs before they'll compile (DotNetEventingStrings.cs via
+      # ResGen, CorePsTypeCatalog.cs via TypeGen). Start-PSBuild normally handles this as a side
+      # effect for the "regular" pwsh build, but this project is published directly without
+      # going through Start-PSBuild, on a fresh checkout that has never generated these files,
+      # so they must be produced explicitly first.
+      Write-Verbose -Verbose "Restoring PowerShell global tool for RID: $rid"
+      dotnet restore .\PowerShell.csproj -r $rid
+      if ($LASTEXITCODE -ne 0) { throw "dotnet restore failed for RID $rid" }
+
+      Write-Verbose -Verbose "Running ResGen and TypeGen"
+      Start-ResGen
+      Start-TypeGen
+
+      Write-Verbose -Verbose "Publishing PowerShell global tool for RID: $rid"
+      dotnet publish -r $rid --no-self-contained --artifacts-path $artifactsPath /property:PackageVersion=$(Version) --configuration Release /property:ReleaseTag=$ReleaseTagToUse
+      if ($LASTEXITCODE -ne 0) { throw "dotnet publish failed for RID $rid" }
+    }
+    finally {
+      Pop-Location
+    }
+
+    # Only a handful of obj-folder files are needed later by 'dotnet pack --no-build'.
+    # NOTE: the obj/publish folder itself is still named "PowerShell" (the artifacts-output
+    # project-name folder is based on the project file name, unaffected by AssemblyName), but
+    # the assembly/pdb filenames inside it are "pwsh.*" since PowerShell.csproj sets
+    # AssemblyName=pwsh (see that file for why).
+    $objDir = Join-Path $artifactsPath 'obj' 'PowerShell' "release_$rid"
+    $filesToKeep = @('apphost', 'apphost.exe', 'pwsh.pdb', 'pwsh.dll', 'project.assets.json')
+    Get-ChildItem -Path $objDir -File -Recurse |
+      Where-Object { $_.Name -notin $filesToKeep } |
+      Remove-Item -Verbose -ErrorAction Stop
+  displayName: 'Publish PowerShell global tool (${{ parameters.Rid }})'
+  env:
+    __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+    VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: $(VSS_NUGET_EXTERNAL_FEED_ENDPOINTS)
+
+- pwsh: |
+    # obp-file-signing.yml's "Prepare files to be signed" step branches on $(ArtifactPlatform)
+    # at runtime (checked via plain string comparison, not a template parameter) to decide
+    # whether to include Windows-only files (pwsh.exe, CimCmdlets/WSMan DLLs, and several
+    # Diagnostics/WSMan/PSDiagnostics module files) in the first-party signing set. Every other
+    # caller (windows-hosted-build.yml, linux.yml's build job) sets this before calling that
+    # template; this step was missing here, so for win-x64/win-arm64 specifically, pwsh.exe and
+    # the CIM/WSMan DLLs were silently excluded from signing.
+    $rid = '${{ parameters.Rid }}'
+    $platform = if ($rid -like 'win*') { 'windows' } elseif ($rid -like 'osx*') { 'macos' } else { 'linux' }
+    Write-Host "##vso[task.setvariable variable=ArtifactPlatform]$platform"
+  displayName: 'Set artifact platform (${{ parameters.Rid }})'
+
+- template: /.pipelines/templates/obp-file-signing.yml@self
+  parameters:
+    binPath: '${{ parameters.ArtifactsRoot }}/${{ parameters.Rid }}/publish/PowerShell/release_${{ parameters.Rid }}'
+    globalTool: 'true'
+    OfficialBuild: $(ps_official_build)
+
+- task: onebranch.pipeline.signing@1
+  displayName: 'Sign PowerShell global tool obj files (${{ parameters.Rid }})'
+  inputs:
+    command: 'sign'
+    signing_profile: external_distribution
+    files_to_sign: '**\*.dll;**\*.exe;**\pwsh'
+    search_root: '${{ parameters.ArtifactsRoot }}/${{ parameters.Rid }}/obj/PowerShell/release_${{ parameters.Rid }}'
+
+- pwsh: |
+    # See the note in the 'Publish' step above: PATH changes from Find-Dotnet do not
+    # persist across pipeline steps, so it must be called again here too.
+    Import-Module -Name '$(PowerShellRoot)/build.psm1' -Force
+    Find-DotNet
+
+    $rid = '${{ parameters.Rid }}'
+    $projDir = Join-Path '$(PowerShellRoot)' 'src' 'GlobalTools' 'PowerShell'
+    $artifactsPath = Join-Path '${{ parameters.ArtifactsRoot }}' $rid
+    $outputPath = '${{ parameters.OutputPath }}'
+    New-Item -ItemType Directory -Path $outputPath -Force | Out-Null
+
+    if ($env:RELEASETAGVAR) {
+      $ReleaseTagToUse = $env:RELEASETAGVAR -Replace '^v'
+    }
+
+    Push-Location $projDir
+    try {
+      Write-Verbose -Verbose "Packing PowerShell global tool for RID: $rid"
+      dotnet pack -r $rid --no-build --output $outputPath --artifacts-path $artifactsPath /property:PackageVersion=$(Version) /property:PackageIcon=Powershell_64.png /property:Version=$(Version) /property:ReleaseTag=$ReleaseTagToUse
+      if ($LASTEXITCODE -ne 0) { throw "dotnet pack failed for RID $rid" }
+    }
+    finally {
+      Pop-Location
+    }
+
+    # Same "unzip nupkg, inject signed Gallery modules/ref assemblies, strip pdbs/content,
+    # re-zip" post-processing used for the Windows.x64 global tool package.
+    $nupkg = Get-ChildItem -Path $outputPath -Filter "PowerShell.$rid.*.nupkg" | Select-Object -First 1
+    if (-not $nupkg) { throw "Expected PowerShell.$rid nupkg not found in $outputPath" }
+
+    $zipPath = $nupkg.FullName -replace '\.nupkg$', '.zip'
+    Rename-Item -Path $nupkg.FullName -NewName (Split-Path $zipPath -Leaf)
+
+    $expandPath = Join-Path $outputPath "$rid-temp"
+    Expand-Archive -Path $zipPath -DestinationPath $expandPath -Force
+
+    # Discover the actual TFM folder name (e.g. "net10.0") instead of hardcoding it: this
+    # literally was "net11.0" until this exact line caused a build failure when this project's
+    # TargetFramework (PowerShell.csproj) and this branch's pinned SDK/TFM were bumped back down
+    # to net10.0 without updating the hardcoded path strings below in lockstep. A RID-specific
+    # tool sub-package has exactly one TFM folder under "tools/", so this is reliable.
+    $tfmFolder = Get-ChildItem -Path (Join-Path $expandPath 'tools') -Directory | Select-Object -First 1 -ExpandProperty Name
+    if (-not $tfmFolder) { throw "Could not determine the TFM folder under $expandPath\tools" }
+
+    $modulesToCopy = @('PowerShellGet', 'PackageManagement', 'Microsoft.PowerShell.PSResourceGet', 'Microsoft.PowerShell.Archive', 'PSReadLine', 'Microsoft.PowerShell.ThreadJob')
+    $destModulesPath = Join-Path $expandPath 'tools' $tfmFolder $rid 'modules'
+    $modulesSourcePath = '${{ parameters.ModulesSourcePath }}'
+    $modulesToCopy | ForEach-Object {
+      $modulePath = Join-Path $modulesSourcePath $_
+      if (Test-Path $modulePath) {
+        Copy-Item -Path $modulePath -Destination $destModulesPath -Recurse -Force
+      } else {
+        Write-Warning "Module not found, skipping: $modulePath"
+      }
+    }
+
+    $refAssemblyPath = '${{ parameters.RefAssemblyPath }}'
+    if (Test-Path $refAssemblyPath) {
+      Copy-Item -Path $refAssemblyPath -Destination (Join-Path $expandPath 'tools' $tfmFolder $rid 'ref') -Recurse -Force
+    }
+
+    $contentPath = Join-Path $expandPath 'content'
+    $contentFilesPath = Join-Path $expandPath 'contentFiles'
+    Remove-Item -Path $contentPath, $contentFilesPath -Recurse -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path (Join-Path $expandPath 'tools' $tfmFolder $rid '*.pdb') -Recurse -Force -ErrorAction SilentlyContinue
+
+    # Generate powershell.config.json, matching Start-PSBuild's own logic in build.psm1
+    # (Execution Policy and the Windows PowerShell compatibility feature are only
+    # supported/relevant on Windows RIDs).
+    $config = [ordered]@{}
+    if ($rid -like 'win*') {
+      $config.Add('Microsoft.PowerShell:ExecutionPolicy', 'RemoteSigned')
+      $config.Add('WindowsPowerShellCompatibilityModuleDenyList', @('PSScheduledJob', 'BestPractices', 'UpdateServices'))
+    }
+    if ($config.Count -gt 0) {
+      $configPath = Join-Path $expandPath 'tools' $tfmFolder $rid 'powershell.config.json'
+      Set-Content -Path $configPath -Value ($config | ConvertTo-Json) -Force -ErrorAction Stop
+    }
+
+    Compress-Archive -Path "$expandPath\*" -DestinationPath $nupkg.FullName -Force
+    Remove-Item -Path $expandPath -Recurse -Force
+    Remove-Item -Path $zipPath -Force
+
+    if (-not (Test-Path $nupkg.FullName)) {
+      throw "Global tool package not found at $($nupkg.FullName)"
+    }
+  displayName: 'Pack PowerShell global tool (${{ parameters.Rid }})'
+  env:
+    VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: $(VSS_NUGET_EXTERNAL_FEED_ENDPOINTS)

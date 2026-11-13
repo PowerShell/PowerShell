@@ -250,12 +250,14 @@
     <value>Вызов метода или свойства не разрешен</value>
   </data>
   <data name="WDACBinderInvocationLogMessage" xml:space="preserve">
-    <value>Вызов метода или свойства "{0}" типа "{1}" не будет разрешен в режиме ограниченного языка для ненадежных сценариев.</value>
+    <value>Вызов метода или свойства '{0}' типа '{1}' будет запрещен в режиме ConstrainedLanguage для недоверенных сценариев.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACBinderTypeCreationLogTitle" xml:space="preserve">
     <value>Создание типа не разрешено</value>
   </data>
   <data name="WDACBinderTypeCreationLogMessage" xml:space="preserve">
-    <value>Создание типа "{0}" не будет разрешено во время привязки параметров в режиме ограниченного языка для недоверенных сценариев.</value>
+    <value>Создание типа '{0}' будет запрещено во время привязки параметров в режиме ConstrainedLanguage для недоверенных сценариев.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>
