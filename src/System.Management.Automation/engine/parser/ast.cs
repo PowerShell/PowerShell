@@ -2766,6 +2766,35 @@ namespace System.Management.Automation.Language
         /// </summary>
         public bool IsInterface { get { return (TypeAttributes & TypeAttributes.Interface) == TypeAttributes.Interface; } }
 
+        private bool? _isHidden;
+
+        /// <summary>
+        /// Returns true if the type has the Hidden attribute.
+        /// </summary>
+        public bool IsHidden
+        {
+            get
+            {
+                _isHidden ??= Attributes.Any(attr =>
+                {
+                    var reflectionType = attr.TypeName.GetReflectionAttributeType();
+                    if (reflectionType == typeof(HiddenAttribute))
+                    {
+                        return true;
+                    }
+
+                    // For inline definitions, GetReflectionAttributeType() may return null at tab completion time
+                    // because the type hasn't been compiled yet. Check the type name as a string fallback.
+                    var typeName = attr.TypeName.FullName;
+                    return typeName.Equals("hidden", StringComparison.OrdinalIgnoreCase) ||
+                           typeName.Equals("HiddenAttribute", StringComparison.OrdinalIgnoreCase) ||
+                           typeName.Equals("System.Management.Automation.HiddenAttribute", StringComparison.OrdinalIgnoreCase);
+                });
+
+                return _isHidden.Value;
+            }
+        }
+
         internal Type Type
         {
             get
