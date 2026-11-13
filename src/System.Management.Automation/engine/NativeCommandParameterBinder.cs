@@ -96,7 +96,7 @@ namespace System.Management.Automation
                     // If this is the verbatim argument marker, we don't pass it on to the native command.
                     // We do need to remember it though - we'll expand environment variables in subsequent args.
                     object argValue = parameter.ArgumentValue;
-                    if (string.Equals("--%", argValue as string, StringComparison.OrdinalIgnoreCase))
+                    if (!sawVerbatimArgumentMarker && string.Equals(Parser.VERBATIM_ARGUMENT, argValue as string, StringComparison.OrdinalIgnoreCase))
                     {
                         sawVerbatimArgumentMarker = true;
                         continue;
