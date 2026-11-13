@@ -644,11 +644,16 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void CreateHelpersForSpecifiedComputerNames()
         {
-            // If we're in ConstrainedLanguage mode and the system is in lockdown mode,
-            // ensure that they haven't specified a ScriptBlock or InitScript - as
-            // we can't protect that boundary.
+// If we're in ConstrainedLanguage mode and the system is not in enforced lockdown,
+// ensure that they haven't specified a ScriptBlock or InitScript, because the child process
+// could otherwise run in FullLanguage and bypass the ConstrainedLanguage boundary.
+// Exception: when ConstrainedLanguage was applied solely because the system-wide App Control (WDAC)
+// policy is in audit mode (log-only) and the child process independently re-evaluates the policy.
+// An explicitly configured ConstrainedLanguage runspace (for example, via a session/JEA configuration)
+// does not set this flag and remains blocked.
             if ((Context.LanguageMode == PSLanguageMode.ConstrainedLanguage) &&
                 (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Enforce) &&
+                !Context.LanguageModeWasSetByAppControlAudit &&
                 ((ScriptBlock != null) || (InitializationScript != null)))
             {
                 ThrowTerminatingError(
