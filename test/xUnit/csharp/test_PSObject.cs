@@ -2,17 +2,17 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Data;
 using System.Management.Automation.Language;
+using System.Reflection;
+using System.Reflection.Emit;
 using Xunit;
 
 namespace PSTests.Parallel
 {
-    using System.Data;
     using System.Linq;
     using System.Management.Automation;
     using System.Management.Automation.Runspaces;
-    using System.Reflection;
-    using System.Reflection.Emit;
     using System.Xml;
 
     using Microsoft.Management.Infrastructure;
@@ -40,7 +40,7 @@ namespace PSTests.Parallel
                 new AssemblyName("AdapterIdentity-" + Guid.NewGuid().ToString("N")),
                 AssemblyBuilderAccess.Run);
             TypeBuilder builder = assembly.DefineDynamicModule("AdapterIdentity")
-                .DefineType("System.Xml.XmlNode", TypeAttributes.Public);
+                .DefineType("System.Xml.XmlNode", System.Reflection.TypeAttributes.Public);
             builder.DefineField("Value", typeof(int), FieldAttributes.Public);
             Type type = builder.CreateType();
             object value = Activator.CreateInstance(type);
