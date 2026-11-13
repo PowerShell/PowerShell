@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Management.Automation;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -125,24 +126,24 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private byte[] ComputeHash(Stream stream)
+        private Task<byte[]> ComputeHashAsync(Stream stream)
         {
             switch (Algorithm)
             {
                 case HashAlgorithmNames.SHA1:
-                    return SHA1.HashData(stream);
+                    return SHA1.HashDataAsync(stream, PipelineStopToken);
                 case HashAlgorithmNames.SHA256:
-                    return SHA256.HashData(stream);
+                    return SHA256.HashDataAsync(stream, PipelineStopToken);
                 case HashAlgorithmNames.SHA384:
-                    return SHA384.HashData(stream);
+                    return SHA384.HashDataAsync(stream, PipelineStopToken);
                 case HashAlgorithmNames.SHA512:
-                    return SHA512.HashData(stream);
+                    return SHA512.HashDataAsync(stream, PipelineStopToken);
                 case HashAlgorithmNames.MD5:
-                    return MD5.HashData(stream);
+                    return MD5.HashDataAsync(stream, PipelineStopToken);
             }
 
             Debug.Assert(false, "invalid hash algorithm");
-            return SHA256.HashData(stream);
+            return SHA256.HashDataAsync(stream, PipelineStopToken);
         }
 
         /// <summary>
@@ -153,7 +154,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (ParameterSetName == StreamParameterSet)
             {
-                byte[] bytehash = ComputeHash(InputStream);
+                byte[] bytehash = ComputeHashAsync(InputStream).GetAwaiter().GetResult();
 
                 string hash = Convert.ToHexString(bytehash);
                 WriteHashResult(Algorithm, hash, string.Empty);
@@ -175,7 +176,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 openfilestream = File.OpenRead(path);
-                byte[] bytehash = ComputeHash(openfilestream);
+                byte[] bytehash = ComputeHashAsync(openfilestream).GetAwaiter().GetResult();
 
                 hash = Convert.ToHexString(bytehash);
             }
