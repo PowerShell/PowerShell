@@ -8,12 +8,8 @@ Describe "Enable-ExperimentalFeature and Disable-ExperimentalFeature tests" -tag
     BeforeAll {
         $pwsh = "$PSHOME/pwsh"
         $systemConfigPath = "$PSHOME/powershell.config.json"
-        if ($IsWindows) {
-            $userConfigPath = "~/Documents/powershell/powershell.config.json"
-        }
-        else {
-            $userConfigPath = "~/.config/powershell/powershell.config.json"
-        }
+        # Derive the active user configuration file path from the engine
+        $userConfigPath = (Get-PSContentPath).ConfigFile
 
         $systemConfigExists = $false
         if (Test-Path $systemConfigPath) {
@@ -25,6 +21,12 @@ Describe "Enable-ExperimentalFeature and Disable-ExperimentalFeature tests" -tag
         if (Test-Path $userConfigPath) {
             $userConfigExists = $true
             Move-Item $userConfigPath "$userConfigPath.backup" -Force -ErrorAction SilentlyContinue
+        } else {
+            # Ensure the parent directory exists
+            $userConfigDir = Split-Path $userConfigPath -Parent
+            if (-not (Test-Path $userConfigDir)) {
+                $null = New-Item -Path $userConfigDir -ItemType Directory -Force
+            }
         }
 
         $testModulePath = Join-Path -Path $PSScriptRoot -ChildPath "assets"

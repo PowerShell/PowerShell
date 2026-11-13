@@ -17,7 +17,9 @@ $script:cmdletsToSkip = @(
     "Enable-ExperimentalFeature",
     "Disable-ExperimentalFeature",
     "Get-PSSubsystem",
-    "Switch-Process"
+    "Switch-Process",
+    "Get-PSContentPath", # New cmdlet - help content not yet generated
+    "Set-PSContentPath"  # New cmdlet - help content not yet generated
 )
 
 function UpdateHelpFromLocalContentPath {
@@ -35,13 +37,9 @@ function UpdateHelpFromLocalContentPath {
 }
 
 function GetCurrentUserHelpRoot {
-    if ([System.Management.Automation.Platform]::IsWindows) {
-        $userHelpRoot = Join-Path $HOME "Documents/PowerShell/Help/"
-    } else {
-        $userModulesRoot = [System.Management.Automation.Platform]::SelectProductNameForDirectory([System.Management.Automation.Platform+XDG_Type]::USER_MODULES)
-        $userHelpRoot = Join-Path $userModulesRoot -ChildPath ".." -AdditionalChildPath "Help"
-    }
-
+    # Try to get the actual configured PSContentPath
+    $contentPath = (Get-PSContentPath).FullName
+    $userHelpRoot = Join-Path $contentPath "Help"
     return $userHelpRoot
 }
 

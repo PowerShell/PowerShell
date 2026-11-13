@@ -19,9 +19,10 @@ Describe "User-Specific powershell.config.json Modifications" -Tags "CI" {
         $PSDefaultParameterValues["it:skip"] = !$IsNotSkipped
 
         if ($IsNotSkipped) {
-            # Discover the user-specific powershell.config.json file
-            $userSettingsDir = [System.IO.Path]::Combine($env:USERPROFILE, "Documents", $productName)
-            $userPropertiesFile = Join-Path $userSettingsDir "powershell.config.json"
+             # Discover the user-specific powershell.config.json file using the engine's active content path
+             $userContentPath   = Get-PSContentPath
+             $userPropertiesFile = $userContentPath.ConfigFile
+             $userSettingsDir    = Split-Path -Path $userPropertiesFile -Parent
 
             # Save the file for restoration after the tests are complete
             $backupPropertiesFile = ""
