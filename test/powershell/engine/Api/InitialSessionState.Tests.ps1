@@ -120,3 +120,56 @@ Describe "TypeTable duplicate types in reused runspace InitialSessionState TypeT
         }
     }
 }
+
+Describe "InitialSessionState clone" -Tags CI {
+
+    Context "Cloned Properties Test" {
+
+        It "should clone PSModulePath" {
+            [initialsessionstate] $iss = [initialsessionstate]::Create()
+            $iss.PSModulePath = "test"
+            $issReused = $iss.Clone()
+            $issReused.PSModulePath | Should -Be $iss.PSModulePath
+            $issReused.PSModulePath = "changed"
+            $issReused.PSModulePath | Should -Not -Be $iss.PSModulePath
+        }
+
+    }
+
+}
+
+Describe "InitialSessionState PSModulePath" -Tags CI {
+
+    Context "Validate PSModulePath in InitialSessionState" {
+
+        BeforeAll {
+
+            [initialsessionstate] $iss = [initialsessionstate]::CreateDefault()
+            $iss.PSModulePath = [string]::Empty
+            $ps = [PowerShell]::Create($iss)
+
+        }
+
+        AfterAll {
+
+            if ($null -ne $ps) { $ps.Dispose() }
+        }
+
+        It "should not load modules from `$PSHome\Modules when PSModulePath is set to empty string" {
+
+            $ps.Commands.Clear()
+            $availableModules = $ps.AddCommand('Get-Module').AddParameter('ListAvailable').Invoke()
+            $availableModules | Should -BeNullOrEmpty
+            $ps.Streams.Error | Should -BeNullOrEmpty
+
+            $ps.Commands.Clear()
+            $ps.Streams.Error.Clear()
+            $null = $ps.AddCommand('Get-Command').AddArgument('Start-ThreadJob').Invoke()
+            $ps.HadErrors | Should -BeTrue
+            $ps.Streams.Error[0].FullyQualifiedErrorId | Should -BeExactly 'CommandNotFoundException,Microsoft.PowerShell.Commands.GetCommandCommand'
+
+        }
+
+    }
+
+}
