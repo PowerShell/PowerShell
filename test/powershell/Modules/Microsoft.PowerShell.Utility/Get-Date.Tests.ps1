@@ -238,7 +238,7 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
 
     It "Get-date works with pipeline input" {
         $x = New-Object System.Management.Automation.PSObject
-        $x | Add-Member NoteProperty Date ([DateTime]::Now)
+        $x | Add-Member NoteProperty Date ([datetime]::Now)
         $y = @($x,$x)
         ($y | Get-Date).Length | Should -Be 2
     }
@@ -315,7 +315,7 @@ Describe "Get-Date" -Tags "CI" {
     }
 
     It "Should check that Get-Date can return the correct datetime from the system time" {
-        $timeDifference = $(Get-Date).Subtract([System.DateTime]::Now)
+        $timeDifference = $(Get-Date).Subtract([datetime]::Now)
 
         $timeDifference.Days         | Should -Be 0
         $timeDifference.Hours        | Should -Be 0
@@ -331,7 +331,7 @@ Describe "Get-Date" -Tags "CI" {
     ) {
         param(
             [long] $UnixTimeSeconds,
-            [DateTime] $Expected
+            [datetime] $Expected
         )
 
         Get-Date -UnixTimeSeconds $UnixTimeSeconds | Should -Be $Expected

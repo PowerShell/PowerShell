@@ -173,7 +173,7 @@ c                              3
         }
         @{
             Value = '"1970-01-01T00:00:00"'
-            Expected = ([DateTime]::new(1970, 1, 1, 0, 0, 0, 0, 0, 'Unspecified'))
+            Expected = ([datetime]::new(1970, 1, 1, 0, 0, 0, 0, 0, 'Unspecified'))
         }
         @{
             Value = '"1970-01-01T00:00:00.0000000Z"'
@@ -199,12 +199,12 @@ c                              3
         param ($Value, $Expected)
 
         $json = $Value | ConvertFrom-Json
-        $json | Should -BeOfType ([DateTime])
+        $json | Should -BeOfType ([datetime])
         $json.Kind | Should -Be $Expected.Kind
         $json | Should -Be $Expected
 
         $json = $Value | ConvertFrom-Json -DateKind Default
-        $json | Should -BeOfType ([DateTime])
+        $json | Should -BeOfType ([datetime])
         $json.Kind | Should -Be $Expected.Kind
         $json | Should -Be $Expected
     }
@@ -220,7 +220,7 @@ c                              3
         }
         @{
             Value = '"1970-01-01T00:00:00"'
-            Expected = ([DateTime]::new(1970, 1, 1, 0, 0, 0, 0, 0, 'Local'))
+            Expected = ([datetime]::new(1970, 1, 1, 0, 0, 0, 0, 0, 'Local'))
         }
         @{
             Value = '"1970-01-01T00:00:00.0000000Z"'
@@ -246,7 +246,7 @@ c                              3
         param ($Value, $Expected)
 
         $json = $Value | ConvertFrom-Json -DateKind Local
-        $json | Should -BeOfType ([DateTime])
+        $json | Should -BeOfType ([datetime])
         $json.Kind | Should -Be Local
         $json | Should -Be $Expected
     }
@@ -262,7 +262,7 @@ c                              3
         }
         @{
             Value = '"1970-01-01T00:00:00"'
-            Expected = ([DateTime]::new(1970, 1, 1, 0, 0, 0, 0, 0, 'Utc'))
+            Expected = ([datetime]::new(1970, 1, 1, 0, 0, 0, 0, 0, 'Utc'))
         }
         @{
             Value = '"1970-01-01T00:00:00.0000000Z"'
@@ -288,7 +288,7 @@ c                              3
         param ($Value, $Expected)
 
         $json = $Value | ConvertFrom-Json -DateKind Utc
-        $json | Should -BeOfType ([DateTime])
+        $json | Should -BeOfType ([datetime])
         $json.Kind | Should -Be Utc
         $json | Should -Be $Expected
     }
@@ -304,7 +304,7 @@ c                              3
         }
         @{
             Value = '"1970-01-01T00:00:00"'
-            Expected = ([DateTimeOffset]::new([DateTime]::new(1970, 1, 1, 0, 0, 0, 0, 0, 'Local')))
+            Expected = ([DateTimeOffset]::new([datetime]::new(1970, 1, 1, 0, 0, 0, 0, 0, 'Local')))
         }
         @{
             Value = '"1970-01-01T00:00:00.0000000Z"'
