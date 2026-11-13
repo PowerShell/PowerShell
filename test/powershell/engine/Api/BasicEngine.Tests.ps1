@@ -49,7 +49,7 @@ Write-Output "should_not_stop_responding_at_exit"
 exit
 '@
         $outputFile = New-Item -Path $TestDrive\output.txt -ItemType File
-        $process = Start-Process "$PSHOME/pwsh" -ArgumentList $command -PassThru -RedirectStandardOutput $outputFile
+        $process = Start-Process "$PSHOME/pwsh" -ArgumentList "-noprofile", $command -PassThru -RedirectStandardOutput $outputFile
         $hasExited = Wait-UntilTrue -sb { $process.HasExited } -TimeoutInMilliseconds 10000 -IntervalInMilliseconds 100
 
         $expectedOutput = Get-Content $outputFile

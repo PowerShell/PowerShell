@@ -80,7 +80,7 @@ Describe "Get-PSHostProcessInfo tests" -Tag CI {
         # Create PowerShell process to monitor.
         $psFileName = $IsWindows ? 'pwsh.exe' : 'pwsh'
         $psPath = Join-Path -Path $PSHOME -ChildPath $psFileName
-        $psProc = Start-Process -FilePath $psPath -ArgumentList "-File $testfilePath -LiveFilePath $aliveFile" -PassThru
+        $psProc = Start-Process -FilePath $psPath -ArgumentList "-noprofile -File $testfilePath -LiveFilePath $aliveFile" -PassThru
         Wait-UntilTrue -sb {
             (Get-PSHostProcessInfo -Id $psProc.Id) -ne $null
         } -TimeoutInMilliseconds 5000 -IntervalInMilliseconds 250
