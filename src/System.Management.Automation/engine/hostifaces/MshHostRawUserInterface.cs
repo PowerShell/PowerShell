@@ -875,7 +875,7 @@ namespace System.Management.Automation.Host
                 }
                 else
                 {
-                    i64 += (UInt64)(-upper);
+                    i64 += (UInt64)(-lower);
                 }
             }
             else
