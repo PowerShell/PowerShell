@@ -251,8 +251,6 @@ namespace System.Management.Automation.Interpreter
     {
         public readonly string MethodName;
 
-        // TODO:
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
         public readonly DebugInfo DebugInfo;
 
         public InterpretedFrameInfo(string methodName, DebugInfo info)
