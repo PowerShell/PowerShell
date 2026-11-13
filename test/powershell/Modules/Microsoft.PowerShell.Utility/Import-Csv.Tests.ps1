@@ -45,7 +45,7 @@ Describe "Import-Csv Double Quote Delimiter" -Tags "CI" {
         @{ name = "quote with empty value"  ; expectedHeader = "a1,H1,a3"; file = "EmptyValue.csv"      ; content = $empyValueCsv       ; delimiter = '"' }
         @{ name = "quote with value"        ; expectedHeader = "a1,a2,a3"; file = "WithValue.csv"       ; content = $withValueCsv       ; delimiter = '"' }
         @{ name = "value enclosed in quote" ; expectedHeader = "a1,a2,a3"; file = "QuotedCharacter.csv" ; content = $quotedCharacterCsv ; delimiter = ',' }
-        ){
+){
         param($expectedHeader, $file, $content, $delimiter)
 
         $testPath = Join-Path $TestDrive $file
@@ -68,7 +68,7 @@ Describe "Import-Csv Double Quote Delimiter" -Tags "CI" {
         @{ name = "quote with empty value"  ; expectedHeader = "a1,H1,a3"; file = "EmptyValue.csv"      ; content = $empyValueCsv       ; delimiter = '"' }
         @{ name = "quote with value"        ; expectedHeader = "a1,a2,a3"; file = "WithValue.csv"       ; content = $withValueCsv       ; delimiter = '"' }
         @{ name = "value enclosed in quote" ; expectedHeader = "a1,a2,a3"; file = "QuotedCharacter.csv" ; content = $quotedCharacterCsv ; delimiter = ',' }
-        ){
+){
         param($expectedHeader, $file, $content, $delimiter)
 
         $testPath = Join-Path $TestDrive $file
@@ -180,5 +180,113 @@ Describe "Import-Csv with different newlines" -Tags "CI" {
         $returnObject[1].h1 | Should -Be 21
         $returnObject[1].h2 | Should -Be 22
         $returnObject[1].h3 | Should -Be 23
+    }
+}
+
+Describe "Import-Csv containing #" -Tags "CI" {
+    BeforeAll {
+        $testColumnsWithQuotedHashtag = @'
+"#","b","c"
+1,2,3
+'@
+
+        $testColumnsWithUnquotedHashtag = @'
+#,b,c
+1,2,3
+4,5,6
+'@
+
+        $testColumnsWithFields = @'
+#Version: 1.0
+#Fields: a,b,c
+1,2,3
+'@
+        $testColumnsWithFieldsSwapped = @'
+#Fields: a,b,c
+#Version: 1.0
+1,2,3
+'@
+        $testColumnsWithFieldsSpaceDelimited = @'
+#Version: 1.0
+#Fields: a b c
+1 2 3
+'@
+        $testColumnsWithFieldsSpaceDelimitedSwapped = @'
+#Fields: a b c
+#Version: 1.0
+1 2 3
+'@
+    }
+
+    It "Should handle quoted # in header" {
+        $testPath = Join-Path $TestDrive "QuotedHashtag.csv"
+        Set-Content $testPath -Value $testColumnsWithQuotedHashtag
+
+        $actualData = Get-ChildItem -Path $testPath | Import-Csv -Delimiter ','
+
+        $actualLength = $($( $actualData | Get-Member) | Where-Object { $_.MemberType -eq "NoteProperty" }).Length
+
+        $actualLength | Should -Be 3
+        $actualData[0]."#" | Should -Be "1"
+    }
+
+    It "Should handle unquoted # in header as comment" {
+        $testPath = Join-Path $TestDrive "UnquotedHashtag.csv"
+        Set-Content $testPath -Value $testColumnsWithUnquotedHashtag
+
+        $actualData = Get-ChildItem -Path $testPath | Import-Csv -Delimiter ','
+
+        $actualLength = $($( $actualData | Get-Member) | Where-Object { $_.MemberType -eq "NoteProperty" }).Length
+
+        $actualLength | Should -Be 3
+        $actualData[0]."1" | Should -Be "4"
+    }
+
+    It "Should handle #Fields directive as header when #Fields directive is second line" {
+        $testPath = Join-Path $TestDrive "Fields.csv"
+        Set-Content $testPath -Value $testColumnsWithFields
+
+        $actualData = Get-ChildItem -Path $testPath | Import-Csv -Delimiter ','
+
+        $actualLength = $($( $actualData | Get-Member) | Where-Object { $_.MemberType -eq "NoteProperty" }).Length
+
+        $actualLength | Should -Be 3
+        $actualData[0]."a" | Should -Be "1"
+    }
+
+    It "Should handle #Fields directive as header when #Fields directive is first line" -Pending {
+        $testPath = Join-Path $TestDrive "Fields.csv"
+        Set-Content $testPath -Value $testColumnsWithFieldsSwapped
+
+        $actualData = Get-ChildItem -Path $testPath | Import-Csv -Delimiter ','
+
+        $actualLength = $($( $actualData | Get-Member) | Where-Object { $_.MemberType -eq "NoteProperty" }).Length
+
+        $actualLength | Should -Be 3
+        $actualData[0]."a" | Should -Be "1"
+    }
+
+    It "Should handle #Fields directive as header when space delimited and when #Fields directive is second line" -Pending {
+        $testPath = Join-Path $TestDrive "FieldsSpace.csv"
+        Set-Content $testPath -Value $testColumnsWithFieldsSpaceDelimited
+
+        $actualData = Get-ChildItem -Path $testPath | Import-Csv -Delimiter ' '
+
+        $actualLength = $($( $actualData | Get-Member) | Where-Object { $_.MemberType -eq "NoteProperty" }).Length
+
+        $actualLength | Should -Be 3
+        $actualData[0]."a" | Should -Be "1"
+    }
+
+    It "Should handle #Fields directive as header when space delimited and when #Fields directive is first line" -Pending {
+        $testPath = Join-Path $TestDrive "FieldsSpace.csv"
+        Set-Content $testPath -Value $testColumnsWithFieldsSpaceDelimitedSwapped
+
+        $actualData = Get-ChildItem -Path $testPath | Import-Csv -Delimiter ' '
+
+        $actualLength = $($( $actualData | Get-Member) | Where-Object { $_.MemberType -eq "NoteProperty" }).Length
+
+        $actualLength | Should -Be 3
+        $actualData[0]."a" | Should -Be "1"
     }
 }

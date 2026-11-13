@@ -1334,40 +1334,52 @@ namespace Microsoft.PowerShell.Commands
 
             var values = new List<string>(ValueCountGuestimate);
             var builder = new StringBuilder(LineLengthGuestimate);
+
             while ((Header == null) && (!this.EOF))
             {
+                if (PeekNextChar('#'))
+                {
+                    ParseNextRecord(values, builder);
+                    TrimEmptiesAtEnd(values);
+
+                    if (values.Count != 0 && values[0].StartsWith("#Fields: "))
+                    {
+                        // W3C Extended Log File Format "#Fields: " directive
+                        values[0] = values[0].Substring(9);
+                        Header = values;
+                    }
+                    else
+                    {
+                        // Skip all lines starting with '#'
+                    }
+
+                    continue;
+                }
+
+                // Normal CSV path: does not start with '#'
                 ParseNextRecord(values, builder);
-
-                // Trim all trailing blankspaces and delimiters ( single/multiple ).
-                // If there is only one element in the row and if its a blankspace we dont trim it.
-                // A trailing delimiter is represented as a blankspace while being added to result collection
-                // which is getting trimmed along with blankspaces supplied through the CSV in the below loop.
-                while (values.Count > 1 && values[values.Count - 1].Equals(string.Empty))
-                {
-                    values.RemoveAt(values.Count - 1);
-                }
-
-                // File starts with '#' and contains '#Fields:' is W3C Extended Log File Format
-                if (values.Count != 0 && values[0].StartsWith("#Fields: "))
-                {
-                    values[0] = values[0].Substring(9);
-                    Header = values;
-                }
-                else if (values.Count != 0 && values[0].StartsWith('#'))
-                {
-                    // Skip all lines starting with '#'
-                }
-                else
-                {
-                    // This is not W3C Extended Log File Format
-                    // By default first line is Header
-                    Header = values;
-                }
+                TrimEmptiesAtEnd(values);
+                Header = values;
             }
 
             if (Header != null && Header.Count > 0)
             {
                 ValidatePropertyNames(Header);
+            }
+        }
+
+        /// <summary>
+        /// Trim all trailing blankspaces and delimiters ( single/multiple ).
+        /// If there is only one element in the row and if its a blankspace we dont trim it.
+        /// A trailing delimiter is represented as a blankspace while being added to result collection
+        /// which is getting trimmed along with blankspaces supplied through the CSV.
+        /// </summary>
+        /// <param name="values">The list of string values to trim trailing empty entries from.</param>
+        private static void TrimEmptiesAtEnd(List<string> values)
+        {
+            while (values.Count > 1 && values[values.Count - 1].Equals(string.Empty))
+            {
+                values.RemoveAt(values.Count - 1);
             }
         }
 
@@ -1460,16 +1472,21 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Reads the next record from the file and returns parsed collection of string.
+        /// Reads the next record from the input stream and parses it into a list of field values.
         /// </summary>
-        /// <returns>
-        /// Parsed collection of strings.
-        /// </returns>
+        /// <param name="result">
+        /// Collects the parsed fields for the current record. This list is cleared before use.
+        /// </param>
+        /// <param name="current">
+        /// Temporary buffer used while building the current field. Cleared before each record.
+        /// </param>
+        /// <remarks>
+        /// Handles quoted fields, embedded delimiters, escaped quotes, and newlines inside quotes.
+        /// Tries to behave like Excel when dealing with slightly malformed input.
+        /// </remarks>
         private void ParseNextRecord(List<string> result, StringBuilder current)
         {
             result.Clear();
-
-            // current string
             current.Clear();
 
             bool seenBeginQuote = false;
