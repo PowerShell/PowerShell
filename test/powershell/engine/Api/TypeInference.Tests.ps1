@@ -158,6 +158,70 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name | Should -Be 'System.String[]'
     }
 
+    It "Infers type from Array literal of custom objects" {
+        $res = [AstTypeInference]::InferTypeOf( { [pscustomobject]@{Test = "Hej"}, [pscustomobject]@{Test = "Hej2"} }.Ast)
+        $res.Count | Should -Be 1
+        $res[0].GetType().Name | Should -Be "PSSyntheticTypeName"
+        $res[0].Name | Should -Be "System.Management.Automation.PSObject[]#Test"
+        $res[0].Members[0].Name | Should -Be "Test"
+        $res[0].Members[0].PSTypeName | Should -Be "System.String"
+    }
+
+    It "Infers type from array expression of custom objects" {
+        $res = [AstTypeInference]::InferTypeOf( { @([pscustomobject]@{Test = "Hej"}; [pscustomobject]@{Test = "Hej2"}) }.Ast)
+        $res.Count | Should -Be 1
+        $res[0].Name | Should -Be "System.Management.Automation.PSObject[]#Test"
+        $res[0].Members[0].Name | Should -Be "Test"
+    }
+
+    It "Infers type from Array literal of custom objects with PSTypeName" {
+        $res = [AstTypeInference]::InferTypeOf( { [pscustomobject]@{PSTypeName = "MyType"; A = 1; B = "X"}, [pscustomobject]@{PSTypeName = "MyType"; A = 2; B = "Y"} }.Ast)
+        $res.Count | Should -Be 1
+        $res[0].Name | Should -Be "MyType[]#A:B"
+        $res[0].Members.Count | Should -Be 2
+    }
+
+    It "Infers type from Array literal of custom objects with different members" {
+        $res = [AstTypeInference]::InferTypeOf( { [pscustomobject]@{A = 1}, [pscustomobject]@{B = 2} }.Ast)
+        $res.Count | Should -Be 1
+        $res[0].GetType().Name | Should -Be "PSTypeName"
+        $res[0].Name | Should -Be "System.Management.Automation.PSObject[]"
+    }
+
+    It "Infers type from IndexExpression on an Array literal of custom objects" {
+        $res = [AstTypeInference]::InferTypeOf( { ([pscustomobject]@{Test = "Hej"}, [pscustomobject]@{Test = "Hej2"})[0] }.Ast)
+        $res.Count | Should -Be 1
+        $res[0].Name | Should -Be "System.Management.Automation.PSObject#Test"
+        $res[0].Members[0].Name | Should -Be "Test"
+    }
+
+    It "Infers type from Select-Object on an Array literal of custom objects" {
+        $res = [AstTypeInference]::InferTypeOf( { [pscustomobject]@{A = 1; B = "X"}, [pscustomobject]@{A = 2; B = "Y"} | Select-Object -Property A }.Ast)
+        $res.Count | Should -Be 1
+        $res[0].Name | Should -Be "System.Management.Automation.PSObject#A"
+        $res[0].Members[0].Name | Should -Be "A"
+        $res[0].Members[0].PSTypeName | Should -Be "System.Int32"
+    }
+
+    It "Infers type from Array literal of custom objects with a PSTypeName containing a hash" {
+        $res = [AstTypeInference]::InferTypeOf( { [pscustomobject]@{PSTypeName = "Some.Type#root/cimv2/Class"; A = 1}, [pscustomobject]@{PSTypeName = "Some.Type#root/cimv2/Class"; A = 2} }.Ast)
+        $res.Count | Should -Be 1
+        $res[0].Name | Should -Be "Some.Type#root/cimv2/Class[]#A"
+    }
+
+    It "Infers type from Array literal of custom objects with the same member of different types" {
+        $res = [AstTypeInference]::InferTypeOf( { [pscustomobject]@{A = 1}, [pscustomobject]@{A = "X"} }.Ast)
+        $res.Count | Should -Be 1
+        $res[0].GetType().Name | Should -Be "PSTypeName"
+        $res[0].Name | Should -Be "System.Management.Automation.PSObject[]"
+    }
+
+    It "Infers array members before the members of its elements" {
+        $res = [AstTypeInference]::InferTypeOf( { ([pscustomobject]@{Length = "X"}, [pscustomobject]@{Length = "Y"}).Length }.Ast)
+        $res.Count | Should -Be 1
+        $res[0].Name | Should -Be "System.Int32"
+    }
+
     It "Infers type from array IndexExpresssion" {
         $res = [AstTypeInference]::InferTypeOf( { (1, 2, 3)[0] }.Ast)
         $res.Count | Should -Be 1

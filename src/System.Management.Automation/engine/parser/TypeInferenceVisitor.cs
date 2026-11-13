@@ -178,6 +178,17 @@ namespace System.Management.Automation
             Func<object, bool> filterToCall = filter;
             if (typename is PSSyntheticTypeName synthetic)
             {
+                if (synthetic.ElementType is not null)
+                {
+                    // The members of an array take precedence over the members of its elements,
+                    // the same way member enumeration only reaches the elements for members the
+                    // array itself does not have.
+                    AddMembersByInferredTypesClrType(typename, isStatic, filter, filterToCall, results);
+                    AddElementMembers(synthetic.Members, results);
+
+                    return results;
+                }
+
                 foreach (var mem in synthetic.Members)
                 {
                     results.Add(new PSInferredProperty(mem.Name, mem.PSTypeName));
@@ -223,6 +234,33 @@ namespace System.Management.Automation
             }
 
             return results;
+        }
+
+        /// <summary>
+        /// Adds the members of the elements of an array, skipping the ones the array already has.
+        /// </summary>
+        /// <param name="elementMembers">The members inferred for the elements of the array.</param>
+        /// <param name="results">The members found for the array itself.</param>
+        private static void AddElementMembers(IList<PSMemberNameAndType> elementMembers, List<object> results)
+        {
+            int arrayMemberCount = results.Count;
+            foreach (var mem in elementMembers)
+            {
+                bool foundOnArray = false;
+                for (int i = 0; i < arrayMemberCount; i++)
+                {
+                    if (TypeInferenceVisitor.GetMemberName(results[i]).Equals(mem.Name, StringComparison.OrdinalIgnoreCase))
+                    {
+                        foundOnArray = true;
+                        break;
+                    }
+                }
+
+                if (!foundOnArray)
+                {
+                    results.Add(new PSInferredProperty(mem.Name, mem.PSTypeName));
+                }
+            }
         }
 
         internal void AddMembersByInferredTypesClrType(PSTypeName typename, bool isStatic, Func<object, bool> filter, Func<object, bool> filterToCall, List<object> results)
@@ -1868,7 +1906,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static string GetMemberName(object member)
+        internal static string GetMemberName(object member)
         {
             var name = string.Empty;
             switch (member)
@@ -2566,6 +2604,8 @@ namespace System.Management.Automation
                 {
                     return new PSTypeName(typeof(object[]));
                 }
+
+                foundType = MergeArrayElementType(foundType, inferredType);
             }
 
             if (foundType == null)
@@ -2578,6 +2618,11 @@ namespace System.Management.Automation
                 return foundType;
             }
 
+            if (foundType is PSSyntheticTypeName syntheticType)
+            {
+                return PSSyntheticTypeName.CreateArray(syntheticType);
+            }
+
             Type enumeratedItemType = GetMostSpecificEnumeratedItemType(foundType.Type);
             if (enumeratedItemType != null)
             {
@@ -2585,6 +2630,61 @@ namespace System.Management.Automation
             }
 
             return new PSTypeName(foundType.Type.MakeArrayType());
+        }
+
+        /// <summary>
+        /// Combines the type inferred from an array element with the type inferred from the
+        /// elements before it.
+        /// </summary>
+        /// <param name="foundType">The type inferred from the previous elements.</param>
+        /// <param name="inferredType">The type inferred from the current element.</param>
+        /// <returns>The type that describes both.</returns>
+        private static PSTypeName MergeArrayElementType(PSTypeName foundType, PSTypeName inferredType)
+        {
+            // Elements can share a type, typically PSObject, while having different synthetic
+            // shapes. No single element type describes all of them, so the synthetic information
+            // is dropped and only the underlying type is kept.
+            if (!string.Equals(foundType.Name, inferredType.Name, StringComparison.OrdinalIgnoreCase))
+            {
+                return new PSTypeName(foundType.Type);
+            }
+
+            // The name only encodes the member names, so elements that give the same member
+            // different types still have different shapes.
+            if (foundType is PSSyntheticTypeName foundSynthetic
+                && inferredType is PSSyntheticTypeName inferredSynthetic
+                && !HaveSameMemberTypes(foundSynthetic, inferredSynthetic))
+            {
+                return new PSTypeName(foundType.Type);
+            }
+
+            return foundType;
+        }
+
+        /// <summary>
+        /// Determines whether two synthetic types infer the same type for each of their members.
+        /// The members are sorted by name and the callers have already established that the names
+        /// match, so the members can be compared pairwise.
+        /// </summary>
+        /// <param name="first">The first synthetic type.</param>
+        /// <param name="second">The second synthetic type.</param>
+        /// <returns>True when every member is inferred as the same type.</returns>
+        private static bool HaveSameMemberTypes(PSSyntheticTypeName first, PSSyntheticTypeName second)
+        {
+            if (first.Members.Count != second.Members.Count)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < first.Members.Count; i++)
+            {
+                if (!string.Equals(first.Members[i].PSTypeName?.Name, second.Members[i].PSTypeName?.Name, StringComparison.OrdinalIgnoreCase))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -2710,6 +2810,15 @@ namespace System.Management.Automation
             {
                 if (psType is PSSyntheticTypeName syntheticType)
                 {
+                    // Indexing an array of synthetic objects yields an element, while indexing a
+                    // single synthetic object, such as a hashtable, yields one of its members.
+                    if (syntheticType.ElementType is not null)
+                    {
+                        yield return syntheticType.ElementType;
+
+                        continue;
+                    }
+
                     foreach (var member in syntheticType.Members)
                     {
                         yield return member.PSTypeName;
@@ -2797,6 +2906,15 @@ namespace System.Management.Automation
         {
             foreach (PSTypeName maybeEnumerableType in enumerableTypes)
             {
+                // An array of synthetic objects keeps the type of its elements so that the
+                // inferred members survive being collected into an array and enumerated again.
+                if (maybeEnumerableType is PSSyntheticTypeName syntheticArray && syntheticArray.ElementType is not null)
+                {
+                    yield return syntheticArray.ElementType;
+
+                    continue;
+                }
+
                 Type type = maybeEnumerableType.Type;
                 if (type == null)
                 {
