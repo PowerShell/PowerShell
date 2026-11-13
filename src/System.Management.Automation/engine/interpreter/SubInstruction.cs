@@ -35,7 +35,7 @@ namespace System.Management.Automation.Interpreter
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = ScriptingRuntimeHelpers.Int32ToObject(unchecked((Int32)l - (Int32)r));
+                frame.Data[frame.StackIndex - 2] = ScriptingRuntimeHelpers.Int32ToObject(unchecked((int)l - (int)r));
                 frame.StackIndex--;
                 return +1;
             }
@@ -47,7 +47,7 @@ namespace System.Management.Automation.Interpreter
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (Int16)unchecked((Int16)l - (Int16)r);
+                frame.Data[frame.StackIndex - 2] = (short)unchecked((short)l - (short)r);
                 frame.StackIndex--;
                 return +1;
             }
@@ -59,7 +59,7 @@ namespace System.Management.Automation.Interpreter
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (Int64)unchecked((Int64)l - (Int64)r);
+                frame.Data[frame.StackIndex - 2] = (long)unchecked((long)l - (long)r);
                 frame.StackIndex--;
                 return +1;
             }
@@ -71,7 +71,7 @@ namespace System.Management.Automation.Interpreter
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (UInt16)unchecked((UInt16)l - (UInt16)r);
+                frame.Data[frame.StackIndex - 2] = (ushort)unchecked((ushort)l - (ushort)r);
                 frame.StackIndex--;
                 return +1;
             }
@@ -83,7 +83,7 @@ namespace System.Management.Automation.Interpreter
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (UInt32)unchecked((UInt32)l - (UInt32)r);
+                frame.Data[frame.StackIndex - 2] = (uint)unchecked((uint)l - (uint)r);
                 frame.StackIndex--;
                 return +1;
             }
@@ -95,7 +95,7 @@ namespace System.Management.Automation.Interpreter
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (UInt64)unchecked((Int16)l - (Int16)r);
+                frame.Data[frame.StackIndex - 2] = (ulong)unchecked((short)l - (short)r);
                 frame.StackIndex--;
                 return +1;
             }
@@ -107,7 +107,7 @@ namespace System.Management.Automation.Interpreter
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (Single)((Single)l - (Single)r);
+                frame.Data[frame.StackIndex - 2] = (float)((float)l - (float)r);
                 frame.StackIndex--;
                 return +1;
             }
@@ -168,7 +168,7 @@ namespace System.Management.Automation.Interpreter
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = ScriptingRuntimeHelpers.Int32ToObject(checked((Int32)l - (Int32)r));
+                frame.Data[frame.StackIndex - 2] = ScriptingRuntimeHelpers.Int32ToObject(checked((int)l - (int)r));
                 frame.StackIndex--;
                 return +1;
             }
@@ -180,7 +180,7 @@ namespace System.Management.Automation.Interpreter
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (Int16)checked((Int16)l - (Int16)r);
+                frame.Data[frame.StackIndex - 2] = (short)checked((short)l - (short)r);
                 frame.StackIndex--;
                 return +1;
             }
@@ -192,7 +192,7 @@ namespace System.Management.Automation.Interpreter
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (Int64)checked((Int64)l - (Int64)r);
+                frame.Data[frame.StackIndex - 2] = (long)checked((long)l - (long)r);
                 frame.StackIndex--;
                 return +1;
             }
@@ -204,7 +204,7 @@ namespace System.Management.Automation.Interpreter
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (UInt16)checked((UInt16)l - (UInt16)r);
+                frame.Data[frame.StackIndex - 2] = (ushort)checked((ushort)l - (ushort)r);
                 frame.StackIndex--;
                 return +1;
             }
@@ -216,7 +216,7 @@ namespace System.Management.Automation.Interpreter
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (UInt32)checked((UInt32)l - (UInt32)r);
+                frame.Data[frame.StackIndex - 2] = (uint)checked((uint)l - (uint)r);
                 frame.StackIndex--;
                 return +1;
             }
@@ -228,7 +228,7 @@ namespace System.Management.Automation.Interpreter
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (UInt64)checked((Int16)l - (Int16)r);
+                frame.Data[frame.StackIndex - 2] = (ulong)checked((short)l - (short)r);
                 frame.StackIndex--;
                 return +1;
             }
@@ -240,7 +240,7 @@ namespace System.Management.Automation.Interpreter
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (Single)((Single)l - (Single)r);
+                frame.Data[frame.StackIndex - 2] = (float)((float)l - (float)r);
                 frame.StackIndex--;
                 return +1;
             }

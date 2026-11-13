@@ -323,7 +323,7 @@ namespace System.Management.Automation
                 prefix = ", ";
             }
 
-            if (_position != Int32.MinValue)
+            if (_position != int.MinValue)
             {
                 result.AppendFormat(CultureInfo.InvariantCulture, PositionFormat, prefix, _position);
                 prefix = ", ";

@@ -1204,7 +1204,7 @@ namespace System.Management.Automation
                             {
                                 int keyInt;
 
-                                if (Int32.TryParse(groupName, out keyInt))
+                                if (int.TryParse(groupName, out keyInt))
                                     h.Add(keyInt, g.ToString());
                                 else
                                     h.Add(groupName, g.ToString());

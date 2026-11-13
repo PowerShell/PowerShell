@@ -28,7 +28,7 @@ namespace System.Management.Automation.Interpreter
 
     internal abstract class OffsetInstruction : Instruction
     {
-        internal const int Unknown = Int32.MinValue;
+        internal const int Unknown = int.MinValue;
         internal const int CacheSize = 32;
 
         // the offset to jump to (relative to this instruction):

@@ -149,7 +149,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (IsBlocked(path))
                 {
-                    UInt32 result = RemoveXattr(path, MacBlockAttribute, RemovexattrFollowSymLink);
+                    uint result = RemoveXattr(path, MacBlockAttribute, RemovexattrFollowSymLink);
                     if (result != 0)
                     {
                         string errorMessage = string.Format(CultureInfo.CurrentUICulture, UnblockFileStrings.UnblockError, path);
@@ -215,7 +215,7 @@ namespace Microsoft.PowerShell.Commands
         // Ansi means UTF8 on Unix
         // https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man2/RemoveXattr.2.html
         [DllImport("libc", SetLastError = true, EntryPoint = "removexattr", CharSet = CharSet.Ansi)]
-        private static extern UInt32 RemoveXattr(string path, string name, int options);
+        private static extern uint RemoveXattr(string path, string name, int options);
 
         [DllImport("libc", EntryPoint = "getxattr", CharSet = CharSet.Ansi)]
         private static extern long GetXattr(
