@@ -581,14 +581,32 @@ namespace Microsoft.PowerShell.Commands
                     break;
 
                 case StackParameterSet:
-                    if (_stackNames != null)
+                    if (Stack)
                     {
-                        foreach (string stackName in _stackNames)
+                        if (_stackNames != null)
+                        {
+                            foreach (string stackName in _stackNames)
+                            {
+                                try
+                                {
+                                    // Get the directory stack. This is similar to the "dirs" command
+                                    WriteObject(SessionState.Path.LocationStack(stackName), false);
+                                }
+                                catch (PSArgumentException argException)
+                                {
+                                    WriteError(
+                                        new ErrorRecord(
+                                            argException.ErrorRecord,
+                                            argException));
+                                    continue;
+                                }
+                            }
+                        }
+                        else
                         {
                             try
                             {
-                                // Get the directory stack. This is similar to the "dirs" command
-                                WriteObject(SessionState.Path.LocationStack(stackName), false);
+                                WriteObject(SessionState.Path.LocationStack(null), false);
                             }
                             catch (PSArgumentException argException)
                             {
@@ -596,23 +614,13 @@ namespace Microsoft.PowerShell.Commands
                                     new ErrorRecord(
                                         argException.ErrorRecord,
                                         argException));
-                                continue;
                             }
                         }
                     }
                     else
                     {
-                        try
-                        {
-                            WriteObject(SessionState.Path.LocationStack(null), false);
-                        }
-                        catch (PSArgumentException argException)
-                        {
-                            WriteError(
-                                new ErrorRecord(
-                                    argException.ErrorRecord,
-                                    argException));
-                        }
+                        // Fall back to current location behavior when -Stack:$false
+                        WriteObject(SessionState.Path.CurrentLocation);
                     }
 
                     break;
