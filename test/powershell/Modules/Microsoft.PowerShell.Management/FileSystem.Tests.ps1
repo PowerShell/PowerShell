@@ -79,6 +79,17 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             $newFile.Name | Should -BeExactly $newTestFile
         }
 
+        It "New-Item reports all supported file system item types for an unknown item type" {
+            $errorRecord = {
+                New-Item -Path (Join-Path $TestDrive "unknown-type") -ItemType UnknownType -ErrorAction Stop
+            } | Should -Throw -PassThru
+
+            $errorRecord.FullyQualifiedErrorId | Should -BeExactly "Argument,Microsoft.PowerShell.Commands.NewItemCommand"
+            foreach ($itemType in '"file"', '"directory"', '"symboliclink"', '"junction"', '"hardlink"') {
+                $errorRecord.Exception.Message | Should -Match ([regex]::Escape($itemType))
+            }
+        }
+
         It "Verify Remove-Item for directory" {
             $existsBefore = Test-Path $testDir
             Remove-Item -Path $testDir -Recurse -Force
