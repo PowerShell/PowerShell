@@ -6949,25 +6949,59 @@ namespace System.Management.Automation
         /// <summary>
         /// Complete members against extension methods 'Where' and 'ForEach'
         /// </summary>
-        private static void CompleteExtensionMethods(string memberName, List<CompletionResult> results, bool addMethodParenthesis = true)
+        private static void CompleteExtensionMethods(string memberName, List<CompletionResult> results, bool addMethodParenthesis = true, List<string> hiddenMethods = null)
         {
             var pattern = WildcardPattern.Get(memberName, WildcardOptions.IgnoreCase);
-            CompleteExtensionMethods(pattern, results, addMethodParenthesis);
+            CompleteExtensionMethods(pattern, results, addMethodParenthesis, hiddenMethods);
         }
 
         /// <summary>
         /// Complete members against extension methods 'Where' and 'ForEach' based on the given pattern.
         /// </summary>
-        private static void CompleteExtensionMethods(WildcardPattern pattern, List<CompletionResult> results, bool addMethodParenthesis)
+        private static void CompleteExtensionMethods(WildcardPattern pattern, List<CompletionResult> results, bool addMethodParenthesis, List<string> hiddenMethods = null)
         {
             foreach (var member in s_extensionMethods)
             {
                 if (pattern.IsMatch(member.Item1))
                 {
+                    if (HasMethodNamed(results, member.Item1, hiddenMethods))
+                    {
+                        continue;
+                    }
+
                     string completionText = addMethodParenthesis ? $"{member.Item1}(" : member.Item1;
                     results.Add(new CompletionResult(completionText, member.Item1, CompletionResultType.Method, member.Item2));
                 }
             }
+        }
+
+        private static bool HasMethodNamed(List<CompletionResult> results, string name, List<string> hiddenMethods = null)
+        {
+            if (hiddenMethods != null)
+            {
+                for (int i = 0; i < hiddenMethods.Count; i++)
+                {
+                    if (string.Equals(hiddenMethods[i], name, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            if (results != null)
+            {
+                for (int i = 0; i < results.Count; i++)
+                {
+                    CompletionResult result = results[i];
+                    if (result.ResultType == CompletionResultType.Method &&
+                        string.Equals(result.ListItemText, name, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -7097,7 +7131,7 @@ namespace System.Management.Automation
             bool addMethodParenthesis = true,
             bool ignoreTypesWithoutDefaultConstructor = false)
         {
-            bool extensionMethodsAdded = false;
+            bool isAnyTypeEnumerable = false;
             HashSet<string> typeNameUsed = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             WildcardPattern memberNamePattern = WildcardPattern.Get(memberName, WildcardOptions.IgnoreCase);
             foreach (var psTypeName in inferredTypes)
@@ -7136,13 +7170,17 @@ namespace System.Management.Automation
                     AddInferredMember(member, memberNamePattern, results, excludedMembers, addMethodParenthesis);
                 }
 
-                // Check if we need to complete against the extension methods 'Where' and 'ForEach'
-                if (!extensionMethodsAdded && psTypeName.Type != null && IsStaticTypeEnumerable(psTypeName.Type))
+                if (!isAnyTypeEnumerable && psTypeName.Type != null && IsStaticTypeEnumerable(psTypeName.Type))
                 {
-                    // Complete extension methods 'Where' and 'ForEach' for Enumerable types
-                    extensionMethodsAdded = true;
-                    CompleteExtensionMethods(memberNamePattern, results, addMethodParenthesis);
+                    isAnyTypeEnumerable = true;
                 }
+            }
+
+            // Check if we need to complete against the extension methods 'Where' and 'ForEach'
+            if (!isStatic && isAnyTypeEnumerable)
+            {
+                // Complete extension methods 'Where' and 'ForEach' for Enumerable types
+                CompleteExtensionMethods(memberNamePattern, results, addMethodParenthesis);
             }
 
             if (results.Count > 0)
@@ -8773,11 +8811,18 @@ namespace System.Management.Automation
 
                 var sortedMembers = powerShellExecutionHelper.ExecuteCurrentPowerShell(out _, members);
 
+                List<string> hiddenMethods = null;
                 foreach (var member in sortedMembers)
                 {
                     var memberInfo = (PSMemberInfo)PSObject.Base(member);
                     if (memberInfo.IsHidden)
                     {
+                        if (memberInfo is PSMethodInfo)
+                        {
+                            hiddenMethods ??= new List<string>();
+                            hiddenMethods.Add(memberInfo.Name);
+                        }
+
                         continue;
                     }
 
@@ -8845,7 +8890,7 @@ namespace System.Management.Automation
                 if (!@static && IsValueEnumerable(PSObject.Base(value)))
                 {
                     // Complete extension methods 'Where' and 'ForEach' for Enumerable values
-                    CompleteExtensionMethods(memberName, results);
+                    CompleteExtensionMethods(memberName, results, hiddenMethods: hiddenMethods);
                 }
             }
         }
