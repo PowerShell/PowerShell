@@ -761,7 +761,7 @@ namespace Microsoft.PowerShell
             {
                 if (SupportsVirtualTerminal && Console.CursorTop == Console.BufferHeight - 1)
                 {
-                    value += PSStyle.Instance.Reset;
+                    value += GetFormatStyleString(FormatStyle.Reset);
                 }
 
                 if (newLine)
