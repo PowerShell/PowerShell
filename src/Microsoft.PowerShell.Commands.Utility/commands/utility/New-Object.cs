@@ -189,18 +189,23 @@ namespace Microsoft.PowerShell.Commands
 
                 switch (Context.LanguageMode)
                 {
-                    case PSLanguageMode.ConstrainedLanguage:
-                        if (!CoreTypes.Contains(type))
+                case PSLanguageMode.ConstrainedLanguage:
+                    if (System.Management.Automation.Security.SystemPolicy.GetSystemLockdownPolicy() != System.Management.Automation.Security.SystemEnforcementMode.Audit)
+                    {
+                        if ((ComObject != null) || (Strict.IsPresent))
                         {
-                            if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
-                            {
-                                ThrowTerminatingError(
-                                    new ErrorRecord(
-                                        new PSNotSupportedException(NewObjectStrings.CannotCreateTypeConstrainedLanguage),
-                                        "CannotCreateTypeConstrainedLanguage",
-                                        ErrorCategory.PermissionDenied,
-                                        targetObject: null));
-                            }
+                            ThrowTerminatingError(
+                                new ErrorRecord(
+                                    new PSNotSupportedException(NewObjectStrings.CannotCreateTypeConstrainedLanguage),
+                                    "CannotCreateTypeConstrainedLanguage",
+                                    ErrorCategory.PermissionDenied,
+                                    targetObject: null));
+                        }
+                    }
+
+                    break;
+                case PSLanguageMode.FullLanguage:
+                    break;
 
                             SystemPolicy.LogWDACAuditMessage(
                                 context: Context,
