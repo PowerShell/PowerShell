@@ -953,7 +953,12 @@ namespace System.Management.Automation.Runspaces
 
                 throttleManager.EndSubmitOperations();
 
-                remoteRunspaceCloseCompleted.WaitOne();
+                if (!remoteRunspaceCloseCompleted.WaitOne(TimeSpan.FromSeconds(30)))
+                {
+                    throw new TimeoutException(
+                        StringUtil.Format(RunspaceStrings.StopPipelinesTimedOut,
+                            TimeSpan.FromSeconds(30)));
+                }
             }
         }
 
@@ -1002,7 +1007,12 @@ namespace System.Management.Automation.Runspaces
 
                 // Stop jobs.
                 throttleManager.EndSubmitOperations();
-                jobsStopCompleted.WaitOne();
+                if (!jobsStopCompleted.WaitOne(TimeSpan.FromSeconds(30)))
+                {
+                    throw new TimeoutException(
+                        StringUtil.Format(RunspaceStrings.StopPipelinesTimedOut,
+                            TimeSpan.FromSeconds(30)));
+                }
             }
 
             // Disconnect all disconnectable job runspaces found.
@@ -1225,7 +1235,16 @@ namespace System.Management.Automation.Runspaces
 
                 if (disposing)
                 {
-                    Close();
+                    try
+                    {
+                        Close();
+                    }
+                    catch (TimeoutException te)
+                    {
+                        // Graceful close timed out — force Broken state so resources are released.
+                        SetRunspaceState(RunspaceState.Broken, te);
+                    }
+
                     _engine = null;
                     _history = null;
                     _transcriptionData = null;
