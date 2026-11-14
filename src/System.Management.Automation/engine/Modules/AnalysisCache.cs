@@ -709,7 +709,7 @@ namespace System.Management.Automation
 
         private static int s_exitHandlerRegistered;
 
-        private readonly object _serializeLock = new object();
+        private readonly Lock _serializeLock = new();
 
         internal void SerializeIfPending()
         {
