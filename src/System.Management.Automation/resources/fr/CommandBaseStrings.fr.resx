@@ -232,12 +232,14 @@ Reviewed by TArcher on 2010-07-20
     <value>Vérification du dot-sourcing des blocs de script</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>Le traitement Dot-Source du bloc de script « {0} » échouera en mode de langage contraint, car son mode de langage « {1} » ne correspond pas au mode de langage actuel « {2} ».</value>
+    <value>Le traitement Dot-Source du bloc de script « {0} » échouera en mode ConstrainedLanguage, car son mode langage « {1} » ne correspond pas au mode langage actuel « {2} ».</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="SearcherWDACLogTitle" xml:space="preserve">
     <value>Outil de recherche de commandes</value>
   </data>
   <data name="SearcherWDACLogMessage" xml:space="preserve">
     <value>La commande « {0} » du module « {1} » n’est pas approuvée et ne sera pas accessible en mode ConstrainedLanguage.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

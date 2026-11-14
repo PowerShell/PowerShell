@@ -653,5 +653,6 @@
   </data>
   <data name="WDACSessionStateVarLogMessage" xml:space="preserve">
     <value>ConstrainedLanguage modunda, '{0}' değişkeninin kapsamını AllScope olarak değiştirmek veya bu kapsamda oluşturmak engellenir.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

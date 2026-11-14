@@ -695,7 +695,6 @@ Fix steps:
         Push-Location $Options.Top
 
         if ($Options.Runtime -notlike 'fxdependent*' -or $Options.Runtime -match $optimizedFddRegex) {
-            Write-Verbose "Building without shim" -Verbose
             $sdkToUse = 'Microsoft.NET.Sdk'
             if (($Options.Runtime -like 'win7-*' -or $Options.Runtime -eq 'win-arm64') -and !$ForMinimalSize) {
                 ## WPF/WinForm and the PowerShell GraphicalHost assemblies are included
@@ -709,9 +708,6 @@ Fix steps:
             Start-NativeExecution { dotnet $Arguments }
             Write-Log -message "PowerShell output: $($Options.Output)"
         } else {
-            Write-Verbose "Building with shim" -Verbose
-            $globalToolSrcFolder = Resolve-Path (Join-Path $Options.Top "../Microsoft.PowerShell.GlobalTool.Shim") | Select-Object -ExpandProperty Path
-
             if ($Options.Runtime -eq 'fxdependent' -or $Options.Runtime -eq 'fxdependent-noopt-linux-musl-x64') {
                 $Arguments += "/property:SDKToUse=Microsoft.NET.Sdk"
             } elseif ($Options.Runtime -eq 'fxdependent-win-desktop') {
@@ -721,25 +717,6 @@ Fix steps:
             Write-Log -message "Run dotnet $Arguments from $PWD"
             Start-NativeExecution { dotnet $Arguments }
             Write-Log -message "PowerShell output: $($Options.Output)"
-
-            try {
-                Push-Location $globalToolSrcFolder
-
-                if ($Options.Runtime -like 'fxdependent*') {
-                    if ($Arguments -contains '/property:UseAppHost=true') {
-                        $Arguments = @($Arguments | Where-Object { $_ -notlike '/property:UseAppHost=true' })
-                    }
-                }
-
-                if ($Arguments -notcontains '--output') {
-                    $Arguments += "--output", $publishPath
-                }
-                Write-Log -message "Run dotnet $Arguments from $PWD to build global tool entry point"
-                Start-NativeExecution { dotnet $Arguments }
-            }
-            finally {
-                Pop-Location
-            }
         }
     } finally {
         Pop-Location
@@ -900,13 +877,17 @@ Fix steps:
 function Switch-PSNugetConfig {
     <#
     .SYNOPSIS
-        Switches the NuGet configuration between public, private, and NuGet.org-only sources.
+        Switches the NuGet configuration between public, private, NuGet.org-only, and early-access sources.
     .DESCRIPTION
         Regenerates nuget.config files in the repository root, src/Modules, and test/tools/Modules
         to point to the specified feed source. Optionally stores authenticated credentials.
     .PARAMETER Source
         The feed set to activate: 'Public' (nuget.org + dotnet feed), 'Private' (PowerShell ADO
-        feed), or 'NuGetOnly' (nuget.org only).
+        feed), 'NuGetOnly' (nuget.org only), or 'EarlyAccess' (.NET early-access
+        feed, with the PowerShell feed for released modules).
+    .PARAMETER UseEarlyAccessModules
+        Adds the internal module early-access feed for bundled modules independently
+        of the .NET feed selected by Source.
     .PARAMETER UserName
         Username for authenticated private feed access.
     .PARAMETER ClearTextPAT
@@ -922,7 +903,9 @@ function Switch-PSNugetConfig {
         [string] $UserName,
 
         [Parameter(Mandatory = $true, ParameterSetName = 'user')]
-        [string] $ClearTextPAT
+        [string] $ClearTextPAT,
+
+        [switch] $UseEarlyAccessModules
     )
 
     Clear-PipelineNugetAuthentication
@@ -938,19 +921,18 @@ function Switch-PSNugetConfig {
     $dotnetSdk = [NugetPackageSource] @{Url = 'https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet9/nuget/v2'; Name = 'dotnet' }
     $gallery = [NugetPackageSource] @{Url = 'https://www.powershellgallery.com/api/v2/'; Name = 'psgallery' }
     $nugetorg = [NugetPackageSource] @{Url = 'https://api.nuget.org/v3/index.json'; Name = 'nuget.org' }
+    $moduleSource = $gallery
     if ( $Source -eq 'Public') {
         New-NugetConfigFile -NugetPackageSource $nugetorg, $dotnetSdk   -Destination "$PSScriptRoot/" @extraParams
-        New-NugetConfigFile -NugetPackageSource $gallery                -Destination "$PSScriptRoot/src/Modules/" @extraParams
         New-NugetConfigFile -NugetPackageSource $gallery                -Destination "$PSScriptRoot/test/tools/Modules/" @extraParams
     } elseif ( $Source -eq 'NuGetOnly') {
         New-NugetConfigFile -NugetPackageSource $nugetorg   -Destination "$PSScriptRoot/" @extraParams
-        New-NugetConfigFile -NugetPackageSource $gallery                -Destination "$PSScriptRoot/src/Modules/" @extraParams
         New-NugetConfigFile -NugetPackageSource $gallery                -Destination "$PSScriptRoot/test/tools/Modules/" @extraParams
     } elseif ( $Source -eq 'Private') {
         $powerShellPackages = [NugetPackageSource] @{Url = 'https://pkgs.dev.azure.com/powershell/PowerShell/_packaging/PowerShell/nuget/v3/index.json'; Name = 'powershell' }
+        $moduleSource = $powerShellPackages
 
         New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/" @extraParams
-        New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/src/Modules/" @extraParams
         New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/test/tools/Modules/" @extraParams
     } elseif ($Source -eq 'EarlyAccess') {
         $earlyAccess = $env:EARLY_ACCESS_FEED
@@ -967,12 +949,20 @@ function Switch-PSNugetConfig {
 
         $earlyAccessFeed = [NugetPackageSource] @{Url = $earlyAccessFeedUrl; Name = 'earlyaccess' }
         $powerShellPackages = [NugetPackageSource] @{Url = 'https://pkgs.dev.azure.com/powershell/PowerShell/_packaging/PowerShell/nuget/v3/index.json'; Name = 'powershell' }
+        $moduleSource = $powerShellPackages
 
         New-NugetConfigFile -NugetPackageSource $earlyAccessFeed -Destination "$PSScriptRoot/"
-        New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/src/Modules/" @extraParams
         New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/test/tools/Modules/" @extraParams
     } else {
         throw "Unknown source: $Source"
+    }
+
+    if ($UseEarlyAccessModules) {
+        $moduleEarlyAccessFeed = [NugetPackageSource] @{Url = 'https://pkgs.dev.azure.com/powershell-rel/PowerShell/_packaging/powershell-module-earlyaccess/nuget/v3/index.json'; Name = 'module-earlyaccess' }
+        # Credentials for moduleSource are registered by the test module configuration above.
+        New-NugetConfigFile -NugetPackageSource $moduleEarlyAccessFeed, $moduleSource -Destination "$PSScriptRoot/src/Modules/"
+    } else {
+        New-NugetConfigFile -NugetPackageSource $moduleSource -Destination "$PSScriptRoot/src/Modules/" @extraParams
     }
 
     if ($UserName -or $ClearTextPAT) {
@@ -1070,10 +1060,6 @@ function Restore-PSPackage
     if (-not $ProjectDirs)
     {
         $ProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen", "$PSScriptRoot/src/Modules", "$PSScriptRoot/tools/wix")
-
-        if ($Options.Runtime -like 'fxdependent*') {
-            $ProjectDirs += "$PSScriptRoot/src/Microsoft.PowerShell.GlobalTool.Shim"
-        }
     }
 
     if ($Force -or (-not (Test-Path "$($Options.Top)/obj/project.assets.json"))) {
@@ -1676,6 +1662,10 @@ function Publish-PSTestTools {
 
     # Publish the Microsoft.PowerShell.NamedPipeConnection module
     Publish-CustomConnectionTestModule
+
+    # Build intermediates are not needed to run tests and must not be included in test packages.
+    Get-ChildItem -Path "$PSScriptRoot/test" -Directory -Recurse -Filter 'obj' |
+        Remove-Item -Recurse -Force
     Write-LogGroupEnd -Title "Publish-PSTestTools"
 }
 

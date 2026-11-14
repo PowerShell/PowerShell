@@ -346,6 +346,9 @@
   <data name="ModuleNameNullOrEmpty" xml:space="preserve">
     <value>Aşağıdaki parametre null veya boş olamaz: Module.</value>
   </data>
+  <data name="ModuleNameTooLong" xml:space="preserve">
+    <value>Modül adı, desteklenen maksimum {1} karakter uzunluğunu aşıyor (gerçek uzunluk: {0}).</value>
+  </data>
   <data name="PathNullOrEmpty" xml:space="preserve">
     <value>Aşağıdaki parametre null veya boş olamaz: Yol.</value>
   </data>

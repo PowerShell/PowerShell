@@ -221,6 +221,8 @@ stages:
   dependsOn: [EarlyDotnet]
   jobs:
   - template: /.pipelines/templates/nupkg.yml@self
+    parameters:
+      OfficialBuild: ${{ parameters.OfficialBuild }}
 
 - stage: msixbundle
   displayName: 'MSIX Bundle+Sign'

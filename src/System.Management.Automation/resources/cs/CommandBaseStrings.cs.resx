@@ -232,12 +232,14 @@ Reviewed by TArcher on 2010-07-20
     <value>Kontrola zpracování bloku skriptu pomocí tečkové notace</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>Zpracování bloku skriptu {0} pomocí tečkové notace v režimu omezeného jazyka selže, protože jeho jazykový režim {1} neodpovídá aktuálnímu jazykovému režimu {2}.</value>
+    <value>Zpracování bloku skriptu {0} pomocí operátoru dot-source v režimu ConstrainedLanguage selže, protože jeho režim jazyka {1} neodpovídá aktuálnímu režimu jazyka {2}.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="SearcherWDACLogTitle" xml:space="preserve">
     <value>Vyhledávač příkazů</value>
   </data>
   <data name="SearcherWDACLogMessage" xml:space="preserve">
     <value>Příkaz {0} v modulu {1} není důvěryhodný a v režimu ConstrainedLanguage nebude přístupný.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

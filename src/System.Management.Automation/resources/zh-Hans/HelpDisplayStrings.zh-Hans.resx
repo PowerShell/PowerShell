@@ -346,6 +346,9 @@
   <data name="ModuleNameNullOrEmpty" xml:space="preserve">
     <value>以下参数不能为空或留空: Module。</value>
   </data>
+  <data name="ModuleNameTooLong" xml:space="preserve">
+    <value>模块名称超出了 {1} 个字符(实际长度: {0})，这是支持的最大长度。</value>
+  </data>
   <data name="PathNullOrEmpty" xml:space="preserve">
     <value>以下参数不能为空或留空: Path。</value>
   </data>

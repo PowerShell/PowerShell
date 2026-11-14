@@ -1419,18 +1419,25 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (resolvedCommandName != null && !IsSafeNameOrIdentifier(commandMetadata.Name))
+            if (resolvedCommandName is not null && !IsSafeNameOrIdentifier(resolvedCommandName))
             {
                 this.WriteError(this.GetErrorSkippedUnsafeCommandName(resolvedCommandName));
                 return;
             }
 
-            if (IsCommandSkippedByServerDeclaration(commandMetadata.Name))
+            // - We do the skip-list check on 'commandMetadata.Name' regardless to keep the existing behavior.
+            // - We do the skip-list check on the resolved command if no prefix is specified, to avoid a server skipped command
+            //   from being exported and shadow the same-name command on client side without the user explicitly asking for it.
+            if (IsCommandSkippedByServerDeclaration(commandMetadata.Name)
+                || (resolvedCommandName is not null
+                    && string.IsNullOrEmpty(Prefix)
+                    && IsCommandSkippedByServerDeclaration(resolvedCommandName)))
             {
                 return;
             }
 
-            if (!IsCommandNameAllowedForImport(commandMetadata.Name))
+            if (!IsCommandNameAllowedForImport(commandMetadata.Name)
+                || (resolvedCommandName is not null && !IsCommandNameAllowedForImport(resolvedCommandName)))
             {
                 return;
             }

@@ -205,6 +205,7 @@
     <value>Derlenmiş Betik Bloğu Dot Source</value>
   </data>
   <data name="WDACCompiledScriptBlockLogMessage" xml:space="preserve">
-    <value>Geçerli kapsamdaki ' {0}' betik bloğu çağrısına, Kısıtlanmış Dil modunda izin verilmeyecek. Betik dili modu: {1}, Bağlam dili modu: {2}.</value>
+    <value>Geçerli kapsama betik bloğu '{0}' çağrısına ConstrainedLanguage modda izin verilmez. Betik dili modu: {1}, Bağlam dili modu: {2}.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

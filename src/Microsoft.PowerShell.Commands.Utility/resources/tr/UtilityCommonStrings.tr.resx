@@ -173,5 +173,6 @@
   </data>
   <data name="IEXWDACLogMessage" xml:space="preserve">
     <value>Invoke-Expression cmdlet betik bloğu, ConstrainedLanguage modunda çalıştırılacak.</value>
+    <comment>{StrContains="Invoke-Expression"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

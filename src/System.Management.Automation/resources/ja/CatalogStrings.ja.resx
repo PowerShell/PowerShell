@@ -150,6 +150,10 @@
   <data name="UnKnownCatalogVersion" xml:space="preserve">
     <value>カタログ バージョンが無効です。カタログのバージョン {0} およびバージョン {1} のみがサポートされています。</value>
   </data>
+  <data name="WeakCatalogHashAlgorithm" xml:space="preserve">
+    <value>'{0}' は、脆弱な SHA-1 ハッシュ アルゴリズムを使用するバージョン 1 のカタログです。'-CatalogVersion 2' を指定してこのカタログを再生成することを検討してください。</value>
+    <comment>{StrContains="SHA-1"}{StrContains="-CatalogVersion 2"}</comment>
+  </data>
   <data name="UnableToOpenCatalogDefinitionFile" xml:space="preserve">
     <value>カタログ定義ファイルを開けません。</value>
   </data>

@@ -237,6 +237,18 @@ Describe 'Formatting for FileInfo objects' -Tags 'CI' {
         $dir.NameString | Should -BeExactly "$($PSStyle.FileInfo.Directory + $dir.Name + $PSStyle.Reset)"
     }
 
+    It 'NameString should not query link metadata for a cached non-reparse point' -Skip:(-not $IsWindows) {
+        $testFile = Join-Path -Path $TestDrive -ChildPath 'cached-metadata'
+        $file = New-Item -ItemType File -Path $testFile
+        $null = $file.Attributes
+
+        # Removing the file makes an unnecessary second filesystem query observable.
+        [System.IO.File]::Delete($testFile)
+
+        # Without the cached-attributes check, NameString queries the deleted path for link metadata and throws.
+        [Microsoft.PowerShell.Commands.FileSystemProvider]::NameString($file) | Should -BeExactly $file.Name
+    }
+
     It 'Executable should have correct color' {
         if ($IsWindows) {
             $exePath = Join-Path -Path $TestDrive -ChildPath 'myExe.exe'

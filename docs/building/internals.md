@@ -28,6 +28,35 @@ it should be listed as a dependency for `$Top` folder (`src\powershell-unix` or 
 
 ## Preliminary steps
 
+### Bundled modules and early-access feeds
+
+The package references in [`PSGalleryModules.csproj`](../../src/Modules/PSGalleryModules.csproj)
+select the bundled module versions. Their restore sources are configured in
+[`src/Modules/nuget.config`](../../src/Modules/nuget.config), not in the project file.
+
+`Switch-PSNugetConfig -Source Private -UseEarlyAccessModules` enables the
+`powershell-module-earlyaccess` Azure Artifacts feed alongside the existing PowerShell
+feed for released modules. The `UseEarlyAccessModules` switch is independent of
+the .NET feed selected by `Source` and can be used with any source mode.
+Without the switch, bundled modules use only the normal module source.
+For public source modes, the normal module source is PowerShell Gallery.
+Update a module's package-reference version to consume an internal version.
+Internal versions should be distinct from released versions because NuGet caches packages by ID and version.
+
+In Azure Pipelines, enable the `UseEarlyAccessModules` build parameter (default: `false`).
+This does not require `IsEarlyAccess`, `EARLY_ACCESS_FEED`, or an early-access .NET SDK.
+The flags can also be enabled together. The shared
+[`insert-nuget-config-azfeed.yml`](../../.pipelines/templates/insert-nuget-config-azfeed.yml)
+template installs the Azure Artifacts Credential Provider and supplies an Azure DevOps
+access token through the secret `VSS_NUGET_EXTERNAL_FEED_ENDPOINTS` variable.
+Build steps must explicitly map this secret variable into their `env` block,
+including module-only builds; Azure Pipelines does not automatically export secret variables.
+The `powershell-net-early-access` service connection identity must have read access
+to the module feed. The existing PowerShell feed continues to use its separate PAT.
+For local restores, install the Azure Artifacts Credential Provider and use
+`Restore-PSPackage -ProjectDirs .\src\Modules -PSModule -Force -InteractiveAuth`
+with an identity that has read access to both feeds.
+
 ### ResGen
 
 Until the .NET CLI `dotnet-resgen` tool supports the generation of strongly typed resource access classes

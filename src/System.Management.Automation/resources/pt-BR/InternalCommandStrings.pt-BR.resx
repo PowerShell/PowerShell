@@ -145,13 +145,15 @@
     <value>Input name "{0}" cannot be resolved to a method.</value>
   </data>
   <data name="NoMethodInvocationInRestrictedLanguageMode" xml:space="preserve">
-    <value>Cannot invoke a method in the restricted language mode.</value>
+    <value>Não é possível invocar um método no modo RestrictedLanguage.</value>
+    <comment>{StrContains="RestrictedLanguage"}</comment>
   </data>
   <data name="NoShouldProcessForScriptBlockSet" xml:space="preserve">
     <value>The -WhatIf and -Confirm parameters are not supported for script blocks.</value>
   </data>
   <data name="OperationNotAllowedInRestrictedLanguageMode" xml:space="preserve">
-    <value>The '{0}' operation is not allowed in the RestrictedLanguage mode.</value>
+    <value>A operação '{0}' não é permitida no modo RestrictedLanguage.</value>
+    <comment>{StrContains="RestrictedLanguage"}</comment>
   </data>
   <data name="OperatorNotSpecified" xml:space="preserve">
     <value>An operator is required to compare the two specified values. Include a valid operator in the command, and then try the command again. For example, Get-Process | Where-Object -Property Name -eq Idle</value>
@@ -188,6 +190,7 @@ ErrorAction, WarningAction, InformationAction, PipelineVariable</value>
     <value>ForEach-Object Cmdlet</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>Method invocation on type '{0}' will not be allowed when run in Constrained Language mode.</value>
+    <value>A invocação de método no tipo '{0}' não será permitida quando executada no modo ConstrainedLanguage.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

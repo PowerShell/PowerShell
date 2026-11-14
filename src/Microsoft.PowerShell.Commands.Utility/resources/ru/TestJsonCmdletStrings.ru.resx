@@ -132,4 +132,7 @@
   <data name="InvalidUriScheme" xml:space="preserve">
     <value>Схема URI "{0}" не поддерживается. Разрешены только URI HTTP(S) и URI локальной файловой системы.</value>
   </data>
+  <data name="UnresolvedJsonSchemaRef" xml:space="preserve">
+    <value>Схема JSON содержит ссылку, которую не удалось разрешить. По умолчанию ссылки на внешние схемы не поддерживаются. Чтобы включить их, используйте параметр "FetchExternalReference".</value>
+  </data>
 </root>

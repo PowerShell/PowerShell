@@ -150,6 +150,10 @@
   <data name="UnKnownCatalogVersion" xml:space="preserve">
     <value>Katalog sürümü geçerli değil. Yalnızca katalog sürüm {0} ve sürüm {1} desteklenir.</value>
   </data>
+  <data name="WeakCatalogHashAlgorithm" xml:space="preserve">
+    <value>'{0}', zayıf SHA-1 karma algoritmasını kullanan 1. sürüm bir katalogdur. Bu kataloğu '-CatalogVersion 2' ile yeniden oluşturmayı göz önünde bulundurun.</value>
+    <comment>{StrContains="SHA-1"}{StrContains="-CatalogVersion 2"}</comment>
+  </data>
   <data name="UnableToOpenCatalogDefinitionFile" xml:space="preserve">
     <value>Katalog tanım dosyası açılamıyor.</value>
   </data>

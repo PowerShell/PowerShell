@@ -150,6 +150,10 @@
   <data name="UnKnownCatalogVersion" xml:space="preserve">
     <value>Wersja wykazu jest nieprawidłowa. Obsługujemy tylko wersję {0} i wersję {1} wykazu.</value>
   </data>
+  <data name="WeakCatalogHashAlgorithm" xml:space="preserve">
+    <value>„{0}” to katalog w wersji 1, który używa słabego algorytmu wyznaczania wartości skrótu SHA-1. Rozważ ponowne wygenerowanie tego wykazu za pomocą elementu „-CatalogVersion 2”.</value>
+    <comment>{StrContains="SHA-1"}{StrContains="-CatalogVersion 2"}</comment>
+  </data>
   <data name="UnableToOpenCatalogDefinitionFile" xml:space="preserve">
     <value>Nie można otworzyć pliku definicji wykazu.</value>
   </data>

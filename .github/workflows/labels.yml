@@ -9,7 +9,6 @@ on:
 
 permissions:
   contents: read
-  pull-requests: read
 
 jobs:
   verify-labels:

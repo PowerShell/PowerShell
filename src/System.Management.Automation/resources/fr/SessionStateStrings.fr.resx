@@ -653,5 +653,6 @@
   </data>
   <data name="WDACSessionStateVarLogMessage" xml:space="preserve">
     <value>La modification de portée de la variable « {0} » en AllScope, ou la création d’une telle variable, sera empêchée en mode ConstrainedLanguage.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

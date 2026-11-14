@@ -132,4 +132,7 @@
   <data name="InvalidUriScheme" xml:space="preserve">
     <value>Le schéma Uri « {0} » n’est pas pris en charge. Seuls les URI HTTP(S) et du système de fichiers local sont autorisés.</value>
   </data>
+  <data name="UnresolvedJsonSchemaRef" xml:space="preserve">
+    <value>Le schéma JSON contient une référence qui n’a pas pu être résolue. Les références à des schémas externes ne sont pas prises en charge par défaut ; utilisez le paramètre « FetchExternalReference » pour les activer.</value>
+  </data>
 </root>

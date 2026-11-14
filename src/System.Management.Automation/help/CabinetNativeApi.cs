@@ -251,6 +251,17 @@ namespace System.Management.Automation.Internal
             {
                 return new IntPtr(-1);
             }
+            catch (Exception e) when (e is UnauthorizedAccessException ||
+                                       e is ArgumentException ||
+                                       e is NotSupportedException ||
+                                       e is System.Security.SecurityException)
+            {
+                // FdiOpen is used both as a reverse-P/Invoke callback (invoked by the native
+                // FDI engine) and as a direct call from FdiNotify to create the destination file.
+                // In either path it must never throw across native FDI frames; return -1 to
+                // signal open failure, matching the IOException handler above.
+                return new IntPtr(-1);
+            }
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
@@ -315,17 +326,26 @@ namespace System.Management.Automation.Internal
 
         internal static int FdiClose(IntPtr fp)
         {
-            GCHandle handle = GCHandle.FromIntPtr(fp);
-            FileStream stream = (FileStream)handle.Target;
-
-            if (stream == null)
+            if (fp == IntPtr.Zero || fp == new IntPtr(-1))
             {
                 return -1;
             }
-            else
+
+            GCHandle handle = GCHandle.FromIntPtr(fp);
+            try
             {
+                FileStream stream = (FileStream)handle.Target;
+                if (stream == null)
+                {
+                    return -1;
+                }
+
                 stream.Dispose();
                 return 0;
+            }
+            catch (IOException)
+            {
+                return -1;
             }
         }
 
@@ -364,6 +384,13 @@ namespace System.Management.Automation.Internal
         /// <exception cref="InvalidOperationException">Thrown when path validation fails.</exception>
         private static string ValidateExtractionPath(string helpDirectory, string entryPath)
         {
+            // Reject empty CAB entry names that would otherwise resolve to the help directory root.
+            if (string.IsNullOrEmpty(entryPath))
+            {
+                throw new InvalidOperationException(
+                    $"CAB entry contains an empty path: '{entryPath}'");
+            }
+
             // Reject absolute paths, UNC paths, or rooted paths in CAB entries
             if (Path.IsPathRooted(entryPath))
             {
@@ -399,6 +426,13 @@ namespace System.Management.Automation.Internal
             {
                 throw new InvalidOperationException(
                     $"CAB entry path is invalid. Entry '{entryPath}' would extract to '{resolvedPath}' which is outside the intended directory '{canonicalHelpDir}'");
+            }
+
+            // Reject entries that resolve exactly to the help directory root (e.g. empty entries).
+            if (resolvedPath.Length <= canonicalHelpDir.Length)
+            {
+                throw new InvalidOperationException(
+                    $"CAB entry '{entryPath}' resolves to the help directory root '{canonicalHelpDir}'");
             }
 
             return resolvedPath;
@@ -443,7 +477,16 @@ namespace System.Management.Automation.Internal
                 case FdiNotificationType.FdintCLOSE_FILE_INFO:
                     {
                         // Close the file
-                        CabinetNativeApi.FdiClose(fdin.hf);
+                        int closeResult = CabinetNativeApi.FdiClose(fdin.hf);
+
+                        // FDI's FNFDINOTIFY contract uses FALSE (0) to signal a CLOSE_FILE_INFO
+                        // failure. A non-zero FdiClose result here means the final flush/Dispose
+                        // failed (e.g. disk-full / I/O error), leaving a truncated file on disk;
+                        // abort this entry rather than reporting a corrupt extraction as success.
+                        if (closeResult != 0)
+                        {
+                            return IntPtr.Zero;
+                        }
 
                         // Get the intended help directory
                         string helpDirectory = Marshal.PtrToStringAnsi(fdin.pv);
@@ -466,7 +509,6 @@ namespace System.Management.Automation.Internal
 
                         try
                         {
-                            // Set the file attributes
                             IntPtr hFile = PlatformInvokes.CreateFile(
                                 absoluteFilePath,
                                 PlatformInvokes.FileDesiredAccess.GenericRead | PlatformInvokes.FileDesiredAccess.GenericWrite,
@@ -476,7 +518,10 @@ namespace System.Management.Automation.Internal
                                 PlatformInvokes.FileAttributes.Normal,
                                 IntPtr.Zero);
 
-                            if (hFile != IntPtr.Zero)
+                            // CreateFile returns INVALID_HANDLE_VALUE (-1) on failure, not Zero.
+                            bool validHandle = hFile != IntPtr.Zero && hFile != new IntPtr(-1);
+
+                            if (validHandle)
                             {
                                 PlatformInvokes.FILETIME ftFile = new PlatformInvokes.FILETIME();
                                 if (PlatformInvokes.DosDateTimeToFileTime(fdin.date, fdin.time, ftFile))
@@ -505,6 +550,11 @@ namespace System.Management.Automation.Internal
 
                         // Call notification function
                         return new IntPtr(1);
+                    }
+                case FdiNotificationType.FdintNEXT_CABINET:
+                    {
+                        // Update-Help content is always a single self-contained cabinet.
+                        return new IntPtr(-1);
                     }
             }
 

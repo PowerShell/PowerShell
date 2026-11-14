@@ -346,6 +346,9 @@
   <data name="ModuleNameNullOrEmpty" xml:space="preserve">
     <value>次のパラメーターを null または空にすることはできません: Module。</value>
   </data>
+  <data name="ModuleNameTooLong" xml:space="preserve">
+    <value>モジュール名が、サポートされる最大長である {1} 文字を超えています (実際の長さ: {0})。</value>
+  </data>
   <data name="PathNullOrEmpty" xml:space="preserve">
     <value>次のパラメーターを null または空にすることはできません: Path。</value>
   </data>

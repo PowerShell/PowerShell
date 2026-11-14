@@ -12,6 +12,7 @@
         'Start-PrepForGlobalToolNupkg'
         'New-GlobalToolNupkgSource'
         'New-GlobalToolNupkgFromSource'
+        'New-GlobalToolPointerNupkgSource'
         'New-ILNugetPackageSource'
         'New-ILNugetPackageFromSource'
         'New-PSBuildZip'

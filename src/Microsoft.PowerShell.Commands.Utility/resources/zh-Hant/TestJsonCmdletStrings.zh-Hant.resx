@@ -132,4 +132,7 @@
   <data name="InvalidUriScheme" xml:space="preserve">
     <value>不支援 URI 配置 '{0}'。只允許 HTTP(S) 和本機檔案系統 URI。</value>
   </data>
+  <data name="UnresolvedJsonSchemaRef" xml:space="preserve">
+    <value>JSON 結構描述包含無法解析的參考。預設不支援外部結構描述參考，請使用 'FetchExternalReference' 參數加以啟用。</value>
+  </data>
 </root>

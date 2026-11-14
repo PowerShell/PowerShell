@@ -127,7 +127,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         }
         foreach ($x in "--help", "-help", "-h", "-?", "--he", "-hel", "--HELP", "-hEl") {
             It "Accepts '$x' as a parameter for help" {
-                & $powershell -noprofile $x | Where-Object { $_ -match "pwsh[.exe] -Help | -? | /?" } | Should -Not -BeNullOrEmpty
+                & $powershell -noprofile $x | Where-Object { $_ -match 'pwsh\[\.exe\] -h \| -Help \| -\? \| /\?' } | Should -Not -BeNullOrEmpty
             }
         }
 
@@ -920,10 +920,6 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
             $inputPath  = "Temp:\StartupBannerTest-Input.txt"
             "exit" > $inputPath
 
-            # Not testing update notification banner text here
-            $oldPowerShellUpdateCheck = $env:POWERSHELL_UPDATECHECK
-            $env:POWERSHELL_UPDATECHECK = "Off"
-
             # Set TERM to "dumb" to avoid DECCKM codes in the output
             $oldTERM = $env:TERM
             $env:TERM = "dumb"
@@ -944,7 +940,6 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
         }
         AfterAll {
             $env:TERM = $oldTERM
-            $env:POWERSHELL_UPDATECHECK = $oldPowerShellUpdateCheck
 
             Remove-Item $inputPath -Force -ErrorAction Ignore
             Remove-Item $outputPath -Force -ErrorAction Ignore

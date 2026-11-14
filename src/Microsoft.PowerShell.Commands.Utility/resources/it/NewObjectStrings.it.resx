@@ -142,21 +142,23 @@
     <value>Non è possibile creare istanze del tipo simile a ByRef "{0}". I tipi simili a ByRef non sono supportati in PowerShell.</value>
   </data>
   <data name="CannotCreateTypeConstrainedLanguage" xml:space="preserve">
-    <value>Non è possibile creare il tipo. In questa modalità linguaggio sono supportati solo i tipi di base.</value>
+    <value>Non è possibile creare il tipo. In questa modalità di linguaggio sono supportati solo i tipi di base.</value>
   </data>
   <data name="CannotCreateTypeLanguageMode" xml:space="preserve">
-    <value>Non è possibile creare il tipo. Solo i tipi di base sono supportati in modalità lingua {0} in un computer con criteri bloccati.</value>
+    <value>Non è possibile creare il tipo. Solo i tipi di base sono supportati in modalità di linguaggio {0} in un computer con criteri bloccati.</value>
   </data>
   <data name="TypeWDACLogTitle" xml:space="preserve">
     <value>Creazione del tipo di cmdlet New-Object</value>
   </data>
   <data name="TypeWDACLogMessage" xml:space="preserve">
-    <value>Il tipo ''{0}'' non verrà creato in modalità ConstrainedLanguage.</value>
+    <value>Il tipo '{0}' non verrà creato in modalità ConstrainedLanguage.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="ComWDACLogTitle" xml:space="preserve">
     <value>Creazione di oggetti COM cmdlet New-Object</value>
   </data>
   <data name="ComWDACLogMessage" xml:space="preserve">
-    <value>L'oggetto COM ''{0}'' non verrà creato in modalità ConstrainedLanguage.</value>
+    <value>L'oggetto COM '{0}' non verrà creato in modalità ConstrainedLanguage.</value>
+    <comment>{StrContains="COM"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>
