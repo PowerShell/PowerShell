@@ -91,11 +91,11 @@ Describe "Parameter Binding Tests" -Tags "CI" {
             [CmdletBinding()]
             param (
             [string]$Parameter1 = "default1",
-            [Parameter(Mandatory = $true)] [string]$Parameter2 = "default2",
-            [Parameter(Mandatory = $true)] [string]$Parameter3 = "default3",
+            [Parameter(Mandatory = $true)] [string]$Parameter2,
+            [Parameter(Mandatory = $true)] [string]$Parameter3,
             [AllowNull()] [int]$Parameter4 = 0,
             [AllowEmptyString()][int]$Parameter5 = 0,
-            [Parameter(Mandatory = $true)] [int]$ShowMe = 0
+            [Parameter(Mandatory = $true)] [int]$ShowMe
             )
 
             Process {
