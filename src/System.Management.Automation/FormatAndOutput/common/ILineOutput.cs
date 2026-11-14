@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -47,13 +48,55 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             var valueStrDec = new ValueStringDecorated(str);
             if (valueStrDec.IsDecorated)
             {
+                if (offset >= 0)
+                {
+                    int cells = 0;
+                    int start = 0;
+                    foreach (var match in ValueStringDecorated.AnsiRegex.EnumerateMatches(str))
+                    {
+                        cells += GetSegmentLength(str.AsSpan(start, match.Index - start), ref offset);
+                        start = match.Index + match.Length;
+                    }
+
+                    return cells + GetSegmentLength(str.AsSpan(start), ref offset);
+                }
+
                 str = valueStrDec.ToString(OutputRendering.PlainText);
+            }
+
+            if (offset >= 0 && offset < str.Length && Ascii.IsValid(str.AsSpan(offset)))
+            {
+                return str.Length - offset;
             }
 
             int length = 0;
             for (; offset < str.Length; offset++)
             {
                 length += CharLengthInBufferCells(str[offset]);
+            }
+
+            return length;
+        }
+
+        private static int GetSegmentLength(ReadOnlySpan<char> text, ref int offset)
+        {
+            if (offset >= text.Length)
+            {
+                offset -= text.Length;
+                return 0;
+            }
+
+            text = text.Slice(offset);
+            offset = 0;
+            if (Ascii.IsValid(text))
+            {
+                return text.Length;
+            }
+
+            int length = 0;
+            foreach (char character in text)
+            {
+                length += CharLengthInBufferCells(character);
             }
 
             return length;

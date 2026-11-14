@@ -16,6 +16,7 @@ namespace System.Management.Automation.Internal
         private readonly bool _isDecorated;
         private readonly string _text;
         private string? _plaintextcontent;
+        private int? _contentLength;
 
         private string PlainText
         {
@@ -35,6 +36,7 @@ namespace System.Management.Automation.Internal
         {
             _text = text;
             _isDecorated = text.Contains(ValueStringDecorated.ESC);
+            _plaintextcontent = _isDecorated ? null : text;
         }
 
         /// <summary>
@@ -47,7 +49,7 @@ namespace System.Management.Automation.Internal
         /// Gets the length of content sans escape sequences.
         /// </summary>
         /// <returns>Length of content sans escape sequences.</returns>
-        public int ContentLength => PlainText.Length;
+        public int ContentLength => _plaintextcontent?.Length ?? (_contentLength ??= ValueStringDecorated.GetContentLength(_text));
 
         /// <summary>
         /// Render the decorarted string using automatic output rendering.
@@ -86,6 +88,7 @@ namespace System.Management.Automation.Internal
         private readonly string _text;
         private string? _plaintextcontent;
         private Dictionary<int, int>? _vtRanges;
+        private int? _contentLength;
 
         private string PlainText
         {
@@ -106,8 +109,18 @@ namespace System.Management.Automation.Internal
         // Hyperlink escape sequences. Note: '.*?' makes '.*' do non-greedy match.
         private const string HyperlinkRegex = @"(\x1b\]8;;.*?\x1b\\)";
 
-        // replace regex with .NET 6 API once available
         internal static readonly Regex AnsiRegex = new Regex($"{GraphicsRegex}|{CsiRegex}|{HyperlinkRegex}", RegexOptions.Compiled);
+
+        internal static int GetContentLength(string text)
+        {
+            int length = text.Length;
+            foreach (ValueMatch match in AnsiRegex.EnumerateMatches(text))
+            {
+                length -= match.Length;
+            }
+
+            return length;
+        }
 
         /// <summary>
         /// Get the ranges of all escape sequences in the text.
@@ -123,7 +136,7 @@ namespace System.Management.Automation.Internal
                 if (_isDecorated && _vtRanges is null)
                 {
                     _vtRanges = new Dictionary<int, int>();
-                    foreach (Match match in AnsiRegex.Matches(_text))
+                    foreach (ValueMatch match in AnsiRegex.EnumerateMatches(_text))
                     {
                         _vtRanges.Add(match.Index, match.Length);
                     }
@@ -143,6 +156,7 @@ namespace System.Management.Automation.Internal
             _isDecorated = text.Contains(ESC);
             _plaintextcontent = _isDecorated ? null : text;
             _vtRanges = null;
+            _contentLength = null;
         }
 
         /// <summary>
@@ -155,7 +169,7 @@ namespace System.Management.Automation.Internal
         /// Gets the length of content sans escape sequences.
         /// </summary>
         /// <returns>Length of content sans escape sequences.</returns>
-        public int ContentLength => PlainText.Length;
+        public int ContentLength => _plaintextcontent?.Length ?? (_contentLength ??= GetContentLength(_text));
 
         /// <summary>
         /// Render the decorarted string using automatic output rendering.

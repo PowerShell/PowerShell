@@ -580,7 +580,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return result;
         }
 
-        private static bool IsOutOfBandView(ViewDefinition vd)
+        internal static bool IsOutOfBandView(ViewDefinition vd)
         {
             return (vd.mainControl is ComplexControlBody || vd.mainControl is ListControlBody) && vd.outOfBand;
         }

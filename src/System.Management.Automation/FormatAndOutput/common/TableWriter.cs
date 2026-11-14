@@ -44,6 +44,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private ScreenInfo _si;
 
         private List<string> _header;
+        private StringBuilder _cachedBuilder = new();
+
+        private StringBuilder GetRowBuilder()
+        {
+            if (_cachedBuilder.Capacity > 64 * 1024)
+            {
+                _cachedBuilder = new StringBuilder();
+            }
+
+            return _cachedBuilder.Clear();
+        }
 
         internal static int ComputeWideViewBestItemsPerRowFit(int stringLen, int screenColumns)
         {
@@ -382,7 +393,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             string[] rows = new string[screenRows];
             for (int row = 0; row < screenRows; row++)
             {
-                StringBuilder sb = new StringBuilder();
+                StringBuilder sb = GetRowBuilder();
 
                 // for a given row, walk the columns
                 for (int col = 0; col < scArray.Length; col++)
@@ -441,7 +452,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private string GenerateRow(string[] values, ReadOnlySpan<int> alignment, DisplayCells dc, bool isHeader)
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = GetRowBuilder();
 
             bool addPadding = true;
             for (int k = 0; k < _si.columnInfo.Length; k++)
@@ -462,24 +473,23 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // pad with a blank (or any character that ALWAYS maps to a single screen cell
                 if (k > 0)
                 {
-                    sb.Append(StringUtil.Padding(ScreenInfo.separatorCharacterCount));
+                    sb.Append(' ', ScreenInfo.separatorCharacterCount);
                 }
                 else
                 {
                     // add indentation padding if needed
                     if (_startColumn > 0)
                     {
-                        sb.Append(StringUtil.Padding(_startColumn));
+                        sb.Append(' ', _startColumn);
                     }
                 }
 
-                string rowField = GenerateRowField(values[k], _si.columnInfo[k].width, alignment[k], dc, addPadding);
                 if (isHeader)
                 {
                     sb.Append(PSStyle.Instance.Formatting.TableHeader);
                 }
 
-                sb.Append(rowField);
+                string rowField = AppendRowField(sb, values[k], _si.columnInfo[k].width, alignment[k], dc, addPadding);
 
                 if (isHeader || (rowField is not null && rowField.Contains(ValueStringDecorated.ESC) && !rowField.AsSpan().TrimEnd().EndsWith(PSStyle.Instance.Reset)))
                 {
@@ -489,6 +499,29 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             return sb.ToString();
+        }
+
+        private static string AppendRowField(StringBuilder builder, string value, int width, int alignment, DisplayCells dc, bool addPadding)
+        {
+            string field = StringManipulationHelper.TruncateAtNewLine(value);
+            int length = dc.Length(field);
+            if (length > width)
+            {
+                field = GenerateRowField(field, width, alignment, dc, addPadding);
+                builder.Append(field);
+                return field;
+            }
+
+            int padding = width - length;
+            int leftPadding = alignment == TextAlignment.Right ? padding : alignment == TextAlignment.Center ? padding / 2 : 0;
+            builder.Append(' ', leftPadding);
+            builder.Append(field);
+            if (addPadding)
+            {
+                builder.Append(' ', padding - leftPadding);
+            }
+
+            return field;
         }
 
         private static string GenerateRowField(string val, int width, int alignment, DisplayCells dc, bool addPadding)
