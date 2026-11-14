@@ -1132,6 +1132,13 @@ namespace System.Management.Automation
                             lineContents.Clear();
                             for (int column = 0; column < bufferContents.GetLength(1); column++)
                             {
+                                // A double-width character takes two cells. The trailing cell is the
+                                // second half of the character in the leading cell, so skip it.
+                                if (bufferContents[row, column].BufferCellType == Host.BufferCellType.Trailing)
+                                {
+                                    continue;
+                                }
+
                                 lineContents.Append(bufferContents[row, column].Character);
                             }
 

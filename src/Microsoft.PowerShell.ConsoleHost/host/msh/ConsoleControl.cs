@@ -2128,6 +2128,24 @@ namespace Microsoft.PowerShell
                                 out bgColor);
                             contents[r, c].ForegroundColor = fgColor;
                             contents[r, c].BackgroundColor = bgColor;
+
+                            // A double-width character takes two cells, and the console returns the
+                            // character in both of them. Mark the cells as leading and trailing, like
+                            // ReadConsoleOutputCJK does, so that callers can tell the second cell apart.
+                            if ((characterBuffer[characterBufferIndex].Attributes & (ushort)NativeMethods.CHAR_INFO_Attributes.COMMON_LVB_LEADING_BYTE)
+                                    == (ushort)NativeMethods.CHAR_INFO_Attributes.COMMON_LVB_LEADING_BYTE)
+                            {
+                                contents[r, c].BufferCellType = BufferCellType.Leading;
+                            }
+                            else if ((characterBuffer[characterBufferIndex].Attributes & (ushort)NativeMethods.CHAR_INFO_Attributes.COMMON_LVB_TRAILING_BYTE)
+                                    == (ushort)NativeMethods.CHAR_INFO_Attributes.COMMON_LVB_TRAILING_BYTE)
+                            {
+                                contents[r, c].BufferCellType = BufferCellType.Trailing;
+                            }
+                            else
+                            {
+                                contents[r, c].BufferCellType = BufferCellType.Complete;
+                            }
                         }
                     }
 
