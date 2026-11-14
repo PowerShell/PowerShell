@@ -39,9 +39,19 @@ jobs:
         $releaseVersion = '$(Version)'
         $globalToolPath = "$(Pipeline.Workspace)/NuGetPackages/PowerShell.$releaseVersion.nupkg"
 
+        $escapedVersion = [Regex]::Escape($releaseVersion)
+        $pattern = "^PowerShell\.(linux-(?:arm|arm64|musl-x64|x64)|osx-(?:arm64|x64)|win-(?:arm64|x64))\.$escapedVersion\.nupkg$"
+        $globalToolRuntimePackages = Get-ChildItem "$(Pipeline.Workspace)/NuGetPackages/*.nupkg" | Where-Object { $_.Name -match $pattern } 
+        
         if ($releaseVersion -notlike '*-*') {
             # Copy the global tool package for stable releases
             Copy-Item $globalToolPath -Destination "$(Pipeline.Workspace)/release"
+
+            if (-not $globalToolRuntimePackages) {
+                throw "No runtime global tool packages found"
+            }
+            
+            $globalToolRuntimePackages | ForEach-Object { Copy-Item $_ -Destination  "$(Pipeline.Workspace)/release" }
         }
 
         Write-Verbose -Verbose "The .nupkgs below will be pushed:"
