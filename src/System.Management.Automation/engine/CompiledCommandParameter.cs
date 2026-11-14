@@ -197,6 +197,13 @@ namespace System.Management.Automation
         internal string Name { get; }
 
         /// <summary>
+        /// The parameter text used for synthetic named arguments.
+        /// </summary>
+        internal string ParameterText => _parameterText ??= "-" + Name + ":";
+
+        private string _parameterText;
+
+        /// <summary>
         /// The PSTypeName from a PSTypeNameAttribute.
         /// </summary>
         internal string PSTypeName { get; private set; }

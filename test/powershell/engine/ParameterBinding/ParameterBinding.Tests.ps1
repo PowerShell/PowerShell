@@ -1,6 +1,75 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
 Describe "Parameter Binding Tests" -Tags "CI" {
+    Context "Reusing binding metadata" {
+        It "Validates intermediate boolean collection conversions on every invocation" {
+            function Test-ChainedConversion {
+                [CmdletBinding()]
+                param([int[]][bool[]] $Value)
+
+                $Value
+            }
+
+            foreach ($iteration in 1..3) {
+                Test-ChainedConversion -Value @(0, 1) | Should -Be @(0, 1)
+                { Test-ChainedConversion -Value @('1') } |
+                    Should -Throw -ErrorId "ParameterArgumentTransformationError,Test-ChainedConversion"
+            }
+        }
+
+        It "Reevaluates property getters and parameter sets for heterogeneous pipeline records" {
+            function Test-PipelineSets {
+                [CmdletBinding(DefaultParameterSetName = 'ByValue')]
+                param(
+                    [Parameter(ValueFromPipeline, ParameterSetName = 'ByValue')]
+                    [int] $Number = -1,
+                    [Parameter(ValueFromPipelineByPropertyName, ParameterSetName = 'ByProperty')]
+                    [int] $Value = -2
+                )
+
+                process { "$($PSCmdlet.ParameterSetName)/$Number/$Value" }
+            }
+
+            $record = [pscustomobject]@{ ReadCount = 0 }
+            $record | Add-Member -MemberType ScriptProperty -Name Value -Value {
+                $this.ReadCount++
+                100 + $this.ReadCount
+            }
+
+            $result = 7, $record, '13', $record | Test-PipelineSets
+
+            $result | Should -Be @('ByValue/7/-2', 'ByProperty/-1/101', 'ByValue/13/-2', 'ByProperty/-1/102')
+            $record.ReadCount | Should -Be 2
+        }
+
+        It "Evaluates defaults once per invocation and restores them for missing pipeline properties" {
+            $evaluationCount = @(0)
+            function Test-PipelineDefaults {
+                [CmdletBinding()]
+                param(
+                    [Parameter(ValueFromPipeline)]
+                    [object] $Record,
+                    [Parameter(ValueFromPipelineByPropertyName)]
+                    [int] $Value = (++$evaluationCount[0])
+                )
+
+                process { $Value }
+            }
+
+            $record = @(
+                [pscustomobject]@{ Value = '7' }
+                [pscustomobject]@{ Other = 0 }
+                [pscustomobject]@{ Value = '9' }
+                [pscustomobject]@{ Other = 1 }
+            )
+
+            $record | Test-PipelineDefaults | Should -Be @(7, 1, 9, 1)
+            $record | Test-PipelineDefaults | Should -Be @(7, 2, 9, 2)
+            $evaluationCount[0] | Should -Be 2
+        }
+    }
+
     It "Should throw a parameter binding exception when two parameters have the same position" {
         function test-PositionalBinding1 {
             [CmdletBinding()]
