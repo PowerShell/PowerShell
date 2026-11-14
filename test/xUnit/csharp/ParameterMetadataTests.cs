@@ -4,12 +4,39 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Management.Automation;
+using System.Management.Automation.Runspaces;
 using Xunit;
 
 namespace PSTests.Parallel
 {
     public static class ParameterMetadataTests
     {
+        [Fact]
+        public static void ConversionChainCachesCollectionMetadataPerTarget()
+        {
+            using var runspace = RunspaceFactory.CreateRunspace(InitialSessionState.CreateDefault2());
+            runspace.Open();
+            var engineIntrinsics = Assert.IsType<EngineIntrinsics>(runspace.SessionStateProxy.GetVariable("ExecutionContext"));
+            var converter = new ArgumentTypeConverterAttribute(typeof(object[]), typeof(bool[]));
+
+            for (int i = 0; i < 3; i++)
+            {
+                var result = converter.Transform(
+                    engineIntrinsics,
+                    new object[] { 0, 1, -1 },
+                    bindingParameters: true,
+                    bindingScriptCmdlet: true);
+
+                Assert.Equal(new[] { false, true, true }, Assert.IsType<bool[]>(result));
+                var exception = Assert.Throws<ArgumentTransformationMetadataException>(() => converter.Transform(
+                    engineIntrinsics,
+                    new object[] { "false", "true" },
+                    bindingParameters: true,
+                    bindingScriptCmdlet: true));
+                Assert.IsType<PSInvalidCastException>(exception.InnerException);
+            }
+        }
+
         [Theory]
         [InlineData("Name")]
         [InlineData("name")]
