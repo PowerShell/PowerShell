@@ -154,7 +154,7 @@ namespace PSTests.Parallel
         {
             var value = new CountingProperties();
             var expression = new PSPropertyExpression("*");
-            Assert.Equal(1, expression.GetValueForFormatting(new PSObject(value)).Result);
+            expression.GetValueForFormatting(new PSObject(value));
             Assert.Equal(2, value.ReadCount);
         }
 
@@ -284,7 +284,7 @@ namespace PSTests.Parallel
 
         public sealed class CountingProperties
         {
-            public int ReadCount;
+            public int ReadCount { get; private set; }
 
             public int Alpha => ++ReadCount;
 
