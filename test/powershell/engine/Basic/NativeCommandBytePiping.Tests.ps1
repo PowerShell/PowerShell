@@ -1,4 +1,3 @@
-﻿
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
@@ -22,6 +21,26 @@ Describe 'Native command byte piping tests' -Tags 'CI' {
 
     It 'Bytes are retained between native executables' {
         testexe -writebytes FF | testexe -readbytes | Should -BeExactly FF
+    }
+
+    It 'Retains all <Length> bytes across transfer chunks and a partial final chunk' -TestCases @(
+        @{ Length = 1 }
+        @{ Length = 16384 }
+        @{ Length = 65539 }
+    ) {
+        param($Length)
+
+        $expected = for ($index = 0; $index -lt $Length; $index++) {
+            '{0:X2}' -f ($index % 256)
+        }
+
+        testexe -writebytestream $Length | testexe -readbytes | Should -BeExactly $expected
+
+        $path = Join-Path $TestDrive "bytes-$Length.bin"
+        testexe -writebytestream $Length > $path
+        $actual = [IO.File]::ReadAllBytes($path)
+        $actual.Length | Should -Be $Length
+        [Convert]::ToHexString($actual) | Should -BeExactly ($expected -join '')
     }
 
     It 'Byte literals are retained when piped directly' {

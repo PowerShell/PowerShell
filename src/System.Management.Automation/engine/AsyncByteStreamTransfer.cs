@@ -16,7 +16,7 @@ namespace System.Management.Automation;
 /// </summary>
 internal sealed class AsyncByteStreamTransfer : IDisposable
 {
-    private const int DefaultBufferSize = 1024;
+    private const int DefaultBufferSize = 16 * 1024;
 
     private readonly BytePipe _bytePipe;
 
