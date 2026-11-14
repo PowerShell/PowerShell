@@ -44,13 +44,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private ScreenInfo _si;
 
         private List<string> _header;
-        private StringBuilder _cachedBuilder = new();
+        private StringBuilder _cachedBuilder = new(256);
 
         private StringBuilder GetRowBuilder()
         {
             if (_cachedBuilder.Capacity > 64 * 1024)
             {
-                _cachedBuilder = new StringBuilder();
+                _cachedBuilder = new StringBuilder(256);
             }
 
             return _cachedBuilder.Clear();
