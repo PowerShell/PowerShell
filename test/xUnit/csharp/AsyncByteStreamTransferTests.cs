@@ -73,7 +73,10 @@ namespace PSTests.Parallel
 
         private sealed class ShortReadStream : MemoryStream
         {
-            internal ShortReadStream(byte[] bytes) : base(bytes) { }
+            internal ShortReadStream(byte[] bytes)
+                : base(bytes)
+            {
+            }
 
             public override ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
                 => base.ReadAsync(buffer.Slice(0, Math.Min(buffer.Length, 7)), cancellationToken);
