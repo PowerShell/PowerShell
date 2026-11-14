@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
@@ -423,7 +424,13 @@ namespace System.Management.Automation
             }
 
             PSObject examples = GetProperty<PSObject>(help, "examples");
-            PSObject[] example = GetProperty<PSObject[]>(examples, "example");
+            // Get-Help returns a single example as PSObject and multiple as PSObject[].
+            // Normalize both to IEnumerable<PSObject> so the loop handles either case.
+            PSObject[] exampleArray = GetProperty<PSObject[]>(examples, "example");
+            IEnumerable<PSObject> example = exampleArray
+                ?? (GetProperty<PSObject>(examples, "example") is PSObject singleEx
+                    ? new[] { singleEx }
+                    : null);
             if (example != null)
             {
                 foreach (PSObject ex in example)
@@ -461,7 +468,20 @@ namespace System.Management.Automation
 
                     if (exsb.Length > 0)
                     {
-                        sb.Append("\n\n.EXAMPLE\n\n");
+                        // The title property value may be stored as a PSObject wrapping a string,
+                        // so use ToString() on the raw Value rather than 'Value as string'.
+                        ReadOnlySpan<char> exampleTitle = ExtractExampleTitle(ex.Properties["title"]?.Value?.ToString());
+                        if (!exampleTitle.IsEmpty)
+                        {
+                            sb.Append("\n\n.EXAMPLE ");
+                            sb.Append(exampleTitle);
+                            sb.Append("\n\n");
+                        }
+                        else
+                        {
+                            sb.Append("\n\n.EXAMPLE\n\n");
+                        }
+
                         sb.Append(exsb);
                     }
                 }
@@ -496,6 +516,22 @@ namespace System.Management.Automation
             AppendContent(sb, ".FUNCTIONALITY", GetProperty<PSObject>(help, "Functionality"));
 
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// Extracts the title after the first ": " delimiter in a generated Get-Help example heading.
+        /// The final dash border and surrounding whitespace are trimmed, preserving authored dashes
+        /// separated from the border by a space. The localized example label is not interpreted,
+        /// and a heading without the delimiter has no title.
+        /// </summary>
+        private static ReadOnlySpan<char> ExtractExampleTitle(string decoratedTitle)
+        {
+            ReadOnlySpan<char> heading = decoratedTitle.AsSpan();
+            int separatorIndex = heading.IndexOf(": ", StringComparison.Ordinal);
+
+            return separatorIndex < 0 || separatorIndex + 2 >= heading.Length
+                ? default
+                : heading.Slice(separatorIndex + 2).TrimEnd('-').Trim();
         }
 
         #endregion
