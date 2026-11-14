@@ -2511,11 +2511,14 @@ function Start-PSxUnit {
         Enables detailed console test output instead of writing an XML result file.
     .PARAMETER Filter
         An xUnit filter expression to restrict which tests are run.
+    .PARAMETER SkipBuild
+        Runs tests using previously built test assemblies, without build or restore.
     #>
     [CmdletBinding()]param(
         [string] $xUnitTestResultsFile = "xUnitResults.xml",
         [switch] $DebugLogging,
-        [string] $Filter
+        [string] $Filter,
+        [switch] $SkipBuild
     )
 
     # Add .NET CLI tools to PATH
@@ -2574,6 +2577,9 @@ function Start-PSxUnit {
         # We run the xUnit tests sequentially to avoid race conditions caused by manipulating the config.json file.
         # xUnit tests run in parallel by default. To make them run sequentially, we need to define the 'xunit.runner.json' file.
         $extraParams = @()
+        if ($SkipBuild) {
+            $extraParams += @('--no-build', '--no-restore')
+        }
         if($Filter) {
             $extraParams += @(
                 '--filter'

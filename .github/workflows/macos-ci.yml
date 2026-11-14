@@ -17,17 +17,25 @@ on:
       - "!.dependabot/config.yml"
       - "!.pipelines/**"
       - "!test/perf/**"
-  pull_request:
-    branches:
-      - master
-      - release/**
-      - github-mirror
-      - "servicing-*"
-      - "*-feature"
+  workflow_call:
+    inputs:
+      runner_os:
+        type: string
+        default: macos-15-large
+      artifact_name:
+        type: string
+        default: build
+      enable_coverage:
+        type: boolean
+        default: false
+      test_only:
+        description: 'Additional architecture: skip packaging'
+        type: boolean
+        default: false
 # Path filters for PRs need to go into the changes job
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  group: macos-${{ inputs.runner_os || 'macos-15-large' }}-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: ${{ contains(github.ref, 'merge')}}
 
 env:
@@ -69,9 +77,9 @@ jobs:
 
   ci_build:
     name: Build PowerShell
-    runs-on: macos-15-large
+    runs-on: ${{ inputs.runner_os || 'macos-15-large' }}
     needs: changes
-    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
+    if: ${{ inputs.enable_coverage || needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     steps:
       - name: checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -79,13 +87,16 @@ jobs:
           fetch-depth: 1000
       - name: Build
         uses: "./.github/actions/build/ci"
+        with:
+          configuration: ${{ inputs.enable_coverage && 'CodeCoverage' || 'Release' }}
+          artifact_name: ${{ inputs.artifact_name || 'build' }}
   macos_test_unelevated_ci:
     name: macos Unelevated CI
     needs:
       - ci_build
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
-    runs-on: macos-15-large
+    if: ${{ inputs.enable_coverage || needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
+    runs-on: ${{ inputs.runner_os || 'macos-15-large' }}
     steps:
       - name: checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -94,6 +105,8 @@ jobs:
       - name: macOS Unelevated CI
         uses: "./.github/actions/test/nix"
         with:
+          artifact_name: ${{ inputs.artifact_name || 'build' }}
+          enable_coverage: ${{ inputs.enable_coverage || false }}
           purpose: UnelevatedPesterTests
           tagSet: CI
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -102,8 +115,8 @@ jobs:
     needs:
       - ci_build
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
-    runs-on: macos-15-large
+    if: ${{ inputs.enable_coverage || needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
+    runs-on: ${{ inputs.runner_os || 'macos-15-large' }}
     steps:
       - name: checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -112,6 +125,8 @@ jobs:
       - name: macOS Elevated CI
         uses: "./.github/actions/test/nix"
         with:
+          artifact_name: ${{ inputs.artifact_name || 'build' }}
+          enable_coverage: ${{ inputs.enable_coverage || false }}
           purpose: ElevatedPesterTests
           tagSet: CI
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -120,8 +135,8 @@ jobs:
     needs:
       - ci_build
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
-    runs-on: macos-15-large
+    if: ${{ inputs.enable_coverage || needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
+    runs-on: ${{ inputs.runner_os || 'macos-15-large' }}
     steps:
       - name: checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -130,6 +145,8 @@ jobs:
       - name: macOS Unelevated Others
         uses: "./.github/actions/test/nix"
         with:
+          artifact_name: ${{ inputs.artifact_name || 'build' }}
+          enable_coverage: ${{ inputs.enable_coverage || false }}
           purpose: UnelevatedPesterTests
           tagSet: Others
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -138,8 +155,8 @@ jobs:
     needs:
       - ci_build
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
-    runs-on: macos-15-large
+    if: ${{ inputs.enable_coverage || needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
+    runs-on: ${{ inputs.runner_os || 'macos-15-large' }}
     steps:
       - name: checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -148,6 +165,8 @@ jobs:
       - name: macOS Elevated Others
         uses: "./.github/actions/test/nix"
         with:
+          artifact_name: ${{ inputs.artifact_name || 'build' }}
+          enable_coverage: ${{ inputs.enable_coverage || false }}
           purpose: ElevatedPesterTests
           tagSet: Others
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -155,16 +174,17 @@ jobs:
     name: xUnit Tests
     needs:
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
+    if: ${{ inputs.enable_coverage || needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     uses: ./.github/workflows/xunit-tests.yml
     with:
-      runner_os: macos-15-large
-      test_results_artifact_name: testResults-xunit
+      runner_os: ${{ inputs.runner_os || 'macos-15-large' }}
+      test_results_artifact_name: testResults-xunit-${{ inputs.artifact_name || 'build' }}
+      enable_coverage: ${{ inputs.enable_coverage || false }}
   PackageMac-macos_packaging:
     name: macOS packaging and testing
     needs:
       - changes
-    if: ${{ needs.changes.outputs.packagingChanged == 'true' }}
+    if: ${{ !inputs.test_only && needs.changes.outputs.packagingChanged == 'true' }}
     runs-on:
       - macos-15-large
     steps:

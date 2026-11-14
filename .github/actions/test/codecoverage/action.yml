@@ -1,0 +1,15 @@
+name: Upload .NET coverage
+description: 'Uploads the normalized coverage and collector output from this test job'
+inputs:
+  suite:
+    description: 'Unique suite name'
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Upload coverage
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+      with:
+        name: codecoverage-${{ runner.os }}-${{ runner.arch }}-${{ inputs.suite }}
+        path: ${{ github.workspace }}/coverage
+        if-no-files-found: error

@@ -1,0 +1,139 @@
+name: PR-CI
+
+on:
+  pull_request:
+    branches:
+      - master
+      - release/**
+      - github-mirror
+      - "servicing-*"
+      - "*-feature"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-ci-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  POWERSHELL_TELEMETRY_OPTOUT: 1
+
+jobs:
+  changes:
+    name: Coverage change detection
+    if: startsWith(github.repository_owner, 'azure') || github.repository_owner == 'PowerShell'
+    runs-on: ubuntu-24.04
+    outputs:
+      coverage: ${{ steps.changes.outputs.enabled }}
+    steps:
+      - name: Checkout PR merge and history
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Detect executable code changes
+        id: changes
+        shell: pwsh
+        run: |
+          Import-Module ./tools/codecoverage.psm1
+          Get-CodeCoverageChange
+
+  windows:
+    needs: changes
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: windows-latest
+            artifact: build-Windows-X64
+            test_only: false
+          - runner: windows-11-arm
+            artifact: build-Windows-ARM64
+            test_only: true
+    uses: ./.github/workflows/windows-ci.yml
+    permissions:
+      contents: read
+      pull-requests: read
+      actions: read
+      security-events: write
+    with:
+      runner_os: ${{ matrix.runner }}
+      artifact_name: ${{ matrix.artifact }}
+      enable_coverage: ${{ needs.changes.outputs.coverage == 'true' }}
+      test_only: ${{ matrix.test_only }}
+
+  linux:
+    needs: changes
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            artifact: build-Linux-X64
+            test_only: false
+          - runner: ubuntu-24.04-arm
+            artifact: build-Linux-ARM64
+            test_only: true
+    uses: ./.github/workflows/linux-ci.yml
+    permissions:
+      contents: read
+      pull-requests: read
+    with:
+      runner_os: ${{ matrix.runner }}
+      artifact_name: ${{ matrix.artifact }}
+      enable_coverage: ${{ needs.changes.outputs.coverage == 'true' }}
+      test_only: ${{ matrix.test_only }}
+
+  macos:
+    needs: changes
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15-large
+            artifact: build-macOS-X64
+            test_only: false
+          - runner: macos-15
+            artifact: build-macOS-ARM64
+            test_only: true
+    uses: ./.github/workflows/macos-ci.yml
+    permissions:
+      contents: read
+      pull-requests: read
+    with:
+      runner_os: ${{ matrix.runner }}
+      artifact_name: ${{ matrix.artifact }}
+      enable_coverage: ${{ needs.changes.outputs.coverage == 'true' }}
+      test_only: ${{ matrix.test_only }}
+
+  coverage:
+    name: Aggregate .NET coverage
+    needs: [changes, windows, linux, macos]
+    if: always() && needs.changes.outputs.coverage == 'true'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout tested commit and history
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Download this run's coverage
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          pattern: codecoverage-*
+          path: ${{ github.workspace }}/coverage-input
+      - name: Report aggregate coverage and annotated PR diff
+        if: always()
+        shell: pwsh
+        run: |
+          Import-Module ./tools/codecoverage.psm1
+          Publish-CodeCoverageReport
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: codecoverage-report
+          path: ${{ github.workspace }}/coverage-report
+          if-no-files-found: error

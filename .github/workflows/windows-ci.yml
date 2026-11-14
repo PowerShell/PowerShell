@@ -16,18 +16,26 @@ on:
       - "!.dependabot/config.yml"
       - "!test/perf/**"
       - "!.pipelines/**"
-  pull_request:
-    branches:
-      - master
-      - release/**
-      - github-mirror
-      - "servicing-*"
-      - "*-feature"
+  workflow_call:
+    inputs:
+      runner_os:
+        type: string
+        default: windows-latest
+      artifact_name:
+        type: string
+        default: build
+      enable_coverage:
+        type: boolean
+        default: false
+      test_only:
+        description: 'Additional architecture: skip packaging and analysis'
+        type: boolean
+        default: false
 
 # Path filters for PRs need to go into the changes job
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  group: windows-${{ inputs.runner_os || 'windows-latest' }}-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: ${{ contains(github.ref, 'merge')}}
 
 permissions:
@@ -73,8 +81,8 @@ jobs:
   ci_build:
     name: Build PowerShell
     needs: changes
-    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
-    runs-on: windows-latest
+    if: ${{ inputs.enable_coverage || needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
+    runs-on: ${{ inputs.runner_os || 'windows-latest' }}
     steps:
       - name: checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -82,13 +90,16 @@ jobs:
           fetch-depth: 1000
       - name: Build
         uses: "./.github/actions/build/ci"
+        with:
+          configuration: ${{ inputs.enable_coverage && 'CodeCoverage' || 'Release' }}
+          artifact_name: ${{ inputs.artifact_name || 'build' }}
   windows_test_unelevated_ci:
     name: Windows Unelevated CI
     needs:
       - ci_build
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
-    runs-on: windows-latest
+    if: ${{ inputs.enable_coverage || needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
+    runs-on: ${{ inputs.runner_os || 'windows-latest' }}
     steps:
       - name: checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -97,6 +108,8 @@ jobs:
       - name: Windows Unelevated CI
         uses: "./.github/actions/test/windows"
         with:
+          artifact_name: ${{ inputs.artifact_name || 'build' }}
+          enable_coverage: ${{ inputs.enable_coverage || false }}
           purpose: UnelevatedPesterTests
           tagSet: CI
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -105,8 +118,8 @@ jobs:
     needs:
       - ci_build
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
-    runs-on: windows-latest
+    if: ${{ inputs.enable_coverage || needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
+    runs-on: ${{ inputs.runner_os || 'windows-latest' }}
     steps:
       - name: checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -115,6 +128,8 @@ jobs:
       - name: Windows Elevated CI
         uses: "./.github/actions/test/windows"
         with:
+          artifact_name: ${{ inputs.artifact_name || 'build' }}
+          enable_coverage: ${{ inputs.enable_coverage || false }}
           purpose: ElevatedPesterTests
           tagSet: CI
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -123,8 +138,8 @@ jobs:
     needs:
       - ci_build
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
-    runs-on: windows-latest
+    if: ${{ inputs.enable_coverage || needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
+    runs-on: ${{ inputs.runner_os || 'windows-latest' }}
     steps:
       - name: checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -133,6 +148,8 @@ jobs:
       - name: Windows Unelevated Others
         uses: "./.github/actions/test/windows"
         with:
+          artifact_name: ${{ inputs.artifact_name || 'build' }}
+          enable_coverage: ${{ inputs.enable_coverage || false }}
           purpose: UnelevatedPesterTests
           tagSet: Others
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -141,8 +158,8 @@ jobs:
     needs:
       - ci_build
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
-    runs-on: windows-latest
+    if: ${{ inputs.enable_coverage || needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
+    runs-on: ${{ inputs.runner_os || 'windows-latest' }}
     steps:
       - name: checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -151,6 +168,8 @@ jobs:
       - name: Windows Elevated Others
         uses: "./.github/actions/test/windows"
         with:
+          artifact_name: ${{ inputs.artifact_name || 'build' }}
+          enable_coverage: ${{ inputs.enable_coverage || false }}
           purpose: ElevatedPesterTests
           tagSet: Others
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -158,15 +177,16 @@ jobs:
     name: xUnit Tests
     needs:
       - changes
-    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
+    if: ${{ inputs.enable_coverage || needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
     uses: ./.github/workflows/xunit-tests.yml
     with:
-      runner_os: windows-latest
-      test_results_artifact_name: testResults-xunit
+      runner_os: ${{ inputs.runner_os || 'windows-latest' }}
+      test_results_artifact_name: testResults-xunit-${{ inputs.artifact_name || 'build' }}
+      enable_coverage: ${{ inputs.enable_coverage || false }}
   analyze:
     name: CodeQL Analysis
     needs: changes
-    if: ${{ needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true' }}
+    if: ${{ !inputs.test_only && (needs.changes.outputs.source == 'true' || needs.changes.outputs.buildModuleChanged == 'true') }}
     uses: ./.github/workflows/analyze-reusable.yml
     permissions:
       actions: read
@@ -178,7 +198,7 @@ jobs:
     name: Windows Packaging
     needs:
       - changes
-    if: ${{ needs.changes.outputs.packagingChanged == 'true' }}
+    if: ${{ !inputs.test_only && needs.changes.outputs.packagingChanged == 'true' }}
     uses: ./.github/workflows/windows-packaging-reusable.yml
   ready_to_merge:
     name: windows ready to merge

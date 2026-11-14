@@ -2,6 +2,12 @@ name: windows_test
 description: 'Test PowerShell on Windows'
 
 inputs:
+  artifact_name:
+    description: 'Build artifact to download'
+    default: build
+  enable_coverage:
+    description: 'Collect .NET coverage while running tests once'
+    default: 'false'
   purpose:
     required: false
     default: ''
@@ -31,7 +37,8 @@ runs:
   - name: Download Build Artifacts
     uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
     with:
-      path: "${{ github.workspace }}"
+      name: ${{ inputs.artifact_name }}
+      path: "${{ github.workspace }}/build"
 
   - name: Capture Artifacts Directory
     continue-on-error: true
@@ -58,7 +65,8 @@ runs:
       $latestVersion = $latestRelease.tag_name.TrimStart("v")
       Write-Host "Latest DSC Version: $latestVersion"
 
-      $downloadUrl = $latestRelease.assets | Where-Object { $_.name -like "DSC-*-x86_64-pc-windows-msvc.zip" } | Select-Object -First 1 | Select-Object -ExpandProperty browser_download_url
+      $architecture = if ($env:RUNNER_ARCH -eq 'ARM64') { 'aarch64' } else { 'x86_64' }
+      $downloadUrl = $latestRelease.assets | Where-Object { $_.name -like "DSC-*-$architecture-pc-windows-msvc.zip" } | Select-Object -First 1 | Select-Object -ExpandProperty browser_download_url
       Write-Host "Download URL: $downloadUrl"
       $tempPath = Get-GWTempPath
       Invoke-RestMethod -Uri $downloadUrl -OutFile "$tempPath\DSC.zip" -Headers $headers
@@ -96,12 +104,25 @@ runs:
       $path = split-path -path $options.Output
       $rootPath = split-Path -path $path
       Expand-Archive -Path '${{ github.workspace }}\build\build.zip' -DestinationPath $rootPath -Force
-      Invoke-CITest -Purpose '${{ inputs.purpose }}' -TagSet '${{ inputs.tagSet }}' -OutputFormat NUnitXml
+      if ('${{ inputs.enable_coverage }}' -eq 'true') {
+        Import-Module ./tools/codecoverage.psm1
+        Invoke-CodeCoverageTest -BinaryDirectory $path -Suite '${{ inputs.purpose }}-${{ inputs.tagSet }}' -Test {
+          Invoke-CITest -Purpose '${{ inputs.purpose }}' -TagSet '${{ inputs.tagSet }}' -OutputFormat NUnitXml
+        }
+      } else {
+        Invoke-CITest -Purpose '${{ inputs.purpose }}' -TagSet '${{ inputs.tagSet }}' -OutputFormat NUnitXml
+      }
     shell: pwsh
+
+  - name: Upload .NET coverage
+    if: always() && inputs.enable_coverage == 'true'
+    uses: "./.github/actions/test/codecoverage"
+    with:
+      suite: "${{ inputs.purpose }}-${{ inputs.tagSet }}"
 
   - name: Convert, Publish, and Upload Pester Test Results
     uses: "./.github/actions/test/process-pester-results"
     with:
-      name: "${{ inputs.purpose }}-${{ inputs.tagSet }}"
+      name: "${{ runner.os }}-${{ runner.arch }}-${{ inputs.purpose }}-${{ inputs.tagSet }}"
       testResultsFolder: ${{ runner.workspace }}\testResults
       ctrfFolder: "${{ inputs.ctrfFolder }}"

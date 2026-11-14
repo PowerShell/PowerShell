@@ -202,7 +202,9 @@ function Invoke-CIxUnit
 {
     param(
         [switch]
-        $SkipFailing
+        $SkipFailing,
+        [switch]
+        $SkipBuild
     )
     $env:CoreOutput = Split-Path -Parent (Get-PSOutput -Options (Get-PSOptions))
     $path = "$env:CoreOutput\pwsh.exe"
@@ -218,7 +220,7 @@ function Invoke-CIxUnit
 
     $xUnitTestResultsFile = Join-Path -Path $PWD -ChildPath "xUnitTestResults.xml"
 
-    Start-PSxUnit -xUnitTestResultsFile $xUnitTestResultsFile
+    Start-PSxUnit -xUnitTestResultsFile $xUnitTestResultsFile -SkipBuild:$SkipBuild
     Push-Artifact -Path $xUnitTestResultsFile -name xunit
 
     if(!$SkipFailing.IsPresent)

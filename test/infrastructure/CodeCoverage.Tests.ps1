@@ -1,0 +1,256 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+Import-Module "$PSScriptRoot/../../tools/codecoverage.psm1" -Force
+
+Describe 'CI .NET code coverage' {
+    InModuleScope codecoverage {
+        BeforeAll {
+            function New-CoverageFixture {
+                param([string] $Path, [string] $Filename, [int] $FirstHits, [int] $SecondHits)
+                $escaped = [System.Security.SecurityElement]::Escape($Filename)
+                @"
+<!DOCTYPE coverage SYSTEM "https://invalid.example/coverage.dtd">
+<coverage><packages><package><classes>
+  <class filename="$escaped"><lines>
+    <line number="1" hits="$FirstHits"/><line number="2" hits="$SecondHits"/>
+  </lines></class>
+  <class filename="$escaped"><lines><line number="1" hits="0"/></lines></class>
+  <class filename="test/xUnit/Test.cs"><lines><line number="1" hits="100"/></lines></class>
+</classes></package></packages></coverage>
+"@ | Set-Content -LiteralPath $Path
+            }
+        }
+
+        It 'normalizes paths across OS/build roots and unions executable lines rather than percentages' {
+            $windows = Join-Path $TestDrive 'windows.xml'
+            $linux = Join-Path $TestDrive 'linux.xml'
+            New-CoverageFixture $windows 'D:\a\PowerShell\PowerShell\src\Sample.cs' 2 0
+            New-CoverageFixture $linux '/_/src/Sample.cs' 0 3
+            $first = ConvertFrom-CodeCoverage -Path $windows -SourceFile @('src/Sample.cs')
+            $second = ConvertFrom-CodeCoverage -Path $linux -SourceFile @('src/Sample.cs')
+            $merged = Merge-CodeCoverage -Run @(@{ Files = $first }, @{ Files = $second })
+            $result = Get-CodeCoverageSummary -File $merged
+            $result.Total | Should -Be 2
+            $result.Covered | Should -Be 2
+            $result.Percent | Should -Be '100.00%'
+            (Get-CodeCoverageSummary -File $first).Percent | Should -Be '50.00%'
+        }
+
+        It 'rejects empty/unrecognized source coverage rather than reporting success' {
+            $xmlPath = Join-Path $TestDrive 'unrecognized.xml'
+            New-CoverageFixture $xmlPath '/tmp/external.cs' 1 0
+            { ConvertFrom-CodeCoverage -Path $xmlPath -SourceFile @('src/Sample.cs') } | Should -Throw '*No tracked*'
+        }
+
+        Context 'Collector lifecycle' {
+            BeforeEach {
+                $script:binaryDirectory = Join-Path $TestDrive 'binaries'
+                $script:outputDirectory = Join-Path $TestDrive 'coverage'
+                $null = New-Item -ItemType Directory -Path $binaryDirectory -Force
+                'binary' | Set-Content (Join-Path $binaryDirectory 'System.Management.Automation.dll')
+                'symbols' | Set-Content (Join-Path $binaryDirectory 'System.Management.Automation.pdb')
+                Mock Install-CodeCoverageTool { 'collector' }
+                Mock Start-CodeCoverageCollector {}
+                Mock Start-NativeExecution {
+                    param($ScriptBlock)
+                    if ($ScriptBlock.ToString() -match 'git') { 'src/Sample.cs' }
+                }
+                Mock Get-CodeCoverageSequencePoint { @{ 'src/Sample.cs' = @{ '1' = $false; '2' = $false } } }
+                Mock ConvertFrom-CodeCoverage { @{ 'src/Sample.cs' = @{ '1' = $true } } }
+            }
+
+            It 'executes tests once and retains zero-hit executable lines' {
+                $script:executionCount = 0
+                Invoke-CodeCoverageTest -BinaryDirectory $binaryDirectory -OutputDirectory $outputDirectory -Suite fixture -Test {
+                    $script:executionCount++
+                }
+                $executionCount | Should -Be 1
+                $data = Get-Content (Join-Path $outputDirectory 'coverage.json') -Raw | ConvertFrom-Json -AsHashtable
+                $data.Passed | Should -BeTrue
+                $data.Files['src/Sample.cs']['1'] | Should -BeTrue
+                $data.Files['src/Sample.cs']['2'] | Should -BeFalse
+                Should -Invoke Start-NativeExecution -Times 1 -Exactly -ParameterFilter { $ScriptBlock.ToString() -match 'uninstrument' }
+            }
+
+            It 'restores binaries and preserves a test failure if finalization also fails' {
+                Mock Start-NativeExecution {
+                    param($ScriptBlock)
+                    if ($ScriptBlock.ToString() -match 'shutdown') { throw 'collector failure' }
+                    if ($ScriptBlock.ToString() -match 'git') { 'src/Sample.cs' }
+                }
+                Mock Write-Error {}
+                { Invoke-CodeCoverageTest -BinaryDirectory $binaryDirectory -OutputDirectory $outputDirectory -Suite fixture -Test {
+                    throw 'original test failure'
+                } } | Should -Throw '*original test failure*'
+                Should -Invoke Start-NativeExecution -Times 1 -Exactly -ParameterFilter { $ScriptBlock.ToString() -match 'uninstrument' }
+                Should -Invoke Write-Error -Times 1 -Exactly -ParameterFilter { $ErrorRecord.Exception.Message -eq 'collector failure' }
+            }
+        }
+
+        Context 'PR commit identity and report' {
+            BeforeEach {
+                $script:savedEnvironment = @{}
+                foreach ($name in 'GITHUB_SHA', 'GITHUB_RUN_ID', 'GITHUB_RUN_ATTEMPT', 'GITHUB_STEP_SUMMARY') {
+                    $script:savedEnvironment[$name] = [System.Environment]::GetEnvironmentVariable($name)
+                }
+                $env:GITHUB_RUN_ID = '123'
+                $env:GITHUB_RUN_ATTEMPT = '2'
+                $env:GITHUB_STEP_SUMMARY = Join-Path $TestDrive 'summary.md'
+                $script:repository = Join-Path $TestDrive ([guid]::NewGuid().ToString())
+                $null = New-Item -ItemType Directory -Path (Join-Path $repository 'src') -Force
+                Push-Location $repository
+                Start-NativeExecution { git init --quiet -b main } | Out-Null
+                Start-NativeExecution { git config user.name 'Coverage test' } | Out-Null
+                Start-NativeExecution { git config user.email 'coverage@example.invalid' } | Out-Null
+                Start-NativeExecution { git config commit.gpgsign false } | Out-Null
+                Start-NativeExecution { git config core.autocrlf false } | Out-Null
+                "old`nunchanged`nold" | Set-Content -LiteralPath 'src/Sample.cs'
+                Start-NativeExecution { git add -- . } | Out-Null
+                Start-NativeExecution { git commit --quiet -m baseline } | Out-Null
+                $script:baseCommit = Start-NativeExecution { git rev-parse HEAD }
+                Start-NativeExecution { git checkout --quiet -b feature } | Out-Null
+                $script:eventPath = Join-Path $TestDrive 'event.json'
+            }
+
+            AfterEach {
+                Pop-Location
+                foreach ($name in $script:savedEnvironment.Keys) {
+                    [System.Environment]::SetEnvironmentVariable($name, $script:savedEnvironment[$name])
+                }
+            }
+
+            It 'skips documentation-only changes' {
+                'documentation' | Set-Content -LiteralPath README.md
+                Start-NativeExecution { git add -- .; git commit --quiet -m documentation } | Out-Null
+                $head = Start-NativeExecution { git rev-parse HEAD }
+                $env:GITHUB_SHA = $head
+                @{ pull_request = @{ base = @{ sha = $baseCommit }; head = @{ sha = $head } } } |
+                    ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $eventPath
+                (Get-CodeCoverageChange -EventPath $eventPath -OutputPath '').Enabled | Should -BeFalse
+            }
+
+            It 'collects .NET coverage for PowerShell-only and deleted-script PRs' {
+                'Write-Output 1' | Set-Content -LiteralPath script.ps1
+                Start-NativeExecution { git add -- .; git commit --quiet -m script } | Out-Null
+                $head = Start-NativeExecution { git rev-parse HEAD }
+                $env:GITHUB_SHA = $head
+                @{ pull_request = @{ base = @{ sha = $baseCommit }; head = @{ sha = $head } } } |
+                    ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $eventPath
+                (Get-CodeCoverageChange -EventPath $eventPath -OutputPath '').Enabled | Should -BeTrue
+
+                $deletionBase = $head
+                Remove-Item -LiteralPath script.ps1
+                Start-NativeExecution { git add -- .; git commit --quiet -m deletion } | Out-Null
+                $head = Start-NativeExecution { git rev-parse HEAD }
+                $env:GITHUB_SHA = $head
+                @{ pull_request = @{ base = @{ sha = $deletionBase }; head = @{ sha = $head } } } |
+                    ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $eventPath
+                (Get-CodeCoverageChange -EventPath $eventPath -OutputPath '').Enabled | Should -BeTrue
+            }
+
+            It 'excludes pulled base changes and annotates the tested synthetic merge' {
+                Start-NativeExecution { git checkout --quiet main } | Out-Null
+                'upstream' | Set-Content -LiteralPath upstream.ps1
+                Start-NativeExecution { git add -- .; git commit --quiet -m upstream } | Out-Null
+                $newBase = Start-NativeExecution { git rev-parse HEAD }
+                Start-NativeExecution { git checkout --quiet feature; git merge --quiet --no-edit main } | Out-Null
+                "covered <tag>`nunchanged`nuncovered" | Set-Content -LiteralPath 'src/Sample.cs'
+                Start-NativeExecution { git add -- .; git commit --quiet -m feature } | Out-Null
+                $head = Start-NativeExecution { git rev-parse HEAD }
+                Start-NativeExecution { git checkout --quiet main; git merge --quiet --no-ff --no-edit feature } | Out-Null
+                $env:GITHUB_SHA = Start-NativeExecution { git rev-parse HEAD }
+                @{ pull_request = @{ base = @{ sha = $newBase }; head = @{ sha = $head } } } |
+                    ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $eventPath
+                $change = Get-CodeCoverageChange -EventPath $eventPath -OutputPath ''
+                $change.DiffBase | Should -Be $newBase
+                $change.ChangedFile | Should -Not -Contain 'upstream.ps1'
+
+                $inputPath = Join-Path $TestDrive 'input'
+                $outputPath = Join-Path $TestDrive 'report'
+                $null = New-Item -ItemType Directory -Path $inputPath -Force
+                @{
+                    Commit = $env:GITHUB_SHA; RunId = '123'; RunAttempt = '2'
+                    Platform = 'Linux'; Architecture = 'ARM64'; Suite = 'xunit'; Passed = $true
+                    Files = @{ 'src/Sample.cs' = @{ '1' = $true; '3' = $false } }
+                } | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $inputPath 'coverage.json')
+                Write-CodeCoverageReport -InputDirectory $inputPath -OutputDirectory $outputPath -ExpectedRun 'Linux/ARM64/xunit' -Change $change
+                $html = Get-Content -LiteralPath (Join-Path $outputPath 'index.html') -Raw
+                $html | Should -Match 'class="covered".*\+covered &lt;tag&gt;'
+                $html | Should -Match 'class="uncovered".*\+uncovered'
+                $report = Get-Content -LiteralPath (Join-Path $outputPath 'summary.md') -Raw
+                $report | Should -Match '50.00%'
+                $report | Should -Match 'delta: \*\*unavailable'
+                $report | Should -Match 'patch coverage, not a baseline delta'
+            }
+
+            It 'uses the merge base after a rebase rather than a previous push' {
+                Start-NativeExecution { git checkout --quiet main } | Out-Null
+                'upstream' | Set-Content -LiteralPath README.md
+                Start-NativeExecution { git add -- .; git commit --quiet -m upstream } | Out-Null
+                $newBase = Start-NativeExecution { git rev-parse HEAD }
+                Start-NativeExecution { git checkout --quiet feature } | Out-Null
+                'script' | Set-Content -LiteralPath changed.psm1
+                Start-NativeExecution { git add -- .; git commit --quiet -m feature; git rebase --quiet main } | Out-Null
+                $env:GITHUB_SHA = Start-NativeExecution { git rev-parse HEAD }
+                @{ pull_request = @{ base = @{ sha = $newBase }; head = @{ sha = $env:GITHUB_SHA } } } |
+                    ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $eventPath
+                $change = Get-CodeCoverageChange -EventPath $eventPath -OutputPath ''
+                $change.DiffBase | Should -Be $newBase
+                $change.ChangedFile | Should -Contain 'changed.psm1'
+                $change.ChangedFile | Should -Not -Contain 'README.md'
+            }
+
+            It 'maps the diff to merged line numbers when upstream was not pulled into the PR' {
+                Start-NativeExecution { git checkout --quiet main } | Out-Null
+                $original = @(1..20 | ForEach-Object { "line $_" })
+                $original | Set-Content -LiteralPath 'src/Sample.cs'
+                Start-NativeExecution { git add -- .; git commit --quiet -m seed; git checkout --quiet feature; git rebase --quiet main } | Out-Null
+                $modified = @($original)
+                $modified[19] = 'feature change'
+                $modified | Set-Content -LiteralPath 'src/Sample.cs'
+                Start-NativeExecution { git add -- .; git commit --quiet -m feature } | Out-Null
+                $head = Start-NativeExecution { git rev-parse HEAD }
+                Start-NativeExecution { git checkout --quiet main } | Out-Null
+                @('upstream first', 'upstream second') + $original | Set-Content -LiteralPath 'src/Sample.cs'
+                Start-NativeExecution { git add -- .; git commit --quiet -m upstream } | Out-Null
+                $newBase = Start-NativeExecution { git rev-parse HEAD }
+                Start-NativeExecution { git merge --quiet --no-ff --no-edit feature } | Out-Null
+                $env:GITHUB_SHA = Start-NativeExecution { git rev-parse HEAD }
+                @{ pull_request = @{ base = @{ sha = $newBase }; head = @{ sha = $head } } } |
+                    ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $eventPath
+                $change = Get-CodeCoverageChange -EventPath $eventPath -OutputPath ''
+                $inputPath = Join-Path $TestDrive 'merged-input'
+                $outputPath = Join-Path $TestDrive 'merged-report'
+                $null = New-Item -ItemType Directory -Path $inputPath -Force
+                @{
+                    Commit = $env:GITHUB_SHA; RunId = '123'; RunAttempt = '2'
+                    Platform = 'Linux'; Architecture = 'X64'; Suite = 'xunit'; Passed = $true
+                    Files = @{ 'src/Sample.cs' = @{ '20' = $false; '22' = $true } }
+                } | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $inputPath 'coverage.json')
+                Write-CodeCoverageReport -InputDirectory $inputPath -OutputDirectory $outputPath -ExpectedRun 'Linux/X64/xunit' -Change $change
+                $html = Get-Content -LiteralPath (Join-Path $outputPath 'index.html') -Raw
+                $html | Should -Match 'class="covered">22\s+covered\s+\+feature change'
+                $html | Should -Not -Match '\+upstream'
+            }
+
+            It 'writes an incomplete report when all suites are missing' {
+                $change = @{ TestCommit = $baseCommit; DiffBase = $baseCommit; ChangedFile = @() }
+                $outputPath = Join-Path $TestDrive 'missing-report'
+                { Write-CodeCoverageReport -InputDirectory (Join-Path $TestDrive 'empty') -OutputDirectory $outputPath -ExpectedRun 'Linux/X64/xunit' -Change $change } |
+                    Should -Throw '*Incomplete coverage*'
+                Get-Content -LiteralPath (Join-Path $outputPath 'summary.md') -Raw | Should -Match 'Missing: Linux/X64/xunit'
+            }
+
+            It 'rejects coverage from a previous run attempt' {
+                $inputPath = Join-Path $TestDrive 'stale'
+                $null = New-Item -ItemType Directory -Path $inputPath -Force
+                @{ Commit = $baseCommit; RunId = '123'; RunAttempt = '1' } |
+                    ConvertTo-Json | Set-Content -LiteralPath (Join-Path $inputPath 'coverage.json')
+                $change = @{ TestCommit = $baseCommit; DiffBase = $baseCommit; ChangedFile = @() }
+                { Write-CodeCoverageReport -InputDirectory $inputPath -OutputDirectory (Join-Path $TestDrive 'stale-report') -ExpectedRun 'Linux/X64/xunit' -Change $change } |
+                    Should -Throw '*different commit, run, or attempt*'
+            }
+        }
+    }
+}
