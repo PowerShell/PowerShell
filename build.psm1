@@ -2433,7 +2433,7 @@ function Test-PSPesterResults
         A Pester PassThru result object to inspect instead of parsing a file.
     .PARAMETER CanHaveNoResult
         When specified with ResultObject, suppresses the 'NO TESTS RUN' exception for
-        zero-count results.
+        zero-count results. Failed tests still cause an exception.
     #>
     [CmdletBinding(DefaultParameterSetName='file')]
     param(
@@ -2495,7 +2495,7 @@ function Test-PSPesterResults
                 throw 'NO TESTS RUN'
             }
         }
-        elseif ($ResultObject.FailedCount -gt 0)
+        if ($ResultObject.FailedCount -gt 0)
         {
             Write-LogGroupStart -Title 'TEST FAILURES'
 

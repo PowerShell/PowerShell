@@ -44,6 +44,10 @@ Describe 'CI .NET code coverage' {
         }
 
         Context 'Collector lifecycle' {
+            BeforeAll {
+                Import-Module "$PSScriptRoot/../../build.psm1" -Force
+            }
+
             BeforeEach {
                 $script:collectorEnvironment = @{}
                 foreach ($name in 'PS_CODE_COVERAGE', 'XDG_RUNTIME_DIR', 'TMPDIR') {
@@ -130,6 +134,36 @@ Describe 'CI .NET code coverage' {
                 }
                 Should -Invoke Start-CodeCoverageCollector -Times 0 -Exactly
                 Should -Invoke Start-NativeExecution -Times 1 -Exactly -ParameterFilter { $ScriptBlock.ToString() -match 'uninstrument' }
+            }
+
+            It 'publishes a failed suite when Pester fails with CanHaveNoResult=<AllowEmpty>' -TestCases @(
+                @{ AllowEmpty = $false }
+                @{ AllowEmpty = $true }
+            ) {
+                param([bool] $AllowEmpty)
+                Mock Write-LogGroupStart {} -ModuleName build
+                Mock Write-LogGroupEnd {} -ModuleName build
+                Mock Show-PSPesterError {} -ModuleName build
+                $resultObject = [pscustomobject]@{
+                    TotalCount = 2
+                    FailedCount = 1
+                    TestResult = @(
+                        [pscustomobject]@{ Name = 'failed test'; Passed = $false }
+                        [pscustomobject]@{ Name = 'passed test'; Passed = $true }
+                    )
+                }
+                { Invoke-CodeCoverageTest -BinaryDirectory $binaryDirectory -OutputDirectory $outputDirectory -Suite fixture -Test {
+                    Test-PSPesterResults -ResultObject $resultObject -CanHaveNoResult:$AllowEmpty
+                } } | Should -Throw '*1 tests in * failed'
+                $data = Get-Content (Join-Path $outputDirectory 'coverage.json') -Raw | ConvertFrom-Json -AsHashtable
+                $data.Passed | Should -BeFalse
+                Should -Invoke Show-PSPesterError -ModuleName build -Times 1 -Exactly -ParameterFilter { $testFailureObject.Name -eq 'failed test' }
+            }
+
+            It 'requires main-run tests while permitting an explicitly empty experimental run' {
+                $resultObject = [pscustomobject]@{ TotalCount = 0; FailedCount = 0; TestResult = @() }
+                { Test-PSPesterResults -ResultObject $resultObject } | Should -Throw '*NO TESTS RUN*'
+                { Test-PSPesterResults -ResultObject $resultObject -CanHaveNoResult } | Should -Not -Throw
             }
 
             It 'matches the Windows x64 unelevated collector to the test trust level' -Skip:(-not $IsWindows) {

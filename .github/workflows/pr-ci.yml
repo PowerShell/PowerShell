@@ -122,7 +122,7 @@ jobs:
       - name: Download this run's coverage
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
-          pattern: codecoverage-*
+          pattern: 'codecoverage-{Windows,Linux,macOS}-{X64,ARM64}-*'
           path: ${{ github.workspace }}/coverage-input
       - name: Report aggregate coverage and annotated PR diff
         if: always()

@@ -55,6 +55,8 @@ Artifacts are scoped to the same run, attempt, and tested commit; missing or fai
 suites produce an explicitly incomplete report and fail the aggregate job.
 Rerun all jobs when rerunning coverage: rerunning only failed jobs cannot combine
 previous-attempt coverage with current-attempt results.
+Only platform/architecture/suite artifacts are downloaded as aggregate inputs;
+the generated `codecoverage-report` is excluded, including on reruns.
 
 The platform workflows remain available for push/manual runs. PR triggers now
 live in `pr-ci.yml`, allowing one aggregate to depend on all six runner variants
