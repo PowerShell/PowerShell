@@ -275,7 +275,7 @@ try {
         }
         foreach ($argument in @('collect', '--session-id', $SessionId, '--server-mode', '--background',
                 '--timeout', '30000', '--output', $OutputPath, '--output-format', 'cobertura',
-                '--settings', $SettingsPath, '--nologo')) {
+                '--settings', $SettingsPath, '--log-file', "$OutputPath.log", '--log-level', 'Verbose', '--nologo')) {
             $startInfo.ArgumentList.Add($argument)
         }
     }
@@ -286,6 +286,11 @@ try {
             throw 'Coverage collector startup timed out.'
         }
         if ($process.ExitCode -ne 0) {
+            foreach ($logPath in @("$OutputPath.log", "$OutputPath.background.log")) {
+                if (Test-Path -LiteralPath $logPath) {
+                    Get-Content -LiteralPath $logPath -Tail 100 -ErrorAction Continue | Out-Host
+                }
+            }
             throw "Coverage collector startup failed with exit code $($process.ExitCode)."
         }
         if ($readyPath) {
@@ -384,12 +389,13 @@ function Invoke-CodeCoverageTest {
     try {
         $env:PS_CODE_COVERAGE = '1'
         if (-not $IsWindows) {
-            $runtimeDirectory = "/tmp/pwsh-codecoverage-$session/"
+            $runtimeId = [Convert]::ToBase64String(([guid] $session).ToByteArray()).TrimEnd('=').Replace('/', '_').Replace('+', '-')
+            $runtimeDirectory = "/tmp/p$runtimeId/"
             $null = [System.IO.Directory]::CreateDirectory($runtimeDirectory, [System.IO.UnixFileMode]'UserRead,UserWrite,UserExecute')
             $env:XDG_RUNTIME_DIR = $runtimeDirectory
             $env:TMPDIR = $runtimeDirectory
             if ($Suite.StartsWith('ElevatedPesterTests-')) {
-                $sudoRuntimeDirectory = "/tmp/pwsh-codecoverage-sudo-$session/"
+                $sudoRuntimeDirectory = "/tmp/r$runtimeId/"
                 Start-NativeExecution { & sudo -n mkdir -m 700 -- $sudoRuntimeDirectory } | Out-Host
                 $sudoDirectoryCreated = $true
                 $sudoEnvironment = @{ XDG_RUNTIME_DIR = $sudoRuntimeDirectory; TMPDIR = $sudoRuntimeDirectory }

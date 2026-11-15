@@ -21,7 +21,9 @@ On Unix, collection creates separate, private runtime directories for the runner
 and sudo processes. Elevated tests and their collector receive explicit
 `XDG_RUNTIME_DIR` and `TMPDIR` sudo overrides, avoiding .NET mutex ownership
 conflicts with the runner and older runtimes without changing existing permissions.
-The temporary directories are removed after collection.
+Directory names are kept short to accommodate Unix-domain socket path limits.
+The temporary directories are removed after collection. Collector diagnostic logs
+are included in the coverage artifact; startup failures print the last log entries.
 These environment variables are restored after collection, including on failure.
 Windows x64 unelevated Pester uses a collector at the same restricted trust level
 as the test process; collector readiness is checked before tests start.

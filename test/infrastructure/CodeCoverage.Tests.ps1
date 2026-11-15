@@ -76,7 +76,7 @@ Describe 'CI .NET code coverage' {
                 Mock Start-CodeCoverageCollector {
                     $env:PS_CODE_COVERAGE | Should -BeExactly '1'
                     if (-not $IsWindows) {
-                        $env:XDG_RUNTIME_DIR | Should -Match '^/tmp/pwsh-codecoverage-[a-f0-9-]+/$'
+                        $env:XDG_RUNTIME_DIR | Should -Match '^/tmp/p[A-Za-z0-9_-]{22}/$'
                         $env:TMPDIR | Should -BeExactly $env:XDG_RUNTIME_DIR
                     }
                 }
@@ -84,7 +84,7 @@ Describe 'CI .NET code coverage' {
                     $script:executionCount++
                     $env:PS_CODE_COVERAGE | Should -BeExactly '1'
                     if (-not $IsWindows) {
-                        $env:XDG_RUNTIME_DIR | Should -Match '^/tmp/pwsh-codecoverage-[a-f0-9-]+/$'
+                        $env:XDG_RUNTIME_DIR | Should -Match '^/tmp/p[A-Za-z0-9_-]{22}/$'
                         $env:TMPDIR | Should -BeExactly $env:XDG_RUNTIME_DIR
                     }
                 }
@@ -149,9 +149,19 @@ Describe 'CI .NET code coverage' {
                     param($SudoEnvironment)
                     $script:runtimePath = $env:XDG_RUNTIME_DIR
                     [System.IO.File]::GetUnixFileMode($script:runtimePath) | Should -Be ([System.IO.UnixFileMode]'UserRead,UserWrite,UserExecute')
-                    $SudoEnvironment.XDG_RUNTIME_DIR | Should -Match '^/tmp/pwsh-codecoverage-sudo-[a-f0-9-]+/$'
+                    $SudoEnvironment.XDG_RUNTIME_DIR | Should -Match '^/tmp/r[A-Za-z0-9_-]{22}/$'
                     $SudoEnvironment.TMPDIR | Should -BeExactly $SudoEnvironment.XDG_RUNTIME_DIR
                     $SudoEnvironment.XDG_RUNTIME_DIR | Should -Not -BeExactly $script:runtimePath
+                    $pipePath = Join-Path $script:runtimePath "CoreFxPipe_CodeCoverage.pipe.$([guid]::NewGuid())"
+                    $socket = [System.Net.Sockets.Socket]::new(
+                        [System.Net.Sockets.AddressFamily]::Unix,
+                        [System.Net.Sockets.SocketType]::Stream,
+                        [System.Net.Sockets.ProtocolType]::Unspecified)
+                    try {
+                        $socket.Bind([System.Net.Sockets.UnixDomainSocketEndPoint]::new($pipePath))
+                    } finally {
+                        $socket.Dispose()
+                    }
                 }
                 Should -Invoke Start-CodeCoverageCollector -Times 1 -Exactly -ParameterFilter { $SudoEnvironment.Count -eq 2 }
                 Should -Invoke Start-NativeExecution -Times 1 -Exactly -ParameterFilter { $ScriptBlock.ToString() -match 'mkdir -m 700' }
