@@ -367,9 +367,9 @@ function Invoke-CodeCoverageTest {
     try {
         $env:PS_CODE_COVERAGE = '1'
         if (-not $IsWindows) {
-            # sudo -E must not give root the runner user's private mutex directories.
-            $env:XDG_RUNTIME_DIR = $null
-            $env:TMPDIR = $null
+            # Keep sudo and the runner out of each other's private mutex directories.
+            $env:XDG_RUNTIME_DIR = '/tmp/'
+            $env:TMPDIR = '/tmp/'
         }
         foreach ($assembly in $binary) {
             $assemblyPath = $assembly.FullName

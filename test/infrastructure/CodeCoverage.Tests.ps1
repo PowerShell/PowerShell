@@ -76,16 +76,16 @@ Describe 'CI .NET code coverage' {
                 Mock Start-CodeCoverageCollector {
                     $env:PS_CODE_COVERAGE | Should -BeExactly '1'
                     if (-not $IsWindows) {
-                        $env:XDG_RUNTIME_DIR | Should -BeNullOrEmpty
-                        $env:TMPDIR | Should -BeNullOrEmpty
+                        $env:XDG_RUNTIME_DIR | Should -BeExactly '/tmp/'
+                        $env:TMPDIR | Should -BeExactly '/tmp/'
                     }
                 }
                 Invoke-CodeCoverageTest -BinaryDirectory $binaryDirectory -OutputDirectory $outputDirectory -Suite fixture -Test {
                     $script:executionCount++
                     $env:PS_CODE_COVERAGE | Should -BeExactly '1'
                     if (-not $IsWindows) {
-                        $env:XDG_RUNTIME_DIR | Should -BeNullOrEmpty
-                        $env:TMPDIR | Should -BeNullOrEmpty
+                        $env:XDG_RUNTIME_DIR | Should -BeExactly '/tmp/'
+                        $env:TMPDIR | Should -BeExactly '/tmp/'
                     }
                 }
                 $executionCount | Should -Be 1
