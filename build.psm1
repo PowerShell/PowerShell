@@ -1742,6 +1742,8 @@ function Start-PSPester {
         Skips rebuilding test tool executables before running tests.
     .PARAMETER UseNuGetOrg
         Switches NuGet config to public feeds before running tests.
+    .PARAMETER SudoEnvironment
+        Environment overrides passed explicitly to the sudo test process.
     #>
     [CmdletBinding(DefaultParameterSetName='default')]
     param(
@@ -1773,7 +1775,16 @@ function Start-PSPester {
             HelpMessage='Wait for the debugger to attach to PowerShell before Pester starts.  Debug builds only!')]
         [switch]$Wait,
         [switch]$SkipTestToolBuild,
-        [switch]$UseNuGetOrg
+        [switch]$UseNuGetOrg,
+        [ValidateScript({
+            foreach ($name in $_.Keys) {
+                if ($name -notmatch '^[A-Za-z_][A-Za-z0-9_]*$') {
+                    throw "Invalid sudo environment variable name: $name"
+                }
+            }
+            $true
+        })]
+        [hashtable]$SudoEnvironment = @{}
     )
 
     if ($UseNuGetOrg) {
@@ -2060,7 +2071,8 @@ function Start-PSPester {
                     $passThruCommand = { & $powershell $PSFlags -c $command }
                     if ($Sudo.IsPresent) {
                         # -E says to preserve the environment
-                        $passThruCommand =  { & sudo -E $powershell $PSFlags -c $command }
+                        $sudoEnvironmentArguments = @($SudoEnvironment.GetEnumerator() | ForEach-Object { "$($_.Key)=$($_.Value)" })
+                        $passThruCommand =  { & sudo -E @sudoEnvironmentArguments $powershell $PSFlags -c $command }
                     }
 
                     $writeCommand = { Write-Host $_ }

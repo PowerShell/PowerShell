@@ -225,6 +225,8 @@ function Start-CodeCoverageCollector {
         Cobertura report to finalize at shutdown.
     .PARAMETER Unelevate
         Starts the server at the trust level used by Windows x64 unelevated tests.
+    .PARAMETER SudoEnvironment
+        Starts a Unix sudo server with the same environment as elevated tests.
     #>
     [CmdletBinding()]
     param(
@@ -232,7 +234,8 @@ function Start-CodeCoverageCollector {
         [Parameter(Mandatory)] [string] $SessionId,
         [Parameter(Mandatory)] [string] $SettingsPath,
         [Parameter(Mandatory)] [string] $OutputPath,
-        [switch] $Unelevate
+        [switch] $Unelevate,
+        [hashtable] $SudoEnvironment = @{}
     )
 
     # Native PowerShell invocation waits on the background server's inherited output pipe.
@@ -261,6 +264,15 @@ try {
         $startInfo.ArgumentList.Add('/trustlevel:0x20000')
         $startInfo.ArgumentList.Add("`"$(Join-Path $PSHOME 'pwsh.exe')`" -NoProfile -EncodedCommand $encodedCommand")
     } else {
+        if ($SudoEnvironment.Count) {
+            $startInfo.FileName = 'sudo'
+            $startInfo.ArgumentList.Add('-n')
+            $startInfo.ArgumentList.Add('-E')
+            foreach ($entry in $SudoEnvironment.GetEnumerator()) {
+                $startInfo.ArgumentList.Add("$($entry.Key)=$($entry.Value)")
+            }
+            $startInfo.ArgumentList.Add($Path)
+        }
         foreach ($argument in @('collect', '--session-id', $SessionId, '--server-mode', '--background',
                 '--timeout', '30000', '--output', $OutputPath, '--output-format', 'cobertura',
                 '--settings', $SettingsPath, '--nologo')) {
@@ -308,7 +320,8 @@ function Invoke-CodeCoverageTest {
         Static instrumentation also collects from subprocesses and works on Arm64
         on Linux and macOS. The original binaries are restored even on test failure.
     .PARAMETER Test
-        The existing CI test operation.
+        The existing CI test operation. Receives a hashtable of sudo environment
+        overrides to forward when launching elevated Unix Pester tests.
     .PARAMETER BinaryDirectory
         Directory containing the assemblies actually used by the tests.
     .PARAMETER Suite
@@ -360,6 +373,10 @@ function Invoke-CodeCoverageTest {
     $started = $false
     $passed = $false
     $savedEnvironment = @{ PS_CODE_COVERAGE = $env:PS_CODE_COVERAGE }
+    $runtimeDirectory = $null
+    $sudoRuntimeDirectory = $null
+    $sudoDirectoryCreated = $false
+    $sudoEnvironment = @{}
     if (-not $IsWindows) {
         $savedEnvironment['XDG_RUNTIME_DIR'] = $env:XDG_RUNTIME_DIR
         $savedEnvironment['TMPDIR'] = $env:TMPDIR
@@ -367,9 +384,16 @@ function Invoke-CodeCoverageTest {
     try {
         $env:PS_CODE_COVERAGE = '1'
         if (-not $IsWindows) {
-            # Keep sudo and the runner out of each other's private mutex directories.
-            $env:XDG_RUNTIME_DIR = '/tmp/'
-            $env:TMPDIR = '/tmp/'
+            $runtimeDirectory = "/tmp/pwsh-codecoverage-$session/"
+            $null = [System.IO.Directory]::CreateDirectory($runtimeDirectory, [System.IO.UnixFileMode]'UserRead,UserWrite,UserExecute')
+            $env:XDG_RUNTIME_DIR = $runtimeDirectory
+            $env:TMPDIR = $runtimeDirectory
+            if ($Suite.StartsWith('ElevatedPesterTests-')) {
+                $sudoRuntimeDirectory = "/tmp/pwsh-codecoverage-sudo-$session/"
+                Start-NativeExecution { & sudo -n mkdir -m 700 -- $sudoRuntimeDirectory } | Out-Host
+                $sudoDirectoryCreated = $true
+                $sudoEnvironment = @{ XDG_RUNTIME_DIR = $sudoRuntimeDirectory; TMPDIR = $sudoRuntimeDirectory }
+            }
         }
         foreach ($assembly in $binary) {
             $assemblyPath = $assembly.FullName
@@ -380,16 +404,22 @@ function Invoke-CodeCoverageTest {
         }
 
         $unelevateCollector = $IsWindows -and $env:RUNNER_ARCH -eq 'X64' -and $Suite.StartsWith('UnelevatedPesterTests-')
-        Start-CodeCoverageCollector -Path $collector -SessionId $session -SettingsPath $configurationPath -OutputPath $rawPath -Unelevate:$unelevateCollector
+        Start-CodeCoverageCollector -Path $collector -SessionId $session -SettingsPath $configurationPath -OutputPath $rawPath -Unelevate:$unelevateCollector -SudoEnvironment $sudoEnvironment
         $started = $true
-        & $Test
+        & $Test $sudoEnvironment
         $passed = $true
     } catch {
         $failures.Add($_)
     } finally {
         try {
             if ($started) {
-                Start-NativeExecution { & $collector shutdown $session --timeout 30000 --nologo } | Out-Host
+                $shutdownPath = $collector
+                $shutdownPrefix = @()
+                if ($sudoEnvironment.Count) {
+                    $shutdownPath = 'sudo'
+                    $shutdownPrefix = @('-n', '-E') + @($sudoEnvironment.GetEnumerator() | ForEach-Object { "$($_.Key)=$($_.Value)" }) + @($collector)
+                }
+                Start-NativeExecution { & $shutdownPath @shutdownPrefix shutdown $session --timeout 30000 --nologo } | Out-Host
                 $measured = @{ Files = ConvertFrom-CodeCoverage -Path $rawPath -SourceFile $sourceFile }
                 $data = @{
                     Commit = $env:GITHUB_SHA
@@ -415,6 +445,20 @@ function Invoke-CodeCoverageTest {
             }
             foreach ($name in $savedEnvironment.Keys) {
                 [System.Environment]::SetEnvironmentVariable($name, $savedEnvironment[$name])
+            }
+            if ($sudoDirectoryCreated) {
+                try {
+                    Start-NativeExecution { & sudo -n rm -r -- $sudoRuntimeDirectory } | Out-Host
+                } catch {
+                    $failures.Add($_)
+                }
+            }
+            if ($runtimeDirectory -and (Test-Path -LiteralPath $runtimeDirectory)) {
+                try {
+                    Remove-Item -LiteralPath $runtimeDirectory -Recurse -Force -ErrorAction Stop
+                } catch {
+                    $failures.Add($_)
+                }
             }
         }
     }

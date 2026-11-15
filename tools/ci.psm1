@@ -279,7 +279,8 @@ function Invoke-CITest
         [ValidateSet('CI', 'Others')]
         [string] $TagSet,
         [string] $TitlePrefix,
-        [string] $OutputFormat = "NUnitXml"
+        [string] $OutputFormat = "NUnitXml",
+        [hashtable] $SudoEnvironment = @{}
     )
 
     Write-Verbose -Verbose "CI test: OutputFormat: $OutputFormat"
@@ -306,7 +307,7 @@ function Invoke-CITest
 
     if($IsLinux -or $IsMacOS)
     {
-        return Invoke-LinuxTestsCore -Purpose $Purpose -ExcludeTag $ExcludeTag -TagSet $TagSet -TitlePrefix $TitlePrefix -OutputFormat $OutputFormat
+        return Invoke-LinuxTestsCore -Purpose $Purpose -ExcludeTag $ExcludeTag -TagSet $TagSet -TitlePrefix $TitlePrefix -OutputFormat $OutputFormat -SudoEnvironment $SudoEnvironment
     }
 
     # CoreCLR
@@ -715,7 +716,8 @@ function Invoke-LinuxTestsCore
         [string[]] $ExcludeTag = @('Slow', 'Feature', 'Scenario'),
         [string] $TagSet = 'CI',
         [string] $TitlePrefix,
-        [string] $OutputFormat = "NUnitXml"
+        [string] $OutputFormat = "NUnitXml",
+        [hashtable] $SudoEnvironment = @{}
     )
 
     $output = Split-Path -Parent (Get-PSOutput -Options (Get-PSOptions))
@@ -786,6 +788,7 @@ function Invoke-LinuxTestsCore
         $sudoPesterParam['Tag'] = @('RequireSudoOnUnix')
         $sudoPesterParam['ExcludeTag'] = $ExcludeTag
         $sudoPesterParam['Sudo'] = $true
+        $sudoPesterParam['SudoEnvironment'] = $SudoEnvironment
         $sudoPesterParam['OutputFile'] = $testResultsSudo
         $sudoPesterParam['OutputFormat'] = $OutputFormat
 

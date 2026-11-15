@@ -17,8 +17,11 @@ Collection/reporting functions live in this module; no external coverage service
 or write-enabled PR token is required.
 During collection, `PS_CODE_COVERAGE=1` lets the startup assembly check account
 for the static tracker's two additional dependencies without relaxing normal builds.
-On Unix, `XDG_RUNTIME_DIR` and `TMPDIR` explicitly use `/tmp/` so elevated subprocesses
-do not select the runner user's private .NET mutex directories.
+On Unix, collection creates separate, private runtime directories for the runner
+and sudo processes. Elevated tests and their collector receive explicit
+`XDG_RUNTIME_DIR` and `TMPDIR` sudo overrides, avoiding .NET mutex ownership
+conflicts with the runner and older runtimes without changing existing permissions.
+The temporary directories are removed after collection.
 These environment variables are restored after collection, including on failure.
 Windows x64 unelevated Pester uses a collector at the same restricted trust level
 as the test process; collector readiness is checked before tests start.

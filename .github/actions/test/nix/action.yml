@@ -158,7 +158,8 @@ runs:
       if ('${{ inputs.enable_coverage }}' -eq 'true') {
         Import-Module ./tools/codecoverage.psm1
         Invoke-CodeCoverageTest -BinaryDirectory $path -Suite '${{ inputs.purpose }}-${{ inputs.tagSet }}' -Test {
-          Invoke-CITest -Purpose '${{ inputs.purpose }}' -TagSet '${{ inputs.tagSet }}' -OutputFormat NUnitXml
+          param($SudoEnvironment)
+          Invoke-CITest -Purpose '${{ inputs.purpose }}' -TagSet '${{ inputs.tagSet }}' -OutputFormat NUnitXml -SudoEnvironment $SudoEnvironment
         }
       } else {
         Invoke-CITest -Purpose '${{ inputs.purpose }}' -TagSet '${{ inputs.tagSet }}' -OutputFormat NUnitXml

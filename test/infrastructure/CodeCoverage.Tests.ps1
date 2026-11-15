@@ -76,16 +76,16 @@ Describe 'CI .NET code coverage' {
                 Mock Start-CodeCoverageCollector {
                     $env:PS_CODE_COVERAGE | Should -BeExactly '1'
                     if (-not $IsWindows) {
-                        $env:XDG_RUNTIME_DIR | Should -BeExactly '/tmp/'
-                        $env:TMPDIR | Should -BeExactly '/tmp/'
+                        $env:XDG_RUNTIME_DIR | Should -Match '^/tmp/pwsh-codecoverage-[a-f0-9-]+/$'
+                        $env:TMPDIR | Should -BeExactly $env:XDG_RUNTIME_DIR
                     }
                 }
                 Invoke-CodeCoverageTest -BinaryDirectory $binaryDirectory -OutputDirectory $outputDirectory -Suite fixture -Test {
                     $script:executionCount++
                     $env:PS_CODE_COVERAGE | Should -BeExactly '1'
                     if (-not $IsWindows) {
-                        $env:XDG_RUNTIME_DIR | Should -BeExactly '/tmp/'
-                        $env:TMPDIR | Should -BeExactly '/tmp/'
+                        $env:XDG_RUNTIME_DIR | Should -Match '^/tmp/pwsh-codecoverage-[a-f0-9-]+/$'
+                        $env:TMPDIR | Should -BeExactly $env:XDG_RUNTIME_DIR
                     }
                 }
                 $executionCount | Should -Be 1
@@ -141,6 +141,41 @@ Describe 'CI .NET code coverage' {
                 } finally {
                     $env:RUNNER_ARCH = $savedArchitecture
                 }
+            }
+
+            It 'isolates sudo runtime storage and matches the elevated collector environment' -Skip:$IsWindows {
+                $script:runtimePath = $null
+                Invoke-CodeCoverageTest -BinaryDirectory $binaryDirectory -OutputDirectory $outputDirectory -Suite ElevatedPesterTests-CI -Test {
+                    param($SudoEnvironment)
+                    $script:runtimePath = $env:XDG_RUNTIME_DIR
+                    [System.IO.File]::GetUnixFileMode($script:runtimePath) | Should -Be ([System.IO.UnixFileMode]'UserRead,UserWrite,UserExecute')
+                    $SudoEnvironment.XDG_RUNTIME_DIR | Should -Match '^/tmp/pwsh-codecoverage-sudo-[a-f0-9-]+/$'
+                    $SudoEnvironment.TMPDIR | Should -BeExactly $SudoEnvironment.XDG_RUNTIME_DIR
+                    $SudoEnvironment.XDG_RUNTIME_DIR | Should -Not -BeExactly $script:runtimePath
+                }
+                Should -Invoke Start-CodeCoverageCollector -Times 1 -Exactly -ParameterFilter { $SudoEnvironment.Count -eq 2 }
+                Should -Invoke Start-NativeExecution -Times 1 -Exactly -ParameterFilter { $ScriptBlock.ToString() -match 'mkdir -m 700' }
+                Should -Invoke Start-NativeExecution -Times 1 -Exactly -ParameterFilter { $ScriptBlock.ToString() -match 'rm -r' }
+                Test-Path -LiteralPath $script:runtimePath | Should -BeFalse
+                foreach ($name in 'PS_CODE_COVERAGE', 'XDG_RUNTIME_DIR', 'TMPDIR') {
+                    [System.Environment]::GetEnvironmentVariable($name) | Should -BeExactly "fixture-$name"
+                }
+            }
+
+            It 'preserves an elevated test failure when sudo runtime cleanup fails' -Skip:$IsWindows {
+                Mock Start-NativeExecution {
+                    param($ScriptBlock)
+                    if ($ScriptBlock.ToString() -match 'git') { 'src/Sample.cs' }
+                    if ($ScriptBlock.ToString() -match 'rm -r') { throw 'sudo cleanup failure' }
+                }
+                Mock Write-Error {}
+                { Invoke-CodeCoverageTest -BinaryDirectory $binaryDirectory -OutputDirectory $outputDirectory -Suite ElevatedPesterTests-CI -Test {
+                    throw 'original elevated test failure'
+                } } | Should -Throw '*original elevated test failure*'
+                foreach ($name in 'PS_CODE_COVERAGE', 'XDG_RUNTIME_DIR', 'TMPDIR') {
+                    [System.Environment]::GetEnvironmentVariable($name) | Should -BeExactly "fixture-$name"
+                }
+                Should -Invoke Write-Error -Times 1 -Exactly -ParameterFilter { $ErrorRecord.Exception.Message -eq 'sudo cleanup failure' }
             }
         }
 
