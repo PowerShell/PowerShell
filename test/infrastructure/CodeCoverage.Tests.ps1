@@ -45,6 +45,11 @@ Describe 'CI .NET code coverage' {
 
         Context 'Collector lifecycle' {
             BeforeEach {
+                $script:collectorEnvironment = @{}
+                foreach ($name in 'PS_CODE_COVERAGE', 'XDG_RUNTIME_DIR', 'TMPDIR') {
+                    $script:collectorEnvironment[$name] = [System.Environment]::GetEnvironmentVariable($name)
+                    [System.Environment]::SetEnvironmentVariable($name, "fixture-$name")
+                }
                 $script:binaryDirectory = Join-Path $TestDrive 'binaries'
                 $script:outputDirectory = Join-Path $TestDrive 'coverage'
                 $null = New-Item -ItemType Directory -Path $binaryDirectory -Force
@@ -60,12 +65,33 @@ Describe 'CI .NET code coverage' {
                 Mock ConvertFrom-CodeCoverage { @{ 'src/Sample.cs' = @{ '1' = $true } } }
             }
 
+            AfterEach {
+                foreach ($name in $script:collectorEnvironment.Keys) {
+                    [System.Environment]::SetEnvironmentVariable($name, $script:collectorEnvironment[$name])
+                }
+            }
+
             It 'executes tests once and retains zero-hit executable lines' {
                 $script:executionCount = 0
+                Mock Start-CodeCoverageCollector {
+                    $env:PS_CODE_COVERAGE | Should -BeExactly '1'
+                    if (-not $IsWindows) {
+                        $env:XDG_RUNTIME_DIR | Should -BeNullOrEmpty
+                        $env:TMPDIR | Should -BeNullOrEmpty
+                    }
+                }
                 Invoke-CodeCoverageTest -BinaryDirectory $binaryDirectory -OutputDirectory $outputDirectory -Suite fixture -Test {
                     $script:executionCount++
+                    $env:PS_CODE_COVERAGE | Should -BeExactly '1'
+                    if (-not $IsWindows) {
+                        $env:XDG_RUNTIME_DIR | Should -BeNullOrEmpty
+                        $env:TMPDIR | Should -BeNullOrEmpty
+                    }
                 }
                 $executionCount | Should -Be 1
+                foreach ($name in 'PS_CODE_COVERAGE', 'XDG_RUNTIME_DIR', 'TMPDIR') {
+                    [System.Environment]::GetEnvironmentVariable($name) | Should -BeExactly "fixture-$name"
+                }
                 $data = Get-Content (Join-Path $outputDirectory 'coverage.json') -Raw | ConvertFrom-Json -AsHashtable
                 $data.Passed | Should -BeTrue
                 $data.Files['src/Sample.cs']['1'] | Should -BeTrue
@@ -83,8 +109,38 @@ Describe 'CI .NET code coverage' {
                 { Invoke-CodeCoverageTest -BinaryDirectory $binaryDirectory -OutputDirectory $outputDirectory -Suite fixture -Test {
                     throw 'original test failure'
                 } } | Should -Throw '*original test failure*'
+                foreach ($name in 'PS_CODE_COVERAGE', 'XDG_RUNTIME_DIR', 'TMPDIR') {
+                    [System.Environment]::GetEnvironmentVariable($name) | Should -BeExactly "fixture-$name"
+                }
                 Should -Invoke Start-NativeExecution -Times 1 -Exactly -ParameterFilter { $ScriptBlock.ToString() -match 'uninstrument' }
                 Should -Invoke Write-Error -Times 1 -Exactly -ParameterFilter { $ErrorRecord.Exception.Message -eq 'collector failure' }
+            }
+
+            It 'restores the environment when instrumentation fails before tests start' {
+                Mock Start-NativeExecution {
+                    param($ScriptBlock)
+                    if ($ScriptBlock.ToString() -match 'git') { 'src/Sample.cs' }
+                    if ($ScriptBlock.ToString() -match ' instrument ') { throw 'instrumentation failure' }
+                }
+                { Invoke-CodeCoverageTest -BinaryDirectory $binaryDirectory -OutputDirectory $outputDirectory -Suite fixture -Test {
+                    throw 'tests should not start'
+                } } | Should -Throw '*instrumentation failure*'
+                foreach ($name in 'PS_CODE_COVERAGE', 'XDG_RUNTIME_DIR', 'TMPDIR') {
+                    [System.Environment]::GetEnvironmentVariable($name) | Should -BeExactly "fixture-$name"
+                }
+                Should -Invoke Start-CodeCoverageCollector -Times 0 -Exactly
+                Should -Invoke Start-NativeExecution -Times 1 -Exactly -ParameterFilter { $ScriptBlock.ToString() -match 'uninstrument' }
+            }
+
+            It 'matches the Windows x64 unelevated collector to the test trust level' -Skip:(-not $IsWindows) {
+                $savedArchitecture = $env:RUNNER_ARCH
+                try {
+                    $env:RUNNER_ARCH = 'X64'
+                    Invoke-CodeCoverageTest -BinaryDirectory $binaryDirectory -OutputDirectory $outputDirectory -Suite UnelevatedPesterTests-CI -Test {}
+                    Should -Invoke Start-CodeCoverageCollector -Times 1 -Exactly -ParameterFilter { $Unelevate }
+                } finally {
+                    $env:RUNNER_ARCH = $savedArchitecture
+                }
             }
         }
 

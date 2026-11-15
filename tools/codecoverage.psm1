@@ -223,22 +223,49 @@ function Start-CodeCoverageCollector {
         Collector configuration.
     .PARAMETER OutputPath
         Cobertura report to finalize at shutdown.
+    .PARAMETER Unelevate
+        Starts the server at the trust level used by Windows x64 unelevated tests.
     #>
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)] [string] $Path,
         [Parameter(Mandatory)] [string] $SessionId,
         [Parameter(Mandatory)] [string] $SettingsPath,
-        [Parameter(Mandatory)] [string] $OutputPath
+        [Parameter(Mandatory)] [string] $OutputPath,
+        [switch] $Unelevate
     )
 
     # Native PowerShell invocation waits on the background server's inherited output pipe.
     $startInfo = [System.Diagnostics.ProcessStartInfo]::new($Path)
     $startInfo.UseShellExecute = $false
-    foreach ($argument in @('collect', '--session-id', $SessionId, '--server-mode', '--background',
-            '--timeout', '30000', '--output', $OutputPath, '--output-format', 'cobertura',
-            '--settings', $SettingsPath, '--nologo')) {
-        $startInfo.ArgumentList.Add($argument)
+    $readyPath = $null
+    if ($Unelevate) {
+        $readyPath = Join-Path (Split-Path $OutputPath) "$SessionId.ready"
+        $modulePath = Join-Path $PSScriptRoot 'codecoverage.psm1'
+        $command = @"
+try {
+    Import-Module '$($modulePath.Replace("'", "''"))' -ErrorAction Stop
+    & (Get-Module codecoverage) {
+        Start-CodeCoverageCollector -Path '$($Path.Replace("'", "''"))' -SessionId '$SessionId' -SettingsPath '$($SettingsPath.Replace("'", "''"))' -OutputPath '$($OutputPath.Replace("'", "''"))'
+    }
+    [System.IO.File]::WriteAllText('$($readyPath.Replace("'", "''")).tmp', 'ready')
+    [System.IO.File]::Move('$($readyPath.Replace("'", "''")).tmp', '$($readyPath.Replace("'", "''"))')
+} catch {
+    [System.IO.File]::WriteAllText('$($readyPath.Replace("'", "''")).tmp', `$_.ToString())
+    [System.IO.File]::Move('$($readyPath.Replace("'", "''")).tmp', '$($readyPath.Replace("'", "''"))')
+    throw
+}
+"@
+        $encodedCommand = [Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes($command))
+        $startInfo.FileName = 'runas.exe'
+        $startInfo.ArgumentList.Add('/trustlevel:0x20000')
+        $startInfo.ArgumentList.Add("`"$(Join-Path $PSHOME 'pwsh.exe')`" -NoProfile -EncodedCommand $encodedCommand")
+    } else {
+        foreach ($argument in @('collect', '--session-id', $SessionId, '--server-mode', '--background',
+                '--timeout', '30000', '--output', $OutputPath, '--output-format', 'cobertura',
+                '--settings', $SettingsPath, '--nologo')) {
+            $startInfo.ArgumentList.Add($argument)
+        }
     }
     $process = [System.Diagnostics.Process]::Start($startInfo)
     try {
@@ -249,8 +276,27 @@ function Start-CodeCoverageCollector {
         if ($process.ExitCode -ne 0) {
             throw "Coverage collector startup failed with exit code $($process.ExitCode)."
         }
+        if ($readyPath) {
+            $deadline = [DateTime]::UtcNow.AddSeconds(90)
+            while (-not (Test-Path -LiteralPath $readyPath)) {
+                if ([DateTime]::UtcNow -ge $deadline) {
+                    throw 'Unelevated coverage collector startup timed out.'
+                }
+                Start-Sleep -Milliseconds 100
+            }
+            $result = Get-Content -LiteralPath $readyPath -Raw
+            if ($result -ne 'ready') {
+                throw "Unelevated coverage collector startup failed: $result"
+            }
+        }
     } finally {
         $process.Dispose()
+        if ($readyPath -and (Test-Path -LiteralPath $readyPath)) {
+            Remove-Item -LiteralPath $readyPath -Force
+        }
+        if ($readyPath -and (Test-Path -LiteralPath "$readyPath.tmp")) {
+            Remove-Item -LiteralPath "$readyPath.tmp" -Force
+        }
     }
 }
 
@@ -313,7 +359,18 @@ function Invoke-CodeCoverageTest {
     $failures = [System.Collections.Generic.List[System.Management.Automation.ErrorRecord]]::new()
     $started = $false
     $passed = $false
+    $savedEnvironment = @{ PS_CODE_COVERAGE = $env:PS_CODE_COVERAGE }
+    if (-not $IsWindows) {
+        $savedEnvironment['XDG_RUNTIME_DIR'] = $env:XDG_RUNTIME_DIR
+        $savedEnvironment['TMPDIR'] = $env:TMPDIR
+    }
     try {
+        $env:PS_CODE_COVERAGE = '1'
+        if (-not $IsWindows) {
+            # sudo -E must not give root the runner user's private mutex directories.
+            $env:XDG_RUNTIME_DIR = $null
+            $env:TMPDIR = $null
+        }
         foreach ($assembly in $binary) {
             $assemblyPath = $assembly.FullName
             $instrumented.Add($assemblyPath)
@@ -322,7 +379,8 @@ function Invoke-CodeCoverageTest {
             } | Out-Host
         }
 
-        Start-CodeCoverageCollector -Path $collector -SessionId $session -SettingsPath $configurationPath -OutputPath $rawPath
+        $unelevateCollector = $IsWindows -and $env:RUNNER_ARCH -eq 'X64' -and $Suite.StartsWith('UnelevatedPesterTests-')
+        Start-CodeCoverageCollector -Path $collector -SessionId $session -SettingsPath $configurationPath -OutputPath $rawPath -Unelevate:$unelevateCollector
         $started = $true
         & $Test
         $passed = $true
@@ -354,6 +412,9 @@ function Invoke-CodeCoverageTest {
                 } catch {
                     $failures.Add($_)
                 }
+            }
+            foreach ($name in $savedEnvironment.Keys) {
+                [System.Environment]::SetEnvironmentVariable($name, $savedEnvironment[$name])
             }
         }
     }

@@ -15,6 +15,13 @@ Coverage builds retain symbols. xUnit dependencies are built before instrumentat
 and tests use `--no-build` so instrumented binaries are not overwritten.
 Collection/reporting functions live in this module; no external coverage service
 or write-enabled PR token is required.
+During collection, `PS_CODE_COVERAGE=1` lets the startup assembly check account
+for the static tracker's two additional dependencies without relaxing normal builds.
+On Unix, inherited `XDG_RUNTIME_DIR` and `TMPDIR` are cleared so elevated subprocesses
+use their own user's .NET mutex storage instead of the runner user's private directories.
+These environment variables are restored after collection, including on failure.
+Windows x64 unelevated Pester uses a collector at the same restricted trust level
+as the test process; collector readiness is checked before tests start.
 
 The aggregate job unions executable source lines across all platform/architecture
 and test suites: a line hit anywhere counts as covered once. It does not average
