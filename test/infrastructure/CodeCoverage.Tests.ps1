@@ -255,24 +255,44 @@ Describe 'CI .NET code coverage' {
                 }
             }
 
-            It 'skips documentation-only changes' {
+            It 'reports total coverage without patch coverage for documentation-only changes' {
                 'documentation' | Set-Content -LiteralPath README.md
                 Start-NativeExecution { git add -- .; git commit --quiet -m documentation } | Out-Null
                 $head = Start-NativeExecution { git rev-parse HEAD }
                 $env:GITHUB_SHA = $head
                 @{ pull_request = @{ base = @{ sha = $baseCommit }; head = @{ sha = $head } } } |
                     ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $eventPath
-                (Get-CodeCoverageChange -EventPath $eventPath -OutputPath '').Enabled | Should -BeFalse
+                $change = Get-CodeCoverageChange -EventPath $eventPath
+                $change.ChangedFile | Should -Be @('README.md')
+                $inputPath = Join-Path $TestDrive 'documentation-input'
+                $outputPath = Join-Path $TestDrive 'documentation-report'
+                $null = New-Item -ItemType Directory -Path $inputPath -Force
+                @{
+                    Commit = $head; RunId = '123'; RunAttempt = '2'
+                    Platform = 'Linux'; Architecture = 'ARM64'; Suite = 'xunit'; Passed = $true
+                    Files = @{ 'src/Sample.cs' = @{ '1' = $true; '3' = $false } }
+                } | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $inputPath 'coverage.json')
+                Write-CodeCoverageReport -InputDirectory $inputPath -OutputDirectory $outputPath -ExpectedRun 'Linux/ARM64/xunit' -Change $change
+                $report = Get-Content -LiteralPath (Join-Path $outputPath 'summary.md') -Raw
+                $report | Should -Match 'Current aggregate: \*\*50.00%\*\* \(1/2 executable lines\)'
+                $report | Should -Match 'No C# files changed; PR patch coverage is \*\*not applicable'
+                Get-Content -LiteralPath $env:GITHUB_STEP_SUMMARY -Raw | Should -Be $report
+                $html = Get-Content -LiteralPath (Join-Path $outputPath 'index.html') -Raw
+                $html | Should -Match 'Current: 50.00%'
+                $html | Should -Match 'No C# files changed; PR patch coverage is not applicable'
+                $data = Get-Content -LiteralPath (Join-Path $outputPath 'coverage.json') -Raw | ConvertFrom-Json -AsHashtable
+                $data['src/Sample.cs']['1'] | Should -BeTrue
+                $data['src/Sample.cs']['3'] | Should -BeFalse
             }
 
-            It 'collects .NET coverage for PowerShell-only and deleted-script PRs' {
+            It 'includes PowerShell-only and deleted-script changes in the reported range' {
                 'Write-Output 1' | Set-Content -LiteralPath script.ps1
                 Start-NativeExecution { git add -- .; git commit --quiet -m script } | Out-Null
                 $head = Start-NativeExecution { git rev-parse HEAD }
                 $env:GITHUB_SHA = $head
                 @{ pull_request = @{ base = @{ sha = $baseCommit }; head = @{ sha = $head } } } |
                     ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $eventPath
-                (Get-CodeCoverageChange -EventPath $eventPath -OutputPath '').Enabled | Should -BeTrue
+                (Get-CodeCoverageChange -EventPath $eventPath).ChangedFile | Should -Be @('script.ps1')
 
                 $deletionBase = $head
                 Remove-Item -LiteralPath script.ps1
@@ -281,7 +301,7 @@ Describe 'CI .NET code coverage' {
                 $env:GITHUB_SHA = $head
                 @{ pull_request = @{ base = @{ sha = $deletionBase }; head = @{ sha = $head } } } |
                     ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $eventPath
-                (Get-CodeCoverageChange -EventPath $eventPath -OutputPath '').Enabled | Should -BeTrue
+                (Get-CodeCoverageChange -EventPath $eventPath).ChangedFile | Should -Be @('script.ps1')
             }
 
             It 'excludes pulled base changes and annotates the tested synthetic merge' {
@@ -297,7 +317,7 @@ Describe 'CI .NET code coverage' {
                 $env:GITHUB_SHA = Start-NativeExecution { git rev-parse HEAD }
                 @{ pull_request = @{ base = @{ sha = $newBase }; head = @{ sha = $head } } } |
                     ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $eventPath
-                $change = Get-CodeCoverageChange -EventPath $eventPath -OutputPath ''
+                $change = Get-CodeCoverageChange -EventPath $eventPath
                 $change.DiffBase | Should -Be $newBase
                 $change.ChangedFile | Should -Not -Contain 'upstream.ps1'
 
@@ -330,7 +350,7 @@ Describe 'CI .NET code coverage' {
                 $env:GITHUB_SHA = Start-NativeExecution { git rev-parse HEAD }
                 @{ pull_request = @{ base = @{ sha = $newBase }; head = @{ sha = $env:GITHUB_SHA } } } |
                     ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $eventPath
-                $change = Get-CodeCoverageChange -EventPath $eventPath -OutputPath ''
+                $change = Get-CodeCoverageChange -EventPath $eventPath
                 $change.DiffBase | Should -Be $newBase
                 $change.ChangedFile | Should -Contain 'changed.psm1'
                 $change.ChangedFile | Should -Not -Contain 'README.md'
@@ -354,7 +374,7 @@ Describe 'CI .NET code coverage' {
                 $env:GITHUB_SHA = Start-NativeExecution { git rev-parse HEAD }
                 @{ pull_request = @{ base = @{ sha = $newBase }; head = @{ sha = $head } } } |
                     ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $eventPath
-                $change = Get-CodeCoverageChange -EventPath $eventPath -OutputPath ''
+                $change = Get-CodeCoverageChange -EventPath $eventPath
                 $inputPath = Join-Path $TestDrive 'merged-input'
                 $outputPath = Join-Path $TestDrive 'merged-report'
                 $null = New-Item -ItemType Directory -Path $inputPath -Force

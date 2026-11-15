@@ -5,9 +5,10 @@
 GitHub Actions `PR-CI` runs the existing Pester CI/Others, elevated/unelevated
 (including experimental-feature runs), and xUnit suites once per platform on
 Windows, Linux, and macOS, using native x64 and Arm64 runners.
-Coverage is collected only when the PR changes a `.cs`, `.ps1`, `.psm1`, or `.psd1`
-file, including deletions. PowerShell-only changes collect **C# execution coverage**,
-not PowerShell statement coverage.
+Coverage is collected during that single test pass for every PR, including PRs
+without C# or PowerShell changes, so current total coverage is always reported.
+PowerShell-only changes collect **C# execution coverage**, not PowerShell
+statement coverage.
 
 `tools/codecoverage.psm1` uses pinned `dotnet-coverage` static instrumentation;
 this supports Arm64 on Linux and macOS and includes instrumented subprocesses.
@@ -37,7 +38,9 @@ includes all executable lines in tracked product C# files, including auto-proper
 and tracked generated code; collector attribute exclusions are disabled to match
 this denominator.
 The job summary shows current total coverage, per-run coverage, and coverage of
-added/modified executable C# lines. Download the `codecoverage-report` artifact
+added/modified executable C# lines using the same collected data. When no C# files
+changed, patch coverage is labeled **not applicable** and total coverage is still
+shown. Download the `codecoverage-report` artifact
 and open `index.html` for the PR diff: covered executable lines are green,
 uncovered executable lines are red, unknown C# coverage is yellow, and
 non-executable lines, removed lines, and PowerShell changes are neutral.

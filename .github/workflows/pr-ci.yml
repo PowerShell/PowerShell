@@ -22,19 +22,16 @@ env:
 
 jobs:
   changes:
-    name: Coverage change detection
+    name: Coverage PR range validation
     if: startsWith(github.repository_owner, 'azure') || github.repository_owner == 'PowerShell'
     runs-on: ubuntu-24.04
-    outputs:
-      coverage: ${{ steps.changes.outputs.enabled }}
     steps:
       - name: Checkout PR merge and history
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
           persist-credentials: false
-      - name: Detect executable code changes
-        id: changes
+      - name: Validate PR coverage range
         shell: pwsh
         run: |
           Import-Module ./tools/codecoverage.psm1
@@ -61,7 +58,7 @@ jobs:
     with:
       runner_os: ${{ matrix.runner }}
       artifact_name: ${{ matrix.artifact }}
-      enable_coverage: ${{ needs.changes.outputs.coverage == 'true' }}
+      enable_coverage: true
       test_only: ${{ matrix.test_only }}
 
   linux:
@@ -83,7 +80,7 @@ jobs:
     with:
       runner_os: ${{ matrix.runner }}
       artifact_name: ${{ matrix.artifact }}
-      enable_coverage: ${{ needs.changes.outputs.coverage == 'true' }}
+      enable_coverage: true
       test_only: ${{ matrix.test_only }}
 
   macos:
@@ -105,13 +102,13 @@ jobs:
     with:
       runner_os: ${{ matrix.runner }}
       artifact_name: ${{ matrix.artifact }}
-      enable_coverage: ${{ needs.changes.outputs.coverage == 'true' }}
+      enable_coverage: true
       test_only: ${{ matrix.test_only }}
 
   coverage:
     name: Aggregate .NET coverage
     needs: [changes, windows, linux, macos]
-    if: always() && needs.changes.outputs.coverage == 'true'
+    if: always() && needs.changes.result == 'success'
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout tested commit and history

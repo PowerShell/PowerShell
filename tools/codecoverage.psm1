@@ -6,19 +6,16 @@
 function Get-CodeCoverageChange {
     <#
     .SYNOPSIS
-        Determines the PR range and whether .NET coverage is needed.
+        Determines the PR range for .NET coverage reporting.
     .DESCRIPTION
         Uses event commit IDs, not the previous push or a fixed number of commits.
         A synthetic PR merge is compared to its base so diff lines match tested code.
     .PARAMETER EventPath
         GitHub event JSON file.
-    .PARAMETER OutputPath
-        Optional GitHub Actions output file.
     #>
     [CmdletBinding()]
     param(
-        [string] $EventPath = $env:GITHUB_EVENT_PATH,
-        [string] $OutputPath = $env:GITHUB_OUTPUT
+        [string] $EventPath = $env:GITHUB_EVENT_PATH
     )
 
     $eventData = Get-Content -LiteralPath $EventPath -Raw -ErrorAction Stop | ConvertFrom-Json
@@ -50,17 +47,12 @@ function Get-CodeCoverageChange {
         git -c core.quotepath=false diff --no-ext-diff --no-textconv --name-only --no-renames $diffBase $testCommit --
     })
     $result = [pscustomobject] @{
-        Enabled = @($changedFile | Where-Object { $_ -match '\.(cs|ps1|psm1|psd1)$' }).Count -gt 0
         BaseCommit = $baseCommit
         HeadCommit = $headCommit
         TestCommit = $testCommit
         DiffBase = $diffBase
         ChangedFile = $changedFile
     }
-    if ($OutputPath) {
-        "enabled=$($result.Enabled.ToString().ToLowerInvariant())" | Add-Content -LiteralPath $OutputPath
-    }
-
     return $result
 }
 
@@ -667,10 +659,16 @@ function Write-CodeCoverageReport {
         }
     }
 
-    $null = $html.AppendLine('</html>')
     $patchSummary = Get-CodeCoverageSummary -File @{ Diff = $changedLines }
     $null = $markdown.AppendLine()
-    $null = $markdown.AppendLine("Added/modified executable C# lines: **$($patchSummary.Percent)** ($($patchSummary.Covered)/$($patchSummary.Total)). This is patch coverage, not a baseline delta.")
+    if (@($Change.ChangedFile | Where-Object { $_.EndsWith('.cs', [System.StringComparison]::Ordinal) }).Count) {
+        $null = $markdown.AppendLine("Added/modified executable C# lines: **$($patchSummary.Percent)** ($($patchSummary.Covered)/$($patchSummary.Total)). This is patch coverage, not a baseline delta.")
+    } else {
+        $null = $markdown.AppendLine('No C# files changed; PR patch coverage is **not applicable**. The aggregate above reports current total coverage.')
+        $null = $html.AppendLine('<p>No C# files changed; PR patch coverage is not applicable. Total coverage is reported above.</p>')
+    }
+
+    $null = $html.AppendLine('</html>')
     $null = $markdown.AppendLine()
     $null = $markdown.AppendLine('PowerShell-only changes still collect C# execution coverage from Pester and xUnit. Their causal effect cannot be separated from existing coverage in a single run.')
     $null = $markdown.AppendLine()
