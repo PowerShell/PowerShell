@@ -1,0 +1,128 @@
+# Collects the RID-specific 'PowerShell' global tool nupkgs built in parallel (as matrix legs
+# of ONE job, see job/globaltool-rid-job.yml), assembles the RID-agnostic pointer package (see
+# New-GlobalToolPointerNupkgSource in tools/packaging/packaging.psm1), signs everything
+# together, and publishes the full set as this job's own output.
+#
+# ob_artifactBaseName is set explicitly (rather than relying on OneBranch's auto-derived
+# drop_<stage>_<job> name) so uploadToAzure.yml's "Download nupkgs" step(s) can reference this
+# artifact by a name that's guaranteed stable, instead of needing to match an undocumented
+# naming convention. uploadToAzure.yml must download this artifact for these packages to reach
+# the "globaltool/" folder in blob storage -- see its "Download global tool nupkgs" step.
+
+parameters:
+  - name: OfficialBuild
+    type: boolean
+    default: true
+  - name: Rids
+    type: object
+
+jobs:
+- job: build_globaltool_pointer
+  displayName: 'Global tool pointer package'
+  # glbtool_rid is a single job definition that runs parallel matrix legs (one per RID);
+  # depending on its job name waits for every leg to finish, not just one.
+  dependsOn: glbtool_rid
+  condition: succeeded()
+  pool:
+    type: windows
+
+  variables:
+    - name: ob_artifactBaseName
+      value: drop_nupkg_build_globaltool_pointer
+    - name: ps_official_build
+      value: ${{ parameters.OfficialBuild }}
+    - name: nugetMultiFeedWarnLevel
+      value: none
+    - name: NugetSecurityAnalysisWarningLevel
+      value: none
+    - name: skipNugetSecurityAnalysis
+      value: true
+    - name: ob_outputDirectory
+      value: '$(Build.ArtifactStagingDirectory)\ONEBRANCH_ARTIFACT'
+    - name: ob_sdl_binskim_enabled
+      value: true
+    - name: ob_sdl_tsa_configFile
+      value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+    - name: ob_sdl_credscan_suppressionsFile
+      value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+    - group: mscodehub-feed-read-general
+    - group: mscodehub-feed-read-akv
+    - group: DotNetPrivateBuildAccess
+    - group: certificate_logical_to_actual
+
+  steps:
+  - checkout: self
+    clean: true
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+      CreateJson: no
+
+  - template: /.pipelines/templates/shouldSign.yml@self
+
+  - template: /.pipelines/templates/cloneToOfficialPath.yml@self
+    parameters:
+      nativePathRoot: '$(Agent.TempDirectory)'
+
+  - ${{ each rid in parameters.Rids }}:
+    - download: current
+      artifact: globaltool-rid-${{ rid }}
+      displayName: 'Download globaltool-rid-${{ rid }}'
+      env:
+        ob_restore_phase: true
+
+  - template: /.pipelines/templates/install-dotnet.yml@self
+
+  - pwsh: |
+      Import-Module -Name '$(PowerShellRoot)\build.psm1'
+      Import-Module -Name '$(PowerShellRoot)\tools\packaging'
+      Find-DotNet
+
+      $rids = '${{ join(',', parameters.Rids) }}' -split ','
+      $ridOutputPath = Join-Path -Path '$(Pipeline.Workspace)' -ChildPath 'globaltool-multirid'
+      New-Item -Path $ridOutputPath -ItemType Directory -Force | Out-Null
+
+      # Gather each RID's nupkg (built and signed independently by its own parallel job) into one folder.
+      $missing = @()
+      foreach ($rid in $rids) {
+        $downloaded = Get-ChildItem -Path "$(Pipeline.Workspace)/globaltool-rid-$rid" -Filter "PowerShell.$rid.*.nupkg" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
+        if (-not $downloaded) {
+          $missing += $rid
+          continue
+        }
+        Copy-Item -Path $downloaded.FullName -Destination $ridOutputPath -Force -Verbose
+      }
+      if ($missing) {
+        throw "Missing PowerShell global tool RID package(s): $($missing -join ', ')"
+      }
+
+      New-GlobalToolPointerNupkgSource -PackageVersion '$(Version)' -RuntimeIdentifiers $rids -SkipCGManifest
+      New-GlobalToolNupkgFromSource -PackageNuSpecPath "$global:GlobalToolNuSpecSourcePath" -PackageName "$global:GlobalToolPkgName" -DestinationPath $ridOutputPath
+      $global:GlobalToolNuSpecSourcePath = $null
+      $global:GlobalToolPkgName = $null
+    displayName: 'Create PowerShell global tool pointer package'
+
+  - task: onebranch.pipeline.signing@1
+    displayName: Sign PowerShell global tool RID nupkg files
+    inputs:
+      command: 'sign'
+      cp_code: '$(nuget_cert_id)'
+      files_to_sign: '**\*.nupkg'
+      search_root: '$(Pipeline.Workspace)\globaltool-multirid'
+
+  - pwsh: |
+      if (-not (Test-Path '$(ob_outputDirectory)')) {
+        New-Item -ItemType Directory -Path '$(ob_outputDirectory)' -Force
+      }
+
+      Write-Verbose -Verbose "Copying PowerShell global tool (RID-specific) packages to output directory"
+      $ridToolOutputPath = Join-Path -Path '$(Pipeline.Workspace)' -ChildPath 'globaltool-multirid'
+      Get-ChildItem -Path $ridToolOutputPath -Filter *.nupkg -Recurse | Copy-Item -Destination '$(ob_outputDirectory)' -Force -Verbose
+    displayName: Copy artifacts to output directory
+
+  - pwsh: |
+      Get-ChildItem -Path '$(ob_outputDirectory)' | Out-String | Write-Verbose -Verbose
+    displayName: List artifacts

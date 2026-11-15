@@ -120,4 +120,10 @@
   <data name="CanNotConfigurationFile" xml:space="preserve">
     <value>PowerShell has stopped working because of a security issue: Cannot read the configuration file: {0}</value>
   </data>
+  <data name="CanNotReadConfigurationFile" xml:space="preserve">
+    <value>Cannot read the PowerShell configuration file '{0}': {1}. Falling back to default settings.</value>
+  </data>
+  <data name="CanNotReadConfigurationValue" xml:space="preserve">
+    <value>Cannot read setting '{0}' from PowerShell configuration file '{1}': {2}. Falling back to default for this setting.</value>
+  </data>
 </root>

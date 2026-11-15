@@ -191,6 +191,6 @@ Aby zaktualizować te tematy Pomocy, uruchom program PowerShell za pomocą polec
     <value>Nie można uzyskać pomocy z lokalizacji sieciowej w sesji z ograniczeniami.</value>
   </data>
   <data name="NotAllowedInRestrictedRemoting" xml:space="preserve">
-    <value>Command not allowed in a restricted session.</value>
+    <value>Polecenie jest niedozwolone w sesji z ograniczeniami.</value>
   </data>
 </root>

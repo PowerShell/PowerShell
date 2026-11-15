@@ -318,7 +318,7 @@
     <value>El servidor que ejecuta PowerShell no puede procesar la operación de conexión porque el servidor no se ha iniciado o se está cerrando.</value>
   </data>
   <data name="ServerConnectFailedOnMismatchedRunspacePoolProperties" xml:space="preserve">
-    <value>El servidor que ejecuta PowerShell no puede procesar la operación de conexión porque las propiedades del grupo de espacio de ejecución del servidor no coincidían con las propiedades especificadas del equipo cliente.</value>
+    <value>El servidor que ejecuta PowerShell no puede procesar la operación de conexión porque las propiedades del grupo de espacios de ejecución del servidor no coincidían con las propiedades especificadas del equipo cliente.</value>
   </data>
   <data name="ServerNotFoundCapabilityProperties" xml:space="preserve">
     <value>{0}. Error en la negociación con el cliente. Asegúrese de que el cliente es compatible con la compilación {1} y la versión {2} de protocolo de PowerShell.</value>
@@ -1022,6 +1022,7 @@ Todas las sesiones de WinRM conectadas a configuraciones de sesión de PowerShel
   </data>
   <data name="DISCLanguageModeComment" xml:space="preserve">
     <value>Modo de lenguaje que se aplicará cuando se aplique a una sesión. Puede ser "NoLanguage" (recomendado), "RestrictedLanguage","ConstrainedLanguage" o "FullLanguage"</value>
+    <comment>{StrContains="NoLanguage"}{StrContains="RestrictedLanguage"}{StrContains="ConstrainedLanguage"}{StrContains="FullLanguage"}</comment>
   </data>
   <data name="DISCModulesToImportComment" xml:space="preserve">
     <value>Módulos que se van a importar cuando se aplican a una sesión</value>
@@ -1342,10 +1343,10 @@ Todas las sesiones de WinRM conectadas a configuraciones de sesión de PowerShel
     <value>PSSession {0} se creó con el parámetro EnableNetworkAccess y solo se puede volver a conectar desde el equipo local.</value>
   </data>
   <data name="CannotStartJobInconsistentLanguageMode" xml:space="preserve">
-    <value>No se puede iniciar el trabajo. El modo de idioma de esta sesión no es compatible con el modo de idioma de todo el sistema.</value>
+    <value>No se puede iniciar el trabajo. El modo de lenguaje de esta sesión no es compatible con el modo de lenguaje de todo el sistema.</value>
   </data>
   <data name="CannotCreateRunspaceInconsistentState" xml:space="preserve">
-    <value>No se puede crear el espacio de ejecución. El modo de idioma para esta configuración no es compatible con el modo de idioma de todo el sistema.</value>
+    <value>No se puede crear el espacio de ejecución. El modo de lenguaje para esta configuración no es compatible con el modo de lenguaje de todo el sistema.</value>
   </data>
   <data name="CannotExitNestedPipeline" xml:space="preserve">
     <value>No se puede salir de una canalización anidada porque la canalización no está en el estado anidado.</value>
@@ -1721,7 +1722,8 @@ El proceso de cliente SSH finalizó antes de que se pudiera establecer la conexi
     <value>Puede producirse un error en la evaluación de expresiones</value>
   </data>
   <data name="WDACGetPowerShellLogMessage" xml:space="preserve">
-    <value>La creación de un objeto de PowerShell a partir de un bloque de script puede requerir la evaluación de algunas expresiones dentro del bloque de script. La evaluación de expresiones producirá un error en modo silencioso y devolverá "null" en el modo de lenguaje restringido, a menos que la expresión represente un valor constante.</value>
+    <value>La creación de un objeto de PowerShell a partir de un bloque de script puede requerir la evaluación de algunas expresiones dentro del bloque de script. La evaluación de expresiones producirá un error en modo silencioso y devolverá "null" en el modo ConstrainedLanguage, a menos que la expresión represente un valor constante.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="HyperVFailedToGetStateUnknownType" xml:space="preserve">
     <value>Error al obtener el estado de la máquina virtual de Hyper-V. El valor era del tipo {0}, pero se esperaba que fuera Microsoft.HyperV.PowerShell.VMState o System.String.</value>

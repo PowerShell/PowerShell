@@ -138,4 +138,8 @@
   <data name="UnknownErrorNumber" xml:space="preserve">
     <value>Nieznany błąd „{0}”.</value>
   </data>
+  <data name="TempHomeDirectoryUnsafePermission" xml:space="preserve">
+    <value>Tymczasowy katalog HOME „{0}” już istnieje, ale nie ma oczekiwanego uprawnienia tylko użytkownika. Być może został on utworzony przez innego użytkownika, co stanowi potencjalne zagrożenie bezpieczeństwa. Program PowerShell nie zostanie uruchomiony, dopóki ten katalog nie zostanie usunięty, jego uprawnienie zostaną poprawione lub zostanie ustawiona zmienna środowiskowa „HOME”.</value>
+    <comment>{StrContains="HOME"}</comment>
+  </data>
 </root>

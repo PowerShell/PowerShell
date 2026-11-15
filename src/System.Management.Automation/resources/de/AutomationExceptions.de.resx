@@ -205,6 +205,7 @@
     <value>Punktquellen des kompilierten Skriptblocks</value>
   </data>
   <data name="WDACCompiledScriptBlockLogMessage" xml:space="preserve">
-    <value>Der Aufruf des Skriptblocks „{0}“ im aktuellen Bereich ist im eingeschränkten Sprachmodus nicht zulässig. Skriptsprachmodus: {1}, Kontextsprachmodus: {2}.</value>
+    <value>Der Aufruf des Skriptblocks „{0}“ im aktuellen Bereich ist im ConstrainedLanguage-Modus nicht zulässig. Skriptsprachmodus: {1}, Kontextsprachmodus: {2}.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

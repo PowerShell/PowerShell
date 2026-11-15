@@ -262,6 +262,7 @@
     <value>Selhání kontroly atributu ValidateTrustedData</value>
   </data>
   <data name="WDACParameterArgNotTrustedMessage" xml:space="preserve">
-    <value>Argument parametru {0} není důvěryhodný a v režimu Constrained Language neprojde kontrolou atributu parametru ValidateTrustedData.</value>
+    <value>Argument parametru '{0}' není důvěryhodný a v režimu ConstrainedLanguage neprojde kontrolou atributu ValidateTrustedData parametru.</value>
+    <comment>{StrContains="ValidateTrustedData"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

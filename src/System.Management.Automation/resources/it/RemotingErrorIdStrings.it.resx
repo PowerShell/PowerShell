@@ -660,10 +660,10 @@
     <value>La configurazione della sessione "{0}" non è una shell basata su PowerShell.</value>
   </data>
   <data name="CSCmdsPowerShellCoreShellNotModifiable" xml:space="preserve">
-    <value>La configurazione della sessione "{0}" è una shell basata su PowerShell. Usare PowerShell 6+ per modificarla.</value>
+    <value>La configurazione della sessione "{0}" è una shell basata su PowerShell. Usa PowerShell 6+ per modificarla.</value>
   </data>
   <data name="CSCmdsWindowsPowerShellCoreNotModifiable" xml:space="preserve">
-    <value>La configurazione della sessione "{0}" è una shell basata su Windows PowerShell. Usare Windows PowerShell per modificarla.</value>
+    <value>La configurazione della sessione "{0}" è una shell basata su Windows PowerShell. Usa Windows PowerShell per modificarla.</value>
   </data>
   <data name="CustomShellNotFound" xml:space="preserve">
     <value>Nessuna configurazione di sessione corrisponde ai criteri "{0}".</value>
@@ -735,9 +735,9 @@ Continuare?</value>
   <data name="DcsWarningMessage" xml:space="preserve">
     <value>La disabilitazione delle configurazioni di sessione non annulla tutte le modifiche apportate dal cmdlet Enable-PSRemoting o Enable-PSSessionConfiguration. Potrebbe essere necessario annullare manualmente le modifiche seguendo questi passaggi:
     1. Arrestare e disabilitare il servizio WinRM.
-    2. Eliminare il listener che accetta richieste in qualsiasi indirizzo IP.
+    2. Eliminare il listener che accetta richieste su qualsiasi indirizzo IP.
     3. Disabilitare le eccezioni del firewall per le comunicazioni di WS-Management.
-    4. Ripristinare il valore di LocalAccountTokenFilterPolicy su 0, che limita l'accesso remoto ai membri del gruppo Administrators nel computer.</value>
+    4. Ripristinare il valore di LocalAccountTokenFilterPolicy su 0, limitando l'accesso remoto ai membri del gruppo Administrators nel computer.</value>
   </data>
   <data name="EDcsRequiresElevation" xml:space="preserve">
     <value>Accesso negato. Per eseguire questo cmdlet, avviare PowerShell con l'opzione "Esegui come amministratore".</value>
@@ -939,8 +939,8 @@ Si noti che ''Start-Job'' non è supportato per progettazione negli scenari in c
     <value>Le modifiche apportate da {0} avranno effetto solo dopo il riavvio del servizio WinRM.</value>
   </data>
   <data name="WinRMRestartWarning" xml:space="preserve">
-    <value>{0} potrebbe essere necessario riavviare il servizio WinRM se di recente è stata annullata la registrazione di una configurazione con questo nome, perché alcune strutture di dati di sistema potrebbero essere ancora memorizzate nella cache. In tal caso, potrebbe essere necessario riavviare WinRM.
-Tutte le sessioni di WinRM connesse alle configurazioni di sessione di PowerShell, ad esempio Microsoft.PowerShell, e alle configurazioni di sessione create con il cmdlet Register-PSSessionConfiguration, vengono disconnesse.</value>
+    <value>{0} potrebbe dover riavviare il servizio WinRM per eliminare dalla cache le strutture di dati rimaste dopo l'annullamento della registrazione di una configurazione con questo nome. In tal caso, potrebbe essere necessario riavviare WinRM.
+Tutte le sessioni di WinRM connesse alle configurazioni di sessione di PowerShell, ad esempio Microsoft.PowerShell, e alle configurazioni di sessione create con il cmdlet Register-PSSessionConfiguration vengono disconnesse.</value>
   </data>
   <data name="WinRMForceRestartWarning" xml:space="preserve">
     <value>Si è in esecuzione in una sessione remota ed è stata selezionata l'opzione Force, il che significa che il servizio WinRM potrebbe riavviarsi. Se il servizio WinRM viene riavviato, questa sessione remota verrà terminata e sarà necessario crearne una nuova per continuare</value>
@@ -1022,6 +1022,7 @@ Tutte le sessioni di WinRM connesse alle configurazioni di sessione di PowerShel
   </data>
   <data name="DISCLanguageModeComment" xml:space="preserve">
     <value>Modalità di linguaggio da applicare quando viene applicata a una sessione. Può essere ''NoLanguage'' (scelta consigliata), ''RestrictedLanguage'', ''ConstrainedLanguage'' o ''FullLanguage''</value>
+    <comment>{StrContains="NoLanguage"}{StrContains="RestrictedLanguage"}{StrContains="ConstrainedLanguage"}{StrContains="FullLanguage"}</comment>
   </data>
   <data name="DISCModulesToImportComment" xml:space="preserve">
     <value>Moduli da importare quando vengono applicati a una sessione</value>
@@ -1069,7 +1070,7 @@ Tutte le sessioni di WinRM connesse alle configurazioni di sessione di PowerShel
     <value>Comandi esterni (script e applicazioni) da rendere visibili quando applicati a una sessione</value>
   </data>
   <data name="InvalidPSSessionConfigurationFilePath" xml:space="preserve">
-    <value>Il percorso del file di configurazione PSSession ''{0}'' non è valido. L'argomento del percorso deve risolvere un singolo file nel file system con estensione ''.pssc''. Correggere la specifica del percorso e riprovare.</value>
+    <value>Il percorso del file di configurazione PSSession '{0}' non è valido. L'argomento del percorso deve risolvere un singolo file nel file system con estensione ''.pssc''. Correggi la specifica del percorso e riprova.</value>
   </data>
   <data name="InvalidRoleCapabilityFilePath" xml:space="preserve">
     <value>Il percorso del file Role Capability ''{0}'' non è valido. L'argomento del percorso deve risolvere un singolo file nel file system con estensione ''.psrc''. Correggere la specifica del percorso e riprovare.</value>
@@ -1078,7 +1079,7 @@ Tutte le sessioni di WinRM connesse alle configurazioni di sessione di PowerShel
     <value>La voce ''Roles'' deve essere una tabella hash, ma era una {0}.</value>
   </data>
   <data name="InvalidRoleValue" xml:space="preserve">
-    <value>Non é possibile convertire il valore della voce di ruolo ''{0}'' in una tabella hash. La voce ''Roles'' deve essere una tabella hash con i nomi dei gruppi come chiavi, dove il valore associato a ogni chiave è un'altra tabella hash delle proprietà di configurazione della sessione per tale ruolo.</value>
+    <value>Non è possibile convertire il valore della voce di ruolo '{0}' in una tabella hash. La voce 'Roles' deve essere una tabella hash con i nomi dei gruppi come chiavi, dove il valore associato a ogni chiave è un'altra tabella hash delle proprietà di configurazione della sessione per tale ruolo.</value>
   </data>
   <data name="CouldNotFindRoleCapability" xml:space="preserve">
     <value>Non è possibile trovare la funzionalità di ruolo ''{0}''. La funzionalità di ruolo deve essere un file denominato ''{1}'' all'interno di una cartella 'RoleCapabilities'' in un modulo nel percorso dei moduli corrente.</value>
@@ -1163,7 +1164,7 @@ Tutte le sessioni di WinRM connesse alle configurazioni di sessione di PowerShel
     <value>La chiave ''{0}'' nel membro ''{1}'' deve essere un blocco di script. Modificare la chiave in modo che usi il tipo corretto nel file {2}.</value>
   </data>
   <data name="InvalidPSSessionConfigurationFile" xml:space="preserve">
-    <value>Il file di configurazione della sessione {0} non è valido. Specificare un file di configurazione della sessione valido e riprovare il comando.</value>
+    <value>Il file di configurazione della sessione {0} non è valido. Specifica un file di configurazione della sessione valido e ripeti il comando.</value>
   </data>
   <data name="RCProgressActivity" xml:space="preserve">
     <value>Connessione di rete interrotta</value>
@@ -1259,7 +1260,7 @@ Tutte le sessioni di WinRM connesse alle configurazioni di sessione di PowerShel
     <value>Il parametro AutoRemoveJob non può essere usato senza il parametro Wait</value>
   </data>
   <data name="InvalidConfigurationName" xml:space="preserve">
-    <value>Il servizio WS-Management non può elaborare la richiesta. Non é possibile trovare la configurazione della sessione {0} nell'unità WSMan: del computer {1}. Per ulteriori informazioni, vedere l'argomento della Guida about_Remote_Troubleshooting.</value>
+    <value>Il servizio WS-Management non può elaborare la richiesta. Non è possibile trovare la configurazione della sessione {0} nell'unità WSMan: del computer {1}. Per ulteriori informazioni, vedi l'argomento della Guida about_Remote_Troubleshooting.</value>
   </data>
   <data name="BadRunspaceTypeForJob" xml:space="preserve">
     <value>Non è possibile creare un processo dalla specifica {0} perché lo spazio di esecuzione specificato non è locale. Riprovare usando uno spazio di esecuzione locale oppure specificare un argomento RunspaceMode.</value>
@@ -1327,10 +1328,10 @@ Tutte le sessioni di WinRM connesse alle configurazioni di sessione di PowerShel
     <value>Il processo è stato sospeso correttamente aggiungendo il parametro Force.</value>
   </data>
   <data name="InvalidPSSessionConfigurationFileErrorProcessing" xml:space="preserve">
-    <value>Il file di configurazione della sessione {0} non è valido. Specificare un file di configurazione della sessione valido e riprovare il comando. Errore durante l'analisi del file di configurazione: {1}.</value>
+    <value>Il file di configurazione della sessione {0} non è valido. Specifica un file di configurazione della sessione valido e ripeti il comando. Errore durante l'analisi del file di configurazione: {1}.</value>
   </data>
   <data name="ErrorParsingTheKeyInPSSessionConfigurationFile" xml:space="preserve">
-    <value>Register-PSSessionConfiguration: la chiave ''{0}'' nel file di configurazione della sessione {1}. contiene un valore non valido. Correggere il file e riprovare a eseguire il comando. </value>
+    <value>Register-PSSessionConfiguration: la chiave '{0}' nel file di configurazione della sessione {1}. contiene un valore non valido. Correggi il file e riprova a eseguire il comando. </value>
   </data>
   <data name="EndpointDoesNotSupportDisconnect" xml:space="preserve">
     <value>Le sessioni disconnesse sono supportate solo quando il computer remoto esegue PowerShell 3.0 o una versione successiva di PowerShell.</value>
@@ -1342,10 +1343,10 @@ Tutte le sessioni di WinRM connesse alle configurazioni di sessione di PowerShel
     <value>PSSession {0} è stata creata usando il parametro EnableNetworkAccess e può essere riconnessa solo dal computer locale.</value>
   </data>
   <data name="CannotStartJobInconsistentLanguageMode" xml:space="preserve">
-    <value>Non è possibile avviare il processo. La modalità linguaggio per questa sessione non è compatibile con la modalità linguaggio a livello di sistema.</value>
+    <value>Non è possibile avviare il processo. La modalità di linguaggio per questa sessione non è compatibile con la modalità di linguaggio a livello di sistema.</value>
   </data>
   <data name="CannotCreateRunspaceInconsistentState" xml:space="preserve">
-    <value>Non è possibile creare lo spazio di esecuzione. La modalità linguaggio per questa confiurazione non è compatibile con la modalità linguaggio a livello di sistema.</value>
+    <value>Non è possibile creare lo spazio di esecuzione. La modalità di linguaggio per questa configurazione non è compatibile con la modalità di linguaggio a livello di sistema.</value>
   </data>
   <data name="CannotExitNestedPipeline" xml:space="preserve">
     <value>Non è possibile uscire da una pipeline annidata perché la pipeline non è nello stato annidato.</value>
@@ -1540,7 +1541,7 @@ Tutte le sessioni di WinRM connesse alle configurazioni di sessione di PowerShel
     <value>Non è possibile avviare il server named pipe in modalità server.</value>
   </data>
   <data name="CouldNotResolveRoleDefinitionPrincipal" xml:space="preserve">
-    <value>Non è possibile concedere l'accesso remoto a ''{0}'': ''{1}''. La configurazione della sessione è stata registrata, ma questo gruppo non ha accesso. Per risolvere l'errore, specificare un nome di gruppo valido e registrare di nuovo la configurazione della sessione.</value>
+    <value>Non è possibile concedere l'accesso remoto a '{0}': '{1}'. La configurazione della sessione è stata registrata, ma questo gruppo non ha accesso. Per risolvere l'errore, specifica un nome di gruppo valido e registra di nuovo la configurazione della sessione.</value>
   </data>
   <data name="SessionConfigurationMustBeFileBased" xml:space="preserve">
     <value>Non è possibile ottenere le funzionalità della sessione per la configurazione di sessione''{0}'': questa configurazione non è stata registrata con un file di configurazione della sessione (.pssc), ad esempio uno creato dal cmdlet New-PSSessionConfigurationFile.</value>
@@ -1712,7 +1713,7 @@ Il processo client SSH è terminato prima che fosse possibile stabilire la conne
     <value>La tabella hash di configurazione della sessione contiene un tipo di chiave non valido. Le chiavi devono essere di tipo stringa.</value>
   </data>
   <data name="DISCUnsupportedConfigName" xml:space="preserve">
-    <value>Il file di configurazione della sessione contiene un'opzione di configurazione non supportata: {0}. Si tratta di un'opzione di configurazione dell'endpoint di comunicazione remota che non si applica allo stato della sessione di PowerShell.</value>
+    <value>Il file di configurazione della sessione contiene un'opzione non supportata: {0}. Si tratta di un'opzione di configurazione dell'endpoint di comunicazione remota che non si applica allo stato della sessione di PowerShell.</value>
   </data>
   <data name="DISCUnknownConfigName" xml:space="preserve">
     <value>Il file di configurazione della sessione contiene un'opzione di configurazione sconosciuta: {0}.</value>
@@ -1721,7 +1722,8 @@ Il processo client SSH è terminato prima che fosse possibile stabilire la conne
     <value>La valutazione dell'espressione potrebbe non riuscire</value>
   </data>
   <data name="WDACGetPowerShellLogMessage" xml:space="preserve">
-    <value>La creazione di un oggetto PowerShell da un blocco di script può richiedere la valutazione di alcune espressioni all'interno del blocco di script. La valutazione dell'espressione avrà esito negativo in modo invisibile all'utente e restituirà ''null'' in modalità linguaggio vincolato, a meno che l'espressione non rappresenti un valore costante.</value>
+    <value>La creazione di un oggetto PowerShell da un blocco di script può richiedere la valutazione di alcune espressioni all'interno del blocco di script. La valutazione dell'espressione avrà esito negativo in modo invisibile all'utente e restituirà ''null'' in modalità ConstrainedLanguage, a meno che l'espressione non rappresenti un valore costante.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="HyperVFailedToGetStateUnknownType" xml:space="preserve">
     <value>Non è possibile ottenere lo stato della VM Hyper-V. Il valore era di tipo {0} ma era previsto Microsoft.HyperV.PowerShell.VMState o System.String.</value>

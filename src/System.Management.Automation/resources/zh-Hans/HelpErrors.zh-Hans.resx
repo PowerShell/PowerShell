@@ -191,6 +191,6 @@
     <value>在受限会话中，无法从网络位置获取帮助。</value>
   </data>
   <data name="NotAllowedInRestrictedRemoting" xml:space="preserve">
-    <value>Command not allowed in a restricted session.</value>
+    <value>受限会话中不允许使用命令。</value>
   </data>
 </root>

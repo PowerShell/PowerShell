@@ -138,4 +138,8 @@
   <data name="UnknownErrorNumber" xml:space="preserve">
     <value>不明なエラー "{0}"。</value>
   </data>
+  <data name="TempHomeDirectoryUnsafePermission" xml:space="preserve">
+    <value>一時的なホーム ディレクトリ '{0}' は既に存在しますが、ユーザー専用に設定されている必要なアクセス許可がありません。別のユーザーによって作成された可能性があり、セキュリティ上のリスクとなるおそれがあります。このディレクトリを削除するか、アクセス許可を修正するか、'HOME' 環境変数を設定するまで、PowerShell は起動しません。</value>
+    <comment>{StrContains="HOME"}</comment>
+  </data>
 </root>

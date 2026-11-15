@@ -138,4 +138,8 @@
   <data name="UnknownErrorNumber" xml:space="preserve">
     <value>Error desconocido "{0}".</value>
   </data>
+  <data name="TempHomeDirectoryUnsafePermission" xml:space="preserve">
+    <value>El directorio HOME temporal "{0}" ya existe, pero no tiene el permiso de solo usuario esperado. Puede que lo haya creado otro usuario, lo que supone un riesgo de seguridad potencial. PowerShell no se iniciará hasta que se quite este directorio, se corrija su permiso o se establezca la variable de entorno "HOME".</value>
+    <comment>{StrContains="HOME"}</comment>
+  </data>
 </root>

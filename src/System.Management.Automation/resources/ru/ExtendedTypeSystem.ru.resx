@@ -377,7 +377,7 @@ PS&gt; [System.Collections.Generic.Comparer``1]::get_Default()
     <value>Значение "{0}" нельзя преобразовать в массив строк.</value>
   </data>
   <data name="InvalidCastExceptionNonCoreType" xml:space="preserve">
-    <value>Невозможно преобразовать значение в тип "{0}". В этом языковом режиме поддерживаются только основные типы.</value>
+    <value>Невозможно преобразовать значение в тип "{0}". В этом режиме языка поддерживаются только основные типы.</value>
   </data>
   <data name="InvalidCastToByRefLikeType" xml:space="preserve">
     <value>Не удается преобразовать в тип "{0}", подобный ByRef. Типы, подобные ByRef, не поддерживаются в PowerShell.</value>
@@ -396,11 +396,13 @@ PS&gt; [System.Collections.Generic.Comparer``1]::get_Default()
   </data>
   <data name="WDACHashTypeLogMessage" xml:space="preserve">
     <value>В режиме ConstrainedLanguage преобразование типа из HashTable в "{0}" не допускается.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACTypeConversionLogTitle" xml:space="preserve">
     <value>Преобразование хэш-таблицы расширенного типа</value>
   </data>
   <data name="WDACTypeConversionLogMessage" xml:space="preserve">
     <value>В режиме ConstrainedLanguage преобразование типа из "{0}" в "{1}" не допускается.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

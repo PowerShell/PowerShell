@@ -240,6 +240,15 @@
   <data name="TargetCannotContainDeviceName" xml:space="preserve">
     <value>Non è possibile elaborare il percorso ''{0}'' perché la destinazione rappresenta un nome di dispositivo riservato.</value>
   </data>
+  <data name="DirectoryNamePathTraversal" xml:space="preserve">
+    <value>Non è possibile elaborare il nome della directory remota '{0}' perché potrebbe causare l'attraversamento del percorso.</value>
+  </data>
+  <data name="FileNamePathTraversal" xml:space="preserve">
+    <value>Non è possibile elaborare il nome del file remoto '{0}' perché potrebbe causare l'attraversamento del percorso.</value>
+  </data>
+  <data name="ADSPathTraversal" xml:space="preserve">
+    <value>Non è possibile elaborare il nome remoto del flusso di dati alternativo '{0}' perché potrebbe causare l'attraversamento del percorso.</value>
+  </data>
   <data name="EncodingNotUsed" xml:space="preserve">
     <value>Codifica non utilizzata quando è specificato ''-AsByteStream''.</value>
   </data>

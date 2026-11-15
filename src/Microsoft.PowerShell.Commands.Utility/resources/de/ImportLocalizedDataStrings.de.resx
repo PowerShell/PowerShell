@@ -147,6 +147,7 @@
     <value>Cmdlet „Import-LocalizedData“</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>Zusätzliche unterstützte Befehle (über den Parameter „SupportedCommand“) sind im Modus „ConstrainedLanguage“ nicht zulässig.</value>
+    <value>Zusätzliche unterstützte Befehle (über den Parameter SupportedCommand) sind im ConstrainedLanguage-Modus nicht zulässig.</value>
+    <comment>{StrContains="SupportedCommand"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

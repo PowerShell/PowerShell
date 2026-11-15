@@ -135,6 +135,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private void InitializeAutoSize()
         {
+            // Only Table and Wide views support autosize.
+            if (this is not (TableViewGenerator or WideViewGenerator))
+            {
+                return;
+            }
+
             // check the autosize flag first
             if (parameters != null && parameters.autosize.HasValue)
             {

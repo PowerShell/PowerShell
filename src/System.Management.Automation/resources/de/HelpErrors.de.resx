@@ -191,6 +191,6 @@ Um diese Hilfethemen zu aktualisieren, starten Sie PowerShell mit dem Befehl „
     <value>In einer eingeschränkten Sitzung kann keine Hilfe von einem Netzwerkstandort abgerufen werden.</value>
   </data>
   <data name="NotAllowedInRestrictedRemoting" xml:space="preserve">
-    <value>Command not allowed in a restricted session.</value>
+    <value>Der Befehl ist in einer eingeschränkten Sitzung nicht zulässig.</value>
   </data>
 </root>

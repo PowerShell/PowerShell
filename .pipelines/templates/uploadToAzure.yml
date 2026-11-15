@@ -163,6 +163,14 @@ jobs:
   - task: DownloadPipelineArtifact@2
     inputs:
       buildType: 'current'
+      artifact: drop_nupkg_build_globaltool_pointer
+      itemPattern: '**/*.nupkg'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
+    displayName: Download RID-specific global tool nupkgs
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
       artifact: drop_windows_package_package_win_arm64
       itemPattern: |
         **/*.msix

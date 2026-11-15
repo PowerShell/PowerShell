@@ -67,6 +67,31 @@ Describe "Resolve-Path returns proper path" -Tag "CI" {
             Pop-Location
         }
     }
+
+    It "Resolve-Path -Relative prepends the current directory to every result" {
+        $directoryNames = ".directory", "..directory", "directory"
+        foreach ($directoryName in $directoryNames) {
+            $directory = New-Item -Path (Join-Path $TestDrive $directoryName) -ItemType Directory
+            $null = New-Item -Path $directory -Name "file1.txt" -ItemType File
+            $null = New-Item -Path $directory -Name "file2.txt" -ItemType File
+        }
+
+        try {
+            Push-Location -Path $TestDrive
+            foreach ($directoryName in $directoryNames) {
+                $expected = @(
+                    Join-Path "." $directoryName "file1.txt"
+                    Join-Path "." $directoryName "file2.txt"
+                )
+                Resolve-Path -Path (Join-Path $directoryName "*.txt") -Relative |
+                    Should -BeExactly $expected
+            }
+        }
+        finally {
+            Pop-Location
+        }
+    }
+
     It 'Resolve-Path RelativeBasePath should handle <Scenario>' -TestCases @(
         @{
             Scenario = "Absolute Path, Absolute ReleativeBasePath"

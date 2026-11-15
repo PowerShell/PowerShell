@@ -653,5 +653,6 @@
   </data>
   <data name="WDACSessionStateVarLogMessage" xml:space="preserve">
     <value>В режиме ConstrainedLanguage будет запрещено устанавливать или изменять значение AllScope для области переменной "{0}".</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

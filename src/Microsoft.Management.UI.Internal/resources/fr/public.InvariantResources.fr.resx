@@ -121,7 +121,8 @@
     <value>{0} ne peut pas être modifié directement, utilisez {1} à la place.</value>
   </data>
   <data name="Columns" xml:space="preserve">
-    <value>Colonnes</value>
+    <value>Columns</value>
+    <comment>{StrContains="Columns"}</comment>
   </data>
   <data name="ManagementListDateTimeColumnFormatString" xml:space="preserve">
     <value>{0:G}</value>
@@ -140,9 +141,11 @@
     <comment>The format string that is used by the InnerList in the case where a whole number type is used. The {0} will be the column value.</comment>
   </data>
   <data name="NotSupportAddingToItems" xml:space="preserve">
-    <value>{0} ne prend pas en charge les ajouts dans les collections d’éléments, utilisez {1} à la place.</value>
+    <value>{0} ne prend pas en charge l’ajout à la collection Items, utilisez {1} à la place.</value>
+    <comment>{StrContains="Items"}</comment>
   </data>
   <data name="ViewSetWithType" xml:space="preserve">
-    <value>Si Affichage a la valeur {0}, le type doit être {1}.</value>
+    <value>Si View a la valeur {0}, le type doit être {1}.</value>
+    <comment>{StrContains="View"}</comment>
   </data>
 </root>

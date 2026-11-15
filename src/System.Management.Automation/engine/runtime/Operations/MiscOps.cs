@@ -3102,6 +3102,30 @@ namespace System.Management.Automation
                             else
                             {
                                 var property = member as PSPropertyInfo;
+                                if (languageMode == PSLanguageMode.ConstrainedLanguage
+                                    && numArgs != 0
+                                    && !CoreTypes.Contains(basedCurrent.GetType()))
+                                {
+                                    if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                                    {
+                                        throw InterpreterError.NewInterpreterException(
+                                            current,
+                                            typeof(PSInvalidOperationException),
+                                            null,
+                                            "PropertySetterNotSupportedInConstrainedLanguage",
+                                            ParserStrings.PropertySetConstrainedLanguage);
+                                    }
+
+                                    SystemPolicy.LogWDACAuditMessage(
+                                        context: context,
+                                        title: ParameterBinderStrings.WDACBinderInvocationLogTitle,
+                                        message: StringUtil.Format(
+                                            ParameterBinderStrings.WDACBinderInvocationLogMessage,
+                                            name,
+                                            basedCurrent.GetType().FullName ?? string.Empty),
+                                        fqid: "MethodOrPropertyInvocationNotAllowed",
+                                        dropIntoDebugger: true);
+                                }
 
                                 switch (numArgs)
                                 {

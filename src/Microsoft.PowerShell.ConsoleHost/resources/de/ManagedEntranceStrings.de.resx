@@ -132,24 +132,6 @@
   <data name="ShellBannerRLMode" xml:space="preserve">
     <value>[Eingeschränkter Sprachmodus]</value>
   </data>
-  <data name="PreviewUpdateNotificationMessage" xml:space="preserve">
-    <value>  {1} Eine neue PowerShell-Vorschauversion ist verfügbar: v{0} {2}
-  {1} Upgraden Sie jetzt, oder besuchen Sie die Releaseseite unter:{3}{2}
-  {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
-</value>
-  </data>
-  <data name="StableUpdateNotificationMessage" xml:space="preserve">
-    <value>  {1} Ein neues stabiles PowerShell-Release ist verfügbar: v{0} {2}
-  {1} Upgraden Sie jetzt, oder besuchen Sie die Releaseseite unter:{3}{2}
-  {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
-</value>
-  </data>
-  <data name="LTSUpdateNotificationMessage" xml:space="preserve">
-    <value>  {1} Ein neues PowerShell LTS-Release ist verfügbar: v{0} {2}
-  {1} Jetzt aktualisieren, oder besuchen Sie die Releaseseite unter:{3}{2}
-  {1}https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
-</value>
-  </data>
   <data name="UsageHelp" xml:space="preserve">
     <value>Syntax: pwsh[.exe] [-Login] [[-File] &lt;filePath&gt; [args]]
                   [-Command { - | &lt;script-block&gt; [-args &lt;arg-array&gt;]

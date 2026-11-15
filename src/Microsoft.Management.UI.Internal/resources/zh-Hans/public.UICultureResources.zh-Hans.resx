@@ -204,27 +204,35 @@
     <comment>An ellipsis character.</comment>
   </data>
   <data name="ZoomIn1Shortcut" xml:space="preserve">
-    <value>Ctrl+小键盘加号</value>
+    <value>Ctrl+Add</value>
+    <comment>{StrContains="Ctrl+Add"}</comment>
   </data>
   <data name="ZoomIn2Shortcut" xml:space="preserve">
-    <value>Ctrl+Shift+小键盘加号</value>
+    <value>Ctrl+Shift+Add</value>
+    <comment>{StrContains="Ctrl+Shift+Add"}</comment>
   </data>
   <data name="ZoomIn3Shortcut" xml:space="preserve">
-    <value>Ctrl+主键盘加号</value>
+    <value>Ctrl+Plus</value>
+    <comment>{StrContains="Ctrl+Plus"}</comment>
   </data>
   <data name="ZoomIn4Shortcut" xml:space="preserve">
-    <value>Ctrl+Shift+主键盘加号</value>
+    <value>Ctrl+Shift+Plus</value>
+    <comment>{StrContains="Ctrl+Shift+Plus"}</comment>
   </data>
   <data name="ZoomOut1Shortcut" xml:space="preserve">
-    <value>Ctrl+小键盘减号</value>
+    <value>Ctrl+Subtract</value>
+    <comment>{StrContains="Ctrl+Subtract"}</comment>
   </data>
   <data name="ZoomOut2Shortcut" xml:space="preserve">
-    <value>Ctrl+Shift+小键盘减号</value>
+    <value>Ctrl+Shift+Subtract</value>
+    <comment>{StrContains="Ctrl+Shift+Subtract"}</comment>
   </data>
   <data name="ZoomOut3Shortcut" xml:space="preserve">
-    <value>Ctrl+主键盘减号</value>
+    <value>Ctrl+Minus</value>
+    <comment>{StrContains="Ctrl+Minus"}</comment>
   </data>
   <data name="ZoomOut4Shortcut" xml:space="preserve">
-    <value>Ctrl+Shift+主键盘减号</value>
+    <value>Ctrl+Shift+Minus</value>
+    <comment>{StrContains="Ctrl+Shift+Minus"}</comment>
   </data>
 </root>

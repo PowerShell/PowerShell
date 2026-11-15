@@ -1,6 +1,10 @@
 trigger: none
 
 parameters:
+  - name: UseEarlyAccessModules
+    displayName: Use early-access modules
+    type: boolean
+    default: false
   - name: InternalSDKBlobURL
     displayName: URL to the blob having internal .NET SDK
     type: string
@@ -40,6 +44,7 @@ parameters:
       - 'net8'
       - 'net9'
       - 'net10'
+      - 'net11'
   - name: DOTNET_RUNTIME_VERSION
     displayName: Runtime version of early access build
     type: string
@@ -64,6 +69,8 @@ resources:
     ref: refs/heads/main
 
 variables:
+  - name: UseEarlyAccessModules
+    value: ${{ parameters.UseEarlyAccessModules }}
   - template: templates/variables/PowerShell-Coordinated_Packages-Variables.yml
     parameters:
       InternalSDKBlobURL: ${{ parameters.InternalSDKBlobURL }}
@@ -121,4 +128,3 @@ extends:
         DOTNET_SDK_VERSION: ${{ parameters.DOTNET_SDK_VERSION }}
         EarlyAccessFeed: ${{ parameters.EarlyAccessFeed }}
         IsEarlyAccess: ${{ parameters.IsEarlyAccess }}
-
