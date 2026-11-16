@@ -1231,11 +1231,11 @@ namespace Microsoft.PowerShell.Commands
                     // Open the input file
                     SetRequestContent(request, new FileStream(InFile, FileMode.Open, FileAccess.Read, FileShare.Read));
                 }
-                catch (UnauthorizedAccessException)
+                catch (UnauthorizedAccessException ex)
                 {
                     string msg = string.Format(CultureInfo.InvariantCulture, WebCmdletStrings.AccessDenied, _originalFilePath);
 
-                    throw new UnauthorizedAccessException(msg);
+                    throw new UnauthorizedAccessException(msg, ex);
                 }
             }
 

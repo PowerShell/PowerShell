@@ -252,7 +252,7 @@ namespace Microsoft.PowerShell.Commands
                                             provider.FullName));
                             }
                         }
-                        catch (ItemNotFoundException)
+                        catch (ItemNotFoundException ex)
                         {
                             // Since the file wasn't found, just make a provider-qualified path out if it
                             // and use that.
@@ -273,7 +273,7 @@ namespace Microsoft.PowerShell.Commands
                                     new PSNotSupportedException(
                                         StringUtil.Format(TraceCommandStrings.TraceFileOnly,
                                             FileListener,
-                                            provider.FullName));
+                                            provider.FullName), ex);
                             }
 
                             resolvedPaths.Add(path);
