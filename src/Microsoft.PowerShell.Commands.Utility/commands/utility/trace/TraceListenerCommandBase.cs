@@ -273,7 +273,8 @@ namespace Microsoft.PowerShell.Commands
                                     new PSNotSupportedException(
                                         StringUtil.Format(TraceCommandStrings.TraceFileOnly,
                                             FileListener,
-                                            provider.FullName), ex);
+                                            provider.FullName),
+                                        ex);
                             }
 
                             resolvedPaths.Add(path);
