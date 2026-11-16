@@ -1338,30 +1338,12 @@ namespace System.Management.Automation
 
     internal static class AmsiUtils
     {
-        static AmsiUtils()
+        internal static bool InitAmsiContext()
         {
-#if !UNIX
-            try
-            {
-                s_amsiInitFailed = !CheckAmsiInit();
-            }
-            catch (DllNotFoundException)
-            {
-                PSEtwLog.LogAmsiUtilStateEvent("DllNotFoundException", $"{s_amsiContext}-{s_amsiSession}");
-                s_amsiInitFailed = true;
-                return;
-            }
-
-            PSEtwLog.LogAmsiUtilStateEvent($"init-{s_amsiInitFailed}", $"{s_amsiContext}-{s_amsiSession}");
-#endif
-        }
-
-        internal static int Init()
-        {
-            Diagnostics.Assert(s_amsiContext == IntPtr.Zero, "Init should be called just once");
-
             lock (s_amsiLockObject)
             {
+                Diagnostics.Assert(s_amsiContext == IntPtr.Zero, "The AMSI context must not already be initialized");
+
                 string appName;
                 try
                 {
@@ -1374,10 +1356,17 @@ namespace System.Management.Automation
                     appName = string.Concat("PowerShell_", currentProcess.ProcessName, ".exe_", PSVersionInfo.ProductVersion);
                 }
 
-                AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
+                IntPtr amsiContext = IntPtr.Zero;
+                int hr = AmsiNativeMethods.AmsiInitialize(appName, ref amsiContext);
 
-                var hr = AmsiNativeMethods.AmsiInitialize(appName, ref s_amsiContext);
-                return hr;
+                bool succeeded = Utils.Succeeded(hr);
+                if (succeeded)
+                {
+                    s_amsiContext = amsiContext;
+                    AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
+                }
+
+                return succeeded;
             }
         }
 
@@ -1434,7 +1423,7 @@ namespace System.Management.Automation
 
                 try
                 {
-                    if (!CheckAmsiInit())
+                    if (!CheckAmsiInit(warmUp))
                     {
                         return AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED;
                     }
@@ -1513,14 +1502,14 @@ namespace System.Management.Automation
 
             lock (s_amsiLockObject)
             {
-                if (s_amsiNotifyFailed)
+                if (s_amsiInitFailed || s_amsiNotifyFailed)
                 {
                     return false;
                 }
 
                 try
                 {
-                    if (!CheckAmsiInit())
+                    if (!CheckAmsiInit(warmup: false))
                     {
                         return false;
                     }
@@ -1559,7 +1548,7 @@ namespace System.Management.Automation
                     s_amsiNotifyFailed = true;
                     return false;
                 }
-                catch (System.EntryPointNotFoundException)
+                catch (EntryPointNotFoundException)
                 {
                     s_amsiNotifyFailed = true;
                     return false;
@@ -1567,79 +1556,84 @@ namespace System.Management.Automation
             }
         }
 
-        private static bool CheckAmsiInit()
+        private static bool CheckAmsiInit(bool warmup)
         {
-            // Initialize AntiMalware Scan Interface, if not already initialized.
-            // If we failed to initialize previously, just return the neutral result ("AMSI_RESULT_NOT_DETECTED")
-            if (s_amsiContext == IntPtr.Zero)
+            if (s_amsiContext != IntPtr.Zero && s_amsiSession != IntPtr.Zero)
             {
-                int hr = Init();
+                s_isWarmupSession = false;
+                return true;
+            }
 
-                if (!Utils.Succeeded(hr))
+            try
+            {
+                // Initialize AntiMalware Scan Interface, if not already initialized.
+                if (s_amsiContext == IntPtr.Zero)
                 {
-                    return false;
+                    s_amsiInitFailed = !InitAmsiContext();
+                }
+
+                // Initialize the session, if one isn't already started.
+                if (!s_amsiInitFailed && s_amsiSession == IntPtr.Zero)
+                {
+                    IntPtr amsiSession = IntPtr.Zero;
+                    int hr = AmsiNativeMethods.AmsiOpenSession(s_amsiContext, ref amsiSession);
+
+                    if (Utils.Succeeded(hr))
+                    {
+                        s_amsiSession = amsiSession;
+                        s_isWarmupSession = warmup;
+                    }
+                    else
+                    {
+                        s_amsiInitFailed = true;
+                    }
                 }
             }
-
-            // Initialize the session, if one isn't already started.
-            // If we failed to initialize previously, just return the neutral result ("AMSI_RESULT_NOT_DETECTED")
-            if (s_amsiSession == IntPtr.Zero)
+            catch (DllNotFoundException)
             {
-                int hr = AmsiNativeMethods.AmsiOpenSession(s_amsiContext, ref s_amsiSession);
-                AmsiInitialized = true;
-
-                if (!Utils.Succeeded(hr))
-                {
-                    return false;
-                }
+                s_amsiInitFailed = true;
+                PSEtwLog.LogAmsiUtilStateEvent("DllNotFoundException", $"{s_amsiContext}-{s_amsiSession}");
+                return false;
             }
 
-            return true;
+            PSEtwLog.LogAmsiUtilStateEvent($"init-{s_amsiInitFailed}", $"{s_amsiContext}-{s_amsiSession}");
+            return !s_amsiInitFailed;
         }
 
-        internal static void CurrentDomain_ProcessExit(object sender, EventArgs e)
-        {
-            if (AmsiInitialized && !AmsiUninitializeCalled)
-            {
-                Uninitialize();
-            }
-        }
+        internal static void CurrentDomain_ProcessExit(object sender, EventArgs e) => Uninitialize();
 
         private static IntPtr s_amsiContext = IntPtr.Zero;
-
         private static IntPtr s_amsiSession = IntPtr.Zero;
 
-        private static readonly bool s_amsiInitFailed = false;
-        private static bool s_amsiNotifyFailed = false;
-        private static readonly object s_amsiLockObject = new object();
+        private static bool s_isWarmupSession;
+        private static bool s_amsiInitFailed;
+        private static bool s_amsiNotifyFailed;
+        private static readonly object s_amsiLockObject = new();
 
         /// <summary>
         /// Reset the AMSI session (used to track related script invocations)
         /// </summary>
-        internal static void CloseSession()
+        internal static void CloseSession(bool resetSession)
         {
-#if !UNIX
-            WinCloseSession();
-#endif
-        }
-
-        internal static void WinCloseSession()
-        {
-            if (!s_amsiInitFailed)
+#if UNIX
+            return;
+#else
+            lock (s_amsiLockObject)
             {
-                if ((s_amsiContext != IntPtr.Zero) && (s_amsiSession != IntPtr.Zero))
+                // Clean up the session if one was open.
+                if (s_amsiContext != IntPtr.Zero && s_amsiSession != IntPtr.Zero)
                 {
-                    lock (s_amsiLockObject)
+                    if (resetSession && s_isWarmupSession)
                     {
-                        // Clean up the session if one was open.
-                        if ((s_amsiContext != IntPtr.Zero) && (s_amsiSession != IntPtr.Zero))
-                        {
-                            AmsiNativeMethods.AmsiCloseSession(s_amsiContext, s_amsiSession);
-                            s_amsiSession = IntPtr.Zero;
-                        }
+                        // The session created by warmup hasn't been used yet, and thus don't need to be reset.
+                        return;
                     }
+
+                    AmsiNativeMethods.AmsiCloseSession(s_amsiContext, s_amsiSession);
+                    s_amsiSession = IntPtr.Zero;
                 }
             }
+#endif
         }
 
         /// <summary>
@@ -1647,37 +1641,25 @@ namespace System.Management.Automation
         /// </summary>
         internal static void Uninitialize()
         {
-#if !UNIX
-            WinUninitialize();
-#endif
-        }
-
-        internal static void WinUninitialize()
-        {
-            AmsiUninitializeCalled = true;
-            if (!s_amsiInitFailed)
+#if UNIX
+            return;
+#else
+            lock (s_amsiLockObject)
             {
-                lock (s_amsiLockObject)
+                if (s_amsiContext != IntPtr.Zero)
                 {
-                    if (s_amsiContext != IntPtr.Zero)
-                    {
-                        CloseSession();
+                    CloseSession(resetSession: false);
 
-                        // Unregister the event handler.
-                        AppDomain.CurrentDomain.ProcessExit -= CurrentDomain_ProcessExit;
+                    // Unregister the event handler.
+                    AppDomain.CurrentDomain.ProcessExit -= CurrentDomain_ProcessExit;
 
-                        // Uninitialize the AMSI interface.
-                        AmsiCleanedUp = true;
-                        AmsiNativeMethods.AmsiUninitialize(s_amsiContext);
-                        s_amsiContext = IntPtr.Zero;
-                    }
+                    // Uninitialize the AMSI interface.
+                    AmsiNativeMethods.AmsiUninitialize(s_amsiContext);
+                    s_amsiContext = IntPtr.Zero;
                 }
             }
+#endif
         }
-
-        public static bool AmsiUninitializeCalled = false;
-        public static bool AmsiInitialized = false;
-        public static bool AmsiCleanedUp = false;
 
         internal static class AmsiNativeMethods
         {
