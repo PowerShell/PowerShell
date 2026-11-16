@@ -15,7 +15,7 @@ this supports Arm64 on Linux and macOS and includes instrumented subprocesses.
 Coverage builds retain symbols. xUnit dependencies are built before instrumentation
 and tests use `--no-build` so instrumented binaries are not overwritten.
 Collection/reporting functions live in this module; no external coverage service
-or write-enabled PR token is required.
+or write-enabled token is required by the PR test workflow.
 During collection, `PS_CODE_COVERAGE=1` lets the startup assembly check account
 for the static tracker's two additional dependencies without relaxing normal builds.
 On Unix, collection creates separate, private runtime directories for the runner
@@ -44,6 +44,16 @@ shown. Download the `codecoverage-report` artifact
 and open `index.html` for the PR diff: covered executable lines are green,
 uncovered executable lines are red, unknown C# coverage is yellow, and
 non-executable lines, removed lines, and PowerShell changes are neutral.
+
+After `PR-CI` completes, `codecoverage-comment.yml` posts the same summary and a
+report download link in a PR comment, updating the bot's existing coverage comment
+on subsequent runs. Incomplete reports retain their warning and suite statuses.
+This separate `workflow_run` publisher has comment-write permission and uses only
+default-branch code; it never executes PR code or artifact contents. It also works
+for fork PRs, skips closed PRs and superseded heads, and prevents an older report
+from replacing a newer one. Automatic comments become active once the publisher
+workflow is present on the default branch. The HTML colored diff remains in the
+downloadable artifact because GitHub comments cannot render its coverage colors.
 
 Base coverage and the before/after coverage delta are explicitly **unavailable**:
 tests run only once and CI does not retain a historical baseline. Patch coverage

@@ -223,6 +223,122 @@ Describe 'CI .NET code coverage' {
             }
         }
 
+        Context 'PR coverage comment' {
+            BeforeEach {
+                $script:commentEnvironment = @{}
+                foreach ($name in 'GITHUB_API_URL', 'GITHUB_REPOSITORY', 'GH_TOKEN') {
+                    $script:commentEnvironment[$name] = [System.Environment]::GetEnvironmentVariable($name)
+                }
+                $env:GITHUB_API_URL = 'https://api.github.example'
+                $env:GITHUB_REPOSITORY = 'owner/repo'
+                $env:GH_TOKEN = 'fixture-token'
+                $script:commentDirectory = Join-Path $TestDrive 'comment-report'
+                $null = New-Item -ItemType Directory -Path $commentDirectory -Force
+                "# .NET code coverage`n**INCOMPLETE: missing suites.**" |
+                    Set-Content -LiteralPath (Join-Path $commentDirectory 'summary.md')
+                $script:commentRun = @{
+                    event = 'pull_request'; path = '.github/workflows/pr-ci.yml'
+                    status = 'completed'; run_attempt = 2; head_sha = 'head'
+                    head_repository = @{ full_name = 'fork/repo' }
+                    pull_requests = @(@{ number = 42 })
+                    html_url = 'https://github.example/owner/repo/actions/runs/123'
+                }
+                $script:commentPullRequest = @{
+                    state = 'open'; head = @{ sha = 'head'; repo = @{ full_name = 'fork/repo' } }
+                }
+                $script:existingComments = @()
+                $script:publishedComment = $null
+                Mock Invoke-RestMethod {
+                    param($Uri, $Method, $Body)
+                    if ($Method -in 'Patch', 'Post') {
+                        $script:publishedComment = $Body | ConvertFrom-Json
+                        return @{ html_url = 'https://github.example/comment' }
+                    }
+
+                    switch -Wildcard ($Uri) {
+                        '*/actions/runs/123' { return $script:commentRun }
+                        '*/pulls/42' { return $script:commentPullRequest }
+                        '*/commits/head/pulls?*' { return ,@(@{ number = 42 }) }
+                        '*/issues/42/comments?*' { return ,$script:existingComments }
+                        default { throw "Unexpected API request: $Uri" }
+                    }
+                }
+            }
+
+            AfterEach {
+                foreach ($name in $script:commentEnvironment.Keys) {
+                    [System.Environment]::SetEnvironmentVariable($name, $script:commentEnvironment[$name])
+                }
+            }
+
+            It 'posts incomplete coverage and a report link for a fork PR without an event PR association' {
+                $commentRun.pull_requests = @()
+                Publish-CodeCoverageComment -ReportDirectory $commentDirectory -RunId 123 -RunAttempt 2
+                $publishedComment.body | Should -Match '\*\*INCOMPLETE: missing suites'
+                $publishedComment.body | Should -Match 'coverage-run:123:2'
+                $publishedComment.body | Should -Match '\[CI run and coverage report download\]\(https://github.example/owner/repo/actions/runs/123\)'
+                Should -Invoke Invoke-RestMethod -Times 1 -Exactly -ParameterFilter {
+                    $Method -eq 'Post' -and $Uri -eq 'https://api.github.example/repos/owner/repo/issues/42/comments'
+                }
+            }
+
+            It 'updates only the bot comment and searches beyond the first page' {
+                $script:existingComments = @(1..100 | ForEach-Object {
+                    @{ id = $_; user = @{ login = 'contributor' }; body = '<!-- powershell-dotnet-coverage -->' }
+                })
+                Mock Invoke-RestMethod {
+                    ,@(@{ id = 456; user = @{ login = 'github-actions[bot]' }; body = '<!-- powershell-dotnet-coverage -->' })
+                } -ParameterFilter { $Uri -like '*comments?per_page=100&page=2' }
+                Publish-CodeCoverageComment -ReportDirectory $commentDirectory -RunId 123 -RunAttempt 2
+                Should -Invoke Invoke-RestMethod -Times 1 -Exactly -ParameterFilter {
+                    $Method -eq 'Patch' -and $Uri -eq 'https://api.github.example/repos/owner/repo/issues/comments/456'
+                }
+                Should -Invoke Invoke-RestMethod -Times 0 -Exactly -ParameterFilter { $Method -eq 'Post' }
+            }
+
+            It 'does not replace a report from newer run/attempt <Identity>' -TestCases @(
+                @{ Identity = '124:1' }
+                @{ Identity = '123:3' }
+            ) {
+                param($Identity)
+                $script:existingComments = @(@{
+                    id = 456; user = @{ login = 'github-actions[bot]' }
+                    body = "<!-- powershell-dotnet-coverage -->`n<!-- coverage-run:$Identity -->"
+                })
+                Publish-CodeCoverageComment -ReportDirectory $commentDirectory -RunId 123 -RunAttempt 2
+                $publishedComment | Should -BeNullOrEmpty
+            }
+
+            It 'does not publish for a closed, superseded or mismatched PR: <Reason>' -TestCases @(
+                @{ Reason = 'closed' }
+                @{ Reason = 'head' }
+                @{ Reason = 'repository' }
+            ) {
+                param($Reason)
+                switch ($Reason) {
+                    closed { $commentPullRequest.state = 'closed' }
+                    head { $commentPullRequest.head.sha = 'new-head' }
+                    repository { $commentPullRequest.head.repo.full_name = 'different/repo' }
+                }
+                Publish-CodeCoverageComment -ReportDirectory $commentDirectory -RunId 123 -RunAttempt 2
+                $publishedComment | Should -BeNullOrEmpty
+            }
+
+            It 'skips a superseded attempt and rejects unrelated workflows and absent summaries' {
+                $commentRun.run_attempt = 3
+                Publish-CodeCoverageComment -ReportDirectory $commentDirectory -RunId 123 -RunAttempt 2
+                $publishedComment | Should -BeNullOrEmpty
+                $commentRun.run_attempt = 2
+                $commentRun.path = '.github/workflows/unrelated.yml'
+                { Publish-CodeCoverageComment -ReportDirectory $commentDirectory -RunId 123 -RunAttempt 2 } |
+                    Should -Throw '*require a PR-CI pull request run*'
+                $commentRun.path = '.github/workflows/pr-ci.yml'
+                Remove-Item -LiteralPath (Join-Path $commentDirectory 'summary.md')
+                { Publish-CodeCoverageComment -ReportDirectory $commentDirectory -RunId 123 -RunAttempt 2 } |
+                    Should -Throw
+            }
+        }
+
         Context 'PR commit identity and report' {
             BeforeEach {
                 $script:savedEnvironment = @{}

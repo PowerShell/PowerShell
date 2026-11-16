@@ -716,4 +716,103 @@ function Publish-CodeCoverageReport {
         -OutputDirectory (Join-Path $env:GITHUB_WORKSPACE 'coverage-report') -ExpectedRun $expected -Change (Get-CodeCoverageChange)
 }
 
-Export-ModuleMember -Function Get-CodeCoverageChange, Invoke-CodeCoverageTest, Invoke-CodeCoverageXUnit, Publish-CodeCoverageReport
+function Publish-CodeCoverageComment {
+    <#
+    .SYNOPSIS
+        Updates the bot's PR comment with a completed run's coverage summary.
+    .DESCRIPTION
+        Runs only from trusted publishing code, never from a PR checkout.
+        Artifact Markdown is treated as data, and stale PR heads/reruns are skipped.
+    .PARAMETER ReportDirectory
+        The completed run's downloaded codecoverage-report artifact.
+    .PARAMETER RunId
+        The workflow run that produced the artifact.
+    .PARAMETER RunAttempt
+        The completed attempt that triggered publishing.
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)] [string] $ReportDirectory,
+        [Parameter(Mandatory)] [long] $RunId,
+        [Parameter(Mandatory)] [int] $RunAttempt
+    )
+
+    $request = @{
+        Headers = @{ Accept = 'application/vnd.github+json'; Authorization = "Bearer $env:GH_TOKEN" }
+        ContentType = 'application/json'
+        ErrorAction = 'Stop'
+    }
+    $api = "$env:GITHUB_API_URL/repos/$env:GITHUB_REPOSITORY"
+    $run = Invoke-RestMethod @request -Uri "$api/actions/runs/$RunId"
+    if ($run.event -ne 'pull_request' -or $run.path -ne '.github/workflows/pr-ci.yml') {
+        throw 'Coverage comments require a PR-CI pull request run.'
+    }
+
+    if ($run.status -ne 'completed' -or $run.run_attempt -ne $RunAttempt) {
+        Write-Host 'Skipping coverage comment: a newer run attempt has started.'
+        return
+    }
+
+    $pullRequests = @($run.pull_requests)
+    if (-not $pullRequests.Count) {
+        # workflow_run can omit pull_requests for fork PRs.
+        $pullRequests = @(
+            Invoke-RestMethod @request -Uri "$api/commits/$($run.head_sha)/pulls?per_page=100" | ForEach-Object { $_ }
+        )
+    }
+
+    if (-not $pullRequests.Count) {
+        Write-Host 'Skipping coverage comment: no associated pull request.'
+        return
+    }
+
+    $summary = Get-Content -LiteralPath (Join-Path $ReportDirectory 'summary.md') -Raw -ErrorAction Stop
+    if ([string]::IsNullOrWhiteSpace($summary) -or $summary.Length -gt 60000) {
+        throw 'Coverage summary is empty or too large for a PR comment.'
+    }
+
+    $marker = '<!-- powershell-dotnet-coverage -->'
+    $body = "$marker`n<!-- coverage-run:${RunId}:${RunAttempt} -->`n$summary`n[CI run and coverage report download]($($run.html_url))`n"
+    foreach ($candidate in $pullRequests) {
+        $pullRequest = Invoke-RestMethod @request -Uri "$api/pulls/$($candidate.number)"
+        if ($pullRequest.state -ne 'open' -or $pullRequest.head.sha -ne $run.head_sha -or
+            $pullRequest.head.repo.full_name -ne $run.head_repository.full_name) {
+            Write-Host "Skipping coverage comment for PR #$($candidate.number): closed or superseded head."
+            continue
+        }
+
+        $comments = @(
+            $page = 1
+            do {
+                $batch = @(
+                    Invoke-RestMethod @request -Uri "$api/issues/$($candidate.number)/comments?per_page=100&page=$page" |
+                        ForEach-Object { $_ }
+                )
+                $batch
+                $page++
+            } while ($batch.Count -eq 100)
+        )
+        $comment = $comments | Where-Object {
+            $_.user.login -eq 'github-actions[bot]' -and $_.body.StartsWith($marker)
+        } | Select-Object -First 1
+        if ($comment) {
+            $identity = [regex]::Match($comment.body, '<!-- coverage-run:(\d+):(\d+) -->')
+            if ($identity.Success -and
+                ([long] $identity.Groups[1].Value -gt $RunId -or
+                ([long] $identity.Groups[1].Value -eq $RunId -and [int] $identity.Groups[2].Value -gt $RunAttempt))) {
+                Write-Host 'Skipping coverage comment: a newer report has already been published.'
+                continue
+            }
+
+            $result = Invoke-RestMethod @request -Method Patch -Uri "$api/issues/comments/$($comment.id)" `
+                -Body (@{ body = $body } | ConvertTo-Json -Compress)
+        } else {
+            $result = Invoke-RestMethod @request -Method Post -Uri "$api/issues/$($candidate.number)/comments" `
+                -Body (@{ body = $body } | ConvertTo-Json -Compress)
+        }
+
+        Write-Host "Published coverage comment: $($result.html_url)"
+    }
+}
+
+Export-ModuleMember -Function Get-CodeCoverageChange, Invoke-CodeCoverageTest, Invoke-CodeCoverageXUnit, Publish-CodeCoverageReport, Publish-CodeCoverageComment
