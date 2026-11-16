@@ -15,9 +15,7 @@ namespace System.Management.Automation.Internal
     internal static class StringUtil
     {
         internal static string Format(string format, object arg0)
-        {
-            return string.Format(CultureInfo.CurrentCulture, format, arg0);
-        }
+            => string.Format(CultureInfo.CurrentCulture, format, arg0);
 
         internal static string Format(string format, object arg0, object arg1)
             => string.Format(CultureInfo.CurrentCulture, format, arg0, arg1);
