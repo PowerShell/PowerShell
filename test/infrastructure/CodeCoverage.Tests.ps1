@@ -397,14 +397,73 @@ Describe 'CI .NET code coverage' {
                 Get-Content -LiteralPath (Join-Path $outputPath 'summary.md') -Raw | Should -Match 'Missing: Linux/X64/xunit'
             }
 
-            It 'rejects coverage from a previous run attempt' {
-                $inputPath = Join-Path $TestDrive 'stale'
+            It 'combines retained successful suites with a retried suite from the same run and commit' {
+                $inputPath = Join-Path $TestDrive 'retry-input'
+                $outputPath = Join-Path $TestDrive 'retry-report'
+                foreach ($attempt in 1, 2) {
+                    $suitePath = Join-Path $inputPath "attempt-$attempt"
+                    $null = New-Item -ItemType Directory -Path $suitePath -Force
+                    @{
+                        Commit = $baseCommit; RunId = '123'; RunAttempt = "$attempt"
+                        Platform = 'Linux'; Architecture = 'X64'; Suite = "suite-$attempt"; Passed = $true
+                        Files = @{ 'src/Sample.cs' = @{ '1' = $attempt -eq 1; '3' = $attempt -eq 2 } }
+                    } | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $suitePath 'coverage.json')
+                }
+
+                $change = @{ TestCommit = $baseCommit; DiffBase = $baseCommit; ChangedFile = @() }
+                $expected = @('Linux/X64/suite-1', 'Linux/X64/suite-2')
+                Write-CodeCoverageReport -InputDirectory $inputPath -OutputDirectory $outputPath -ExpectedRun $expected -Change $change
+                $report = Get-Content -LiteralPath (Join-Path $outputPath 'summary.md') -Raw
+                $report | Should -Match 'Current aggregate: \*\*100.00%\*\* \(2/2 executable lines\)'
+                $report | Should -Match '\| suite-1 \| 1 \|'
+                $report | Should -Match '\| suite-2 \| 2 \|'
+                $data = Get-Content -LiteralPath (Join-Path $outputPath 'coverage.json') -Raw | ConvertFrom-Json -AsHashtable
+                $data['src/Sample.cs']['1'] | Should -BeTrue
+                $data['src/Sample.cs']['3'] | Should -BeTrue
+
+                $suitePath = Join-Path (Join-Path $inputPath 'attempt-1') 'coverage.json'
+                $retained = Get-Content -LiteralPath $suitePath -Raw | ConvertFrom-Json -AsHashtable
+                $retained.Passed = $false
+                $retained | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $suitePath
+                { Write-CodeCoverageReport -InputDirectory $inputPath -OutputDirectory $outputPath -ExpectedRun $expected -Change $change } |
+                    Should -Throw '*0 missing and 1 failed suites*'
+            }
+
+            It 'rejects an invalid or future artifact attempt <Attempt>' -TestCases @(
+                @{ Attempt = '3' }
+                @{ Attempt = '0' }
+                @{ Attempt = '-1' }
+                @{ Attempt = 'invalid' }
+                @{ Attempt = $null }
+            ) {
+                param($Attempt)
+                $inputPath = Join-Path $TestDrive 'invalid-attempt'
                 $null = New-Item -ItemType Directory -Path $inputPath -Force
-                @{ Commit = $baseCommit; RunId = '123'; RunAttempt = '1' } |
+                @{ Commit = $baseCommit; RunId = '123'; RunAttempt = $Attempt } |
                     ConvertTo-Json | Set-Content -LiteralPath (Join-Path $inputPath 'coverage.json')
                 $change = @{ TestCommit = $baseCommit; DiffBase = $baseCommit; ChangedFile = @() }
+                { Write-CodeCoverageReport -InputDirectory $inputPath -OutputDirectory (Join-Path $TestDrive 'invalid-attempt-report') -ExpectedRun 'Linux/X64/xunit' -Change $change } |
+                    Should -Throw '*invalid or future run attempt*'
+            }
+
+            It 'rejects coverage from a different <Identity> even on an earlier attempt' -TestCases @(
+                @{ Identity = 'commit' }
+                @{ Identity = 'run' }
+            ) {
+                param($Identity)
+                $inputPath = Join-Path $TestDrive 'stale'
+                $null = New-Item -ItemType Directory -Path $inputPath -Force
+                $stale = @{ Commit = $baseCommit; RunId = '123'; RunAttempt = '1' }
+                if ($Identity -eq 'commit') {
+                    $stale.Commit = 'a' * 40
+                } else {
+                    $stale.RunId = '122'
+                }
+
+                $stale | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $inputPath 'coverage.json')
+                $change = @{ TestCommit = $baseCommit; DiffBase = $baseCommit; ChangedFile = @() }
                 { Write-CodeCoverageReport -InputDirectory $inputPath -OutputDirectory (Join-Path $TestDrive 'stale-report') -ExpectedRun 'Linux/X64/xunit' -Change $change } |
-                    Should -Throw '*different commit, run, or attempt*'
+                    Should -Throw '*different commit or run*'
             }
         }
     }

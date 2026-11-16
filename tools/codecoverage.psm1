@@ -544,6 +544,7 @@ function Write-CodeCoverageReport {
         Publishes the aggregate, per-run breakdown, and coverage-colored PR diff.
     .DESCRIPTION
         Rejects stale data and labels missing/failed suites as incomplete.
+        Earlier attempts are valid only within the same run and tested commit.
         Historical base coverage and causal script/test deltas are not inferred.
     .PARAMETER InputDirectory
         Downloaded coverage artifacts from this CI run.
@@ -567,10 +568,20 @@ function Write-CodeCoverageReport {
     $runs = @(Get-ChildItem -LiteralPath $InputDirectory -Filter coverage.json -Recurse -File | ForEach-Object {
         Get-Content -LiteralPath $_.FullName -Raw | ConvertFrom-Json -AsHashtable
     })
+    $currentAttempt = 0
+    if (-not [int]::TryParse($env:GITHUB_RUN_ATTEMPT, [ref] $currentAttempt) -or $currentAttempt -lt 1) {
+        throw 'Invalid current coverage run attempt.'
+    }
+
     foreach ($coverageRun in $runs) {
-        if ($coverageRun.Commit -ne $Change.TestCommit -or $coverageRun.RunId -ne $env:GITHUB_RUN_ID -or
-            $coverageRun.RunAttempt -ne $env:GITHUB_RUN_ATTEMPT) {
-            throw 'Coverage artifact belongs to a different commit, run, or attempt.'
+        if ($coverageRun.Commit -ne $Change.TestCommit -or $coverageRun.RunId -ne $env:GITHUB_RUN_ID) {
+            throw 'Coverage artifact belongs to a different commit or run.'
+        }
+
+        $artifactAttempt = 0
+        if (-not [int]::TryParse([string] $coverageRun.RunAttempt, [ref] $artifactAttempt) -or
+            $artifactAttempt -lt 1 -or $artifactAttempt -gt $currentAttempt) {
+            throw "Coverage artifact has an invalid or future run attempt: $($coverageRun.RunAttempt)."
         }
     }
 
@@ -600,12 +611,12 @@ function Write-CodeCoverageReport {
     }
 
     $null = $markdown.AppendLine()
-    $null = $markdown.AppendLine('| Platform | Architecture | Test run | Covered / executable | Coverage | Status |')
-    $null = $markdown.AppendLine('| --- | --- | --- | --- | --- | --- |')
+    $null = $markdown.AppendLine('| Platform | Architecture | Test run | Attempt | Covered / executable | Coverage | Status |')
+    $null = $markdown.AppendLine('| --- | --- | --- | --- | --- | --- | --- |')
     foreach ($coverageRun in $runs | Sort-Object Platform, Architecture, Suite) {
         $runSummary = Get-CodeCoverageSummary -File $coverageRun.Files
         $status = if ($coverageRun.Passed) { 'Passed' } else { 'Failed / partial' }
-        $null = $markdown.AppendLine("| $($coverageRun.Platform) | $($coverageRun.Architecture) | $($coverageRun.Suite) | $($runSummary.Covered) / $($runSummary.Total) | $($runSummary.Percent) | $status |")
+        $null = $markdown.AppendLine("| $($coverageRun.Platform) | $($coverageRun.Architecture) | $($coverageRun.Suite) | $($coverageRun.RunAttempt) | $($runSummary.Covered) / $($runSummary.Total) | $($runSummary.Percent) | $status |")
     }
 
     $html = [System.Text.StringBuilder]::new()

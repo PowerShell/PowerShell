@@ -54,10 +54,13 @@ The diff uses immutable base/head commit IDs from the PR event. For a synthetic
 merge it compares the event base to the tested merge commit, so line annotations
 match the tested source and changes already pulled from the base are excluded.
 For a head checkout it uses the merge base, which also handles rebases.
-Artifacts are scoped to the same run, attempt, and tested commit; missing or failed
+Artifacts are scoped to the same workflow run and tested commit; missing or failed
 suites produce an explicitly incomplete report and fail the aggregate job.
-Rerun all jobs when rerunning coverage: rerunning only failed jobs cannot combine
-previous-attempt coverage with current-attempt results.
+Rerunning failed jobs retains coverage from successful suites in earlier attempts
+of that same run, without rerunning those tests. Each rerun replaces its suite's
+artifact, and the aggregate report is replaced as well. The summary records each
+suite's attempt; invalid or future attempts, other runs/commits, and duplicate
+suites are rejected.
 Only platform/architecture/suite artifacts are downloaded as aggregate inputs;
 the generated `codecoverage-report` is excluded, including on reruns.
 

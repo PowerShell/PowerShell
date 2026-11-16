@@ -13,3 +13,4 @@ runs:
         name: codecoverage-${{ runner.os }}-${{ runner.arch }}-${{ inputs.suite }}
         path: ${{ github.workspace }}/coverage
         if-no-files-found: error
+        overwrite: true

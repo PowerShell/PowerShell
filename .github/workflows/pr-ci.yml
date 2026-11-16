@@ -134,3 +134,4 @@ jobs:
           name: codecoverage-report
           path: ${{ github.workspace }}/coverage-report
           if-no-files-found: error
+          overwrite: true
