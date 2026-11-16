@@ -192,7 +192,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Temporary CimSession cache lock.
         /// </summary>
-        private static readonly object temporarySessionCacheLock = new();
+        private static readonly Lock temporarySessionCacheLock = new();
 
         /// <summary>
         /// <para>temporary CimSession cache</para>
@@ -1527,7 +1527,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Lock object used to lock
         /// operation & cancelOperation members.
         /// </summary>
-        private readonly object stateLock = new();
+        private readonly Lock stateLock = new();
 
         /// <summary>
         /// The operation issued by cimSession.

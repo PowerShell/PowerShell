@@ -536,7 +536,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Lock object.
         /// </summary>
-        private readonly object a_lock = new();
+        private readonly Lock a_lock = new();
 
         /// <summary>
         /// Number of active operations.
@@ -558,7 +558,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Lock object.
         /// </summary>
-        private readonly object cimSessionProxyCacheLock = new();
+        private readonly Lock cimSessionProxyCacheLock = new();
 
         /// <summary>
         /// Cache all <see cref="CimSessionProxy"/> objects related to
