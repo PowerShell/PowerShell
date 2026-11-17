@@ -133,7 +133,7 @@
     <value>Debugowanie nie jest obsługiwane w sesjach zdalnych.</value>
   </data>
   <data name="CannotSetBreakpointInconsistentLanguageMode" xml:space="preserve">
-    <value>Nie można ustawić punktu przerwania. Tryb językowy dla tej sesji jest niezgodny z trybem języka w całym systemie.</value>
+    <value>Nie można ustawić punktu przerwania. Tryb języka dla tej sesji jest niezgodny z trybem języka w całym systemie.</value>
   </data>
   <data name="RemoteDebuggerNotSupportedInHost" xml:space="preserve">
     <value>Nie można ustawić punktów przerwania w sesji zdalnej, ponieważ zdalne debugowanie nie jest obsługiwane przez bieżącego hosta.</value>

@@ -395,12 +395,14 @@ PS&gt; [System.Collections.Generic.Comparer``1]::get_Default()
     <value>Extended Type System Hashtable Conversion</value>
   </data>
   <data name="WDACHashTypeLogMessage" xml:space="preserve">
-    <value>Type conversion from HashTable to '{0}' will not be allowed in ConstrainedLanguage mode.</value>
+    <value>A conversão de tipo de HashTable para '{0}' não será permitida no modo ConstrainedLanguage.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACTypeConversionLogTitle" xml:space="preserve">
     <value>Extended Type System Hashtable Conversion</value>
   </data>
   <data name="WDACTypeConversionLogMessage" xml:space="preserve">
-    <value>Type conversion from '{0}' to '{1}' will not be allowed in ConstrainedLanguage mode.</value>
+    <value>A conversão de tipo de '{0}' para '{1}' não será permitida no modo ConstrainedLanguage.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

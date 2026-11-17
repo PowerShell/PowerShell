@@ -134,36 +134,16 @@ Describe "Packaging Module Functions" {
             $mapping = Get-Content -Path $mappingPath -Raw | ConvertFrom-Json
         }
 
-        It "Should map <Channel> <Architecture> packages to <Url>" -TestCases @(
-            @{
-                Channel = "preview"
-                Architecture = "x86_64"
-                Url = "azurelinux-4-preview-microsoft-x86_64"
-            }
-            @{
-                Channel = "preview"
-                Architecture = "aarch64"
-                Url = "azurelinux-4-preview-microsoft-aarch64"
-            }
-            @{
-                Channel = "stable"
-                Architecture = "x86_64"
-                Url = "azurelinux-4-prod-microsoft-x86_64"
-            }
-            @{
-                Channel = "stable"
-                Architecture = "aarch64"
-                Url = "azurelinux-4-prod-microsoft-aarch64"
-            }
-        ) {
-            param($Channel, $Architecture, $Url)
+        It "Should not map packages to Azure Linux 4" {
+            $azureLinux4Mappings = @(
+                $mapping.Packages |
+                    Where-Object {
+                        $_.url -like "azurelinux-4*" -or
+                        $_.PackageFormat -match "\.azl4\."
+                    }
+            )
 
-            $mappedPackage = @($mapping.Packages | Where-Object url -EQ $Url)
-            $mappedPackage.Count | Should -Be 1
-            $mappedPackage[0].channel | Should -BeExactly $Channel
-            $mappedPackage[0].distribution | Should -BeExactly @("azl")
-            $mappedPackage[0].PackageFormat |
-                Should -BeExactly "PACKAGE_NAME-POWERSHELL_RELEASE-1.azl4.$Architecture.rpm"
+            $azureLinux4Mappings | Should -BeNullOrEmpty
         }
 
         It "Should remove the Azure Linux 4 beta mappings" {

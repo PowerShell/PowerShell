@@ -173,5 +173,6 @@
   </data>
   <data name="IEXWDACLogMessage" xml:space="preserve">
     <value>Blok skryptu polecenia cmdlet Invoke-Expression zostanie uruchomiony w trybie ConstrainedLanguage.</value>
+    <comment>{StrContains="Invoke-Expression"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

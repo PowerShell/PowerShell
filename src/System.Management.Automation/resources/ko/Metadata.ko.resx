@@ -262,6 +262,7 @@
     <value>ValidateTrustedData 특성 검사 실패</value>
   </data>
   <data name="WDACParameterArgNotTrustedMessage" xml:space="preserve">
-    <value>'{0}' 매개 변수 인수는 신뢰할 수 없으며, 제한 언어 모드에서 ValidateTrustedData 매개 변수 특성 검사에 실패합니다.</value>
+    <value>'{0}' 매개 변수 인수는 신뢰할 수 없으며 ConstrainedLanguage 모드에서 ValidateTrustedData 매개 변수 특성 검사에 실패합니다.</value>
+    <comment>{StrContains="ValidateTrustedData"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

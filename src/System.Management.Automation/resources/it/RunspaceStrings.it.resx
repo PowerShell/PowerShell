@@ -172,7 +172,7 @@
     <value>Le opzioni del thread possono essere modificate solo se lo stato dell'apartment è multithreading apartment (MTA), le opzioni correnti sono UseNewThread o UseCurrentThread e il nuovo valore è ReuseThread.</value>
   </data>
   <data name="UseLocalScopeNotAllowed" xml:space="preserve">
-    <value>{0} non può essere false quando la modalità lingua è {1} o {2}.</value>
+    <value>{0} non può essere false quando la modalità di linguaggio è {1} o {2}.</value>
   </data>
   <data name="DisconnectNotSupported" xml:space="preserve">
     <value>Non è possibile disconnettere uno spazio di esecuzione solo locale.</value>
@@ -184,7 +184,8 @@
     <value>La sessione è occupata. Si verrà connessi alla sessione non appena sarà disponibile. Per annullare il comando Enter-PSSession, premere CTRL+C.</value>
   </data>
   <data name="NotSupportedOnRestrictedRunspace" xml:space="preserve">
-    <value>Impossibile completare il comando. La chiamata di script non è supportata in questa configurazione di sessione. Questo problema può verificarsi se la configurazione della sessione è in modalità senza linguaggio.</value>
+    <value>Impossibile completare il comando. La chiamata dello script non è supportata in questa configurazione di sessione. Questo problema può verificarsi se la configurazione della sessione è in modalità NoLanguage.</value>
+    <comment>{StrContains="NoLanguage"}</comment>
   </data>
   <data name="DisconnectConnectNotSupported" xml:space="preserve">
     <value>Non puoi usare le operazioni Disconnect e Connect negli spazi di esecuzione locali.</value>

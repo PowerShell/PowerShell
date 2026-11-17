@@ -205,6 +205,7 @@
     <value>Kropkowe źródło skompilowanego bloku skryptu</value>
   </data>
   <data name="WDACCompiledScriptBlockLogMessage" xml:space="preserve">
-    <value>Wywołanie bloku skryptu „{0}” w bieżącym zakresie będzie niedozwolone w trybie Constrained Language. Tryb języka skryptu: {1}, tryb języka kontekstu: {2}.</value>
+    <value>Blok skryptu '{0}' wywołanie do bieżącego zakresu będzie niedozwolone w trybie ConstrainedLanguage. Tryb języka skryptu: {1}, tryb języka kontekstu: {2}.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

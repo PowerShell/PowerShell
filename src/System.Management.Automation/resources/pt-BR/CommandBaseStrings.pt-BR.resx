@@ -232,12 +232,14 @@ Reviewed by TArcher on 2010-07-20
     <value>Verificação de dot-source do processamento de bloco de script</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>O processamento de dot-source para o bloco de script "{0}" falhará no modo de linguagem restrita porque o modo de linguagem "{1}" não corresponde ao modo de linguagem atual "{2}".</value>
+    <value>O processamento Dot-Source do bloco de script '{0}' falhará no modo ConstrainedLanguage porque seu modo de linguagem '{1}' não corresponde ao modo de linguagem atual '{2}'.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="SearcherWDACLogTitle" xml:space="preserve">
     <value>Pesquisador de comandos</value>
   </data>
   <data name="SearcherWDACLogMessage" xml:space="preserve">
     <value>O comando "{0}" no módulo "{1}" não é confiável e não estará acessível no modo ConstrainedLanguage.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

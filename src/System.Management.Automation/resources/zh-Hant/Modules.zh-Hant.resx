@@ -626,6 +626,7 @@
   </data>
   <data name="ImportPSFileNotAllowedInConstrainedLanguage" xml:space="preserve">
     <value>在 ConstrainedLanguage 模式中，不允許將 *.ps1 檔案匯入為模組。</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="MismatchedLanguageModes" xml:space="preserve">
     <value>載入指令碼模組 {0} 時發生錯誤，因為其語言模式與模組資訊清單不同。資訊清單語言模式為 {1}，而模組語言模式為 {2}。請確定所有模組檔案都已簽署，或已納入應用程式允許清單設定中。</value>
@@ -638,6 +639,7 @@
   </data>
   <data name="CannotCreateModuleWithScriptBlock" xml:space="preserve">
     <value>當工作階段處於 ConstrainedLanguage 模式時，無法建立新模組。</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="CannotFindCoreCompatibleBuiltInModule" xml:space="preserve">
     <value>找不到與 'Core' 版本相容的內建模組 '{0}'。請確認 PowerShell 內建模組可供使用。它們通常隨 PowerShell 套件一起提供，位於 $PSHOME 模組路徑下，而且是 PowerShell 正常運作所需。</value>
@@ -646,42 +648,49 @@
     <value>Export-ModuleMember Cmdlet</value>
   </data>
   <data name="WDACExportModuleCommandLogMessage" xml:space="preserve">
-    <value>在限制語言模式中匯出模組成員將會失敗，因為模組 '{0}' 的語言模式 '{1}' 與目前的工作階段 '{2}' 的語言模式不同。</value>
+    <value>在 ConstrainedLanguage 模式中匯出模組成員將會失敗，因為模組 '{0}' 的語言模式 '{1}' 與目前的工作階段 '{2}' 的語言模式不同。</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACImplicitFunctionExportLogTitle" xml:space="preserve">
     <value>模組隱含函式匯出</value>
   </data>
   <data name="WDACImplicitFunctionExportLogMessage" xml:space="preserve">
-    <value>模組 '{0}' 的隱含函式匯出將會遭到拒絕，因為它是受信任的 (以完整語言模式執行)，但工作階段不是受信任的 (以限制語言模式執行)。最佳做法是一律以完整名稱個別匯出模組函式。</value>
+    <value>模組 '{0}' 的隱含函式匯出將會遭到拒絕，因為它是受信任的 (以 FullLanguage 模式執行)，但工作階段不是受信任的 (以 ConstrainedLanguage 模式執行)。最佳做法是一律以完整名稱個別匯出模組函式。</value>
+    <comment>{StrContains="FullLanguage"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACScriptFileImportLogTitle" xml:space="preserve">
     <value>正在將指令檔匯入為模組</value>
   </data>
   <data name="WDACScriptFileImportLogMessage" xml:space="preserve">
     <value>在 ConstrainedLanguage 模式中，不允許將指令碼檔案 '{0}' 匯入為模組。</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACModuleDotSourceLogTitle" xml:space="preserve">
     <value>模組包含 Dot-Source 運算子</value>
   </data>
   <data name="WDACModuleDotSourceLogMessage" xml:space="preserve">
-    <value>模組 '{0}' 的匯入在限制語言模式中將會失敗，因為它使用萬用字元匯出函式，同時也使用 dot-source 運算子。</value>
+    <value>模組 '{0}' 的匯入在 ConstrainedLanguage 模式中將會失敗，因為它使用萬用字元匯出函式，同時也使用 dot-source 運算子。</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACModuleFnExportWithNestedModulesLogTitle" xml:space="preserve">
-    <value>"模組匯出函式</value>
+    <value>模組匯出函式</value>
   </data>
   <data name="WDACModuleFnExportWithNestedModulesLogMessage" xml:space="preserve">
-    <value>模組 '{0}' 使用名稱萬用字元匯出函式。在限制語言模式下執行時，任何巢狀模組函式名稱都會移除。</value>
+    <value>模組 '{0}' 使用名稱萬用字元匯出函式。在 ConstrainedLanguage 模式中執行時，將會移除任何巢狀模組函式名稱。</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACNewModuleCommandLogTitle" xml:space="preserve">
-    <value>"New-Module Cmdlet</value>
+    <value>新模組 Cmdlet</value>
   </data>
   <data name="WDACNewModuleCommandLogMessage" xml:space="preserve">
-    <value>來自未受信任的限制語言工作階段的新模組，將無法提供 FullLanguage 指令碼區塊。</value>
+    <value>來自未受信任的 ConstrainedLanguage 工作階段的新模組，將無法提供 FullLanguage 指令碼區塊。</value>
+    <comment>{StrContains="ConstrainedLanguage"}{StrContains="FullLanguage"}</comment>
   </data>
   <data name="WDACMismatchedLanguageModesTitle" xml:space="preserve">
-    <value>"模組語言模式不相符</value>
+    <value>模組語言模式不相符</value>
   </data>
   <data name="WDACMismatchedLanguageModesMessage" xml:space="preserve">
-    <value>正在載入的相依模組與父模組的語言模式不同。在限制語言模式中將不允許此動作。</value>
+    <value>正在載入的依存模組與父系的語言模式不同。在 ConstrainedLanguage 模式下將不允許此情況。</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

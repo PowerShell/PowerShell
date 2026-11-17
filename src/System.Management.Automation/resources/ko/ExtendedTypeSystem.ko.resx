@@ -396,11 +396,13 @@ PS&gt; [System.Collections.Generic.Comparer``1]::get_Default()
   </data>
   <data name="WDACHashTypeLogMessage" xml:space="preserve">
     <value>ConstrainedLanguage 모드에서는 HashTable에서 '{0}'(으)로 형식을 변환할 수 없습니다.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACTypeConversionLogTitle" xml:space="preserve">
     <value>확장 유형 시스템 해시 테이블 변환</value>
   </data>
   <data name="WDACTypeConversionLogMessage" xml:space="preserve">
     <value>ConstrainedLanguage 모드에서는 '{0}'에서 '{1}'(으)로 형식을 변환할 수 없습니다.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

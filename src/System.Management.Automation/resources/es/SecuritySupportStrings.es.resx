@@ -164,5 +164,6 @@
   </data>
   <data name="ExternalScriptWDACLogMessage" xml:space="preserve">
     <value>La directiva no confía en el archivo de script "{0}" y se ejecutará en modo ConstrainedLanguage.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

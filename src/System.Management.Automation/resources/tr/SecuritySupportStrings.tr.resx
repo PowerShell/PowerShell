@@ -164,5 +164,6 @@
   </data>
   <data name="ExternalScriptWDACLogMessage" xml:space="preserve">
     <value>'{0}' betik dosyasına ilke tarafından güvenilmiyor ve ConstrainedLanguage modunda çalışacak.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>
