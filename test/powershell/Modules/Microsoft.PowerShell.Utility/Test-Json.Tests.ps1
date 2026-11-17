@@ -485,6 +485,50 @@ Describe "Test-Json" -Tags "CI" {
         $errorVar[1].FullyQualifiedErrorId | Should -BeExactly "InvalidJsonAgainstSchemaDetailed,Microsoft.PowerShell.Commands.TestJsonCommand"
     }
 
+    It "Test-Json writes an error when a '<name>' schema rejects JSON without a detailed error" -TestCases @(
+        @{
+            name = "top-level not"
+            schema = '{"not":{"enum":[1]}}'
+            json = '1'
+            evaluationPath = '/not'
+            instancePath = $null
+        }
+        @{
+            name = "nested not"
+            schema = '{"properties":{"k":{"not":{"enum":["admin"]}}}}'
+            json = '{"k":"admin"}'
+            evaluationPath = '/properties/k/not'
+            instancePath = '/k'
+        }
+        @{
+            name = "if/then with not"
+            schema = '{"if":{"not":{"required":["s"]}},"then":{"properties":{"k":{"not":{"enum":["admin"]}}}}}'
+            json = '{"k":"admin"}'
+            evaluationPath = '/then/properties/k/not'
+            instancePath = '/k'
+        }
+        @{
+            name = "array item if/then with not"
+            schema = '{"properties":{"c":{"type":"array","items":{"if":{"not":{"required":["s"]}},"then":{"properties":{"k":{"not":{"enum":["admin"]}}}}}}}}'
+            json = '{"c":[{"k":"admin"}]}'
+            evaluationPath = '/properties/c/items/then/properties/k/not'
+            instancePath = '/c/0/k'
+        }
+    ) {
+        param($schema, $json, $evaluationPath, $instancePath)
+
+        $errorVar = @()
+        $result = Test-Json -Json $json -Schema $schema -ErrorVariable errorVar -ErrorAction SilentlyContinue
+
+        $result | Should -BeFalse
+        $errorVar.Count | Should -BeGreaterThan 0
+        $errorVar[0].FullyQualifiedErrorId | Should -BeExactly "InvalidJsonAgainstSchemaDetailed,Microsoft.PowerShell.Commands.TestJsonCommand"
+        $errorVar.Exception.Message | Should -Match ([regex]::Escape($evaluationPath))
+        if ($instancePath) {
+            $errorVar.Exception.Message | Should -Match ([regex]::Escape($instancePath))
+        }
+    }
+
     It 'Test-Json recognizes non-object types: <name>' -TestCases @(
         @{ name = 'number'; value = 1; expected = 'number' }
         @{ name = '"true"'; value = '"true"'; expected = 'string' }
