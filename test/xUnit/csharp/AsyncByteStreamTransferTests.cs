@@ -62,6 +62,37 @@ namespace PSTests.Parallel
             Assert.Empty(destination.ToArray());
         }
 
+        [Fact]
+        public static async Task CancelsPendingWriteAndClosesDestination()
+        {
+            using var source = new ShortReadStream(new byte[] { 42 });
+            using var destination = new PendingWriteStream();
+            using var transfer = new AsyncByteStreamTransfer(new TestBytePipe(source), new TestBytePipe(destination));
+
+            transfer.BeginReadChunks();
+            await destination.Started.Task.WaitAsync(TimeSpan.FromSeconds(30));
+            transfer.Dispose();
+            await transfer.EOF.WaitAsync(TimeSpan.FromSeconds(30));
+
+            Assert.False(destination.CanWrite);
+            Assert.Empty(destination.ToArray());
+        }
+
+        [Fact]
+        public static async Task StopsCopyingWhenDestinationCloses()
+        {
+            byte[] expected = new byte[65539];
+            using var source = new ShortReadStream(expected);
+            using var destination = new ClosedWriteStream();
+            using var transfer = new AsyncByteStreamTransfer(new TestBytePipe(source), new TestBytePipe(destination));
+
+            transfer.BeginReadChunks();
+            await transfer.EOF.WaitAsync(TimeSpan.FromSeconds(30));
+
+            Assert.InRange(source.Position, 1, expected.Length - 1);
+            Assert.False(destination.CanWrite);
+        }
+
         private sealed class TestBytePipe : BytePipe
         {
             private readonly Stream _stream;
@@ -92,6 +123,23 @@ namespace PSTests.Parallel
                 await Task.Delay(Timeout.Infinite, cancellationToken);
                 return 0;
             }
+        }
+
+        private sealed class PendingWriteStream : MemoryStream
+        {
+            internal TaskCompletionSource Started { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+            public override async ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken = default)
+            {
+                Started.SetResult();
+                await Task.Delay(Timeout.Infinite, cancellationToken);
+            }
+        }
+
+        private sealed class ClosedWriteStream : MemoryStream
+        {
+            public override ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken = default)
+                => ValueTask.FromException(new IOException("The destination pipe is closed."));
         }
     }
 }

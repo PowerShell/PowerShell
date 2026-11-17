@@ -3,7 +3,6 @@
 
 #nullable enable
 
-using System.Buffers;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,13 +15,11 @@ namespace System.Management.Automation;
 /// </summary>
 internal sealed class AsyncByteStreamTransfer : IDisposable
 {
-    private const int DefaultBufferSize = 16 * 1024;
+    private const int DefaultBufferSize = 64 * 1024;
 
     private readonly BytePipe _bytePipe;
 
     private readonly BytePipe _destinationPipe;
-
-    private readonly Memory<byte> _buffer;
 
     private readonly CancellationTokenSource _cts = new();
 
@@ -34,7 +31,6 @@ internal sealed class AsyncByteStreamTransfer : IDisposable
     {
         _bytePipe = bytePipe;
         _destinationPipe = destinationPipe;
-        _buffer = new byte[DefaultBufferSize];
     }
 
     public Task EOF => _readToBufferTask ?? Task.CompletedTask;
@@ -55,17 +51,7 @@ internal sealed class AsyncByteStreamTransfer : IDisposable
             stream = await _bytePipe.GetStream(_cts.Token);
             destinationStream = await _destinationPipe.GetStream(_cts.Token);
 
-            while (true)
-            {
-                int bytesRead;
-                bytesRead = await stream.ReadAsync(_buffer, _cts.Token);
-                if (bytesRead is 0)
-                {
-                    break;
-                }
-
-                destinationStream.Write(_buffer.Span.Slice(0, bytesRead));
-            }
+            await stream.CopyToAsync(destinationStream, DefaultBufferSize, _cts.Token);
         }
         catch (IOException)
         {
