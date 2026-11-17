@@ -13,6 +13,9 @@ using Xunit;
 
 namespace PSTests.Sequential
 {
+    /// <summary>
+    /// Tests default drive initialization when optional network mapping metadata is unavailable.
+    /// </summary>
     public partial class FileSystemProviderInitializationTests
     {
         [SkippableFact]
@@ -27,7 +30,8 @@ namespace PSTests.Sequential
             // An unchecked user DOS-device link needs no share, credentials or server.
             // NO_BROADCAST_SYSTEM avoids notifying unrelated applications.
             const uint CreateFlags = 0x1 | 0x8;
-            Assert.True(DefineDosDevice(CreateFlags, device, target),
+            Assert.True(
+                DefineDosDevice(CreateFlags, device, target),
                 "Could not create the independent DOS-device fixture: " + Marshal.GetLastPInvokeError());
 
             try
@@ -59,7 +63,8 @@ namespace PSTests.Sequential
                 // mapping that might now own the same drive letter.
                 Assert.Equal(target, ReadDosDevice(device));
                 const uint RemoveFlags = 0x1 | 0x2 | 0x4 | 0x8;
-                Assert.True(DefineDosDevice(RemoveFlags, device, target),
+                Assert.True(
+                    DefineDosDevice(RemoveFlags, device, target),
                     "Could not remove the exact owned DOS-device fixture: " + Marshal.GetLastPInvokeError());
                 char[] buffer = new char[32768];
                 Assert.Equal(0u, QueryDosDevice(device, buffer, buffer.Length));
