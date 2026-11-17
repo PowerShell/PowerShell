@@ -1241,6 +1241,9 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private const string UnspecifiedName = "H";
 
+        private const string FieldsDirective = "#Fields:";
+        private const string FieldsDirectivePrefix = FieldsDirective + " ";
+
         /// <summary>
         /// Avoid writing out duplicate warning messages when there are one or more unspecified names.
         /// </summary>
@@ -1288,25 +1291,26 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private bool EOF => _sr.EndOfStream;
 
-        private char ReadChar()
+        private static char ReadChar(StreamReader reader)
         {
-            if (EOF)
+            if (reader.EndOfStream)
             {
                 throw new InvalidOperationException(CsvCommandStrings.EOFIsReached);
             }
 
-            int i = _sr.Read();
+            int i = reader.Read();
             return (char)i;
         }
 
         /// <summary>
         /// Peeks the next character in the stream and returns true if it is same as passed in character.
         /// </summary>
+        /// <param name="reader">The reader to inspect.</param>
         /// <param name="c"></param>
         /// <returns></returns>
-        private bool PeekNextChar(char c)
+        private static bool PeekNextChar(StreamReader reader, char c)
         {
-            int i = _sr.Peek();
+            int i = reader.Peek();
             if (i == -1)
             {
                 return false;
@@ -1326,17 +1330,31 @@ namespace Microsoft.PowerShell.Commands
 
         internal void ReadHeader()
         {
-            // Read #Type record if available
+            // Read the initial directive, which may be a #Type record.
+            string initialFieldsDirective = null;
             if ((TypeName == null) && (!this.EOF))
             {
-                TypeName = ReadTypeInformation();
+                TypeName = ReadInitialDirective(out initialFieldsDirective);
             }
 
             var values = new List<string>(ValueCountGuestimate);
             var builder = new StringBuilder(LineLengthGuestimate);
-            while ((Header == null) && (!this.EOF))
+            while (Header == null && (initialFieldsDirective != null || !EOF))
             {
-                ParseNextRecord(values, builder);
+                bool startsWithHash;
+                if (initialFieldsDirective != null)
+                {
+                    using var stream = new MemoryStream(Encoding.Unicode.GetBytes(initialFieldsDirective));
+                    using var reader = new StreamReader(stream, Encoding.Unicode);
+                    ParseNextRecord(reader, values, builder);
+                    startsWithHash = true;
+                    initialFieldsDirective = null;
+                }
+                else
+                {
+                    startsWithHash = _delimiter == ' ' && PeekNextChar(_sr, '#');
+                    ParseNextRecord(_sr, values, builder);
+                }
 
                 // Trim all trailing blankspaces and delimiters ( single/multiple ).
                 // If there is only one element in the row and if its a blankspace we dont trim it.
@@ -1347,10 +1365,16 @@ namespace Microsoft.PowerShell.Commands
                     values.RemoveAt(values.Count - 1);
                 }
 
-                // File starts with '#' and contains '#Fields:' is W3C Extended Log File Format
-                if (values.Count != 0 && values[0].StartsWith("#Fields: "))
+                // W3C Extended Log File Format uses a #Fields: directive to declare column names.
+                if (startsWithHash && values.Count > 1 && _delimiter == ' ' && values[0] == FieldsDirective)
                 {
-                    values[0] = values[0].Substring(9);
+                    // The space after the directive makes it a separate field.
+                    values.RemoveAt(0);
+                    Header = values;
+                }
+                else if (values.Count != 0 && values[0].StartsWith(FieldsDirectivePrefix))
+                {
+                    values[0] = values[0].Substring(FieldsDirectivePrefix.Length);
                     Header = values;
                 }
                 else if (values.Count != 0 && values[0].StartsWith('#'))
@@ -1380,7 +1404,7 @@ namespace Microsoft.PowerShell.Commands
             var builder = new StringBuilder(LineLengthGuestimate);
             while (true)
             {
-                ParseNextRecord(values, builder);
+                ParseNextRecord(_sr, values, builder);
                 if (values.Count == 0)
                     break;
 
@@ -1436,23 +1460,30 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Read the type information, if present.
+        /// Read the initial comment for type information or a space-delimited #Fields directive.
         /// </summary>
+        /// <param name="fieldsDirective">The first line if it declares space-delimited fields.</param>
         /// <returns>Type string if present else null.</returns>
-        private string ReadTypeInformation()
+        private string ReadInitialDirective(out string fieldsDirective)
         {
+            fieldsDirective = null;
             string type = null;
-            if (PeekNextChar('#'))
+            if (PeekNextChar(_sr, '#'))
             {
-                string temp = ReadLine();
-                if (temp.StartsWith("#Type", StringComparison.OrdinalIgnoreCase))
+                string firstLine = ReadLine();
+                if (firstLine.StartsWith("#Type", StringComparison.OrdinalIgnoreCase))
                 {
-                    type = temp.Substring(5);
+                    type = firstLine.Substring(5);
                     type = type.Trim();
                     if (type.Length == 0)
                     {
                         type = null;
                     }
+                }
+                else if (_delimiter == ' ' && Header == null && firstLine.StartsWith(FieldsDirectivePrefix, StringComparison.Ordinal))
+                {
+                    // ConvertFrom-Csv can receive the #Fields directive as a separate pipeline input.
+                    fieldsDirective = firstLine;
                 }
             }
 
@@ -1465,7 +1496,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>
         /// Parsed collection of strings.
         /// </returns>
-        private void ParseNextRecord(List<string> result, StringBuilder current)
+        private void ParseNextRecord(StreamReader reader, List<string> result, StringBuilder current)
         {
             result.Clear();
 
@@ -1474,10 +1505,10 @@ namespace Microsoft.PowerShell.Commands
 
             bool seenBeginQuote = false;
 
-            while (!EOF)
+            while (!reader.EndOfStream)
             {
                 // Read the next character
-                char ch = ReadChar();
+                char ch = ReadChar(reader);
 
                 if (ch == _delimiter)
                 {
@@ -1501,7 +1532,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (seenBeginQuote)
                     {
-                        if (PeekNextChar('"'))
+                        if (PeekNextChar(reader, '"'))
                         {
                             // "" inside double quote are single quote
                             // ex: "foo""bar"
@@ -1509,7 +1540,7 @@ namespace Microsoft.PowerShell.Commands
                             // ->foo"bar<-
 
                             // PeekNextChar only peeks. Read the next char.
-                            ReadChar();
+                            ReadChar(reader);
                             current.Append('"');
                         }
                         else
@@ -1529,7 +1560,7 @@ namespace Microsoft.PowerShell.Commands
                             // ->"foo bar"  <- is read as ->foo bar<-
                             // ->"foo bar" ab <- is read as ->"foo bar" ab <-
                             bool endofRecord = false;
-                            ReadTillNextDelimiter(current, ref endofRecord, true);
+                            ReadTillNextDelimiter(reader, current, ref endofRecord, true);
                             result.Add(current.ToString());
                             current.Remove(0, current.Length);
                             if (endofRecord)
@@ -1552,7 +1583,7 @@ namespace Microsoft.PowerShell.Commands
                         // Basically we read till next delimiter
                         bool endOfRecord = false;
                         current.Append(ch);
-                        ReadTillNextDelimiter(current, ref endOfRecord, false);
+                        ReadTillNextDelimiter(reader, current, ref endOfRecord, false);
                         result.Add(current.ToString());
                         current.Remove(0, current.Length);
                         if (endOfRecord)
@@ -1584,7 +1615,7 @@ namespace Microsoft.PowerShell.Commands
                         // Ex: ->foo bar "er,ror"<- is read as ->foo bar "er<-
                         bool endOfRecord = false;
                         current.Append(ch);
-                        ReadTillNextDelimiter(current, ref endOfRecord, true);
+                        ReadTillNextDelimiter(reader, current, ref endOfRecord, true);
                         result.Add(current.ToString());
                         current.Remove(0, current.Length);
 
@@ -1594,7 +1625,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                 }
-                else if (IsNewLine(ch, out string newLine))
+                else if (IsNewLine(reader, ch, out string newLine))
                 {
                     if (seenBeginQuote)
                     {
@@ -1623,14 +1654,14 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // If we detect a newline we return it as a string "\r", "\n" or "\r\n"
-        private bool IsNewLine(char ch, out string newLine)
+        private static bool IsNewLine(StreamReader reader, char ch, out string newLine)
         {
             newLine = string.Empty;
             if (ch == '\r')
             {
-                if (PeekNextChar('\n'))
+                if (PeekNextChar(reader, '\n'))
                 {
-                    ReadChar();
+                    ReadChar(reader);
                     newLine = "\r\n";
                 }
                 else
@@ -1649,6 +1680,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This function reads the characters till next delimiter and adds them to current.
         /// </summary>
+        /// <param name="reader">The reader positioned after the current character.</param>
         /// <param name="current"></param>
         /// <param name="endOfRecord">
         /// This is true if end of record is reached
@@ -1658,7 +1690,7 @@ namespace Microsoft.PowerShell.Commands
         /// If this is true, eat the trailing blanks. Note:if there are non
         /// whitespace characters present, then trailing blanks are not consumed.
         /// </param>
-        private void ReadTillNextDelimiter(StringBuilder current, ref bool endOfRecord, bool eatTrailingBlanks)
+        private void ReadTillNextDelimiter(StreamReader reader, StringBuilder current, ref bool endOfRecord, bool eatTrailingBlanks)
         {
             StringBuilder temp = new();
 
@@ -1667,19 +1699,19 @@ namespace Microsoft.PowerShell.Commands
 
             while (true)
             {
-                if (EOF)
+                if (reader.EndOfStream)
                 {
                     endOfRecord = true;
                     break;
                 }
 
-                char ch = ReadChar();
+                char ch = ReadChar(reader);
 
                 if (ch == _delimiter)
                 {
                     break;
                 }
-                else if (IsNewLine(ch, out string newLine))
+                else if (IsNewLine(reader, ch, out string newLine))
                 {
                     endOfRecord = true;
                     break;

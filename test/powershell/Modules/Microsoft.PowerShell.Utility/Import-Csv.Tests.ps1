@@ -140,6 +140,24 @@ Describe "Import-Csv File Format Tests" -Tags "CI" {
 
         }
     }
+
+    It "Uses the #Fields directive in a space-delimited W3C log" {
+        $testPath = Join-Path $TestDrive 'space-delimited.log'
+        @'
+#Version: 1.0
+#Fields: time cs-method cs-uri
+00:34:23 GET /first
+12:21:16 POST /second
+'@ | Set-Content -LiteralPath $testPath
+
+        $rows = @(Import-Csv -LiteralPath $testPath -Delimiter ' ')
+
+        $rows.Count | Should -Be 2
+        $rows[0].PSObject.Properties.Name | Should -Be @('time', 'cs-method', 'cs-uri')
+        $rows.time | Should -Be @('00:34:23', '12:21:16')
+        $rows.'cs-method' | Should -Be @('GET', 'POST')
+        $rows.'cs-uri' | Should -Be @('/first', '/second')
+    }
 }
 
 Describe "Import-Csv #Type Tests" -Tags "CI" {

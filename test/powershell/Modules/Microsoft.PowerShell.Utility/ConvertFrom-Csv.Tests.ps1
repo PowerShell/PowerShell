@@ -80,3 +80,29 @@ Describe "ConvertFrom-Csv DRT Unit Tests" -Tags "CI" {
         $result[1].Header2 | Should -BeExactly "2"
     }
 }
+
+Describe "ConvertFrom-Csv W3C Extended Log File Format" -Tags "CI" {
+    BeforeAll {
+        $logLines = @(
+            '#Version: 1.0'
+            '#Fields: time cs-method cs-uri'
+            '00:34:23 GET /first'
+            '12:21:16 POST /second'
+        )
+    }
+
+    It "Uses the #Fields directive in a space-delimited W3C log from <name>" -TestCases @(
+        @{ name = 'a single string'; convert = { ConvertFrom-Csv -InputObject ($logLines -join [Environment]::NewLine) -Delimiter ' ' } }
+        @{ name = 'piped lines'; convert = { $logLines | ConvertFrom-Csv -Delimiter ' ' } }
+    ) {
+        param($convert)
+
+        $rows = @(& $convert)
+
+        $rows.Count | Should -Be 2
+        $rows[0].PSObject.Properties.Name | Should -Be @('time', 'cs-method', 'cs-uri')
+        $rows.time | Should -Be @('00:34:23', '12:21:16')
+        $rows.'cs-method' | Should -Be @('GET', 'POST')
+        $rows.'cs-uri' | Should -Be @('/first', '/second')
+    }
+}
