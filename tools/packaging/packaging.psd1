@@ -13,6 +13,7 @@
         'New-GlobalToolNupkgSource'
         'New-GlobalToolNupkgFromSource'
         'New-GlobalToolPointerNupkgSource'
+        'Set-GlobalToolNuspecMetadata'
         'New-ILNugetPackageSource'
         'New-ILNugetPackageFromSource'
         'New-PSBuildZip'

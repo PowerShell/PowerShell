@@ -167,6 +167,10 @@ steps:
     $expandPath = Join-Path $outputPath "$rid-temp"
     Expand-Archive -Path $zipPath -DestinationPath $expandPath -Force
 
+    # SDK pack omits metadata such as owners and language; use the shared global tool metadata.
+    Import-Module -Name '$(PowerShellRoot)/tools/packaging' -Force
+    Set-GlobalToolNuspecMetadata -Path (Join-Path $expandPath "PowerShell.$rid.nuspec")
+
     # Discover the actual TFM folder name (e.g. "net10.0") instead of hardcoding it: this
     # literally was "net11.0" until this exact line caused a build failure when this project's
     # TargetFramework (PowerShell.csproj) and this branch's pinned SDK/TFM were bumped back down
