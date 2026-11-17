@@ -1338,59 +1338,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private IList<string> ReadColumnNames(bool fieldsPrefixRead)
-        {
-            var values = new List<string>(ValueCountGuestimate);
-            var builder = new StringBuilder(LineLengthGuestimate);
-            while (!EOF)
-            {
-                bool startsWithHash = fieldsPrefixRead || PeekNextChar('#');
-                ParseNextRecord(values, builder);
-                if (fieldsPrefixRead)
-                {
-                    // Restore the marker as the first field so all headers use the same parsing rules.
-                    values.Insert(0, FieldsDirective);
-                    fieldsPrefixRead = false;
-                }
-
-                // Trim trailing empty fields while preserving a single empty field.
-                while (values.Count > 1 && values[^1].Length == 0)
-                {
-                    values.RemoveAt(values.Count - 1);
-                }
-
-                if (TryParseHeader(values, startsWithHash))
-                {
-                    return values;
-                }
-            }
-
-            return null;
-        }
-
-        private bool TryParseHeader(List<string> values, bool startsWithHash)
-        {
-            if (values.Count == 0)
-            {
-                return true;
-            }
-
-            // A space delimiter splits the directive and the first column name into separate fields.
-            if (_delimiter == ' ' && startsWithHash && values.Count > 1 && values[0] == FieldsDirective)
-            {
-                values.RemoveAt(0);
-                return true;
-            }
-
-            if (values[0].StartsWith(FieldsDirectivePrefix))
-            {
-                values[0] = values[0].Substring(FieldsDirectivePrefix.Length);
-                return true;
-            }
-
-            return !values[0].StartsWith('#');
-        }
-
         internal void Import(ref bool alreadyWriteOutWarning)
         {
             _alreadyWarnedUnspecifiedName = alreadyWriteOutWarning;
@@ -1453,6 +1400,59 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+        }
+
+        private IList<string> ReadColumnNames(bool fieldsPrefixRead)
+        {
+            var values = new List<string>(ValueCountGuestimate);
+            var builder = new StringBuilder(LineLengthGuestimate);
+            while (!EOF)
+            {
+                bool startsWithHash = fieldsPrefixRead || PeekNextChar('#');
+                ParseNextRecord(values, builder);
+                if (fieldsPrefixRead)
+                {
+                    // Restore the marker as the first field so all headers use the same parsing rules.
+                    values.Insert(0, FieldsDirective);
+                    fieldsPrefixRead = false;
+                }
+
+                // Trim trailing empty fields while preserving a single empty field.
+                while (values.Count > 1 && values[^1].Length == 0)
+                {
+                    values.RemoveAt(values.Count - 1);
+                }
+
+                if (TryParseHeader(values, startsWithHash))
+                {
+                    return values;
+                }
+            }
+
+            return null;
+        }
+
+        private bool TryParseHeader(List<string> values, bool startsWithHash)
+        {
+            if (values.Count == 0)
+            {
+                return true;
+            }
+
+            // A space delimiter splits the directive and the first column name into separate fields.
+            if (_delimiter == ' ' && startsWithHash && values.Count > 1 && values[0] == FieldsDirective)
+            {
+                values.RemoveAt(0);
+                return true;
+            }
+
+            if (values[0].StartsWith(FieldsDirectivePrefix))
+            {
+                values[0] = values[0].Substring(FieldsDirectivePrefix.Length);
+                return true;
+            }
+
+            return !values[0].StartsWith('#');
         }
 
         /// <summary>
