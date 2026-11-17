@@ -4216,6 +4216,54 @@ function New-GlobalToolNupkgFromSource
     Remove-Item -Path $CGManifestPath -Recurse -Force -ErrorAction SilentlyContinue
 }
 
+function Set-GlobalToolNuspecMetadata
+{
+    <#
+    .SYNOPSIS
+    Applies the shared global tool metadata to an SDK-generated nuspec.
+
+    .DESCRIPTION
+    Preserves the generated package identity and SDK-specific metadata, and copies the
+    shared package icon alongside the nuspec before the package is reassembled.
+
+    .PARAMETER Path
+    Path to the nuspec in the expanded global tool package.
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)]
+        [string] $Path
+    )
+
+    $nuspecPath = (Resolve-Path -LiteralPath $Path -ErrorAction Stop).ProviderPath
+    $nuspec = [xml] (Get-Content -LiteralPath $nuspecPath -Raw -ErrorAction Stop)
+    $metadata = $nuspec.package.metadata
+    if (-not $metadata.id -or -not $metadata.version) {
+        throw "Global tool nuspec must contain a package id and version: $nuspecPath"
+    }
+
+    $template = [xml] ($packagingStrings.GlobalToolNuSpec -f $metadata.id, $metadata.version, $iconFileName)
+    foreach ($field in $template.package.metadata.ChildNodes) {
+        if ($field.LocalName -in 'id', 'version', 'packageTypes') {
+            continue
+        }
+
+        $element = $metadata.SelectSingleNode("*[local-name()='$($field.LocalName)']")
+        if ($null -eq $element) {
+            $element = $nuspec.CreateElement($field.LocalName, $metadata.NamespaceURI)
+            $null = $metadata.AppendChild($element)
+        }
+
+        $element.InnerText = $field.InnerText
+        foreach ($attribute in $field.Attributes) {
+            $element.SetAttribute($attribute.Name, $attribute.Value)
+        }
+    }
+
+    Copy-Item -LiteralPath $iconPath -Destination (Join-Path (Split-Path $nuspecPath -Parent) $iconFileName) -Force -ErrorAction Stop
+    $nuspec.Save($nuspecPath)
+}
+
 <#
 .SYNOPSIS
 Create the NuSpec source directory for the RID-agnostic 'PowerShell' global tool pointer package.
@@ -4226,7 +4274,8 @@ produces only the top-level pointer package (metadata + a v2 DotnetToolSettings.
 supported RID to its sub-package id, e.g. "PowerShell.win-x64"). It does not contain any pwsh
 binaries. The RID-specific sub-packages themselves are produced separately, directly by
 'dotnet pack -r <rid> --no-build' against src/GlobalTools/PowerShell/PowerShell.csproj, on an
-agent matching each RID's OS, then signed like any other build output.
+agent matching each RID's OS, then signed like any other build output. Apply the shared metadata
+with Set-GlobalToolNuspecMetadata when reassembling each expanded RID package.
 
 Callers should build every RID sub-package first, then call this function, then pack the
 resulting source with New-GlobalToolNupkgFromSource, so that the pointer package always ships
