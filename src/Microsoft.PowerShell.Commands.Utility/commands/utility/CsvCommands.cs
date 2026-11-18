@@ -1255,7 +1255,8 @@ namespace Microsoft.PowerShell.Commands
         internal IList<string> Header { get; private set; }
 
         /// <summary>
-        /// Gets ETS type name from the first line / comment in the CSV.
+        /// Gets the ETS type name from a leading #TYPE record.
+        /// An empty string represents a #TYPE record without a type name.
         /// </summary>
         internal string TypeName { get; private set; }
 
@@ -1423,7 +1424,8 @@ namespace Microsoft.PowerShell.Commands
                     values.RemoveAt(values.Count - 1);
                 }
 
-                if (TryParseHeader(values, startsWithHash))
+                // PowerShell CSV headers can contain names that look like W3C directives.
+                if (TypeName != null || TryParseHeader(values, startsWithHash))
                 {
                     return values;
                 }
@@ -1479,11 +1481,13 @@ namespace Microsoft.PowerShell.Commands
                 return false;
             }
 
+            const string typeDirective = "Type";
             string line = ReadLine();
-            if (line != null && line.StartsWith("Type", StringComparison.OrdinalIgnoreCase))
+            if (line != null &&
+                line.StartsWith(typeDirective, StringComparison.OrdinalIgnoreCase) &&
+                (line.Length == typeDirective.Length || char.IsWhiteSpace(line[typeDirective.Length])))
             {
-                string type = line.Substring(4).Trim();
-                TypeName = type.Length == 0 ? null : type;
+                TypeName = line.Substring(typeDirective.Length).Trim();
             }
 
             return false;

@@ -145,6 +145,7 @@ Describe "Import-Csv File Format Tests" -Tags "CI" {
         $testPath = Join-Path $TestDrive 'space-delimited.log'
         @'
 #Version: 1.0
+#Software: Example server
 #Fields: time cs-method cs-uri
 00:34:23 GET /first
 12:21:16 POST /second
@@ -177,6 +178,18 @@ Describe "Import-Csv #Type Tests" -Tags "CI" {
         $importTypes.Count | Should -Be $expectedProcessTypes.Count
         $importTypes[0] | Should -Be $expectedProcessTypes[0]
         $importTypes[1] | Should -Be $expectedProcessTypes[1]
+    }
+
+    It "Preserves a literal #Fields: column in PowerShell CSV" {
+        $path = Join-Path $TestDrive 'typed-header.csv'
+        [pscustomobject]@{ '#Fields: value' = 'one'; Column2 = 'two' } |
+            Export-Csv -LiteralPath $path -IncludeTypeInformation
+
+        $rows = @(Import-Csv -LiteralPath $path)
+
+        $rows.Count | Should -Be 1
+        $rows[0].'#Fields: value' | Should -BeExactly 'one'
+        $rows[0].Column2 | Should -BeExactly 'two'
     }
 }
 
