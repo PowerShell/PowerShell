@@ -223,4 +223,32 @@ Describe "Language Primitive Tests" -Tags "CI" {
         $convertedValue = [System.Management.Automation.LanguagePrimitives]::ConvertTo($formattedNumber, [bigint])
         $convertedValue | Should -Be 1
     }
+
+    # Issue #17731 - Generic List conversion from scalar
+    It 'Converts Boolean scalar to Generic List[bool]' {
+        $result = [System.Collections.Generic.List[bool]]$true
+        $result | Should -BeOfType [System.Collections.Generic.List[bool]]
+        $result.Count | Should -Be 1
+        $result[0] | Should -Be $true
+    }
+
+    It 'Converts Boolean `$false to Generic List[bool]' {
+        $result = [System.Collections.Generic.List[bool]]$false
+        $result | Should -BeOfType [System.Collections.Generic.List[bool]]
+        $result.Count | Should -Be 1
+        $result[0] | Should -Be $false
+    }
+
+    It 'Converts Boolean variable to Generic List[bool]' {
+        $boolVar = $true
+        $result = [System.Collections.Generic.List[bool]]$boolVar
+        $result[0] | Should -Be $true
+    }
+
+    It 'Converts PSObject to Generic List[psobject]' {
+        $result = [System.Collections.Generic.List[psobject]]$true
+        $result | Should -BeOfType [System.Collections.Generic.List[psobject]]
+        $result.Count | Should -Be 1
+        $result[0] | Should -Be $true
+    }
 }
