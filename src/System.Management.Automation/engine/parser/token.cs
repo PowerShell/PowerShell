@@ -428,6 +428,9 @@ namespace System.Management.Automation.Language
         /// <summary>The null conditional index access operator '?[]'.</summary>
         QuestionLBracket = 104,
 
+        /// <summary>The ThreadJob background operator '&amp;!'.</summary>
+        AmpersandExclaim = 105,
+
         #endregion Operators
 
         #region Keywords
@@ -697,6 +700,11 @@ namespace System.Management.Automation.Language
         AssignmentOperator = 0x00002000,
 
         /// <summary>
+        /// The token is the BackgroundThreadJob operator '&!'.
+        /// </summary>
+        BackgroundThreadOperator = 0x00004000,
+
+        /// <summary>
         /// The token is scanned identically in expression mode or command mode.
         /// </summary>
         ParseModeInvariant = 0x00008000,
@@ -881,7 +889,7 @@ namespace System.Management.Automation.Language
             /*     QuestionQuestion */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceCoalesce,
             /*          QuestionDot */ TokenFlags.SpecialOperator | TokenFlags.DisallowedInRestrictedMode,
             /*     QuestionLBracket */ TokenFlags.None,
-            /*     Reserved slot 7  */ TokenFlags.None,
+            /*     AmpersandExclaim */ TokenFlags.SpecialOperator | TokenFlags.ParseModeInvariant,
             /*     Reserved slot 8  */ TokenFlags.None,
             /*     Reserved slot 9  */ TokenFlags.None,
             /*     Reserved slot 10 */ TokenFlags.None,
@@ -1081,7 +1089,7 @@ namespace System.Management.Automation.Language
             /*     QuestionQuestion */ "??",
             /*          QuestionDot */ "?.",
             /*     QuestionLBracket */ "?[",
-            /*    Reserved slot 7   */ string.Empty,
+            /*     AmpersandExclaim */ "&!",
             /*    Reserved slot 8   */ string.Empty,
             /*    Reserved slot 9   */ string.Empty,
             /*    Reserved slot 10  */ string.Empty,
