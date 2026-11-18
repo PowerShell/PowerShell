@@ -3051,7 +3051,7 @@ namespace Microsoft.PowerShell.Commands
                 continueRemoval = ShouldProcess(directory.FullName, action);
             }
 
-            if (InternalSymbolicLinkLinkCodeMethods.IsReparsePointLikeSymlink(directory))
+            if (continueRemoval && InternalSymbolicLinkLinkCodeMethods.IsReparsePointLikeSymlink(directory))
             {
                 void WriteErrorHelper(Exception exception)
                 {
