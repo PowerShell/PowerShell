@@ -165,8 +165,6 @@ namespace System.Management.Automation.Language
         public virtual AstVisitAction VisitStringConstantExpression(StringConstantExpressionAst stringConstantExpressionAst) => DefaultVisit(stringConstantExpressionAst);
 
         /// <summary/>
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "SubExpression")]
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "subExpression")]
         public virtual AstVisitAction VisitSubExpression(SubExpressionAst subExpressionAst) => DefaultVisit(subExpressionAst);
 
         /// <summary/>
