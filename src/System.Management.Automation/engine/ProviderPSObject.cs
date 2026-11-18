@@ -396,6 +396,11 @@ namespace System.Management.Automation.Provider
         private static string GetParentPath(Microsoft.Win32.RegistryKey key, in RegistryProviderMetadata metadata)
         {
             string keyName = metadata.KeyName;
+            if (string.Equals(keyName, metadata.Drive.Root, StringComparison.OrdinalIgnoreCase))
+            {
+                return string.Empty;
+            }
+
             int separatorIndex = keyName.LastIndexOf('\\');
             return separatorIndex < 0
                 ? string.Empty

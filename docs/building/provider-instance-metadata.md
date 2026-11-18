@@ -62,7 +62,9 @@ and container properties.
 On Windows, Registry key output uses `RegistryProviderMetadata`. Its descriptors are
 `Property` (0), `PSPath` (1), `PSParentPath` (2), `PSChildName` (3), `PSDrive` (4),
 `PSProvider` (5), and `PSIsContainer` (6). The metadata struct captures the key name,
-normalized value-name array, and drive when the item is emitted. Reads and promotion
+normalized value-name array, and drive when the item is emitted. The parent path is
+derived from the captured key name and compared with `Drive.Root`, so a custom drive's root has an empty
+`PSParentPath` even when the underlying Registry key has a parent. Reads and promotion
 remain valid after the key is closed, and `Property` retains its array identity and
 in-memory element edits. Note properties are still allocated only on promotion.
 Registry keys without a drive and keys with existing
@@ -315,7 +317,8 @@ container state, and no preexisting instance members.
 The last condition matters because wrapping with the compact source must not discard
 provider- or caller-supplied notes. On Windows, the same protocol also covers Registry key
 output with no preexisting instance members and a drive. Registry paths use the captured
-key name, value names retain their emission-time array, and the drive supplies the provider context.
+key name and drive root, value names retain their emission-time array, and
+the drive supplies the provider context.
 Other providers and ineligible item types follow the legacy note attachment path.
 
 The `FileInfo`/`DirectoryInfo` object does not retain the PowerShell drive through which it

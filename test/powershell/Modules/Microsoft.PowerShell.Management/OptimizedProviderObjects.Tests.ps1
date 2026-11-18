@@ -159,6 +159,24 @@ public static class RegistryMetadataTestHelper
         }
     }
 
+    It "preserves the parent boundary of a custom registry drive root: <RootSuffix>" -Skip:(!$IsWindows) -TestCases @(
+        @{ RootSuffix = '\' }
+        @{ RootSuffix = '/' }
+    ) {
+        param($RootSuffix)
+
+        $root = Get-Item -LiteralPath "RegistryMetadata:$RootSuffix"
+        $child = Get-Item -LiteralPath 'RegistryMetadata:\sample[1]'
+        $expectedParent = "Microsoft.PowerShell.Core\Registry::$($root.Name)"
+        $root.Close()
+        $child.Close()
+
+        $root.PSParentPath | Should -BeExactly ''
+        $root.PSObject.Properties['PSParentPath'].Value | Should -BeExactly ''
+        $child.PSParentPath | Should -BeExactly $expectedParent
+        $child.PSObject.Properties['PSParentPath'].Value | Should -BeExactly $expectedParent
+    }
+
     It "preserves custom drive and drive-less registry metadata" -Skip:(!$IsWindows) {
         $item = Get-Item -LiteralPath 'RegistryMetadata:\sample[1]'
         $item.PSDrive.Name | Should -BeExactly "RegistryMetadata"
@@ -172,6 +190,19 @@ public static class RegistryMetadataTestHelper
         }
         finally {
             Pop-Location
+        }
+    }
+
+    It "compares custom registry drive roots without case sensitivity" -Skip:(!$IsWindows) {
+        $rootName = (Get-Item -LiteralPath $registryPath).Name.ToLowerInvariant()
+        New-PSDrive -Name RegistryMetadataLower -PSProvider Registry -Root $rootName | Out-Null
+        try {
+            $item = Get-Item -LiteralPath 'RegistryMetadataLower:\'
+            $item.Close()
+            $item.PSParentPath | Should -BeExactly ''
+        }
+        finally {
+            Remove-PSDrive -Name RegistryMetadataLower -Force -ErrorAction Stop
         }
     }
 
