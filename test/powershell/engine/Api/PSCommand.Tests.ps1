@@ -67,4 +67,54 @@ Describe "PSCommand API tests" -Tag "CI" {
             }
         }
     }
+
+    Context "GetSteppablePipeline with a command added by CommandInfo" {
+        BeforeAll {
+            function Invoke-SteppablePipeline {
+                param([powershell] $Shell)
+
+                $steppablePipeline = $Shell.GetSteppablePipeline()
+                try {
+                    $steppablePipeline.Begin($false)
+                    $steppablePipeline.End()
+                }
+                finally {
+                    $steppablePipeline.Dispose()
+                }
+            }
+        }
+
+        BeforeEach {
+            $steppableShell = [powershell]::Create('CurrentRunspace')
+        }
+
+        AfterEach {
+            $steppableShell.Dispose()
+        }
+
+        It "Runs a cmdlet that cannot be resolved by name" {
+            $cmdlet = [System.Management.Automation.CmdletInfo]::new('un-resolvable', [Microsoft.PowerShell.Commands.OutStringCommand])
+            $null = $steppableShell.AddCommand($cmdlet).AddParameter("InputObject", 'test').AddParameter("Stream")
+
+            $result = Invoke-SteppablePipeline -Shell $steppableShell
+            $result | Should -Be "test"
+        }
+
+        It "Runs the cmdlet it was given rather than a function of the same name" {
+            function Get-Date { 'shadowed' }
+            $null = $steppableShell.AddCommand((Get-Command -Name Get-Date -CommandType Cmdlet))
+
+            $result = Invoke-SteppablePipeline -Shell $steppableShell
+            $result | Should -BeOfType System.DateTime
+        }
+
+        It "Uses the alias's name as the invocation name when given an AliasInfo, as Invoke does" {
+            function Get-InvocationName { $MyInvocation.InvocationName }
+            Set-Alias -Name Get-InvocationNameAlias -Value Get-InvocationName
+            $null = $steppableShell.AddCommand((Get-Alias -Name Get-InvocationNameAlias))
+
+            $result = Invoke-SteppablePipeline -Shell $steppableShell
+            $result | Should -BeExactly 'Get-InvocationNameAlias'
+        }
+    }
 }
