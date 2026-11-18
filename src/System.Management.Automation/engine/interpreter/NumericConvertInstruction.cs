@@ -56,14 +56,14 @@ namespace System.Management.Automation.Interpreter
                 {
                     case TypeCode.Byte: return ConvertInt32((byte)obj);
                     case TypeCode.SByte: return ConvertInt32((sbyte)obj);
-                    case TypeCode.Int16: return ConvertInt32((Int16)obj);
+                    case TypeCode.Int16: return ConvertInt32((short)obj);
                     case TypeCode.Char: return ConvertInt32((char)obj);
-                    case TypeCode.Int32: return ConvertInt32((Int32)obj);
-                    case TypeCode.Int64: return ConvertInt64((Int64)obj);
-                    case TypeCode.UInt16: return ConvertInt32((UInt16)obj);
-                    case TypeCode.UInt32: return ConvertInt64((UInt32)obj);
-                    case TypeCode.UInt64: return ConvertUInt64((UInt64)obj);
-                    case TypeCode.Single: return ConvertDouble((Single)obj);
+                    case TypeCode.Int32: return ConvertInt32((int)obj);
+                    case TypeCode.Int64: return ConvertInt64((long)obj);
+                    case TypeCode.UInt16: return ConvertInt32((ushort)obj);
+                    case TypeCode.UInt32: return ConvertInt64((uint)obj);
+                    case TypeCode.UInt64: return ConvertUInt64((ulong)obj);
+                    case TypeCode.Single: return ConvertDouble((float)obj);
                     case TypeCode.Double: return ConvertDouble((double)obj);
                     default: throw Assert.Unreachable;
                 }
@@ -77,21 +77,21 @@ namespace System.Management.Automation.Interpreter
                     {
                         case TypeCode.Byte: return (byte)obj;
                         case TypeCode.SByte: return (sbyte)obj;
-                        case TypeCode.Int16: return (Int16)obj;
+                        case TypeCode.Int16: return (short)obj;
                         case TypeCode.Char: return (char)obj;
-                        case TypeCode.Int32: return (Int32)obj;
-                        case TypeCode.Int64: return (Int64)obj;
-                        case TypeCode.UInt16: return (UInt16)obj;
-                        case TypeCode.UInt32: return (UInt32)obj;
-                        case TypeCode.UInt64: return (UInt64)obj;
-                        case TypeCode.Single: return (Single)obj;
+                        case TypeCode.Int32: return (int)obj;
+                        case TypeCode.Int64: return (long)obj;
+                        case TypeCode.UInt16: return (ushort)obj;
+                        case TypeCode.UInt32: return (uint)obj;
+                        case TypeCode.UInt64: return (ulong)obj;
+                        case TypeCode.Single: return (float)obj;
                         case TypeCode.Double: return (double)obj;
                         default: throw Assert.Unreachable;
                     }
                 }
             }
 
-            private object ConvertInt64(Int64 obj)
+            private object ConvertInt64(long obj)
             {
                 unchecked
                 {
@@ -99,21 +99,21 @@ namespace System.Management.Automation.Interpreter
                     {
                         case TypeCode.Byte: return (byte)obj;
                         case TypeCode.SByte: return (sbyte)obj;
-                        case TypeCode.Int16: return (Int16)obj;
+                        case TypeCode.Int16: return (short)obj;
                         case TypeCode.Char: return (char)obj;
-                        case TypeCode.Int32: return (Int32)obj;
-                        case TypeCode.Int64: return (Int64)obj;
-                        case TypeCode.UInt16: return (UInt16)obj;
-                        case TypeCode.UInt32: return (UInt32)obj;
-                        case TypeCode.UInt64: return (UInt64)obj;
-                        case TypeCode.Single: return (Single)obj;
+                        case TypeCode.Int32: return (int)obj;
+                        case TypeCode.Int64: return (long)obj;
+                        case TypeCode.UInt16: return (ushort)obj;
+                        case TypeCode.UInt32: return (uint)obj;
+                        case TypeCode.UInt64: return (ulong)obj;
+                        case TypeCode.Single: return (float)obj;
                         case TypeCode.Double: return (double)obj;
                         default: throw Assert.Unreachable;
                     }
                 }
             }
 
-            private object ConvertUInt64(UInt64 obj)
+            private object ConvertUInt64(ulong obj)
             {
                 unchecked
                 {
@@ -121,14 +121,14 @@ namespace System.Management.Automation.Interpreter
                     {
                         case TypeCode.Byte: return (byte)obj;
                         case TypeCode.SByte: return (sbyte)obj;
-                        case TypeCode.Int16: return (Int16)obj;
+                        case TypeCode.Int16: return (short)obj;
                         case TypeCode.Char: return (char)obj;
-                        case TypeCode.Int32: return (Int32)obj;
-                        case TypeCode.Int64: return (Int64)obj;
-                        case TypeCode.UInt16: return (UInt16)obj;
-                        case TypeCode.UInt32: return (UInt32)obj;
-                        case TypeCode.UInt64: return (UInt64)obj;
-                        case TypeCode.Single: return (Single)obj;
+                        case TypeCode.Int32: return (int)obj;
+                        case TypeCode.Int64: return (long)obj;
+                        case TypeCode.UInt16: return (ushort)obj;
+                        case TypeCode.UInt32: return (uint)obj;
+                        case TypeCode.UInt64: return (ulong)obj;
+                        case TypeCode.Single: return (float)obj;
                         case TypeCode.Double: return (double)obj;
                         default: throw Assert.Unreachable;
                     }
@@ -143,14 +143,14 @@ namespace System.Management.Automation.Interpreter
                     {
                         case TypeCode.Byte: return (byte)obj;
                         case TypeCode.SByte: return (sbyte)obj;
-                        case TypeCode.Int16: return (Int16)obj;
+                        case TypeCode.Int16: return (short)obj;
                         case TypeCode.Char: return (char)obj;
-                        case TypeCode.Int32: return (Int32)obj;
-                        case TypeCode.Int64: return (Int64)obj;
-                        case TypeCode.UInt16: return (UInt16)obj;
-                        case TypeCode.UInt32: return (UInt32)obj;
-                        case TypeCode.UInt64: return (UInt64)obj;
-                        case TypeCode.Single: return (Single)obj;
+                        case TypeCode.Int32: return (int)obj;
+                        case TypeCode.Int64: return (long)obj;
+                        case TypeCode.UInt16: return (ushort)obj;
+                        case TypeCode.UInt32: return (uint)obj;
+                        case TypeCode.UInt64: return (ulong)obj;
+                        case TypeCode.Single: return (float)obj;
                         case TypeCode.Double: return (double)obj;
                         default: throw Assert.Unreachable;
                     }
@@ -180,14 +180,14 @@ namespace System.Management.Automation.Interpreter
                 {
                     case TypeCode.Byte: return ConvertInt32((byte)obj);
                     case TypeCode.SByte: return ConvertInt32((sbyte)obj);
-                    case TypeCode.Int16: return ConvertInt32((Int16)obj);
+                    case TypeCode.Int16: return ConvertInt32((short)obj);
                     case TypeCode.Char: return ConvertInt32((char)obj);
-                    case TypeCode.Int32: return ConvertInt32((Int32)obj);
-                    case TypeCode.Int64: return ConvertInt64((Int64)obj);
-                    case TypeCode.UInt16: return ConvertInt32((UInt16)obj);
-                    case TypeCode.UInt32: return ConvertInt64((UInt32)obj);
-                    case TypeCode.UInt64: return ConvertUInt64((UInt64)obj);
-                    case TypeCode.Single: return ConvertDouble((Single)obj);
+                    case TypeCode.Int32: return ConvertInt32((int)obj);
+                    case TypeCode.Int64: return ConvertInt64((long)obj);
+                    case TypeCode.UInt16: return ConvertInt32((ushort)obj);
+                    case TypeCode.UInt32: return ConvertInt64((uint)obj);
+                    case TypeCode.UInt64: return ConvertUInt64((ulong)obj);
+                    case TypeCode.Single: return ConvertDouble((float)obj);
                     case TypeCode.Double: return ConvertDouble((double)obj);
                     default: throw Assert.Unreachable;
                 }
@@ -201,21 +201,21 @@ namespace System.Management.Automation.Interpreter
                     {
                         case TypeCode.Byte: return (byte)obj;
                         case TypeCode.SByte: return (sbyte)obj;
-                        case TypeCode.Int16: return (Int16)obj;
+                        case TypeCode.Int16: return (short)obj;
                         case TypeCode.Char: return (char)obj;
-                        case TypeCode.Int32: return (Int32)obj;
-                        case TypeCode.Int64: return (Int64)obj;
-                        case TypeCode.UInt16: return (UInt16)obj;
-                        case TypeCode.UInt32: return (UInt32)obj;
-                        case TypeCode.UInt64: return (UInt64)obj;
-                        case TypeCode.Single: return (Single)obj;
+                        case TypeCode.Int32: return (int)obj;
+                        case TypeCode.Int64: return (long)obj;
+                        case TypeCode.UInt16: return (ushort)obj;
+                        case TypeCode.UInt32: return (uint)obj;
+                        case TypeCode.UInt64: return (ulong)obj;
+                        case TypeCode.Single: return (float)obj;
                         case TypeCode.Double: return (double)obj;
                         default: throw Assert.Unreachable;
                     }
                 }
             }
 
-            private object ConvertInt64(Int64 obj)
+            private object ConvertInt64(long obj)
             {
                 checked
                 {
@@ -223,21 +223,21 @@ namespace System.Management.Automation.Interpreter
                     {
                         case TypeCode.Byte: return (byte)obj;
                         case TypeCode.SByte: return (sbyte)obj;
-                        case TypeCode.Int16: return (Int16)obj;
+                        case TypeCode.Int16: return (short)obj;
                         case TypeCode.Char: return (char)obj;
-                        case TypeCode.Int32: return (Int32)obj;
-                        case TypeCode.Int64: return (Int64)obj;
-                        case TypeCode.UInt16: return (UInt16)obj;
-                        case TypeCode.UInt32: return (UInt32)obj;
-                        case TypeCode.UInt64: return (UInt64)obj;
-                        case TypeCode.Single: return (Single)obj;
+                        case TypeCode.Int32: return (int)obj;
+                        case TypeCode.Int64: return (long)obj;
+                        case TypeCode.UInt16: return (ushort)obj;
+                        case TypeCode.UInt32: return (uint)obj;
+                        case TypeCode.UInt64: return (ulong)obj;
+                        case TypeCode.Single: return (float)obj;
                         case TypeCode.Double: return (double)obj;
                         default: throw Assert.Unreachable;
                     }
                 }
             }
 
-            private object ConvertUInt64(UInt64 obj)
+            private object ConvertUInt64(ulong obj)
             {
                 checked
                 {
@@ -245,14 +245,14 @@ namespace System.Management.Automation.Interpreter
                     {
                         case TypeCode.Byte: return (byte)obj;
                         case TypeCode.SByte: return (sbyte)obj;
-                        case TypeCode.Int16: return (Int16)obj;
+                        case TypeCode.Int16: return (short)obj;
                         case TypeCode.Char: return (char)obj;
-                        case TypeCode.Int32: return (Int32)obj;
-                        case TypeCode.Int64: return (Int64)obj;
-                        case TypeCode.UInt16: return (UInt16)obj;
-                        case TypeCode.UInt32: return (UInt32)obj;
-                        case TypeCode.UInt64: return (UInt64)obj;
-                        case TypeCode.Single: return (Single)obj;
+                        case TypeCode.Int32: return (int)obj;
+                        case TypeCode.Int64: return (long)obj;
+                        case TypeCode.UInt16: return (ushort)obj;
+                        case TypeCode.UInt32: return (uint)obj;
+                        case TypeCode.UInt64: return (ulong)obj;
+                        case TypeCode.Single: return (float)obj;
                         case TypeCode.Double: return (double)obj;
                         default: throw Assert.Unreachable;
                     }
@@ -267,14 +267,14 @@ namespace System.Management.Automation.Interpreter
                     {
                         case TypeCode.Byte: return (byte)obj;
                         case TypeCode.SByte: return (sbyte)obj;
-                        case TypeCode.Int16: return (Int16)obj;
+                        case TypeCode.Int16: return (short)obj;
                         case TypeCode.Char: return (char)obj;
-                        case TypeCode.Int32: return (Int32)obj;
-                        case TypeCode.Int64: return (Int64)obj;
-                        case TypeCode.UInt16: return (UInt16)obj;
-                        case TypeCode.UInt32: return (UInt32)obj;
-                        case TypeCode.UInt64: return (UInt64)obj;
-                        case TypeCode.Single: return (Single)obj;
+                        case TypeCode.Int32: return (int)obj;
+                        case TypeCode.Int64: return (long)obj;
+                        case TypeCode.UInt16: return (ushort)obj;
+                        case TypeCode.UInt32: return (uint)obj;
+                        case TypeCode.UInt64: return (ulong)obj;
+                        case TypeCode.Single: return (float)obj;
                         case TypeCode.Double: return (double)obj;
                         default: throw Assert.Unreachable;
                     }

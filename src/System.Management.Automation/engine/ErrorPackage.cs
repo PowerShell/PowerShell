@@ -1367,7 +1367,7 @@ namespace System.Management.Automation
                 ArrayList iterationInfo = RemotingDecoder.GetPropertyValue<ArrayList>(serializedErrorRecord, "PipelineIterationInfo");
                 if (iterationInfo != null)
                 {
-                    _pipelineIterationInfo = new ReadOnlyCollection<int>((int[])iterationInfo.ToArray(typeof(Int32)));
+                    _pipelineIterationInfo = new ReadOnlyCollection<int>((int[])iterationInfo.ToArray(typeof(int)));
                 }
             }
             else

@@ -1171,7 +1171,7 @@ namespace System.Management.Automation
 
             Dbg.Assert(readCount >= 0, "ReadCount cannot be negative");
 
-            int resolvedReadCount = (readCount > 0 ? readCount : Int32.MaxValue);
+            int resolvedReadCount = (readCount > 0 ? readCount : int.MaxValue);
 
             lock (SyncObject)
             {
