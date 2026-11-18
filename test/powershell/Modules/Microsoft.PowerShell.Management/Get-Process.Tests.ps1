@@ -112,6 +112,29 @@ Describe "Get-Process" -Tags "CI" {
 
         $actual | Should -Be $expected
     }
+
+    It "Should support embedded newline characters in the command line - type check" -Skip:(!$IsLinux) {
+
+        # Verify that the CommandLine property returned is of type String and not Object[]:
+        $expected = "String"
+
+        $actual = & "$PSHOME/pwsh" -NoProfile -NoLogo -NonInteractive -Command "(Get-Process -Id `"`$pid`").CommandLine.GetType().Name; `$unusedVar = `"newline character here:`n`""
+
+        $actual | Should -Be $expected
+    }
+
+    It "Should support embedded newline characters in the command line - value check" -Skip:(!$IsLinux) {
+
+        # Note that we are expecting an array of two strings back, even though the value of the CommandLine property
+        # itself is a single string (as verified by the previous test). This is because that string contains a newline,
+        # and once that string is sent to stdout by the subprocess and then read back in by the call operator (&), it
+        # gets interpreted as two separate lines and therefore gets loaded into an array of two strings:
+        $expected = @("$PSHOME/pwsh -NoProfile -NoLogo -NonInteractive -Command (Get-Process -Id `"`$pid`").CommandLine; `$unusedVar = `"newline character here:", "`"")
+
+        $actual = & "$PSHOME/pwsh" -NoProfile -NoLogo -NonInteractive -Command "(Get-Process -Id `"`$pid`").CommandLine; `$unusedVar = `"newline character here:`n`""
+
+        $actual | Should -Be $expected
+    }
 }
 
 Describe "Get-Process Formatting" -Tags "Feature" {
