@@ -92,7 +92,7 @@ Describe "Resolve-Path returns proper path" -Tag "CI" {
         }
     }
 
-    It 'Resolve-Path RelativeBasePath should handle <Scenario>' -TestCases @(
+    It 'Resolve-Path BasePath should handle <Scenario>' -TestCases @(
         @{
             Scenario = "Absolute Path, Absolute ReleativeBasePath"
             Path     = $root
@@ -133,8 +133,8 @@ Describe "Resolve-Path returns proper path" -Tag "CI" {
 
         if ($null -eq $Expected)
         {
-            {Resolve-Path -Path $Path -RelativeBasePath $BasePath -ErrorAction Stop} | Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.ResolvePathCommand"
-            {Resolve-Path -Path $Path -RelativeBasePath $BasePath -ErrorAction Stop -Relative} | Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.ResolvePathCommand"
+            {Resolve-Path -Path $Path -BasePath $BasePath -ErrorAction Stop} | Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.ResolvePathCommand"
+            {Resolve-Path -Path $Path -BasePath $BasePath -ErrorAction Stop -Relative} | Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.ResolvePathCommand"
         }
         else
         {
@@ -146,8 +146,8 @@ Describe "Resolve-Path returns proper path" -Tag "CI" {
                     Set-Location $CD
                 }
 
-                (Resolve-Path -Path $Path -RelativeBasePath $BasePath).ProviderPath | Should -BeExactly $Expected[0]
-                Resolve-Path -Path $Path -RelativeBasePath $BasePath -Relative | Should -BeExactly $Expected[1]
+                (Resolve-Path -Path $Path -BasePath $BasePath).ProviderPath | Should -BeExactly $Expected[0]
+                Resolve-Path -Path $Path -BasePath $BasePath -Relative | Should -BeExactly $Expected[1]
             }
             finally
             {
@@ -159,7 +159,7 @@ Describe "Resolve-Path returns proper path" -Tag "CI" {
         }
     }
 
-    It "Resolve-Path -Path '<Path>' -RelativeBasePath '<BasePath>' -Force:<Force> should return '<ExpectedResult>'" -TestCases @(
+    It "Resolve-Path -Path '<Path>' -BasePath '<BasePath>' -Force:<Force> should return '<ExpectedResult>'" -TestCases @(
         @{
             Path           = $relativeHiddenFilePath1
             BasePath       = $TestDrive
@@ -198,6 +198,11 @@ Describe "Resolve-Path returns proper path" -Tag "CI" {
         }
     ) {
         param($Path, $BasePath, $Force, $ExpectedResult)
-        (Resolve-Path -Path $Path -RelativeBasePath $BasePath -Force:$Force).Path | Should -BeExactly $ExpectedResult
+        (Resolve-Path -Path $Path -BasePath $BasePath -Force:$Force).Path | Should -BeExactly $ExpectedResult
+    }
+
+    It "Resolve-Path supports the '-RelativeBasePath' alias for '-BasePath'" {
+        $expected = (Resolve-Path -Path $relativeHiddenFilePath1 -BasePath $TestDrive).Path
+        (Resolve-Path -Path $relativeHiddenFilePath1 -RelativeBasePath $TestDrive).Path | Should -BeExactly $expected
     }
 }

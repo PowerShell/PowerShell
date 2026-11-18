@@ -4657,7 +4657,7 @@ namespace System.Management.Automation
                     && lastAst.Extent.File is not null)
                 {
                     relativeBasePath = Directory.GetParent(lastAst.Extent.File).FullName;
-                    _ = currentPS.AddParameter("RelativeBasePath", relativeBasePath);
+                    _ = currentPS.AddParameter("BasePath", relativeBasePath);
                 }
                 else
                 {
