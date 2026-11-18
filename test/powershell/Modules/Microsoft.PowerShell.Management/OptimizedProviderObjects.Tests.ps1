@@ -380,10 +380,11 @@ Describe "Optimized FileSystem provider instance metadata" -Tags "CI" {
         $lines[0].PSObject.Properties.Remove("ReadCount")
         $lines[1].ReadCount | Should -Be 2
 
-        $driveLines = @(Get-Content -LiteralPath "${driveName}:\sample[1].txt" -ReadCount 1)
+        $drivePath = Join-Path "${driveName}:" 'sample[1].txt'
+        $driveLines = @(Get-Content -LiteralPath $drivePath -ReadCount 1)
         $driveLines[0].PSDrive.Name | Should -BeExactly $driveName
         $driveLines[0].PSProvider.Name | Should -BeExactly "FileSystem"
-        $driveLines[0].PSPath | Should -BeExactly "${driveName}:\sample[1].txt"
+        $driveLines[0].PSPath | Should -BeExactly $drivePath
     }
 
     It "preserves metadata through Export-Clixml and Import-Clixml" {
