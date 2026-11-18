@@ -130,6 +130,48 @@ Describe 'conversion syntax' -Tags "CI" {
             { [System.Collections.Generic.IEnumerable[int]]@('a') } | Should -Throw -ErrorId 'InvalidCastFromStringToInteger'
         }
 
+        Context "Overload resolution with generic collection interface parameters" {
+            BeforeAll {
+                if (-not ('GenericCollectionInterfaceOverloadTest' -as [type])) {
+                    Add-Type -TypeDefinition @'
+using System.Collections.Generic;
+
+public static class GenericCollectionInterfaceOverloadTest
+{
+    public static string IntArrayOrEnumerableOfString(int[] value) => "int[]";
+    public static string IntArrayOrEnumerableOfString(IEnumerable<string> value) => "IEnumerable<string>";
+
+    public static string StringArrayOrEnumerableOfString(string[] value) => "string[]";
+    public static string StringArrayOrEnumerableOfString(IEnumerable<string> value) => "IEnumerable<string>";
+
+    public static string EnumerableOfIntOrListOfString(IEnumerable<int> value) => "IEnumerable<int>";
+    public static string EnumerableOfIntOrListOfString(IList<string> value) => "IList<string>";
+}
+'@
+                }
+            }
+
+            It "prefers an array overload over a generic interface overload for <Description>" -TestCases @(
+                @{ Description = 'int[] vs IEnumerable[string] with ints'; Script = { [GenericCollectionInterfaceOverloadTest]::IntArrayOrEnumerableOfString(@(1, 2)) }; Expected = 'int[]' }
+                @{ Description = 'int[] vs IEnumerable[string] with a List'; Script = { [GenericCollectionInterfaceOverloadTest]::IntArrayOrEnumerableOfString([System.Collections.Generic.List[object]]@(1, 2)) }; Expected = 'int[]' }
+                @{ Description = 'string[] vs IEnumerable[string] with ints'; Script = { [GenericCollectionInterfaceOverloadTest]::StringArrayOrEnumerableOfString(@(1, 2)) }; Expected = 'string[]' }
+                @{ Description = 'string[] vs IEnumerable[string] with a List'; Script = { [GenericCollectionInterfaceOverloadTest]::StringArrayOrEnumerableOfString([System.Collections.Generic.List[object]]@(1, 2)) }; Expected = 'string[]' }
+            ) {
+                param($Script, $Expected)
+
+                & $Script | Should -BeExactly $Expected
+            }
+
+            It "chooses between generic interface overloads by element type for <Description>" -TestCases @(
+                @{ Description = 'ints'; Script = { [GenericCollectionInterfaceOverloadTest]::EnumerableOfIntOrListOfString(@(1, 2)) }; Expected = 'IEnumerable<int>' }
+                @{ Description = 'strings'; Script = { [GenericCollectionInterfaceOverloadTest]::EnumerableOfIntOrListOfString(@('a', 'b')) }; Expected = 'IList<string>' }
+            ) {
+                param($Script, $Expected)
+
+                & $Script | Should -BeExactly $Expected
+            }
+        }
+
         It "does not convert <Description>" -TestCases @(
             @{ Description = 'a scalar'; Script = { [System.Collections.Generic.IEnumerable[string]]'abc' } }
             @{ Description = 'a hashtable'; Script = { [System.Collections.Generic.IEnumerable[object]]@{ a = 1 } } }

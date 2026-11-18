@@ -5343,29 +5343,14 @@ namespace System.Management.Automation
         /// <returns>The converter and its rank, or null if this conversion does not apply.</returns>
         private static Tuple<PSConverter<object>, ConversionRank> FigureGenericCollectionInterfaceConversion(Type fromType, Type toType)
         {
-            if (!toType.IsInterface || !toType.IsGenericType)
-            {
-                return null;
-            }
-
-            Type genericTypeDefinition = toType.GetGenericTypeDefinition();
-            if (genericTypeDefinition != typeof(IEnumerable<>)
-                && genericTypeDefinition != typeof(ICollection<>)
-                && genericTypeDefinition != typeof(IList<>)
-                && genericTypeDefinition != typeof(IReadOnlyCollection<>)
-                && genericTypeDefinition != typeof(IReadOnlyList<>))
+            Type elementType = GetGenericCollectionInterfaceElementType(toType);
+            if (elementType == null || elementType.ContainsGenericParameters || elementType.IsByRefLike)
             {
                 return null;
             }
 
             // Only convert values that PowerShell treats as collections; scalars are not wrapped.
             if (!fromType.IsArray && !IsTypeEnumerable(fromType))
-            {
-                return null;
-            }
-
-            Type elementType = toType.GetGenericArguments()[0];
-            if (elementType.ContainsGenericParameters || elementType.IsByRefLike || elementType == typeof(void))
             {
                 return null;
             }
@@ -5377,11 +5362,67 @@ namespace System.Management.Automation
                 return null;
             }
 
-            typeConversion.WriteLine("Converting to {0} via {1}.", toType, arrayType);
-            PSConverter<object> converter = (valueToConvert, resultType, recursion, originalValueToConvert, formatProvider, backupTable) =>
-                arrayConverter(valueToConvert, arrayType, recursion, originalValueToConvert, formatProvider, backupTable);
+            var converter = new ConvertViaArrayToGenericCollectionInterface(arrayConverter, arrayType);
+            return new Tuple<PSConverter<object>, ConversionRank>(converter.Convert, arrayConversion.Rank);
+        }
 
-            return new Tuple<PSConverter<object>, ConversionRank>(converter, arrayConversion.Rank);
+        /// <summary>
+        /// Gets the element type T if <paramref name="type"/> is one of the generic collection interfaces
+        /// implemented by single-dimensional arrays (IEnumerable&lt;T&gt;, ICollection&lt;T&gt;, IList&lt;T&gt;,
+        /// IReadOnlyCollection&lt;T&gt; or IReadOnlyList&lt;T&gt;); otherwise null.
+        /// </summary>
+        internal static Type GetGenericCollectionInterfaceElementType(Type type)
+        {
+            if (!type.IsInterface || !type.IsConstructedGenericType)
+            {
+                return null;
+            }
+
+            Type genericTypeDefinition = type.GetGenericTypeDefinition();
+            if (genericTypeDefinition == typeof(IEnumerable<>)
+                || genericTypeDefinition == typeof(ICollection<>)
+                || genericTypeDefinition == typeof(IList<>)
+                || genericTypeDefinition == typeof(IReadOnlyCollection<>)
+                || genericTypeDefinition == typeof(IReadOnlyList<>))
+            {
+                return type.GenericTypeArguments[0];
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Returns true if converting from <paramref name="fromType"/> to <paramref name="toType"/> uses the
+        /// array-backed conversion to a generic collection interface, rather than any other conversion.
+        /// </summary>
+        internal static bool IsGenericCollectionInterfaceConversion(Type fromType, Type toType)
+        {
+            return GetGenericCollectionInterfaceElementType(toType) != null
+                && FigureConversion(fromType, toType).Converter is PSConverter<object> converter
+                && converter.Target is ConvertViaArrayToGenericCollectionInterface;
+        }
+
+        private sealed class ConvertViaArrayToGenericCollectionInterface
+        {
+            private readonly PSConverter<object> _arrayConverter;
+            private readonly Type _arrayType;
+
+            internal ConvertViaArrayToGenericCollectionInterface(PSConverter<object> arrayConverter, Type arrayType)
+            {
+                _arrayConverter = arrayConverter;
+                _arrayType = arrayType;
+            }
+
+            internal object Convert(object valueToConvert,
+                                    Type resultType,
+                                    bool recursion,
+                                    PSObject originalValueToConvert,
+                                    IFormatProvider formatProvider,
+                                    TypeTable backupTable)
+            {
+                typeConversion.WriteLine("Converting to {0} via {1}.", resultType, _arrayType);
+                return _arrayConverter(valueToConvert, _arrayType, recursion, originalValueToConvert, formatProvider, backupTable);
+            }
         }
 
         /// <summary>

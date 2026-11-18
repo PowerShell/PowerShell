@@ -882,6 +882,38 @@ namespace System.Management.Automation
             return newParameters;
         }
 
+        private static Type GetCollectionElementType(Type type)
+        {
+            return type.IsArray ? type.GetElementType() : LanguagePrimitives.GetGenericCollectionInterfaceElementType(type);
+        }
+
+        private static bool UsesGenericCollectionInterfaceConversion(OverloadCandidate candidate, ParameterInformation[] parameters, object[] arguments)
+        {
+            for (int i = 0; i < candidate.conversionRanks.Length; i++)
+            {
+                Type parameterType = parameters[i].parameterType;
+                if (LanguagePrimitives.GetGenericCollectionInterfaceElementType(parameterType) == null)
+                {
+                    continue;
+                }
+
+                // Mirror the argument type selection used by GetArgumentConversionRank.
+                bool isByRef = parameters[i].isByRef;
+                Type fromType = GetArgumentType(arguments[i], isByRef);
+                if (LanguagePrimitives.GetConversionRank(fromType, parameterType) == ConversionRank.None)
+                {
+                    fromType = GetArgumentType(PSObject.Base(arguments[i]), isByRef);
+                }
+
+                if (LanguagePrimitives.IsGenericCollectionInterfaceConversion(fromType, parameterType))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         /// <summary>
         /// Compare the 2 methods, determining which method is better.
         /// </summary>
@@ -893,6 +925,16 @@ namespace System.Management.Automation
 
             ParameterInformation[] params1 = candidate1.expandedParameters ?? candidate1.parameters;
             ParameterInformation[] params2 = candidate2.expandedParameters ?? candidate2.parameters;
+
+            // A candidate that is only applicable through the array-backed conversion to a generic collection
+            // interface (e.g. object[] to IEnumerable<string>) always loses to a candidate that does not need it.
+            // This keeps overload resolution unchanged for every call that already had an applicable overload.
+            bool usesInterfaceConversion1 = UsesGenericCollectionInterfaceConversion(candidate1, params1, arguments);
+            bool usesInterfaceConversion2 = UsesGenericCollectionInterfaceConversion(candidate2, params2, arguments);
+            if (usesInterfaceConversion1 != usesInterfaceConversion2)
+            {
+                return usesInterfaceConversion1 ? -1 : 1;
+            }
 
             int betterCount = 0;
             int multiplier = candidate1.conversionRanks.Length;
@@ -909,9 +951,17 @@ namespace System.Management.Automation
                 else if (candidate1.conversionRanks[i] == ConversionRank.UnrelatedArrays)
                 {
                     // If both are unrelated arrays, then use the element type conversions instead.
+                    // A parameter may also be a generic collection interface that is converted to via an array.
                     Type argElemType = EffectiveArgumentType(arguments[i]).GetElementType();
-                    ConversionRank rank1 = LanguagePrimitives.GetConversionRank(argElemType, params1[i].parameterType.GetElementType());
-                    ConversionRank rank2 = LanguagePrimitives.GetConversionRank(argElemType, params2[i].parameterType.GetElementType());
+                    Type paramElemType1 = GetCollectionElementType(params1[i].parameterType);
+                    Type paramElemType2 = GetCollectionElementType(params2[i].parameterType);
+                    if (argElemType == null || paramElemType1 == null || paramElemType2 == null)
+                    {
+                        continue;
+                    }
+
+                    ConversionRank rank1 = LanguagePrimitives.GetConversionRank(argElemType, paramElemType1);
+                    ConversionRank rank2 = LanguagePrimitives.GetConversionRank(argElemType, paramElemType2);
                     if (rank1 < rank2)
                     {
                         betterCount -= multiplier;
