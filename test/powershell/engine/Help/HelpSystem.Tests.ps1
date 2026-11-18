@@ -651,7 +651,7 @@ Describe 'Update-Help allows partial culture matches' -Tags 'CI' {
         {
             # If null (in system culture tests), omit entirely
             $CultureArg = $UICulture ? @{ UICulture = $UICulture } : @{}
-            $Args = @{
+            $Arguments = @{
                 Module = 'Microsoft.PowerShell.Core'
                 SourcePath = Join-Path $PSScriptRoot 'assets'
                 Force = $true
@@ -659,7 +659,7 @@ Describe 'Update-Help allows partial culture matches' -Tags 'CI' {
                 ErrorVariable = 'ErrorVariable'
             }
 
-            Update-Help @Args @CultureArg
+            Update-Help @Arguments @CultureArg
 
             if (-not $Pass) {
                 $ErrorVariable | Should -Match 'Failed to update Help for the module.*'
