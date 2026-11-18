@@ -197,6 +197,17 @@ namespace System.Management.Automation
             base.SetJobState(state, reason);
         }
 
+        /// <inheritdoc />
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _tracer.Dispose();
+            }
+
+            base.Dispose(disposing);
+        }
+
         #endregion Protected Methods
 
         #region State Management
@@ -2021,6 +2032,7 @@ namespace System.Management.Automation
 
                 _jobRunning?.Dispose();
                 _jobSuspendedOrAborted?.Dispose();
+                _tracer.Dispose();
             }
             finally
             {
