@@ -381,7 +381,37 @@ namespace System.Management.Automation.Language
             var assemList = assemblies ?? ClrFacade.GetAssemblies(typeResolutionState, typeName);
             var isAssembliesExplicitlyPassedIn = assemblies != null;
 
-            result = CallResolveTypeNameWorkerHelper(typeName, context, assemList, isAssembliesExplicitlyPassedIn, typeResolutionState, out exception);
+            if (typeResolutionState.typeAliases.TryGetValue(typeName.FullName, out ITypeName typeNameAlias))
+            {
+                if (typeNameAlias is GenericTypeName genericTypeAlias)
+                {
+                    result = genericTypeAlias.GetReflectionType();
+                    if (result is not null)
+                    {
+                        TypeCache.Add(genericTypeAlias, typeResolutionState, result);
+                    }
+                }
+                else if (typeNameAlias is ArrayTypeName arrayTypeAlias)
+                {
+                    result = arrayTypeAlias.GetReflectionType();
+                    if (result is not null)
+                    {
+                        TypeCache.Add(arrayTypeAlias, typeResolutionState, result);
+                    }
+                }
+                else if (typeNameAlias is TypeName newTypeNameAlias)
+                {
+                    result = CallResolveTypeNameWorkerHelper(newTypeNameAlias, context, assemList, isAssembliesExplicitlyPassedIn, typeResolutionState, out exception);
+                    if (result is not null)
+                    {
+                        TypeCache.Add(newTypeNameAlias, typeResolutionState, result);
+                    }
+                }
+            }
+            else
+            {
+                result = CallResolveTypeNameWorkerHelper(typeName, context, assemList, isAssembliesExplicitlyPassedIn, typeResolutionState, out exception);
+            }
 
             if (result != null)
             {
@@ -396,6 +426,48 @@ namespace System.Management.Automation.Language
                     var newTypeNameToSearch = ns + "." + typeName.Name;
                     newTypeNameToSearch = typeResolutionState.GetAlternateTypeName(newTypeNameToSearch) ??
                                           newTypeNameToSearch;
+                    var newTypeName = new TypeName(typeName.Extent, newTypeNameToSearch);
+#if CORECLR
+                    if (!isAssembliesExplicitlyPassedIn)
+                    {
+                        // We called 'ClrFacade.GetAssemblies' to get assemblies. That means the assemblies to search from
+                        // are not pre-defined, and thus we have to refetch assembly again based on the new type name.
+                        assemList = ClrFacade.GetAssemblies(typeResolutionState, newTypeName);
+                    }
+#endif
+                    var newResult = CallResolveTypeNameWorkerHelper(newTypeName, context, assemList, isAssembliesExplicitlyPassedIn, typeResolutionState, out exception);
+
+                    if (exception != null)
+                    {
+                        break;
+                    }
+
+                    if (newResult != null)
+                    {
+                        if (result == null)
+                        {
+                            result = newResult;
+                        }
+                        else
+                        {
+                            exception = new AmbiguousTypeException(typeName, new string[] { result.FullName, newResult.FullName });
+                            result = null;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (exception is null)
+            {
+                foreach (var key in typeResolutionState.namespaceAliases.Keys)
+                {
+                    if (!typeName.Name.StartsWith(string.Create(CultureInfo.InvariantCulture, $"{key}."), StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+                    var newTypeNameToSearch = string.Create(CultureInfo.InvariantCulture, $"{typeResolutionState.namespaceAliases[key]}{typeName.Name.AsSpan(key.Length)}");
+                    newTypeNameToSearch = typeResolutionState.GetAlternateTypeName(newTypeNameToSearch) ?? newTypeNameToSearch;
                     var newTypeName = new TypeName(typeName.Extent, newTypeNameToSearch);
 #if CORECLR
                     if (!isAssembliesExplicitlyPassedIn)
@@ -521,16 +593,20 @@ namespace System.Management.Automation.Language
     {
         internal static readonly string[] systemNamespace = { "System" };
         internal static readonly Assembly[] emptyAssemblies = Array.Empty<Assembly>();
+        internal static readonly Dictionary<string, ITypeName> emptyTypeAliases = new Dictionary<string, ITypeName> { };
+        internal static readonly Dictionary<string, string> emptyNamespaceAliases = new Dictionary<string, string> { };
         internal static readonly TypeResolutionState UsingSystem = new TypeResolutionState();
 
         internal readonly string[] namespaces;
         internal readonly Assembly[] assemblies;
+        internal readonly Dictionary<string, ITypeName> typeAliases;
+        internal readonly Dictionary<string, string> namespaceAliases;
         private readonly HashSet<string> _typesDefined;
         internal readonly int genericArgumentCount;
         internal readonly bool attribute;
 
         private TypeResolutionState()
-            : this(systemNamespace, emptyAssemblies)
+            : this(systemNamespace, emptyAssemblies, emptyTypeAliases, emptyNamespaceAliases)
         {
         }
 
@@ -556,10 +632,12 @@ namespace System.Management.Automation.Language
             return _typesDefined.Contains(type);
         }
 
-        internal TypeResolutionState(string[] namespaces, Assembly[] assemblies)
+        internal TypeResolutionState(string[] namespaces, Assembly[] assemblies, Dictionary<string, ITypeName> typeAliases, Dictionary<string, string> namespaceAliases)
         {
             this.namespaces = namespaces ?? systemNamespace;
             this.assemblies = assemblies ?? emptyAssemblies;
+            this.typeAliases = typeAliases ?? emptyTypeAliases;
+            this.namespaceAliases = namespaceAliases ?? emptyNamespaceAliases;
             _typesDefined = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         }
 
@@ -567,6 +645,8 @@ namespace System.Management.Automation.Language
         {
             this.namespaces = other.namespaces;
             this.assemblies = other.assemblies;
+            this.typeAliases = other.typeAliases;
+            this.namespaceAliases = other.namespaceAliases;
             _typesDefined = other._typesDefined;
             this.genericArgumentCount = genericArgumentCount;
             this.attribute = attribute;
@@ -576,6 +656,8 @@ namespace System.Management.Automation.Language
         {
             this.namespaces = other.namespaces;
             this.assemblies = other.assemblies;
+            this.typeAliases = other.typeAliases;
+            this.namespaceAliases = other.namespaceAliases;
             _typesDefined = typesDefined;
             this.genericArgumentCount = other.genericArgumentCount;
             this.attribute = other.attribute;
@@ -628,6 +710,16 @@ namespace System.Management.Automation.Language
             if (this.assemblies.Length != other.assemblies.Length)
                 return false;
 
+            if (this.typeAliases.Count != other.typeAliases.Count)
+            {
+                return false;
+            }
+
+            if (this.namespaceAliases.Count != other.namespaceAliases.Count)
+            {
+                return false;
+            }
+
             for (int i = 0; i < namespaces.Length; i++)
             {
                 if (!this.namespaces[i].Equals(other.namespaces[i], StringComparison.OrdinalIgnoreCase))
@@ -638,6 +730,32 @@ namespace System.Management.Automation.Language
             {
                 if (!this.assemblies[i].Equals(other.assemblies[i]))
                     return false;
+            }
+
+            foreach (string key in typeAliases.Keys)
+            {
+                if (!other.typeAliases.ContainsKey(key))
+                {
+                    return false;
+                }
+
+                if (!this.typeAliases[key].Equals(other.typeAliases[key]))
+                {
+                    return false;
+                }
+            }
+
+            foreach (string key in namespaceAliases.Keys)
+            {
+                if (!other.namespaceAliases.ContainsKey(key))
+                {
+                    return false;
+                }
+
+                if (!this.namespaceAliases[key].Equals(other.namespaceAliases[key]))
+                {
+                    return false;
+                }
             }
 
             if (_typesDefined.Count != other._typesDefined.Count)
@@ -658,6 +776,16 @@ namespace System.Management.Automation.Language
             for (int i = 0; i < assemblies.Length; i++)
             {
                 result = Utils.CombineHashCodes(result, this.assemblies[i].GetHashCode());
+            }
+
+            foreach (KeyValuePair<string, ITypeName> kvp in typeAliases)
+            {
+                result = Utils.CombineHashCodes(result, kvp.GetHashCode());
+            }
+
+            foreach (KeyValuePair<string, string> kvp in namespaceAliases)
+            {
+                result = Utils.CombineHashCodes(result, kvp.GetHashCode());
             }
 
             foreach (var t in _typesDefined)
