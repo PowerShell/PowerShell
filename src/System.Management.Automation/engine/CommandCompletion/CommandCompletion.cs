@@ -91,7 +91,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         public static CommandCompletion CompleteInput(string input, int cursorIndex, Hashtable options)
         {
-            if (input == null || input.Length == 0)
+            if (input == null)
             {
                 return s_emptyCommandCompletion;
             }
@@ -143,7 +143,7 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "powershell")]
         public static CommandCompletion CompleteInput(string input, int cursorIndex, Hashtable options, PowerShell powershell)
         {
-            if (input == null || input.Length == 0)
+            if (input == null)
             {
                 return s_emptyCommandCompletion;
             }
