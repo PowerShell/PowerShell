@@ -80,7 +80,7 @@ public static class RegistryMetadataTestHelper
         $item.PSObject.Properties["PSPath"] | Should -BeNullOrEmpty
     }
 
-    It "derives registry metadata from the key and drive" -Skip:(!$IsWindows) {
+    It "captures registry metadata from the key and drive at emission" -Skip:(!$IsWindows) {
         $item = Get-Item -LiteralPath $keyPath
         if ($registryMetadataEnabled) {
             [RegistryMetadataTestHelper]::SourceType($item) | Should -BeExactly "RegistryProviderMetadata"
@@ -96,14 +96,66 @@ public static class RegistryMetadataTestHelper
         $item.PSDrive.Name | Should -BeExactly "HKCU"
         $item.PSProvider | Should -BeExactly $item.PSDrive.Provider
 
-        if ($registryMetadataEnabled) {
-            New-ItemProperty -LiteralPath $keyPath -Name "DerivedLater" -Value "value" | Out-Null
-            try {
-                $item.Property | Should -Contain "DerivedLater"
+        New-ItemProperty -LiteralPath $keyPath -Name "DerivedLater" -Value "value" | Out-Null
+        try {
+            $item.Property | Should -Not -Contain "DerivedLater"
+            (Get-Item -LiteralPath $keyPath).Property | Should -Contain "DerivedLater"
+        }
+        finally {
+            Remove-ItemProperty -LiteralPath $keyPath -Name "DerivedLater" -ErrorAction Stop
+        }
+    }
+
+    It "preserves metadata after closing the key before <Operation>" -Skip:(!$IsWindows) -TestCases @(
+        @{ Operation = 'direct reads' }
+        @{ Operation = 'property inspection' }
+        @{ Operation = 'Add-Member' }
+    ) {
+        param($Operation)
+
+        $item = Get-Item -LiteralPath $keyPath
+        $expectedPath = "Microsoft.PowerShell.Core\Registry::$($item.Name)"
+        $expectedParent = "Microsoft.PowerShell.Core\Registry::$((Get-Item -LiteralPath $registryPath).Name)"
+        $item.Close()
+
+        switch ($Operation) {
+            'property inspection' {
+                $item.PSObject.Properties['PSPath'].Value | Should -BeExactly $expectedPath
             }
-            finally {
-                Remove-ItemProperty -LiteralPath $keyPath -Name "DerivedLater" -ErrorAction Stop
+            'Add-Member' {
+                $item | Add-Member -NotePropertyName Extra -NotePropertyValue 'added' -ErrorAction Stop
+                $item.Extra | Should -BeExactly 'added'
             }
+        }
+
+        $item.PSPath | Should -BeExactly $expectedPath
+        $item.PSParentPath | Should -BeExactly $expectedParent
+        $item.PSChildName | Should -BeExactly 'sample[1]'
+        $item.Property | Should -Contain '(default)'
+        $item.Property | Should -Contain 'Named'
+        $item.PSDrive.Name | Should -BeExactly 'HKCU'
+        $item.PSProvider.Name | Should -BeExactly 'Registry'
+        $item.PSIsContainer | Should -BeTrue
+    }
+
+    It "preserves Property array identity and edits through promotion" -Skip:(!$IsWindows) {
+        $item = Get-Item -LiteralPath $keyPath
+        try {
+            $first = $item.Property
+            [object]::ReferenceEquals($first, $item.Property) | Should -BeTrue
+            $item.Property[0] = 'Edited note'
+            $item.Property[0] | Should -BeExactly 'Edited note'
+            if ($registryMetadataEnabled) {
+                [RegistryMetadataTestHelper]::HasStorage($item) | Should -BeFalse
+            }
+
+            $item | Add-Member -NotePropertyName Extra -NotePropertyValue 'added' -ErrorAction Stop
+            [object]::ReferenceEquals($first, $item.PSObject.Properties['Property'].Value) | Should -BeTrue
+            $item.Property[0] | Should -BeExactly 'Edited note'
+            (Get-Item -LiteralPath $keyPath).Property | Should -Not -Contain 'Edited note'
+        }
+        finally {
+            $item.Close()
         }
     }
 

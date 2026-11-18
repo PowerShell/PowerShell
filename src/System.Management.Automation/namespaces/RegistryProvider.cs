@@ -4065,7 +4065,12 @@ namespace Microsoft.PowerShell.Commands
 
             itemObject = new PSObject<RegistryProviderMetadata>(
                 registryKey,
-                new RegistryProviderMetadata { Drive = PSDriveInfo });
+                new RegistryProviderMetadata
+                {
+                    Drive = PSDriveInfo,
+                    KeyName = registryKey.Name,
+                    ValueNames = GetValueNamesForMetadata(registryKey.GetValueNames()),
+                });
             itemObject.AttachProviderInstanceMembers((IProviderInstanceMemberSource)itemObject);
             return true;
         }

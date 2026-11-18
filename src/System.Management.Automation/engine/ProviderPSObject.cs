@@ -376,24 +376,26 @@ namespace System.Management.Automation.Provider
 {
 #if !UNIX
     /// <summary>
-    /// Carries the drive used to derive registry provider notes from the key.
+    /// Carries the registry metadata captured when a key is emitted, independently of its lifetime.
     /// </summary>
     internal struct RegistryProviderMetadata
     {
         internal PSDriveInfo Drive;
+        internal string KeyName;
+        internal string[] ValueNames;
 
         [PSObjectMetadataAccessor("Property", 0)]
-        private static string[] GetProperty(Microsoft.Win32.RegistryKey key)
-            => Microsoft.PowerShell.Commands.RegistryProvider.GetValueNamesForMetadata(key.GetValueNames());
+        private static string[] GetProperty(Microsoft.Win32.RegistryKey key, in RegistryProviderMetadata metadata)
+            => metadata.ValueNames;
 
         [PSObjectMetadataAccessor("PSPath", 1)]
         private static string GetPath(Microsoft.Win32.RegistryKey key, in RegistryProviderMetadata metadata)
-            => LocationGlobber.GetProviderQualifiedPath(key.Name, metadata.Drive.Provider);
+            => LocationGlobber.GetProviderQualifiedPath(metadata.KeyName, metadata.Drive.Provider);
 
         [PSObjectMetadataAccessor("PSParentPath", 2)]
         private static string GetParentPath(Microsoft.Win32.RegistryKey key, in RegistryProviderMetadata metadata)
         {
-            string keyName = key.Name;
+            string keyName = metadata.KeyName;
             int separatorIndex = keyName.LastIndexOf('\\');
             return separatorIndex < 0
                 ? string.Empty
@@ -401,9 +403,9 @@ namespace System.Management.Automation.Provider
         }
 
         [PSObjectMetadataAccessor("PSChildName", 3)]
-        private static string GetChildName(Microsoft.Win32.RegistryKey key)
+        private static string GetChildName(Microsoft.Win32.RegistryKey key, in RegistryProviderMetadata metadata)
         {
-            string keyName = key.Name;
+            string keyName = metadata.KeyName;
             int separatorIndex = keyName.LastIndexOf('\\');
             return separatorIndex < 0 ? keyName : keyName.Substring(separatorIndex + 1);
         }
