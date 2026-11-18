@@ -416,6 +416,48 @@ Describe "Get-Help should find pattern alias" -Tags "CI" {
 }
 
 Describe "help function uses full view by default" -Tags "CI" {
+    BeforeAll {
+        $script:helpFullViewInvariantCultureLCID = [System.Globalization.CultureInfo]::InvariantCulture.LCID
+        $script:helpFullViewEnUSCulture = [System.Globalization.CultureInfo]::GetCultureInfo('en-US')
+    }
+
+    BeforeEach {
+        $script:helpFullViewCultureState = @{
+            CurrentCulture = [System.Globalization.CultureInfo]::CurrentCulture
+            CurrentUICulture = [System.Globalization.CultureInfo]::CurrentUICulture
+            CurrentCultureChanged = $false
+            CurrentUICultureChanged = $false
+        }
+
+        # The full help content used by these assertions is localized for en-US.
+        if ($script:helpFullViewCultureState.CurrentCulture.LCID -eq $script:helpFullViewInvariantCultureLCID) {
+            [System.Globalization.CultureInfo]::CurrentCulture = $script:helpFullViewEnUSCulture
+            $script:helpFullViewCultureState.CurrentCultureChanged = $true
+        }
+
+        if ($script:helpFullViewCultureState.CurrentUICulture.LCID -eq $script:helpFullViewInvariantCultureLCID) {
+            [System.Globalization.CultureInfo]::CurrentUICulture = $script:helpFullViewEnUSCulture
+            $script:helpFullViewCultureState.CurrentUICultureChanged = $true
+        }
+    }
+
+    AfterEach {
+        if ($script:helpFullViewCultureState.CurrentCultureChanged) {
+            [System.Globalization.CultureInfo]::CurrentCulture = $script:helpFullViewCultureState.CurrentCulture
+        }
+
+        if ($script:helpFullViewCultureState.CurrentUICultureChanged) {
+            [System.Globalization.CultureInfo]::CurrentUICulture = $script:helpFullViewCultureState.CurrentUICulture
+        }
+
+        $script:helpFullViewCultureState = $null
+    }
+
+    AfterAll {
+        $script:helpFullViewInvariantCultureLCID = $null
+        $script:helpFullViewEnUSCulture = $null
+    }
+
     It "help should return full view without -Full switch" {
         if (Test-IsWindowsArm64) {
             Set-ItResult -Pending -Because "IOException: The handle is invalid."
