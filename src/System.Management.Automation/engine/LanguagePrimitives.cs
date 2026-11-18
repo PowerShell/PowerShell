@@ -5334,6 +5334,57 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Figures out a conversion from an array or enumerable to one of the generic collection
+        /// interfaces implemented by single-dimensional arrays (IEnumerable&lt;T&gt;, ICollection&lt;T&gt;,
+        /// IList&lt;T&gt;, IReadOnlyCollection&lt;T&gt; and IReadOnlyList&lt;T&gt;), by converting to T[].
+        /// </summary>
+        /// <param name="fromType">The type of the value to convert.</param>
+        /// <param name="toType">The target type.</param>
+        /// <returns>The converter and its rank, or null if this conversion does not apply.</returns>
+        private static Tuple<PSConverter<object>, ConversionRank> FigureGenericCollectionInterfaceConversion(Type fromType, Type toType)
+        {
+            if (!toType.IsInterface || !toType.IsGenericType)
+            {
+                return null;
+            }
+
+            Type genericTypeDefinition = toType.GetGenericTypeDefinition();
+            if (genericTypeDefinition != typeof(IEnumerable<>)
+                && genericTypeDefinition != typeof(ICollection<>)
+                && genericTypeDefinition != typeof(IList<>)
+                && genericTypeDefinition != typeof(IReadOnlyCollection<>)
+                && genericTypeDefinition != typeof(IReadOnlyList<>))
+            {
+                return null;
+            }
+
+            // Only convert values that PowerShell treats as collections; scalars are not wrapped.
+            if (!fromType.IsArray && !IsTypeEnumerable(fromType))
+            {
+                return null;
+            }
+
+            Type elementType = toType.GetGenericArguments()[0];
+            if (elementType.ContainsGenericParameters || elementType.IsByRefLike || elementType == typeof(void))
+            {
+                return null;
+            }
+
+            Type arrayType = elementType.MakeArrayType();
+            IConversionData arrayConversion = FigureConversion(fromType, arrayType);
+            if (arrayConversion.Rank == ConversionRank.None || arrayConversion.Converter is not PSConverter<object> arrayConverter)
+            {
+                return null;
+            }
+
+            typeConversion.WriteLine("Converting to {0} via {1}.", toType, arrayType);
+            PSConverter<object> converter = (valueToConvert, resultType, recursion, originalValueToConvert, formatProvider, backupTable) =>
+                arrayConverter(valueToConvert, arrayType, recursion, originalValueToConvert, formatProvider, backupTable);
+
+            return new Tuple<PSConverter<object>, ConversionRank>(converter, arrayConversion.Rank);
+        }
+
+        /// <summary>
         /// Figure conversion when following conditions are satisfied:
         /// 1. toType is a closed generic type and it has a constructor that takes IEnumerable[T], ICollection[T] or IList[T]
         /// 2. fromType is System.Array, System.Object[] or it's the same as the element type of toType.
@@ -5785,6 +5836,16 @@ namespace System.Management.Automation
             if (converter == null)
             {
                 var tuple = FigureIEnumerableConstructorConversion(fromType, toType);
+                if (tuple != null)
+                {
+                    converter = tuple.Item1;
+                    rank = tuple.Item2;
+                }
+            }
+
+            if (converter == null)
+            {
+                var tuple = FigureGenericCollectionInterfaceConversion(fromType, toType);
                 if (tuple != null)
                 {
                     converter = tuple.Item1;
