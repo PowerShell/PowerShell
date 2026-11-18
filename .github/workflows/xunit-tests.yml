@@ -48,9 +48,35 @@ jobs:
           Invoke-CIxUnit
           Write-Host "Completed xUnit test run."
 
+          Write-Host "Running PSObject tests with PSOptimizedProviderObjects enabled..."
+          $options = Get-PSOptions
+          $configPath = Join-Path $PWD "test/xUnit/bin/$($options.Configuration)/$($options.Framework)/powershell.config.json"
+          try {
+              @{ ExperimentalFeatures = @('PSOptimizedProviderObjects') } |
+                  ConvertTo-Json | Set-Content -LiteralPath $configPath
+              $resultsFile = Join-Path $PWD 'xUnitTestResults.PSOptimizedProviderObjects.xml'
+              Start-PSxUnit -xUnitTestResultsFile $resultsFile -Filter 'FullyQualifiedName~PSTests.Parallel.PSObjectTests'
+              Test-XUnitTestResults -TestResultsFile $resultsFile
+              [xml] $results = Get-Content -LiteralPath $resultsFile -Raw
+              $tests = @($results.SelectNodes('//test'))
+              foreach ($method in @(
+                  'FileSystemProviderDirectReadsDoNotPromoteMetadataSource'
+                  'GetContentDirectReadsKeepPerOutputMetadataLazy'
+                  'GetContentByteReadsKeepPerOutputMetadataLazyAndDistinct'
+              )) {
+                  $test = @($tests | Where-Object method -eq $method)
+                  if ($test.Count -ne 1 -or $test[0].result -ne 'Pass') {
+                      throw "The feature-enabled test '$method' must pass without skipping."
+                  }
+              }
+          }
+          finally {
+              Remove-Item -LiteralPath $configPath -ErrorAction SilentlyContinue
+          }
+
       - name: Upload xUnit results
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: ${{ inputs.test_results_artifact_name }}
-          path: ${{ github.workspace }}/xUnitTestResults.xml
+          path: ${{ github.workspace }}/xUnitTestResults*.xml
