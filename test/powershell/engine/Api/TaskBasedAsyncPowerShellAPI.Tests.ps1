@@ -6,7 +6,7 @@ Describe 'Task-based PowerShell async APIs' -Tags 'Feature' {
         $sbStub = @'
 .foreach{
     [pscustomobject]@{
-        Time       = [DateTime]::Now.ToString('yyyyMMddTHHmmss.fffffff')
+        Time       = [datetime]::Now.ToString('yyyyMMddTHHmmss.fffffff')
         Value      = $_
         ThreadId   = [System.Threading.Thread]::CurrentThread.ManagedThreadId
         RunspaceId = [runspace]::DefaultRunspace.Id
