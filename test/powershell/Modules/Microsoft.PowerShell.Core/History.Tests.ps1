@@ -141,8 +141,9 @@ Describe "History cmdlet test cases" -Tags "CI" {
             $ps.Streams.Information).Count
         $ps.Dispose()
 
-        ## Twice per stream - once for the original invocation, and once for the re-invocation
-        $outputCount | Should -Be 12
+        ## Twice per stream - once for the original invocation, and once for the re-invocation.
+        ## Plus one additional verbose output from Invoke-History's ShouldProcess when $VerbosePreference is 'Continue'.
+        $outputCount | Should -Be 13
     }
 
     It "Tests Invoke-History on a private command" {
