@@ -901,9 +901,7 @@ namespace System.Management.Automation.Provider
                 }
             }
 
-            normalizedPath = path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
-
-            return normalizedPath;
+            return path;
         }
 
         /// <summary>
