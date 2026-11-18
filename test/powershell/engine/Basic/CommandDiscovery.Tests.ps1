@@ -150,7 +150,7 @@ Describe "Command Discovery tests" -Tags "CI" {
         }
 
         It "Invoking <name> should return '<expectedResult>'" -TestCases $executionWithWildcardCases {
-            param($command, $expectedResult, [String]$Pending)
+            param($command, $expectedResult, [string]$Pending)
 
             if($Pending)
             {

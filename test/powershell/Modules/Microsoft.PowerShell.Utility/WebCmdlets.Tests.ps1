@@ -92,7 +92,7 @@ function ExecuteRequestWithHeaders {
 function GetTestData {
     param (
         [ValidateSet("text/plain", "application/xml", "application/json")]
-        [String]
+        [string]
         $contentType
     )
 

@@ -88,12 +88,12 @@ set-psbreakpoint -command foo
 
     It "Should throw Exception when missing mandatory parameter -line" -Pending {
          $output = & $ps -noninteractive -command "sbp -column 1 -script $scriptFileName"
-         [system.string]::Join(" ", $output) | Should -Match "MissingMandatoryParameter,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
+         [string]::Join(" ", $output) | Should -Match "MissingMandatoryParameter,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
     }
 
     It "Should throw Exception when missing mandatory parameter" -Pending {
          $output = & $ps -noprofile -noninteractive -command "sbp -line 1"
-         [system.string]::Join(" ", $output) | Should -Match "MissingMandatoryParameter,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
+         [string]::Join(" ", $output) | Should -Match "MissingMandatoryParameter,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
     }
 
     It "Should be able to set psbreakpoints for -command" {

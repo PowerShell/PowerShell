@@ -9069,12 +9069,12 @@ namespace System.Management.Automation.Runspaces
                     @"ToString",
                     GetScriptBlock(@"
           $suffix = """"
-          if (![String]::IsNullOrEmpty($this.PSSemVerPreReleaseLabel))
+          if (![string]::IsNullOrEmpty($this.PSSemVerPreReleaseLabel))
           {
               $suffix = ""-""+$this.PSSemVerPreReleaseLabel
           }
 
-          if (![String]::IsNullOrEmpty($this.PSSemVerBuildLabel))
+          if (![string]::IsNullOrEmpty($this.PSSemVerBuildLabel))
           {
               $suffix += ""+""+$this.PSSemVerBuildLabel
           }
