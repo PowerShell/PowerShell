@@ -71,7 +71,13 @@ function Invoke-IsolatedMeasurement {
     else {
         [string[]] $features = @()
     }
-    @{ ExperimentalFeatures = $features } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $settingsFile
+    $settings = @{ ExperimentalFeatures = $features }
+    if ($IsWindows) {
+        # -SettingsFile replaces the build configuration, including its execution policy.
+        $settings['Microsoft.PowerShell:ExecutionPolicy'] = 'RemoteSigned'
+    }
+
+    $settings | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $settingsFile
 
     $startInfo = [System.Diagnostics.ProcessStartInfo]::new()
     $startInfo.FileName = $ExecutablePath
