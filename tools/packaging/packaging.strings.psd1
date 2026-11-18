@@ -179,7 +179,7 @@ open {0}
         <id>{0}</id>
         <version>{1}</version>
         <authors>Microsoft</authors>
-        <owners>Microsoft,PowerShell</owners>
+        <owners></owners>
         <projectUrl>https://github.com/PowerShell/PowerShell</projectUrl>
         <icon>{2}</icon>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -240,7 +240,7 @@ open {0}
         <id>{0}</id>
         <version>{1}</version>
         <authors>Microsoft</authors>
-        <owners>Microsoft,PowerShell</owners>
+        <owners></owners>
         <projectUrl>https://github.com/PowerShell/PowerShell</projectUrl>
         <icon>{2}</icon>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
