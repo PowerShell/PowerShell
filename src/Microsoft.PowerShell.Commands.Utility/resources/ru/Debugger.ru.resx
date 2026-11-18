@@ -133,7 +133,7 @@
     <value>Отладка не поддерживается в удаленных сеансах.</value>
   </data>
   <data name="CannotSetBreakpointInconsistentLanguageMode" xml:space="preserve">
-    <value>Не удается задать точку останова. Языковой режим для данной сессии несовместим с общесистемным языковым режимом.</value>
+    <value>Не удается задать точку останова. Режим языка для данного сеанса несовместим с общесистемным режимом языка.</value>
   </data>
   <data name="RemoteDebuggerNotSupportedInHost" xml:space="preserve">
     <value>Невозможно установить точки останова в удаленном сеансе, так как текущий узел не поддерживает удаленную отладку.</value>

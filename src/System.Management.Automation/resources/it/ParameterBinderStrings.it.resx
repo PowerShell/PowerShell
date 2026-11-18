@@ -250,12 +250,14 @@
     <value>Chiamata di metodo o proprietà non consentita</value>
   </data>
   <data name="WDACBinderInvocationLogMessage" xml:space="preserve">
-    <value>La chiamata del metodo o della proprietà ''{0}'' per il tipo ''{1}'' non sarà consentita in modalità Linguaggio vincolato per gli script non attendibili.</value>
+    <value>La chiamata del metodo o della proprietà '{0}' sul tipo '{1}' non sarà consentita in modalità ConstrainedLanguage per gli script non attendibili.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACBinderTypeCreationLogTitle" xml:space="preserve">
     <value>Creazione del tipo non consentita</value>
   </data>
   <data name="WDACBinderTypeCreationLogMessage" xml:space="preserve">
-    <value>La creazione del tipo ''{0}'' non sarà consentita durante l'associazione dei parametri in modalità Linguaggio vincolato per gli script non attendibili.</value>
+    <value>La creazione di Type '{0}' non sarà consentita durante l'associazione di parametri in modalità ConstrainedLanguage per gli script non attendibili.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

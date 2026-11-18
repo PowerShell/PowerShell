@@ -172,6 +172,7 @@
     <value>Invoke-Expression Cmdlet</value>
   </data>
   <data name="IEXWDACLogMessage" xml:space="preserve">
-    <value>Der Skriptblock des cmdlets „Invoke-Expression“ wird im ConstrainedLanguage-Modus ausgeführt.</value>
+    <value>Der Skriptblock des Cmdlet „Invoke-Expression“ wird im ConstrainedLanguage-Modus ausgeführt.</value>
+    <comment>{StrContains="Invoke-Expression"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

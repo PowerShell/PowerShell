@@ -1022,6 +1022,7 @@ Všechny relace WinRM připojené ke konfiguracím relací PowerShellu, jako je 
   </data>
   <data name="DISCLanguageModeComment" xml:space="preserve">
     <value>Jazykový režim, který se použije při použití v relaci. Může být NoLanguage (doporučeno), RestrictedLanguage, ConstrainedLanguage nebo FullLanguage</value>
+    <comment>{StrContains="NoLanguage"}{StrContains="RestrictedLanguage"}{StrContains="ConstrainedLanguage"}{StrContains="FullLanguage"}</comment>
   </data>
   <data name="DISCModulesToImportComment" xml:space="preserve">
     <value>Moduly, které se mají importovat při použití v relaci</value>
@@ -1721,7 +1722,8 @@ Proces klienta SSH se ukončil dříve, než bylo možné navázat připojení.<
     <value>Vyhodnocení výrazu může selhat</value>
   </data>
   <data name="WDACGetPowerShellLogMessage" xml:space="preserve">
-    <value>Vytvoření objektu PowerShellu z bloku skriptu může vyžadovat vyhodnocení některých výrazů uvnitř bloku skriptu. Vyhodnocení výrazu v tichém režimu selže a vrátí hodnotu null v režimu omezeného jazyka, pokud výraz nepředstavuje konstantní hodnotu.</value>
+    <value>Vytvoření objektu PowerShellu z bloku skriptu může vyžadovat vyhodnocení některých výrazů uvnitř bloku skriptu. V režimu ConstrainedLanguage vyhodnocení výrazu bez upozornění selže a vrátí hodnotu null, pokud výraz nepředstavuje konstantní hodnotu.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="HyperVFailedToGetStateUnknownType" xml:space="preserve">
     <value>Nepovedlo se získat stav virtuálního počítače Hyper-V. Hodnota byla typu {0}, ale očekávala se hodnota Microsoft.HyperV.PowerShell.VMState nebo System.String.</value>

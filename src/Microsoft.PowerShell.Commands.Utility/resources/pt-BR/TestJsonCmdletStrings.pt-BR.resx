@@ -132,4 +132,7 @@
   <data name="InvalidUriScheme" xml:space="preserve">
     <value>URI scheme '{0}' is not supported. Only HTTP(S) and local file system URIs are allowed.</value>
   </data>
+  <data name="UnresolvedJsonSchemaRef" xml:space="preserve">
+    <value>O esquema JSON contém uma referência que não pôde ser resolvida. Por padrão, não há suporte para referências externas de esquema; use o parâmetro 'FetchExternalReference' para habilitá-las.</value>
+  </data>
 </root>

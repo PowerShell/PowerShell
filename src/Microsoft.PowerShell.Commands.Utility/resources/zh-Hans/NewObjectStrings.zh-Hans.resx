@@ -151,12 +151,14 @@
     <value>New-Object Cmdlet 类型创建</value>
   </data>
   <data name="TypeWDACLogMessage" xml:space="preserve">
-    <value>ConstrainedLanguage 模式下不会创建类型 "{0}"。</value>
+    <value>ConstrainedLanguage 模式下不会创建类型“{0}”。</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="ComWDACLogTitle" xml:space="preserve">
     <value>New-Object cmdlet COM 对象创建</value>
   </data>
   <data name="ComWDACLogMessage" xml:space="preserve">
-    <value>ConstrainedLanguage 模式下不会创建 COM 对象 "{0}"。</value>
+    <value>ConstrainedLanguage 模式下不会创建 COM 对象“{0}”。</value>
+    <comment>{StrContains="COM"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

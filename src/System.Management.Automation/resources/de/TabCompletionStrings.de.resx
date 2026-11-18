@@ -425,7 +425,7 @@ Dies kann entweder eine Zeichenfolgendarstellung einer SID oder eine Domäne und
   </data>
   <data name="DataHashtableKeyDescription" xml:space="preserve">
     <value>[string[]]
-Wählt Ereignisse mit einem der angegebenen Werte im Abschnitt „EventData“ aus.</value>
+Wählt Ereignisse mit einem der angegebenen Werte im EventData-Abschnitt aus.</value>
   </data>
   <data name="SuppressHashFilterHashtableKeyDescription" xml:space="preserve">
     <value>[hashtable]

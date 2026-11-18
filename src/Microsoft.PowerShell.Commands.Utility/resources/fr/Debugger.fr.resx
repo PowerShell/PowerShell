@@ -133,7 +133,7 @@
     <value>Le débogage n’est pas pris en charge sur les sessions distantes.</value>
   </data>
   <data name="CannotSetBreakpointInconsistentLanguageMode" xml:space="preserve">
-    <value>Nous ne pouvons pas définir un point d’arrêt. Le mode de langage de cette session n’est pas compatible avec le mode de langage à l’échelle du système.</value>
+    <value>Nous ne pouvons pas définir un point d’arrêt. Le mode langage de cette session n’est pas compatible avec le mode langage à l’échelle du système.</value>
   </data>
   <data name="RemoteDebuggerNotSupportedInHost" xml:space="preserve">
     <value>Nous ne pouvons pas définir des points d’arrêt dans la session à distance, car l’hôte actuel ne prend pas en charge le débogage distant.</value>

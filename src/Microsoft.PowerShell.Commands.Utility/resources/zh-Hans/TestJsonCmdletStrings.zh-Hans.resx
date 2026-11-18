@@ -132,4 +132,7 @@
   <data name="InvalidUriScheme" xml:space="preserve">
     <value>不支持 URI 架构“{0}”。仅允许 HTTP(S)和本地文件系统 URI。</value>
   </data>
+  <data name="UnresolvedJsonSchemaRef" xml:space="preserve">
+    <value>JSON 架构包含无法解析的引用。默认情况下不支持外部架构引用，请使用 “FetchExternalReference” 参数启用它。</value>
+  </data>
 </root>

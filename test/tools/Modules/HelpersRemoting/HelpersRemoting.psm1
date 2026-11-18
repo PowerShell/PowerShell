@@ -8,7 +8,7 @@
 $Script:CIRemoteCred = $null
 
 if ($IsWindows) {
-    try { $Script:CIRemoteCred = Import-Clixml -Path "$env:TEMP\CIRemoteCred.xml" } catch { }
+    try { $Script:CIRemoteCred = Import-Clixml -Path "$env:TEMP\CIRemoteCred.xml" } catch { $Script:CIRemoteCred = $null }
 }
 
 function Get-DefaultEndPointName

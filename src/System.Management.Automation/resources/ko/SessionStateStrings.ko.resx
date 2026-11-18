@@ -653,5 +653,6 @@
   </data>
   <data name="WDACSessionStateVarLogMessage" xml:space="preserve">
     <value>ConstrainedLanguage 모드에서는 변수 '{0}'의 범위를 AllScope로 변경하거나 만들 수 없습니다.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

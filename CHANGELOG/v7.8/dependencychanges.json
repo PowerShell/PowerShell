@@ -1,0 +1,15 @@
+[
+  {
+    "ChangeType": "NonSecurity",
+    "Branch": "master",
+    "PackageId": ".NET SDK",
+    "FromVersion": "11.0.100-rc.1.26425.128",
+    "ToVersion": "11.0.100",
+    "VulnerabilityId": [],
+    "Severity": [],
+    "VulnerableRanges": [],
+    "AdvisoryUrls": [],
+    "Justification": "Updated .NET SDK. Building with the latest SDK is required.",
+    "TimestampUtc": "2026-11-11T20:10:35.9037590Z"
+  }
+]

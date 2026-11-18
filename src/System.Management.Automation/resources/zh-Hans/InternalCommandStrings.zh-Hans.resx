@@ -145,13 +145,15 @@
     <value>无法将输入名称“{0}”解析为方法。</value>
   </data>
   <data name="NoMethodInvocationInRestrictedLanguageMode" xml:space="preserve">
-    <value>无法在受限语言模式下调用方法。</value>
+    <value>无法在 RestrictedLanguage 模式下调用方法。</value>
+    <comment>{StrContains="RestrictedLanguage"}</comment>
   </data>
   <data name="NoShouldProcessForScriptBlockSet" xml:space="preserve">
     <value>脚本块不支持 -WhatIf 和 -Confirm 参数。</value>
   </data>
   <data name="OperationNotAllowedInRestrictedLanguageMode" xml:space="preserve">
     <value>RestrictedLanguage 模式下不允许执行“{0}”操作。</value>
+    <comment>{StrContains="RestrictedLanguage"}</comment>
   </data>
   <data name="OperatorNotSpecified" xml:space="preserve">
     <value>需要使用运算符来比较两个指定的值。在命令中包含有效的运算符，然后重试该命令。例如，Get-Process | Where-Object -Property Name -eq Idle</value>
@@ -188,6 +190,7 @@ ErrorAction、WarningAction、 InformationAction、PipelineVariable</value>
     <value>ForEach-Object Cmdlet</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>在约束语言模式下运行时，不允许对类型“{0}”进行方法调用。</value>
+    <value>在 ConstrainedLanguage 模式下运行时，不允许在类型 '{0}' 上进行方法调用。</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

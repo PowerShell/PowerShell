@@ -6112,9 +6112,10 @@ namespace System.Management.Automation.Language
                 // If there is an instance member, we generate (roughly) the following:
                 //     PSMemberInfo memberInfo;
                 //     if (PSGetMemberBinder.TryGetInstanceMember(target.Value, Name, out memberInfo))
-                //         memberInfo.Value = value;
+                //         PSSetMemberBinder.SetInstanceMemberValue(memberInfo, target.Value, value);
                 //     else
                 //         update the site
+                //
                 // We use a generic method like this because:
                 //   * If one object has an instance property with a given name, it's like many others do as well
                 //   * We want to avoid generating new sites for every object with an instance member
@@ -6129,19 +6130,28 @@ namespace System.Management.Automation.Language
                 // but we add the check because the DLR requires a non-empty check when the target implements IDynamicMetaObjectProvider,
                 // which PSObject does.  The version check is also marginally useful if we knew we'd never see another
                 // instance member with this member name, but we're not tracking things to make that a useful test.
+                ParameterExpression memberInfoVar = Expression.Variable(typeof(PSMemberInfo));
 
-                var memberInfoVar = Expression.Variable(typeof(PSMemberInfo));
-                var temp = Expression.Variable(typeof(object));
-                var expr = Expression.Condition(
-                    Expression.Call(CachedReflectionInfo.PSGetMemberBinder_TryGetInstanceMember,
-                                    target.Expression.Cast(typeof(object)), Expression.Constant(Name), memberInfoVar),
-                    Expression.Assign(Expression.Property(memberInfoVar, "Value"), value.Expression.Cast(typeof(object))),
+                ConditionalExpression expr = Expression.Condition(
+                    Expression.Call(
+                        CachedReflectionInfo.PSGetMemberBinder_TryGetInstanceMember,
+                        target.Expression.Cast(typeof(object)),
+                        Expression.Constant(Name),
+                        memberInfoVar),
+                    Expression.Call(
+                        CachedReflectionInfo.PSSetMemberBinder_SetInstanceMemberValue,
+                        memberInfoVar,
+                        target.Expression.Cast(typeof(object)),
+                        value.Expression.Cast(typeof(object))),
                     this.GetUpdateExpression(typeof(object)));
-                var bindingRestrictions = BinderUtils.GetVersionCheck(_getMemberBinder, _getMemberBinder._version)
+
+                BindingRestrictions bindingRestrictions = BinderUtils.GetVersionCheck(_getMemberBinder, _getMemberBinder._version)
                     .Merge(value.PSGetTypeRestriction());
 
-                return (new DynamicMetaObject(Expression.Block(new[] { memberInfoVar, temp }, expr),
-                    bindingRestrictions)).WriteToDebugLog(this);
+                return new DynamicMetaObject(
+                    Expression.Block(new[] { memberInfoVar }, expr),
+                    bindingRestrictions)
+                    .WriteToDebugLog(this);
             }
 
             if (targetValue is IDictionary)
@@ -6194,13 +6204,35 @@ namespace System.Management.Automation.Language
             {
                 restrictions = restrictions.Merge(BinderUtils.GetLanguageModeCheckIfHasEverUsedConstrainedLanguage());
 
-                // Validate that this is allowed in the current language mode.
-                DynamicMetaObject runtimeError = PSGetMemberBinder.EnsureAllowedInLanguageMode(
-                    target, targetValue, Name, _static, new[] { value }, restrictions,
-                    "PropertySetterNotSupportedInConstrainedLanguage", ParserStrings.PropertySetConstrainedLanguage);
-                if (runtimeError != null)
+                ExecutionContext context = LocalPipeline.GetExecutionContextFromTLS();
+                if (context is { LanguageMode: PSLanguageMode.ConstrainedLanguage })
                 {
-                    return runtimeError.WriteToDebugLog(this);
+                    Type constrainedTargetType = targetValue as Type;
+                    if ((!_static) || (constrainedTargetType == null))
+                    {
+                        constrainedTargetType = targetValue.GetType();
+                    }
+
+                    if (!CoreTypes.Contains(constrainedTargetType))
+                    {
+                        if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                        {
+                            return target.ThrowRuntimeError(
+                                new[] { value },
+                                restrictions,
+                                "PropertySetterNotSupportedInConstrainedLanguage",
+                                ParserStrings.PropertySetConstrainedLanguage)
+                                .WriteToDebugLog(this);
+                        }
+
+                        string targetName = constrainedTargetType.FullName ?? string.Empty;
+                        SystemPolicy.LogWDACAuditMessage(
+                            context: context,
+                            title: ParameterBinderStrings.WDACBinderInvocationLogTitle,
+                            message: StringUtil.Format(ParameterBinderStrings.WDACBinderInvocationLogMessage, Name, targetName),
+                            fqid: "MethodOrPropertyInvocationNotAllowed",
+                            dropIntoDebugger: true);
+                    }
                 }
             }
 
@@ -6446,6 +6478,45 @@ namespace System.Management.Automation.Language
                                 PSGetMemberBinder.GetTargetExpr(target, typeof(object)), Expression.Constant(Name),
                                 value.Expression.Cast(typeof(object))),
                 restrictions).WriteToDebugLog(this);
+        }
+
+        internal static object SetInstanceMemberValue(PSMemberInfo memberInfo, object target, object value)
+        {
+            if (ExecutionContext.HasEverUsedConstrainedLanguage)
+            {
+                ExecutionContext context = LocalPipeline.GetExecutionContextFromTLS();
+                // Explicit `GetType() ==` instead of `is` as we only want to allow `PSNoteProperty`,
+                // classes that inherits from it should be excluded.
+                if ((context != null) && (context.LanguageMode == PSLanguageMode.ConstrainedLanguage) && (memberInfo.GetType() != typeof(PSNoteProperty)))
+                {
+                    object baseObject = PSObject.Base(target);
+                    if ((baseObject == null) || !CoreTypes.Contains(baseObject.GetType()))
+                    {
+                        if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                        {
+                            throw InterpreterError.NewInterpreterException(
+                                target,
+                                typeof(PSInvalidOperationException),
+                                null,
+                                "PropertySetterNotSupportedInConstrainedLanguage",
+                                ParserStrings.PropertySetConstrainedLanguage);
+                        }
+
+                        SystemPolicy.LogWDACAuditMessage(
+                            context: context,
+                            title: ParameterBinderStrings.WDACBinderInvocationLogTitle,
+                            message: StringUtil.Format(
+                                ParameterBinderStrings.WDACBinderInvocationLogMessage,
+                                memberInfo.Name ?? string.Empty,
+                                baseObject?.GetType().FullName ?? target.GetType().FullName ?? string.Empty),
+                            fqid: "MethodOrPropertyInvocationNotAllowed",
+                            dropIntoDebugger: true);
+                    }
+                }
+            }
+
+            memberInfo.Value = value;
+            return value;
         }
 
         private DynamicMetaObject GeneratePropertyAssignmentException(BindingRestrictions restrictions)

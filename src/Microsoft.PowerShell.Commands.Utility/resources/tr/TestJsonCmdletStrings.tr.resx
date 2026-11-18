@@ -132,4 +132,7 @@
   <data name="InvalidUriScheme" xml:space="preserve">
     <value>'{0}' URI düzeni desteklenmiyor. Yalnızca HTTP(S) ve yerel dosya sistemi URI'lerine izin verilir.</value>
   </data>
+  <data name="UnresolvedJsonSchemaRef" xml:space="preserve">
+    <value>JSON şeması çözümlenemeyen bir başvuru içeriyor. Dış şema başvuruları varsayılan olarak desteklenmez; bunları etkinleştirmek için 'FetchExternalReference' parametresini kullanın.</value>
+  </data>
 </root>
