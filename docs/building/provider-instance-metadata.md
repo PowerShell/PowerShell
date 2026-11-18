@@ -432,7 +432,9 @@ state?” Those questions catch most integration regressions in this design.
 
 | Concern | Implementation |
 | --- | --- |
-| Generic wrapper, attribute contract, descriptor validation/compilation, FileSystem metadata accessors | [`ProviderPSObject.cs`](../../src/System.Management.Automation/engine/ProviderPSObject.cs) |
+| Generic wrapper, attribute contract, descriptor validation/compilation | [`ProviderPSObject.cs`](../../src/System.Management.Automation/engine/ProviderPSObject.cs) |
+| FileSystem metadata accessors | [`ProviderPSObject.FileSystem.cs`](../../src/System.Management.Automation/engine/ProviderPSObject.FileSystem.cs) |
+| Registry metadata snapshot and accessors | [`ProviderPSObject.Registry.cs`](../../src/System.Management.Automation/engine/ProviderPSObject.Registry.cs) |
 | PSObject wrapping, member attachment, resurrection keys, copying | [`MshObject.cs`](../../src/System.Management.Automation/engine/MshObject.cs) |
 | Lazy source, promotion, lookup, enumeration and mutation behavior | [`MshMemberInfo.cs`](../../src/System.Management.Automation/engine/MshMemberInfo.cs) |
 | Dynamic get-member and value/member lookup binders | [`Binders.cs`](../../src/System.Management.Automation/engine/runtime/Binding/Binders.cs) |
