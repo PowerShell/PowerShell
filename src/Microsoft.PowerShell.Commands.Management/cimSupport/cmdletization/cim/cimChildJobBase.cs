@@ -572,7 +572,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             _cancellationTokenSource.Cancel();
         }
 
-        private readonly object _jobStateLock = new();
+        private readonly Lock _jobStateLock = new();
         private bool _jobHadErrors;
         private bool _jobWasStarted;
         private bool _jobWasStopped;
