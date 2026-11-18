@@ -3,6 +3,9 @@
 
 Describe "Optimized Registry provider instance metadata" -Tags "CI" {
     BeforeAll {
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+        $PSDefaultParameterValues['It:Skip'] = -not [ExperimentalFeature]::IsEnabled('PSOptimizedProviderObjects')
+
         if ($IsWindows) {
             $registryPath = "HKCU:\Software\PowerShellMetadataTests_$([guid]::NewGuid().ToString('N'))"
             New-Item -Path $registryPath -ErrorAction Stop | Out-Null
@@ -36,6 +39,7 @@ public static class RegistryMetadataTestHelper
     }
 
     AfterAll {
+        $global:PSDefaultParameterValues = $originalDefaultParameterValues
         if ($IsWindows) {
             Remove-PSDrive -Name RegistryMetadata -Force -ErrorAction Stop
             Remove-Item -LiteralPath $registryPath -Recurse -Force -ErrorAction Stop
@@ -221,6 +225,9 @@ public static class RegistryMetadataTestHelper
 
 Describe "Optimized FileSystem provider instance metadata" -Tags "CI" {
     BeforeAll {
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+        $PSDefaultParameterValues['It:Skip'] = -not [ExperimentalFeature]::IsEnabled('PSOptimizedProviderObjects')
+
         $file = Join-Path $TestDrive "sample[1].txt"
         $driveName = "OptMeta"
         New-PSDrive -Name $driveName -PSProvider FileSystem -Root $TestDrive | Out-Null
@@ -234,6 +241,7 @@ Describe "Optimized FileSystem provider instance metadata" -Tags "CI" {
     }
 
     AfterAll {
+        $global:PSDefaultParameterValues = $originalDefaultParameterValues
         Remove-PSDrive -Name $driveName -Force -ErrorAction SilentlyContinue
     }
 
