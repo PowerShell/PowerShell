@@ -2046,6 +2046,7 @@ function New-MacOSPackage
 
             Start-NativeExecution -VerboseOutputOnError {
                 pkgbuild --root $pkgRoot `
+                    --compression latest `
                     --identifier $pkgIdentifier `
                     --version $Version `
                     --scripts $scriptsDir `

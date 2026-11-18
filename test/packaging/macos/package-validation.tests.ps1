@@ -36,7 +36,7 @@ Describe "Verify macOS Package" {
             Write-Verbose "Expanding package to: $($script:expandDir)" -Verbose
             # pkgutil will create the directory itself, so don't pre-create it
             Start-NativeExecution {
-                pkgutil --expand $package.FullName $script:expandDir
+                pkgutil --expand-full $package.FullName $script:expandDir
             }
 
             # Extract the payload to verify files
