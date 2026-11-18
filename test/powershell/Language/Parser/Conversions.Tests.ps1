@@ -134,7 +134,23 @@ Describe 'conversion syntax' -Tags "CI" {
             BeforeAll {
                 if (-not ('GenericCollectionInterfaceOverloadTest' -as [type])) {
                     Add-Type -TypeDefinition @'
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
+
+[TypeConverter(typeof(TypeConverter))]
+public class GenericCollectionInterfaceAttributedList : ArrayList { }
+
+public class GenericCollectionInterfaceStringsConverter : TypeConverter
+{
+    public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType) => destinationType == typeof(IEnumerable<string>);
+    public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType) => new List<string> { "custom" };
+}
+
+[TypeConverter(typeof(GenericCollectionInterfaceStringsConverter))]
+public class GenericCollectionInterfaceConvertingList : ArrayList { }
 
 public static class GenericCollectionInterfaceOverloadTest
 {
@@ -160,6 +176,22 @@ public static class GenericCollectionInterfaceOverloadTest
                 param($Script, $Expected)
 
                 & $Script | Should -BeExactly $Expected
+            }
+
+            It "prefers an array overload over a generic interface overload for an enumerable with type converter metadata" {
+                $list = [GenericCollectionInterfaceAttributedList]::new()
+                $null = $list.Add(1)
+                $null = $list.Add(2)
+
+                [GenericCollectionInterfaceOverloadTest]::IntArrayOrEnumerableOfString($list) | Should -BeExactly 'int[]'
+            }
+
+            It "prefers a custom type converter over the generic collection interface conversion" {
+                $list = [GenericCollectionInterfaceConvertingList]::new()
+                $null = $list.Add(1)
+
+                $result = [System.Collections.Generic.IEnumerable[string]]$list
+                $result -join ';' | Should -BeExactly 'custom'
             }
 
             It "chooses between generic interface overloads by element type for <Description>" -TestCases @(

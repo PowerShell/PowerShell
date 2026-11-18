@@ -5884,6 +5884,7 @@ namespace System.Management.Automation
                 }
             }
 
+            bool isGenericCollectionInterfaceConversion = false;
             if (converter == null)
             {
                 var tuple = FigureGenericCollectionInterfaceConversion(fromType, toType);
@@ -5891,6 +5892,7 @@ namespace System.Management.Automation
                 {
                     converter = tuple.Item1;
                     rank = tuple.Item2;
+                    isGenericCollectionInterfaceConversion = true;
                 }
             }
 
@@ -5903,7 +5905,14 @@ namespace System.Management.Automation
                 customConverter.tryfirstConverter = valueDependentConversion;
                 customConverter.fallbackConverter = converter;
                 converter = customConverter.Convert;
-                if (valueDependentRank > rank)
+                if (isGenericCollectionInterfaceConversion)
+                {
+                    // Custom type converters are tried first, and the generic collection interface conversion
+                    // is only the final fallback. Keep the Custom rank this conversion had without that fallback,
+                    // so overload resolution is unchanged.
+                    rank = ConversionRank.Custom;
+                }
+                else if (valueDependentRank > rank)
                 {
                     rank = valueDependentRank;
                 }
