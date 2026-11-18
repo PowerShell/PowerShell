@@ -998,6 +998,7 @@ namespace System.Management.Automation.PSTasks
         #region Members
 
         private readonly PSTaskPool _taskPool;
+        private readonly object _syncObject = new();
         private bool _isOpen;
         private bool _stopSignaled;
 
@@ -1056,11 +1057,14 @@ namespace System.Management.Automation.PSTasks
         {
             get
             {
-                foreach (var childJob in ChildJobs)
+                lock (_syncObject)
                 {
-                    if (childJob.HasMoreData)
+                    foreach (Job childJob in ChildJobs)
                     {
-                        return true;
+                        if (childJob.HasMoreData)
+                        {
+                            return true;
+                        }
                     }
                 }
 
@@ -1113,13 +1117,16 @@ namespace System.Management.Automation.PSTasks
         /// <returns>True when child job is successfully added.</returns>
         internal bool AddJob(PSTaskChildJob childJob)
         {
-            if (!_isOpen)
+            lock (_syncObject)
             {
-                return false;
-            }
+                if (!_isOpen)
+                {
+                    return false;
+                }
 
-            ChildJobs.Add(childJob);
-            return true;
+                ChildJobs.Add(childJob);
+                return true;
+            }
         }
 
         /// <summary>
@@ -1128,7 +1135,17 @@ namespace System.Management.Automation.PSTasks
         /// </summary>
         internal void Start()
         {
-            _isOpen = false;
+            PSTaskChildJob[] childJobs;
+            lock (_syncObject)
+            {
+                _isOpen = false;
+                childJobs = new PSTaskChildJob[ChildJobs.Count];
+                for (int i = 0; i < ChildJobs.Count; i++)
+                {
+                    childJobs[i] = (PSTaskChildJob)ChildJobs[i];
+                }
+            }
+
             SetJobState(JobState.Running);
 
             // Submit jobs to the task pool, blocking when throttle limit is reached.
@@ -1137,9 +1154,9 @@ namespace System.Management.Automation.PSTasks
             System.Threading.ThreadPool.QueueUserWorkItem(
                 (_) =>
                 {
-                    foreach (var childJob in ChildJobs)
+                    foreach (PSTaskChildJob childJob in childJobs)
                     {
-                        _taskPool.Add((PSTaskChildJob)childJob);
+                        _taskPool.Add(childJob);
                     }
 
                     _taskPool.Close();
@@ -1162,12 +1179,15 @@ namespace System.Management.Automation.PSTasks
 
                 // Final state will be 'Complete', only if all child jobs completed successfully.
                 JobState finalState = JobState.Completed;
-                foreach (var childJob in ChildJobs)
+                lock (_syncObject)
                 {
-                    if (childJob.JobStateInfo.State != JobState.Completed)
+                    foreach (Job childJob in ChildJobs)
                     {
-                        finalState = JobState.Failed;
-                        break;
+                        if (childJob.JobStateInfo.State != JobState.Completed)
+                        {
+                            finalState = JobState.Failed;
+                            break;
+                        }
                     }
                 }
 
