@@ -243,4 +243,3 @@ Describe "Install-CIPester" {
         }
     }
 }
-
