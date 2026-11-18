@@ -34,7 +34,7 @@ runs:
       uses: "./.github/actions/infrastructure/get-changed-files"
       with:
         filter: '*.md'
-        event-types: 'pull_request,push'
+        event-types: 'pull_request,push,schedule,workflow_dispatch'
 
     - name: Verify markdown links
       id: verify
