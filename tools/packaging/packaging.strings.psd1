@@ -182,9 +182,11 @@ open {0}
         <owners></owners>
         <projectUrl>https://github.com/PowerShell/PowerShell</projectUrl>
         <icon>{2}</icon>
-        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <requireLicenseAcceptance>true</requireLicenseAcceptance>
         <description>PowerShell global tool</description>
+        <readme>README.md</readme>
         <license type="expression">MIT</license>
+        <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
         <tags>PowerShell</tags>
         <language>en-US</language>
         <copyright>&#169; Microsoft Corporation. All rights reserved.</copyright>
@@ -243,9 +245,11 @@ open {0}
         <owners></owners>
         <projectUrl>https://github.com/PowerShell/PowerShell</projectUrl>
         <icon>{2}</icon>
-        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <requireLicenseAcceptance>true</requireLicenseAcceptance>
         <description>PowerShell global tool</description>
+        <readme>README.md</readme>
         <license type="expression">MIT</license>
+        <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
         <tags>PowerShell</tags>
         <language>en-US</language>
         <copyright>&#169; Microsoft Corporation. All rights reserved.</copyright>

@@ -4120,6 +4120,7 @@ function New-GlobalToolNupkgSource
         default { throw "New-GlobalToolNupkgSource: Unknown package type: $PackageType" }
     }
 
+    Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'globaltool.README.md') -Destination (Join-Path $RootFolder 'README.md') -Force -ErrorAction Stop
     $nuSpec = $packagingStrings.GlobalToolNuSpec -f $PackageName, $PackageVersion, $iconFileName
     $nuSpec | Out-File -FilePath (Join-Path $RootFolder "$PackageName.nuspec") -Encoding ascii
     $toolSettings | Out-File -FilePath (Join-Path $ridFolder "DotnetToolSettings.xml") -Encoding ascii
@@ -4224,7 +4225,7 @@ function Set-GlobalToolNuspecMetadata
 
     .DESCRIPTION
     Preserves the generated package identity and SDK-specific metadata, and copies the
-    shared package icon alongside the nuspec before the package is reassembled.
+    shared package icon and README alongside the nuspec before the package is reassembled.
 
     .PARAMETER Path
     Path to the nuspec in the expanded global tool package.
@@ -4261,6 +4262,7 @@ function Set-GlobalToolNuspecMetadata
     }
 
     Copy-Item -LiteralPath $iconPath -Destination (Join-Path (Split-Path $nuspecPath -Parent) $iconFileName) -Force -ErrorAction Stop
+    Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'globaltool.README.md') -Destination (Join-Path (Split-Path $nuspecPath -Parent) 'README.md') -Force -ErrorAction Stop
     $nuspec.Save($nuspecPath)
 }
 
@@ -4306,6 +4308,7 @@ function New-GlobalToolPointerNupkgSource
 
     $RootFolder = New-TempFolder
     Copy-Item -Path $iconPath -Destination "$RootFolder/$iconFileName" -Verbose
+    Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'globaltool.README.md') -Destination (Join-Path $RootFolder 'README.md') -Force -ErrorAction Stop
 
     # The SDK places the pointer package's DotnetToolSettings.xml under tools/any/any, since the
     # pointer package itself is not tied to any framework or runtime.
