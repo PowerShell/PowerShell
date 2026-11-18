@@ -976,12 +976,8 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             }
 
             // Check if the path is local and assert if not:
-            string machineNameMassaged = pathElts.MachineName.ToLowerInvariant();
-            machineNameMassaged = machineNameMassaged.TrimStart('\\');
-            Debug.Assert(machineNameMassaged == System.Environment.MachineName.ToLowerInvariant());
-
-            string lowerEngCtrName = pathElts.CounterName.ToLowerInvariant();
-            string lowerEngObjectName = pathElts.ObjectName.ToLowerInvariant();
+            string machineNameMassaged = pathElts.MachineName.TrimStart('\\');
+            Debug.Assert(machineNameMassaged.Equals(System.Environment.MachineName, StringComparison.OrdinalIgnoreCase));
 
             // Get the registry index
             RegistryKey rootKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Perflib\\009");
@@ -993,7 +989,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             for (int enumIndex = 1; enumIndex < regCounters.Length; enumIndex++)
             {
                 string regString = regCounters[enumIndex];
-                if (regString.ToLowerInvariant() == lowerEngCtrName)
+                if (regString.Equals(pathElts.CounterName, StringComparison.OrdinalIgnoreCase))
                 {
                     try
                     {
@@ -1004,7 +1000,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                         return PdhResults.PDH_INVALID_PATH;
                     }
                 }
-                else if (regString.ToLowerInvariant() == lowerEngObjectName)
+                else if (regString.Equals(pathElts.ObjectName, StringComparison.OrdinalIgnoreCase))
                 {
                     try
                     {
