@@ -5398,8 +5398,24 @@ namespace System.Management.Automation
         internal static bool IsGenericCollectionInterfaceConversion(Type fromType, Type toType)
         {
             return GetGenericCollectionInterfaceElementType(toType) != null
-                && FigureConversion(fromType, toType).Converter is PSConverter<object> converter
+                && IsGenericCollectionInterfaceConversion(FigureConversion(fromType, toType));
+        }
+
+        private static bool IsGenericCollectionInterfaceConversion(IConversionData conversionData)
+        {
+            return conversionData.Converter is PSConverter<object> converter
                 && converter.Target is ConvertViaArrayToGenericCollectionInterface;
+        }
+
+        /// <summary>
+        /// Gets the conversion rank as if the array-backed conversion to a generic collection interface did not exist.
+        /// Overload resolution uses this when comparing types with each other (rather than an argument with a
+        /// parameter), so that adding that conversion does not change which existing overload is preferred.
+        /// </summary>
+        internal static ConversionRank GetConversionRankExcludingGenericCollectionInterfaceConversion(Type fromType, Type toType)
+        {
+            IConversionData conversionData = FigureConversion(fromType, toType);
+            return IsGenericCollectionInterfaceConversion(conversionData) ? ConversionRank.None : conversionData.Rank;
         }
 
         private sealed class ConvertViaArrayToGenericCollectionInterface

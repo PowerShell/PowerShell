@@ -160,6 +160,9 @@ public static class GenericCollectionInterfaceOverloadTest
     public static string StringArrayOrEnumerableOfString(string[] value) => "string[]";
     public static string StringArrayOrEnumerableOfString(IEnumerable<string> value) => "IEnumerable<string>";
 
+    public static string IntArrayOrEnumerableOfObject(int[] value) => "int[]";
+    public static string IntArrayOrEnumerableOfObject(IEnumerable<object> value) => "IEnumerable<object>";
+
     public static string EnumerableOfIntOrListOfString(IEnumerable<int> value) => "IEnumerable<int>";
     public static string EnumerableOfIntOrListOfString(IList<string> value) => "IList<string>";
 }
@@ -176,6 +179,10 @@ public static class GenericCollectionInterfaceOverloadTest
                 param($Script, $Expected)
 
                 & $Script | Should -BeExactly $Expected
+            }
+
+            It "prefers an array overload over a generic interface overload for a null argument" {
+                [GenericCollectionInterfaceOverloadTest]::IntArrayOrEnumerableOfObject($null) | Should -BeExactly 'int[]'
             }
 
             It "prefers an array overload over a generic interface overload for an enumerable with type converter metadata" {

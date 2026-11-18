@@ -960,8 +960,8 @@ namespace System.Management.Automation
                         continue;
                     }
 
-                    ConversionRank rank1 = LanguagePrimitives.GetConversionRank(argElemType, paramElemType1);
-                    ConversionRank rank2 = LanguagePrimitives.GetConversionRank(argElemType, paramElemType2);
+                    ConversionRank rank1 = LanguagePrimitives.GetConversionRankExcludingGenericCollectionInterfaceConversion(argElemType, paramElemType1);
+                    ConversionRank rank2 = LanguagePrimitives.GetConversionRankExcludingGenericCollectionInterfaceConversion(argElemType, paramElemType2);
                     if (rank1 < rank2)
                     {
                         betterCount -= multiplier;
@@ -1016,8 +1016,10 @@ namespace System.Management.Automation
 
                     // With a positive multiplier, we'll choose the "most general" type, and a negative
                     // multiplier will choose the "most specific".
-                    rank1 = LanguagePrimitives.GetConversionRank(params1[i].parameterType, params2[i].parameterType);
-                    rank2 = LanguagePrimitives.GetConversionRank(params2[i].parameterType, params1[i].parameterType);
+                    // Compare the parameter types as if the generic collection interface conversion did not exist,
+                    // so that it cannot change which existing overload is preferred.
+                    rank1 = LanguagePrimitives.GetConversionRankExcludingGenericCollectionInterfaceConversion(params1[i].parameterType, params2[i].parameterType);
+                    rank2 = LanguagePrimitives.GetConversionRankExcludingGenericCollectionInterfaceConversion(params2[i].parameterType, params1[i].parameterType);
                     if (rank1 < rank2)
                     {
                         betterCount += multiplier;
