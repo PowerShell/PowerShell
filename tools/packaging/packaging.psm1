@@ -1397,6 +1397,9 @@ Function New-LinkInfo
     }
 }
 
+# Minimum macOS version
+$macOSMinVersion = "11.0"  # macOS Big Sur minimum
+
 function New-MacOsDistributionPackage
 {
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -1459,9 +1462,6 @@ function New-MacOsDistributionPackage
         }
     }
 
-    # Minimum OS version
-    $minOSVersion = "11.0"  # macOS Big Sur minimum
-
     # format distribution template with:
     # 0 - title
     # 1 - version
@@ -1469,7 +1469,7 @@ function New-MacOsDistributionPackage
     # 3 - minimum os version
     # 4 - Package Identifier
     # 5 - host architecture (x86_64 for Intel or arm64 for Apple Silicon)
-    $PackagingStrings.OsxDistributionTemplate -f $PackageName, $Version, $componentFileName, $minOSVersion, $PackageIdentifier, $HostArchitecture | Out-File -Encoding utf8 -FilePath $distributionXmlPath -Force
+    $PackagingStrings.OsxDistributionTemplate -f $PackageName, $Version, $componentFileName, $macOSMinVersion, $PackageIdentifier, $HostArchitecture | Out-File -Encoding utf8 -FilePath $distributionXmlPath -Force
 
     # Build final package path
     # Rename x86_64 to x64 for compatibility
@@ -2046,6 +2046,8 @@ function New-MacOSPackage
 
             Start-NativeExecution -VerboseOutputOnError {
                 pkgbuild --root $pkgRoot `
+                    --compression latest `
+                    --min-os-version $macOSMinVersion `
                     --identifier $pkgIdentifier `
                     --version $Version `
                     --scripts $scriptsDir `
