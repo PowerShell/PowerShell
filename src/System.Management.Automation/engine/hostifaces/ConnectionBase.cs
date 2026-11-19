@@ -103,52 +103,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Construct an instance of an Runspace using a custom
-        /// implementation of PSHost.
-        /// </summary>
-        /// <param name="host">
-        /// The explicit PSHost implementation
-        /// </param>
-        /// <param name="initialSessionState">
-        /// configuration information for this runspace instance.
-        /// </param>
-        /// <param name="suppressClone">
-        /// If true, don't make a copy of the initial session state object.
-        /// </param>
-        /// <exception cref="System.ArgumentNullException">
-        /// Host is null.
-        /// </exception>
-        /// <exception cref="System.ArgumentNullException">
-        /// host is null.
-        /// </exception>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors", Justification = "OK to call ThreadOptions")]
-        protected RunspaceBase(PSHost host, InitialSessionState initialSessionState, bool suppressClone)
-        {
-            if (host == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(host));
-            }
-
-            if (initialSessionState == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(initialSessionState));
-            }
-
-            Host = host;
-            if (suppressClone)
-            {
-                InitialSessionState = initialSessionState;
-            }
-            else
-            {
-                InitialSessionState = initialSessionState.Clone();
-            }
-
-            this.ThreadOptions = initialSessionState.ThreadOptions;
-            this.ApartmentState = initialSessionState.ApartmentState;
-        }
-
-        /// <summary>
         /// The host implemented PSHost interface.
         /// </summary>
         protected PSHost Host { get; }

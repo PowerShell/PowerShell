@@ -127,40 +127,6 @@ namespace System.Management.Automation.Runspaces
             return new LocalRunspace(host, initialSessionState);
         }
 
-        /// <summary>
-        /// Creates a runspace using specified PSHost and InitialSessionState.
-        /// </summary>
-        /// <param name="host">
-        /// Host implementation for runspace.
-        /// </param>
-        /// <param name="initialSessionState">
-        /// InitialSessionState information for the runspace.
-        /// </param>
-        /// <returns>
-        /// A runspace object
-        /// </returns>
-        /// <exception cref="ArgumentNullException">
-        /// Thrown when host is null
-        /// </exception>
-        /// <exception cref="ArgumentNullException">
-        /// Thrown when initialSessionState is null
-        /// </exception>
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspace")]
-        internal static Runspace CreateRunspaceFromSessionStateNoClone(PSHost host, InitialSessionState initialSessionState)
-        {
-            if (host == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(host));
-            }
-
-            if (initialSessionState == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(initialSessionState));
-            }
-
-            return new LocalRunspace(host, initialSessionState, true);
-        }
-
         #endregion
 
         #region RunspacePool Factory
