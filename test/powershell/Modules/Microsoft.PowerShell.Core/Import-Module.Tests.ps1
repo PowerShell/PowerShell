@@ -441,6 +441,14 @@ Set-Alias -Name ut -Value Use-Thing
 
         $withDefaultPath = New-PrefixTestModule -Name PrefixWithDefault -DefaultCommandPrefix Def
         $withoutDefaultPath = New-PrefixTestModule -Name PrefixWithoutDefault
+
+        # A parent module whose function calls a command of a nested module by the nested module's own prefix.
+        $childPath = New-PrefixTestModule -Name PrefixChild -DefaultCommandPrefix Kid
+        $parentDir = Join-Path -Path $modulesRoot -ChildPath PrefixParent
+        $null = New-Item -Path $parentDir -ItemType Directory -Force
+        Set-Content -Path (Join-Path $parentDir "PrefixParent.psm1") -Value "function Invoke-Parent { Use-KidThing }"
+        $parentPath = Join-Path $parentDir "PrefixParent.psd1"
+        New-ModuleManifest -Path $parentPath -RootModule PrefixParent.psm1 -NestedModules (Join-Path '..' 'PrefixChild' 'PrefixChild.psd1') -DefaultCommandPrefix Par -FunctionsToExport Invoke-Parent -CmdletsToExport @() -AliasesToExport @() -VariablesToExport @()
     }
 
     AfterAll {
@@ -448,7 +456,7 @@ Set-Alias -Name ut -Value Use-Thing
     }
 
     AfterEach {
-        Remove-Module -Name PrefixWithDefault, PrefixWithoutDefault -Force -ErrorAction SilentlyContinue
+        Remove-Module -Name PrefixWithDefault, PrefixWithoutDefault, PrefixParent, PrefixChild -Force -ErrorAction SilentlyContinue
     }
 
     It "Imports '<ModuleName>' with -Prefix <PrefixText> as <ExpectedFunction> and <ExpectedAlias>" -TestCases @(
@@ -494,5 +502,28 @@ Set-Alias -Name ut -Value Use-Thing
         Import-Module -Name $withDefaultPath -Prefix ''
 
         Get-Command -Name Use-Thing -Module PrefixWithDefault -ErrorAction Ignore | Should -Not -BeNullOrEmpty
+    }
+
+    It "Keeps the default prefix of a nested module when the parent is imported with -Prefix <PrefixText>" -TestCases @(
+        @{ PrefixText = '(not specified)'; Prefix = $null; ParentFunction = 'Invoke-ParParent' }
+        @{ PrefixText = "''"; Prefix = ''; ParentFunction = 'Invoke-Parent' }
+    ) {
+        param($Prefix, $ParentFunction)
+
+        $importParams = @{ Name = $parentPath }
+        if ($null -ne $Prefix) {
+            $importParams.Prefix = $Prefix
+        }
+
+        Import-Module @importParams
+
+        & $ParentFunction | Should -BeExactly 'thing'
+    }
+
+    It "Keeps the default prefix of an already loaded nested module when the parent is imported with an empty -Prefix" {
+        Import-Module -Name $childPath
+        Import-Module -Name $parentPath -Prefix ''
+
+        Invoke-Parent | Should -BeExactly 'thing'
     }
 }

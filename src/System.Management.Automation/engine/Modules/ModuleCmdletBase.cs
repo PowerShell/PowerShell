@@ -2990,6 +2990,14 @@ namespace Microsoft.PowerShell.Commands
                     bool oldGlobal = this.BaseGlobal;
                     this.BaseGlobal = false;
 
+                    // An empty -Prefix only removes the default prefix of the module being imported;
+                    // nested module manifests keep their own DefaultCommandPrefix.
+                    string oldPrefix = this.BasePrefix;
+                    if (oldPrefix is { Length: 0 })
+                    {
+                        this.BasePrefix = null;
+                    }
+
                     PSModuleInfo nestedModule = LoadModuleNamedInManifest(
                             parentModule: manifestInfo,
                             moduleSpecification: nestedModuleSpecification,
@@ -3005,6 +3013,7 @@ namespace Microsoft.PowerShell.Commands
                             manifestLanguageMode: ((manifestScriptInfo != null) ? manifestScriptInfo.DefiningLanguageMode.GetValueOrDefault() : (PSLanguageMode?)null));
 
                     this.BaseGlobal = oldGlobal;
+                    this.BasePrefix = oldPrefix;
 
                     // If found, add it to the parent's list of NestedModules
                     if (found)
