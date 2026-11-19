@@ -63,10 +63,14 @@ function Test-ResourceStrings
                 $resourceType | Should -Not -BeNullOrEmpty
 
                 # check all the resource strings
-                $xmlData = [xml](Get-Content $resourceFile.Fullname)
+                # Help fragments can contain only line breaks. Preserve that whitespace and read InnerText
+                # explicitly so the XML adapter cannot turn a whitespace-only value into an XmlElement string.
+                $xmlData = [xml]::new()
+                $xmlData.PreserveWhitespace = $true
+                $xmlData.Load($resourceFile.FullName)
                 foreach ( $inResource in $xmlData.root.data ) {
                     $resourceStringToCheck = $resourceType.GetProperty($inResource.name,$bindingFlags).GetValue(0)
-                    NormalizeLineEnd($resourceStringToCheck) | Should -Be (NormalizeLineEnd($inresource.value))
+                    NormalizeLineEnd($resourceStringToCheck) | Should -Be (NormalizeLineEnd($inResource.SelectSingleNode('value').InnerText))
                 }
             }
         }
