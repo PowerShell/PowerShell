@@ -5295,7 +5295,7 @@ namespace System.Management.Automation.Language
                             // For static property access, the target expr must be null.  For non-static, we must convert
                             // because target.Expression is typeof(object) because this is a dynamic site.
                             var targetExpr = _static ? null : GetTargetExpr(target, adapterData.member.DeclaringType);
-                            var propertyAccessor = adapterData.member as PropertyInfo;
+                            var propertyAccessor = adapterData.getterProperty;
                             if (propertyAccessor != null)
                             {
                                 var propertyGetter = propertyAccessor.GetMethod;
