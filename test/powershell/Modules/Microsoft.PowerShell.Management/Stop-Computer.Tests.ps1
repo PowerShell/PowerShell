@@ -12,7 +12,7 @@ try
     # set up for testing
     Enable-Testhook -testhookName $stopTesthook
 
-    Describe "Stop-Computer" -Tag Feature {
+    Describe "Stop-Computer" -Tag Feature,NotWinPE {
         # if we throw in BeforeEach, the test will fail and the stop will not be called
         BeforeEach {
             if ( ! (Test-TesthookIsSet -testhookName $stopTesthook) ) {

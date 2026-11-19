@@ -17,7 +17,6 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
         $tempFile = Join-Path -Path $TestDrive -ChildPath PSTest
         $tempDirectory = Join-Path -Path $TestDrive -ChildPath 'PSPath[]'
         New-Item $tempDirectory -ItemType Directory  -Force
-        $assetsFile = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath assets) -ChildPath SortTest.txt
         if ($IsWindows) {
             $pingParam = "-n 2 localhost"
         }
@@ -95,12 +94,6 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
         $dirEntry.Length | Should -BeGreaterThan 0
     }
 
-    It "Should handle stdin redirection without error" {
-        $process = Start-Process sort -Wait -RedirectStandardOutput $tempFile -RedirectStandardInput $assetsFile  @extraArgs
-        $dirEntry = Get-ChildItem $tempFile
-        $dirEntry.Length | Should -BeGreaterThan 0
-    }
-
     ## -Verb is supported in PowerShell on Windows full desktop.
     It "Should give an error when -Verb parameter is used" -Skip:$isFullWin {
         { Start-Process -Verb runas -FilePath $pingCommand } | Should -Throw -ErrorId "NotSupportedException,Microsoft.PowerShell.Commands.StartProcessCommand"
@@ -160,6 +153,16 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
         $process = Start-Process $pingCommand -ArgumentList '' -PassThru @extraArgs
         $process.Length      | Should -Be 1
         $process.Id          | Should -BeGreaterThan 1
+    }
+}
+
+Describe "Start-Process with sort input redirection" -Tag "Feature","RequireAdminOnWindows","NotWinPE" {
+    It "Should handle stdin redirection without error" {
+        $tempFile = Join-Path -Path $TestDrive -ChildPath PSTest
+        $assetsFile = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath assets) -ChildPath SortTest.txt
+        $process = Start-Process sort -Wait -RedirectStandardOutput $tempFile -RedirectStandardInput $assetsFile
+        $dirEntry = Get-ChildItem $tempFile
+        $dirEntry.Length | Should -BeGreaterThan 0
     }
 }
 

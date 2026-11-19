@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-Describe "Remote import-module tests" -Tags 'Feature','RequireAdminOnWindows' {
+Describe "Remote import-module tests" -Tags 'Feature','RequireAdminOnWindows','NotWinPE' {
 
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
