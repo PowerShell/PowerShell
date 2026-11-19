@@ -715,25 +715,15 @@ namespace Microsoft.PowerShell
                 return (switchKey: string.Empty, shouldBreak: false);
             }
 
-            char firstChar = switchKey[0];
-            if (!CharExtensions.IsDash(firstChar) && firstChar != '/')
+            if (!PwshStartupOptions.TryGetSwitchKey(switchKey, out string normalizedSwitchKey))
             {
-                // then it's a file
+                // The first non-switch argument is an implicit script path.
                 --argIndex;
                 ParseFile(args, ref argIndex, noexitSeen);
-
                 return (switchKey: string.Empty, shouldBreak: true);
             }
 
-            // chop off the first character so that we're agnostic wrt specifying / or -
-            // in front of the switch name.
-            switchKey = switchKey.Substring(1);
-
-            // chop off the second dash so we're agnostic wrt specifying - or --
-            if (!string.IsNullOrEmpty(switchKey) && CharExtensions.IsDash(firstChar) && switchKey[0] == firstChar)
-            {
-                switchKey = switchKey.Substring(1);
-            }
+            switchKey = normalizedSwitchKey;
 
             return (switchKey: switchKey, shouldBreak: false);
         }
@@ -793,17 +783,6 @@ namespace Microsoft.PowerShell
             }
 
             return executionPolicySetting;
-        }
-
-        private static bool MatchSwitch(string switchKey, string match, string smallestUnambiguousMatch)
-        {
-            Dbg.Assert(!string.IsNullOrEmpty(match), "need a value");
-            Dbg.Assert(match.Trim().ToLowerInvariant() == match, "match should be normalized to lowercase w/ no outside whitespace");
-            Dbg.Assert(smallestUnambiguousMatch.Trim().ToLowerInvariant() == smallestUnambiguousMatch, "match should be normalized to lowercase w/ no outside whitespace");
-            Dbg.Assert(match.Contains(smallestUnambiguousMatch), "sUM should be a substring of match");
-
-            return (switchKey.Length >= smallestUnambiguousMatch.Length
-                    && match.StartsWith(switchKey, StringComparison.OrdinalIgnoreCase));
         }
 
         #endregion
@@ -909,9 +888,10 @@ namespace Microsoft.PowerShell
                 }
 
                 string switchKey = switchKeyResults.switchKey;
+                string? optionName = PwshStartupOptions.Find(switchKey)?.Name;
 
                 // If version is in the commandline, don't continue to look at any other parameters
-                if (MatchSwitch(switchKey, "version", "v"))
+                if (optionName == "Version")
                 {
                     _showVersion = true;
                     _showBanner = false;
@@ -922,20 +902,20 @@ namespace Microsoft.PowerShell
                     break;
                 }
 
-                if (MatchSwitch(switchKey, "help", "h") || MatchSwitch(switchKey, "?", "?"))
+                if (optionName == "Help")
                 {
                     _showHelp = true;
                     _showExtendedHelp = true;
                     _abortStartup = true;
                     ParametersUsed |= ParameterBitmap.Help;
                 }
-                else if (MatchSwitch(switchKey, "login", "l"))
+                else if (optionName == "Login")
                 {
                     // On Windows, '-Login' does nothing.
                     // On *nix, '-Login' is already handled much earlier to improve startup performance, so we do nothing here.
                     ParametersUsed |= ParameterBitmap.Login;
                 }
-                else if (MatchSwitch(switchKey, "noexit", "noe"))
+                else if (optionName == "NoExit")
                 {
                     _noExit = true;
                     noexitSeen = true;
@@ -947,22 +927,22 @@ namespace Microsoft.PowerShell
                         break;
                     }
                 }
-                else if (MatchSwitch(switchKey, "noprofile", "nop"))
+                else if (optionName == "NoProfile")
                 {
                     _skipUserInit = true;
                     ParametersUsed |= ParameterBitmap.NoProfile;
                 }
-                else if (MatchSwitch(switchKey, "nologo", "nol"))
+                else if (optionName == "NoLogo")
                 {
                     _showBanner = false;
                     ParametersUsed |= ParameterBitmap.NoLogo;
                 }
-                else if (MatchSwitch(switchKey, "noninteractive", "noni"))
+                else if (optionName == "NonInteractive")
                 {
                     _noInteractive = true;
                     ParametersUsed |= ParameterBitmap.NonInteractive;
                 }
-                else if (MatchSwitch(switchKey, "socketservermode", "so"))
+                else if (optionName == "SocketServerMode")
                 {
                     _socketServerMode = true;
                     _showBanner = false;
@@ -974,7 +954,7 @@ namespace Microsoft.PowerShell
                     }
                 }
 #if !UNIX
-                else if (MatchSwitch(switchKey, "v2socketservermode", "v2so"))
+                else if (optionName == "V2SocketServerMode")
                 {
                     _v2SocketServerMode = true;
                     _showBanner = false;
@@ -986,7 +966,7 @@ namespace Microsoft.PowerShell
                     }
                 }
 #endif
-                else if (MatchSwitch(switchKey, "servermode", "s"))
+                else if (optionName == "ServerMode")
                 {
                     _serverMode = true;
                     _showBanner = false;
@@ -997,7 +977,7 @@ namespace Microsoft.PowerShell
                         break;
                     }
                 }
-                else if (MatchSwitch(switchKey, "namedpipeservermode", "nam"))
+                else if (optionName == "NamedPipeServerMode")
                 {
                     _namedPipeServerMode = true;
                     _showBanner = false;
@@ -1008,7 +988,7 @@ namespace Microsoft.PowerShell
                         break;
                     }
                 }
-                else if (MatchSwitch(switchKey, "sshservermode", "sshs"))
+                else if (optionName == "SSHServerMode")
                 {
                     _sshServerMode = true;
                     _showBanner = false;
@@ -1019,17 +999,17 @@ namespace Microsoft.PowerShell
                         break;
                     }
                 }
-                else if (MatchSwitch(switchKey, "noprofileloadtime", "noprofileloadtime"))
+                else if (optionName == "NoProfileLoadTime")
                 {
                     _noProfileLoadTime = true;
                     ParametersUsed |= ParameterBitmap.NoProfileLoadTime;
                 }
-                else if (MatchSwitch(switchKey, "interactive", "i"))
+                else if (optionName == "Interactive")
                 {
                     _noInteractive = false;
                     ParametersUsed |= ParameterBitmap.Interactive;
                 }
-                else if (MatchSwitch(switchKey, "configurationfile", "configurationfile"))
+                else if (optionName == "ConfigurationFile")
                 {
                     ++i;
                     if (i >= args.Length)
@@ -1042,7 +1022,7 @@ namespace Microsoft.PowerShell
                     _configurationFile = args[i];
                     ParametersUsed |= ParameterBitmap.ConfigurationFile;
                 }
-                else if (MatchSwitch(switchKey, "configurationname", "config"))
+                else if (optionName == "ConfigurationName")
                 {
                     ++i;
                     if (i >= args.Length)
@@ -1055,7 +1035,7 @@ namespace Microsoft.PowerShell
                     _configurationName = args[i];
                     ParametersUsed |= ParameterBitmap.ConfigurationName;
                 }
-                else if (MatchSwitch(switchKey, "custompipename", "cus"))
+                else if (optionName == "CustomPipeName")
                 {
                     ++i;
                     if (i >= args.Length)
@@ -1082,7 +1062,7 @@ namespace Microsoft.PowerShell
                     _customPipeName = args[i];
                     ParametersUsed |= ParameterBitmap.CustomPipeName;
                 }
-                else if (MatchSwitch(switchKey, "commandwithargs", "commandwithargs") || MatchSwitch(switchKey, "cwa", "cwa"))
+                else if (optionName == "CommandWithArgs")
                 {
                     _commandHasArgs = true;
 
@@ -1095,7 +1075,7 @@ namespace Microsoft.PowerShell
                     CollectPSArgs(args, ref i);
                     ParametersUsed |= ParameterBitmap.CommandWithArgs;
                 }
-                else if (MatchSwitch(switchKey, "command", "c"))
+                else if (optionName == "Command")
                 {
                     if (!ParseCommand(args, ref i, noexitSeen, false))
                     {
@@ -1104,7 +1084,7 @@ namespace Microsoft.PowerShell
 
                     ParametersUsed |= ParameterBitmap.Command;
                 }
-                else if (MatchSwitch(switchKey, "windowstyle", "w"))
+                else if (optionName == "WindowStyle")
                 {
 #if UNIX
                     SetCommandLineError(
@@ -1133,7 +1113,7 @@ namespace Microsoft.PowerShell
                     ParametersUsed |= ParameterBitmap.WindowStyle;
 #endif
                 }
-                else if (MatchSwitch(switchKey, "file", "f"))
+                else if (optionName == "File")
                 {
                     if (!ParseFile(args, ref i, noexitSeen))
                     {
@@ -1143,23 +1123,23 @@ namespace Microsoft.PowerShell
                     ParametersUsed |= ParameterBitmap.File;
                 }
 #if DEBUG
-                else if (MatchSwitch(switchKey, "isswait", "isswait"))
+                else if (optionName == "ISSWait")
                 {
                     // Just toss this option, it was processed earlier in 'ManagedEntrance.Start()'.
                 }
 #endif
-                else if (MatchSwitch(switchKey, "outputformat", "o") || MatchSwitch(switchKey, "of", "o"))
+                else if (optionName == "OutputFormat")
                 {
                     ParseFormat(args, ref i, ref _outFormat, CommandLineParameterParserStrings.MissingOutputFormatParameter);
                     _outputFormatSpecified = true;
                     ParametersUsed |= ParameterBitmap.OutputFormat;
                 }
-                else if (MatchSwitch(switchKey, "inputformat", "inp") || MatchSwitch(switchKey, "if", "if"))
+                else if (optionName == "InputFormat")
                 {
                     ParseFormat(args, ref i, ref _inFormat, CommandLineParameterParserStrings.MissingInputFormatParameter);
                     ParametersUsed |= ParameterBitmap.InputFormat;
                 }
-                else if (MatchSwitch(switchKey, "executionpolicy", "ex") || MatchSwitch(switchKey, "ep", "ep"))
+                else if (optionName == "ExecutionPolicy")
                 {
                     ParseExecutionPolicy(args, ref i, ref _executionPolicy, CommandLineParameterParserStrings.MissingExecutionPolicyParameter);
                     ParametersUsed |= ParameterBitmap.ExecutionPolicy;
@@ -1174,7 +1154,7 @@ namespace Microsoft.PowerShell
 
                     ParametersUsed |= executionPolicy;
                 }
-                else if (MatchSwitch(switchKey, "encodedcommand", "e") || MatchSwitch(switchKey, "ec", "e"))
+                else if (optionName == "EncodedCommand")
                 {
                     _wasCommandEncoded = true;
                     if (!ParseCommand(args, ref i, noexitSeen, true))
@@ -1184,7 +1164,7 @@ namespace Microsoft.PowerShell
 
                     ParametersUsed |= ParameterBitmap.EncodedCommand;
                 }
-                else if (MatchSwitch(switchKey, "encodedarguments", "encodeda") || MatchSwitch(switchKey, "ea", "ea"))
+                else if (optionName == "EncodedArguments")
                 {
                     if (!CollectArgs(args, ref i))
                     {
@@ -1193,7 +1173,7 @@ namespace Microsoft.PowerShell
 
                     ParametersUsed |= ParameterBitmap.EncodedArgument;
                 }
-                else if (MatchSwitch(switchKey, "settingsfile", "settings"))
+                else if (optionName == "SettingsFile")
                 {
                     // Parse setting file arg and write error
                     if (!TryParseSettingFileHelper(args, ++i))
@@ -1203,7 +1183,7 @@ namespace Microsoft.PowerShell
 
                     ParametersUsed |= ParameterBitmap.SettingsFile;
                 }
-                else if (MatchSwitch(switchKey, "sta", "sta"))
+                else if (optionName == "STA")
                 {
                     if (!Platform.IsWindowsDesktop || !Platform.IsStaSupported)
                     {
@@ -1223,7 +1203,7 @@ namespace Microsoft.PowerShell
                     _staMode = true;
                     ParametersUsed |= ParameterBitmap.STA;
                 }
-                else if (MatchSwitch(switchKey, "mta", "mta"))
+                else if (optionName == "MTA")
                 {
                     if (!Platform.IsWindowsDesktop)
                     {
@@ -1243,7 +1223,7 @@ namespace Microsoft.PowerShell
                     _staMode = false;
                     ParametersUsed |= ParameterBitmap.MTA;
                 }
-                else if (MatchSwitch(switchKey, "workingdirectory", "wo") || MatchSwitch(switchKey, "wd", "wd"))
+                else if (optionName == "WorkingDirectory")
                 {
                     ++i;
                     if (i >= args.Length)
@@ -1257,11 +1237,11 @@ namespace Microsoft.PowerShell
                     ParametersUsed |= ParameterBitmap.WorkingDirectory;
                 }
 #if !UNIX
-                else if (MatchSwitch(switchKey, "removeworkingdirectorytrailingcharacter", "removeworkingdirectorytrailingcharacter"))
+                else if (optionName == "RemoveWorkingDirectoryTrailingCharacter")
                 {
                     _removeWorkingDirectoryTrailingCharacter = true;
                 }
-                else if (MatchSwitch(switchKey, "token", "to"))
+                else if (optionName == "Token")
                 {
                     ++i;
                     if (i >= args.Length)
@@ -1276,7 +1256,7 @@ namespace Microsoft.PowerShell
                     // Not adding anything to ParametersUsed, because it is required with V2 socket server mode
                     // So, we can assume it based on that bit
                 }
-                else if (MatchSwitch(switchKey, "utctimestamp", "utc"))
+                else if (optionName == "UTCTimestamp")
                 {
                     ++i;
                     if (i >= args.Length)
