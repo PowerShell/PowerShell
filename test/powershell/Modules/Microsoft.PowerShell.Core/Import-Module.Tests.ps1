@@ -407,3 +407,92 @@ Describe "Module with FileList" -Tag "CI" {
         $asmPath | Should -Not -BeIn $asms
     }
 }
+
+Describe "Import-Module -Prefix and DefaultCommandPrefix" -Tags "CI" {
+    BeforeAll {
+        $originalPSModulePath = $env:PSModulePath
+        $modulesRoot = Join-Path -Path $TestDrive -ChildPath "PrefixModules"
+        $env:PSModulePath += [System.IO.Path]::PathSeparator + $modulesRoot
+
+        function New-PrefixTestModule {
+            param([string] $Name, [string] $DefaultCommandPrefix)
+
+            $moduleDir = Join-Path -Path $modulesRoot -ChildPath $Name
+            $null = New-Item -Path $moduleDir -ItemType Directory -Force
+            Set-Content -Path (Join-Path $moduleDir "$Name.psm1") -Value @'
+function Use-Thing { 'thing' }
+Set-Alias -Name ut -Value Use-Thing
+'@
+            $manifestParams = @{
+                Path              = Join-Path $moduleDir "$Name.psd1"
+                RootModule        = "$Name.psm1"
+                FunctionsToExport = 'Use-Thing'
+                AliasesToExport   = 'ut'
+                CmdletsToExport   = @()
+                VariablesToExport = @()
+            }
+            if ($DefaultCommandPrefix) {
+                $manifestParams.DefaultCommandPrefix = $DefaultCommandPrefix
+            }
+
+            New-ModuleManifest @manifestParams
+            return $manifestParams.Path
+        }
+
+        $withDefaultPath = New-PrefixTestModule -Name PrefixWithDefault -DefaultCommandPrefix Def
+        $withoutDefaultPath = New-PrefixTestModule -Name PrefixWithoutDefault
+    }
+
+    AfterAll {
+        $env:PSModulePath = $originalPSModulePath
+    }
+
+    AfterEach {
+        Remove-Module -Name PrefixWithDefault, PrefixWithoutDefault -Force -ErrorAction SilentlyContinue
+    }
+
+    It "Imports '<ModuleName>' with -Prefix <PrefixText> as <ExpectedFunction> and <ExpectedAlias>" -TestCases @(
+        @{ ModuleName = 'PrefixWithDefault'; PrefixText = '(not specified)'; Prefix = $null; ExpectedFunction = 'Use-DefThing'; ExpectedAlias = 'Defut' }
+        @{ ModuleName = 'PrefixWithDefault'; PrefixText = "'Cli'"; Prefix = 'Cli'; ExpectedFunction = 'Use-CliThing'; ExpectedAlias = 'Cliut' }
+        @{ ModuleName = 'PrefixWithDefault'; PrefixText = "''"; Prefix = ''; ExpectedFunction = 'Use-Thing'; ExpectedAlias = 'ut' }
+        @{ ModuleName = 'PrefixWithoutDefault'; PrefixText = '(not specified)'; Prefix = $null; ExpectedFunction = 'Use-Thing'; ExpectedAlias = 'ut' }
+        @{ ModuleName = 'PrefixWithoutDefault'; PrefixText = "'Cli'"; Prefix = 'Cli'; ExpectedFunction = 'Use-CliThing'; ExpectedAlias = 'Cliut' }
+        @{ ModuleName = 'PrefixWithoutDefault'; PrefixText = "''"; Prefix = ''; ExpectedFunction = 'Use-Thing'; ExpectedAlias = 'ut' }
+    ) {
+        param($ModuleName, $Prefix, $ExpectedFunction, $ExpectedAlias)
+
+        $importParams = @{ Name = Join-Path $modulesRoot $ModuleName "$ModuleName.psd1"; PassThru = $true }
+        if ($null -ne $Prefix) {
+            $importParams.Prefix = $Prefix
+        }
+
+        $module = Import-Module @importParams
+
+        $module.ExportedCommands.Keys | Where-Object { $_ -like '*-*' } | Should -BeExactly $ExpectedFunction
+        (Get-Command -Name $ExpectedFunction -CommandType Function -ErrorAction Ignore).Module.Name | Should -BeExactly $ModuleName
+        (Get-Command -Name $ExpectedAlias -CommandType Alias -ErrorAction Ignore).Module.Name | Should -BeExactly $ModuleName
+        & $ExpectedAlias | Should -BeExactly 'thing'
+    }
+
+    It "Imports a module found by name in PSModulePath with an empty -Prefix without the default prefix" {
+        Import-Module -Name PrefixWithDefault -Prefix ''
+
+        Get-Command -Name Use-Thing -Module PrefixWithDefault -ErrorAction Ignore | Should -Not -BeNullOrEmpty
+        Get-Command -Name Use-DefThing -Module PrefixWithDefault -ErrorAction Ignore | Should -BeNullOrEmpty
+    }
+
+    It "Keeps the default prefix when an already loaded module is imported again without -Prefix" {
+        Import-Module -Name $withDefaultPath
+        Import-Module -Name $withDefaultPath
+
+        Get-Command -Name Use-DefThing -Module PrefixWithDefault -ErrorAction Ignore | Should -Not -BeNullOrEmpty
+        Get-Command -Name Use-Thing -Module PrefixWithDefault -ErrorAction Ignore | Should -BeNullOrEmpty
+    }
+
+    It "Imports an already loaded module again without the default prefix when -Prefix is empty" {
+        Import-Module -Name $withDefaultPath
+        Import-Module -Name $withDefaultPath -Prefix ''
+
+        Get-Command -Name Use-Thing -Module PrefixWithDefault -ErrorAction Ignore | Should -Not -BeNullOrEmpty
+    }
+}

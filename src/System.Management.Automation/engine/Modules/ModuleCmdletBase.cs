@@ -116,8 +116,10 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// This parameter specified a prefix used to modify names of imported commands.
+        /// <see langword="null"/> means that no prefix was specified, so the module's DefaultCommandPrefix applies;
+        /// an empty string means that commands are imported without a prefix.
         /// </summary>
-        internal string BasePrefix { get; set; } = string.Empty;
+        internal string BasePrefix { get; set; }
 
         /// <summary>
         /// Flags -force operations.
@@ -1625,17 +1627,10 @@ namespace Microsoft.PowerShell.Commands
                 if (bailOnFirstError) return null;
             }
 
-            string resolvedCommandPrefix = string.Empty;
-
-            if (!string.IsNullOrEmpty(defaultCommandPrefix))
-            {
-                resolvedCommandPrefix = defaultCommandPrefix;
-            }
-
-            if (!string.IsNullOrEmpty(this.BasePrefix))
-            {
-                resolvedCommandPrefix = this.BasePrefix;
-            }
+            // An explicit -Prefix, including an empty one, overrides the DefaultCommandPrefix from the manifest.
+            // rootModulePrefix stays null when neither is set, so that the root module can apply its own default.
+            string rootModulePrefix = this.BasePrefix ?? (string.IsNullOrEmpty(defaultCommandPrefix) ? null : defaultCommandPrefix);
+            string resolvedCommandPrefix = rootModulePrefix ?? string.Empty;
 
             if (!string.IsNullOrEmpty(actualRootModule))
             {
@@ -3000,7 +2995,7 @@ namespace Microsoft.PowerShell.Commands
                             moduleSpecification: nestedModuleSpecification,
                             moduleBase: moduleBase,
                             searchModulePath: true,
-                            prefix: string.Empty,
+                            prefix: null,
                             ss: null,
                             options: nestedModuleOptions,
                             manifestProcessingFlags: manifestProcessingFlags,
@@ -3101,7 +3096,7 @@ namespace Microsoft.PowerShell.Commands
                         moduleSpecification: new ModuleSpecification(actualRootModule),
                         moduleBase: moduleBase,
                         searchModulePath: false,
-                        prefix: resolvedCommandPrefix,
+                        prefix: rootModulePrefix,
                         ss: ss,
                         options: options,
                         manifestProcessingFlags: manifestProcessingFlags,
@@ -5332,7 +5327,7 @@ namespace Microsoft.PowerShell.Commands
                     else // reimport the module + return alreadyLoadedModule (alreadyLoadedModule = no need to proceed with regular import)
                     {
                         // If the module has already been loaded, then while loading it the second time, we should load it with the DefaultCommandPrefix specified in the module manifest. (If there is no Prefix from command line)
-                        if (string.IsNullOrEmpty(prefix) && File.Exists(alreadyLoadedModule.Path))
+                        if (prefix is null && File.Exists(alreadyLoadedModule.Path))
                         {
                             string defaultPrefix = GetDefaultPrefix(alreadyLoadedModule);
                             if (!string.IsNullOrEmpty(defaultPrefix))
@@ -5460,7 +5455,7 @@ namespace Microsoft.PowerShell.Commands
                     moduleFileFound = true;
 
                     // If the module has already been loaded, then while loading it the second time, we should load it with the DefaultCommandPrefix specified in the module manifest. (If there is no Prefix from command line)
-                    if (string.IsNullOrEmpty(prefix))
+                    if (prefix is null)
                     {
                         string defaultPrefix = GetDefaultPrefix(module);
                         if (!string.IsNullOrEmpty(defaultPrefix))
