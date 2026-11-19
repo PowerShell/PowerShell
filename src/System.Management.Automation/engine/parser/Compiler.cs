@@ -480,6 +480,9 @@ namespace System.Management.Automation.Language
         internal static readonly MethodInfo PSSetMemberBinder_SetInstanceMemberValue =
             typeof(PSSetMemberBinder).GetMethod(nameof(PSSetMemberBinder.SetInstanceMemberValue), StaticFlags);
 
+        internal static readonly PropertyInfo PSTraceSource_IsEnabled =
+            typeof(PSTraceSource).GetProperty(nameof(PSTraceSource.IsEnabled), InstanceFlags);
+
         internal static readonly MethodInfo PSTraceSource_WriteLine =
             typeof(PSTraceSource).GetMethod(nameof(PSTraceSource.WriteLine), InstanceFlags, new[] { typeof(string), typeof(object) });
 
