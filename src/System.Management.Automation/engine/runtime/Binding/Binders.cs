@@ -7034,16 +7034,20 @@ namespace System.Management.Automation.Language
                     expr = Expression.Block(expr, ExpressionCache.AutomationNullConstant);
                 }
 
-                if (MethodInvocationTracer.IsEnabled)
-                {
-                    expr = Expression.Block(
+                // Check is part of the expression tree as the tree is cached
+                // on the arg types and could have been cached before the trace
+                // was enabled.
+                // https://github.com/PowerShell/PowerShell/issues/28447
+                var tracer = Expression.Constant(MethodInvocationTracer);
+                expr = Expression.Block(
+                    Expression.IfThen(
+                        Expression.Property(tracer, CachedReflectionInfo.PSTraceSource_IsEnabled),
                         Expression.Call(
-                            Expression.Constant(MethodInvocationTracer),
+                            tracer,
                             CachedReflectionInfo.PSTraceSource_WriteLine,
                             Expression.Constant("Invoking method: {0}"),
-                            Expression.Constant(result.methodDefinition)),
-                        expr);
-                }
+                            Expression.Constant(result.methodDefinition))),
+                    expr);
 
                 // If we're calling SteppablePipeline.{Begin|Process|End}, we don't want
                 // to wrap exceptions - this is very much a special case to help error
