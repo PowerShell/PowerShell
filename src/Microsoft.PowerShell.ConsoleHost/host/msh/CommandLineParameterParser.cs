@@ -808,7 +808,7 @@ namespace Microsoft.PowerShell
                 hostUI.Write(helpText);
                 if (_showExtendedHelp)
                 {
-                    hostUI.Write(ManagedEntranceStrings.ExtendedHelp);
+                    hostUI.Write(PwshHelp.ExtendedHelp);
                 }
 
                 hostUI.WriteLine();

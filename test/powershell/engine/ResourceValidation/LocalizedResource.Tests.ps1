@@ -57,7 +57,7 @@ Describe "Localized resource files validation" -Tags "CI" {
 
             ## Verifies that the default English resource files exist and match the expected count.
             $defaultCultureResources = $assemblies | ForEach-Object { Get-ChildItem "$_/resources/*.resx" }
-            $defaultCultureResources | Should -HaveCount 150 -Because "Default English resource files count: $($defaultCultureResources.Count); Expected count: 150."
+            $defaultCultureResources | Should -HaveCount 151 -Because "Default English resource files count: $($defaultCultureResources.Count); Expected count: 151."
         }
         finally {
             Pop-Location
