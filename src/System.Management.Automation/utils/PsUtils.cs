@@ -335,10 +335,14 @@ namespace System.Management.Automation
             "NestedModules",
             "RootModule",
             "ModuleToProcess",
-            "ModuleVersion"
+            "ModuleVersion",
+            "DefaultCommandPrefix"
         };
 
-        internal static Hashtable GetModuleManifestProperties(string psDataFilePath, string[] keys)
+        internal static Hashtable GetModuleManifestProperties(
+            string psDataFilePath,
+            string[] keys,
+            bool requireLiteralKeys = false)
         {
             string dataFileContents = File.ReadAllText(psDataFilePath, Encoding.Default);
             ParseError[] parseErrors;
@@ -359,6 +363,11 @@ namespace System.Management.Automation
                 var result = new Hashtable(StringComparer.OrdinalIgnoreCase);
                 foreach (var pair in hashtableAst.KeyValuePairs)
                 {
+                    if (requireLiteralKeys && pair.Item1 is not StringConstantExpressionAst)
+                    {
+                        return null;
+                    }
+
                     if (pair.Item1 is StringConstantExpressionAst key && keys.Contains(key.Value, StringComparer.OrdinalIgnoreCase))
                     {
                         try

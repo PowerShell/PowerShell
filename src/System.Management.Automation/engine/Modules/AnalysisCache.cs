@@ -100,9 +100,19 @@ namespace System.Management.Automation
             ConcurrentDictionary<string, CommandTypes> result = null;
             try
             {
-                var moduleManifestProperties = PsUtils.GetModuleManifestProperties(modulePath, PsUtils.FastModuleManifestAnalysisPropertyNames);
+                var moduleManifestProperties = PsUtils.GetModuleManifestProperties(
+                    modulePath,
+                    PsUtils.FastModuleManifestAnalysisPropertyNames,
+                    requireLiteralKeys: true);
                 if (moduleManifestProperties != null)
                 {
+                    // DefaultCommandPrefix can be converted from a non-string value. Fall back to the
+                    // regular manifest loader so cache analysis uses the same conversion as module import.
+                    if (moduleManifestProperties.ContainsKey("DefaultCommandPrefix"))
+                    {
+                        return AnalyzeTheOldWay(modulePath, context, lastWriteTime);
+                    }
+
                     if (!Configuration.PowerShellConfig.Instance.IsImplicitWinCompatEnabled() && ModuleIsEditionIncompatible(modulePath, moduleManifestProperties))
                     {
                         ModuleIntrinsics.Tracer.WriteLine($"Module lies on the Windows System32 legacy module path and is incompatible with current PowerShell edition, skipping module: {modulePath}");
@@ -649,7 +659,7 @@ namespace System.Management.Automation
             return new byte[]
             {
                 0x50, 0x53, 0x4d, 0x4f, 0x44, 0x55, 0x4c, 0x45, 0x43, 0x41, 0x43, 0x48, 0x45, // PSMODULECACHE
-                0x01 // version #
+                0x02 // version #
             };
         }
 
