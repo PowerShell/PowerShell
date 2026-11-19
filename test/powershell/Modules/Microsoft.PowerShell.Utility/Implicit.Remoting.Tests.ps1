@@ -2087,6 +2087,9 @@ try
         BeforeAll {
             if ($skipTest) { return }
             $session = New-RemoteSession
+            if ($null -eq $session) {
+                throw 'New-RemoteSession returned no session.'
+            }
 
             # Define a remote function
             Invoke-Command -Session $session { function MyFunction { "Remote!" } Set-Alias SafeAlias -Value MyFunction }
