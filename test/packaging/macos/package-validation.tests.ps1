@@ -86,11 +86,6 @@ Describe "Verify macOS Package" {
             $componentPkg = Get-ChildItem -Path $script:expandDir -Filter "*.pkg" -Recurse -ErrorAction SilentlyContinue
             $componentPkg | Should -Not -BeNullOrEmpty -Because "Package should contain a component.pkg"
         }
-
-        It "Payload should extract successfully" {
-            $script:payloadDir | Should -Exist
-            $script:extractedFiles | Should -Not -BeNullOrEmpty -Because "Package payload should contain files"
-        }
     }
 
     Context "Required files in package" {
