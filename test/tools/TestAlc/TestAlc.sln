@@ -11,6 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Isolated.Root", "root\
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		CodeCoverage|Any CPU = CodeCoverage|Any CPU
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
@@ -18,14 +19,20 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{87AFE044-D21A-4ECE-A8F7-9A31678811D9}.CodeCoverage|Any CPU.ActiveCfg = CodeCoverage|Any CPU
+		{87AFE044-D21A-4ECE-A8F7-9A31678811D9}.CodeCoverage|Any CPU.Build.0 = CodeCoverage|Any CPU
 		{87AFE044-D21A-4ECE-A8F7-9A31678811D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{87AFE044-D21A-4ECE-A8F7-9A31678811D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{87AFE044-D21A-4ECE-A8F7-9A31678811D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{87AFE044-D21A-4ECE-A8F7-9A31678811D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{702DAF12-2A79-4756-8E2A-E18B46639AD3}.CodeCoverage|Any CPU.ActiveCfg = CodeCoverage|Any CPU
+		{702DAF12-2A79-4756-8E2A-E18B46639AD3}.CodeCoverage|Any CPU.Build.0 = CodeCoverage|Any CPU
 		{702DAF12-2A79-4756-8E2A-E18B46639AD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{702DAF12-2A79-4756-8E2A-E18B46639AD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{702DAF12-2A79-4756-8E2A-E18B46639AD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{702DAF12-2A79-4756-8E2A-E18B46639AD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D0B1FAD-52F7-436A-AB9D-5A53E370C72B}.CodeCoverage|Any CPU.ActiveCfg = CodeCoverage|Any CPU
+		{9D0B1FAD-52F7-436A-AB9D-5A53E370C72B}.CodeCoverage|Any CPU.Build.0 = CodeCoverage|Any CPU
 		{9D0B1FAD-52F7-436A-AB9D-5A53E370C72B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9D0B1FAD-52F7-436A-AB9D-5A53E370C72B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9D0B1FAD-52F7-436A-AB9D-5A53E370C72B}.Release|Any CPU.ActiveCfg = Release|Any CPU

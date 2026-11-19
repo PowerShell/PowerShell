@@ -1742,6 +1742,8 @@ function Start-PSPester {
         Skips rebuilding test tool executables before running tests.
     .PARAMETER UseNuGetOrg
         Switches NuGet config to public feeds before running tests.
+    .PARAMETER SudoEnvironment
+        Environment overrides passed explicitly to the sudo test process.
     #>
     [CmdletBinding(DefaultParameterSetName='default')]
     param(
@@ -1773,7 +1775,16 @@ function Start-PSPester {
             HelpMessage='Wait for the debugger to attach to PowerShell before Pester starts.  Debug builds only!')]
         [switch]$Wait,
         [switch]$SkipTestToolBuild,
-        [switch]$UseNuGetOrg
+        [switch]$UseNuGetOrg,
+        [ValidateScript({
+            foreach ($name in $_.Keys) {
+                if ($name -notmatch '^[A-Za-z_][A-Za-z0-9_]*$') {
+                    throw "Invalid sudo environment variable name: $name"
+                }
+            }
+            $true
+        })]
+        [hashtable]$SudoEnvironment = @{}
     )
 
     if ($UseNuGetOrg) {
@@ -2060,7 +2071,8 @@ function Start-PSPester {
                     $passThruCommand = { & $powershell $PSFlags -c $command }
                     if ($Sudo.IsPresent) {
                         # -E says to preserve the environment
-                        $passThruCommand =  { & sudo -E $powershell $PSFlags -c $command }
+                        $sudoEnvironmentArguments = @($SudoEnvironment.GetEnumerator() | ForEach-Object { "$($_.Key)=$($_.Value)" })
+                        $passThruCommand =  { & sudo -E @sudoEnvironmentArguments $powershell $PSFlags -c $command }
                     }
 
                     $writeCommand = { Write-Host $_ }
@@ -2421,7 +2433,7 @@ function Test-PSPesterResults
         A Pester PassThru result object to inspect instead of parsing a file.
     .PARAMETER CanHaveNoResult
         When specified with ResultObject, suppresses the 'NO TESTS RUN' exception for
-        zero-count results.
+        zero-count results. Failed tests still cause an exception.
     #>
     [CmdletBinding(DefaultParameterSetName='file')]
     param(
@@ -2483,7 +2495,7 @@ function Test-PSPesterResults
                 throw 'NO TESTS RUN'
             }
         }
-        elseif ($ResultObject.FailedCount -gt 0)
+        if ($ResultObject.FailedCount -gt 0)
         {
             Write-LogGroupStart -Title 'TEST FAILURES'
 
@@ -2511,11 +2523,14 @@ function Start-PSxUnit {
         Enables detailed console test output instead of writing an XML result file.
     .PARAMETER Filter
         An xUnit filter expression to restrict which tests are run.
+    .PARAMETER SkipBuild
+        Runs tests using previously built test assemblies, without build or restore.
     #>
     [CmdletBinding()]param(
         [string] $xUnitTestResultsFile = "xUnitResults.xml",
         [switch] $DebugLogging,
-        [string] $Filter
+        [string] $Filter,
+        [switch] $SkipBuild
     )
 
     # Add .NET CLI tools to PATH
@@ -2574,6 +2589,9 @@ function Start-PSxUnit {
         # We run the xUnit tests sequentially to avoid race conditions caused by manipulating the config.json file.
         # xUnit tests run in parallel by default. To make them run sequentially, we need to define the 'xunit.runner.json' file.
         $extraParams = @()
+        if ($SkipBuild) {
+            $extraParams += @('--no-build', '--no-restore')
+        }
         if($Filter) {
             $extraParams += @(
                 '--filter'

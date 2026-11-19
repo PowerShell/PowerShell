@@ -2,6 +2,12 @@ name: nix_test
 description: 'Test PowerShell on non-Windows platforms'
 
 inputs:
+  artifact_name:
+    description: 'Build artifact to download'
+    default: build
+  enable_coverage:
+    description: 'Collect .NET coverage while running tests once'
+    default: 'false'
   purpose:
     required: false
     default: ''
@@ -31,7 +37,8 @@ runs:
   - name: Download Build Artifacts
     uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
     with:
-      path: "${{ github.workspace }}"
+      name: ${{ inputs.artifact_name }}
+      path: "${{ github.workspace }}/build"
 
   - name: Capture Artifacts Directory
     continue-on-error: true
@@ -52,11 +59,12 @@ runs:
     run: |-
       Import-Module ./.github/workflows/GHWorkflowHelper/GHWorkflowHelper.psm1
       $platform = $env:RUNNER_OS
+      $architecture = if ($env:RUNNER_ARCH -eq 'ARM64') { 'aarch64' } else { 'x86_64' }
       Write-Host "Runner platform: $platform"
       if ($platform -eq 'Linux') {
-        $packageName = 'DSC-*-x86_64-linux.tar.gz'
+        $packageName = "DSC-*-$architecture-linux.tar.gz"
       } elseif ($platform -eq 'macOS') {
-        $packageName = 'DSC-*-x86_64-apple-darwin.tar.gz'
+        $packageName = "DSC-*-$architecture-apple-darwin.tar.gz"
       } else {
         throw "Unsupported platform: $platform"
       }
@@ -147,12 +155,26 @@ runs:
       chmod a+x $pwshPath
       $options.Output = $pwshPath
       Set-PSOptions $options
-      Invoke-CITest -Purpose '${{ inputs.purpose }}' -TagSet '${{ inputs.tagSet }}' -TitlePrefix '${{ inputs.buildName }}' -OutputFormat NUnitXml
+      if ('${{ inputs.enable_coverage }}' -eq 'true') {
+        Import-Module ./tools/codecoverage.psm1
+        Invoke-CodeCoverageTest -BinaryDirectory $path -Suite '${{ inputs.purpose }}-${{ inputs.tagSet }}' -Test {
+          param($SudoEnvironment)
+          Invoke-CITest -Purpose '${{ inputs.purpose }}' -TagSet '${{ inputs.tagSet }}' -OutputFormat NUnitXml -SudoEnvironment $SudoEnvironment
+        }
+      } else {
+        Invoke-CITest -Purpose '${{ inputs.purpose }}' -TagSet '${{ inputs.tagSet }}' -OutputFormat NUnitXml
+      }
     shell: pwsh
+
+  - name: Upload .NET coverage
+    if: always() && inputs.enable_coverage == 'true'
+    uses: "./.github/actions/test/codecoverage"
+    with:
+      suite: "${{ inputs.purpose }}-${{ inputs.tagSet }}"
 
   - name: Convert, Publish, and Upload Pester Test Results
     uses: "./.github/actions/test/process-pester-results"
     with:
-      name: "${{ inputs.purpose }}-${{ inputs.tagSet }}"
+      name: "${{ runner.os }}-${{ runner.arch }}-${{ inputs.purpose }}-${{ inputs.tagSet }}"
       testResultsFolder: "${{ runner.workspace }}/testResults"
       ctrfFolder: "${{ inputs.ctrfFolder }}"

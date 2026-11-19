@@ -60,6 +60,13 @@ Describe "Validate start of console host" -Tag CI {
             'System.Xml.ReaderWriter.dll'
         )
 
+        if ($env:PS_CODE_COVERAGE -eq '1') {
+            $allowedAssemblies += @(
+                'System.IO.MemoryMappedFiles.dll'
+                'System.Reflection.Emit.dll'
+            )
+        }
+
         if ($IsWindows) {
             $allowedAssemblies += @(
                 'Microsoft.PowerShell.CoreCLR.Eventing.dll'
