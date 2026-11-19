@@ -2825,6 +2825,30 @@ namespace System.Management.Automation.Language
 
         private DynamicMetaObject BinaryDivide(DynamicMetaObject target, DynamicMetaObject arg, DynamicMetaObject errorSuggestion)
         {
+            // Handle array division - check for any array type
+            if (target.LimitType.IsArray)
+            {
+                var targetExpr = target.Expression.Cast(typeof(object[]));
+                var argExpr = arg.Expression.Cast(typeof(object));
+                var callExpr = Expression.Call(CachedReflectionInfo.ArrayOps_Divide, targetExpr, argExpr);
+                
+                return new DynamicMetaObject(
+                    callExpr.Cast(typeof(object)),
+                    target.CombineRestrictions(arg));
+            }
+
+            // Handle string division
+            if (target.LimitType == typeof(string))
+            {
+                var targetExpr = target.Expression.Cast(typeof(string));
+                var argExpr = arg.Expression.Cast(typeof(object));
+                var callExpr = Expression.Call(CachedReflectionInfo.StringOps_Divide, targetExpr, argExpr);
+                
+                return new DynamicMetaObject(
+                    callExpr.Cast(typeof(object)),
+                    target.CombineRestrictions(arg));
+            }
+
             return BinarySubDivOrRem(target, arg, errorSuggestion, "Divide", "op_Division", "/");
         }
 
