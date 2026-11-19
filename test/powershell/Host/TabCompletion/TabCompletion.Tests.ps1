@@ -4279,6 +4279,130 @@ function Test-Func {
     }
 }
 
+Describe 'Native pwsh script argument completion' -Tags CI {
+    BeforeAll {
+        $delegatedScript = Join-Path $TestDrive "delegated script's parameters.ps1"
+        # A marker in TestDrive detects accidental execution without sharing global state with other tests.
+        $scriptBodyMarker = Join-Path $TestDrive 'script-body-ran.txt'
+        $scriptContent = @'
+param(
+    [Parameter(Position=0)]
+    [ValidateSet('Alpha', 'Beta')]
+    [string] $Mode,
+
+    [ArgumentCompleter({
+        param($commandName, $parameterName, $wordToComplete)
+        [System.Management.Automation.CompletionResult]::new('CustomChoice', 'CustomChoice', 'ParameterValue', 'Script custom completion')
+    })]
+    [string] $Choice,
+
+    [string] $Name
+)
+[System.IO.File]::WriteAllText('__SCRIPT_BODY_MARKER__', 'executed')
+'@
+        $scriptContent.Replace('__SCRIPT_BODY_MARKER__', $scriptBodyMarker.Replace("'", "''")) | Set-Content -LiteralPath $delegatedScript
+        $quotedTarget = "'$($delegatedScript.Replace("'", "''"))'"
+    }
+
+    BeforeEach {
+        Remove-Item -LiteralPath $scriptBodyMarker -ErrorAction Ignore
+    }
+
+    AfterEach {
+        try {
+            Test-Path -LiteralPath $scriptBodyMarker | Should -BeFalse
+        } finally {
+            Remove-Item -LiteralPath $scriptBodyMarker -ErrorAction Ignore
+        }
+    }
+
+    It 'Delegates named parameters for <Prefix>' -TestCases @(
+        @{ Prefix = 'pwsh -File' }
+        @{ Prefix = 'pwsh -NoProfile -File' }
+        @{ Prefix = 'pwsh -NoProfile' }
+    ) {
+        param($Prefix)
+        $inputText = "$Prefix $quotedTarget -Na"
+        $result = TabExpansion2 $inputText $inputText.Length
+        $match = $result.CompletionMatches | Where-Object CompletionText -EQ '-Name'
+        $match | Should -Not -BeNullOrEmpty
+        $edited = $inputText.Remove($result.ReplacementIndex, $result.ReplacementLength).Insert($result.ReplacementIndex, $match.CompletionText)
+        $edited | Should -BeExactly "$Prefix $quotedTarget -Name"
+    }
+
+    It 'Delegates positional and named ValidateSet values for <Argument>' -TestCases @(
+        @{ Argument = 'Al'; Expected = 'Alpha' }
+        @{ Argument = '-Mode Be'; Expected = 'Beta' }
+    ) {
+        param($Argument, $Expected)
+        $inputText = "pwsh -File $quotedTarget $Argument"
+        $result = TabExpansion2 $inputText $inputText.Length
+        $match = $result.CompletionMatches | Where-Object CompletionText -EQ $Expected
+        $match | Should -Not -BeNullOrEmpty
+        $edited = $inputText.Remove($result.ReplacementIndex, $result.ReplacementLength).Insert($result.ReplacementIndex, $match.CompletionText)
+        $expectedArgument = if ($Argument.StartsWith('-Mode')) { "-Mode $Expected" } else { $Expected }
+        $edited | Should -BeExactly "pwsh -File $quotedTarget $expectedArgument"
+    }
+
+    It 'Preserves script argument completer results and tooltips' {
+        $inputText = "pwsh -File $quotedTarget -Choice Cus"
+        $result = TabExpansion2 $inputText $inputText.Length
+        $match = $result.CompletionMatches | Where-Object CompletionText -EQ 'CustomChoice'
+        $match.ToolTip | Should -BeExactly 'Script custom completion'
+        $edited = $inputText.Remove($result.ReplacementIndex, $result.ReplacementLength).Insert($result.ReplacementIndex, $match.CompletionText)
+        $edited | Should -BeExactly "pwsh -File $quotedTarget -Choice CustomChoice"
+    }
+
+    It 'Maps replacement ranges with text after the cursor' {
+        $inputText = "pwsh -NoProfile -File $quotedTarget -Na -Mode Alpha"
+        $cursor = $inputText.IndexOf(' -Na ') + 4
+        $result = TabExpansion2 $inputText $cursor
+        $match = $result.CompletionMatches | Where-Object CompletionText -EQ '-Name'
+        $match | Should -Not -BeNullOrEmpty
+        $edited = $inputText.Remove($result.ReplacementIndex, $result.ReplacementLength).Insert($result.ReplacementIndex, $match.CompletionText)
+        $edited | Should -BeExactly "pwsh -NoProfile -File $quotedTarget -Name -Mode Alpha"
+    }
+
+    It 'Resolves bare script names against the current runspace directory' {
+        $relativeScript = Join-Path $TestDrive 'relative-completion.ps1'
+        Set-Content -LiteralPath $relativeScript -Value 'param([string] $Name)'
+        Push-Location $TestDrive
+        try {
+            $inputText = 'pwsh -File relative-completion.ps1 -Na'
+            $result = TabExpansion2 $inputText $inputText.Length
+            $match = $result.CompletionMatches | Where-Object CompletionText -EQ '-Name'
+            $match | Should -Not -BeNullOrEmpty
+            $edited = $inputText.Remove($result.ReplacementIndex, $result.ReplacementLength).Insert($result.ReplacementIndex, $match.CompletionText)
+            $edited | Should -BeExactly 'pwsh -File relative-completion.ps1 -Name'
+        } finally {
+            Pop-Location
+        }
+    }
+
+    It 'Uses script argument completers registered in the current runspace' {
+        Register-ArgumentCompleter -CommandName @($delegatedScript, [IO.Path]::GetFileName($delegatedScript)) -ParameterName Name -ScriptBlock {
+            [System.Management.Automation.CompletionResult]::new('RunspaceName', 'RunspaceName', 'ParameterValue', 'Current runspace registration')
+        }
+        $inputText = "pwsh -File $quotedTarget -Name Run"
+        $result = TabExpansion2 $inputText $inputText.Length
+        $match = $result.CompletionMatches | Where-Object CompletionText -EQ 'RunspaceName'
+        $match | Should -Not -BeNullOrEmpty
+        $match.ToolTip | Should -BeExactly 'Current runspace registration'
+        $edited = $inputText.Remove($result.ReplacementIndex, $result.ReplacementLength).Insert($result.ReplacementIndex, $match.CompletionText)
+        $edited | Should -BeExactly "pwsh -File $quotedTarget -Name RunspaceName"
+    }
+
+    It 'Keeps startup options out of unresolved and nonliteral script arguments' -TestCases @(
+        @{ InputText = 'pwsh -File no-such-script.ps1 -NoP' }
+        @{ InputText = 'pwsh -File $target -NoP' }
+        @{ InputText = 'pwsh $target -NoP' }
+    ) {
+        param($InputText)
+        $result = TabExpansion2 $InputText $InputText.Length
+        $result.CompletionMatches.CompletionText | Should -Not -Contain '-NoProfile'
+    }
+}
+
 Describe 'Native pwsh startup completion' -Tags CI {
     BeforeAll {
         $pwshApplication = (Get-Command pwsh -CommandType Application | Select-Object -First 1).Source

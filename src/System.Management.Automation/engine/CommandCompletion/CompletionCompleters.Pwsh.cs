@@ -46,7 +46,7 @@ public static partial class CompletionCompleters
                 return true;
 
             case PwshCompletionContextKind.ScriptArguments:
-                return false;
+                return TryCompletePwshScript(command, context, startup, results);
 
             default:
                 // Opaque command payloads and unknown startup syntax are handled even
