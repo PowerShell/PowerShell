@@ -4278,3 +4278,273 @@ function Test-Func {
         }
     }
 }
+
+Describe 'Native pwsh startup completion' -Tags CI {
+    BeforeAll {
+        $pwshApplication = (Get-Command pwsh -CommandType Application | Select-Object -First 1).Source
+    }
+
+    It 'Completes canonical startup options with parameter types and help' {
+        $inputText = 'pwsh -NoP'
+        $result = TabExpansion2 $inputText $inputText.Length
+        $result.CompletionMatches.CompletionText | Should -Contain '-NoProfile'
+        $match = $result.CompletionMatches | Where-Object CompletionText -EQ '-NoProfile'
+        $match.ResultType | Should -Be 'ParameterName'
+        $match.ToolTip | Should -Match 'NoProfile'
+        $match.ToolTip.Length | Should -BeGreaterThan 20
+        $result.ReplacementIndex | Should -Be 5
+        $result.ReplacementLength | Should -Be 4
+    }
+
+    It 'Provides concise descriptive tooltips for <Option>' -TestCases @(
+        @{ Option = '-Command'; Description = 'Executes' }
+        @{ Option = '-File'; Description = 'standard input' }
+        @{ Option = '-CommandWithArgs'; Description = 'Executes' }
+    ) {
+        param($Option, $Description)
+        $previousCulture = [cultureinfo]::CurrentUICulture
+        try {
+            [cultureinfo]::CurrentUICulture = [cultureinfo]::InvariantCulture
+            $inputText = "pwsh $Option"
+            $result = TabExpansion2 $inputText $inputText.Length
+            $match = $result.CompletionMatches | Where-Object CompletionText -EQ $Option
+            $match | Should -HaveCount 1
+            $match.ToolTip | Should -Match $Description
+            ($match.ToolTip -split '\r?\n').Count | Should -BeLessOrEqual 8
+        } finally {
+            [cultureinfo]::CurrentUICulture = $previousCulture
+        }
+    }
+
+    It 'Completes finite values for <Option>' -TestCases @(
+        @{ Option = '-InputFormat'; Prefix = 'x'; Expected = 'XML' }
+        @{ Option = '-of'; Prefix = 't'; Expected = 'Text' }
+    ) {
+        param($Option, $Prefix, $Expected)
+        $inputText = "pwsh $Option $Prefix"
+        $result = TabExpansion2 $inputText $inputText.Length
+        $result.CompletionMatches | Should -HaveCount 1
+        $result.CompletionMatches[0].CompletionText | Should -BeExactly $Expected
+        $result.CompletionMatches[0].ResultType | Should -Be 'ParameterValue'
+        $result.CompletionMatches[0].ToolTip.Length | Should -BeGreaterThan $Expected.Length
+        ($inputText.Remove($result.ReplacementIndex, $result.ReplacementLength).Insert($result.ReplacementIndex, $result.CompletionMatches[0].CompletionText)) | Should -BeExactly "pwsh $Option $Expected"
+    }
+
+    It 'Preserves quotes around finite values' {
+        $inputText = 'pwsh -InputFormat "x"'
+        $result = TabExpansion2 $inputText $inputText.Length
+        $result.CompletionMatches[0].CompletionText | Should -BeExactly '"XML"'
+        ($inputText.Remove($result.ReplacementIndex, $result.ReplacementLength).Insert($result.ReplacementIndex, $result.CompletionMatches[0].CompletionText)) | Should -BeExactly 'pwsh -InputFormat "XML"'
+    }
+
+    It 'Completes Windows execution policies' -Skip:(!$IsWindows) {
+        $inputText = 'pwsh -ep rem'
+        $result = TabExpansion2 $inputText $inputText.Length
+        $result.CompletionMatches.CompletionText | Should -Contain 'RemoteSigned'
+    }
+
+    It 'Preserves quotes around option names' {
+        $inputText = "pwsh '-NoP'"
+        $result = TabExpansion2 $inputText $inputText.Length
+        $result.CompletionMatches.CompletionText | Should -Contain "'-NoProfile'"
+    }
+
+    It 'Completes explicit executable paths' {
+        $inputText = "& '$($pwshApplication.Replace("'", "''"))' -NoP"
+        $result = TabExpansion2 $inputText $inputText.Length
+        $result.CompletionMatches.CompletionText | Should -Contain '-NoProfile'
+    }
+
+    It 'Uses platform restrictions for apartment and window options' {
+        $inputText = 'pwsh -'
+        $result = TabExpansion2 $inputText $inputText.Length
+        $supported = @{
+            '-STA' = [System.Management.Automation.Platform]::IsWindowsDesktop -and [System.Management.Automation.Platform]::IsStaSupported
+            '-MTA' = [System.Management.Automation.Platform]::IsWindowsDesktop
+            '-WindowStyle' = $IsWindows
+        }
+        foreach ($name in $supported.Keys) {
+            if ($supported[$name]) {
+                $result.CompletionMatches.CompletionText | Should -Contain $name
+            } else {
+                $result.CompletionMatches.CompletionText | Should -Not -Contain $name
+            }
+        }
+    }
+
+    It 'Does not fall back to filenames for invalid values or opaque payloads' -TestCases @(
+        @{ InputText = 'pwsh -InputFormat NoSuchFormat' }
+        @{ InputText = 'pwsh -Command Get-' }
+        @{ InputText = 'pwsh -EncodedCommand abc' }
+    ) {
+        param($InputText)
+        $result = TabExpansion2 $InputText $InputText.Length
+        $result.CompletionMatches | Should -BeNullOrEmpty
+    }
+
+    It 'Offers standard input first for empty File values while retaining paths' -TestCases @(
+        @{ Option = '-File' }
+        @{ Option = '-f' }
+    ) {
+        param($Option)
+        $directory = Join-Path $TestDrive 'stdin-completion'
+        New-Item -ItemType Directory -Path $directory -Force | Out-Null
+        Set-Content -LiteralPath (Join-Path $directory 'stdin-script.ps1') -Value 'param()'
+        New-Item -ItemType Directory -Path (Join-Path $directory 'stdin-folder') -Force | Out-Null
+        Push-Location $directory
+        try {
+            $inputText = "pwsh $Option "
+            $result = TabExpansion2 $inputText $inputText.Length
+            $result.CompletionMatches[0].CompletionText | Should -BeExactly '-'
+            $result.CompletionMatches[0].ResultType | Should -Be 'ParameterValue'
+            $result.CompletionMatches[0].ToolTip | Should -Match 'standard input'
+            $result.CompletionMatches[0].ToolTip | Should -Match 'prompts'
+            $result.CompletionMatches[0].ToolTip | Should -Match 'interactive session'
+            $result.ReplacementIndex | Should -Be $inputText.Length
+            $result.ReplacementLength | Should -Be 0
+            $edited = $inputText.Remove($result.ReplacementIndex, $result.ReplacementLength).Insert($result.ReplacementIndex, $result.CompletionMatches[0].CompletionText)
+            $edited | Should -BeExactly "pwsh $Option -"
+            ($result.CompletionMatches | Where-Object { $_.CompletionText -match 'stdin-script\.ps1' }) | Should -HaveCount 1
+            ($result.CompletionMatches | Where-Object { $_.CompletionText -match 'stdin-folder' }) | Should -HaveCount 1
+        } finally {
+            Pop-Location
+        }
+    }
+
+    It 'Completes the standard input sentinel preserving quotes in <InputText>' -TestCases @(
+        @{ InputText = 'pwsh -File -'; Expected = '-'; ExpectedInput = 'pwsh -File -' }
+        @{ InputText = "pwsh -File '-'"; Expected = "'-'"; ExpectedInput = "pwsh -File '-'" }
+        @{ InputText = 'pwsh -f "-"'; Expected = '"-"'; ExpectedInput = 'pwsh -f "-"' }
+        @{ InputText = 'pwsh -File ""'; Expected = '"-"'; ExpectedInput = 'pwsh -File "-"' }
+    ) {
+        param($InputText, $Expected, $ExpectedInput)
+        $result = TabExpansion2 $InputText $InputText.Length
+        $result.CompletionMatches[0].CompletionText | Should -BeExactly $Expected
+        $result.CompletionMatches[0].ResultType | Should -Be 'ParameterValue'
+        $edited = $InputText.Remove($result.ReplacementIndex, $result.ReplacementLength).Insert($result.ReplacementIndex, $result.CompletionMatches[0].CompletionText)
+        $edited | Should -BeExactly $ExpectedInput
+    }
+
+    It 'Does not offer standard input outside an empty or dash File value in <InputText>' -TestCases @(
+        @{ InputText = 'pwsh -File ./stdin' }
+        @{ InputText = 'pwsh ./stdin' }
+        @{ InputText = 'pwsh -SettingsFile ' }
+        @{ InputText = 'pwsh -ConfigurationFile ' }
+        @{ InputText = 'pwsh -WorkingDirectory ' }
+        @{ InputText = 'pwsh -File - ' }
+        @{ InputText = "pwsh -File '-' " }
+    ) {
+        param($InputText)
+        $result = TabExpansion2 $InputText $InputText.Length
+        ($result.CompletionMatches | Where-Object { $_.ResultType -eq 'ParameterValue' -and $_.CompletionText.Trim("'", '"') -eq '-' }) | Should -BeNullOrEmpty
+    }
+
+    It 'Completes quoted script paths and replaces only the path token' {
+        $scriptPath = Join-Path $TestDrive 'completion script.ps1'
+        Set-Content -LiteralPath $scriptPath -Value 'param()'
+        $prefixPath = Join-Path $TestDrive 'completion scr'
+        $inputText = "pwsh -NoProfile -File '$prefixPath'"
+        $result = TabExpansion2 $inputText $inputText.Length
+        $result.CompletionMatches | Should -HaveCount 1
+        $edited = $inputText.Remove($result.ReplacementIndex, $result.ReplacementLength).Insert($result.ReplacementIndex, $result.CompletionMatches[0].CompletionText)
+        $edited | Should -BeExactly "pwsh -NoProfile -File '$scriptPath'"
+    }
+
+    It 'Completes settings file paths and working directories' {
+        $settings = Join-Path $TestDrive 'completion-settings.json'
+        Set-Content -LiteralPath $settings -Value '{}'
+        $directory = Join-Path $TestDrive 'completion-directory'
+        New-Item -ItemType Directory -Path $directory | Out-Null
+        foreach ($case in @(
+            @{ Option = '-SettingsFile'; Prefix = (Join-Path $TestDrive 'completion-set'); Expected = $settings }
+            @{ Option = '-WorkingDirectory'; Prefix = (Join-Path $TestDrive 'completion-dir'); Expected = $directory }
+        )) {
+            $inputText = "pwsh $($case.Option) '$($case.Prefix)'"
+            $result = TabExpansion2 $inputText $inputText.Length
+            $result.CompletionMatches | Should -HaveCount 1
+            $result.CompletionMatches[0].CompletionText.Trim("'").TrimEnd([IO.Path]::DirectorySeparatorChar) | Should -BeExactly $case.Expected
+        }
+    }
+
+    It 'Completes only configuration files and directories for ConfigurationFile' {
+        $directory = Join-Path $TestDrive 'configuration completion'
+        New-Item -ItemType Directory -Path $directory | Out-Null
+        foreach ($name in 'configuration.pssc', 'configuration-uppercase.PSSC', 'configuration.json', 'configuration.ps1') {
+            Set-Content -LiteralPath (Join-Path $directory $name) -Value '@{}'
+        }
+
+        $childDirectory = Join-Path $directory 'configuration-folder'
+        New-Item -ItemType Directory -Path $childDirectory | Out-Null
+        $inputText = "pwsh -NoProfile -ConfigurationFile '$(Join-Path $directory 'configuration')'"
+        $result = TabExpansion2 $inputText $inputText.Length
+        $result.CompletionMatches | Should -HaveCount 3
+        $paths = $result.CompletionMatches | ForEach-Object { $_.CompletionText.Trim("'").TrimEnd([IO.Path]::DirectorySeparatorChar) }
+        $paths | Should -Contain (Join-Path $directory 'configuration.pssc')
+        $paths | Should -Contain (Join-Path $directory 'configuration-uppercase.PSSC')
+        $paths | Should -Contain $childDirectory
+        $paths | Should -Not -Contain (Join-Path $directory 'configuration.json')
+        $paths | Should -Not -Contain (Join-Path $directory 'configuration.ps1')
+
+        $match = $result.CompletionMatches | Where-Object { $_.CompletionText.Trim("'") -eq (Join-Path $directory 'configuration.pssc') }
+        $edited = $inputText.Remove($result.ReplacementIndex, $result.ReplacementLength).Insert($result.ReplacementIndex, $match.CompletionText)
+        $edited | Should -BeExactly "pwsh -NoProfile -ConfigurationFile '$(Join-Path $directory 'configuration.pssc')'"
+    }
+
+    It 'Leaves ConfigurationName completion empty without elevated Windows discovery' -Skip:($IsWindows -and (Test-IsElevated)) {
+        $path = Join-Path $TestDrive 'configuration-name-fallback.txt'
+        Set-Content -LiteralPath $path -Value 'test'
+        $inputText = "pwsh -ConfigurationName '$(Join-Path $TestDrive 'configuration-name-fall')'"
+        $result = TabExpansion2 $inputText $inputText.Length
+        $result.CompletionMatches | Should -BeNullOrEmpty
+    }
+
+    It 'Completes registered configuration names only with elevated Windows and running WinRM' -Skip:(!$IsWindows -or !(Test-IsElevated)) {
+        $service = Microsoft.PowerShell.Management\Get-Service -Name WinRM -ErrorAction Ignore
+        if (!$service -or $service.Status -ne 'Running') {
+            Set-ItResult -Skipped -Because 'Configuration discovery requires an already running WinRM service.'
+            return
+        }
+
+        $names = @(Microsoft.PowerShell.Core\Get-PSSessionConfiguration -Name '*' -ErrorAction Ignore | Select-Object -ExpandProperty Name)
+        if (!$names.Count) {
+            Set-ItResult -Skipped -Because 'No registered session configurations are available.'
+            return
+        }
+
+        $expected = $names[0]
+        $inputText = "pwsh -ConfigurationName '$($expected.Replace("'", "''"))'"
+        $result = TabExpansion2 $inputText $inputText.Length
+        $match = $result.CompletionMatches | Where-Object ListItemText -EQ $expected
+        $match | Should -HaveCount 1
+        $match.ResultType | Should -Be 'ParameterValue'
+        $match.ToolTip | Should -BeExactly $expected
+        $edited = $inputText.Remove($result.ReplacementIndex, $result.ReplacementLength).Insert($result.ReplacementIndex, $match.CompletionText)
+        $edited | Should -BeExactly $inputText
+    }
+
+    It 'Preserves registered native completer precedence in an isolated runspace' {
+        $shell = [powershell]::Create()
+        try {
+            $result = $shell.AddScript({
+                Register-ArgumentCompleter -Native -CommandName pwsh -ScriptBlock {
+                    [System.Management.Automation.CompletionResult]::new('custom-result', 'custom-result', 'ParameterValue', 'Registered completer')
+                }
+                TabExpansion2 'pwsh -NoP' 9
+            }).Invoke()
+            $shell.HadErrors | Should -BeFalse
+            $result.CompletionMatches | Should -HaveCount 1
+            $result.CompletionMatches[0].CompletionText | Should -BeExactly 'custom-result'
+        } finally {
+            $shell.Dispose()
+        }
+    }
+
+    It 'Preserves filename completion for an unrelated native application' {
+        $native = if ($IsWindows) { 'cmd.exe' } else { 'sh' }
+        $path = Join-Path $TestDrive 'unrelated-native-file.txt'
+        Set-Content -LiteralPath $path -Value 'test'
+        $inputText = "$native '$(Join-Path $TestDrive 'unrelated-native-fi')'"
+        $result = TabExpansion2 $inputText $inputText.Length
+        $result.CompletionMatches.CompletionText.Trim("'") | Should -Contain $path
+    }
+}
