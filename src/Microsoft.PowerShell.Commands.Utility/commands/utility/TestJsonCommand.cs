@@ -315,40 +315,58 @@ namespace Microsoft.PowerShell.Commands
         /// from constructs like OneOf or AnyOf.
         /// </summary>
         /// <param name="evaluationResult">The evaluation result to process.</param>
-        private void ReportValidationErrors(EvaluationResults evaluationResult)
+        private bool ReportValidationErrors(EvaluationResults evaluationResult)
         {
             // Skip this node and all children if validation passed
             if (evaluationResult.IsValid)
             {
-                return;
+                return false;
             }
 
             // Report errors at this level
-            HandleValidationErrors(evaluationResult);
+            bool errorReported = HandleValidationErrors(evaluationResult);
 
             // Recursively process child results
             if (evaluationResult.HasDetails)
             {
                 foreach (var nestedResult in evaluationResult.Details)
                 {
-                    ReportValidationErrors(nestedResult);
+                    errorReported |= ReportValidationErrors(nestedResult);
                 }
             }
+
+            if (!errorReported)
+            {
+                object evaluationPath = evaluationResult.HasDetails
+                    ? evaluationResult.Details[0].EvaluationPath
+                    : evaluationResult.EvaluationPath;
+                WriteValidationError(evaluationPath, evaluationResult.InstanceLocation);
+                errorReported = true;
+            }
+
+            return errorReported;
         }
 
-        private void HandleValidationErrors(EvaluationResults evaluationResult)
+        private bool HandleValidationErrors(EvaluationResults evaluationResult)
         {
             if (!evaluationResult.HasErrors)
             {
-                return;
+                return false;
             }
 
             foreach (var error in evaluationResult.Errors!)
             {
-                Exception exception = new(string.Format(TestJsonCmdletStrings.InvalidJsonAgainstSchemaDetailed, error.Value, evaluationResult.InstanceLocation));
-                ErrorRecord errorRecord = new(exception, "InvalidJsonAgainstSchemaDetailed", ErrorCategory.InvalidData, null);
-                WriteError(errorRecord);
+                WriteValidationError(error.Value, evaluationResult.InstanceLocation);
             }
+
+            return true;
+        }
+
+        private void WriteValidationError(object error, object instanceLocation)
+        {
+            Exception exception = new(string.Format(TestJsonCmdletStrings.InvalidJsonAgainstSchemaDetailed, error, instanceLocation));
+            ErrorRecord errorRecord = new(exception, "InvalidJsonAgainstSchemaDetailed", ErrorCategory.InvalidData, null);
+            WriteError(errorRecord);
         }
     }
 }
