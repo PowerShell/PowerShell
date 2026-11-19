@@ -657,9 +657,9 @@ Describe 'Default formatting AutoSize override' -Tag 'CI' {
         try {
             $PSStyle.OutputRendering = 'PlainText'
             $PSStyle.AutoSizeDefaultFormatting = $false
-            $defaultOutput = Get-Command Import-Module | Out-String
+            $defaultOutput = Get-Command Import-Module | Out-String -Width 120
             $PSStyle.AutoSizeDefaultFormatting = $true
-            $autoSizedOutput = Get-Command Import-Module | Out-String
+            $autoSizedOutput = Get-Command Import-Module | Out-String -Width 120
 
             $defaultOutput = $defaultOutput.Trim().Split("`n")
             $autoSizedOutput = $autoSizedOutput.Trim().Split("`n")
