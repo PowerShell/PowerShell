@@ -55,6 +55,9 @@ namespace TestExe
                     case "-writebytes":
                         WriteBytes(args.AsSpan()[1..]);
                         break;
+                    case "-writebytestream":
+                        WriteByteStream(int.Parse(args[1], CultureInfo.InvariantCulture));
+                        break;
                     case "-updateuserpath":
                         UpdateEnvPath(EnvTarget.User);
                         break;
@@ -96,6 +99,23 @@ namespace TestExe
                 }
 
                 stdout.WriteByte(value);
+            }
+        }
+
+        private static void WriteByteStream(int length)
+        {
+            using Stream stdout = Console.OpenStandardOutput();
+            byte[] buffer = new byte[256];
+            for (int i = 0; i < buffer.Length; i++)
+            {
+                buffer[i] = (byte)i;
+            }
+
+            while (length > 0)
+            {
+                int count = Math.Min(length, buffer.Length);
+                stdout.Write(buffer, 0, count);
+                length -= count;
             }
         }
 

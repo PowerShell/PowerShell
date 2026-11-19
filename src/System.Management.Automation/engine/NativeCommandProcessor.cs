@@ -110,7 +110,7 @@ namespace System.Management.Automation
     /// An output object from the child process.
     /// If it's from the error stream isError will be true.
     /// </summary>
-    internal class ProcessOutputObject
+    internal readonly struct ProcessOutputObject
     {
         /// <summary>
         /// Get the data from this object.
@@ -1009,7 +1009,7 @@ namespace System.Management.Automation
             }
         }
 
-        private ProcessOutputObject DequeueProcessOutput(bool blocking)
+        private bool TryDequeueProcessOutput(bool blocking, out ProcessOutputObject record)
         {
             if (blocking)
             {
@@ -1021,7 +1021,8 @@ namespace System.Management.Automation
                     {
                         // If adding is not complete we need a try {} catch {}
                         // to mitigate a concurrent call to CompleteAdding().
-                        return _nativeProcessOutputQueue.Take();
+                        record = _nativeProcessOutputQueue.Take();
+                        return true;
                     }
                     catch (InvalidOperationException)
                     {
@@ -1032,11 +1033,11 @@ namespace System.Management.Automation
                     }
                 }
 
-                return null;
+                record = default;
+                return false;
             }
 
-            _nativeProcessOutputQueue.TryTake(out ProcessOutputObject record);
-            return record;
+            return _nativeProcessOutputQueue.TryTake(out record);
         }
 
         /// <summary>
@@ -1066,8 +1067,7 @@ namespace System.Management.Automation
 
             if (stdOutRedirected || stdErrRedirected)
             {
-                ProcessOutputObject record;
-                while ((record = DequeueProcessOutput(blocking)) != null)
+                while (TryDequeueProcessOutput(blocking, out ProcessOutputObject record))
                 {
                     if (this.Command.Context.CurrentPipelineStopping)
                     {
@@ -1516,8 +1516,6 @@ namespace System.Management.Automation
 
         private void ProcessOutputRecord(ProcessOutputObject outputValue)
         {
-            Dbg.Assert(outputValue != null, "only object of type ProcessOutputObject expected");
-
             if (outputValue.Stream == MinishellStream.Error)
             {
                 ErrorRecord record = outputValue.Data as ErrorRecord;
@@ -2264,6 +2262,7 @@ namespace System.Management.Automation
         #endregion constructor
 
         private SteppablePipeline _pipeline;
+        private List<object> _formattedInput;
         private Serializer _xmlSerializer;
 
         /// <summary>
@@ -2304,28 +2303,35 @@ namespace System.Management.Automation
 
         private void AddTextInput(object input)
         {
-            AddTextInputFromFormattedArray(_pipeline.Process(input));
+            _pipeline.Process(input);
+            WriteFormattedInput();
         }
 
-        private void AddTextInputFromFormattedArray(Array formattedObjects)
+        private void WriteFormattedInput()
         {
-            foreach (var item in formattedObjects)
+            try
             {
-                string line = PSObject.ToStringParser(_command.Context, item);
-                // if process is already finished and we are trying to write something to it,
-                // we will get IOException
-                try
+                foreach (var item in _formattedInput)
                 {
-                    _streamWriter.WriteLine(line);
+                    string line = PSObject.ToStringParser(_command.Context, item);
+                    // if process is already finished and we are trying to write something to it,
+                    // we will get IOException
+                    try
+                    {
+                        _streamWriter.WriteLine(line);
+                    }
+                    catch (IOException)
+                    {
+                        // we are assuming that process is already finished
+                        // we should just stop processing at this point
+                        this.Dispose();
+                        break;
+                    }
                 }
-                catch (IOException)
-                {
-                    // we are assuming that process is already finished
-                    // we should just stop processing at this point
-                    this.Dispose();
-                    // stop foreach execution
-                    break;
-                }
+            }
+            finally
+            {
+                _formattedInput.Clear();
             }
         }
 
@@ -2384,8 +2390,10 @@ namespace System.Management.Automation
             }
             else // Text
             {
+                // Reuse the formatter's output buffer instead of allocating a result array per input.
+                _formattedInput = new List<object>();
                 _pipeline = ScriptBlock.Create("Out-String -Stream").GetSteppablePipeline();
-                _pipeline.Begin(true);
+                _pipeline.Begin(true, new Pipe(_formattedInput));
             }
         }
 
@@ -2448,8 +2456,8 @@ namespace System.Management.Automation
                 // for example, because downstream process finished
                 if (_pipeline != null)
                 {
-                    var finalResults = _pipeline.End();
-                    AddTextInputFromFormattedArray(finalResults);
+                    _pipeline.End();
+                    WriteFormattedInput();
                 }
             }
 

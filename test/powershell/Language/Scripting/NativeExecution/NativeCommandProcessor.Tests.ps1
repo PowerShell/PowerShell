@@ -1,5 +1,107 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
+Describe 'Native command streaming' -Tags 'CI' {
+    BeforeAll {
+        $powershell = Join-Path $PSHOME 'pwsh'
+    }
+
+    It 'Preserves formatting, empty lines, and final formatter output for <Name>' -TestCases @(
+        @{ Name = 'strings'; Data = @('first', "embedded`nnewline", '', 'last') }
+        @{ Name = 'objects'; Data = @([pscustomobject]@{ Value = 1 }, [pscustomobject]@{ Value = 2 }) }
+        @{ Name = 'mixed input'; Data = @('first', [pscustomobject]@{ Value = 1 }, 'last') }
+    ) {
+        param($Name, $Data)
+
+        $formatted = $Data | Out-String -Stream
+        $expected = $OutputEncoding.GetBytes(
+            ($formatted -join [Environment]::NewLine) + [Environment]::NewLine).
+            ForEach{ '{0:X2}' -f [int]$_ }
+
+        $Data | testexe -readbytes | Should -BeExactly $expected
+    }
+
+    It 'Preserves custom Out-String begin, process, and end output' {
+        function Out-String {
+            [CmdletBinding()]
+            param(
+                [Parameter(ValueFromPipeline)]
+                $InputObject,
+                [switch]$Stream
+            )
+
+            begin { 'begin' }
+            process { "[$InputObject]" }
+            end { 'end' }
+        }
+
+        $expected = $OutputEncoding.GetBytes(
+            (@('begin', '[one]', '[two]', 'end') -join [Environment]::NewLine) + [Environment]::NewLine).
+            ForEach{ '{0:X2}' -f [int]$_ }
+
+        'one', 'two' | testexe -readbytes | Should -BeExactly $expected
+    }
+
+    It 'Uses OutputEncoding when writing formatted input' {
+        $OutputEncoding = [Text.Encoding]::Unicode
+        $expected = @($OutputEncoding.GetPreamble()) + @($OutputEncoding.GetBytes("hello$([Environment]::NewLine)"))
+        $expectedHex = $expected.ForEach{ '{0:X2}' -f [int]$_ }
+
+        'hello' | testexe -readbytes | Should -BeExactly $expectedHex
+    }
+
+    It 'Flushes input before requesting the next upstream object' {
+        $acknowledgment = Join-Path $TestDrive 'input-received.txt'
+        $command = "[IO.File]::WriteAllText('$acknowledgment', [Console]::ReadLine()); [Console]::ReadLine()"
+
+        & {
+            'ready'
+            Wait-UntilTrue { Test-Path $acknowledgment } -TimeoutInMilliseconds 30000 -IntervalInMilliseconds 100 | Should -BeTrue
+            [IO.File]::ReadAllText($acknowledgment) | Should -BeExactly 'ready'
+            'done'
+        } | & $powershell -NoProfile -Command $command | Should -BeExactly 'done'
+    }
+
+    It 'Preserves output order, empty lines, and an unterminated final line' {
+        $command = 'for ($i = 0; $i -lt 4096; $i++) { [Console]::WriteLine($i) }; [Console]::WriteLine(); [Console]::Write("last")'
+        $actual = @(& $powershell -NoProfile -Command $command)
+
+        $actual.Count | Should -Be 4098
+        $actual[0..4095] | Should -BeExactly ([string[]](0..4095))
+        $actual[4096] | Should -BeExactly ''
+        $actual[4097] | Should -BeExactly 'last'
+    }
+
+    It 'Does not mistake a null CLIXML output record for end of output' {
+        $actual = @(& $powershell -NoProfile -Command { $null; 'after' })
+
+        $actual.Count | Should -Be 2
+        $actual[0] | Should -BeNullOrEmpty
+        $actual[1] | Should -BeExactly 'after'
+    }
+
+    It 'Delivers sparse output before the native process exits' {
+        $acknowledgment = Join-Path $TestDrive 'output-received.txt'
+        $command = @"
+[Console]::WriteLine('ready')
+`$deadline = [DateTime]::UtcNow.AddSeconds(30)
+while (-not [IO.File]::Exists('$acknowledgment')) {
+    if ([DateTime]::UtcNow -gt `$deadline) { throw 'Output was not delivered before exit' }
+    Start-Sleep -Milliseconds 100
+}
+[Console]::WriteLine('last')
+"@
+
+        & $powershell -NoProfile -Command $command | ForEach-Object {
+            if ($_ -eq 'ready') {
+                [IO.File]::WriteAllText($acknowledgment, 'received')
+            }
+
+            $_
+        } | Should -BeExactly 'ready', 'last'
+    }
+}
+
 Describe 'Native pipeline should have proper encoding' -tags 'CI' {
     It '$OutputEncoding should be set to UTF8 without BOM' {
         $OutputEncoding.BodyName | Should -Be "utf-8"
