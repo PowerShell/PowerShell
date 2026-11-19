@@ -303,9 +303,46 @@ namespace Microsoft.PowerShell.Commands
             return retVal;
         }
 
+        internal PSPropertyExpressionResult GetValueForFormatting(PSObject target)
+        {
+            if (Script == null)
+            {
+                if (_isResolved)
+                {
+                    return GetValue(target, eatExceptions: true);
+                }
+
+                if (!HasWildCardCharacters
+                    && PSObject.Base(target) is not Hashtable
+                    && target.BaseObject is not System.Dynamic.IDynamicMetaObjectProvider)
+                {
+                    PSMemberInfo member = target.Members[_stringValue];
+                    if (member == null)
+                    {
+                        return null;
+                    }
+
+                    if (member is PSPropertyInfo)
+                    {
+                        if (_resolvedExpression == null || !string.Equals(_resolvedExpression._stringValue, member.Name, StringComparison.Ordinal))
+                        {
+                            _resolvedExpression = new PSPropertyExpression(member.Name, isResolved: true);
+                        }
+
+                        return _resolvedExpression.GetValue(target, eatExceptions: true);
+                    }
+                }
+            }
+
+            // Expansions and scripts retain their full evaluation and error behavior.
+            List<PSPropertyExpressionResult> results = GetValues(target);
+            return results.Count == 0 ? null : results[0];
+        }
+
         #region Private Members
 
         private CallSite<Func<CallSite, object, object>> _getValueDynamicSite;
+        private PSPropertyExpression _resolvedExpression;
 
         private PSPropertyExpressionResult GetValue(PSObject target, bool eatExceptions)
         {

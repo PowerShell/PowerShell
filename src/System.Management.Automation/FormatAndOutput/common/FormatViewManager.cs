@@ -463,8 +463,71 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// Class to manage the selection of a desired view type
     /// for out of band objects.
     /// </summary>
-    internal static class OutOfBandFormatViewManager
+    internal sealed class OutOfBandFormatViewManager
     {
+        private TypeInfoDataBase _cachedDatabase;
+        private string[] _cachedTypeNames;
+        private ViewDefinition _cachedView;
+        private bool _cacheEnabled;
+
+        internal ViewDefinition GetOutOfBandView(PSPropertyExpressionFactory expressionFactory, TypeInfoDataBase db, Collection<string> typeNames)
+        {
+            if (!ReferenceEquals(db, _cachedDatabase))
+            {
+                _cachedDatabase = db;
+                _cachedTypeNames = null;
+                _cachedView = null;
+                _cacheEnabled = true;
+                foreach (ViewDefinition view in db.viewDefinitionsSection.viewDefinitionList)
+                {
+                    if (!DisplayDataQuery.IsOutOfBandView(view))
+                    {
+                        continue;
+                    }
+
+                    foreach (TypeOrGroupReference reference in view.appliesTo.referenceList)
+                    {
+                        if (reference.conditionToken != null)
+                        {
+                            // Conditional selection must run for every object.
+                            _cacheEnabled = false;
+                            break;
+                        }
+                    }
+
+                    if (!_cacheEnabled)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            if (!_cacheEnabled)
+            {
+                return DisplayDataQuery.GetOutOfBandView(expressionFactory, db, typeNames);
+            }
+
+            if (_cachedTypeNames != null && _cachedTypeNames.Length == typeNames.Count)
+            {
+                int index = 0;
+                while (index < typeNames.Count && string.Equals(_cachedTypeNames[index], typeNames[index], StringComparison.OrdinalIgnoreCase))
+                {
+                    index++;
+                }
+
+                if (index == typeNames.Count)
+                {
+                    return _cachedView;
+                }
+            }
+
+            _cachedView = DisplayDataQuery.GetOutOfBandView(expressionFactory, db, typeNames);
+            // Snapshot the values, not the mutable PSObject type-name collection.
+            _cachedTypeNames = new string[typeNames.Count];
+            typeNames.CopyTo(_cachedTypeNames, 0);
+            return _cachedView;
+        }
+
         private static bool IsNotRemotingProperty(string name)
         {
             var isRemotingPropertyName = name.Equals(RemotingConstants.ComputerNameNoteProperty, StringComparison.OrdinalIgnoreCase)
@@ -478,13 +541,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal static bool HasNonRemotingProperties(PSObject so) => so.GetFirstPropertyOrDefault(NameIsNotRemotingProperty) != null;
 
-        internal static FormatEntryData GenerateOutOfBandData(TerminatingErrorContext errorContext, PSPropertyExpressionFactory expressionFactory,
+        internal FormatEntryData GenerateOutOfBandData(TerminatingErrorContext errorContext, PSPropertyExpressionFactory expressionFactory,
                     TypeInfoDataBase db, PSObject so, int enumerationLimit, bool useToStringFallback, out List<ErrorRecord> errors)
         {
             errors = null;
 
             var typeNames = so.InternalTypeNames;
-            ViewDefinition view = DisplayDataQuery.GetOutOfBandView(expressionFactory, db, typeNames);
+            ViewDefinition view = GetOutOfBandView(expressionFactory, db, typeNames);
 
             ViewGenerator outOfBandViewGenerator;
             if (view != null)

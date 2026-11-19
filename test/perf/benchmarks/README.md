@@ -52,6 +52,28 @@ Start-Benchmarking -Runtime <string[]> [-Filter <string[]>] [-Artifacts <string>
 ```
 Run `Get-Help Start-Benchmarking -Full` to see the description of each parameter.
 
+### Formatting workloads
+
+The standalone [`Measure-Formatting.ps1`](../Measure-Formatting.ps1) measures
+formatting packets, registered views, tables, wrapping, calculated columns, lists,
+and wide output without requiring BenchmarkDotNet. Inputs are precreated plain,
+ANSI-decorated, and word-rich long fields. Run from the repository root using
+separate baseline and candidate Release executables:
+
+```powershell
+& 'C:\builds\baseline\pwsh.exe' -NoProfile -File .\test\perf\Measure-Formatting.ps1 -RowCount 20000 -RepeatCount 11 -ResultPath C:\results\baseline.json
+& 'C:\builds\candidate\pwsh.exe' -NoProfile -File .\test\perf\Measure-Formatting.ps1 -RowCount 20000 -RepeatCount 11 -ResultPath C:\results\candidate.json
+```
+
+The result directory must already exist. JSON contains runtime metadata and raw
+samples; a companion CSV contains medians and ranges. Each scenario receives three
+warmups and seeded, shuffled repetitions at width 120. Construction and terminal/file
+I/O are excluded. Allocation is process-wide `GC.GetTotalAllocatedBytes(true)`,
+not peak or retained memory. Run builds sequentially on an otherwise idle machine
+with the same runtime and configuration. Compare each scenario against its own
+baseline; the enumeration scenario is a control, not a subtractable pipeline cost.
+Measure first-row latency separately when changing formatter buffering.
+
 ### Regression Detection
 
 We use the tool [`ResultsComparer`](../dotnet-tools/ResultsComparer) to compare the provided benchmark results.
