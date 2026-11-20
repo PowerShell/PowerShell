@@ -166,6 +166,29 @@ Describe "Move-Item with -PreservePathFrom" -Tag "CI" {
         Join-Path $sourceDirectory "Sub1" | Should -Not -Exist
     }
 
+    It "Does not create directories when the move is rejected" {
+        $errorRecord = $null
+        Move-Item (Join-Path $sourceDirectory "Sub1") `
+            -PreservePathFrom $sourceDirectory `
+            -Destination (Join-Path $sourceDirectory "Sub1/Export") -ErrorVariable errorRecord -ErrorAction SilentlyContinue
+
+        $errorRecord.FullyQualifiedErrorId | Should -Be "MoveItemArgumentError,Microsoft.PowerShell.Commands.MoveItemCommand"
+        Join-Path $sourceDirectory "Sub1/Export" | Should -Not -Exist
+    }
+
+    It "Reports an error for an existing target directory instead of nesting it again" {
+        New-Item -ItemType Directory (Join-Path $destinationDirectory "Sub1") -Force | Out-Null
+
+        $errorRecord = $null
+        Move-Item (Join-Path $sourceDirectory "Sub1") `
+            -PreservePathFrom $sourceDirectory `
+            -Destination $destinationDirectory -ErrorVariable errorRecord -ErrorAction SilentlyContinue
+
+        $errorRecord | Should -Not -BeNullOrEmpty
+        Join-Path $destinationDirectory "Sub1/Sub1" | Should -Not -Exist
+        Join-Path $sourceDirectory "Sub1" | Should -Exist
+    }
+
     It "Writes a non-terminating error when the item is not below the base path" {
         $outsideFile = "$TESTDRIVE/PreservePathFromOutside.log"
         Set-Content $outsideFile -Value "outside"

@@ -122,6 +122,27 @@ Describe "Copy-Item with -PreservePathFrom" -Tags "CI" {
         )
     }
 
+    It "Resolves the base path without applying the -Include filter of the copy operation to it" {
+        Copy-Item (Join-Path $sourceDirectory "*.log") `
+            -Include *.log `
+            -PreservePathFrom $sourceDirectory `
+            -Destination $destinationDirectory
+
+        Join-Path $destinationDirectory "Root.log" | Should -Exist
+    }
+
+    It "Copies to the existing target directory instead of nesting it again" {
+        New-Item -ItemType Directory (Join-Path $destinationDirectory "Sub1") -Force | Out-Null
+
+        Copy-Item (Join-Path $sourceDirectory "Sub1") `
+            -PreservePathFrom $sourceDirectory `
+            -Destination $destinationDirectory -Recurse -Force
+
+        Join-Path $destinationDirectory "Sub1/First.log" | Should -Exist
+        Join-Path $destinationDirectory "Sub1/Deep/Second.log" | Should -Exist
+        Join-Path $destinationDirectory "Sub1/Sub1" | Should -Not -Exist
+    }
+
     It "Returns the copied items with the preserved paths when using -PassThru" {
         $result = Get-ChildItem $sourceDirectory -File -Recurse |
             Copy-Item -PreservePathFrom $sourceDirectory -Destination $destinationDirectory -PassThru

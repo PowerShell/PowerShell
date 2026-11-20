@@ -3585,24 +3585,39 @@ namespace Microsoft.PowerShell.Commands
         /// The destination provider path. When this method returns true it contains
         /// the destination adjusted to preserve the relative path of the item.
         /// </param>
+        /// <param name="destinationIsExactTarget">
+        /// When true, the returned destination is the exact target path of the item
+        /// and no item name should be appended to it when copying or moving.
+        /// </param>
         /// <returns>
         /// False if the destination could not be computed, in which case an error
         /// has been written; otherwise true.
         /// </returns>
-        private bool TryGetDestinationWithPreservedPath(
+        private bool TryGetPreservedDestination(
             string path,
             string preservePathFrom,
-            ref string destinationPath)
+            ref string destinationPath,
+            out bool destinationIsExactTarget)
         {
-            // Resolve the base path the folder structure is preserved from.
+            destinationIsExactTarget = false;
+
+            // Resolve the base path with an isolated context so that the Include,
+            // Exclude, and Filter settings of the copy or move operation are not
+            // applied to the base directory while it is being resolved.
             Collection<string> resolvedBasePaths = null;
             ProviderInfo baseProvider = null;
+
+            CmdletProviderContext resolutionContext = new CmdletProviderContext(Context);
+            resolutionContext.SetFilters(
+                new Collection<string>(),
+                new Collection<string>(),
+                null);
 
             try
             {
                 resolvedBasePaths = Context.ExecutionContext.SessionState.Path.GetResolvedProviderPathFromPSPath(
                     preservePathFrom,
-                    Context,
+                    resolutionContext,
                     out baseProvider);
             }
             catch (ItemNotFoundException pathNotFound)
@@ -3669,7 +3684,8 @@ namespace Microsoft.PowerShell.Commands
 
             if (relativePath == ".")
             {
-                // The item is the base path itself; keep the destination unchanged.
+                // The item is the base path itself; keep the destination and the
+                // regular copy or move semantics unchanged.
                 return true;
             }
 
@@ -3690,21 +3706,31 @@ namespace Microsoft.PowerShell.Commands
                 return false;
             }
 
+            // The destination is the exact target of the item; the copy and move
+            // code paths must not append the item name to it again. The parent of
+            // the destination is created by the callers once the operation has been
+            // validated and confirmed, so that rejected operations do not leave
+            // newly created directories behind.
             destinationPath = MakePath(destinationPath, relativePath);
+            destinationIsExactTarget = true;
 
-            // The parent of the destination has to exist so that the item can be
-            // copied or moved below it. Copy-Item creates the destination directory
-            // itself when copying a directory, but creating the parent is harmless
-            // there because Copy-Item would create it anyway.
-            // CreateDirectory honors ShouldProcess, so nothing is created for -WhatIf.
+            return true;
+        }
+
+        /// <summary>
+        /// Creates the parent directory of the specified destination path when it
+        /// does not exist yet, so that an item with a preserved relative path can
+        /// be copied or moved below it.
+        /// </summary>
+        /// <param name="destinationPath">The exact target path of the item.</param>
+        private void CreateDestinationParent(string destinationPath)
+        {
             string destinationParent = GetParentPath(destinationPath, null);
 
             if (!string.IsNullOrEmpty(destinationParent) && !IsItemContainer(destinationParent))
             {
-                CreateDirectory(destinationParent, streamOutput: false);
+                Directory.CreateDirectory(destinationParent);
             }
-
-            return true;
         }
 
         /// <summary>
@@ -3763,6 +3789,8 @@ namespace Microsoft.PowerShell.Commands
 
             // When preserving the folder structure below a base path, adjust the
             // destination by the relative path of the item below that base path.
+            bool preservePath = false;
+
             if (!string.IsNullOrEmpty(copyDynamicParameter?.PreservePathFrom))
             {
                 if (fromSession != null || toSession != null)
@@ -3778,10 +3806,16 @@ namespace Microsoft.PowerShell.Commands
                     return;
                 }
 
-                if (!TryGetDestinationWithPreservedPath(path, copyDynamicParameter.PreservePathFrom, ref destinationPath))
+                if (!TryGetPreservedDestination(
+                        path,
+                        copyDynamicParameter.PreservePathFrom,
+                        ref destinationPath,
+                        out bool destinationIsExactTarget))
                 {
                     return;
                 }
+
+                preservePath = destinationIsExactTarget;
             }
 
             _excludeMatcher = SessionStateUtilities.CreateWildcardsFromStrings(Exclude, WildcardOptions.IgnoreCase);
@@ -3808,7 +3842,7 @@ namespace Microsoft.PowerShell.Commands
                     using (System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create())
                     {
                         ps.Runspace = toSession.Runspace;
-                        CopyItemLocalOrToSession(path, destinationPath, recurse, Force, ps);
+                        CopyItemLocalOrToSession(path, destinationPath, recurse, Force, ps, destinationIsExactTarget: preservePath);
                     }
                 }
                 else // Copy-Item local
@@ -3824,7 +3858,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    CopyItemLocalOrToSession(path, destinationPath, recurse, Force, null);
+                    CopyItemLocalOrToSession(path, destinationPath, recurse, Force, null, destinationIsExactTarget: preservePath);
                     if (Stopping || _copiedFiles == _totalFiles)
                     {
                         _copyStopwatch.Stop();
@@ -3959,7 +3993,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void CopyItemLocalOrToSession(string path, string destinationPath, bool recurse, bool Force, System.Management.Automation.PowerShell ps)
+        private void CopyItemLocalOrToSession(string path, string destinationPath, bool recurse, bool Force, System.Management.Automation.PowerShell ps, bool destinationIsExactTarget = false)
         {
             bool isContainer = IsItemContainer(path);
 
@@ -3973,14 +4007,14 @@ namespace Microsoft.PowerShell.Commands
                     DirectoryInfo dir = new DirectoryInfo(path);
 
                     // Now copy the directory to the destination
-                    CopyDirectoryInfoItem(dir, destinationPath, recurse, Force, ps);
+                    CopyDirectoryInfoItem(dir, destinationPath, recurse, Force, ps, destinationIsExactTarget);
                 }
                 else // !isContainer
                 {
                     // Get the file info
                     FileInfo file = new FileInfo(path);
 
-                    CopyFileInfoItem(file, destinationPath, Force, ps);
+                    CopyFileInfoItem(file, destinationPath, Force, ps, destinationIsExactTarget);
                 }
             }
             finally
@@ -3994,7 +4028,8 @@ namespace Microsoft.PowerShell.Commands
             string destination,
             bool recurse,
             bool force,
-            System.Management.Automation.PowerShell ps)
+            System.Management.Automation.PowerShell ps,
+            bool destinationIsExactTarget = false)
         {
             Dbg.Diagnostics.Assert(
                 directory != null,
@@ -4006,10 +4041,13 @@ namespace Microsoft.PowerShell.Commands
             // will become a child of that directory.
             // If the destination doesn't exist we will just try to copy to that new
             // path.
+            // If the destination is the exact target of the directory, for example
+            // when preserving the relative path of an item, the directory name is
+            // not appended to it.
 
             if (ps == null)
             {
-                if (IsItemContainer(destination))
+                if (!destinationIsExactTarget && IsItemContainer(destination))
                 {
                     destination = MakePath(destination, directory.Name);
                 }
@@ -4135,17 +4173,19 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void CopyFileInfoItem(FileInfo file, string destinationPath, bool force, System.Management.Automation.PowerShell ps)
+        private void CopyFileInfoItem(FileInfo file, string destinationPath, bool force, System.Management.Automation.PowerShell ps, bool destinationIsExactTarget = false)
         {
             Dbg.Diagnostics.Assert(
                 file != null,
                 "The caller should verify file.");
 
             // If the destination is a container, add the file name
-            // to the destination path.
+            // to the destination path. If the destination is the exact target of
+            // the file, for example when preserving the relative path of an item,
+            // the file name is not appended to it.
             if (ps == null)
             {
-                if (IsItemContainer(destinationPath))
+                if (!destinationIsExactTarget && IsItemContainer(destinationPath))
                 {
                     destinationPath = MakePath(destinationPath, file.Name);
                 }
@@ -4181,6 +4221,15 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (ps == null)
                         {
+                            // When the destination is the exact target of the file,
+                            // for example when preserving the relative path of an
+                            // item, create the parent of the destination if it does
+                            // not exist yet.
+                            if (destinationIsExactTarget)
+                            {
+                                CreateDestinationParent(destinationPath);
+                            }
+
                             // Now copy the file
                             // We assume that if we get called we want to make
                             // the copy even if the destination already exists.
@@ -6072,14 +6121,22 @@ namespace Microsoft.PowerShell.Commands
 
             // When preserving the folder structure below a base path, adjust the
             // destination by the relative path of the item below that base path.
+            // The adjusted destination is the exact target of the item.
             MoveItemDynamicParameters moveDynamicParameter = DynamicParameters as MoveItemDynamicParameters;
+            bool preservePath = false;
 
             if (!string.IsNullOrEmpty(moveDynamicParameter?.PreservePathFrom))
             {
-                if (!TryGetDestinationWithPreservedPath(path, moveDynamicParameter.PreservePathFrom, ref destination))
+                if (!TryGetPreservedDestination(
+                        path,
+                        moveDynamicParameter.PreservePathFrom,
+                        ref destination,
+                        out bool destinationIsExactTarget))
                 {
                     return;
                 }
+
+                preservePath = destinationIsExactTarget;
             }
 
             try
@@ -6092,7 +6149,7 @@ namespace Microsoft.PowerShell.Commands
                     // Get the DirectoryInfo
                     DirectoryInfo dir = new DirectoryInfo(path);
 
-                    if (ItemExists(destination) &&
+                    if (!preservePath && ItemExists(destination) &&
                         IsItemContainer(destination))
                     {
                         destination = MakePath(destination, dir.Name);
@@ -6117,6 +6174,14 @@ namespace Microsoft.PowerShell.Commands
                     // Confirm the move with the user
                     if (ShouldProcess(resource, action))
                     {
+                        // When the destination is the exact target of the directory,
+                        // for example when preserving the relative path of an item,
+                        // create the parent of the destination if it does not exist yet.
+                        if (preservePath)
+                        {
+                            CreateDestinationParent(destination);
+                        }
+
                         // Now move the directory
                         MoveDirectoryInfoItem(dir, destination, Force);
                     }
@@ -6131,7 +6196,7 @@ namespace Microsoft.PowerShell.Commands
                         "FileInfo should be throwing an exception but it's " +
                         "returning null instead");
 
-                    if (IsItemContainer(destination))
+                    if (!preservePath && IsItemContainer(destination))
                     {
                         // Construct the new file path from the destination
                         // directory and the file name
@@ -6146,6 +6211,14 @@ namespace Microsoft.PowerShell.Commands
                     // Confirm the move with the user
                     if (ShouldProcess(resource, action))
                     {
+                        // When the destination is the exact target of the file,
+                        // for example when preserving the relative path of an item,
+                        // create the parent of the destination if it does not exist yet.
+                        if (preservePath)
+                        {
+                            CreateDestinationParent(destination);
+                        }
+
                         MoveFileInfoItem(file, destination, Force, true);
                     }
                 }
