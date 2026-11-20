@@ -55,6 +55,12 @@ namespace Microsoft.PowerShell.Commands
         private const string ParameterSet_FQName_ViaPsrpSession = "FullyQualifiedNameAndPSSession";
         private const string ParameterSet_ViaWinCompat = "WinCompat";
         private const string ParameterSet_FQName_ViaWinCompat = "FullyQualifiedNameAndWinCompat";
+        private static readonly char[] s_pathTraversalChars =
+#if UNIX
+            ['\\', '/'];
+#else
+            ['\\', '/', ':'];
+#endif
 
         /// <summary>
         /// This parameter specifies whether to import to the current session state
@@ -1078,6 +1084,22 @@ namespace Microsoft.PowerShell.Commands
             Version remoteModuleVersion,
             PSSession psSession)
         {
+            if (string.IsNullOrEmpty(remoteModuleName) || remoteModuleName.IndexOfAny(s_pathTraversalChars) >= 0 || remoteModuleName is "." or "..")
+            {
+                string errorMessage = string.Format(
+                    CultureInfo.InvariantCulture,
+                    Modules.SkipModuleWithInvalidModuleName,
+                    remoteModuleName);
+                ErrorRecord errorRecord = new ErrorRecord(
+                    new ArgumentException(errorMessage),
+                    nameof(Modules.SkipModuleWithInvalidModuleName),
+                    ErrorCategory.InvalidData,
+                    remoteModuleName);
+                this.WriteError(errorRecord);
+
+                return null;
+            }
+
             string temporaryModulePath = RemoteDiscoveryHelper.GetModulePath(
                 remoteModuleName,
                 remoteModuleVersion,
@@ -1125,6 +1147,7 @@ namespace Microsoft.PowerShell.Commands
 
                 //
                 // rename the psd1 file
+                // remoteModuleName is sanitized at this point
                 //
                 string localPsd1File = Path.Combine(temporaryModulePath, remoteModuleName + ".psd1");
                 if (File.Exists(localPsd1File))
