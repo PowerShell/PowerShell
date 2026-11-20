@@ -434,6 +434,31 @@ Describe "Get-ChildItem" -Tags "CI" {
             $result.Name | Should -Contain 'deep.js'
         }
 
+        It 'keeps an exactly targeted directory accessible without other filters' {
+            $result = Get-ChildItem -Path (Join-Path $excludeRoot 'node_modules') -ExcludeDirectory node_modules
+
+            $result | Should -HaveCount 2
+            $result.Name | Should -Contain 'lib.js'
+            $result.Name | Should -Contain 'nested'
+        }
+
+        It 'keeps an exactly targeted directory accessible with -LiteralPath and -Exclude' {
+            $result = Get-ChildItem -LiteralPath (Join-Path $excludeRoot 'node_modules') -Exclude *.js -ExcludeDirectory node_modules
+
+            $result | Should -HaveCount 1
+            $result.Name | Should -BeExactly 'nested'
+        }
+
+        # When -Exclude/-Include is present, the engine resolves even a wildcard-free -Path by globbing
+        # it, so the target's own name is subject to the active filters. -ExcludeDirectory therefore
+        # behaves the same way -Exclude itself does for an exactly named target (see issue #28466);
+        # -LiteralPath keeps such targets accessible.
+        It 'excludes an exactly targeted directory itself when other filters force globbing' {
+            $result = Get-ChildItem -Path (Join-Path $excludeRoot 'node_modules') -Exclude *.js -ExcludeDirectory node_modules
+
+            $result | Should -BeNullOrEmpty
+        }
+
         It 'rejects an empty exclusion pattern' {
             { Get-ChildItem -Path $excludeRoot -ExcludeDirectory '' } | Should -Throw
         }
