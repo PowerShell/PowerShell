@@ -1777,6 +1777,12 @@ namespace System.Management.Automation
                     continue;
                 }
 
+                // If the parameter is not in any of the current parameter sets, no parameter set data can match.
+                if ((parameter.Parameter.ParameterSetFlags & _currentParameterSetFlag) == 0 && !parameter.Parameter.IsInAllSets)
+                {
+                    continue;
+                }
+
                 var matchingParameterSetMetadata = parameter.Parameter.GetMatchingParameterSetData(_currentParameterSetFlag);
 
                 uint parameterMandatorySets = 0;
