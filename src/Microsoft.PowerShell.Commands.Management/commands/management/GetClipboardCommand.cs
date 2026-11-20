@@ -64,7 +64,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                textContent = Clipboard.GetText();
+                textContent = Clipboard.GetText((Hashtable)GetVariableValue("PSClipboardActions"));
             }
             catch (PlatformNotSupportedException)
             {
