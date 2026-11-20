@@ -1448,7 +1448,7 @@ namespace Microsoft.PowerShell.Commands
                 return true;
             }
 
-            if (values[0].StartsWith(FieldsDirectivePrefix))
+            if (values[0].StartsWith(FieldsDirectivePrefix, StringComparison.Ordinal))
             {
                 values[0] = values[0].Substring(FieldsDirectivePrefix.Length);
                 return true;

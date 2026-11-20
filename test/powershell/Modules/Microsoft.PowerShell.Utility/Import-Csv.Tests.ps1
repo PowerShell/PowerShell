@@ -141,15 +141,19 @@ Describe "Import-Csv File Format Tests" -Tags "CI" {
         }
     }
 
-    It "Uses the #Fields directive in a space-delimited W3C log" {
+    It "Uses the #Fields directive <position> in a space-delimited W3C log" -TestCases @(
+        @{ position = 'on the first line'; precedingDirectives = @() }
+        @{ position = 'after other directives'; precedingDirectives = @('#Version: 1.0', '#Software: Example server') }
+    ) {
+        param($precedingDirectives)
+
         $testPath = Join-Path $TestDrive 'space-delimited.log'
-        @'
-#Version: 1.0
-#Software: Example server
-#Fields: time cs-method cs-uri
-00:34:23 GET /first
-12:21:16 POST /second
-'@ | Set-Content -LiteralPath $testPath
+        $logLines = $precedingDirectives + @(
+            '#Fields: time cs-method cs-uri'
+            '00:34:23 GET /first'
+            '12:21:16 POST /second'
+        )
+        Set-Content -LiteralPath $testPath -Value $logLines
 
         $rows = @(Import-Csv -LiteralPath $testPath -Delimiter ' ')
 
