@@ -102,6 +102,11 @@ namespace mvc
                     defaults: new { controller = "Get", action = "Index" },
                     constraints: new RouteValueDictionary(new { httpMethod = new HttpMethodRouteConstraint("DELETE") }));
                 routes.MapRoute(
+                    name: "query",
+                    template: "Query",
+                    defaults: new { controller = "Get", action = "Index" },
+                    constraints: new RouteValueDictionary(new { httpMethod = new HttpMethodRouteConstraint("QUERY") }));
+                routes.MapRoute(
                     name: "retry",
                     template: "Retry/{sessionId?}/{failureCode?}/{failureCount?}",
                     defaults: new { controller = "Retry", action = "Retry" });
