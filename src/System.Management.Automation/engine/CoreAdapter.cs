@@ -5755,7 +5755,7 @@ namespace System.Management.Automation
         protected override void PropertySet(PSProperty property, object setValue, bool convertIfPossible)
         {
             DataRow dataRow = (DataRow)property.baseObject;
-            dataRow[(string)property.adapterData] = setValue;
+            dataRow[(string)property.adapterData] = PSObject.Base(setValue);
             return;
         }
         #endregion virtual
@@ -5878,7 +5878,7 @@ namespace System.Management.Automation
         protected override void PropertySet(PSProperty property, object setValue, bool convertIfPossible)
         {
             DataRowView dataRowView = (DataRowView)property.baseObject;
-            dataRowView[(string)property.adapterData] = setValue;
+            dataRowView[(string)property.adapterData] = PSObject.Base(setValue);
             return;
         }
         #endregion virtual
