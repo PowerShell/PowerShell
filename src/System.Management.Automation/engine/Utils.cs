@@ -1553,6 +1553,81 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// The unit suffixes used by <see cref="ToHumanReadableSize"/>, from bytes to exabytes.
+        /// </summary>
+        private static readonly string[] SizeUnitSuffixes = { "B", "KB", "MB", "GB", "TB", "PB", "EB" };
+
+        /// <summary>
+        /// Returns a compact, human-readable string representation of a byte count using binary (1024-based)
+        /// units, similar to how Windows File Explorer displays file sizes. The value is scaled to the largest
+        /// unit that keeps it below 1024 and rendered with at most one decimal digit, for example
+        /// "745 B", "16.7 KB", "62.9 MB", "820.2 MB", or "1.2 TB". The value is truncated, rather than
+        /// rounded, so that it never renders as "1024" of a unit.
+        /// </summary>
+        /// <param name="bytes">The size in bytes.</param>
+        /// <returns>The human-readable size string.</returns>
+        internal static string ToHumanReadableSize(long bytes)
+        {
+            double size = bytes;
+            int unitIndex = 0;
+            while (unitIndex < SizeUnitSuffixes.Length - 1 && Math.Abs(size) >= 1024)
+            {
+                size /= 1024;
+                unitIndex++;
+            }
+
+            if (unitIndex == 0)
+            {
+                return string.Create(CultureInfo.CurrentCulture, $"{bytes} B");
+            }
+
+            double truncated = Math.Truncate(size * 10) / 10;
+            return string.Create(CultureInfo.CurrentCulture, $"{truncated:0.#} {SizeUnitSuffixes[unitIndex]}");
+        }
+
+        /// <summary>
+        /// Returns a human-readable, relative representation of a point in time compared to
+        /// <paramref name="relativeTo"/>, for example "just now", "3 min ago", "19 hours ago",
+        /// or "6 days ago". Values that are in the future, or further in the past than 7 days,
+        /// are formatted as a culture-aware short date and time.
+        /// </summary>
+        /// <param name="time">The point in time to format.</param>
+        /// <param name="relativeTo">The reference time, usually the current time.</param>
+        /// <returns>The human-readable, relative time string.</returns>
+        internal static string ToRelativeTimeString(DateTime time, DateTime relativeTo)
+        {
+            TimeSpan elapsed = relativeTo - time;
+
+            if (elapsed >= TimeSpan.Zero)
+            {
+                if (elapsed < TimeSpan.FromMinutes(1))
+                {
+                    return "just now";
+                }
+
+                if (elapsed < TimeSpan.FromHours(1))
+                {
+                    int minutes = (int)elapsed.TotalMinutes;
+                    return string.Create(CultureInfo.CurrentCulture, $"{minutes} min ago");
+                }
+
+                if (elapsed < TimeSpan.FromDays(1))
+                {
+                    int hours = (int)elapsed.TotalHours;
+                    return string.Create(CultureInfo.CurrentCulture, $"{hours} {(hours == 1 ? "hour" : "hours")} ago");
+                }
+
+                if (elapsed < TimeSpan.FromDays(7))
+                {
+                    int days = (int)elapsed.TotalDays;
+                    return string.Create(CultureInfo.CurrentCulture, $"{days} {(days == 1 ? "day" : "days")} ago");
+                }
+            }
+
+            return string.Create(CultureInfo.CurrentCulture, $"{time,10:d} {time,8:t}");
+        }
+
+        /// <summary>
         /// Returns true if the current session is restricted (JEA or similar sessions)
         /// </summary>
         /// <param name="context">ExecutionContext.</param>

@@ -93,6 +93,16 @@ Describe 'Tests for $PSStyle automatic variable' -Tag 'CI' {
         $PSStyle | Out-String | Should -Match 'AutoSizeDefaultFormatting'
     }
 
+    It '$PSStyle default view includes HumanReadable' {
+        $PSStyle | Out-String | Should -Match 'HumanReadable'
+    }
+
+    It '$PSStyle.HumanReadable has correct defaults' {
+        $PSStyle.HumanReadable.Size | Should -BeTrue
+        $PSStyle.HumanReadable.Datetime | Should -BeFalse
+        $PSStyle.HumanReadable.Timespan | Should -BeFalse
+    }
+
     It '$PSStyle has correct defaults for style <key>' -TestCases (Get-TestCases $styleDefaults) {
         param($key, $value)
 

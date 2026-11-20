@@ -1986,26 +1986,45 @@ namespace Microsoft.PowerShell.Commands
         /// Provides a LengthString property for FileSystemInfo.
         /// </summary>
         /// <param name="instance">Instance of PSObject wrapping a FileSystemInfo.</param>
-        /// <returns>Length as a string.</returns>
+        /// <returns>
+        /// Length as a string. The value is rendered in a human-readable format, for example "1.2 TB",
+        /// when $PSStyle.HumanReadable.Size is enabled (the default), and as the raw byte count otherwise.
+        /// The value is wrapped in parentheses when the file is not available on disk (offline).
+        /// </returns>
         public static string LengthString(PSObject instance)
         {
-            return instance?.BaseObject is FileInfo fileInfo
-                ? fileInfo.Attributes.HasFlag(FileAttributes.Offline)
-                    ? $"({fileInfo.Length})"
-                    : fileInfo.Length.ToString()
-                : string.Empty;
+            if (instance?.BaseObject is not FileInfo fileInfo)
+            {
+                return string.Empty;
+            }
+
+            string length = PSStyle.Instance.HumanReadable.Size
+                ? Utils.ToHumanReadableSize(fileInfo.Length)
+                : fileInfo.Length.ToString();
+
+            return fileInfo.Attributes.HasFlag(FileAttributes.Offline)
+                ? $"({length})"
+                : length;
         }
 
         /// <summary>
         /// Provides a LastWriteTimeString property for FileSystemInfo.
         /// </summary>
         /// <param name="instance">Instance of PSObject wrapping a FileSystemInfo.</param>
-        /// <returns>LastWriteTime formatted as short date + short time.</returns>
+        /// <returns>
+        /// LastWriteTime formatted as short date + short time, or as a human-readable relative value,
+        /// for example "3 min ago", when $PSStyle.HumanReadable.Datetime is enabled.
+        /// </returns>
         public static string LastWriteTimeString(PSObject instance)
         {
-            return instance?.BaseObject is FileSystemInfo fileInfo
-                ? string.Create(CultureInfo.CurrentCulture, $"{fileInfo.LastWriteTime,10:d} {fileInfo.LastWriteTime,8:t}")
-                : string.Empty;
+            if (instance?.BaseObject is not FileSystemInfo fileInfo)
+            {
+                return string.Empty;
+            }
+
+            return PSStyle.Instance.HumanReadable.Datetime
+                ? Utils.ToRelativeTimeString(fileInfo.LastWriteTime, DateTime.Now)
+                : string.Create(CultureInfo.CurrentCulture, $"{fileInfo.LastWriteTime,10:d} {fileInfo.LastWriteTime,8:t}");
         }
 
         #region RenameItem

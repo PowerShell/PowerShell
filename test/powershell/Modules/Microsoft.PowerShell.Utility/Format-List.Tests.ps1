@@ -184,7 +184,7 @@ Describe "Format-List DRT basic functionality" -Tags "CI" {
         $null = New-Item $testdrive\test.txt -ItemType File -Value "hello" -Force
         $result = Get-ChildItem -File $testdrive\test.txt | Format-List | Out-String
         $result | Should -Match "Name\s*:\s*test.txt"
-        $result | Should -Match "Length\s*:\s*5"
+        $result | Should -Match "Length\s*:\s*5 B"
     }
 
     It "Format-List should work with double byte wide chars" {
