@@ -53,6 +53,149 @@ Describe "Validate Copy-Item locally" -Tags "CI" {
     }
 }
 
+Describe "Copy-Item with -PreservePathFrom" -Tags "CI" {
+    BeforeAll {
+        $sourceDirectory = "$TESTDRIVE/PreservePathFromSource"
+        $destinationDirectory = "$TESTDRIVE/PreservePathFromDestination"
+
+        New-Item -ItemType Directory -Path (Join-Path $sourceDirectory "Sub1/Deep"), (Join-Path $sourceDirectory "Sub2") -Force | Out-Null
+        Set-Content (Join-Path $sourceDirectory "Root.log") -Value "root"
+        Set-Content (Join-Path $sourceDirectory "Sub1/First.log") -Value "first"
+        Set-Content (Join-Path $sourceDirectory "Sub1/Deep/Second.log") -Value "second"
+        Set-Content (Join-Path $sourceDirectory "Sub2/Third.log") -Value "third"
+
+        # Returns the relative paths of all files below the destination, with
+        # platform separators and in a stable order, so that they can be compared.
+        function Get-RelativeFilePathsBelow {
+            param([string]$Path)
+
+            Get-ChildItem $Path -Recurse -File | ForEach-Object {
+                $_.FullName.Substring($Path.Length).TrimStart('\', '/') -replace '/', [IO.Path]::DirectorySeparatorChar
+            } | Sort-Object
+        }
+    }
+
+    AfterEach {
+        Remove-Item $destinationDirectory -Recurse -Force -ErrorAction SilentlyContinue
+    }
+
+    It "Preserves the folder structure of piped files below the base path" {
+        Get-ChildItem $sourceDirectory -File -Recurse |
+            Where-Object LastWriteTime -gt ([DateTime]::Today.AddDays(-1)) |
+            Copy-Item -PreservePathFrom $sourceDirectory -Destination $destinationDirectory
+
+        $separator = [IO.Path]::DirectorySeparatorChar
+        Get-RelativeFilePathsBelow $destinationDirectory | Should -Be @(
+            "Root.log"
+            "Sub1${separator}Deep${separator}Second.log"
+            "Sub1${separator}First.log"
+            "Sub2${separator}Third.log"
+        )
+    }
+
+    It "Preserves the folder structure when the destination does not exist" {
+        { Get-ChildItem $sourceDirectory -File -Recurse |
+            Copy-Item -PreservePathFrom $sourceDirectory -Destination $destinationDirectory } | Should -Not -Throw
+
+        Join-Path $destinationDirectory "Sub1/Deep/Second.log" | Should -Exist
+        Join-Path $destinationDirectory "Sub2/Third.log" | Should -Exist
+    }
+
+    It "Preserves the folder structure of piped directories" {
+        Get-ChildItem $sourceDirectory -Directory |
+            Copy-Item -PreservePathFrom $sourceDirectory -Destination $destinationDirectory -Recurse
+
+        Join-Path $destinationDirectory "Sub1/First.log" | Should -Exist
+        Join-Path $destinationDirectory "Sub1/Deep/Second.log" | Should -Exist
+        Join-Path $destinationDirectory "Sub2/Third.log" | Should -Exist
+    }
+
+    It "Preserves the folder structure for wildcard paths" {
+        Copy-Item (Join-Path $sourceDirectory "*/*.log") `
+            -PreservePathFrom $sourceDirectory `
+            -Destination $destinationDirectory
+
+        $separator = [IO.Path]::DirectorySeparatorChar
+        Get-RelativeFilePathsBelow $destinationDirectory | Should -Be @(
+            "Sub1${separator}First.log"
+            "Sub2${separator}Third.log"
+        )
+    }
+
+    It "Resolves the base path without applying the -Include filter of the copy operation to it" {
+        Copy-Item (Join-Path $sourceDirectory "*.log") `
+            -Include *.log `
+            -PreservePathFrom $sourceDirectory `
+            -Destination $destinationDirectory
+
+        Join-Path $destinationDirectory "Root.log" | Should -Exist
+    }
+
+    It "Copies to the existing target directory instead of nesting it again" {
+        New-Item -ItemType Directory (Join-Path $destinationDirectory "Sub1") -Force | Out-Null
+
+        Copy-Item (Join-Path $sourceDirectory "Sub1") `
+            -PreservePathFrom $sourceDirectory `
+            -Destination $destinationDirectory -Recurse -Force
+
+        Join-Path $destinationDirectory "Sub1/First.log" | Should -Exist
+        Join-Path $destinationDirectory "Sub1/Deep/Second.log" | Should -Exist
+        Join-Path $destinationDirectory "Sub1/Sub1" | Should -Not -Exist
+    }
+
+    It "Returns the copied items with the preserved paths when using -PassThru" {
+        $result = Get-ChildItem $sourceDirectory -File -Recurse |
+            Copy-Item -PreservePathFrom $sourceDirectory -Destination $destinationDirectory -PassThru
+
+        $result.Count | Should -Be 4
+        ($result | Where-Object FullName -eq (Join-Path $destinationDirectory "Sub1/Deep/Second.log")) | Should -Not -BeNullOrEmpty
+    }
+
+    It "Writes a non-terminating error when the item is not below the base path" {
+        $outsideFile = "$TESTDRIVE/Outside.log"
+        Set-Content $outsideFile -Value "outside"
+
+        try {
+            $errorRecord = $null
+            Copy-Item $outsideFile `
+                -PreservePathFrom $sourceDirectory `
+                -Destination $destinationDirectory -ErrorVariable errorRecord -ErrorAction SilentlyContinue
+
+            $errorRecord.FullyQualifiedErrorId | Should -Be "PreservePathFromOutsideBasePath,Microsoft.PowerShell.Commands.CopyItemCommand"
+            $outsideFile | Should -Exist
+        }
+        finally {
+            Remove-Item $outsideFile -Force -ErrorAction SilentlyContinue
+        }
+    }
+
+    It "Writes an error when the base path does not exist" {
+        $errorRecord = $null
+        Copy-Item (Join-Path $sourceDirectory "Root.log") `
+            -PreservePathFrom "$TESTDRIVE/DoesNotExist" `
+            -Destination $destinationDirectory -ErrorVariable errorRecord -ErrorAction SilentlyContinue
+
+        $errorRecord.FullyQualifiedErrorId | Should -Be "PreservePathFromPathNotFound,Microsoft.PowerShell.Commands.CopyItemCommand"
+    }
+
+    It "Writes an error when the base path is not a directory" {
+        $baseFile = Join-Path $sourceDirectory "Root.log"
+        $errorRecord = $null
+        Copy-Item $baseFile `
+            -PreservePathFrom $baseFile `
+            -Destination $destinationDirectory -ErrorVariable errorRecord -ErrorAction SilentlyContinue
+
+        $errorRecord.FullyQualifiedErrorId | Should -Be "PreservePathFromNotDirectory,Microsoft.PowerShell.Commands.CopyItemCommand"
+    }
+
+    It "Does not copy anything when using -WhatIf" {
+        Get-ChildItem $sourceDirectory -File -Recurse |
+            Copy-Item -PreservePathFrom $sourceDirectory -Destination $destinationDirectory -WhatIf
+
+        $destinationDirectory | Should -Not -Exist
+    }
+}
+
 # This is a Pester test suite to validate Copy-Item remotely using a remote session.
 # We cannot create a PS Remoting session on non-Windows, so do not run the suite on those platforms.
 if (-not $IsWindows)
