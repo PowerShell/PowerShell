@@ -140,6 +140,29 @@ Describe "Import-Csv File Format Tests" -Tags "CI" {
 
         }
     }
+
+    It "Uses the #Fields directive <position> in a space-delimited W3C log" -TestCases @(
+        @{ position = 'on the first line'; precedingDirectives = @() }
+        @{ position = 'after other directives'; precedingDirectives = @('#Version: 1.0', '#Software: Example server') }
+    ) {
+        param($precedingDirectives)
+
+        $testPath = Join-Path $TestDrive 'space-delimited.log'
+        $logLines = $precedingDirectives + @(
+            '#Fields: time cs-method cs-uri'
+            '00:34:23 GET /first'
+            '12:21:16 POST /second'
+        )
+        Set-Content -LiteralPath $testPath -Value $logLines
+
+        $rows = @(Import-Csv -LiteralPath $testPath -Delimiter ' ')
+
+        $rows.Count | Should -Be 2
+        $rows[0].PSObject.Properties.Name | Should -Be @('time', 'cs-method', 'cs-uri')
+        $rows.time | Should -Be @('00:34:23', '12:21:16')
+        $rows.'cs-method' | Should -Be @('GET', 'POST')
+        $rows.'cs-uri' | Should -Be @('/first', '/second')
+    }
 }
 
 Describe "Import-Csv #Type Tests" -Tags "CI" {
@@ -159,6 +182,18 @@ Describe "Import-Csv #Type Tests" -Tags "CI" {
         $importTypes.Count | Should -Be $expectedProcessTypes.Count
         $importTypes[0] | Should -Be $expectedProcessTypes[0]
         $importTypes[1] | Should -Be $expectedProcessTypes[1]
+    }
+
+    It "Preserves a literal #Fields: column in PowerShell CSV" {
+        $path = Join-Path $TestDrive 'typed-header.csv'
+        [pscustomobject]@{ '#Fields: value' = 'one'; Column2 = 'two' } |
+            Export-Csv -LiteralPath $path -IncludeTypeInformation
+
+        $rows = @(Import-Csv -LiteralPath $path)
+
+        $rows.Count | Should -Be 1
+        $rows[0].'#Fields: value' | Should -BeExactly 'one'
+        $rows[0].Column2 | Should -BeExactly 'two'
     }
 }
 

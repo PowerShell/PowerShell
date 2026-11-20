@@ -1241,6 +1241,9 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private const string UnspecifiedName = "H";
 
+        private const string FieldsDirective = "#Fields:";
+        private const string FieldsDirectivePrefix = FieldsDirective + " ";
+
         /// <summary>
         /// Avoid writing out duplicate warning messages when there are one or more unspecified names.
         /// </summary>
@@ -1252,7 +1255,8 @@ namespace Microsoft.PowerShell.Commands
         internal IList<string> Header { get; private set; }
 
         /// <summary>
-        /// Gets ETS type name from the first line / comment in the CSV.
+        /// Gets the ETS type name from a leading #TYPE record.
+        /// An empty string represents a #TYPE record without a type name.
         /// </summary>
         internal string TypeName { get; private set; }
 
@@ -1326,44 +1330,8 @@ namespace Microsoft.PowerShell.Commands
 
         internal void ReadHeader()
         {
-            // Read #Type record if available
-            if ((TypeName == null) && (!this.EOF))
-            {
-                TypeName = ReadTypeInformation();
-            }
-
-            var values = new List<string>(ValueCountGuestimate);
-            var builder = new StringBuilder(LineLengthGuestimate);
-            while ((Header == null) && (!this.EOF))
-            {
-                ParseNextRecord(values, builder);
-
-                // Trim all trailing blankspaces and delimiters ( single/multiple ).
-                // If there is only one element in the row and if its a blankspace we dont trim it.
-                // A trailing delimiter is represented as a blankspace while being added to result collection
-                // which is getting trimmed along with blankspaces supplied through the CSV in the below loop.
-                while (values.Count > 1 && values[values.Count - 1].Equals(string.Empty))
-                {
-                    values.RemoveAt(values.Count - 1);
-                }
-
-                // File starts with '#' and contains '#Fields:' is W3C Extended Log File Format
-                if (values.Count != 0 && values[0].StartsWith("#Fields: "))
-                {
-                    values[0] = values[0].Substring(9);
-                    Header = values;
-                }
-                else if (values.Count != 0 && values[0].StartsWith('#'))
-                {
-                    // Skip all lines starting with '#'
-                }
-                else
-                {
-                    // This is not W3C Extended Log File Format
-                    // By default first line is Header
-                    Header = values;
-                }
-            }
+            bool fieldsPrefixRead = ReadInitialDirective();
+            Header ??= ReadColumnNames(fieldsPrefixRead);
 
             if (Header != null && Header.Count > 0)
             {
@@ -1435,28 +1403,110 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        /// <summary>
-        /// Read the type information, if present.
-        /// </summary>
-        /// <returns>Type string if present else null.</returns>
-        private string ReadTypeInformation()
+        private IList<string> ReadColumnNames(bool fieldsPrefixRead)
         {
-            string type = null;
-            if (PeekNextChar('#'))
+            var values = new List<string>(ValueCountGuestimate);
+            var builder = new StringBuilder(LineLengthGuestimate);
+            while (!EOF)
             {
-                string temp = ReadLine();
-                if (temp.StartsWith("#Type", StringComparison.OrdinalIgnoreCase))
+                bool startsWithHash = fieldsPrefixRead || PeekNextChar('#');
+                ParseNextRecord(values, builder);
+                if (fieldsPrefixRead)
                 {
-                    type = temp.Substring(5);
-                    type = type.Trim();
-                    if (type.Length == 0)
-                    {
-                        type = null;
-                    }
+                    // Restore the marker as the first field so all headers use the same parsing rules.
+                    values.Insert(0, FieldsDirective);
+                    fieldsPrefixRead = false;
+                }
+
+                // Trim trailing empty fields while preserving a single empty field.
+                while (values.Count > 1 && values[^1].Length == 0)
+                {
+                    values.RemoveAt(values.Count - 1);
+                }
+
+                // PowerShell CSV headers can contain names that look like W3C directives.
+                if (TypeName != null || TryParseHeader(values, startsWithHash))
+                {
+                    return values;
                 }
             }
 
-            return type;
+            return null;
+        }
+
+        private bool TryParseHeader(List<string> values, bool startsWithHash)
+        {
+            if (values.Count == 0)
+            {
+                return true;
+            }
+
+            // A space delimiter splits the directive and the first column name into separate fields.
+            if (_delimiter == ' ' && startsWithHash && values.Count > 1 && values[0] == FieldsDirective)
+            {
+                values.RemoveAt(0);
+                return true;
+            }
+
+            if (values[0].StartsWith(FieldsDirectivePrefix, StringComparison.Ordinal))
+            {
+                values[0] = values[0].Substring(FieldsDirectivePrefix.Length);
+                return true;
+            }
+
+            return !values[0].StartsWith('#');
+        }
+
+        /// <summary>
+        /// Read leading type information or leave the reader at the first space-delimited column name.
+        /// </summary>
+        /// <returns>True if the initial #Fields: prefix was consumed.</returns>
+        private bool ReadInitialDirective()
+        {
+            if (TypeName != null || EOF || !PeekNextChar('#'))
+            {
+                return false;
+            }
+
+            ReadChar();
+            if (Header == null && _delimiter == ' ' && PeekNextChar('F'))
+            {
+                // ConvertFrom-Csv can receive the #Fields directive as a separate pipeline input.
+                if (TryReadFieldsPrefix())
+                {
+                    return true;
+                }
+
+                ReadLine();
+                return false;
+            }
+
+            const string typeDirective = "Type";
+            string line = ReadLine();
+            if (line != null &&
+                line.StartsWith(typeDirective, StringComparison.OrdinalIgnoreCase) &&
+                (line.Length == typeDirective.Length || char.IsWhiteSpace(line[typeDirective.Length])))
+            {
+                TypeName = line.Substring(typeDirective.Length).Trim();
+            }
+
+            return false;
+        }
+
+        private bool TryReadFieldsPrefix()
+        {
+            // The leading hash was already read.
+            foreach (char expected in FieldsDirectivePrefix.AsSpan(1))
+            {
+                if (!PeekNextChar(expected))
+                {
+                    return false;
+                }
+
+                ReadChar();
+            }
+
+            return true;
         }
 
         /// <summary>
