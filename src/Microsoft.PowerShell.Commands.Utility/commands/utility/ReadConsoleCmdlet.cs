@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Host;
+using System.Management.Automation.Internal;
 using System.Security;
 using System.Text;
 
@@ -80,6 +81,18 @@ namespace Microsoft.PowerShell.Commands
             get;
             set;
         }
+
+        /// <summary>
+        /// Gets or sets the value returned when the user enters nothing. The prompt shows it as "(default: value)".
+        /// </summary>
+        [Parameter(ParameterSetName = "AsString")]
+        public
+        string
+        DefaultValue
+        {
+            get;
+            set;
+        }
         #endregion Parameters
 
         #region Cmdlet Overrides
@@ -125,6 +138,11 @@ namespace Microsoft.PowerShell.Commands
                     promptString = (string)LanguagePrimitives.ConvertTo(_prompt, typeof(string), CultureInfo.InvariantCulture);
                 }
 
+                if (DefaultValue != null)
+                {
+                    promptString = StringUtil.Format(UtilityCommonStrings.ReadHostPromptWithDefault, promptString, DefaultValue);
+                }
+
                 FieldDescription fd = new(promptString);
                 if (AsSecureString || MaskInput)
                 {
@@ -147,17 +165,22 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (MaskInput && o?.BaseObject is SecureString secureString)
                         {
-                            WriteObject(Utils.GetStringFromSecureString(secureString));
+                            WriteInput(Utils.GetStringFromSecureString(secureString));
                         }
                         else
                         {
-                            WriteObject(o);
+                            WriteInput(o);
                         }
                     }
                 }
             }
             else
             {
+                if (DefaultValue != null)
+                {
+                    ui.Write(StringUtil.Format(UtilityCommonStrings.ReadHostDefaultOnly, DefaultValue));
+                }
+
                 object result;
                 if (AsSecureString || MaskInput)
                 {
@@ -170,12 +193,26 @@ namespace Microsoft.PowerShell.Commands
 
                 if (MaskInput)
                 {
-                    WriteObject(Utils.GetStringFromSecureString((SecureString)result));
+                    WriteInput(Utils.GetStringFromSecureString((SecureString)result));
                 }
                 else
                 {
-                    WriteObject(result);
+                    WriteInput(result);
                 }
+            }
+        }
+
+        // An empty entry means the user accepted the default. A null from the host (for example a
+        // canceled read) is passed through, so a script can still tell "no input" from "accepted".
+        private void WriteInput(object input)
+        {
+            if (DefaultValue != null && PSObject.Base(input) is string { Length: 0 })
+            {
+                WriteObject(DefaultValue);
+            }
+            else
+            {
+                WriteObject(input);
             }
         }
 
