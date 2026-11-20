@@ -160,6 +160,30 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        internal void SetCredential(NetworkCredential cred, Uri uri, bool preserveAuthOnRedirect)
+        {
+            if (preserveAuthOnRedirect)
+            {
+                Credentials = cred;
+                return;
+            }
+
+            Uri origin = new(uri.GetLeftPart(UriPartial.Authority));
+            CredentialCache cache = new();
+
+            // DefaultCredentials only supports a limited subset of schemes.
+            string[] schemes = ReferenceEquals(cred, CredentialCache.DefaultNetworkCredentials)
+                ? new[] { "NTLM", "Kerberos", "Negotiate" }
+                : new[] { "Basic", "Digest", "NTLM", "Kerberos", "Negotiate" };
+
+            foreach (string scheme in schemes)
+            {
+                cache.Add(origin, scheme, cred);
+            }
+
+            Credentials = cache;
+        }
+
         /// <summary>
         /// Add a X509Certificate to the Certificates collection.
         /// </summary>
