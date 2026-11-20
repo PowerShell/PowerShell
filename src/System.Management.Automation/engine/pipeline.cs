@@ -904,7 +904,24 @@ namespace System.Management.Automation.Internal
                 return;
             }
 
-            _pipelineStopTokenSource.Cancel();
+            try
+            {
+                _pipelineStopTokenSource.Cancel();
+            }
+            catch (ObjectDisposedException)
+            {
+                // Dispose() can race with this asynchronous Stop() call. Dispose() only
+                // disposes the token source after the pipeline has finished and all the
+                // commands have been disposed, so there is nothing left to stop and we
+                // return early rather than call StopProcessing() on disposed commands.
+                // https://github.com/PowerShell/PowerShell/issues/28299
+                return;
+            }
+            catch (AggregateException)
+            {
+                // Swallow callback failures like StopProcessing() below, e.g. a
+                // ScriptBlock callback run on a thread without a Runspace.
+            }
 
             // Call StopProcessing() for all the commands.
             foreach (CommandProcessorBase commandProcessor in commands)

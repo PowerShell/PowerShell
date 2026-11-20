@@ -17,7 +17,7 @@ Describe 'PipelineStopToken tests' -Tags 'CI' {
             )
 
             $ps = [PowerShell]::Create()
-            $null = $ps.AddScript("'start'`n" + $ScriptBlock.ToString())
+            $null = $ps.AddScript($ScriptBlock.ToString())
             foreach ($arg in $ArgumentList) {
                 $null = $ps.AddArgument($arg)
             }
@@ -26,7 +26,7 @@ Describe 'PipelineStopToken tests' -Tags 'CI' {
             $inPipe.Complete()
             $outPipe = [System.Management.Automation.PSDataCollection[object]]::new()
 
-            # Use an event to make sure Stop is called once the pipeline has started
+            # Use an event to make sure Stop is called once the script outputs its first object
             # and not before.
             $eventId = [Guid]::NewGuid().ToString()
             Register-ObjectEvent -InputObject $outPipe -EventName DataAdded -SourceIdentifier $eventId
@@ -53,6 +53,27 @@ Describe 'PipelineStopToken tests' -Tags 'CI' {
                 [CmdletBinding()]
                 param ([Parameter()][int]$Timeout)
 
+                'start'
+                [System.Threading.Tasks.Task]::Delay($Timeout * 1000, $PSCmdlet.PipelineStopToken).GetAwaiter().GetResult()
+            }
+
+            Test-FunctionWithStop -Timeout 10
+        }
+
+        $end = (Get-Date) - $start
+        $end.TotalSeconds | Should -BeLessThan 10
+    }
+
+    It 'Stops pipeline when a registered callback throws' {
+        $start = Get-Date
+
+        Invoke-WithStop -ScriptBlock {
+            Function Test-FunctionWithStop {
+                [CmdletBinding()]
+                param ([Parameter()][int]$Timeout)
+
+                $null = $PSCmdlet.PipelineStopToken.Register([Action]{ throw 'callback failure' })
+                'start'
                 [System.Threading.Tasks.Task]::Delay($Timeout * 1000, $PSCmdlet.PipelineStopToken).GetAwaiter().GetResult()
             }
 
@@ -87,6 +108,7 @@ public sealed class TestCmdletWithStop : Cmdlet
         $start = Get-Date
         Invoke-WithStop -ScriptBlock {
             Import-Module -Assembly $args[0]
+            'start'
 
             Test-CmdletWithStop -Timeout 10
          } -ArgumentList $binaryAssembly
