@@ -1657,12 +1657,20 @@ namespace Microsoft.PowerShell.Commands
 
                 FlagsExpression<FileAttributes> evaluator = null;
                 FlagsExpression<FileAttributes> switchEvaluator = null;
+                Collection<WildcardPattern> excludeDirectoryMatcher = null;
 
                 GetChildDynamicParameters fspDynamicParam = DynamicParameters as GetChildDynamicParameters;
                 if (fspDynamicParam != null)
                 {
                     evaluator = fspDynamicParam.Attributes;
                     switchEvaluator = FormatAttributeSwitchParameters();
+
+                    if (fspDynamicParam.ExcludeDirectory is { Length: > 0 })
+                    {
+                        excludeDirectoryMatcher = SessionStateUtilities.CreateWildcardsFromStrings(
+                            fspDynamicParam.ExcludeDirectory,
+                            WildcardOptions.IgnoreCase);
+                    }
                 }
 
                 // Write out the items
@@ -1677,6 +1685,18 @@ namespace Microsoft.PowerShell.Commands
                         if (Stopping)
                         {
                             return;
+                        }
+
+                        // Skip directories excluded by the -ExcludeDirectory patterns. Excluded
+                        // directories are not written out and, when recursing, not recursed into.
+                        if (excludeDirectoryMatcher != null
+                            && filesystemInfo is DirectoryInfo
+                            && SessionStateUtilities.MatchesAnyWildcardPattern(
+                                filesystemInfo.Name,
+                                excludeDirectoryMatcher,
+                                defaultValue: false))
+                        {
+                            continue;
                         }
 
                         try
@@ -1775,6 +1795,16 @@ namespace Microsoft.PowerShell.Commands
                             if (Stopping)
                             {
                                 return;
+                            }
+
+                            // Do not recurse into directories excluded by the -ExcludeDirectory patterns.
+                            if (excludeDirectoryMatcher != null
+                                && SessionStateUtilities.MatchesAnyWildcardPattern(
+                                    recursiveDirectory.Name,
+                                    excludeDirectoryMatcher,
+                                    defaultValue: false))
+                            {
+                                continue;
                             }
 
                             bool hidden = false;
@@ -7410,6 +7440,15 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         public FlagsExpression<FileAttributes> Attributes { get; set; }
+
+        /// <summary>
+        /// Gets or sets the wildcard patterns used to exclude directories.
+        /// Directories whose names match any of these patterns are excluded
+        /// from the output and, when recursing, are not recursed into.
+        /// </summary>
+        [Parameter]
+        [ValidateNotNullOrEmpty]
+        public string[] ExcludeDirectory { get; set; }
 
         /// <summary>
         /// Gets or sets the flag to follow symbolic links when recursing.
