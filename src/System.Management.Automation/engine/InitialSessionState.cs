@@ -4889,7 +4889,7 @@ end {
 # .ExternalHelp System.Management.Automation.dll-help.xml
 ";
 
-        internal const string DefaultSetDriveFunctionText = "Set-Location $MyInvocation.MyCommand.Name";
+        internal const string DefaultSetDriveFunctionText = "Set-Location -LiteralPath $MyInvocation.MyCommand.Name";
 
         internal static readonly ScriptBlock SetDriveScriptBlock = ScriptBlock.CreateDelayParsedScriptBlock(DefaultSetDriveFunctionText, isProductCode: true);
 

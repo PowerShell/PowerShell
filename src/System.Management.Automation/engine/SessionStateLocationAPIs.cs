@@ -253,6 +253,9 @@ namespace System.Management.Automation
                         throw new InvalidOperationException(SessionStateStrings.LocationUndoStackIsEmpty);
                     }
 
+                    // Should process history path as literal
+                    context ??= new CmdletProviderContext(this.ExecutionContext);
+                    context.SuppressWildcardExpansion = true;
                     path = _setLocationHistory.Undo(this.CurrentLocation).Path;
                     break;
                 case string originalPathSwitch when !literalPath && originalPathSwitch.Equals("+", StringComparison.Ordinal):
@@ -261,6 +264,9 @@ namespace System.Management.Automation
                         throw new InvalidOperationException(SessionStateStrings.LocationRedoStackIsEmpty);
                     }
 
+                    // Should process history path as literal
+                    context ??= new CmdletProviderContext(this.ExecutionContext);
+                    context.SuppressWildcardExpansion = true;
                     path = _setLocationHistory.Redo(this.CurrentLocation).Path;
                     break;
                 default:
