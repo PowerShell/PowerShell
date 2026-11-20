@@ -262,6 +262,7 @@
     <value>Ошибка проверки атрибута ValidateTrustedData</value>
   </data>
   <data name="WDACParameterArgNotTrustedMessage" xml:space="preserve">
-    <value>Аргумент параметра "{0}" не является доверенным и приведет к сбою проверки атрибута параметра ValidateTrustedData в режиме ограниченного языка.</value>
+    <value>Аргумент параметра "{0}" не является доверенным и приведет к сбою проверки атрибута параметра ValidateTrustedData в режиме ConstrainedLanguage.</value>
+    <comment>{StrContains="ValidateTrustedData"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

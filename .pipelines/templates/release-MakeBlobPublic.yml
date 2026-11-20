@@ -52,9 +52,24 @@ jobs:
       displayName: 'Capture Environment Variables'
 
     - pwsh: |
+        Write-Host 'Available Az.Accounts and Az.Storage modules before installation:'
+        $availableModules = Get-Module -Name Az.Accounts, Az.Storage -ListAvailable |
+          Sort-Object Name, Version -Descending |
+          Select-Object Name, Version, ModuleBase
+        if ($availableModules) {
+          $availableModules | Format-Table -AutoSize | Out-String -Width 9999 | Write-Host
+        } else {
+          Write-Host 'No Az.Accounts or Az.Storage modules are available.'
+        }
+
         $repositoryName = 'PowerShellGalleryMirror'
-        if (-not (Get-PSRepository -Name $repositoryName -ErrorAction Ignore)) {
-          Register-PSRepository -Name $repositoryName -SourceLocation 'https://pkgs.dev.azure.com/powershell/PowerShell/_packaging/PowerShellGalleryMirror/nuget/v2' -InstallationPolicy Trusted -ErrorAction Stop
+        $repositorySourceLocation = 'https://pkgs.dev.azure.com/powershell/PowerShell/_packaging/PowerShellGalleryMirror/nuget/v2'
+        Unregister-PSRepository -Name $repositoryName -ErrorAction Ignore
+        Register-PSRepository -Name $repositoryName -SourceLocation $repositorySourceLocation -InstallationPolicy Trusted -ErrorAction Stop
+
+        $registeredSourceLocation = (Get-PSRepository -Name $repositoryName -ErrorAction Stop).SourceLocation
+        if ($registeredSourceLocation.TrimEnd('/') -ne $repositorySourceLocation.TrimEnd('/')) {
+          throw "Repository '$repositoryName' has unexpected source location '$registeredSourceLocation'."
         }
         Install-Module -Repository $repositoryName -Name Az.Storage -RequiredVersion 9.7.2 -Scope CurrentUser -Force -ErrorAction Stop
       displayName: Install Az.Storage 9.7.2
@@ -148,9 +163,24 @@ jobs:
       displayName: 'Capture Environment Variables'
 
     - pwsh: |
+        Write-Host 'Available Az.Accounts and Az.Storage modules before installation:'
+        $availableModules = Get-Module -Name Az.Accounts, Az.Storage -ListAvailable |
+          Sort-Object Name, Version -Descending |
+          Select-Object Name, Version, ModuleBase
+        if ($availableModules) {
+          $availableModules | Format-Table -AutoSize | Out-String -Width 9999 | Write-Host
+        } else {
+          Write-Host 'No Az.Accounts or Az.Storage modules are available.'
+        }
+
         $repositoryName = 'PowerShellGalleryMirror'
-        if (-not (Get-PSRepository -Name $repositoryName -ErrorAction Ignore)) {
-          Register-PSRepository -Name $repositoryName -SourceLocation 'https://pkgs.dev.azure.com/powershell/PowerShell/_packaging/PowerShellGalleryMirror/nuget/v2' -InstallationPolicy Trusted -ErrorAction Stop
+        $repositorySourceLocation = 'https://pkgs.dev.azure.com/powershell/PowerShell/_packaging/PowerShellGalleryMirror/nuget/v2'
+        Unregister-PSRepository -Name $repositoryName -ErrorAction Ignore
+        Register-PSRepository -Name $repositoryName -SourceLocation $repositorySourceLocation -InstallationPolicy Trusted -ErrorAction Stop
+
+        $registeredSourceLocation = (Get-PSRepository -Name $repositoryName -ErrorAction Stop).SourceLocation
+        if ($registeredSourceLocation.TrimEnd('/') -ne $repositorySourceLocation.TrimEnd('/')) {
+          throw "Repository '$repositoryName' has unexpected source location '$registeredSourceLocation'."
         }
         Install-Module -Repository $repositoryName -Name Az.Storage -RequiredVersion 9.7.2 -Scope CurrentUser -Force -ErrorAction Stop
       displayName: Install Az.Storage 9.7.2

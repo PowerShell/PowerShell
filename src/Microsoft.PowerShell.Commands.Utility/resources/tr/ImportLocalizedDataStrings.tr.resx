@@ -148,5 +148,6 @@
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
     <value>Desteklenen ek komutlara (SupportedCommand parametresi aracılığıyla) ConstrainedLanguage modunda izin verilmez.</value>
+    <comment>{StrContains="SupportedCommand"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

@@ -151,12 +151,14 @@
     <value>Typerstellung mit dem Cmdlet „New-Object“</value>
   </data>
   <data name="TypeWDACLogMessage" xml:space="preserve">
-    <value>Der Typ „{0}“ wird im ConstrainedLanguage-Modus nicht erstellt.</value>
+    <value>Typ '{0}' wird im ConstrainedLanguage-Modus nicht erstellt.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="ComWDACLogTitle" xml:space="preserve">
     <value>COM-Objekterstellung mit dem New-Object-Cmdlet</value>
   </data>
   <data name="ComWDACLogMessage" xml:space="preserve">
-    <value>Das COM-Objekt „{0}“ wird im ConstrainedLanguage-Modus nicht erstellt.</value>
+    <value>COM-Objekt '{0}' wird im ConstrainedLanguage-Modus nicht erstellt.</value>
+    <comment>{StrContains="COM"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

@@ -845,10 +845,7 @@ function Update-PSSignedBuildFolder
     foreach ($signedFileObject in $signedFilesList) {
         # completely skip replacing pwsh on non-windows systems (there is no .exe extension here)
         # and it may not be signed correctly
-
-        # The Shim will not be signed in CI.
-
-        if ($signedFileObject.Name -eq "pwsh" -or ($signedFileObject.Name -eq "Microsoft.PowerShell.GlobalTool.Shim.exe" -and $env:BUILD_REASON -eq 'PullRequest')) {
+        if ($signedFileObject.Name -eq "pwsh") {
             Write-Verbose -Verbose "Skipping $signedFileObject"
             continue
         }
@@ -1400,6 +1397,9 @@ Function New-LinkInfo
     }
 }
 
+# Minimum macOS version
+$macOSMinVersion = "11.0"  # macOS Big Sur minimum
+
 function New-MacOsDistributionPackage
 {
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -1462,9 +1462,6 @@ function New-MacOsDistributionPackage
         }
     }
 
-    # Minimum OS version
-    $minOSVersion = "11.0"  # macOS Big Sur minimum
-
     # format distribution template with:
     # 0 - title
     # 1 - version
@@ -1472,7 +1469,7 @@ function New-MacOsDistributionPackage
     # 3 - minimum os version
     # 4 - Package Identifier
     # 5 - host architecture (x86_64 for Intel or arm64 for Apple Silicon)
-    $PackagingStrings.OsxDistributionTemplate -f $PackageName, $Version, $componentFileName, $minOSVersion, $PackageIdentifier, $HostArchitecture | Out-File -Encoding utf8 -FilePath $distributionXmlPath -Force
+    $PackagingStrings.OsxDistributionTemplate -f $PackageName, $Version, $componentFileName, $macOSMinVersion, $PackageIdentifier, $HostArchitecture | Out-File -Encoding utf8 -FilePath $distributionXmlPath -Force
 
     # Build final package path
     # Rename x86_64 to x64 for compatibility
@@ -2049,6 +2046,8 @@ function New-MacOSPackage
 
             Start-NativeExecution -VerboseOutputOnError {
                 pkgbuild --root $pkgRoot `
+                    --compression latest `
+                    --min-os-version $macOSMinVersion `
                     --identifier $pkgIdentifier `
                     --version $Version `
                     --scripts $scriptsDir `
@@ -3920,9 +3919,6 @@ function ReduceFxDependentPackage
     $runtimeFolder | ForEach-Object {
         Get-ChildItem -Path $_.FullName -Directory -Exclude $runtimesToKeep | Remove-Item -Force -Recurse -Verbose
     }
-
-    ## Remove the shim layer assemblies
-    Get-ChildItem -Path $Path -Filter "Microsoft.PowerShell.GlobalTool.Shim.*" | Remove-Item -Verbose
 }
 
 <#
@@ -4005,56 +4001,24 @@ function New-GlobalToolNupkgSource
         [Parameter()] [switch] $SkipCGManifest
     )
 
-    if ($PackageType -ne "Unified")
-    {
-        Write-Log "New-GlobalToolNupkgSource: Reducing package size for non-unified packages."
+    Write-Log "New-GlobalToolNupkgSource: Reducing package size."
 
-        Write-Log "New-GlobalToolNupkgSource: Reducing size of Linux package"
-        ReduceFxDependentPackage -Path $LinuxBinPath
+    Write-Log "New-GlobalToolNupkgSource: Reducing size of Linux package"
+    ReduceFxDependentPackage -Path $LinuxBinPath
 
-        Write-Log "New-GlobalToolNupkgSource: Reducing size of Alpine package"
-        ReduceFxDependentPackage -Path $AlpineBinPath
+    Write-Log "New-GlobalToolNupkgSource: Reducing size of Alpine package"
+    ReduceFxDependentPackage -Path $AlpineBinPath
 
-        Write-Log "New-GlobalToolNupkgSource: Reducing size of Windows package"
-        ReduceFxDependentPackage -Path $WindowsBinPath -KeepWindowsRuntimes
+    Write-Log "New-GlobalToolNupkgSource: Reducing size of Windows package"
+    ReduceFxDependentPackage -Path $WindowsBinPath -KeepWindowsRuntimes
 
-        Write-Log "New-GlobalToolNupkgSource: Reducing size of WindowsDesktop package"
-        ReduceFxDependentPackage -Path $WindowsDesktopBinPath -KeepWindowsRuntimes
-    }
+    Write-Log "New-GlobalToolNupkgSource: Reducing size of WindowsDesktop package"
+    ReduceFxDependentPackage -Path $WindowsDesktopBinPath -KeepWindowsRuntimes
 
     Write-Log "New-GlobalToolNupkgSource: Creating package: $PackageType"
 
     switch ($PackageType)
     {
-        "Unified"
-        {
-            $ShimDllPath = Join-Path $WindowsDesktopBinPath "Microsoft.PowerShell.GlobalTool.Shim.dll"
-
-            $PackageName = "PowerShell"
-            $RootFolder = New-TempFolder
-
-            Copy-Item -Path $iconPath -Destination "$RootFolder/$iconFileName" -Verbose
-
-            $ridFolder = New-Item -Path (Join-Path $RootFolder "tools/$script:netCoreRuntime/any") -ItemType Directory
-            $winFolder = New-Item (Join-Path $ridFolder "win") -ItemType Directory
-            $unixFolder = New-Item (Join-Path $ridFolder "unix") -ItemType Directory
-
-            Write-Log "New-GlobalToolNupkgSource: Copying runtime assemblies from $WindowsDesktopBinPath"
-            Copy-Item "$WindowsDesktopBinPath\*" -Destination $winFolder -Recurse
-
-            Write-Log "New-GlobalToolNupkgSource: Copying runtime assemblies from $LinuxBinPath"
-            Copy-Item "$LinuxBinPath\*" -Destination $unixFolder -Recurse
-
-            Write-Log "New-GlobalToolNupkgSource: Copying shim dll from $ShimDllPath"
-            Copy-Item $ShimDllPath -Destination $ridFolder
-
-            $shimConfigFile = Join-Path (Split-Path $ShimDllPath -Parent) 'Microsoft.PowerShell.GlobalTool.Shim.runtimeconfig.json'
-            Write-Log "New-GlobalToolNupkgSource: Copying shim config file from $shimConfigFile"
-            Copy-Item $shimConfigFile -Destination $ridFolder -ErrorAction Stop
-
-            $toolSettings = $packagingStrings.GlobalToolSettingsFile -f (Split-Path $ShimDllPath -Leaf)
-        }
-
         "PowerShell.Linux.Alpine"
         {
             $PackageName = "PowerShell.Linux.Alpine"
@@ -4158,6 +4122,7 @@ function New-GlobalToolNupkgSource
         default { throw "New-GlobalToolNupkgSource: Unknown package type: $PackageType" }
     }
 
+    Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'globaltool.README.md') -Destination (Join-Path $RootFolder 'README.md') -Force -ErrorAction Stop
     $nuSpec = $packagingStrings.GlobalToolNuSpec -f $PackageName, $PackageVersion, $iconFileName
     $nuSpec | Out-File -FilePath (Join-Path $RootFolder "$PackageName.nuspec") -Encoding ascii
     $toolSettings | Out-File -FilePath (Join-Path $ridFolder "DotnetToolSettings.xml") -Encoding ascii
@@ -4252,6 +4217,142 @@ function New-GlobalToolNupkgFromSource
         return
     }
     Remove-Item -Path $CGManifestPath -Recurse -Force -ErrorAction SilentlyContinue
+}
+
+function Set-GlobalToolNuspecMetadata
+{
+    <#
+    .SYNOPSIS
+    Applies the shared global tool metadata to an SDK-generated nuspec.
+
+    .DESCRIPTION
+    Preserves the generated package identity and SDK-specific metadata, and copies the
+    shared package icon and README alongside the nuspec before the package is reassembled.
+
+    .PARAMETER Path
+    Path to the nuspec in the expanded global tool package.
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)]
+        [string] $Path
+    )
+
+    $nuspecPath = (Resolve-Path -LiteralPath $Path -ErrorAction Stop).ProviderPath
+    $nuspec = [xml] (Get-Content -LiteralPath $nuspecPath -Raw -ErrorAction Stop)
+    $metadata = $nuspec.package.metadata
+    if (-not $metadata.id -or -not $metadata.version) {
+        throw "Global tool nuspec must contain a package id and version: $nuspecPath"
+    }
+
+    $template = [xml] ($packagingStrings.GlobalToolNuSpec -f $metadata.id, $metadata.version, $iconFileName)
+    foreach ($field in $template.package.metadata.ChildNodes) {
+        if ($field.LocalName -in 'id', 'version', 'packageTypes') {
+            continue
+        }
+
+        $element = $metadata.SelectSingleNode("*[local-name()='$($field.LocalName)']")
+        if ($null -eq $element) {
+            $element = $nuspec.CreateElement($field.LocalName, $metadata.NamespaceURI)
+            $null = $metadata.AppendChild($element)
+        }
+
+        $element.InnerText = $field.InnerText
+        foreach ($attribute in $field.Attributes) {
+            $element.SetAttribute($attribute.Name, $attribute.Value)
+        }
+    }
+
+    Copy-Item -LiteralPath $iconPath -Destination (Join-Path (Split-Path $nuspecPath -Parent) $iconFileName) -Force -ErrorAction Stop
+    Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'globaltool.README.md') -Destination (Join-Path (Split-Path $nuspecPath -Parent) 'README.md') -Force -ErrorAction Stop
+    $nuspec.Save($nuspecPath)
+}
+
+<#
+.SYNOPSIS
+Create the NuSpec source directory for the RID-agnostic 'PowerShell' global tool pointer package.
+
+.DESCRIPTION
+This is the RID-specific-tool-packaging replacement for the old shim-based "Unified" package: it
+produces only the top-level pointer package (metadata + a v2 DotnetToolSettings.xml mapping each
+supported RID to its sub-package id, e.g. "PowerShell.win-x64"). It does not contain any pwsh
+binaries. The RID-specific sub-packages themselves are produced separately, directly by
+'dotnet pack -r <rid> --no-build' against src/GlobalTools/PowerShell/PowerShell.csproj, on an
+agent matching each RID's OS, then signed like any other build output. Apply the shared metadata
+with Set-GlobalToolNuspecMetadata when reassembling each expanded RID package.
+
+Callers should build every RID sub-package first, then call this function, then pack the
+resulting source with New-GlobalToolNupkgFromSource, so that the pointer package always ships
+alongside a complete, matching set of sub-packages.
+
+.PARAMETER PackageVersion
+Version for the NuGet package that will be generated.
+
+.PARAMETER RuntimeIdentifiers
+The list of RIDs that have a corresponding "<PackageName>.<rid>" sub-package published
+alongside this pointer package (for example: win-x64, win-arm64, linux-x64, linux-arm,
+linux-arm64, linux-musl-x64, osx-x64, osx-arm64).
+
+.PARAMETER PackageName
+Name of the pointer package. Defaults to "PowerShell".
+#>
+function New-GlobalToolPointerNupkgSource
+{
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)] [string] $PackageVersion,
+        [Parameter(Mandatory)] [string[]] $RuntimeIdentifiers,
+        [Parameter()] [string] $PackageName = 'PowerShell',
+        [Parameter()] [switch] $SkipCGManifest
+    )
+
+    Write-Log "New-GlobalToolPointerNupkgSource: Creating pointer package: $PackageName for RIDs: $($RuntimeIdentifiers -join ', ')"
+
+    $RootFolder = New-TempFolder
+    Copy-Item -Path $iconPath -Destination "$RootFolder/$iconFileName" -Verbose
+    Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'globaltool.README.md') -Destination (Join-Path $RootFolder 'README.md') -Force -ErrorAction Stop
+
+    # The SDK places the pointer package's DotnetToolSettings.xml under tools/any/any, since the
+    # pointer package itself is not tied to any framework or runtime.
+    $toolsFolder = New-Item -Path (Join-Path $RootFolder "tools/any/any") -ItemType Directory
+
+    $ridPackageElements = $RuntimeIdentifiers | ForEach-Object {
+        '        <RuntimeIdentifierPackage RuntimeIdentifier="{0}" Id="{1}.{0}" />' -f $_, $PackageName
+    }
+    $toolSettings = $packagingStrings.GlobalToolPointerSettingsFile -f ($ridPackageElements -join [System.Environment]::NewLine)
+    $toolSettings | Out-File -FilePath (Join-Path $toolsFolder "DotnetToolSettings.xml") -Encoding ascii
+
+    $nuSpec = $packagingStrings.GlobalToolPointerNuSpec -f $PackageName, $PackageVersion, $iconFileName
+    $nuSpec | Out-File -FilePath (Join-Path $RootFolder "$PackageName.nuspec") -Encoding ascii
+
+    Write-Log "New-GlobalToolPointerNupkgSource: Pointer package ($PackageName) source created at: $RootFolder"
+
+    $pkgNuSpecSourcePathVar = "GlobalToolNuSpecSourcePath"
+    Write-Verbose -Verbose "sending: [task.setvariable variable=$pkgNuSpecSourcePathVar]$RootFolder"
+    Write-Host "##vso[task.setvariable variable=$pkgNuSpecSourcePathVar]$RootFolder"
+    $global:GlobalToolNuSpecSourcePath = $RootFolder
+
+    $pkgNameVar = "GlobalToolPkgName"
+    Write-Verbose -Verbose "sending: vso[task.setvariable variable=$pkgNameVar]$PackageName"
+    Write-Host "##vso[task.setvariable variable=$pkgNameVar]$PackageName"
+    $global:GlobalToolPkgName = $PackageName
+
+    if ($SkipCGManifest.IsPresent) {
+        Write-Verbose -Verbose "New-GlobalToolPointerNupkgSource: Skipping CGManifest creation."
+        return
+    }
+
+    $globalToolCGManifestPFilePath = Join-Path -Path "$env:REPOROOT" -ChildPath "tools/cgmanifest/main/cgmanifest.json"
+    $globalToolCGManifestFilePath = Resolve-Path -Path $globalToolCGManifestPFilePath -ErrorAction SilentlyContinue
+    if (($null -eq $globalToolCGManifestFilePath) -or (! (Test-Path -Path $globalToolCGManifestFilePath)))
+    {
+        throw "New-GlobalToolPointerNupkgSource: Invalid build source CGManifest file path: $globalToolCGManifestPFilePath"
+    }
+    $globalToolCGManifestSourceRoot = New-TempFolder
+    Copy-Item -Path $globalToolCGManifestFilePath -Destination $globalToolCGManifestSourceRoot -Force
+
+    $globalToolCGManifestPathVar = "GlobalToolCGManifestPath"
+    Write-Host "##vso[task.setvariable variable=$globalToolCGManifestPathVar]$globalToolCGManifestSourceRoot"
 }
 
 <#

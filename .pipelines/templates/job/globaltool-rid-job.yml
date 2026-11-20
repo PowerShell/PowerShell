@@ -1,0 +1,124 @@
+# Runs the build/sign/pack recipe for every RID of the RID-specific 'PowerShell' global tool
+# (see ../step/globaltool-rid-pack.yml) as ONE job definition with a matrix strategy, instead of
+# one fully-expanded job block per RID. Using a matrix keeps the compiled pipeline YAML small
+# (the step list is defined once; ADO spins up a separate parallel job run per matrix leg at
+# runtime) -- instantiating this template 8 times with 8 separate job blocks previously pushed
+# the overall pipeline past OneBranch's "Maximum object size exceeded" compiled-YAML limit.
+#
+# Each matrix leg depends only on build_ref_assemblies (for the shared signed ref assemblies)
+# and the CoOrdinatedBuildPipeline artifact containing its platform's Modules folder, so all
+# can start and run concurrently as soon as those are ready, independent of build_nupkg's
+# unrelated work.
+#
+# The resulting signed nupkg is published as this job's own artifact (globaltool-rid-<rid>,
+# named via ob_artifactBaseName since OneBranch disallows the 'publish' step and instead
+# auto-publishes each job's ob_outputDirectory -- see job/globaltool-ref-assemblies.yml for the
+# same pattern) for job/globaltool-pointer-job.yml to collect once every RID has finished.
+# Downstream jobs that need all RIDs to finish should use `dependsOn: glbtool_rid` (the single
+# job name below) -- ADO waits for every matrix leg of a job before a dependent job starts.
+
+parameters:
+  - name: OfficialBuild
+    type: boolean
+    default: true
+  - name: Rids
+    type: object
+
+jobs:
+- job: glbtool_rid
+  displayName: 'Global tool'
+  dependsOn: build_ref_assemblies
+  condition: succeeded()
+  pool:
+    type: windows
+
+  strategy:
+    matrix:
+      ${{ each rid in parameters.Rids }}:
+        ${{ replace(rid, '-', '_') }}:
+          rid: ${{ rid }}
+          ${{ if startsWith(rid, 'win-') }}:
+            modulesArtifact: drop_windows_build_windows_fxdependent_release
+          ${{ else }}:
+            modulesArtifact: drop_linux_sign_linux_fxd
+
+  variables:
+    - name: ob_artifactBaseName
+      value: globaltool-rid-$(rid)
+    - name: ps_official_build
+      value: ${{ parameters.OfficialBuild }}
+    - name: nugetMultiFeedWarnLevel
+      value: none
+    - name: NugetSecurityAnalysisWarningLevel
+      value: none
+    - name: skipNugetSecurityAnalysis
+      value: true
+    - name: ob_outputDirectory
+      value: '$(Build.ArtifactStagingDirectory)\ONEBRANCH_ARTIFACT'
+    - name: ob_sdl_binskim_enabled
+      value: true
+    - name: ob_sdl_tsa_configFile
+      value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+    - name: ob_sdl_credscan_suppressionsFile
+      value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+    - group: mscodehub-feed-read-general
+    - group: mscodehub-feed-read-akv
+    - group: DotNetPrivateBuildAccess
+    - group: certificate_logical_to_actual
+
+  steps:
+  - checkout: self
+    clean: true
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+      CreateJson: no
+
+  - template: /.pipelines/templates/shouldSign.yml@self
+
+  - template: /.pipelines/templates/cloneToOfficialPath.yml@self
+    parameters:
+      nativePathRoot: '$(Agent.TempDirectory)'
+
+  - download: CoOrdinatedBuildPipeline
+    artifact: $(modulesArtifact)
+    displayName: 'Download modules artifact'
+    env:
+      ob_restore_phase: true
+
+  - download: current
+    artifact: GlobalToolRefAssembly
+    displayName: 'Download GlobalToolRefAssembly'
+    env:
+      ob_restore_phase: true
+
+  - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
+    parameters:
+      repoRoot: $(PowerShellRoot)
+
+  - template: /.pipelines/templates/install-dotnet.yml@self
+
+  - template: /.pipelines/templates/step/globaltool-rid-pack.yml@self
+    parameters:
+      Rid: $(rid)
+      ModulesSourcePath: '$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\$(modulesArtifact)\Signed-fxdependent\Modules'
+      RefAssemblyPath: '$(Pipeline.Workspace)\GlobalToolRefAssembly'
+
+  # OneBranch disallows the 'publish'/PublishPipelineArtifact step ("Onebranch automatically
+  # upload binaries at the end of the job"). Copy into ob_outputDirectory instead; OneBranch
+  # publishes its contents as this job's own artifact, named via ob_artifactBaseName above
+  # (globaltool-rid-<rid>, resolved per matrix leg).
+  - pwsh: |
+      $rid = '$(rid)'
+      $nupkg = Get-ChildItem -Path '$(Pipeline.Workspace)/globaltool-multirid' -Filter "PowerShell.$rid.*.nupkg" | Select-Object -First 1
+      if (-not $nupkg) {
+        throw "Expected PowerShell.$rid nupkg not found in $(Pipeline.Workspace)/globaltool-multirid"
+      }
+      if (-not (Test-Path '$(ob_outputDirectory)')) {
+        New-Item -ItemType Directory -Path '$(ob_outputDirectory)' -Force
+      }
+      Copy-Item -Path $nupkg.FullName -Destination '$(ob_outputDirectory)' -Force -Verbose
+    displayName: 'Copy nupkg to output directory'
