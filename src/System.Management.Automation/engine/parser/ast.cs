@@ -8875,7 +8875,14 @@ namespace System.Management.Automation.Language
         {
             if (_cachedType == null)
             {
-                Type generic = GetGenericType(TypeName.GetReflectionType());
+                // Resolve the arity-qualified name (List`1) first. The plain name (List) usually doesn't exist,
+                // and failed lookups aren't cached, so trying it first scans every loaded assembly on every
+                // call, for example each New-Object 'System.Collections.Generic.List[string]'.
+                Type generic = TypeName.FullName.Contains('`') ? null : GetArityQualifiedType();
+                if (generic == null || !generic.ContainsGenericParameters)
+                {
+                    generic = TypeName.GetReflectionType();
+                }
 
                 if (generic != null && generic.ContainsGenericParameters)
                 {
@@ -8930,18 +8937,23 @@ namespace System.Management.Automation.Language
             {
                 if (!TypeName.FullName.Contains('`'))
                 {
-                    TypeName newTypeName = new(
-                        Extent,
-                        string.Create(CultureInfo.InvariantCulture, $"{TypeName.Name}`{GenericArguments.Count}"))
-                    {
-                        AssemblyName = TypeName.AssemblyName
-                    };
-
-                    generic = newTypeName.GetReflectionType();
+                    generic = GetArityQualifiedType();
                 }
             }
 
             return generic;
+        }
+
+        private Type GetArityQualifiedType()
+        {
+            TypeName newTypeName = new(
+                Extent,
+                string.Create(CultureInfo.InvariantCulture, $"{TypeName.Name}`{GenericArguments.Count}"))
+            {
+                AssemblyName = TypeName.AssemblyName
+            };
+
+            return newTypeName.GetReflectionType();
         }
 
         /// <summary>
