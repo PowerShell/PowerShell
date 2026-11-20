@@ -3029,24 +3029,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        /// <summary>
-        /// Removes a directory from the file system.
-        /// </summary>
-        /// <param name="directory">
-        /// The DirectoryInfo object representing the directory to be removed.
-        /// </param>
-        /// <param name="recurse">
-        /// If true, ShouldProcess will be called for each item in the subtree.
-        /// If false, ShouldProcess will only be called for the directory item.
-        /// </param>
-        /// <param name="force">
-        /// If true, attempts to modify the file attributes in case of a failure so that
-        /// the file can be removed.
-        /// </param>
-        /// <param name="rootOfRemoval">
-        /// True if the DirectoryInfo being passed in is the root of the tree being removed.
-        /// ShouldProcess will be called if this is true or if recurse is true.
-        /// </param>
         private enum RemoveProgressEntryType
         {
             EnterDirectory,
@@ -3238,6 +3220,24 @@ namespace Microsoft.PowerShell.Commands
             queue.Add(new RemoveProgressEntry { Type = RemoveProgressEntryType.ExitDirectory, Directory = directory }, cancellationToken);
         }
 
+        /// <summary>
+        /// Removes a directory from the file system.
+        /// </summary>
+        /// <param name="directory">
+        /// The DirectoryInfo object representing the directory to be removed.
+        /// </param>
+        /// <param name="recurse">
+        /// If true, ShouldProcess will be called for each item in the subtree.
+        /// If false, ShouldProcess will only be called for the directory item.
+        /// </param>
+        /// <param name="force">
+        /// If true, attempts to modify the file attributes in case of a failure so that
+        /// the file can be removed.
+        /// </param>
+        /// <param name="rootOfRemoval">
+        /// True if the DirectoryInfo being passed in is the root of the tree being removed.
+        /// ShouldProcess will be called if this is true or if recurse is true.
+        /// </param>
         private void RemoveDirectoryInfoItem(DirectoryInfo directory, bool recurse, bool force, bool rootOfRemoval)
         {
             Dbg.Diagnostics.Assert(directory != null, "Caller should always check directory");
