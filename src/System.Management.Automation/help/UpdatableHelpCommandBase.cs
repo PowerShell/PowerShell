@@ -32,6 +32,12 @@ namespace Microsoft.PowerShell.Commands
 
         internal int activityId;
         private readonly Dictionary<string, UpdatableHelpExceptionContext> _exceptions;
+        private static readonly char[] s_pathTraversalChars =
+#if UNIX
+            ['\\', '/'];
+#else
+            ['\\', '/', ':'];
+#endif
 
         #region Parameters
 
@@ -269,6 +275,21 @@ namespace Microsoft.PowerShell.Commands
                         "ModuleNameTooLong", StringUtil.Format(HelpDisplayStrings.ModuleNameTooLong, module.Name.Length, UpdatableHelpModuleInfo.MaxModuleNameLength),
                         ErrorCategory.InvalidArgument, null, null));
                 }
+                return;
+            }
+
+            if (string.IsNullOrEmpty(module.Name) || module.Name.IndexOfAny(s_pathTraversalChars) >= 0 || module.Name is "." or "..")
+            {
+                if (!noErrors)
+                {
+                    ProcessException(module.Name, culture: null, new UpdatableHelpSystemException(
+                       nameof(HelpDisplayStrings.InvalidModuleName),
+                       StringUtil.Format(HelpDisplayStrings.InvalidModuleName, module.Name),
+                       ErrorCategory.InvalidData,
+                       targetObject: null,
+                       innerException: null));
+                }
+
                 return;
             }
 
