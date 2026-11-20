@@ -9,7 +9,7 @@ Describe "AppLocker policy test files at startup" -Tags 'CI' {
 
             $systemPolicy = [System.Management.Automation.Security.SystemPolicy]
             $flags = [System.Reflection.BindingFlags]'NonPublic, Static'
-            $hasScriptPolicy = $systemPolicy.GetMethod('HasAppLockerOrSaferScriptPolicy', $flags).Invoke($null, $null)
+            $hasScriptPolicy = $systemPolicy.GetMethod('HasAppLockerOrSaferScriptPolicy', $flags, $null, [type[]]@(), $null).Invoke($null, $null)
 
             # When WDAC enforces lockdown, the AppLocker check is never reached.
             $null = $systemPolicy::GetSystemLockdownPolicy()

@@ -140,11 +140,13 @@ namespace Microsoft.PowerShell
             // Get the execution policy
             _executionPolicy = SecuritySupport.GetExecutionPolicy(_shellId);
 
-            // Always check the SAFER APIs if code integrity isn't being handled system-wide through
+            // Check the SAFER APIs if code integrity isn't being handled system-wide through
             // WLDP or AppLocker. In those cases, the scripts will be run in ConstrainedLanguage.
             // Otherwise, block.
+            // SAFER hashes the file and verifies its signature, so skip it when no AppLocker script
+            // policy or Software Restriction Policy exists, since SAFER would allow the file anyway.
             // SAFER APIs are not on CSS or OneCore
-            if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Enforce)
+            if (SystemPolicy.IsSaferScriptCheckRequired())
             {
                 SaferPolicy saferPolicy = SaferPolicy.Disallowed;
                 int saferAttempt = 0;

@@ -488,13 +488,80 @@ namespace System.Management.Automation.Security
                 return true;
             }
 
-            // AppLocker compiles the effective script rules (group policy, local policy or MDM) into this file.
-            string compiledScriptPolicy = IO.Path.Combine(Environment.SystemDirectory, "AppLocker", "Script.AppLocker");
+            // SAFER evaluates the user policy of the impersonated user, but Registry.CurrentUser can still map to the
+            // hive of the process user. Keep the check while the thread impersonates.
+            if (IsThreadImpersonating())
+            {
+                return true;
+            }
 
-            return PolicyFileMayExist(compiledScriptPolicy)
-                || RegistryKeyMayExist(Registry.LocalMachine, AppLockerScriptPolicyKey)
-                || !IsPolicyKeyEmpty(Registry.LocalMachine, SaferCodeIdentifiersKey, SaferAuthenticodeEnabledValue)
-                || !IsPolicyKeyEmpty(Registry.CurrentUser, SaferCodeIdentifiersKey, SaferAuthenticodeEnabledValue);
+            return HasAppLockerOrSaferScriptPolicy(
+                Registry.LocalMachine,
+                Registry.CurrentUser,
+                IO.Path.Combine(Environment.SystemDirectory, "AppLocker"));
+        }
+
+        /// <summary>
+        /// Returns true if the current thread impersonates a user, or if that cannot be determined.
+        /// </summary>
+        internal static bool IsThreadImpersonating()
+        {
+            try
+            {
+                using var identity = System.Security.Principal.WindowsIdentity.GetCurrent(ifImpersonating: true);
+                return identity is not null;
+            }
+            catch (Exception e) when (e is System.Security.SecurityException or UnauthorizedAccessException)
+            {
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// Checks whether an AppLocker script policy or a Software Restriction Policy may be in effect, given the
+        /// registry roots for machine and user policies and the AppLocker policy directory.
+        /// </summary>
+        /// <returns>False only when none of the policy locations exists. True if any of them exists or cannot be read.</returns>
+        internal static bool HasAppLockerOrSaferScriptPolicy(RegistryKey machineRoot, RegistryKey userRoot, string appLockerDirectory)
+        {
+            // AppLocker compiles the effective script rules (group policy, local policy or MDM) into Script.AppLocker.
+            // Policies from the AppLocker CSP are also kept under the MDM folder, so treat that folder as a policy too.
+            return PolicyFileMayExist(IO.Path.Combine(appLockerDirectory, "Script.AppLocker"))
+                || PolicyFileMayExist(IO.Path.Combine(appLockerDirectory, "MDM"))
+                || RegistryKeyMayExist(machineRoot, AppLockerScriptPolicyKey)
+                || !IsPolicyKeyEmpty(machineRoot, SaferCodeIdentifiersKey, SaferAuthenticodeEnabledValue)
+                || !IsPolicyKeyEmpty(userRoot, SaferCodeIdentifiersKey, SaferAuthenticodeEnabledValue);
+        }
+
+        /// <summary>
+        /// Checks whether PowerShell has to ask SAFER (Software Restriction Policies and AppLocker) about each script
+        /// file it loads. The policy locations are read on every call, so a policy applied while the process runs
+        /// is enforced for the files loaded after it.
+        /// </summary>
+        /// <returns>
+        /// False when the system lockdown policy is Enforce, or when no AppLocker script policy or Software Restriction
+        /// Policy exists.
+        /// </returns>
+        internal static bool IsSaferScriptCheckRequired()
+        {
+            return IsSaferScriptCheckRequired(GetSystemLockdownPolicy(), HasAppLockerOrSaferScriptPolicy);
+        }
+
+        /// <summary>
+        /// Checks whether script files need a SAFER check, given the system lockdown policy and a check for an
+        /// AppLocker script policy or Software Restriction Policy. The policy check runs only when it matters.
+        /// </summary>
+        internal static bool IsSaferScriptCheckRequired(SystemEnforcementMode systemLockdownPolicy, Func<bool> scriptPolicyMayExist)
+        {
+            // When the system policy is Enforce, scripts that are not allowed run in ConstrainedLanguage instead of
+            // being blocked, so SAFER is not consulted.
+            if (systemLockdownPolicy == SystemEnforcementMode.Enforce)
+            {
+                return false;
+            }
+
+            // Without an AppLocker script policy or a Software Restriction Policy, SAFER allows every script.
+            return scriptPolicyMayExist();
         }
 
         /// <summary>

@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using System.Management.Automation.Security;
 using System.Runtime.Versioning;
+using System.Security.Principal;
 using Microsoft.Win32;
 using Xunit;
 
@@ -96,12 +97,122 @@ namespace PSTests.Parallel
         public static void TestHasAppLockerOrSaferScriptPolicyMatchesMachine()
         {
             bool expected = (Environment.Is64BitOperatingSystem && !Environment.Is64BitProcess)
+                || SystemPolicy.IsThreadImpersonating()
                 || SystemPolicy.PolicyFileMayExist(Path.Combine(Environment.SystemDirectory, "AppLocker", "Script.AppLocker"))
+                || SystemPolicy.PolicyFileMayExist(Path.Combine(Environment.SystemDirectory, "AppLocker", "MDM"))
                 || SystemPolicy.RegistryKeyMayExist(Registry.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\SrpV2\Script")
                 || !SystemPolicy.IsPolicyKeyEmpty(Registry.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\Safer\CodeIdentifiers", "AuthenticodeEnabled")
                 || !SystemPolicy.IsPolicyKeyEmpty(Registry.CurrentUser, @"SOFTWARE\Policies\Microsoft\Windows\Safer\CodeIdentifiers", "AuthenticodeEnabled");
 
             Assert.Equal(expected, SystemPolicy.HasAppLockerOrSaferScriptPolicy());
+        }
+
+        [Fact]
+        public static void TestHasAppLockerOrSaferScriptPolicyWhileImpersonating()
+        {
+            // Registry.CurrentUser may not be the impersonated user's hive, so the policy check must not be skipped.
+            Assert.False(SystemPolicy.IsThreadImpersonating());
+            using WindowsIdentity identity = WindowsIdentity.GetCurrent();
+            WindowsIdentity.RunImpersonated(identity.AccessToken, () =>
+            {
+                Assert.True(SystemPolicy.IsThreadImpersonating());
+                Assert.True(SystemPolicy.HasAppLockerOrSaferScriptPolicy());
+            });
+        }
+
+        public enum ScriptPolicyState
+        {
+            None,
+            AuthenticodeEnabledOnly,
+            SaferMachineRule,
+            SaferMachineDefaultLevel,
+            SaferUserRule,
+            AppLockerScriptKey,
+            AppLockerScriptPolicyFile,
+            AppLockerMdmFolder,
+        }
+
+        [Theory]
+        [InlineData(ScriptPolicyState.None, false)]
+        [InlineData(ScriptPolicyState.AuthenticodeEnabledOnly, false)]
+        [InlineData(ScriptPolicyState.SaferMachineRule, true)]
+        [InlineData(ScriptPolicyState.SaferMachineDefaultLevel, true)]
+        [InlineData(ScriptPolicyState.SaferUserRule, true)]
+        [InlineData(ScriptPolicyState.AppLockerScriptKey, true)]
+        [InlineData(ScriptPolicyState.AppLockerScriptPolicyFile, true)]
+        [InlineData(ScriptPolicyState.AppLockerMdmFolder, true)]
+        public static void TestSaferScriptCheckForPolicyState(ScriptPolicyState state, bool scriptPolicyExpected)
+        {
+            const string CodeIdentifiers = @"SOFTWARE\Policies\Microsoft\Windows\Safer\CodeIdentifiers";
+            string testKeyPath = @"Software\PowerShellTests\SystemPolicy_" + Guid.NewGuid().ToString("N");
+            string appLockerDirectory = Path.Combine(Path.GetTempPath(), "SystemPolicy_" + Guid.NewGuid().ToString("N"));
+            try
+            {
+                using RegistryKey machine = Registry.CurrentUser.CreateSubKey(testKeyPath + @"\Machine");
+                using RegistryKey user = Registry.CurrentUser.CreateSubKey(testKeyPath + @"\User");
+
+                // An AppLocker folder without policies, as on a machine where AppLocker was never configured.
+                Directory.CreateDirectory(appLockerDirectory);
+                File.WriteAllText(Path.Combine(appLockerDirectory, "AppCache.dat.LOG1"), string.Empty);
+
+                switch (state)
+                {
+                    case ScriptPolicyState.AuthenticodeEnabledOnly:
+                        using (RegistryKey key = machine.CreateSubKey(CodeIdentifiers))
+                        {
+                            key.SetValue("authenticodeenabled", 0, RegistryValueKind.DWord);
+                        }
+
+                        break;
+
+                    case ScriptPolicyState.SaferMachineRule:
+                        using (RegistryKey key = machine.CreateSubKey(CodeIdentifiers))
+                        {
+                            key.SetValue("authenticodeenabled", 0, RegistryValueKind.DWord);
+                            key.CreateSubKey(@"0\Paths\{" + Guid.NewGuid() + "}").Dispose();
+                        }
+
+                        break;
+
+                    case ScriptPolicyState.SaferMachineDefaultLevel:
+                        using (RegistryKey key = machine.CreateSubKey(CodeIdentifiers))
+                        {
+                            key.SetValue("DefaultLevel", 0, RegistryValueKind.DWord);
+                        }
+
+                        break;
+
+                    case ScriptPolicyState.SaferUserRule:
+                        user.CreateSubKey(CodeIdentifiers + @"\0\Hashes\{" + Guid.NewGuid() + "}").Dispose();
+                        break;
+
+                    case ScriptPolicyState.AppLockerScriptKey:
+                        machine.CreateSubKey(@"SOFTWARE\Policies\Microsoft\Windows\SrpV2\Script").Dispose();
+                        break;
+
+                    case ScriptPolicyState.AppLockerScriptPolicyFile:
+                        File.WriteAllText(Path.Combine(appLockerDirectory, "Script.AppLocker"), string.Empty);
+                        break;
+
+                    case ScriptPolicyState.AppLockerMdmFolder:
+                        Directory.CreateDirectory(Path.Combine(appLockerDirectory, "MDM"));
+                        break;
+                }
+
+                bool scriptPolicyMayExist = SystemPolicy.HasAppLockerOrSaferScriptPolicy(machine, user, appLockerDirectory);
+                Assert.Equal(scriptPolicyExpected, scriptPolicyMayExist);
+
+                // SAFER is asked about each script only when a policy may exist, unless the system lockdown policy
+                // (WDAC) is Enforce. Then scripts run in ConstrainedLanguage and SAFER is not asked at all.
+                Assert.Equal(scriptPolicyExpected, SystemPolicy.IsSaferScriptCheckRequired(SystemEnforcementMode.None, () => scriptPolicyMayExist));
+                Assert.Equal(scriptPolicyExpected, SystemPolicy.IsSaferScriptCheckRequired(SystemEnforcementMode.Audit, () => scriptPolicyMayExist));
+                Assert.False(SystemPolicy.IsSaferScriptCheckRequired(SystemEnforcementMode.Enforce, () => throw new InvalidOperationException()));
+            }
+            finally
+            {
+                Registry.CurrentUser.DeleteSubKeyTree(testKeyPath, throwOnMissingSubKey: false);
+                Directory.Delete(appLockerDirectory, recursive: true);
+            }
         }
     }
 }
