@@ -100,9 +100,25 @@ namespace System.Management.Automation
             ConcurrentDictionary<string, CommandTypes> result = null;
             try
             {
-                var moduleManifestProperties = PsUtils.GetModuleManifestProperties(modulePath, PsUtils.FastModuleManifestAnalysisPropertyNames);
+                var moduleManifestProperties = PsUtils.GetModuleManifestProperties(
+                    modulePath,
+                    PsUtils.FastModuleManifestAnalysisPropertyNames,
+                    requireSafeKeys: true);
                 if (moduleManifestProperties != null)
                 {
+                    string defaultCommandPrefix = null;
+                    if (moduleManifestProperties.ContainsKey("DefaultCommandPrefix") &&
+                        moduleManifestProperties["DefaultCommandPrefix"] != null &&
+                        !LanguagePrimitives.TryConvertTo<string>(
+                            moduleManifestProperties["DefaultCommandPrefix"],
+                            CultureInfo.InvariantCulture,
+                            out defaultCommandPrefix))
+                    {
+                        // Preserve the regular manifest loader's conversion semantics when static analysis
+                        // cannot convert the prefix safely.
+                        return AnalyzeTheOldWay(modulePath, context, lastWriteTime);
+                    }
+
                     if (!Configuration.PowerShellConfig.Instance.IsImplicitWinCompatEnabled() && ModuleIsEditionIncompatible(modulePath, moduleManifestProperties))
                     {
                         ModuleIntrinsics.Tracer.WriteLine($"Module lies on the Windows System32 legacy module path and is incompatible with current PowerShell edition, skipping module: {modulePath}");
@@ -123,9 +139,9 @@ namespace System.Management.Automation
                     result = new ConcurrentDictionary<string, CommandTypes>(3, moduleManifestProperties.Count, StringComparer.OrdinalIgnoreCase);
 
                     var sawWildcard = false;
-                    var hadCmdlets = AddPsd1EntryToResult(result, moduleManifestProperties["CmdletsToExport"], CommandTypes.Cmdlet, ref sawWildcard);
-                    var hadFunctions = AddPsd1EntryToResult(result, moduleManifestProperties["FunctionsToExport"], CommandTypes.Function, ref sawWildcard);
-                    var hadAliases = AddPsd1EntryToResult(result, moduleManifestProperties["AliasesToExport"], CommandTypes.Alias, ref sawWildcard);
+                    var hadCmdlets = AddPsd1EntryToResult(result, moduleManifestProperties["CmdletsToExport"], CommandTypes.Cmdlet, defaultCommandPrefix, ref sawWildcard);
+                    var hadFunctions = AddPsd1EntryToResult(result, moduleManifestProperties["FunctionsToExport"], CommandTypes.Function, defaultCommandPrefix, ref sawWildcard);
+                    var hadAliases = AddPsd1EntryToResult(result, moduleManifestProperties["AliasesToExport"], CommandTypes.Alias, defaultCommandPrefix, ref sawWildcard);
 
                     var analysisSucceeded = hadCmdlets && hadFunctions && hadAliases;
 
@@ -296,11 +312,12 @@ namespace System.Management.Automation
             return true;
         }
 
-        private static bool AddPsd1EntryToResult(ConcurrentDictionary<string, CommandTypes> result, object value, CommandTypes commandTypeToAdd, ref bool sawWildcard)
+        private static bool AddPsd1EntryToResult(ConcurrentDictionary<string, CommandTypes> result, object value, CommandTypes commandTypeToAdd, string defaultCommandPrefix, ref bool sawWildcard)
         {
             string command = value as string;
             if (command != null)
             {
+                command = ModuleCmdletBase.AddPrefixToCommandName(command, defaultCommandPrefix);
                 return AddPsd1EntryToResult(result, command, commandTypeToAdd, ref sawWildcard);
             }
 
@@ -309,7 +326,7 @@ namespace System.Management.Automation
             {
                 foreach (var o in commands)
                 {
-                    if (!AddPsd1EntryToResult(result, o, commandTypeToAdd, ref sawWildcard))
+                    if (!AddPsd1EntryToResult(result, o, commandTypeToAdd, defaultCommandPrefix, ref sawWildcard))
                         return false;
                 }
 
@@ -649,7 +666,7 @@ namespace System.Management.Automation
             return new byte[]
             {
                 0x50, 0x53, 0x4d, 0x4f, 0x44, 0x55, 0x4c, 0x45, 0x43, 0x41, 0x43, 0x48, 0x45, // PSMODULECACHE
-                0x01 // version #
+                0x02 // version #
             };
         }
 

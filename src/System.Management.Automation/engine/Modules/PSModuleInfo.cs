@@ -575,10 +575,11 @@ namespace System.Management.Automation
                 {
                     foreach (var detectedExport in DetectedFunctionExports)
                     {
-                        if (!exports.ContainsKey(detectedExport))
+                        string prefixedExport = ModuleCmdletBase.AddPrefixToCommandName(detectedExport, Prefix);
+                        if (!exports.ContainsKey(prefixedExport))
                         {
-                            FunctionInfo tempFunction = new FunctionInfo(detectedExport, ScriptBlock.EmptyScriptBlock, null) { Module = this };
-                            exports[detectedExport] = tempFunction;
+                            FunctionInfo tempFunction = new FunctionInfo(prefixedExport, ScriptBlock.EmptyScriptBlock, null) { Module = this };
+                            exports[prefixedExport] = tempFunction;
                         }
                     }
                 }
