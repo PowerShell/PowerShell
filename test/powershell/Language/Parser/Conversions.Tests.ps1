@@ -79,6 +79,149 @@ Describe 'conversion syntax' -Tags "CI" {
         }
     }
 
+    Context "Cast collection to generic collection interface" {
+        It "converts object[] to <Type> as an array of <ElementType>" -TestCases @(
+            @{ Type = [System.Collections.Generic.IEnumerable[string]]; ElementType = [string]; Value = @(1, 'b'); Expected = @('1', 'b') }
+            @{ Type = [System.Collections.Generic.ICollection[int]]; ElementType = [int]; Value = @('1', 2); Expected = @(1, 2) }
+            @{ Type = [System.Collections.Generic.IList[int]]; ElementType = [int]; Value = @('1', '2'); Expected = @(1, 2) }
+            @{ Type = [System.Collections.Generic.IReadOnlyCollection[double]]; ElementType = [double]; Value = @(1, '2.5'); Expected = @(1, 2.5) }
+            @{ Type = [System.Collections.Generic.IReadOnlyList[string]]; ElementType = [string]; Value = @(1, 2); Expected = @('1', '2') }
+        ) {
+            param($Type, $ElementType, $Value, $Expected)
+
+            $result = $Value -as $Type
+            , $result | Should -BeOfType $ElementType.MakeArrayType()
+            $result -join ';' | Should -BeExactly ($Expected -join ';')
+        }
+
+        It "converts a non-array enumerable to a generic collection interface" {
+            $list = [System.Collections.Generic.List[object]]::new()
+            $list.Add('1')
+            $list.Add(2)
+
+            $result = [System.Collections.Generic.IEnumerable[int]]$list
+            , $result | Should -BeOfType ([int[]])
+            $result -join ';' | Should -BeExactly '1;2'
+        }
+
+        It "does not convert when the value is already assignable to the target type" {
+            $array = [string[]]@('a', 'b')
+            [object]::ReferenceEquals($array, [System.Collections.Generic.IEnumerable[string]]$array) | Should -BeTrue
+
+            $list = [System.Collections.Generic.List[string]]::new()
+            [object]::ReferenceEquals($list, [System.Collections.Generic.IList[string]]$list) | Should -BeTrue
+        }
+
+        It "selects a method overload that takes a generic collection interface" {
+            $set = [System.Collections.Generic.HashSet[string]]::new(@('a', 'b', 'c', 'A', 'b'), [System.StringComparer]::InvariantCultureIgnoreCase)
+            $set.Count | Should -Be 3
+        }
+
+        It "converts an argument to a parameter of a generic collection interface type" {
+            function Test-GenericInterfaceParameter([System.Collections.Generic.IEnumerable[int]] $Value) { , $Value }
+
+            $result = Test-GenericInterfaceParameter -Value @('1', '2')
+            , $result | Should -BeOfType ([int[]])
+            $result -join ';' | Should -BeExactly '1;2'
+        }
+
+        It "throws when an element cannot be converted" {
+            # Same error as converting to the equivalent array type, e.g. [int[]]@('a')
+            { [System.Collections.Generic.IEnumerable[int]]@('a') } | Should -Throw -ErrorId 'InvalidCastFromStringToInteger'
+        }
+
+        Context "Overload resolution with generic collection interface parameters" {
+            BeforeAll {
+                if (-not ('GenericCollectionInterfaceOverloadTest' -as [type])) {
+                    Add-Type -TypeDefinition @'
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
+
+[TypeConverter(typeof(TypeConverter))]
+public class GenericCollectionInterfaceAttributedList : ArrayList { }
+
+public class GenericCollectionInterfaceStringsConverter : TypeConverter
+{
+    public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType) => destinationType == typeof(IEnumerable<string>);
+    public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType) => new List<string> { "custom" };
+}
+
+[TypeConverter(typeof(GenericCollectionInterfaceStringsConverter))]
+public class GenericCollectionInterfaceConvertingList : ArrayList { }
+
+public static class GenericCollectionInterfaceOverloadTest
+{
+    public static string IntArrayOrEnumerableOfString(int[] value) => "int[]";
+    public static string IntArrayOrEnumerableOfString(IEnumerable<string> value) => "IEnumerable<string>";
+
+    public static string StringArrayOrEnumerableOfString(string[] value) => "string[]";
+    public static string StringArrayOrEnumerableOfString(IEnumerable<string> value) => "IEnumerable<string>";
+
+    public static string IntArrayOrEnumerableOfObject(int[] value) => "int[]";
+    public static string IntArrayOrEnumerableOfObject(IEnumerable<object> value) => "IEnumerable<object>";
+
+    public static string EnumerableOfIntOrListOfString(IEnumerable<int> value) => "IEnumerable<int>";
+    public static string EnumerableOfIntOrListOfString(IList<string> value) => "IList<string>";
+}
+'@
+                }
+            }
+
+            It "prefers an array overload over a generic interface overload for <Description>" -TestCases @(
+                @{ Description = 'int[] vs IEnumerable[string] with ints'; Script = { [GenericCollectionInterfaceOverloadTest]::IntArrayOrEnumerableOfString(@(1, 2)) }; Expected = 'int[]' }
+                @{ Description = 'int[] vs IEnumerable[string] with a List'; Script = { [GenericCollectionInterfaceOverloadTest]::IntArrayOrEnumerableOfString([System.Collections.Generic.List[object]]@(1, 2)) }; Expected = 'int[]' }
+                @{ Description = 'string[] vs IEnumerable[string] with ints'; Script = { [GenericCollectionInterfaceOverloadTest]::StringArrayOrEnumerableOfString(@(1, 2)) }; Expected = 'string[]' }
+                @{ Description = 'string[] vs IEnumerable[string] with a List'; Script = { [GenericCollectionInterfaceOverloadTest]::StringArrayOrEnumerableOfString([System.Collections.Generic.List[object]]@(1, 2)) }; Expected = 'string[]' }
+            ) {
+                param($Script, $Expected)
+
+                & $Script | Should -BeExactly $Expected
+            }
+
+            It "prefers an array overload over a generic interface overload for a null argument" {
+                [GenericCollectionInterfaceOverloadTest]::IntArrayOrEnumerableOfObject($null) | Should -BeExactly 'int[]'
+            }
+
+            It "prefers an array overload over a generic interface overload for an enumerable with type converter metadata" {
+                $list = [GenericCollectionInterfaceAttributedList]::new()
+                $null = $list.Add(1)
+                $null = $list.Add(2)
+
+                [GenericCollectionInterfaceOverloadTest]::IntArrayOrEnumerableOfString($list) | Should -BeExactly 'int[]'
+            }
+
+            It "prefers a custom type converter over the generic collection interface conversion" {
+                $list = [GenericCollectionInterfaceConvertingList]::new()
+                $null = $list.Add(1)
+
+                $result = [System.Collections.Generic.IEnumerable[string]]$list
+                $result -join ';' | Should -BeExactly 'custom'
+            }
+
+            It "chooses between generic interface overloads by element type for <Description>" -TestCases @(
+                @{ Description = 'ints'; Script = { [GenericCollectionInterfaceOverloadTest]::EnumerableOfIntOrListOfString(@(1, 2)) }; Expected = 'IEnumerable<int>' }
+                @{ Description = 'strings'; Script = { [GenericCollectionInterfaceOverloadTest]::EnumerableOfIntOrListOfString(@('a', 'b')) }; Expected = 'IList<string>' }
+            ) {
+                param($Script, $Expected)
+
+                & $Script | Should -BeExactly $Expected
+            }
+        }
+
+        It "does not convert <Description>" -TestCases @(
+            @{ Description = 'a scalar'; Script = { [System.Collections.Generic.IEnumerable[string]]'abc' } }
+            @{ Description = 'a hashtable'; Script = { [System.Collections.Generic.IEnumerable[object]]@{ a = 1 } } }
+            @{ Description = 'to other generic interfaces'; Script = { [System.Collections.Generic.ISet[string]]@('a') } }
+        ) {
+            param($Script)
+
+            $Script | Should -Throw -ErrorId 'ConvertToFinalInvalidCastException'
+        }
+    }
+
     It 'Should not convert invalid strings to type name using -as operator' {
         'int]whatever' -as [type] | Should -Be $null
     }

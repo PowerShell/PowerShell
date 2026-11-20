@@ -5334,6 +5334,114 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Figures out a conversion from an array or enumerable to one of the generic collection
+        /// interfaces implemented by single-dimensional arrays (IEnumerable&lt;T&gt;, ICollection&lt;T&gt;,
+        /// IList&lt;T&gt;, IReadOnlyCollection&lt;T&gt; and IReadOnlyList&lt;T&gt;), by converting to T[].
+        /// </summary>
+        /// <param name="fromType">The type of the value to convert.</param>
+        /// <param name="toType">The target type.</param>
+        /// <returns>The converter and its rank, or null if this conversion does not apply.</returns>
+        private static Tuple<PSConverter<object>, ConversionRank> FigureGenericCollectionInterfaceConversion(Type fromType, Type toType)
+        {
+            Type elementType = GetGenericCollectionInterfaceElementType(toType);
+            if (elementType == null || elementType.ContainsGenericParameters || elementType.IsByRefLike)
+            {
+                return null;
+            }
+
+            // Only convert values that PowerShell treats as collections; scalars are not wrapped.
+            if (!fromType.IsArray && !IsTypeEnumerable(fromType))
+            {
+                return null;
+            }
+
+            Type arrayType = elementType.MakeArrayType();
+            IConversionData arrayConversion = FigureConversion(fromType, arrayType);
+            if (arrayConversion.Rank == ConversionRank.None || arrayConversion.Converter is not PSConverter<object> arrayConverter)
+            {
+                return null;
+            }
+
+            var converter = new ConvertViaArrayToGenericCollectionInterface(arrayConverter, arrayType);
+            return new Tuple<PSConverter<object>, ConversionRank>(converter.Convert, arrayConversion.Rank);
+        }
+
+        /// <summary>
+        /// Gets the element type T if <paramref name="type"/> is one of the generic collection interfaces
+        /// implemented by single-dimensional arrays (IEnumerable&lt;T&gt;, ICollection&lt;T&gt;, IList&lt;T&gt;,
+        /// IReadOnlyCollection&lt;T&gt; or IReadOnlyList&lt;T&gt;); otherwise null.
+        /// </summary>
+        internal static Type GetGenericCollectionInterfaceElementType(Type type)
+        {
+            if (!type.IsInterface || !type.IsConstructedGenericType)
+            {
+                return null;
+            }
+
+            Type genericTypeDefinition = type.GetGenericTypeDefinition();
+            if (genericTypeDefinition == typeof(IEnumerable<>)
+                || genericTypeDefinition == typeof(ICollection<>)
+                || genericTypeDefinition == typeof(IList<>)
+                || genericTypeDefinition == typeof(IReadOnlyCollection<>)
+                || genericTypeDefinition == typeof(IReadOnlyList<>))
+            {
+                return type.GenericTypeArguments[0];
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Returns true if converting from <paramref name="fromType"/> to <paramref name="toType"/> uses the
+        /// array-backed conversion to a generic collection interface, rather than any other conversion.
+        /// </summary>
+        internal static bool IsGenericCollectionInterfaceConversion(Type fromType, Type toType)
+        {
+            return GetGenericCollectionInterfaceElementType(toType) != null
+                && IsGenericCollectionInterfaceConversion(FigureConversion(fromType, toType));
+        }
+
+        private static bool IsGenericCollectionInterfaceConversion(IConversionData conversionData)
+        {
+            return conversionData.Converter is PSConverter<object> converter
+                && converter.Target is ConvertViaArrayToGenericCollectionInterface;
+        }
+
+        /// <summary>
+        /// Gets the conversion rank as if the array-backed conversion to a generic collection interface did not exist.
+        /// Overload resolution uses this when comparing types with each other (rather than an argument with a
+        /// parameter), so that adding that conversion does not change which existing overload is preferred.
+        /// </summary>
+        internal static ConversionRank GetConversionRankExcludingGenericCollectionInterfaceConversion(Type fromType, Type toType)
+        {
+            IConversionData conversionData = FigureConversion(fromType, toType);
+            return IsGenericCollectionInterfaceConversion(conversionData) ? ConversionRank.None : conversionData.Rank;
+        }
+
+        private sealed class ConvertViaArrayToGenericCollectionInterface
+        {
+            private readonly PSConverter<object> _arrayConverter;
+            private readonly Type _arrayType;
+
+            internal ConvertViaArrayToGenericCollectionInterface(PSConverter<object> arrayConverter, Type arrayType)
+            {
+                _arrayConverter = arrayConverter;
+                _arrayType = arrayType;
+            }
+
+            internal object Convert(object valueToConvert,
+                                    Type resultType,
+                                    bool recursion,
+                                    PSObject originalValueToConvert,
+                                    IFormatProvider formatProvider,
+                                    TypeTable backupTable)
+            {
+                typeConversion.WriteLine("Converting to {0} via {1}.", resultType, _arrayType);
+                return _arrayConverter(valueToConvert, _arrayType, recursion, originalValueToConvert, formatProvider, backupTable);
+            }
+        }
+
+        /// <summary>
         /// Figure conversion when following conditions are satisfied:
         /// 1. toType is a closed generic type and it has a constructor that takes IEnumerable[T], ICollection[T] or IList[T]
         /// 2. fromType is System.Array, System.Object[] or it's the same as the element type of toType.
@@ -5792,6 +5900,18 @@ namespace System.Management.Automation
                 }
             }
 
+            bool isGenericCollectionInterfaceConversion = false;
+            if (converter == null)
+            {
+                var tuple = FigureGenericCollectionInterfaceConversion(fromType, toType);
+                if (tuple != null)
+                {
+                    converter = tuple.Item1;
+                    rank = tuple.Item2;
+                    isGenericCollectionInterfaceConversion = true;
+                }
+            }
+
             converter ??= FigurePropertyConversion(fromType, toType, ref rank);
 
             if (TypeConverterPossiblyExists(fromType) || TypeConverterPossiblyExists(toType)
@@ -5801,7 +5921,14 @@ namespace System.Management.Automation
                 customConverter.tryfirstConverter = valueDependentConversion;
                 customConverter.fallbackConverter = converter;
                 converter = customConverter.Convert;
-                if (valueDependentRank > rank)
+                if (isGenericCollectionInterfaceConversion)
+                {
+                    // Custom type converters are tried first, and the generic collection interface conversion
+                    // is only the final fallback. Keep the Custom rank this conversion had without that fallback,
+                    // so overload resolution is unchanged.
+                    rank = ConversionRank.Custom;
+                }
+                else if (valueDependentRank > rank)
                 {
                     rank = valueDependentRank;
                 }
