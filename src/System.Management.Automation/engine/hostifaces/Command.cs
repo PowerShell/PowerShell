@@ -782,47 +782,47 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Default streaming behavior.
         /// </summary>
-        None,
+        None = 0,
 
         /// <summary>
         /// Success output.
         /// </summary>
-        Output,
+        Output = 1,
 
         /// <summary>
         /// Error output.
         /// </summary>
-        Error,
+        Error = 2,
 
         /// <summary>
         /// Warning information stream.
         /// </summary>
-        Warning,
+        Warning = 4,
 
         /// <summary>
         /// Verbose information stream.
         /// </summary>
-        Verbose,
+        Verbose = 8,
 
         /// <summary>
         /// Debug information stream.
         /// </summary>
-        Debug,
+        Debug = 16,
 
         /// <summary>
         /// Information information stream.
         /// </summary>
-        Information,
+        Information = 32,
 
         /// <summary>
         /// All streams.
         /// </summary>
-        All,
+        All = Output | Error | Warning | Verbose | Debug | Information,
 
         /// <summary>
         /// Redirect to nothing.
         /// </summary>
-        Null
+        Null = 0
     }
 
     /// <summary>
