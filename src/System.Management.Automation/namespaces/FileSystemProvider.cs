@@ -2912,6 +2912,12 @@ namespace Microsoft.PowerShell.Commands
                     _totalBytes = 0;
                     _removedFiles = 0;
                     _removedBytes = 0;
+                    _totalDirs = 0;
+                    _removedDirs = 0;
+
+                    // Provide a configuration to display directory count during deletion
+                    _removeReportDirectories = Context?.ExecutionContext != null
+                        && LanguagePrimitives.IsTrue(Context.ExecutionContext.SessionState.PSVariable.Get("PSRemoveItemDirectoryProgress")?.Value);
                     _removeStopwatch.Restart();
                 }
 
@@ -2993,7 +2999,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (Stopping || _removedFiles == _totalFiles)
+                if (Stopping || (_removedFiles == _totalFiles && (!_removeReportDirectories || _removedDirs == _totalDirs)))
                 {
                     _removeStopwatch.Stop();
                     var progress = new ProgressRecord(REMOVE_FILE_ACTIVITY_ID, " ", " ")
@@ -3093,6 +3099,23 @@ namespace Microsoft.PowerShell.Commands
                 });
 
                 var directories = new Stack<RemoveProgressDirectoryFrame>();
+                void WriteRemoveProgress()
+                {
+                    long totalFiles = Interlocked.Read(ref _totalFiles);
+                    long totalDirs = Interlocked.Read(ref _totalDirs);
+                    long totalBytes = Interlocked.Read(ref _totalBytes);
+                    double speed = _removedBytes / 1024 / 1024 / _removeStopwatch.Elapsed.TotalSeconds;
+                    var progress = new ProgressRecord(
+                        REMOVE_FILE_ACTIVITY_ID,
+                        StringUtil.Format(FileSystemProviderStrings.RemovingLocalFileActivity, _removedFiles, totalFiles),
+                        StringUtil.Format(FileSystemProviderStrings.RemovingLocalBytesStatus, Utils.DisplayHumanReadableFileSize(_removedBytes), Utils.DisplayHumanReadableFileSize(totalBytes), speed)
+                        + (_removeReportDirectories
+                            ? string.Format(CultureInfo.InvariantCulture, ", {0} of {1} directories", _removedDirs, totalDirs)
+                            : string.Empty));
+                    progress.PercentComplete = totalBytes != 0 ? (int)Math.Min((double)_removedBytes * 100 / totalBytes, 100) : 100;
+                    progress.RecordType = ProgressRecordType.Processing;
+                    WriteProgress(progress);
+                }
                 try
                 {
                     foreach (RemoveProgressEntry entry in queue.GetConsumingEnumerable())
@@ -3140,15 +3163,7 @@ namespace Microsoft.PowerShell.Commands
                                     _removedBytes += entry.FileSize;
                                     if (_removeStopwatch.Elapsed.TotalSeconds > ProgressBarDurationThreshold)
                                     {
-                                        long totalBytes = Interlocked.Read(ref _totalBytes);
-                                        double speed = _removedBytes / 1024 / 1024 / _removeStopwatch.Elapsed.TotalSeconds;
-                                        var progress = new ProgressRecord(
-                                            REMOVE_FILE_ACTIVITY_ID,
-                                            StringUtil.Format(FileSystemProviderStrings.RemovingLocalFileActivity, _removedFiles, Interlocked.Read(ref _totalFiles)),
-                                            StringUtil.Format(FileSystemProviderStrings.RemovingLocalBytesStatus, Utils.DisplayHumanReadableFileSize(_removedBytes), Utils.DisplayHumanReadableFileSize(totalBytes), speed));
-                                        progress.PercentComplete = totalBytes != 0 ? (int)Math.Min((double)_removedBytes * 100 / totalBytes, 100) : 100;
-                                        progress.RecordType = ProgressRecordType.Processing;
-                                        WriteProgress(progress);
+                                        WriteRemoveProgress();
                                     }
                                 }
                                 break;
@@ -3167,6 +3182,11 @@ namespace Microsoft.PowerShell.Commands
                                     else
                                     {
                                         RemoveFileSystemItem(frame.Directory, force);
+                                        _removedDirs++;
+                                        if (_removeReportDirectories)
+                                        {
+                                            WriteRemoveProgress();
+                                        }
                                     }
                                 }
                                 break;
@@ -3202,6 +3222,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             queue.Add(new RemoveProgressEntry { Type = RemoveProgressEntryType.EnterDirectory, Directory = directory, IsRoot = isRoot }, cancellationToken);
+            Interlocked.Increment(ref _totalDirs);
 
             // Snapshot each directory's immediate children before the consumer can remove them.
             foreach (DirectoryInfo childDirectory in directory.EnumerateDirectories().ToArray())
@@ -5225,6 +5246,9 @@ namespace Microsoft.PowerShell.Commands
 
         private long _removedBytes;
         private long _removedFiles;
+        private long _totalDirs;
+        private long _removedDirs;
+        private bool _removeReportDirectories;
         private readonly Stopwatch _removeStopwatch = new();
 
         private const double ProgressBarDurationThreshold = 2.0;
