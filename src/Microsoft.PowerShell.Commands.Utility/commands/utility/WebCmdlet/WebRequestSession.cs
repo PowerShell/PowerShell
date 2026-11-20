@@ -5,12 +5,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -211,6 +213,10 @@ namespace Microsoft.PowerShell.Commands
                     return new NetworkStream(socket, ownsSocket: false);
                 };
             }
+            else if (OperatingSystem.IsWindows())
+            {
+                handler.ConnectCallback = ConnectWithFastLoopbackRefusalAsync;
+            }
 
             handler.CookieContainer = Cookies;
             handler.AutomaticDecompression = DecompressionMethods.All;
@@ -256,6 +262,46 @@ namespace Microsoft.PowerShell.Commands
             {
                 Timeout = _connectionTimeout
             };
+        }
+
+        // SIO_TCP_INITIAL_RTO with TCP_INITIAL_RTO_PARAMETERS { Rtt = TCP_INITIAL_RTO_DEFAULT_RTT,
+        // MaxSynRetransmissions = TCP_INITIAL_RTO_NO_SYN_RETRANSMISSIONS } (mstcpip.h).
+        private const int SioTcpInitialRto = unchecked((int)0x98000011);
+        private static readonly byte[] s_noSynRetransmissions = { 0, 0, 254, 0 };
+
+        /// <summary>
+        /// The default SocketsHttpHandler connect, except that for a loopback host on Windows the SYN
+        /// is not retransmitted after a refusal. Windows otherwise retries for about 2 seconds per
+        /// address before reporting the refusal (4 seconds for localhost: ::1, then 127.0.0.1).
+        /// libuv, curl and Chromium do the same for loopback.
+        /// </summary>
+        private static async ValueTask<Stream> ConnectWithFastLoopbackRefusalAsync(SocketsHttpConnectionContext context, CancellationToken cancellationToken)
+        {
+            Socket socket = new(SocketType.Stream, ProtocolType.Tcp) { NoDelay = true };
+            try
+            {
+                string host = context.DnsEndPoint.Host;
+                if (string.Equals(host, "localhost", StringComparison.OrdinalIgnoreCase)
+                    || (IPAddress.TryParse(host, out IPAddress? address) && IPAddress.IsLoopback(address)))
+                {
+                    try
+                    {
+                        socket.IOControl(SioTcpInitialRto, s_noSynRetransmissions, null);
+                    }
+                    catch (SocketException)
+                    {
+                        // Older Windows: keep the default behavior.
+                    }
+                }
+
+                await socket.ConnectAsync(context.DnsEndPoint, cancellationToken).ConfigureAwait(false);
+                return new NetworkStream(socket, ownsSocket: true);
+            }
+            catch
+            {
+                socket.Dispose();
+                throw;
+            }
         }
 
         private void SetClassVar<T>(ref T oldValue, T newValue) where T : class?
