@@ -111,3 +111,85 @@ Describe "Move-Item tests" -Tag "CI" {
         }
     }
 }
+
+Describe "Move-Item with -PreservePathFrom" -Tag "CI" {
+    BeforeAll {
+        $sourceDirectory = "$TESTDRIVE/PreservePathFromSource"
+        $destinationDirectory = "$TESTDRIVE/PreservePathFromDestination"
+
+        # Returns the relative paths of all files below a path, with platform
+        # separators and in a stable order, so that they can be compared.
+        function Get-RelativeFilePathsBelow {
+            param([string]$Path)
+
+            Get-ChildItem $Path -Recurse -File | ForEach-Object {
+                $_.FullName.Substring($Path.Length).TrimStart('\', '/') -replace '/', [IO.Path]::DirectorySeparatorChar
+            } | Sort-Object
+        }
+    }
+
+    BeforeEach {
+        Remove-Item $sourceDirectory, $destinationDirectory -Recurse -Force -ErrorAction SilentlyContinue
+
+        New-Item -ItemType Directory -Path (Join-Path $sourceDirectory "Sub1/Deep"), (Join-Path $sourceDirectory "Sub2") -Force | Out-Null
+        Set-Content (Join-Path $sourceDirectory "Root.log") -Value "root"
+        Set-Content (Join-Path $sourceDirectory "Sub1/First.log") -Value "first"
+        Set-Content (Join-Path $sourceDirectory "Sub1/Deep/Second.log") -Value "second"
+        Set-Content (Join-Path $sourceDirectory "Sub2/Third.log") -Value "third"
+    }
+
+    AfterAll {
+        Remove-Item $sourceDirectory, $destinationDirectory -Recurse -Force -ErrorAction SilentlyContinue
+    }
+
+    It "Preserves the folder structure of piped files below the base path" {
+        Get-ChildItem $sourceDirectory -File -Recurse |
+            Move-Item -PreservePathFrom $sourceDirectory -Destination $destinationDirectory
+
+        $separator = [IO.Path]::DirectorySeparatorChar
+        Get-RelativeFilePathsBelow $destinationDirectory | Should -Be @(
+            "Root.log"
+            "Sub1${separator}Deep${separator}Second.log"
+            "Sub1${separator}First.log"
+            "Sub2${separator}Third.log"
+        )
+        (Get-ChildItem $sourceDirectory -Recurse -File).Count | Should -Be 0
+    }
+
+    It "Preserves the folder structure of piped directories" {
+        Get-ChildItem $sourceDirectory -Directory |
+            Move-Item -PreservePathFrom $sourceDirectory -Destination $destinationDirectory
+
+        Join-Path $destinationDirectory "Sub1/First.log" | Should -Exist
+        Join-Path $destinationDirectory "Sub1/Deep/Second.log" | Should -Exist
+        Join-Path $destinationDirectory "Sub2/Third.log" | Should -Exist
+        Join-Path $sourceDirectory "Sub1" | Should -Not -Exist
+    }
+
+    It "Writes a non-terminating error when the item is not below the base path" {
+        $outsideFile = "$TESTDRIVE/PreservePathFromOutside.log"
+        Set-Content $outsideFile -Value "outside"
+
+        try {
+            $errorRecord = $null
+            Move-Item $outsideFile `
+                -PreservePathFrom $sourceDirectory `
+                -Destination $destinationDirectory -ErrorVariable errorRecord -ErrorAction SilentlyContinue
+
+            $errorRecord.FullyQualifiedErrorId | Should -Be "PreservePathFromOutsideBasePath,Microsoft.PowerShell.Commands.MoveItemCommand"
+            $outsideFile | Should -Exist
+        }
+        finally {
+            Remove-Item $outsideFile -Force -ErrorAction SilentlyContinue
+        }
+    }
+
+    It "Writes an error when the base path does not exist" {
+        $errorRecord = $null
+        Move-Item (Join-Path $sourceDirectory "Root.log") `
+            -PreservePathFrom "$TESTDRIVE/DoesNotExist" `
+            -Destination $destinationDirectory -ErrorVariable errorRecord -ErrorAction SilentlyContinue
+
+        $errorRecord.FullyQualifiedErrorId | Should -Be "PreservePathFromPathNotFound,Microsoft.PowerShell.Commands.MoveItemCommand"
+    }
+}

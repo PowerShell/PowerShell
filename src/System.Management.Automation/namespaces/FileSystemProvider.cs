@@ -323,6 +323,17 @@ namespace Microsoft.PowerShell.Commands
             return new CopyItemDynamicParameters();
         }
 
+        /// <summary>
+        /// Gets the dynamic parameters for Move-Item on the FileSystemProvider.
+        /// </summary>
+        /// <param name="path">Source for the move operation.</param>
+        /// <param name="destination">Destination for the move operation.</param>
+        /// <returns></returns>
+        protected override object MoveItemDynamicParameters(string path, string destination)
+        {
+            return new MoveItemDynamicParameters();
+        }
+
         #region ICmdletProviderSupportsHelp members
 
         /// <summary>
@@ -3560,6 +3571,143 @@ namespace Microsoft.PowerShell.Commands
         #region CopyItem
 
         /// <summary>
+        /// Determines the destination for an item when preserving its relative path
+        /// below a base path, so that the folder structure of the source item is
+        /// preserved at the destination.
+        /// </summary>
+        /// <param name="path">
+        /// The provider path of the item being copied or moved.
+        /// </param>
+        /// <param name="preservePathFrom">
+        /// The user-specified base path from which the relative path is preserved.
+        /// </param>
+        /// <param name="destinationPath">
+        /// The destination provider path. When this method returns true it contains
+        /// the destination adjusted to preserve the relative path of the item.
+        /// </param>
+        /// <returns>
+        /// False if the destination could not be computed, in which case an error
+        /// has been written; otherwise true.
+        /// </returns>
+        private bool TryGetDestinationWithPreservedPath(
+            string path,
+            string preservePathFrom,
+            ref string destinationPath)
+        {
+            // Resolve the base path the folder structure is preserved from.
+            Collection<string> resolvedBasePaths = null;
+            ProviderInfo baseProvider = null;
+
+            try
+            {
+                resolvedBasePaths = Context.ExecutionContext.SessionState.Path.GetResolvedProviderPathFromPSPath(
+                    preservePathFrom,
+                    Context,
+                    out baseProvider);
+            }
+            catch (ItemNotFoundException pathNotFound)
+            {
+                WriteError(new ErrorRecord(pathNotFound, "PreservePathFromPathNotFound", ErrorCategory.ObjectNotFound, preservePathFrom));
+                return false;
+            }
+            catch (System.Management.Automation.DriveNotFoundException driveNotFound)
+            {
+                WriteError(new ErrorRecord(driveNotFound, "PreservePathFromDriveNotFound", ErrorCategory.ObjectNotFound, preservePathFrom));
+                return false;
+            }
+            catch (ProviderNotFoundException providerNotFound)
+            {
+                WriteError(new ErrorRecord(providerNotFound, "PreservePathFromProviderNotFound", ErrorCategory.InvalidArgument, preservePathFrom));
+                return false;
+            }
+
+            if (baseProvider == null || baseProvider.ImplementingType != typeof(FileSystemProvider))
+            {
+                string error = StringUtil.Format(
+                    FileSystemProviderStrings.PreservePathFromWrongProvider,
+                    preservePathFrom,
+                    ProviderInfo.Name);
+                WriteError(new ErrorRecord(
+                    new ArgumentException(error),
+                    "PreservePathFromWrongProvider",
+                    ErrorCategory.InvalidArgument,
+                    preservePathFrom));
+                return false;
+            }
+
+            if (resolvedBasePaths.Count != 1)
+            {
+                string error = StringUtil.Format(
+                    FileSystemProviderStrings.PreservePathFromAmbiguous,
+                    preservePathFrom,
+                    resolvedBasePaths.Count);
+                WriteError(new ErrorRecord(
+                    new ArgumentException(error),
+                    "PreservePathFromAmbiguous",
+                    ErrorCategory.InvalidArgument,
+                    preservePathFrom));
+                return false;
+            }
+
+            string basePath = NormalizePath(resolvedBasePaths[0]);
+
+            if (!IsItemContainer(basePath))
+            {
+                string error = StringUtil.Format(
+                    FileSystemProviderStrings.PreservePathFromNotDirectory,
+                    basePath);
+                WriteError(new ErrorRecord(
+                    new ArgumentException(error),
+                    "PreservePathFromNotDirectory",
+                    ErrorCategory.InvalidArgument,
+                    basePath));
+                return false;
+            }
+
+            // Compute the relative path of the item below the base path.
+            string relativePath = Path.GetRelativePath(basePath, path);
+
+            if (relativePath == ".")
+            {
+                // The item is the base path itself; keep the destination unchanged.
+                return true;
+            }
+
+            if (Path.IsPathRooted(relativePath)
+                || relativePath == ".."
+                || relativePath.StartsWith($"..{Path.DirectorySeparatorChar}")
+                || relativePath.StartsWith($"..{Path.AltDirectorySeparatorChar}"))
+            {
+                string error = StringUtil.Format(
+                    FileSystemProviderStrings.PreservePathFromOutsideBasePath,
+                    path,
+                    basePath);
+                WriteError(new ErrorRecord(
+                    new ArgumentException(error),
+                    "PreservePathFromOutsideBasePath",
+                    ErrorCategory.InvalidArgument,
+                    path));
+                return false;
+            }
+
+            destinationPath = MakePath(destinationPath, relativePath);
+
+            // The parent of the destination has to exist so that the item can be
+            // copied or moved below it. Copy-Item creates the destination directory
+            // itself when copying a directory, but creating the parent is harmless
+            // there because Copy-Item would create it anyway.
+            // CreateDirectory honors ShouldProcess, so nothing is created for -WhatIf.
+            string destinationParent = GetParentPath(destinationPath, null);
+
+            if (!string.IsNullOrEmpty(destinationParent) && !IsItemContainer(destinationParent))
+            {
+                CreateDirectory(destinationParent, streamOutput: false);
+            }
+
+            return true;
+        }
+
+        /// <summary>
         /// Copies an item at the specified path to the given destination.
         /// </summary>
         /// <param name="path">
@@ -3610,6 +3758,29 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     toSession = copyDynamicParameter.ToSession;
+                }
+            }
+
+            // When preserving the folder structure below a base path, adjust the
+            // destination by the relative path of the item below that base path.
+            if (!string.IsNullOrEmpty(copyDynamicParameter?.PreservePathFrom))
+            {
+                if (fromSession != null || toSession != null)
+                {
+                    string sessionError = StringUtil.Format(
+                        FileSystemProviderStrings.PreservePathFromNotSupportedWithSession,
+                        "PreservePathFrom");
+                    WriteError(new ErrorRecord(
+                        new ArgumentException(sessionError),
+                        "PreservePathFromNotSupportedWithSession",
+                        ErrorCategory.InvalidArgument,
+                        copyDynamicParameter.PreservePathFrom));
+                    return;
+                }
+
+                if (!TryGetDestinationWithPreservedPath(path, copyDynamicParameter.PreservePathFrom, ref destinationPath))
+                {
+                    return;
                 }
             }
 
@@ -5899,6 +6070,18 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
+            // When preserving the folder structure below a base path, adjust the
+            // destination by the relative path of the item below that base path.
+            MoveItemDynamicParameters moveDynamicParameter = DynamicParameters as MoveItemDynamicParameters;
+
+            if (!string.IsNullOrEmpty(moveDynamicParameter?.PreservePathFrom))
+            {
+                if (!TryGetDestinationWithPreservedPath(path, moveDynamicParameter.PreservePathFrom, ref destination))
+                {
+                    return;
+                }
+            }
+
             try
             {
                 bool isContainer = IsItemContainer(path);
@@ -7398,6 +7581,28 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [ValidateNotNullOrEmpty]
         public PSSession ToSession { get; set; }
+
+        /// <summary>
+        /// Gets or sets the base path from which the relative path of the item
+        /// being copied is preserved at the destination.
+        /// </summary>
+        [Parameter]
+        [ValidateNotNullOrEmpty]
+        public string PreservePathFrom { get; set; }
+    }
+
+    /// <summary>
+    /// Defines the dynamic parameters for the move-item cmdlet on the FileSystemProvider.
+    /// </summary>
+    internal sealed class MoveItemDynamicParameters
+    {
+        /// <summary>
+        /// Gets or sets the base path from which the relative path of the item
+        /// being moved is preserved at the destination.
+        /// </summary>
+        [Parameter]
+        [ValidateNotNullOrEmpty]
+        public string PreservePathFrom { get; set; }
     }
 
     /// <summary>
