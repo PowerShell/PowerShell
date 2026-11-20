@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -19,6 +20,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.AccessControl;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.XPath;
@@ -2901,23 +2903,25 @@ namespace Microsoft.PowerShell.Commands
                     return;
                 }
 
-                if (Context != null
+                bool reportProgress = Context != null
                     && Context.ExecutionContext.SessionState.PSVariable.Get(SpecialVariables.ProgressPreferenceVarPath.UserPath).Value is ActionPreference progressPreference
-                    && progressPreference == ActionPreference.Continue)
+                    && progressPreference == ActionPreference.Continue;
+                if (reportProgress)
                 {
-                    {
-                        Task.Run(() =>
-                        {
-                            GetTotalFiles(path, recurse);
-                        });
-                        _removeStopwatch.Start();
-                    }
+                    _removeStopwatch.Start();
                 }
 
 #if UNIX
                 if (iscontainer)
                 {
-                    RemoveDirectoryInfoItem((DirectoryInfo)fsinfo, recurse, Force, true);
+                    if (reportProgress)
+                    {
+                        RemoveDirectoryInfoItemWithProgressQueue((DirectoryInfo)fsinfo, recurse, Force);
+                    }
+                    else
+                    {
+                        RemoveDirectoryInfoItem((DirectoryInfo)fsinfo, recurse, Force, true);
+                    }
                 }
                 else
                 {
@@ -2926,7 +2930,14 @@ namespace Microsoft.PowerShell.Commands
 #else
                 if ((!removeStreams) && iscontainer)
                 {
-                    RemoveDirectoryInfoItem((DirectoryInfo)fsinfo, recurse, Force, true);
+                    if (reportProgress)
+                    {
+                        RemoveDirectoryInfoItemWithProgressQueue((DirectoryInfo)fsinfo, recurse, Force);
+                    }
+                    else
+                    {
+                        RemoveDirectoryInfoItem((DirectoryInfo)fsinfo, recurse, Force, true);
+                    }
                 }
                 else
                 {
@@ -3036,6 +3047,197 @@ namespace Microsoft.PowerShell.Commands
         /// True if the DirectoryInfo being passed in is the root of the tree being removed.
         /// ShouldProcess will be called if this is true or if recurse is true.
         /// </param>
+        private enum RemoveProgressEntryType
+        {
+            EnterDirectory,
+            ExitDirectory,
+            DirectoryLink,
+            File,
+            Error,
+        }
+
+        private sealed class RemoveProgressEntry
+        {
+            internal RemoveProgressEntryType Type;
+            internal DirectoryInfo Directory;
+            internal FileInfo File;
+            internal long FileSize;
+            internal bool IsRoot;
+            internal Exception Error;
+        }
+
+        private sealed class RemoveProgressDirectoryFrame
+        {
+            internal DirectoryInfo Directory;
+            internal bool ShouldRemove;
+        }
+
+        /// <summary>
+        /// For progress reporting, one producer discovers files and sends them through a
+        /// bounded queue, and one consumer only reads that queue and deletes files from there,
+        /// consuming them in the process. This prevents reporting different file counts and 
+        /// sizes since discovery is only done (and sent) by one process.
+        /// </summary>
+        private void RemoveDirectoryInfoItemWithProgressQueue(DirectoryInfo root, bool recurse, bool force)
+        {
+            using (var queue = new BlockingCollection<RemoveProgressEntry>(new ConcurrentQueue<RemoveProgressEntry>(), 128))
+            using (var cancellation = new CancellationTokenSource())
+            {
+                Task producer = Task.Run(() =>
+                {
+                    try
+                    {
+                        EnqueueDirectoryForRemoval(root, true, queue, cancellation.Token);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        // The consumer stopped because StopProcessing was requested.
+                    }
+                    catch (Exception e)
+                    {
+                        if (!cancellation.IsCancellationRequested)
+                        {
+                            queue.Add(new RemoveProgressEntry { Type = RemoveProgressEntryType.Error, Error = e }, cancellation.Token);
+                        }
+                    }
+                    finally
+                    {
+                        queue.CompleteAdding();
+                    }
+                });
+
+                var directories = new Stack<RemoveProgressDirectoryFrame>();
+                try
+                {
+                    foreach (RemoveProgressEntry entry in queue.GetConsumingEnumerable())
+                    {
+                        if (Stopping)
+                        {
+                            cancellation.Cancel();
+                            break;
+                        }
+
+                        bool parentShouldRemove = directories.Count == 0 || directories.Peek().ShouldRemove;
+                        switch (entry.Type)
+                        {
+                            case RemoveProgressEntryType.EnterDirectory:
+                            {
+                                bool shouldRemove = parentShouldRemove;
+                                if (shouldRemove && (entry.IsRoot || recurse))
+                                {
+                                    shouldRemove = ShouldProcess(entry.Directory.FullName, FileSystemProviderStrings.RemoveItemActionDirectory);
+                                }
+
+                                directories.Push(new RemoveProgressDirectoryFrame { Directory = entry.Directory, ShouldRemove = shouldRemove });
+                                break;
+                            }
+                            case RemoveProgressEntryType.DirectoryLink:
+                                if (parentShouldRemove)
+                                {
+                                    // Preserve the provider's special handling for directory symlinks.
+                                    RemoveDirectoryInfoItem(entry.Directory, recurse, force, entry.IsRoot);
+                                }
+                                break;
+                            case RemoveProgressEntryType.File:
+                                if (parentShouldRemove)
+                                {
+                                    if (recurse)
+                                    {
+                                        RemoveFileInfoItem(entry.File, force);
+                                    }
+                                    else
+                                    {
+                                        RemoveFileSystemItem(entry.File, force);
+                                    }
+
+                                    _removedFiles++;
+                                    _removedBytes += entry.FileSize;
+                                    if (_removeStopwatch.Elapsed.TotalSeconds > ProgressBarDurationThreshold)
+                                    {
+                                        long totalBytes = Interlocked.Read(ref _totalBytes);
+                                        double speed = _removedBytes / 1024 / 1024 / _removeStopwatch.Elapsed.TotalSeconds;
+                                        var progress = new ProgressRecord(
+                                            REMOVE_FILE_ACTIVITY_ID,
+                                            StringUtil.Format(FileSystemProviderStrings.RemovingLocalFileActivity, _removedFiles, Interlocked.Read(ref _totalFiles)),
+                                            StringUtil.Format(FileSystemProviderStrings.RemovingLocalBytesStatus, Utils.DisplayHumanReadableFileSize(_removedBytes), Utils.DisplayHumanReadableFileSize(totalBytes), speed));
+                                        progress.PercentComplete = totalBytes != 0 ? (int)Math.Min((double)_removedBytes * 100 / totalBytes, 100) : 100;
+                                        progress.RecordType = ProgressRecordType.Processing;
+                                        WriteProgress(progress);
+                                    }
+                                }
+                                break;
+                            case RemoveProgressEntryType.ExitDirectory:
+                            {
+                                RemoveProgressDirectoryFrame frame = directories.Pop();
+                                if (frame.ShouldRemove)
+                                {
+                                    // Re-check emptiness to avoid an error due to external interference
+                                    bool hasChildren = DirectoryInfoHasChildItems(frame.Directory);
+                                    if (hasChildren && !force)
+                                    {
+                                        string error = StringUtil.Format(FileSystemProviderStrings.DirectoryNotEmpty, frame.Directory.FullName);
+                                        WriteError(new ErrorRecord(new IOException(error), "DirectoryNotEmpty", ErrorCategory.WriteError, frame.Directory));
+                                    }
+                                    else
+                                    {
+                                        RemoveFileSystemItem(frame.Directory, force);
+                                    }
+                                }
+                                break;
+                            }
+                            case RemoveProgressEntryType.Error:
+                                WriteError(new ErrorRecord(entry.Error, "RemoveItemEnumerationError", ErrorCategory.ReadError, root));
+                                break;
+                        }
+                    }
+                }
+                finally
+                {
+                    cancellation.Cancel();
+                    try
+                    {
+                        producer.GetAwaiter().GetResult();
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        // Expected when stopping.
+                    }
+                }
+            }
+        }
+
+        private void EnqueueDirectoryForRemoval(DirectoryInfo directory, bool isRoot, BlockingCollection<RemoveProgressEntry> queue, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (InternalSymbolicLinkLinkCodeMethods.IsReparsePointLikeSymlink(directory))
+            {
+                queue.Add(new RemoveProgressEntry { Type = RemoveProgressEntryType.DirectoryLink, Directory = directory, IsRoot = isRoot }, cancellationToken);
+                return;
+            }
+
+            queue.Add(new RemoveProgressEntry { Type = RemoveProgressEntryType.EnterDirectory, Directory = directory, IsRoot = isRoot }, cancellationToken);
+
+            // Snapshot each directory's immediate children before the consumer can remove them.
+            foreach (DirectoryInfo childDirectory in directory.EnumerateDirectories().ToArray())
+            {
+                EnqueueDirectoryForRemoval(childDirectory, false, queue, cancellationToken);
+            }
+
+            IEnumerable<FileInfo> files = string.IsNullOrEmpty(Filter)
+                ? directory.EnumerateFiles()
+                : directory.EnumerateFiles(Filter);
+            foreach (FileInfo file in files.ToArray())
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                long fileSize = file.Length;
+                Interlocked.Increment(ref _totalFiles);
+                Interlocked.Add(ref _totalBytes, fileSize);
+                queue.Add(new RemoveProgressEntry { Type = RemoveProgressEntryType.File, File = file, FileSize = fileSize }, cancellationToken);
+            }
+
+            queue.Add(new RemoveProgressEntry { Type = RemoveProgressEntryType.ExitDirectory, Directory = directory }, cancellationToken);
+        }
+
         private void RemoveDirectoryInfoItem(DirectoryInfo directory, bool recurse, bool force, bool rootOfRemoval)
         {
             Dbg.Diagnostics.Assert(directory != null, "Caller should always check directory");
