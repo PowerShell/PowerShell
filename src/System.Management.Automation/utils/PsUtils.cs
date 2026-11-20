@@ -342,7 +342,7 @@ namespace System.Management.Automation
         internal static Hashtable GetModuleManifestProperties(
             string psDataFilePath,
             string[] keys,
-            bool requireLiteralKeys = false)
+            bool requireSafeKeys = false)
         {
             string dataFileContents = File.ReadAllText(psDataFilePath, Encoding.Default);
             ParseError[] parseErrors;
@@ -363,17 +363,34 @@ namespace System.Management.Automation
                 var result = new Hashtable(StringComparer.OrdinalIgnoreCase);
                 foreach (var pair in hashtableAst.KeyValuePairs)
                 {
-                    if (requireLiteralKeys && pair.Item1 is not StringConstantExpressionAst)
+                    string keyName = null;
+                    if (requireSafeKeys)
                     {
-                        return null;
+                        try
+                        {
+                            keyName = pair.Item1.SafeGetValue() as string;
+                        }
+                        catch
+                        {
+                            return null;
+                        }
+
+                        if (keyName == null)
+                        {
+                            return null;
+                        }
+                    }
+                    else if (pair.Item1 is StringConstantExpressionAst key)
+                    {
+                        keyName = key.Value;
                     }
 
-                    if (pair.Item1 is StringConstantExpressionAst key && keys.Contains(key.Value, StringComparer.OrdinalIgnoreCase))
+                    if (keyName != null && keys.Contains(keyName, StringComparer.OrdinalIgnoreCase))
                     {
                         try
                         {
                             var val = pair.Item2.SafeGetValue();
-                            result[key.Value] = val;
+                            result[keyName] = val;
                         }
                         catch
                         {

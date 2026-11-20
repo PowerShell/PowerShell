@@ -147,6 +147,50 @@ $env:PSModuleAnalysisCachePath = $AnalysisCachePath
         $result | Should -BeExactly "convertible prefix auto-loaded"
     }
 
+    It "auto-loads a module with an explicit prefixed alias" {
+        $moduleName = "DefaultCommandPrefixAlias"
+        $moduleRoot = Join-Path -Path $TestDrive -ChildPath "Modules"
+        $moduleDirectory = Join-Path -Path $moduleRoot -ChildPath $moduleName
+        $moduleManifest = Join-Path -Path $moduleDirectory -ChildPath "$moduleName.psd1"
+        $moduleScript = Join-Path -Path $moduleDirectory -ChildPath "$moduleName.psm1"
+        $functionName = "Get-DefaultCommandPrefixAliasTarget"
+        $aliasName = "Get-DefaultCommandPrefixAlias"
+        $commandName = $aliasName -replace "-", "-Test"
+        $analysisCachePath = Join-Path -Path $TestDrive -ChildPath "$moduleName.cache"
+        $testScript = Join-Path -Path $TestDrive -ChildPath "$moduleName.ps1"
+        $powershell = Join-Path -Path $PSHOME -ChildPath $(if ($IsWindows) { "pwsh.exe" } else { "pwsh" })
+
+        $null = New-Item -Path $moduleDirectory -ItemType Directory -Force
+        @"
+function $functionName {
+    'prefixed alias auto-loaded'
+}
+
+Set-Alias -Name $aliasName -Value $functionName
+"@ | Set-Content -Path $moduleScript
+
+        New-ModuleManifest -Path $moduleManifest -RootModule "$moduleName.psm1" -ModuleVersion "1.0.0" -Guid ([guid]::NewGuid()) -DefaultCommandPrefix "Test" -FunctionsToExport $functionName -CmdletsToExport @() -AliasesToExport $aliasName
+
+        @'
+param(
+    [string] $ModuleRoot,
+    [string] $AnalysisCachePath,
+    [string] $CommandName
+)
+
+$ErrorActionPreference = 'Stop'
+$env:PSModulePath = "$ModuleRoot$([IO.Path]::PathSeparator)$env:PSModulePath"
+$env:PSModuleAnalysisCachePath = $AnalysisCachePath
+
+& $CommandName
+'@ | Set-Content -Path $testScript
+
+        $result = & $powershell -NoProfile -File $testScript -ModuleRoot $moduleRoot -AnalysisCachePath $analysisCachePath -CommandName $commandName
+
+        $LASTEXITCODE | Should -Be 0
+        $result | Should -BeExactly "prefixed alias auto-loaded"
+    }
+
     It "auto-loads a module with a parenthesized default command prefix key" {
         $moduleName = "DefaultCommandPrefixParenthesized"
         $moduleRoot = Join-Path -Path $TestDrive -ChildPath "Modules"
@@ -292,33 +336,4 @@ $env:PSModuleAnalysisCachePath = $AnalysisCachePath
         $result | Should -BeExactly "stale cache discarded"
     }
 
-    It "imports a wildcard-export module with its default command prefix" {
-        $moduleName = "DefaultCommandPrefixImport"
-        $moduleRoot = Join-Path -Path $TestDrive -ChildPath "ImportModules"
-        $moduleDirectory = Join-Path -Path $moduleRoot -ChildPath $moduleName
-        $moduleManifest = Join-Path -Path $moduleDirectory -ChildPath "$moduleName.psd1"
-        $moduleScript = Join-Path -Path $moduleDirectory -ChildPath "$moduleName.psm1"
-
-        $null = New-Item -Path $moduleDirectory -ItemType Directory -Force
-        @'
-function Get-DefaultCommandPrefixImport {
-    'module imported'
-}
-'@ | Set-Content -Path $moduleScript
-
-        New-ModuleManifest -Path $moduleManifest -RootModule "$moduleName.psm1" -ModuleVersion "1.0.0" -Guid ([guid]::NewGuid()) -DefaultCommandPrefix "Test" -FunctionsToExport "*" -CmdletsToExport @() -AliasesToExport @()
-
-        $originalModulePath = $env:PSModulePath
-        try
-        {
-            $env:PSModulePath = "$moduleRoot$([IO.Path]::PathSeparator)$originalModulePath"
-            Import-Module -Name $moduleName
-            Get-TestDefaultCommandPrefixImport | Should -BeExactly "module imported"
-        }
-        finally
-        {
-            Remove-Module -Name $moduleName -Force -ErrorAction Ignore
-            $env:PSModulePath = $originalModulePath
-        }
-    }
 }

@@ -103,13 +103,19 @@ namespace System.Management.Automation
                 var moduleManifestProperties = PsUtils.GetModuleManifestProperties(
                     modulePath,
                     PsUtils.FastModuleManifestAnalysisPropertyNames,
-                    requireLiteralKeys: true);
+                    requireSafeKeys: true);
                 if (moduleManifestProperties != null)
                 {
-                    // DefaultCommandPrefix can be converted from a non-string value. Fall back to the
-                    // regular manifest loader so cache analysis uses the same conversion as module import.
-                    if (moduleManifestProperties.ContainsKey("DefaultCommandPrefix"))
+                    string defaultCommandPrefix = null;
+                    if (moduleManifestProperties.ContainsKey("DefaultCommandPrefix") &&
+                        moduleManifestProperties["DefaultCommandPrefix"] != null &&
+                        !LanguagePrimitives.TryConvertTo<string>(
+                            moduleManifestProperties["DefaultCommandPrefix"],
+                            CultureInfo.InvariantCulture,
+                            out defaultCommandPrefix))
                     {
+                        // Preserve the regular manifest loader's conversion semantics when static analysis
+                        // cannot convert the prefix safely.
                         return AnalyzeTheOldWay(modulePath, context, lastWriteTime);
                     }
 
@@ -133,9 +139,9 @@ namespace System.Management.Automation
                     result = new ConcurrentDictionary<string, CommandTypes>(3, moduleManifestProperties.Count, StringComparer.OrdinalIgnoreCase);
 
                     var sawWildcard = false;
-                    var hadCmdlets = AddPsd1EntryToResult(result, moduleManifestProperties["CmdletsToExport"], CommandTypes.Cmdlet, ref sawWildcard);
-                    var hadFunctions = AddPsd1EntryToResult(result, moduleManifestProperties["FunctionsToExport"], CommandTypes.Function, ref sawWildcard);
-                    var hadAliases = AddPsd1EntryToResult(result, moduleManifestProperties["AliasesToExport"], CommandTypes.Alias, ref sawWildcard);
+                    var hadCmdlets = AddPsd1EntryToResult(result, moduleManifestProperties["CmdletsToExport"], CommandTypes.Cmdlet, defaultCommandPrefix, ref sawWildcard);
+                    var hadFunctions = AddPsd1EntryToResult(result, moduleManifestProperties["FunctionsToExport"], CommandTypes.Function, defaultCommandPrefix, ref sawWildcard);
+                    var hadAliases = AddPsd1EntryToResult(result, moduleManifestProperties["AliasesToExport"], CommandTypes.Alias, defaultCommandPrefix, ref sawWildcard);
 
                     var analysisSucceeded = hadCmdlets && hadFunctions && hadAliases;
 
@@ -306,11 +312,12 @@ namespace System.Management.Automation
             return true;
         }
 
-        private static bool AddPsd1EntryToResult(ConcurrentDictionary<string, CommandTypes> result, object value, CommandTypes commandTypeToAdd, ref bool sawWildcard)
+        private static bool AddPsd1EntryToResult(ConcurrentDictionary<string, CommandTypes> result, object value, CommandTypes commandTypeToAdd, string defaultCommandPrefix, ref bool sawWildcard)
         {
             string command = value as string;
             if (command != null)
             {
+                command = ModuleCmdletBase.AddPrefixToCommandName(command, defaultCommandPrefix);
                 return AddPsd1EntryToResult(result, command, commandTypeToAdd, ref sawWildcard);
             }
 
@@ -319,7 +326,7 @@ namespace System.Management.Automation
             {
                 foreach (var o in commands)
                 {
-                    if (!AddPsd1EntryToResult(result, o, commandTypeToAdd, ref sawWildcard))
+                    if (!AddPsd1EntryToResult(result, o, commandTypeToAdd, defaultCommandPrefix, ref sawWildcard))
                         return false;
                 }
 
