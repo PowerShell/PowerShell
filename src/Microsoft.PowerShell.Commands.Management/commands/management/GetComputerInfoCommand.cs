@@ -75,6 +75,29 @@ namespace Microsoft.PowerShell.Commands
             public ServerLevel? serverLevel;
             public DeviceGuardInfo deviceGuard;
         }
+
+        /// <summary>
+        /// The WMI queries the cmdlet can run. The registry and native API
+        /// calls are cheap and always made, so they are not listed here.
+        /// </summary>
+        [Flags]
+        private enum InfoSources
+        {
+            None = 0,
+            OperatingSystem = 1 << 0,
+            PageFileUsage = 1 << 1,
+            HalVersion = 1 << 2,
+            HotFixes = 1 << 3,
+            Bios = 1 << 4,
+            BaseBoard = 1 << 5,
+            ComputerSystem = 1 << 6,
+            Processors = 1 << 7,
+            NetworkAdapters = 1 << 8,
+            Keyboards = 1 << 9,
+            HyperV = 1 << 10,
+            DeviceGuard = 1 << 11,
+            All = (1 << 12) - 1
+        }
         #endregion Inner Types
 
         #region Static Data and Constants
@@ -158,42 +181,73 @@ namespace Microsoft.PowerShell.Commands
             var systemInfo = new SystemInfoGroup();
             var now = DateTime.Now;
 
-            using (var session = CimSession.Create(_machineName))
+            // Only run the WMI queries that the requested properties need. Some of them,
+            // like the hot fix and processor queries, take seconds.
+            InfoSources sources = GetRequiredSources(_namedProperties);
+
+            using (var session = sources == InfoSources.None ? null : CimSession.Create(_machineName))
             {
-                UpdateProgress(ComputerInfoResources.LoadingOperationSystemInfo);
-
-                osInfo.os = session.GetFirst<WmiOperatingSystem>(CIMHelper.ClassNames.OperatingSystem);
-                osInfo.pageFileUsage = session.GetAll<WmiPageFileUsage>(CIMHelper.ClassNames.PageFileUsage);
-
-                if (osInfo.os != null)
+                if ((sources & (InfoSources.OperatingSystem | InfoSources.PageFileUsage | InfoSources.HalVersion)) != 0)
                 {
-                    osInfo.halVersion = GetHalVersion(session, osInfo.os.SystemDirectory);
+                    UpdateProgress(ComputerInfoResources.LoadingOperationSystemInfo);
 
-                    if (osInfo.os.LastBootUpTime != null)
-                        osInfo.upTime = now - osInfo.os.LastBootUpTime.Value;
+                    osInfo.os = session.GetFirst<WmiOperatingSystem>(CIMHelper.ClassNames.OperatingSystem);
+
+                    if (sources.HasFlag(InfoSources.PageFileUsage))
+                        osInfo.pageFileUsage = session.GetAll<WmiPageFileUsage>(CIMHelper.ClassNames.PageFileUsage);
+
+                    if (osInfo.os != null)
+                    {
+                        if (sources.HasFlag(InfoSources.HalVersion))
+                            osInfo.halVersion = GetHalVersion(session, osInfo.os.SystemDirectory);
+
+                        if (osInfo.os.LastBootUpTime != null)
+                            osInfo.upTime = now - osInfo.os.LastBootUpTime.Value;
+                    }
                 }
 
-                UpdateProgress(ComputerInfoResources.LoadingHotPatchInfo);
-                osInfo.hotFixes = session.GetAll<HotFix>(CIMHelper.ClassNames.HotFix);
+                if (sources.HasFlag(InfoSources.HotFixes))
+                {
+                    UpdateProgress(ComputerInfoResources.LoadingHotPatchInfo);
+                    osInfo.hotFixes = session.GetAll<HotFix>(CIMHelper.ClassNames.HotFix);
+                }
 
                 UpdateProgress(ComputerInfoResources.LoadingRegistryInfo);
                 osInfo.regCurVer = RegistryInfo.GetWinNtCurrentVersion();
 
-                UpdateProgress(ComputerInfoResources.LoadingBiosInfo);
-                systemInfo.bios = session.GetFirst<WmiBios>(CIMHelper.ClassNames.Bios);
+                if (sources.HasFlag(InfoSources.Bios))
+                {
+                    UpdateProgress(ComputerInfoResources.LoadingBiosInfo);
+                    systemInfo.bios = session.GetFirst<WmiBios>(CIMHelper.ClassNames.Bios);
+                }
 
-                UpdateProgress(ComputerInfoResources.LoadingMotherboardInfo);
-                systemInfo.baseboard = session.GetFirst<WmiBaseBoard>(CIMHelper.ClassNames.BaseBoard);
+                if (sources.HasFlag(InfoSources.BaseBoard))
+                {
+                    UpdateProgress(ComputerInfoResources.LoadingMotherboardInfo);
+                    systemInfo.baseboard = session.GetFirst<WmiBaseBoard>(CIMHelper.ClassNames.BaseBoard);
+                }
 
-                UpdateProgress(ComputerInfoResources.LoadingComputerInfo);
-                systemInfo.computer = session.GetFirst<WmiComputerSystem>(CIMHelper.ClassNames.ComputerSystem);
-                miscInfo = GetOtherInfo(session);
+                if ((sources & (InfoSources.ComputerSystem | InfoSources.Keyboards | InfoSources.HyperV | InfoSources.DeviceGuard)) != 0)
+                {
+                    UpdateProgress(ComputerInfoResources.LoadingComputerInfo);
+                }
 
-                UpdateProgress(ComputerInfoResources.LoadingProcessorInfo);
-                systemInfo.processors = GetProcessors(session);
+                if (sources.HasFlag(InfoSources.ComputerSystem))
+                    systemInfo.computer = session.GetFirst<WmiComputerSystem>(CIMHelper.ClassNames.ComputerSystem);
 
-                UpdateProgress(ComputerInfoResources.LoadingNetworkAdapterInfo);
-                systemInfo.networkAdapters = GetNetworkAdapters(session);
+                miscInfo = GetOtherInfo(session, sources);
+
+                if (sources.HasFlag(InfoSources.Processors))
+                {
+                    UpdateProgress(ComputerInfoResources.LoadingProcessorInfo);
+                    systemInfo.processors = GetProcessors(session);
+                }
+
+                if (sources.HasFlag(InfoSources.NetworkAdapters))
+                {
+                    UpdateProgress(ComputerInfoResources.LoadingNetworkAdapterInfo);
+                    systemInfo.networkAdapters = GetNetworkAdapters(session);
+                }
 
                 UpdateProgress(null);   // close the progress bar
             }
@@ -530,13 +584,17 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="session">
         /// A <see cref="Microsoft.Management.Infrastructure.CimSession"/> object representing
-        /// a CIM session.
+        /// a CIM session. May be null when <paramref name="sources"/> has none of the WMI
+        /// sources used here.
+        /// </param>
+        /// <param name="sources">
+        /// The WMI queries to run.
         /// </param>
         /// <returns>
         /// A <see cref="MiscInfoGroup"/> object containing miscellaneous
         /// system information
         /// </returns>
-        private static MiscInfoGroup GetOtherInfo(CimSession session)
+        private static MiscInfoGroup GetOtherInfo(CimSession session, InfoSources sources)
         {
             var rv = new MiscInfoGroup();
 
@@ -572,9 +630,11 @@ namespace Microsoft.PowerShell.Commands
 
             rv.logonServer = RegistryInfo.GetLogonServer();
 
-            rv.keyboards = session.GetAll<WmiKeyboard>(CIMHelper.ClassNames.Keyboard);
+            if (sources.HasFlag(InfoSources.Keyboards))
+                rv.keyboards = session.GetAll<WmiKeyboard>(CIMHelper.ClassNames.Keyboard);
 
-            rv.hyperV = GetHyperVisorInfo(session);
+            if (sources.HasFlag(InfoSources.HyperV))
+                rv.hyperV = GetHyperVisorInfo(session);
 
             var serverLevels = RegistryInfo.GetServerLevels();
             uint value;
@@ -596,7 +656,8 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            rv.deviceGuard = GetDeviceGuard(session);
+            if (sources.HasFlag(InfoSources.DeviceGuard))
+                rv.deviceGuard = GetDeviceGuard(session);
 
             return rv;
         }
@@ -879,7 +940,7 @@ namespace Microsoft.PowerShell.Commands
                 output.LogonServer = otherInfo.logonServer;
                 output.PowerPlatformRole = otherInfo.powerPlatformRole;
 
-                if (otherInfo.keyboards.Length > 0)
+                if (otherInfo.keyboards?.Length > 0)
                 {
                     // TODO: handle multiple keyboards?
                     // there might be several keyboards found. For the moment
@@ -920,6 +981,94 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return output;
+        }
+
+        /// <summary>
+        /// Get the WMI queries needed to fill in the given properties.
+        /// </summary>
+        /// <param name="namedProperties">
+        /// The requested property names, or null for all of them.
+        /// </param>
+        private static InfoSources GetRequiredSources(List<string> namedProperties)
+        {
+            if (namedProperties == null)
+            {
+                return InfoSources.All;
+            }
+
+            var sources = InfoSources.None;
+            foreach (var propertyName in namedProperties)
+            {
+                sources |= GetRequiredSources(propertyName);
+            }
+
+            return sources;
+        }
+
+        /// <summary>
+        /// Get the WMI queries needed to fill in one <see cref="ComputerInfo"/> property.
+        /// </summary>
+        private static InfoSources GetRequiredSources(string propertyName)
+        {
+            switch (propertyName)
+            {
+                // These are only filled in when Win32_OperatingSystem, Win32_BIOS
+                // or Win32_ComputerSystem returned an instance, so they need that query too.
+                case nameof(ComputerInfo.OsHardwareAbstractionLayer):
+                    return InfoSources.OperatingSystem | InfoSources.HalVersion;
+                case nameof(ComputerInfo.OsHotFixes):
+                    return InfoSources.OperatingSystem | InfoSources.HotFixes;
+                case nameof(ComputerInfo.OsPagingFiles):
+                    return InfoSources.OperatingSystem | InfoSources.PageFileUsage;
+                case nameof(ComputerInfo.CsNetworkAdapters):
+                    return InfoSources.ComputerSystem | InfoSources.NetworkAdapters;
+                case nameof(ComputerInfo.CsProcessors):
+                    return InfoSources.ComputerSystem | InfoSources.Processors;
+
+                case nameof(ComputerInfo.KeyboardLayout):
+                    return InfoSources.Keyboards;
+
+                // Registry and native API only.
+                case nameof(ComputerInfo.OsServerLevel):
+                case nameof(ComputerInfo.TimeZone):
+                case nameof(ComputerInfo.LogonServer):
+                case nameof(ComputerInfo.PowerPlatformRole):
+                    return InfoSources.None;
+            }
+
+            if (propertyName.StartsWith("Windows", StringComparison.Ordinal))
+            {
+                // Registry only.
+                return InfoSources.None;
+            }
+
+            if (propertyName.StartsWith("Os", StringComparison.Ordinal))
+            {
+                return InfoSources.OperatingSystem;
+            }
+
+            if (propertyName.StartsWith("Bios", StringComparison.Ordinal))
+            {
+                return InfoSources.Bios;
+            }
+
+            if (propertyName.StartsWith("Cs", StringComparison.Ordinal))
+            {
+                return InfoSources.ComputerSystem;
+            }
+
+            if (propertyName.StartsWith("HyperV", StringComparison.Ordinal))
+            {
+                return InfoSources.HyperV;
+            }
+
+            if (propertyName.StartsWith("DeviceGuard", StringComparison.Ordinal))
+            {
+                return InfoSources.DeviceGuard;
+            }
+
+            // A property not covered above gets every query, as before.
+            return InfoSources.All;
         }
 
         /// <summary>
