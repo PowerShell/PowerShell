@@ -97,6 +97,10 @@ namespace System.Management.Automation.Configuration
 
             emptyConfig = new JObject();
             configRoots = new JObject[2];
+
+            // The default powershell.config.json has no keys whose values are needed for "-NoProfile -Command" startup.
+            // Loading the DOM and looking up missing keys do not require a serializer, so we defer its creation until
+            // an existing key's value needs to be read/converted.
             serializer = new Lazy<JsonSerializer>(
                 () => JsonSerializer.Create(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None, MaxDepth = 10 }));
 
