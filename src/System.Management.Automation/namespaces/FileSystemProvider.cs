@@ -3067,12 +3067,23 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// For progress reporting, one producer discovers files and sends them through a
         /// bounded queue, and one consumer only reads that queue and deletes files from there,
-        /// consuming them in the process. This prevents reporting different file counts and 
+        /// consuming them in the process. This prevents reporting different file counts and
         /// sizes since discovery is only done (and sent) by one process.
         /// </summary>
         private void RemoveDirectoryInfoItemWithProgressQueue(DirectoryInfo root, bool recurse, bool force)
         {
-            using (var queue = new BlockingCollection<RemoveProgressEntry>(new ConcurrentQueue<RemoveProgressEntry>(), 128))
+            // Default queue capacity of ~100 MB
+            int queueCapacity = 500_000;
+
+            // Provide a configuration to set queue capacity
+            object rawCapacity = Context.ExecutionContext.SessionState.PSVariable.Get("PSRemoveItemProgressQueueCapacity")?.Value;
+            if (rawCapacity != null && LanguagePrimitives.TryConvertTo(rawCapacity, typeof(int), out object converted))
+            {
+                int requested = (int)converted;
+                // Cap the queue requested size at max ~400 MB
+                queueCapacity = Math.Max(0, Math.Min(requested, 2_000_000));
+            }
+            using (var queue = new BlockingCollection<RemoveProgressEntry>(new ConcurrentQueue<RemoveProgressEntry>(), queueCapacity))
             using (var cancellation = new CancellationTokenSource())
             {
                 Task producer = Task.Run(() =>
