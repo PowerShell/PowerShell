@@ -71,7 +71,7 @@ namespace System.Management.Automation.Configuration
         // They are used as a cache to avoid hitting the disk for every read operation.
         private readonly JObject[] configRoots;
         private readonly JObject emptyConfig;
-        private readonly JsonSerializer serializer;
+        private readonly Lazy<JsonSerializer> serializer;
 
         /// <summary>
         /// Lock used to enable multiple concurrent readers and singular write locks within a single process.
@@ -97,7 +97,8 @@ namespace System.Management.Automation.Configuration
 
             emptyConfig = new JObject();
             configRoots = new JObject[2];
-            serializer = JsonSerializer.Create(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None, MaxDepth = 10 });
+            serializer = new Lazy<JsonSerializer>(
+                () => JsonSerializer.Create(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None, MaxDepth = 10 }));
 
             fileLock = new ReaderWriterLockSlim();
         }
@@ -105,6 +106,23 @@ namespace System.Management.Automation.Configuration
         private string GetConfigFilePath(ConfigScope scope)
         {
             return (scope == ConfigScope.CurrentUser) ? perUserConfigFile : systemWideConfigFile;
+        }
+
+        /// <summary>
+        /// Load the DOM directly to avoid serializer contract discovery during startup.
+        /// </summary>
+        private static JObject ReadConfigRoot(JsonReader reader)
+        {
+            reader.MaxDepth = 10;
+            while (reader.TokenType is JsonToken.None or JsonToken.Comment)
+            {
+                if (!reader.Read())
+                {
+                    return null;
+                }
+            }
+
+            return reader.TokenType == JsonToken.Null ? null : JObject.Load(reader);
         }
 
         /// <summary>
@@ -408,25 +426,9 @@ namespace System.Management.Automation.Configuration
                         fileLock.EnterReadLock();
 
                         using var stream = OpenFileStreamWithRetry(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                        using var jsonReader = new JsonTextReader(new StreamReader(stream)) { MaxDepth = 10 };
+                        using var jsonReader = new JsonTextReader(new StreamReader(stream));
 
-                        // Load the DOM directly to avoid serializer contract discovery during startup.
-                        // Empty, comment-only, and JSON null files still represent an empty configuration.
-                        configData = emptyConfig;
-                        while (jsonReader.Read())
-                        {
-                            if (jsonReader.TokenType == JsonToken.Comment)
-                            {
-                                continue;
-                            }
-
-                            if (jsonReader.TokenType != JsonToken.Null)
-                            {
-                                configData = JObject.Load(jsonReader);
-                            }
-
-                            break;
-                        }
+                        configData = ReadConfigRoot(jsonReader) ?? emptyConfig;
                     }
                     catch (Exception exc) when (
                         scope == ConfigScope.CurrentUser &&
@@ -471,7 +473,7 @@ namespace System.Management.Automation.Configuration
             {
                 try
                 {
-                    return jToken.ToObject<T>(serializer) ?? defaultValue;
+                    return jToken.ToObject<T>(serializer.Value) ?? defaultValue;
                 }
                 catch (JsonException exc) when (scope == ConfigScope.CurrentUser)
                 {
@@ -561,12 +563,9 @@ namespace System.Management.Automation.Configuration
                 using (StreamReader streamRdr = new StreamReader(fs, Encoding.UTF8, detectEncodingFromByteOrderMarks: true, bufferSize: 1024, leaveOpen: true))
                 using (JsonTextReader jsonReader = new JsonTextReader(streamRdr))
                 {
-                    // Safely determines whether there is content to read from the file
-                    bool isReadSuccess = jsonReader.Read();
-                    if (isReadSuccess)
+                    jsonObject = ReadConfigRoot(jsonReader);
+                    if (jsonObject != null)
                     {
-                        // Read the stream into a root JObject for manipulation
-                        jsonObject = serializer.Deserialize<JObject>(jsonReader);
                         JProperty propertyToModify = jsonObject.Property(key);
 
                         if (propertyToModify == null)
@@ -593,9 +592,7 @@ namespace System.Management.Automation.Configuration
                     }
                     else
                     {
-                        // The file doesn't already exist and we want to write to it or it exists with no content.
-                        // A new file will be created that contains only this value.
-                        // If the file doesn't exist and a we don't want to write to it, no action is needed.
+                        // Treat empty, comment-only, and JSON null files as empty configurations.
                         if (addValue)
                         {
                             jsonObject = new JObject(new JProperty(key, value));

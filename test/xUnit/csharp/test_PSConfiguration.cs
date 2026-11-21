@@ -444,10 +444,26 @@ namespace PSTests.Sequential
         {
             File.WriteAllText(configFile, "{\"PSModulePath\":\"modules\"}");
             var serializerField = typeof(PowerShellConfig).GetField("serializer", BindingFlags.NonPublic | BindingFlags.Instance);
-            var serializer = (JsonSerializer)serializerField.GetValue(config);
+            var serializer = ((Lazy<JsonSerializer>)serializerField.GetValue(config)).Value;
             serializer.ContractResolver = new RejectingContractResolver();
 
             Assert.Null(config.GetPowerShellPolicies(ConfigScope.AllUsers));
+        }
+
+        [Fact]
+        public void SerializerIsCreatedOnlyWhenReadingAnExistingSetting()
+        {
+            File.WriteAllText(configFile, "{\"PSModulePath\":\"modules\"}");
+            var serializerField = typeof(PowerShellConfig).GetField("serializer", BindingFlags.NonPublic | BindingFlags.Instance);
+            var serializer = (Lazy<JsonSerializer>)serializerField.GetValue(config);
+
+            Assert.False(serializer.IsValueCreated);
+
+            Assert.Null(config.GetPowerShellPolicies(ConfigScope.AllUsers));
+            Assert.False(serializer.IsValueCreated);
+
+            Assert.Equal("modules", config.GetModulePath(ConfigScope.AllUsers));
+            Assert.True(serializer.IsValueCreated);
         }
 
         [Theory]
@@ -462,6 +478,40 @@ namespace PSTests.Sequential
 
             Assert.Null(config.GetModulePath(ConfigScope.AllUsers));
             Assert.Null(config.GetPowerShellPolicies(ConfigScope.AllUsers));
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData(" \r\n\t")]
+        [InlineData("/* comment */ // another comment")]
+        [InlineData("null")]
+        [InlineData("/* comment */ null")]
+        public void AddingSettingToEmptyConfigurationCreatesObject(string json)
+        {
+            File.WriteAllText(configFile, json);
+            Assert.Null(config.GetExecutionPolicy(ConfigScope.AllUsers, "Microsoft.PowerShell"));
+
+            config.SetExecutionPolicy(ConfigScope.AllUsers, "Microsoft.PowerShell", "RemoteSigned");
+
+            Assert.Equal("RemoteSigned", config.GetExecutionPolicy(ConfigScope.AllUsers, "Microsoft.PowerShell"));
+            JObject writtenConfig = JObject.Parse(File.ReadAllText(configFile));
+            Assert.Equal("RemoteSigned", (string)writtenConfig["Microsoft.PowerShell:ExecutionPolicy"]);
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData(" \r\n\t")]
+        [InlineData("/* comment */ // another comment")]
+        [InlineData("null")]
+        [InlineData("/* comment */ null")]
+        public void RemovingSettingFromEmptyConfigurationLeavesFileUnchanged(string json)
+        {
+            File.WriteAllText(configFile, json);
+
+            config.RemoveExecutionPolicy(ConfigScope.AllUsers, "Microsoft.PowerShell");
+
+            Assert.Equal(json, File.ReadAllText(configFile));
+            Assert.Null(config.GetExecutionPolicy(ConfigScope.AllUsers, "Microsoft.PowerShell"));
         }
 
         [Fact]
