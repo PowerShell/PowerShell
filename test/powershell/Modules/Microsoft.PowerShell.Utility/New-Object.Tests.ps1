@@ -76,6 +76,19 @@ Describe "New-Object" -Tags "CI" {
             $null = $accelerators::Remove('NewObjectGenericAcceleratorTest')
         }
     }
+
+    It "should prefer a type accelerator over a generic type with the same name" {
+        $accelerators = [psobject].Assembly.GetType('System.Management.Automation.TypeAccelerators')
+        $accelerators::Add('List', [System.Collections.Generic.HashSet`1])
+        try {
+            $sb = [scriptblock]::Create("using namespace System.Collections.Generic`nNew-Object -TypeName 'List[int]'")
+            $o = & $sb
+            , $o | Should -BeOfType ([System.Collections.Generic.HashSet[int]])
+        }
+        finally {
+            $null = $accelerators::Remove('List')
+        }
+    }
 }
 
 Describe "New-Object DRT basic functionality" -Tags "CI" {
