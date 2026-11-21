@@ -23,6 +23,9 @@ namespace Microsoft.PowerShell.Commands
     {
         #region Fields
 
+        // SIO_TCP_INITIAL_RTO (mstcpip.h).
+        private const int SioTcpInitialRto = unchecked((int)0x98000011);
+
         private HttpClient? _client;
         private CookieContainer _cookies;
         private bool _useDefaultCredentials;
@@ -264,11 +267,6 @@ namespace Microsoft.PowerShell.Commands
             };
         }
 
-        // SIO_TCP_INITIAL_RTO with TCP_INITIAL_RTO_PARAMETERS { Rtt = TCP_INITIAL_RTO_DEFAULT_RTT,
-        // MaxSynRetransmissions = TCP_INITIAL_RTO_NO_SYN_RETRANSMISSIONS } (mstcpip.h).
-        private const int SioTcpInitialRto = unchecked((int)0x98000011);
-        private static readonly byte[] s_noSynRetransmissions = { 0, 0, 254, 0 };
-
         /// <summary>
         /// The default SocketsHttpHandler connect, except that for a loopback host on Windows the SYN
         /// is not retransmitted after a refusal. Windows otherwise retries for about 2 seconds per
@@ -286,7 +284,10 @@ namespace Microsoft.PowerShell.Commands
                 {
                     try
                     {
-                        socket.IOControl(SioTcpInitialRto, s_noSynRetransmissions, null);
+                        // TCP_INITIAL_RTO_PARAMETERS { Rtt = TCP_INITIAL_RTO_DEFAULT_RTT,
+                        // MaxSynRetransmissions = TCP_INITIAL_RTO_NO_SYN_RETRANSMISSIONS } (mstcpip.h).
+                        byte[] noSynRetransmissions = { 0, 0, 254, 0 };
+                        socket.IOControl(SioTcpInitialRto, noSynRetransmissions, null);
                     }
                     catch (SocketException)
                     {
