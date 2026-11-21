@@ -42,6 +42,53 @@ Describe "New-Object" -Tags "CI" {
 
         $o      | Should -BeExactly "1.2.3.4"
     }
+
+    It "should create an object of the generic type '<TypeName>'" -TestCases @(
+        @{ TypeName = 'System.Collections.Generic.List[string]'; Expected = [System.Collections.Generic.List[string]] }
+        @{ TypeName = 'System.Collections.Generic.List`1[string]'; Expected = [System.Collections.Generic.List[string]] }
+        @{ TypeName = 'System.Collections.Generic.Dictionary[string,int]'; Expected = [System.Collections.Generic.Dictionary[string,int]] }
+        @{ TypeName = 'System.Collections.Generic.HashSet[System.Collections.Generic.List[int]]'; Expected = [System.Collections.Generic.HashSet[System.Collections.Generic.List[int]]] }
+        @{ TypeName = 'System.Tuple[int,string]'; Expected = [System.Tuple[int,string]]; ArgumentList = 1, 'a' }
+        @{ TypeName = 'Nullable[int]'; Expected = [int]; ArgumentList = 1 }
+    ) {
+        param($TypeName, $Expected, $ArgumentList)
+
+        $params = @{ TypeName = $TypeName }
+        if ($ArgumentList) { $params.ArgumentList = $ArgumentList }
+        $o = New-Object @params
+        $o.GetType() | Should -Be $Expected
+    }
+
+    It "should create an object of a generic type named through 'using namespace'" {
+        $sb = [scriptblock]::Create("using namespace System.Collections.Generic`nNew-Object -TypeName 'List[int]'")
+        $o = & $sb
+        , $o | Should -BeOfType ([System.Collections.Generic.List[int]])
+    }
+
+    It "should create an object of a generic type named through a type accelerator" {
+        $accelerators = [psobject].Assembly.GetType('System.Management.Automation.TypeAccelerators')
+        $accelerators::Add('NewObjectGenericAcceleratorTest', [System.Collections.Generic.List`1])
+        try {
+            $o = New-Object -TypeName 'NewObjectGenericAcceleratorTest[int]'
+            , $o | Should -BeOfType ([System.Collections.Generic.List[int]])
+        }
+        finally {
+            $null = $accelerators::Remove('NewObjectGenericAcceleratorTest')
+        }
+    }
+
+    It "should prefer a type accelerator over a generic type with the same name" {
+        $accelerators = [psobject].Assembly.GetType('System.Management.Automation.TypeAccelerators')
+        $accelerators::Add('List', [System.Collections.Generic.HashSet`1])
+        try {
+            $sb = [scriptblock]::Create("using namespace System.Collections.Generic`nNew-Object -TypeName 'List[int]'")
+            $o = & $sb
+            , $o | Should -BeOfType ([System.Collections.Generic.HashSet[int]])
+        }
+        finally {
+            $null = $accelerators::Remove('List')
+        }
+    }
 }
 
 Describe "New-Object DRT basic functionality" -Tags "CI" {
