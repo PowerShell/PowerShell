@@ -929,16 +929,16 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
     }
 
     It "Validate Invoke-WebRequest returns valid RelationLink property with absolute uris if Link Header is present <name>" -TestCases @(
-        $originalUri = Get-WebListenerUrl -Test 'Link' -Query @{maxlinks = 5; linknumber = 2}
+        $originalUri = Get-WebListenerUrl -Test 'Link' -Query @{maxlinks = 5; linknumber = 2} -Https
         @{name = '(URI with scheme)'; uri = $originalUri}
         @{name = '(URI without scheme)'; uri = $originalUri.OriginalString.Split("//")[1]}
     ) {
         param($uri)
-        $command = "Invoke-WebRequest -Uri '$uri'"
+        $command = "Invoke-WebRequest -Uri '$uri' -SkipCertificateCheck"
         $result = ExecuteWebCommand -command $command
 
         $result.Output.RelationLink.Count | Should -BeExactly 5
-        $baseUri = Get-WebListenerUrl -Test 'Link'
+        $baseUri = Get-WebListenerUrl -Test 'Link' -Https
         $result.Output.RelationLink["next"] | Should -BeExactly "${baseUri}?maxlinks=5&linknumber=3&type=default"
         $result.Output.RelationLink["last"] | Should -BeExactly "${baseUri}?maxlinks=5&linknumber=5&type=default"
         $result.Output.RelationLink["prev"] | Should -BeExactly "${baseUri}?maxlinks=5&linknumber=1&type=default"
@@ -1970,6 +1970,18 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         It "Verifies Invoke-WebRequest Negotiated -Credential over HTTPS" {
             $params = @{
                 Uri                  = $httpsBasicUri
+                Credential           = $credential
+                SkipCertificateCheck = $true
+            }
+            $Response = Invoke-WebRequest @params
+            $result = $response.Content | ConvertFrom-Json
+
+            $result.Headers.Authorization | Should -BeExactly "Basic dGVzdHVzZXI6dGVzdHBhc3N3b3Jk"
+        }
+
+        It "Verifies Invoke-WebRequest Negotiated -Credential defaults to HTTPS when the URI has no scheme" {
+            $params = @{
+                Uri                  = $httpsBasicUri.OriginalString.Split("//")[1]
                 Credential           = $credential
                 SkipCertificateCheck = $true
             }
@@ -3026,12 +3038,12 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
     It "Validate Invoke-RestMethod -FollowRelLink correctly follows all the available relation links <name>" -TestCases @(
         $maxLinks = 5
-        $originalUri = Get-WebListenerUrl -Test 'Link' -Query @{maxlinks = $maxLinks}
+        $originalUri = Get-WebListenerUrl -Test 'Link' -Query @{maxlinks = $maxLinks} -Https
         @{name = '(URI with scheme)'; uri = $originalUri}
         @{name = '(URI without scheme)'; uri = $originalUri.OriginalString.Split("//")[1]}
     ) {
         param($uri)
-        $command = "Invoke-RestMethod -Uri '$uri' -FollowRelLink"
+        $command = "Invoke-RestMethod -Uri '$uri' -FollowRelLink -SkipCertificateCheck"
         $result = ExecuteWebCommand -command $command
 
         $result.Output.Count | Should -BeExactly $maxLinks
@@ -4014,6 +4026,17 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         It "Verifies Invoke-RestMethod Negotiated -Credential over HTTPS" {
             $params = @{
                 Uri                  = $httpsBasicUri
+                Credential           = $credential
+                SkipCertificateCheck = $true
+            }
+            $result = Invoke-RestMethod @params
+
+            $result.Headers.Authorization | Should -BeExactly "Basic dGVzdHVzZXI6dGVzdHBhc3N3b3Jk"
+        }
+
+        It "Verifies Invoke-RestMethod Negotiated -Credential defaults to HTTPS when the URI has no scheme" {
+            $params = @{
+                Uri                  = $httpsBasicUri.OriginalString.Split("//")[1]
                 Credential           = $credential
                 SkipCertificateCheck = $true
             }
