@@ -1510,6 +1510,7 @@ namespace Microsoft.PowerShell.Commands
                     var foundMatch = ProcessFile(filename);
                     if (Quiet && foundMatch)
                     {
+                        _doneProcessing = true;
                         return;
                     }
                 }

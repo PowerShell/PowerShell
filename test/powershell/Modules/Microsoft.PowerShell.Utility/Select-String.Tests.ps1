@@ -168,6 +168,12 @@ Describe "Select-String" -Tags "CI" {
             Remove-Item $testInputFile -Force
         }
 
+        It "Should return a single true when a non-matching string is followed by a matching file in quiet mode" {
+            $result = "no match here", (Get-Item $testInputFile) | Select-String -Quiet "second"
+            $result | Should -HaveCount 1
+            $result | Should -BeTrue
+        }
+
         It "Should return an object when a match is found is the file on only one line" {
             $result = Select-String $testInputFile -Pattern "string"
             ,$result | Should -BeOfType System.Object
