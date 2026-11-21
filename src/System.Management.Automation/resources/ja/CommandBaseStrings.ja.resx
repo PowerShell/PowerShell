@@ -232,12 +232,14 @@ Reviewed by TArcher on 2010-07-20
     <value>スクリプト ブロック処理のドット ソース チェック</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>スクリプト ブロック '{0}' のドット ソース処理は、ConstrainedLanguage モードでは失敗します。これは、その言語モード '{1}' が現在の言語モード '{2}' と一致しないためです。</value>
+    <value>スクリプト ブロック '{0}' のドット ソース処理は、ConstrainedLanguageモードでは失敗します。これは、その言語モード '{1}' が現在の言語モード '{2}' と一致しないためです。</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="SearcherWDACLogTitle" xml:space="preserve">
     <value>コマンド検索機能</value>
   </data>
   <data name="SearcherWDACLogMessage" xml:space="preserve">
     <value>モジュール '{1}' のコマンド '{0}' は信頼されていないため、ConstrainedLanguage モードではアクセスできません。</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

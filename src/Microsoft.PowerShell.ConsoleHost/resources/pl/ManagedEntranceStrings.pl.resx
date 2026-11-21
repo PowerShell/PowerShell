@@ -121,13 +121,13 @@
     <value>PowerShell {0}</value>
   </data>
   <data name="ShellBannerCLMode" xml:space="preserve">
-    <value>[Tryb z ograniczonym językiem]</value>
+    <value>[Tryb języka z ograniczeniami]</value>
   </data>
   <data name="ShellBannerCLAuditMode" xml:space="preserve">
     <value>[Tryb AUDYTU języka z ograniczeniami: brak ograniczeń]</value>
   </data>
   <data name="ShellBannerNLMode" xml:space="preserve">
-    <value>[Brak trybu języka]</value>
+    <value>[Tryb bez języka]</value>
   </data>
   <data name="ShellBannerRLMode" xml:space="preserve">
     <value>[Tryb języka z ograniczeniami]</value>

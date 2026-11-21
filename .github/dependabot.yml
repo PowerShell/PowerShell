@@ -7,6 +7,10 @@ updates:
       interval: "daily"
     labels:
       - "CL-BuildPackaging"
+    groups:
+      codeql:
+        patterns:
+          - "github/codeql-action/*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -15,6 +19,10 @@ updates:
       interval: "daily"
     labels:
       - "CL-BuildPackaging"
+    groups:
+      codeql:
+        patterns:
+          - "github/codeql-action/*"
 
   - package-ecosystem: "docker"
     directory: /

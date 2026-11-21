@@ -396,11 +396,13 @@ PS&gt; [System.Collections.Generic.Comparer``1]::get_Default()
   </data>
   <data name="WDACHashTypeLogMessage" xml:space="preserve">
     <value>HashTable'dan '{0}' türüne dönüştürme, ConstrainedLanguage modunda izin verilmeyecektir.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACTypeConversionLogTitle" xml:space="preserve">
     <value>Genişletilmiş Tür Sistemi Hashtable Dönüşümü</value>
   </data>
   <data name="WDACTypeConversionLogMessage" xml:space="preserve">
-    <value>KısıtlanmışDil modunda '{0}' türünden '{1}' türüne dönüştürmeye izin verilmeyecek.</value>
+    <value>ConstrainedLanguage modunda '{0}' türünden '{1}' türüne dönüştürmeye izin verilmeyecek.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

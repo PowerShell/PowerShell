@@ -626,18 +626,20 @@
   </data>
   <data name="ImportPSFileNotAllowedInConstrainedLanguage" xml:space="preserve">
     <value>L’importation de fichiers *.ps1 en tant que modules n’est pas autorisée en mode ConstrainedLanguage.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="MismatchedLanguageModes" xml:space="preserve">
-    <value>Une erreur s’est produite lors du chargement du module de script {0}, car son mode de langage est différent de celui du manifeste du module. Le mode de langage du manifeste est {1} et le mode de langage du module est {2}. Vérifiez que tous les fichiers du module sont signés ou qu’ils font partie de la configuration de la liste d’autorisation de votre application.</value>
+    <value>Une erreur s’est produite lors du chargement du module de script {0}, car son mode langage est différent de celui du manifeste du module. Le mode langage du manifeste est {1} et le mode langage du module est {2}. Vérifiez que tous les fichiers du module sont signés ou qu’ils font partie de la configuration de la liste d’autorisation de votre application.</value>
   </data>
   <data name="CannotUseDotSourceWithWildCardFunctionExport" xml:space="preserve">
     <value>Ce module utilise l’opérateur dot-source lors de l’exportation de fonctions à l’aide de caractères génériques, ce qui n’est pas autorisé lorsque le système est soumis à obligation de vérification des applications.</value>
   </data>
   <data name="CannotExportMembersAccrossLanguageBoundaries" xml:space="preserve">
-    <value>Impossible d’exporter des membres de module à partir d’un module dont le mode de langage est différent de celui de la session en cours.</value>
+    <value>Impossible d’exporter des membres de module à partir d’un module dont le mode langage est différent de celui de la session en cours.</value>
   </data>
   <data name="CannotCreateModuleWithScriptBlock" xml:space="preserve">
     <value>Impossible de créer un nouveau module tant que la session est en mode ConstrainedLanguage.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="CannotFindCoreCompatibleBuiltInModule" xml:space="preserve">
     <value>Impossible de trouver le module intégré « {0} » compatible avec l’édition « Core ». Vérifiez que les modules intégrés PowerShell sont disponibles. Ils sont généralement fournis avec le package PowerShell sous le chemin de module $PSHOME, et sont nécessaires au bon fonctionnement de PowerShell.</value>
@@ -646,42 +648,49 @@
     <value>Cmdlet Export-ModuleMember</value>
   </data>
   <data name="WDACExportModuleCommandLogMessage" xml:space="preserve">
-    <value>L’exportation des membres du module échouera en mode de langage contraint, car le module « {0} » a un mode de langage « {1} » différent du mode de la session actuelle « {2} ».</value>
+    <value>L’exportation des membres du module échouera en mode ConstrainedLanguage, car le module '{0}' a un mode de langage '{1}' différent du '{2}' de la session actuelle.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACImplicitFunctionExportLogTitle" xml:space="preserve">
     <value>Exportation implicite des fonctions du module</value>
   </data>
   <data name="WDACImplicitFunctionExportLogMessage" xml:space="preserve">
-    <value>L’exportation implicite de fonctions pour le module « {0} » sera refusée, car il est approuvé (il s’exécute en mode de langage complet), mais la session ne l’est pas (elle s’exécute en mode de langage contraint). Il est recommandé d’exporter systématiquement les fonctions du module individuellement, avec leur nom complet.</value>
+    <value>L’exportation implicite de fonctions du module « {0} » sera refusée, car il est approuvé (il s’exécute en mode FullLanguage), mais la session ne l’est pas (elle s’exécute en mode ConstrainedLanguage). L’exportation systématiquement des fonctions du module individuellement, avec leur nom complet, constitue la meilleure pratique.</value>
+    <comment>{StrContains="FullLanguage"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACScriptFileImportLogTitle" xml:space="preserve">
     <value>Importation du fichier de script en tant que module</value>
   </data>
   <data name="WDACScriptFileImportLogMessage" xml:space="preserve">
     <value>L’importation du fichier de script « {0} » en tant que module ne sera pas autorisée en mode ConstrainedLanguage.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACModuleDotSourceLogTitle" xml:space="preserve">
     <value>Le module contient un opérateur Dot-Source</value>
   </data>
   <data name="WDACModuleDotSourceLogMessage" xml:space="preserve">
-    <value>L’importation du module « {0} » échouera en mode de langage contraint, car il exporte des fonctions à l’aide de caractères génériques tout en utilisant l’opérateur dot-source.</value>
+    <value>L’importation du module '{0}' échouera en mode ConstrainedLanguage, car il exporte des fonctions à l’aide de caractères génériques tout en utilisant l’opérateur dot-source.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACModuleFnExportWithNestedModulesLogTitle" xml:space="preserve">
-    <value>« Fonctions d’exportation de module</value>
+    <value>Fonctions d’exportation de module</value>
   </data>
   <data name="WDACModuleFnExportWithNestedModulesLogMessage" xml:space="preserve">
-    <value>Le module « {0} » exporte des fonctions à l’aide de caractères génériques dans le nom. Tous les noms de fonctions des modules imbriqués seront supprimés lors de l’exécution en mode de langage contraint.</value>
+    <value>Le module '{0}' exporte des fonctions à l’aide de caractères génériques de nom. Tous les noms de fonctions de module imbriqués seront supprimés lors de l’exécution en mode ConstrainedLanguage.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACNewModuleCommandLogTitle" xml:space="preserve">
-    <value>«Cmdlet New-Module</value>
+    <value>Cmdlet New-Module</value>
   </data>
   <data name="WDACNewModuleCommandLogMessage" xml:space="preserve">
-    <value>Un nouveau module provenant d’une session de langage contraint non approuvée sera empêché de fournir le bloc de script FullLanguage.</value>
+    <value>Un nouveau module d’une session ConstrainedLanguage non approuvée ne pourra pas fournir le bloc de script FullLanguage.</value>
+    <comment>{StrContains="ConstrainedLanguage"}{StrContains="FullLanguage"}</comment>
   </data>
   <data name="WDACMismatchedLanguageModesTitle" xml:space="preserve">
-    <value>« Modes de langage incompatibles avec les modules</value>
+    <value>Modes de langage incompatibles avec les modules</value>
   </data>
   <data name="WDACMismatchedLanguageModesMessage" xml:space="preserve">
-    <value>Un module dépendant est en cours de chargement avec un mode de langue différent de celui du module parent. Cela ne sera pas autorisé en mode de langage contraint.</value>
+    <value>Un module dépendant est en cours de chargement avec un mode de langue différent de celui du parent. Cela ne sera pas autorisé en mode ConstrainedLanguage.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

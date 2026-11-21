@@ -1,6 +1,10 @@
 trigger: none
 
 parameters: # parameters are shown up in ADO UI in a build queue time
+  - name: UseEarlyAccessModules
+    displayName: Use early-access modules
+    type: boolean
+    default: false
   - name: 'debug'
     displayName: 'Enable debug output'
     type: boolean
@@ -52,6 +56,8 @@ parameters: # parameters are shown up in ADO UI in a build queue time
 name: release-$(BUILD.SOURCEBRANCHNAME)-nonofficial-$(Build.BuildId)
 
 variables:
+  - name: UseEarlyAccessModules
+    value: ${{ parameters.UseEarlyAccessModules }}
   - template: /.pipelines/templates/variables/PowerShell-Release-Variables.yml@self
     parameters:
       debug: ${{ parameters.debug }}
@@ -70,7 +76,7 @@ resources:
 
   pipelines:
     - pipeline: CoOrdinatedBuildPipeline
-      source: 'PowerShell-Coordinated_Packages-NonOfficial'
+      source: 'PowerShell-Coordinated Binaries-NonOfficial'
 
     # NOTE: The alias name "PSPackagesOfficial" is intentionally reused here even
     # for the NonOfficial pipeline source. Downstream shared templates (for example,

@@ -2,6 +2,10 @@ trigger: none
 pr: none
 
 parameters: # parameters are shown up in ADO UI in a build queue time
+- name: UseEarlyAccessModules
+  displayName: Use early-access modules
+  type: boolean
+  default: false
 - name: 'createVPack'
   displayName: 'Create and Submit VPack'
   type: boolean
@@ -46,6 +50,8 @@ parameters: # parameters are shown up in ADO UI in a build queue time
 name: msixbundle_vPack_$(Build.SourceBranchName)_Prod.True_Create.${{ parameters.createVPack }}_$(date:yyyyMMdd).$(rev:rr)
 
 variables:
+  - name: UseEarlyAccessModules
+    value: ${{ parameters.UseEarlyAccessModules }}
   - name: CDP_DEFINITION_BUILD_COUNT
     value: $[counter('', 0)]
   - name: system.debug
@@ -268,9 +274,9 @@ extends:
             Write-Verbose -Verbose "Completed building PowerShell for '$env:BuildConfiguration' configuration"
           displayName: 'Build Windows Universal - $(Architecture)-$(BuildConfiguration) Symbols folder'
           env:
+            VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: $(VSS_NUGET_EXTERNAL_FEED_ENDPOINTS)
             ${{ if eq(parameters.IsEarlyAccess, true) }}:
               __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
-              VSS_NUGET_EXTERNAL_FEED_ENDPOINTS: $(VSS_NUGET_EXTERNAL_FEED_ENDPOINTS)
             ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
 
         # Add CodeQL Finalize task right after your 'Build' step.
