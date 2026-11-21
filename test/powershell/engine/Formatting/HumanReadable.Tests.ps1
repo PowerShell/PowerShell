@@ -70,13 +70,17 @@ Describe 'Tests for human-readable rendering of file sizes and timestamps' -Tag 
         }
 
         It 'Directory listing shows humanized lengths by default' {
-            $out = Get-Item $kiloFile | Out-String
+            # The 'children' view is selected explicitly because on Unix platforms the default
+            # view for FileSystemInfo is 'childrenWithUnixStat', which renders the raw UnixStat
+            # size and formats LastWriteTime directly instead of using the LengthString and
+            # LastWriteTimeString properties exercised here.
+            $out = Get-Item $kiloFile | Format-Table -View children | Out-String
             $out.Contains($script:expectedKilo) | Should -BeTrue
         }
 
         It 'Directory listing shows raw lengths when $PSStyle.HumanReadable.Size is disabled' {
             $PSStyle.HumanReadable.Size = $false
-            $out = Get-Item $kiloFile | Out-String
+            $out = Get-Item $kiloFile | Format-Table -View children | Out-String
             $out.Contains($script:expectedKilo) | Should -BeFalse
             $out.Contains('1500') | Should -BeTrue
         }
@@ -158,7 +162,7 @@ Describe 'Tests for human-readable rendering of file sizes and timestamps' -Tag 
             $item = Get-Item $timeFile
             $item.LastWriteTime = (Get-Date) - [TimeSpan]::FromMinutes(5.5)
 
-            $out = Get-Item $timeFile | Out-String
+            $out = Get-Item $timeFile | Format-Table -View children | Out-String
             $out.Contains('5 min ago') | Should -BeTrue
         }
     }

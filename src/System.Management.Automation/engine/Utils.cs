@@ -1589,14 +1589,16 @@ namespace System.Management.Automation
         /// Returns a human-readable, relative representation of a point in time compared to
         /// <paramref name="relativeTo"/>, for example "just now", "3 min ago", "19 hours ago",
         /// or "6 days ago". Values that are in the future, or further in the past than 7 days,
-        /// are formatted as a culture-aware short date and time.
+        /// are formatted as a culture-aware short date and time. The elapsed time is computed
+        /// in UTC so that it stays correct across daylight-saving time transitions, while the
+        /// absolute fallback is rendered from the original local time.
         /// </summary>
         /// <param name="time">The point in time to format.</param>
         /// <param name="relativeTo">The reference time, usually the current time.</param>
         /// <returns>The human-readable, relative time string.</returns>
         internal static string ToRelativeTimeString(DateTime time, DateTime relativeTo)
         {
-            TimeSpan elapsed = relativeTo - time;
+            TimeSpan elapsed = relativeTo.ToUniversalTime() - time.ToUniversalTime();
 
             if (elapsed >= TimeSpan.Zero)
             {
