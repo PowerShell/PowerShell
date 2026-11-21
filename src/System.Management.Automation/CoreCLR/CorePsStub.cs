@@ -470,6 +470,15 @@ namespace System.Management.Automation.Security
             return SystemEnforcementMode.None;
         }
 
+        /// <summary>
+        /// Checks whether script files need a SAFER policy check.
+        /// </summary>
+        /// <remarks>Always return true on non-Windows platforms, matching GetSystemLockdownPolicy.</remarks>
+        internal static bool IsSaferScriptCheckRequired()
+        {
+            return true;
+        }
+
         internal static bool IsClassInApprovedList(Guid clsid)
         {
             throw new NotImplementedException("SystemPolicy.IsClassInApprovedList not implemented");
