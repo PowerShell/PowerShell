@@ -147,7 +147,7 @@ To start a codespace for the PowerShell repository:
 1. Go to https://github.com/PowerShell/PowerShell
 1. Click the green button on the right and choose to create a codespace
 
-   ![alt text](Images/Codespaces.png)
+   ![alt text](/.github/Images/Codespaces.png)
 1. Alternatively, just hit the comma `,` key on your keyboard which should instantly start a codespace as well.
 
 Once the codespace starts, you can press `ctrl+shift+b` (`cmd+shift+b` on Mac) to run the default build task. If you would like to interactivey test your changes, you can press `F5` to start debugging, add breakpoints, etc.
@@ -181,7 +181,7 @@ Please see PowerShell [Testing Guidelines - Running Tests Outside of CI][running
 
 **Always create a pull request to the `master` branch of this repository**.
 
-![GitHub-PR.png](Images/GitHub-PR.png)
+![GitHub-PR.png](/.github/Images/GitHub-PR.png)
 
 * It's recommended to avoid a PR with too many changes.
   A large PR not only stretches the review time, but also makes it much harder to spot issues.
