@@ -2618,7 +2618,7 @@
                 AutomationProperties.Name="{x:Static default:XamlLocalizableResources.AutoResXGen_SearchBox_AutomationPropertiesName_75}"
                 BackgroundText="{TemplateBinding BackgroundText}"
                 Padding="0, 0, 20, 0"
-                Text="{Binding Path=Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TextTrimConverter}}">
+                Text="{Binding Path=Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource TemplatedParent}}">
                 <local:MessageTextBox.InputBindings>
                     <KeyBinding Command="local:SearchBox.ClearTextCommand" Key="Escape" />
                 </local:MessageTextBox.InputBindings>
