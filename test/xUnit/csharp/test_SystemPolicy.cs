@@ -120,28 +120,16 @@ namespace PSTests.Parallel
             });
         }
 
-        public enum ScriptPolicyState
-        {
-            None,
-            AuthenticodeEnabledOnly,
-            SaferMachineRule,
-            SaferMachineDefaultLevel,
-            SaferUserRule,
-            AppLockerScriptKey,
-            AppLockerScriptPolicyFile,
-            AppLockerMdmFolder,
-        }
-
         [Theory]
-        [InlineData(ScriptPolicyState.None, false)]
-        [InlineData(ScriptPolicyState.AuthenticodeEnabledOnly, false)]
-        [InlineData(ScriptPolicyState.SaferMachineRule, true)]
-        [InlineData(ScriptPolicyState.SaferMachineDefaultLevel, true)]
-        [InlineData(ScriptPolicyState.SaferUserRule, true)]
-        [InlineData(ScriptPolicyState.AppLockerScriptKey, true)]
-        [InlineData(ScriptPolicyState.AppLockerScriptPolicyFile, true)]
-        [InlineData(ScriptPolicyState.AppLockerMdmFolder, true)]
-        public static void TestSaferScriptCheckForPolicyState(ScriptPolicyState state, bool scriptPolicyExpected)
+        [InlineData("None", false)]
+        [InlineData("AuthenticodeEnabledOnly", false)]
+        [InlineData("SaferMachineRule", true)]
+        [InlineData("SaferMachineDefaultLevel", true)]
+        [InlineData("SaferUserRule", true)]
+        [InlineData("AppLockerScriptKey", true)]
+        [InlineData("AppLockerScriptPolicyFile", true)]
+        [InlineData("AppLockerMdmFolder", true)]
+        public static void TestSaferScriptCheckForPolicyState(string state, bool scriptPolicyExpected)
         {
             const string CodeIdentifiers = @"SOFTWARE\Policies\Microsoft\Windows\Safer\CodeIdentifiers";
             string testKeyPath = @"Software\PowerShellTests\SystemPolicy_" + Guid.NewGuid().ToString("N");
@@ -157,7 +145,7 @@ namespace PSTests.Parallel
 
                 switch (state)
                 {
-                    case ScriptPolicyState.AuthenticodeEnabledOnly:
+                    case "AuthenticodeEnabledOnly":
                         using (RegistryKey key = machine.CreateSubKey(CodeIdentifiers))
                         {
                             key.SetValue("authenticodeenabled", 0, RegistryValueKind.DWord);
@@ -165,7 +153,7 @@ namespace PSTests.Parallel
 
                         break;
 
-                    case ScriptPolicyState.SaferMachineRule:
+                    case "SaferMachineRule":
                         using (RegistryKey key = machine.CreateSubKey(CodeIdentifiers))
                         {
                             key.SetValue("authenticodeenabled", 0, RegistryValueKind.DWord);
@@ -174,7 +162,7 @@ namespace PSTests.Parallel
 
                         break;
 
-                    case ScriptPolicyState.SaferMachineDefaultLevel:
+                    case "SaferMachineDefaultLevel":
                         using (RegistryKey key = machine.CreateSubKey(CodeIdentifiers))
                         {
                             key.SetValue("DefaultLevel", 0, RegistryValueKind.DWord);
@@ -182,21 +170,27 @@ namespace PSTests.Parallel
 
                         break;
 
-                    case ScriptPolicyState.SaferUserRule:
+                    case "SaferUserRule":
                         user.CreateSubKey(CodeIdentifiers + @"\0\Hashes\{" + Guid.NewGuid() + "}").Dispose();
                         break;
 
-                    case ScriptPolicyState.AppLockerScriptKey:
+                    case "AppLockerScriptKey":
                         machine.CreateSubKey(@"SOFTWARE\Policies\Microsoft\Windows\SrpV2\Script").Dispose();
                         break;
 
-                    case ScriptPolicyState.AppLockerScriptPolicyFile:
+                    case "AppLockerScriptPolicyFile":
                         File.WriteAllText(Path.Combine(appLockerDirectory, "Script.AppLocker"), string.Empty);
                         break;
 
-                    case ScriptPolicyState.AppLockerMdmFolder:
+                    case "AppLockerMdmFolder":
                         Directory.CreateDirectory(Path.Combine(appLockerDirectory, "MDM"));
                         break;
+
+                    case "None":
+                        break;
+
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(state), state, null);
                 }
 
                 bool scriptPolicyMayExist = SystemPolicy.HasAppLockerOrSaferScriptPolicy(machine, user, appLockerDirectory);
