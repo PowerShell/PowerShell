@@ -545,6 +545,32 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result.Error.FullyQualifiedErrorId | Should -Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
     }
 
+    It "Invoke-WebRequest fails fast when nothing listens on a loopback port: <HostName>" -Skip:(!$IsWindows) -TestCases @(
+        @{ HostName = '127.0.0.1' }
+        @{ HostName = '[::1]' }
+        @{ HostName = 'localhost' }
+    ) {
+        param($HostName)
+
+        $listener = [System.Net.Sockets.TcpListener]::new([ipaddress]::IPv6Any, 0)
+        $listener.Server.DualMode = $true
+        $listener.Start()
+        $port = $listener.LocalEndpoint.Port
+        $listener.Stop()
+
+        $uri = "http://${HostName}:$port/"
+
+        # Warm up, so the timed request below only measures the connect
+        { Invoke-WebRequest -Uri $uri -ErrorAction Stop } | Should -Throw -ErrorId "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+
+        # Windows retransmits the SYN for about 2 seconds per address after the
+        # connection is refused, unless the socket opts out
+        $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+        { Invoke-WebRequest -Uri $uri -ErrorAction Stop } | Should -Throw -ErrorId "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+        $stopwatch.Stop()
+        $stopwatch.Elapsed.TotalSeconds | Should -BeLessThan 1.5
+    }
+
     It "Validate Invoke-WebRequest redirect with -Query destination Http" {
         $httpUri = Get-WebListenerUrl -Test 'Get'
         $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{destination = $httpUri}
