@@ -112,6 +112,16 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Converts all / in the path to \ without correcting its casing.  For checks whose answer
+        /// does not depend on casing (exists, is a directory), where GetCorrectCasedPath would
+        /// enumerate every ancestor directory for nothing.
+        /// </summary>
+        private static string NormalizeSeparators(string path)
+        {
+            return path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
+        }
+
+        /// <summary>
         /// Get the correct casing for a path.  This method assumes it's being called by NormalizePath()
         /// so that the path is already normalized.
         /// </summary>
@@ -3387,7 +3397,7 @@ namespace Microsoft.PowerShell.Commands
 
             bool result = false;
 
-            path = NormalizePath(path);
+            path = NormalizeSeparators(path);
 
             try
             {
@@ -3486,7 +3496,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
-            path = NormalizePath(path);
+            path = NormalizeSeparators(path);
 
             // First check to see if it is a directory
             try
@@ -5851,7 +5861,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
-            path = NormalizePath(path);
+            path = NormalizeSeparators(path);
 
             return Directory.Exists(path);
         }
@@ -8039,9 +8049,16 @@ namespace Microsoft.PowerShell.Commands
             const Interop.Windows.FileAttributes Attributes = Interop.Windows.FileAttributes.BackupSemantics | Interop.Windows.FileAttributes.PosixSemantics;
 
             using (var sfOne = Interop.Windows.CreateFileWithSafeFileHandle(pathOne, FileAccess.Read, FileShare.Read, FileMode.Open, Attributes))
-            using (var sfTwo = Interop.Windows.CreateFileWithSafeFileHandle(pathTwo, FileAccess.Read, FileShare.Read, FileMode.Open, Attributes))
             {
-                if (!sfOne.IsInvalid && !sfTwo.IsInvalid)
+                // If the first item can't be opened (Copy-Item's destination usually doesn't exist yet),
+                // the two can't be the same item, so don't open the second one.
+                if (sfOne.IsInvalid)
+                {
+                    return false;
+                }
+
+                using var sfTwo = Interop.Windows.CreateFileWithSafeFileHandle(pathTwo, FileAccess.Read, FileShare.Read, FileMode.Open, Attributes);
+                if (!sfTwo.IsInvalid)
                 {
                     BY_HANDLE_FILE_INFORMATION infoOne;
                     BY_HANDLE_FILE_INFORMATION infoTwo;
