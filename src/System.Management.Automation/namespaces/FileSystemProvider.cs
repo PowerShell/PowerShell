@@ -3056,6 +3056,7 @@ namespace Microsoft.PowerShell.Commands
             internal long FileSize;
             internal bool IsRoot;
             internal Exception Error;
+            internal TaskCompletionSource<bool> Approval;
         }
 
         private sealed class RemoveProgressDirectoryFrame
@@ -3149,6 +3150,7 @@ namespace Microsoft.PowerShell.Commands
                                 }
 
                                 directories.Push(new RemoveProgressDirectoryFrame { Directory = entry.Directory, ShouldRemove = shouldRemove });
+                                entry.Approval?.TrySetResult(shouldRemove);
                                 break;
                             }
                             case RemoveProgressEntryType.DirectoryLink:
@@ -3232,7 +3234,14 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            queue.Add(new RemoveProgressEntry { Type = RemoveProgressEntryType.EnterDirectory, Directory = directory, IsRoot = isRoot }, cancellationToken);
+            var approval = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            queue.Add(new RemoveProgressEntry { Type = RemoveProgressEntryType.EnterDirectory, Directory = directory, IsRoot = isRoot, Approval = approval }, cancellationToken);
+
+            if (!approval.Task.WaitAsync(cancellationToken).GetAwaiter().GetResult())   // throws OperationCanceledException when the token fires
+            {
+                queue.Add(new RemoveProgressEntry { Type = RemoveProgressEntryType.ExitDirectory, Directory = directory }, cancellationToken);
+                return;
+            }
             Interlocked.Increment(ref _totalDirs);
 
             // Snapshot each directory's immediate children before the consumer can remove them.
