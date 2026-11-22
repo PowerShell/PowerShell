@@ -401,6 +401,24 @@ namespace System.Management.Automation.Runspaces
         public RunspaceAvailability RunspaceAvailability { get; }
     }
 
+#nullable enable
+    /// <summary>
+    /// Defines the event arguments passed to the <see cref="Runspace.RunspaceOpened"/> event.
+    /// </summary>
+    public sealed class RunspaceOpenedEventArgs : EventArgs
+    {
+        internal RunspaceOpenedEventArgs(Runspace runspace)
+        {
+            Runspace = runspace;
+        }
+
+        /// <summary>
+        /// The runspace that was opened.
+        /// </summary>
+        public Runspace Runspace { get; }
+    }
+#nullable disable
+
     #endregion Runspace state
 
     #region Runspace capabilities
@@ -761,7 +779,7 @@ namespace System.Management.Automation.Runspaces
         /// Gets the Runspace Id.
         /// </summary>
         public int Id { get; }
-        
+
         /// <summary>
         /// Gets and sets a boolean indicating whether the runspace has a
         /// debugger attached with <c>Debug-Runspace</c>.
@@ -850,6 +868,37 @@ namespace System.Management.Automation.Runspaces
         /// Event raised when the availability of the Runspace changes.
         /// </summary>
         public abstract event EventHandler<RunspaceAvailabilityEventArgs> AvailabilityChanged;
+
+#nullable enable
+        /// <summary>
+        /// Event raised when any local runspace in the process is opened, including runspaces created
+        /// by a <see cref="RunspacePool"/>. It is raised synchronously on the thread opening the runspace,
+        /// after its state is <see cref="RunspaceState.Opened"/> but before the
+        /// <see cref="StateChanged"/> event for that state. The <see cref="InitialSessionState"/>
+        /// variables, functions and other session state entries have already been set, but its startup
+        /// scripts and module imports have not been run yet. An exception thrown by a handler fails
+        /// the open and leaves the runspace <see cref="RunspaceState.Broken"/>.
+        /// </summary>
+        public static event EventHandler<RunspaceOpenedEventArgs>? RunspaceOpened;
+
+        /// <summary>
+        /// Raises the <see cref="RunspaceOpened"/> event.
+        /// </summary>
+        /// <returns>The exception thrown by a handler, or null.</returns>
+        internal static Exception? RaiseRunspaceOpened(Runspace runspace)
+        {
+            try
+            {
+                // Args are only allocated when there are subscribers.
+                RunspaceOpened?.Invoke(null, new RunspaceOpenedEventArgs(runspace));
+                return null;
+            }
+            catch (Exception e)
+            {
+                return e;
+            }
+        }
+#nullable disable
 
         /// <summary>
         /// Returns true if there are any subscribers to the AvailabilityChanged event.

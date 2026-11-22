@@ -687,12 +687,19 @@ namespace System.Management.Automation.Runspaces
             SetRunspaceState(RunspaceState.Opened);
             RunspaceOpening.Set();
 
-            // Raise the event
-            RaiseRunspaceStateEvents();
-            s_runspaceInitTracer.WriteLine("runspace opened successfully");
+            // Raised before the Opened state event so handlers can configure the runspace (e.g. a
+            // debugger setting breakpoints) before anything else is told it is available.
+            Exception initError = RaiseRunspaceOpened(this);
+            if (initError == null)
+            {
+                // Raise the event
+                RaiseRunspaceStateEvents();
+                s_runspaceInitTracer.WriteLine("runspace opened successfully");
 
-            // Now do initial state configuration that requires an active runspace
-            Exception initError = InitialSessionState.BindRunspace(this, s_runspaceInitTracer);
+                // Now do initial state configuration that requires an active runspace
+                initError = InitialSessionState.BindRunspace(this, s_runspaceInitTracer);
+            }
+
             if (initError != null)
             {
                 // Log engine health event
