@@ -2908,7 +2908,11 @@ namespace Microsoft.PowerShell.Commands
                     && progressPreference == ActionPreference.Continue;
                 if (reportProgress)
                 {
-                    _removeStopwatch.Start();
+                    _totalFiles = 0;
+                    _totalBytes = 0;
+                    _removedFiles = 0;
+                    _removedBytes = 0;
+                    _removeStopwatch.Restart();
                 }
 
 #if UNIX
