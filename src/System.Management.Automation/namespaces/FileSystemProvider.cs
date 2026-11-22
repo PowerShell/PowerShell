@@ -3081,7 +3081,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 int requested = (int)converted;
                 // Cap the queue requested size at max ~400 MB
-                queueCapacity = Math.Max(0, Math.Min(requested, 2_000_000));
+                queueCapacity = Math.Max(1, Math.Min(requested, 2_000_000));
             }
             using (var queue = new BlockingCollection<RemoveProgressEntry>(new ConcurrentQueue<RemoveProgressEntry>(), queueCapacity))
             using (var cancellation = new CancellationTokenSource())
