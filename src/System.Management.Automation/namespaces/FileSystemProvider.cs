@@ -3158,8 +3158,8 @@ namespace Microsoft.PowerShell.Commands
                                 if (frame.ShouldRemove)
                                 {
                                     // Re-check emptiness to avoid an error due to external interference
-                                    bool hasChildren = DirectoryInfoHasChildItems(frame.Directory);
-                                    if (hasChildren && !force)
+                                    bool hasChildren = !force && DirectoryInfoHasChildItems(frame.Directory);
+                                    if (hasChildren)
                                     {
                                         string error = StringUtil.Format(FileSystemProviderStrings.DirectoryNotEmpty, frame.Directory.FullName);
                                         WriteError(new ErrorRecord(new IOException(error), "DirectoryNotEmpty", ErrorCategory.WriteError, frame.Directory));
