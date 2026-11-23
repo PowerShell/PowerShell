@@ -446,6 +446,25 @@ Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
         $result.FullyQualifiedErrorId | Should -BeExactly 'TypeNotFound'
     }
 
+    It 'Verifies single line function with a parameter list keeps its position' {
+
+        $ast = [System.Management.Automation.Language.Parser]::ParseInput(
+            "`n  function Test-Inline(`$a = 'a', `$b = 'b') { `"`$a `$b `$_`"; throw 'Terminating Error!' }",
+            '/fake/Inline.ps1',
+            [ref]$null,
+            [ref]$null)
+        $throwAst = $ast.Find({ $args[0] -is [System.Management.Automation.Language.ThrowStatementAst] }, $true)
+        . $ast.GetScriptBlock()
+
+        $result = 1 | ForEach-Object -Parallel ${function:Test-Inline} 2>&1
+
+        $result.Count | Should -BeExactly 2
+        $result[0] | Should -BeExactly 'a b 1'
+        $result[1].Exception.ErrorRecord.InvocationInfo.ScriptName | Should -BeExactly '/fake/Inline.ps1'
+        $result[1].Exception.ErrorRecord.InvocationInfo.ScriptLineNumber | Should -BeExactly 2
+        $result[1].Exception.ErrorRecord.InvocationInfo.OffsetInLine | Should -BeExactly $throwAst.Extent.StartColumnNumber
+    }
+
     It 'Verifies <Name> runs with the expected output and position' -TestCases @(
         @{ Name = 'Test-ParamBlock'; Expected = 'default 1 Functions.ps1: line 4' }
         @{ Name = 'Test-ParamList'; Expected = 'default 1 Functions.ps1: line 7' }
