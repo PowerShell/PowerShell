@@ -87,3 +87,15 @@ Start-PSPester -UseNuGetOrg
 ## Building in Visual Studio
 
 We currently have the issue [#3400](https://github.com/PowerShell/PowerShell/issues/3400) tracking this task.
+
+## Measuring startup performance
+
+Build both the baseline and changed source with `Start-PSBuild -Configuration Release -ReleaseTag $releaseTag`,
+using the same release tag, SDK, runtime, architecture, and bundled modules. Do not compare a Debug build
+with a Release build or attribute differences between a development build and an official package to a source change.
+
+Use `-nologo -noprofile` for every measured launch. Include direct command execution, such as
+`pwsh -nologo -noprofile -command 1`, and distinguish time to first output from total process duration.
+For interactive startup, measure both the visible prompt and execution of the first entered command:
+line-reader initialization can continue after the prompt appears. Warm both builds and interleave their
+measurements to reduce cache and machine-state bias; collect diagnostic traces separately from timing runs.

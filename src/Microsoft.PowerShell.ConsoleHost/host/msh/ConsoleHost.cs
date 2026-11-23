@@ -24,6 +24,7 @@ using System.Runtime;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.PowerShell.Commands;
 using Microsoft.PowerShell.Telemetry;
 #if LEGACYTELEMETRY
@@ -157,6 +158,7 @@ namespace Microsoft.PowerShell
 
             Thread.CurrentThread.Name = "ConsoleHost main thread";
 
+            Task startupTelemetry = null;
             try
             {
                 // We might be able to ignore console host creation error if we are running in
@@ -316,8 +318,8 @@ namespace Microsoft.PowerShell
                 s_theConsoleHost.BindBreakHandler();
                 IsStdOutputRedirected = Console.IsOutputRedirected;
 
-                // Send startup telemetry for ConsoleHost startup
-                ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("Normal", s_cpp.ParametersUsedAsDouble);
+                double parametersUsed = s_cpp.ParametersUsedAsDouble;
+                startupTelemetry = Task.Run(() => ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("Normal", parametersUsed));
 
                 return unchecked((int)s_theConsoleHost.Run(s_cpp, false));
             }
@@ -340,6 +342,8 @@ namespace Microsoft.PowerShell
                     s_theConsoleHost.Dispose();
                 }
 #pragma warning restore IDE0031
+                // Short-lived commands must finish reporting startup before the process exits.
+                startupTelemetry?.GetAwaiter().GetResult();
             }
         }
 

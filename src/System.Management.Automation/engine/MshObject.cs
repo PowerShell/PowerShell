@@ -436,21 +436,62 @@ namespace System.Management.Automation
 
             if (obj is PSObject) { return PSObject.s_mshObjectAdapter; }
 
-            if (obj is CimInstance) { return PSObject.s_cimInstanceAdapter; }
+            // Routing by base-type name avoids loading optional adapter assemblies for
+            // ordinary objects. The helpers still verify the actual runtime type.
+            for (Type type = obj.GetType(); type != null; type = type.BaseType)
+            {
+                AdapterSet adapter = type.FullName switch
+                {
+                    "Microsoft.Management.Infrastructure.CimInstance" => GetCimAdapter(obj),
 #if !UNIX
-            if (obj is ManagementClass) { return PSObject.s_managementClassAdapter; }
-
-            if (obj is ManagementBaseObject) { return PSObject.s_managementObjectAdapter; }
-
-            if (obj is DirectoryEntry) { return PSObject.s_directoryEntryAdapter; }
+                    "System.Management.ManagementClass" or "System.Management.ManagementBaseObject" => GetWmiAdapter(obj),
+                    "System.DirectoryServices.DirectoryEntry" => GetDirectoryEntryAdapter(obj),
 #endif
-            if (obj is DataRowView) { return PSObject.s_dataRowViewAdapter; }
-
-            if (obj is DataRow) { return PSObject.s_dataRowAdapter; }
-
-            if (obj is XmlNode) { return PSObject.s_xmlNodeAdapter; }
+                    "System.Data.DataRowView" or "System.Data.DataRow" => GetDataAdapter(obj),
+                    "System.Xml.XmlNode" => GetXmlAdapter(obj),
+                    _ => null,
+                };
+                if (adapter != null)
+                {
+                    return adapter;
+                }
+            }
 
             return null;
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static AdapterSet GetCimAdapter(object obj)
+        {
+            return obj is CimInstance ? s_cimInstanceAdapter.Value : null;
+        }
+
+#if !UNIX
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static AdapterSet GetWmiAdapter(object obj)
+        {
+            if (obj is ManagementClass) { return s_managementClassAdapter.Value; }
+            return obj is ManagementBaseObject ? s_managementObjectAdapter.Value : null;
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static AdapterSet GetDirectoryEntryAdapter(object obj)
+        {
+            return obj is DirectoryEntry ? s_directoryEntryAdapter.Value : null;
+        }
+#endif
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static AdapterSet GetDataAdapter(object obj)
+        {
+            if (obj is DataRowView) { return s_dataRowViewAdapter.Value; }
+            return obj is DataRow ? s_dataRowAdapter.Value : null;
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static AdapterSet GetXmlAdapter(object obj)
+        {
+            return obj is XmlNode ? s_xmlNodeAdapter.Value : null;
         }
 
         /// <summary>
@@ -651,19 +692,19 @@ namespace System.Management.Automation
         private static readonly AdapterSet s_mshMemberSetAdapter = new AdapterSet(new PSMemberSetAdapter(), null);
         private static readonly AdapterSet s_mshObjectAdapter = new AdapterSet(new PSObjectAdapter(), null);
 
-        private static readonly PSObject.AdapterSet s_cimInstanceAdapter =
-            new PSObject.AdapterSet(new ThirdPartyAdapter(typeof(Microsoft.Management.Infrastructure.CimInstance),
+        private static readonly Lazy<AdapterSet> s_cimInstanceAdapter =
+            new(() => new PSObject.AdapterSet(new ThirdPartyAdapter(typeof(Microsoft.Management.Infrastructure.CimInstance),
                                                           new Microsoft.PowerShell.Cim.CimInstanceAdapter()),
-                                    PSObject.DotNetInstanceAdapter);
+                                    PSObject.DotNetInstanceAdapter));
 
 #if !UNIX
-        private static readonly AdapterSet s_managementObjectAdapter = new AdapterSet(new ManagementObjectAdapter(), DotNetInstanceAdapter);
-        private static readonly AdapterSet s_managementClassAdapter = new AdapterSet(new ManagementClassApdapter(), DotNetInstanceAdapter);
-        private static readonly AdapterSet s_directoryEntryAdapter = new AdapterSet(new DirectoryEntryAdapter(), DotNetInstanceAdapter);
+        private static readonly Lazy<AdapterSet> s_managementObjectAdapter = new(() => new AdapterSet(new ManagementObjectAdapter(), DotNetInstanceAdapter));
+        private static readonly Lazy<AdapterSet> s_managementClassAdapter = new(() => new AdapterSet(new ManagementClassApdapter(), DotNetInstanceAdapter));
+        private static readonly Lazy<AdapterSet> s_directoryEntryAdapter = new(() => new AdapterSet(new DirectoryEntryAdapter(), DotNetInstanceAdapter));
 #endif
-        private static readonly AdapterSet s_dataRowViewAdapter = new AdapterSet(new DataRowViewAdapter(), s_baseAdapterForAdaptedObjects);
-        private static readonly AdapterSet s_dataRowAdapter = new AdapterSet(new DataRowAdapter(), s_baseAdapterForAdaptedObjects);
-        private static readonly AdapterSet s_xmlNodeAdapter = new AdapterSet(new XmlNodeAdapter(), s_baseAdapterForAdaptedObjects);
+        private static readonly Lazy<AdapterSet> s_dataRowViewAdapter = new(() => new AdapterSet(new DataRowViewAdapter(), s_baseAdapterForAdaptedObjects));
+        private static readonly Lazy<AdapterSet> s_dataRowAdapter = new(() => new AdapterSet(new DataRowAdapter(), s_baseAdapterForAdaptedObjects));
+        private static readonly Lazy<AdapterSet> s_xmlNodeAdapter = new(() => new AdapterSet(new XmlNodeAdapter(), s_baseAdapterForAdaptedObjects));
 
         #endregion fields
 

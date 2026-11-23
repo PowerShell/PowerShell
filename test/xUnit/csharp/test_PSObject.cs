@@ -2,7 +2,10 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Data;
 using System.Management.Automation.Language;
+using System.Reflection;
+using System.Reflection.Emit;
 using Xunit;
 
 namespace PSTests.Parallel
@@ -16,6 +19,36 @@ namespace PSTests.Parallel
 
     public static class PSObjectTests
     {
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public static void TestDeferredDataAdapters(bool useView)
+        {
+            using var table = new DataTable();
+            table.Columns.Add("Value", typeof(string));
+            table.Rows.Add("adapted value");
+            object value = useView ? (object)table.DefaultView[0] : table.Rows[0];
+
+            var pso = new PSObject(value);
+            Assert.Equal("adapted value", pso.Properties["Value"].Value);
+        }
+
+        [Fact]
+        public static void TestAdapterRoutingChecksRuntimeTypeIdentity()
+        {
+            var assembly = AssemblyBuilder.DefineDynamicAssembly(
+                new AssemblyName("AdapterIdentity-" + Guid.NewGuid().ToString("N")),
+                AssemblyBuilderAccess.Run);
+            TypeBuilder builder = assembly.DefineDynamicModule("AdapterIdentity")
+                .DefineType("System.Xml.XmlNode", System.Reflection.TypeAttributes.Public);
+            builder.DefineField("Value", typeof(int), FieldAttributes.Public);
+            Type type = builder.CreateType();
+            object value = Activator.CreateInstance(type);
+            type.GetField("Value").SetValue(value, 42);
+
+            Assert.Equal(42, new PSObject(value).Properties["Value"].Value);
+        }
+
         [Fact]
         public static void TestEmptyObjectHasNoProperty()
         {
