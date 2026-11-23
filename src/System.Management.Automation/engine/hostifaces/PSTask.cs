@@ -9,6 +9,7 @@ using System.Management.Automation.Language;
 using System.Management.Automation.Remoting.Internal;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Security;
+using System.Text;
 using System.Threading;
 
 using Dbg = System.Management.Automation.Diagnostics;
@@ -483,7 +484,8 @@ namespace System.Management.Automation.PSTasks
             InitializePowershell();
 
             // Start the script running in a new thread
-            _powershell.AddCommand(new Command(_scriptBlockToRun));
+            string script = GetTaskScript(_scriptBlockToRun, out string fileName);
+            _powershell.AddCommand(new Command(script, fileName));
             _powershell.Commands.Commands[0].DollarUnderbar = _dollarUnderbar;
             if (_usingValuesMap != null && _usingValuesMap.Count > 0)
             {
@@ -497,6 +499,84 @@ namespace System.Management.Automation.PSTasks
         /// Signals the running task to stop.
         /// </summary>
         public void SignalStop() => _powershell?.BeginStop(null, null);
+
+#nullable enable
+        /// <summary>
+        /// Gets the script text to parse in the task runspace, keeping the source file, line and column numbers.
+        /// </summary>
+        /// <remarks>
+        /// The script is parsed again in the task runspace, rather than running the caller's Ast, so it is a root
+        /// that defines its classes in the task runspace, its type names don't resolve to classes defined by the
+        /// caller, and a filter runs as a plain script block. The text before the script block is replaced with
+        /// newlines and spaces so the line and column numbers match, and anything that is not part of the script
+        /// block body is blanked out.
+        /// </remarks>
+        /// <param name="scriptBlock">The script block to run.</param>
+        /// <param name="fileName">The file the script block came from, or null if unknown.</param>
+        /// <returns>The script text to parse.</returns>
+        private static string GetTaskScript(ScriptBlock scriptBlock, out string? fileName)
+        {
+            fileName = null;
+            Ast ast = scriptBlock.Ast;
+            ScriptBlockAst body = ast as ScriptBlockAst ?? ((FunctionDefinitionAst)ast).Body;
+            IScriptExtent bodyExtent = body.Extent;
+            string? fullScript = bodyExtent.StartScriptPosition.GetFullScript();
+
+            // A script block literal or function body is inside another Ast and its extent includes the braces. A root
+            // script block, like one from [scriptblock]::Create(), has no parent and its extent is the whole script.
+            bool hasBraces = body.Parent is not null;
+            if (fullScript is null
+                || bodyExtent.EndOffset > fullScript.Length
+                || (hasBraces && (fullScript[bodyExtent.StartOffset] != '{' || fullScript[bodyExtent.EndOffset - 1] != '}')))
+            {
+                return scriptBlock.ToString();
+            }
+
+            int start = bodyExtent.StartOffset;
+            int end = bodyExtent.EndOffset;
+            var text = new StringBuilder();
+            if (ast is FunctionDefinitionAst { Parameters.Count: > 0 } fda)
+            {
+                // When a function has parameters in the function declaration, we need to replace the function keyword
+                // and the opening brace with a param block. 'function f($a) {' becomes 'param(      $a)'.
+                IScriptExtent firstParam = fda.Parameters[0].Extent;
+                IScriptExtent lastParam = fda.Parameters[fda.Parameters.Count - 1].Extent;
+                AppendPadding(text, fda.Extent);
+                text.Append("param(");
+                AppendBlank(text, fullScript, fda.Extent.StartOffset + 6, firstParam.StartOffset);
+                text.Append(fullScript, firstParam.StartOffset, lastParam.EndOffset - firstParam.StartOffset);
+                AppendBlank(text, fullScript, lastParam.EndOffset, start);
+                text.Append(')');
+                start++;
+                end--;
+            }
+            else
+            {
+                AppendPadding(text, bodyExtent);
+                if (hasBraces)
+                {
+                    text.Append(' ');
+                    start++;
+                    end--;
+                }
+            }
+
+            text.Append(fullScript, start, end - start);
+            fileName = bodyExtent.File;
+            return text.ToString();
+
+            static void AppendPadding(StringBuilder text, IScriptExtent extent)
+                => text.Append('\n', extent.StartLineNumber - 1).Append(' ', extent.StartColumnNumber - 1);
+
+            static void AppendBlank(StringBuilder text, string source, int start, int end)
+            {
+                for (int i = start; i < end; i++)
+                {
+                    text.Append(source[i] is '\r' or '\n' ? source[i] : ' ');
+                }
+            }
+        }
+#nullable disable
 
         #endregion
     }

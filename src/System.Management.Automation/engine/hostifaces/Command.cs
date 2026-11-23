@@ -83,14 +83,15 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Initializes a new script Command that runs the already parsed script block rather than re-parsing its text.
-        /// This preserves the Ast extents (file, line, offset) for errors and the debugger.
+        /// Initializes a new script Command whose script is parsed with the file name that will be provided to the
+        /// parser when it builds the ScriptBlock from the script contents.
         /// </summary>
-        /// <param name="scriptBlock">The script block to run, an unbound copy is created for each invocation.</param>
-        internal Command(ScriptBlock scriptBlock)
-            : this(scriptBlock.ToString(), isScript: true, useLocalScope: null)
+        /// <param name="script">The script contents.</param>
+        /// <param name="fileName">The file name the script came from, or null.</param>
+        internal Command(string script, string fileName)
+            : this(script, isScript: true, useLocalScope: null)
         {
-            _scriptBlock = scriptBlock;
+            _fileName = fileName;
         }
 
         internal Command(CommandInfo commandInfo)
@@ -121,7 +122,7 @@ namespace System.Management.Automation.Runspaces
             _mergeUnclaimedPreviousCommandResults = command._mergeUnclaimedPreviousCommandResults;
             IsEndOfStatement = command.IsEndOfStatement;
             CommandInfo = command.CommandInfo;
-            _scriptBlock = command._scriptBlock;
+            _fileName = command._fileName;
 
             foreach (CommandParameter param in command.Parameters)
             {
@@ -479,9 +480,7 @@ namespace System.Management.Automation.Runspaces
                         null, "ScriptsNotAllowed", ParserStrings.ScriptsNotAllowed);
                 }
 
-                // Clone() drops the session state affinity and takes the language mode of this runspace, the same as
-                // re-parsing the text would, while keeping the original Ast and compiled data.
-                ScriptBlock scriptBlock = _scriptBlock?.Clone() ?? executionContext.Engine.ParseScriptBlock(CommandText, addToHistory);
+                ScriptBlock scriptBlock = executionContext.Engine.ParseScriptBlock(CommandText, _fileName, addToHistory);
                 if (origin == Automation.CommandOrigin.Internal)
                 {
                     scriptBlock.LanguageMode = PSLanguageMode.FullLanguage;
@@ -583,7 +582,7 @@ namespace System.Management.Automation.Runspaces
         /// be deprecated, at least for internal use.
         /// </summary>
         private readonly bool? _useLocalScope;
-        private readonly ScriptBlock _scriptBlock;
+        private readonly string _fileName;
 
         #endregion Private fields
 
