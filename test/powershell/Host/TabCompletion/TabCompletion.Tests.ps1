@@ -4498,7 +4498,7 @@ Describe 'Native pwsh startup completion' -Tags CI {
 
     It 'Does not fall back to filenames for invalid values or opaque payloads' -TestCases @(
         @{ InputText = 'pwsh -InputFormat NoSuchFormat' }
-        @{ InputText = 'pwsh -Command Get-' }
+        @{ InputText = 'pwsh -Help -No' }
         @{ InputText = 'pwsh -EncodedCommand abc' }
     ) {
         param($InputText)

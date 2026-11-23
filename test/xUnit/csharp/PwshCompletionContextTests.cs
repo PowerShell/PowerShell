@@ -38,13 +38,17 @@ public class PwshCompletionContextTests
     [InlineData("pwsh -File - |", "Opaque", "File")]
     [InlineData("pwsh -File '-' |", "Opaque", "File")]
     [InlineData("pwsh -File \"-\" |", "Opaque", "File")]
-    [InlineData("pwsh -c |", "Opaque", "Command")]
-    [InlineData("pwsh -c Get-It -NoP|rofile", "Opaque", "Command")]
-    [InlineData("pwsh -cwa |", "Opaque", "CommandWithArgs")]
+    [InlineData("pwsh -c |", "Command", "Command")]
+    [InlineData("pwsh -c Get-It -NoP|rofile", "Command", "Command")]
+    [InlineData("pwsh -cwa |", "Command", "CommandWithArgs")]
+    [InlineData("pwsh -CommandWithArgs Get-It -NoP|rofile", "Command", "CommandWithArgs")]
     [InlineData("pwsh -e |", "Opaque", "EncodedCommand")]
     [InlineData("pwsh -ec ab|cd", "Opaque", "EncodedCommand")]
     [InlineData("pwsh -ec abcd |", "OptionName", null)]
     [InlineData("pwsh -Version |", "Opaque", "Version")]
+    [InlineData("pwsh -Help |", "Opaque", "Help")]
+    [InlineData("pwsh -h -NoP|", "Opaque", "Help")]
+    [InlineData("pwsh /? |", "Opaque", "Help")]
     [InlineData("pwsh -unknown |", "ScriptArguments", null)]
     [InlineData("pwsh -review|", "ScriptPath", null)]
     [InlineData("pwsh --review|", "ScriptPath", null)]
@@ -79,6 +83,19 @@ public class PwshCompletionContextTests
         Assert.Equal(current, context.CurrentElement?.Extent.Text);
         Assert.Equal(context.ScriptTarget.Extent.EndOffset, context.ScriptArgumentsOffset);
         Assert.Equal(input.IndexOf('|'), context.CursorOffset);
+    }
+
+    [Theory]
+    [InlineData("pwsh --NoP -|", "NoProfile", false)]
+    [InlineData("pwsh /NoP -|", "NoProfile", false)]
+    [InlineData("pwsh -of XML -|", "OutputFormat", false)]
+    [InlineData("pwsh -CustomPipeName -NoProfile -|", "NoProfile", true)]
+    [InlineData("pwsh -NoP|rofile", "NoProfile", true)]
+    [InlineData("pwsh -STA -|", "MTA", false)]
+    [InlineData("pwsh -MTA -|", "STA", false)]
+    public void FiltersConsumedOptions(string input, string name, bool expected)
+    {
+        Assert.Equal(expected, Scan(input).CanOffer(PwshStartupOptions.Find(name)!));
     }
 
     private static PwshCompletionContext Scan(string markedInput)

@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Management.Automation.Language;
 using System.Runtime.Versioning;
+using System.Text;
 
 namespace System.Management.Automation;
 
@@ -34,7 +35,11 @@ public static partial class CompletionCompleters
         switch (startup.Kind)
         {
             case PwshCompletionContextKind.OptionName:
-                return TryCompletePwshOptionName(context.WordToComplete, results);
+                return TryCompletePwshOptionName(context.WordToComplete, startup, results);
+
+            case PwshCompletionContextKind.Command:
+                CompletePwshCommand(command, context, startup, results);
+                return true;
 
             case PwshCompletionContextKind.ScriptPath:
                 CompletePwshScriptPath(context, startup.Option, results);
@@ -84,7 +89,7 @@ public static partial class CompletionCompleters
         }
     }
 
-    private static bool TryCompletePwshOptionName(string wordToComplete, List<CompletionResult> results)
+    private static bool TryCompletePwshOptionName(string wordToComplete, PwshCompletionContext startup, List<CompletionResult> results)
     {
         string prefix = wordToComplete;
         string quote = CompletionHelpers.HandleDoubleAndSingleQuote(ref prefix);
@@ -97,14 +102,114 @@ public static partial class CompletionCompleters
         {
             // Partial input need not meet the host's minimum abbreviation length yet.
             // Offer canonical spellings so aliases do not produce duplicate menu entries.
-            if (option.Advertised && option.IsSupportedOnCurrentPlatform && option.Name.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+            if (option.Advertised && option.IsSupportedOnCurrentPlatform && startup.CanOffer(option)
+                && option.Name.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
             {
-                results.Add(new CompletionResult(quote + "-" + option.Name + quote, option.Name,
-                    CompletionResultType.ParameterName, PwshHelp.GetString(option.ResourceKey)));
+                results.Add(new CompletionResult(
+                    quote + "-" + option.Name + quote,
+                    option.Name,
+                    CompletionResultType.ParameterName,
+                    PwshHelp.GetString(option.ResourceKey)));
             }
         }
 
         return true;
+    }
+
+    private static void CompletePwshCommand(
+        CommandAst command,
+        CompletionContext context,
+        PwshCompletionContext startup,
+        List<CompletionResult> results)
+    {
+        string? source = command.Extent.StartScriptPosition.GetFullScript();
+        int offset = startup.CommandOffset;
+        int end = Math.Max(command.Extent.EndOffset, startup.CursorOffset);
+        if (source == null || offset < 0 || end > source.Length)
+        {
+            return;
+        }
+
+        string input = source.Substring(offset, end - offset);
+        string trimmed = input.TrimStart();
+        if (trimmed.Length > 0 && (trimmed[0].IsSingleQuote() || trimmed[0].IsDoubleQuote()))
+        {
+            CompletePwshQuotedCommand(input, offset, context, startup, results);
+            return;
+        }
+
+        if (trimmed.StartsWith('{') || trimmed.TrimEnd() == "-")
+        {
+            return;
+        }
+
+        CommandCompletion delegated = CommandCompletion.CompleteInput(input, startup.CursorOffset - offset, context.Options);
+        ApplyPwshScriptCompletion(delegated, input.Length, 0, offset, context, results);
+    }
+
+    private static void CompletePwshQuotedCommand(
+        string input,
+        int offset,
+        CompletionContext context,
+        PwshCompletionContext startup,
+        List<CompletionResult> results)
+    {
+        // Use the tokenizer to locate the closing quote, including escaped quotes and unfinished input.
+        Parser.ParseInput(input, out Token[] tokens, out _);
+        Token token = tokens[0];
+        if (token.Kind is not (TokenKind.StringLiteral or TokenKind.StringExpandable))
+        {
+            return;
+        }
+
+        int contentStart = token.Extent.StartOffset + 1;
+        bool terminated = (token.TokenFlags & TokenFlags.TokenInError) == 0;
+        int contentEnd = token.Extent.EndOffset - (terminated ? 1 : 0);
+        int cursor = startup.CursorOffset - offset;
+        if (cursor < contentStart || cursor > token.Extent.EndOffset)
+        {
+            return;
+        }
+
+        // Complete the contents as PowerShell source while keeping the original argument a string.
+        // Subsequent native arguments are not part of the script being completed.
+        string script = input.Substring(contentStart, contentEnd - contentStart);
+        CommandCompletion delegated = CommandCompletion.CompleteInput(
+            script,
+            Math.Min(cursor, contentEnd) - contentStart,
+            context.Options);
+        var matches = new List<CompletionResult>();
+        ApplyPwshScriptCompletion(delegated, script.Length, 0, offset + contentStart, context, matches);
+        bool singleQuoted = input[contentStart - 1].IsSingleQuote();
+        foreach (CompletionResult match in matches)
+        {
+            results.Add(new CompletionResult(
+                EscapePwshCommandCompletion(match.CompletionText, singleQuoted),
+                match.ListItemText,
+                match.ResultType,
+                match.ToolTip));
+        }
+    }
+
+    private static string EscapePwshCommandCompletion(string text, bool singleQuoted)
+    {
+        if (singleQuoted)
+        {
+            return CodeGeneration.EscapeSingleQuotedStringContent(text);
+        }
+
+        var escaped = new StringBuilder();
+        foreach (char character in text)
+        {
+            if (character.IsDoubleQuote() || character is '`' or '$')
+            {
+                escaped.Append('`');
+            }
+
+            escaped.Append(character);
+        }
+
+        return escaped.ToString();
     }
 
     private static void CompletePwshScriptPath(CompletionContext context, PwshStartupOption? option, List<CompletionResult> results)
@@ -115,7 +220,10 @@ public static partial class CompletionCompleters
         }
 
         // Windows startup requires .ps1; Unix also accepts extensionless scripts such as shebang files.
-        CompletePwshPath(context, results, directoryOnly: false,
+        CompletePwshPath(
+            context,
+            results,
+            directoryOnly: false,
             Platform.IsWindows ? new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".ps1" } : null);
     }
 
@@ -125,8 +233,11 @@ public static partial class CompletionCompleters
         string quote = CompletionHelpers.HandleDoubleAndSingleQuote(ref prefix);
         if (prefix.Length == 0 || prefix == "-")
         {
-            results.Add(new CompletionResult(quote + "-" + quote, "-",
-                CompletionResultType.ParameterValue, PwshHelp.GetString("ValueStandardInput")));
+            results.Add(new CompletionResult(
+                quote + "-" + quote,
+                "-",
+                CompletionResultType.ParameterValue,
+                PwshHelp.GetString("ValueStandardInput")));
         }
     }
 
@@ -143,7 +254,8 @@ public static partial class CompletionCompleters
         {
             if (OperatingSystem.IsWindows())
             {
-                results.AddRange(CompletePwshConfigurationNames(context.WordToComplete,
+                results.AddRange(CompletePwshConfigurationNames(
+                    context.WordToComplete,
                     Utils.IsAdministrator(),
                     () => IsPwshConfigurationServiceRunning(context),
                     () => GetPwshConfigurationNames(context)));
@@ -156,7 +268,10 @@ public static partial class CompletionCompleters
         {
             case PwshStartupArgumentKind.FilePath:
             case PwshStartupArgumentKind.DirectoryPath:
-                CompletePwshPath(context, results, option.ArgumentKind == PwshStartupArgumentKind.DirectoryPath,
+                CompletePwshPath(
+                    context,
+                    results,
+                    option.ArgumentKind == PwshStartupArgumentKind.DirectoryPath,
                     option.Name == "ConfigurationFile" ? new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".pssc" } : null);
                 break;
 
@@ -174,8 +289,11 @@ public static partial class CompletionCompleters
         {
             if (value.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
             {
-                results.Add(new CompletionResult(quote + value + quote, value,
-                    CompletionResultType.ParameterValue, PwshHelp.GetString("Value" + value)));
+                results.Add(new CompletionResult(
+                    quote + value + quote,
+                    value,
+                    CompletionResultType.ParameterValue,
+                    PwshHelp.GetString("Value" + value)));
             }
         }
     }
@@ -235,8 +353,11 @@ public static partial class CompletionCompleters
     /// The caller supplies platform and privilege availability. Service inspection and discovery remain
     /// deferred so unavailable discovery touches neither, and tests can verify the gates without using WinRM.
     /// </remarks>
-    internal static IReadOnlyList<CompletionResult> CompletePwshConfigurationNames(string wordToComplete,
-        bool isDiscoveryAvailable, Func<bool> isServiceRunning, Func<IEnumerable<string?>?> discoverNames)
+    internal static IReadOnlyList<CompletionResult> CompletePwshConfigurationNames(
+        string wordToComplete,
+        bool isDiscoveryAvailable,
+        Func<bool> isServiceRunning,
+        Func<IEnumerable<string?>?> discoverNames)
     {
         var results = new List<CompletionResult>();
         if (!isDiscoveryAvailable)
@@ -261,7 +382,9 @@ public static partial class CompletionCompleters
         return results;
     }
 
-    private static void AddPwshConfigurationNameResults(string wordToComplete, IEnumerable<string?>? discoveredNames,
+    private static void AddPwshConfigurationNameResults(
+        string wordToComplete,
+        IEnumerable<string?>? discoveredNames,
         List<CompletionResult> results)
     {
         string prefix = wordToComplete;

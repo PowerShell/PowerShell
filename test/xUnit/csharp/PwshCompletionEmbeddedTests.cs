@@ -42,10 +42,7 @@ public sealed class PwshCompletionEmbeddedTests : IDisposable
     {
         string script = Path.Combine(_directory, fileName);
         File.WriteAllText(script, "param() $global:ScriptBodyRan = $true");
-        using Runspace runspace = RunspaceFactory.CreateRunspace();
-        runspace.Open();
-        using PowerShell shell = PowerShell.Create();
-        shell.Runspace = runspace;
+        using PowerShell shell = PowerShell.Create(RunspaceMode.NewRunspace);
         shell.AddCommand("Set-Location").AddParameter("LiteralPath", _directory).Invoke();
         Assert.False(shell.HadErrors);
         shell.Commands.Clear();
@@ -65,7 +62,7 @@ public sealed class PwshCompletionEmbeddedTests : IDisposable
         CommandAst command = Assert.IsType<CommandAst>(ast.Find(node => node is CommandAst, searchNestedScriptBlocks: false));
         StringConstantExpressionAst argument = Assert.IsType<StringConstantExpressionAst>(command.CommandElements[1]);
         Assert.Equal(script, Path.GetFullPath(argument.Value, _directory));
-        Assert.Null(runspace.SessionStateProxy.GetVariable("ScriptBodyRan"));
+        Assert.Null(shell.Runspace.SessionStateProxy.GetVariable("ScriptBodyRan"));
     }
 
     [Fact]
@@ -80,10 +77,7 @@ public sealed class PwshCompletionEmbeddedTests : IDisposable
             File.SetUnixFileMode(executable, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
         }
 
-        using Runspace runspace = RunspaceFactory.CreateRunspace();
-        runspace.Open();
-        using PowerShell shell = PowerShell.Create();
-        shell.Runspace = runspace;
+        using PowerShell shell = PowerShell.Create(RunspaceMode.NewRunspace);
         CommandCompletion completion = Complete("& '" + executable.Replace("'", "''") + "' -NoP", false, shell);
         Assert.Equal(
             Platform.IsWindows,
@@ -95,10 +89,7 @@ public sealed class PwshCompletionEmbeddedTests : IDisposable
     [InlineData(true)]
     public void StartupCompletionNeedsNoConsoleHost(bool useAst)
     {
-        using Runspace runspace = RunspaceFactory.CreateRunspace();
-        runspace.Open();
-        using PowerShell shell = PowerShell.Create();
-        shell.Runspace = runspace;
+        using PowerShell shell = PowerShell.Create(RunspaceMode.NewRunspace);
         string input = Invocation + "-NoP";
         CommandCompletion completion = Complete(input, useAst, shell);
         Assert.Contains(
@@ -125,16 +116,109 @@ public sealed class PwshCompletionEmbeddedTests : IDisposable
         CompletionResult match = Assert.Single(completion.CompletionMatches, result => result.CompletionText == "EmbeddedValue");
         string edited = input.Remove(completion.ReplacementIndex, completion.ReplacementLength).Insert(completion.ReplacementIndex, match.CompletionText);
         Assert.EndsWith("-Mode EmbeddedValue", edited);
-        Assert.Null(runspace.SessionStateProxy.GetVariable("ScriptBodyRan"));
+        Assert.Null(shell.Runspace.SessionStateProxy.GetVariable("ScriptBodyRan"));
+    }
+
+    [Theory]
+    [InlineData("-NoP -No", "-NoProfile")]
+    [InlineData("--NoProfile -No", "-NoProfile")]
+    [InlineData("/noprofile -No", "-NoProfile")]
+    [InlineData("-of XML -", "-OutputFormat")]
+    [InlineData("-STA -", "-MTA")]
+    [InlineData("-MTA -", "-STA")]
+    public void OmitsProvidedAndConflictingOptions(string arguments, string excluded)
+    {
+        using PowerShell shell = PowerShell.Create(RunspaceMode.NewRunspace);
+        CommandCompletion completion = Complete(Invocation + arguments, false, shell);
+        Assert.DoesNotContain(completion.CompletionMatches, result => result.CompletionText == excluded);
+        Assert.Contains(completion.CompletionMatches, result => result.CompletionText == "-NoLogo");
+    }
+
+    [Theory]
+    [InlineData("-Help ")]
+    [InlineData("-h -No")]
+    [InlineData("/? ")]
+    [InlineData("-Version ")]
+    [InlineData("-c - ")]
+    [InlineData("-c 'Get-' ")]
+    public void TerminalOptionsAndOpaqueCommandsHaveNoCompletions(string arguments)
+    {
+        using PowerShell shell = PowerShell.Create(RunspaceMode.NewRunspace);
+        Assert.Empty(Complete(Invocation + arguments, false, shell).CompletionMatches);
+    }
+
+    [Theory]
+    [InlineData(false, "-Command", "Get-CompletionPro", "Get-CompletionProbe", false)]
+    [InlineData(true, "-c", "Get-CompletionProbe -Mo", "-Mode", false)]
+    [InlineData(false, "--command", "Get-CompletionProbe -Mode Emb", "EmbeddedValue", false)]
+    [InlineData(true, "/c", "Get-CompletionProbe -Mode Emb", "EmbeddedValue", true)]
+    [InlineData(false, "-c", "pwsh -c Get-CompletionPro", "Get-CompletionProbe", false)]
+    [InlineData(false, "-CommandWithArgs", "Get-CompletionPro", "Get-CompletionProbe", false)]
+    [InlineData(true, "-cwa", "Get-CompletionPro", "Get-CompletionProbe", false)]
+    public void CommandCompletionMapsOriginalOffsets(bool useAst, string option, string payload, string expected, bool middle)
+    {
+        using PowerShell shell = PowerShell.Create(RunspaceMode.NewRunspace);
+        shell.AddScript("function global:Get-CompletionProbe { param([ValidateSet('EmbeddedValue')] $Mode) $global:CommandBodyRan = $true }").Invoke();
+        shell.Commands.Clear();
+
+        string prefix = "$unused = 1; " + Invocation + "-NoProfile " + option + " ";
+        string input = prefix + payload;
+        int cursor = input.Length;
+        if (middle)
+        {
+            input += "eddedValue -Other";
+        }
+
+        CommandCompletion completion = Complete(input, useAst, shell, cursor);
+        CompletionResult match = Assert.Single(completion.CompletionMatches, result => result.CompletionText == expected);
+        int wordStart = prefix.Length + payload.LastIndexOf(' ') + 1;
+        Assert.Equal(wordStart, completion.ReplacementIndex);
+        Assert.Equal(middle ? "EmbeddedValue".Length : input.Length - wordStart, completion.ReplacementLength);
+        string edited = input.Remove(completion.ReplacementIndex, completion.ReplacementLength)
+            .Insert(completion.ReplacementIndex, match.CompletionText);
+        Assert.StartsWith(prefix, edited);
+        Assert.Null(shell.Runspace.SessionStateProxy.GetVariable("CommandBodyRan"));
+    }
+
+    [Theory]
+    [InlineData(false, "-Command", "'Get-CompletionPro<cursor>'", "'Get-CompletionProbe'", "Get-CompletionProbe")]
+    [InlineData(true, "-c", "\"Get-CompletionPro<cursor>\"", "\"Get-CompletionProbe\"", "Get-CompletionProbe")]
+    [InlineData(false, "-CommandWithArgs", "'Get-CompletionPro<cursor>' argument", "'Get-CompletionProbe' argument", "Get-CompletionProbe")]
+    [InlineData(true, "-cwa", "\"Get-CompletionProbe -Mo<cursor>\" argument", "\"Get-CompletionProbe -Mode\" argument", "Mode")]
+    [InlineData(false, "-c", "'Get-CompletionPro<cursor>", "'Get-CompletionProbe", "Get-CompletionProbe")]
+    [InlineData(true, "-cwa", "\"Get-CompletionProbe -Mo<cursor>", "\"Get-CompletionProbe -Mode", "Mode")]
+    [InlineData(false, "-c", "'Get-CompletionPro'<cursor>", "'Get-CompletionProbe'", "Get-CompletionProbe")]
+    [InlineData(true, "-cwa", "'Get-CompletionProbe -Mode Emb<cursor>eddedValue' tail", "'Get-CompletionProbe -Mode EmbeddedValue' tail", "EmbeddedValue")]
+    [InlineData(false, "-c", "'1 | Get-CompletionPro<cursor>'", "'1 | Get-CompletionProbe'", "Get-CompletionProbe")]
+    [InlineData(true, "-c", "'Get-CompletionProbe -Mode Spa<cursor>'", "'Get-CompletionProbe -Mode ''Spaced Value'''", "Spaced Value")]
+    [InlineData(false, "-cwa", "\"Get-CompletionProbe -Mode Spa<cursor>\"", "\"Get-CompletionProbe -Mode 'Spaced Value'\"", "Spaced Value")]
+    [InlineData(true, "-c", "\"Get-CompletionProbe -Mode Dol<cursor>\"", "\"Get-CompletionProbe -Mode 'Dollar`$Value'\"", "Dollar$Value")]
+    public void QuotedCommandCompletionPreservesStringArgument(
+        bool useAst,
+        string option,
+        string markedPayload,
+        string expectedPayload,
+        string expectedItem)
+    {
+        using PowerShell shell = PowerShell.Create(RunspaceMode.NewRunspace);
+        shell.AddScript("function global:Get-CompletionProbe { param([ValidateSet('EmbeddedValue', 'Spaced Value', 'Dollar$Value')] $Mode) $global:CommandBodyRan = $true }").Invoke();
+        shell.Commands.Clear();
+
+        string prefix = "$unused = 1; " + Invocation + "-NoProfile " + option + " ";
+        int cursor = prefix.Length + markedPayload.IndexOf("<cursor>", StringComparison.Ordinal);
+        string input = prefix + markedPayload.Replace("<cursor>", string.Empty);
+        CommandCompletion completion = Complete(input, useAst, shell, cursor);
+        CompletionResult match = Assert.Single(completion.CompletionMatches, result => result.ListItemText == expectedItem);
+        string edited = input.Remove(completion.ReplacementIndex, completion.ReplacementLength)
+            .Insert(completion.ReplacementIndex, match.CompletionText);
+        Assert.Equal(prefix + expectedPayload, edited);
+        Assert.Null(shell.Runspace.SessionStateProxy.GetVariable("CommandBodyRan"));
     }
 
     [Fact]
     public void FunctionNamedPwshKeepsItsParameters()
     {
-        using Runspace runspace = RunspaceFactory.CreateRunspace();
-        runspace.Open();
-        using PowerShell shell = PowerShell.Create();
-        shell.Runspace = runspace;
+        using PowerShell shell = PowerShell.Create(RunspaceMode.NewRunspace);
         shell.AddScript("function global:pwsh { param($DistinctParameter) }").Invoke();
         shell.Commands.Clear();
         CommandCompletion completion = Complete("pwsh -Distinct", false, shell);
@@ -155,7 +239,7 @@ public sealed class PwshCompletionEmbeddedTests : IDisposable
         shell.Commands.Clear();
         CommandCompletion completion = Complete("pwsh -Script", false, shell);
         Assert.Contains(completion.CompletionMatches, result => result.CompletionText == "-ScriptParameter");
-        Assert.Null(runspace.SessionStateProxy.GetVariable("ScriptBodyRan"));
+        Assert.Null(shell.Runspace.SessionStateProxy.GetVariable("ScriptBodyRan"));
         Assert.DoesNotContain(completion.CompletionMatches, result => result.CompletionText == "-NoProfile");
     }
 
@@ -166,10 +250,7 @@ public sealed class PwshCompletionEmbeddedTests : IDisposable
         try
         {
             CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("fr-FR");
-            using Runspace runspace = RunspaceFactory.CreateRunspace();
-            runspace.Open();
-            using PowerShell shell = PowerShell.Create();
-            shell.Runspace = runspace;
+            using PowerShell shell = PowerShell.Create(RunspaceMode.NewRunspace);
             CommandCompletion completion = Complete(Invocation + "-", false, shell);
             Assert.Equal(Platform.IsWindows, System.Linq.Enumerable.Any(completion.CompletionMatches, result => result.CompletionText == "-WindowStyle"));
             CompletionResult profile = Assert.Single(completion.CompletionMatches, result => result.CompletionText == "-NoProfile");
@@ -185,10 +266,7 @@ public sealed class PwshCompletionEmbeddedTests : IDisposable
     [Fact]
     public void RegisteredNativeCompleterTakesPrecedence()
     {
-        using Runspace runspace = RunspaceFactory.CreateRunspace();
-        runspace.Open();
-        using PowerShell shell = PowerShell.Create();
-        shell.Runspace = runspace;
+        using PowerShell shell = PowerShell.Create(RunspaceMode.NewRunspace);
         shell.AddScript("Register-ArgumentCompleter -Native -CommandName pwsh,pwsh.exe -ScriptBlock { 'CustomNativeValue' }").Invoke();
         shell.Commands.Clear();
         CommandCompletion completion = Complete(Invocation + "-NoP", false, shell);
@@ -207,14 +285,19 @@ public sealed class PwshCompletionEmbeddedTests : IDisposable
         return RunspaceFactory.CreateRunspace(initialSessionState);
     }
 
-    private static CommandCompletion Complete(string input, bool useAst, PowerShell shell)
+    private static CommandCompletion Complete(string input, bool useAst, PowerShell shell, int? cursor = null)
     {
         if (!useAst)
         {
-            return CommandCompletion.CompleteInput(input, input.Length, null, shell);
+            return CommandCompletion.CompleteInput(input, cursor ?? input.Length, null, shell);
         }
 
         Ast ast = Parser.ParseInput(input, out Token[] tokens, out _);
-        return CommandCompletion.CompleteInput(ast, tokens, ast.Extent.EndScriptPosition, null, shell);
+        return CommandCompletion.CompleteInput(
+            ast,
+            tokens,
+            ((InternalScriptPosition)ast.Extent.EndScriptPosition).CloneWithNewOffset(cursor ?? input.Length),
+            null,
+            shell);
     }
 }

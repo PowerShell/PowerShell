@@ -3,16 +3,36 @@
 
 #nullable enable
 
+using System.Collections.Generic;
 using System.Management.Automation.Language;
 
 namespace System.Management.Automation;
 
+/// <summary>Identifies which completion behavior owns the cursor in a native pwsh invocation.</summary>
 internal enum PwshCompletionContextKind
 {
+    /// <summary>A startup option name, including an empty argument where another option can be supplied.</summary>
     OptionName,
+
+    /// <summary>The value of a recognized startup option, such as XML after -OutputFormat.</summary>
     OptionValue,
+
+    /// <summary>A script target supplied after -File or implicitly as a positional argument.</summary>
     ScriptPath,
+
+    /// <summary>Arguments following a script target, eligible for delegation to that script's completer.</summary>
     ScriptArguments,
+
+    /// <summary>The source following -Command or -CommandWithArgs, eligible for delegation to PowerShell language completion.</summary>
+    Command,
+
+    /// <summary>Input for which pwsh completion deliberately returns no candidates and suppresses fallback completion.</summary>
+    /// <remarks>
+    /// Used for encoded payloads, input after -Help or -Version,
+    /// input after a standard-input sentinel, and input after an option value whose evaluated argument
+    /// count cannot be determined syntactically. This does not necessarily mean the input is invalid.
+    /// For encoded payloads, only the payload is opaque; later startup options can still be completed.
+    /// </remarks>
     Opaque,
 }
 
@@ -22,8 +42,12 @@ internal enum PwshCompletionContextKind
 /// </summary>
 internal sealed class PwshCompletionContext
 {
-    private PwshCompletionContext(PwshCompletionContextKind kind, int cursorOffset,
-        PwshStartupOption? option, CommandElementAst? currentElement, CommandElementAst? scriptTarget)
+    private PwshCompletionContext(
+        PwshCompletionContextKind kind,
+        int cursorOffset,
+        PwshStartupOption? option,
+        CommandElementAst? currentElement,
+        CommandElementAst? scriptTarget)
     {
         Kind = kind;
         CursorOffset = cursorOffset;
@@ -42,6 +66,15 @@ internal sealed class PwshCompletionContext
 
     internal CommandElementAst? ScriptTarget { get; }
 
+    internal HashSet<string> ProvidedOptions { get; private init; } = new(StringComparer.OrdinalIgnoreCase);
+
+    internal int CommandOffset { get; private init; } = -1;
+
+    internal bool CanOffer(PwshStartupOption option)
+        => !ProvidedOptions.Contains(option.Name)
+            && !(option.Name == "STA" && ProvidedOptions.Contains("MTA"))
+            && !(option.Name == "MTA" && ProvidedOptions.Contains("STA"));
+
     /// <summary>The start of the original source suffix to copy for script delegation.</summary>
     internal int ScriptArgumentsOffset => ScriptTarget?.Extent.EndOffset ?? -1;
 
@@ -55,11 +88,9 @@ internal sealed class PwshCompletionContext
     /// </remarks>
     internal static PwshCompletionContext Scan(CommandAst command, int cursorOffset)
     {
-        PwshStartupOption? pending = null;
-        CommandElementAst? scriptTarget = null;
-        bool opaque = false;
+        var scanner = new StartupArgumentScanner(command, cursorOffset);
 
-        // The caller has already identified the executable. Do not inspect command resolution here.
+        // The caller has already identified the executable. Only inspect its arguments.
         for (int i = 1; i < command.CommandElements.Count; i++)
         {
             CommandElementAst element = command.CommandElements[i];
@@ -68,129 +99,190 @@ internal sealed class PwshCompletionContext
                 break;
             }
 
-            // At the token's end the user is still completing it; whitespace moves to the next argument.
+            // At the token's end the user is still completing it; whitespace advances the scan.
             bool current = cursorOffset <= element.Extent.EndOffset;
-            if (opaque)
+            PwshCompletionContext? context = scanner.CompleteRemainder(element, current);
+            if (context != null)
             {
-                return Context(PwshCompletionContextKind.Opaque, current ? element : null);
-            }
-
-            if (scriptTarget != null)
-            {
-                return Context(PwshCompletionContextKind.ScriptArguments, current ? element : FindCurrentElement());
-            }
-
-            if (pending != null)
-            {
-                if (pending.ArgumentKind == PwshStartupArgumentKind.ScriptPath)
-                {
-                    if (GetStaticText(element) == "-")
-                    {
-                        // Standard input has no script metadata to delegate to after the sentinel is complete.
-                        return Context(current ? PwshCompletionContextKind.ScriptPath
-                            : PwshCompletionContextKind.Opaque, current ? element : null);
-                    }
-
-                    if (current)
-                    {
-                        return Context(PwshCompletionContextKind.ScriptPath, element);
-                    }
-
-                    scriptTarget = element;
-                    pending = null;
-                    continue;
-                }
-
-                if (current)
-                {
-                    return Context(IsEncodedPayload(pending) ? PwshCompletionContextKind.Opaque
-                        : PwshCompletionContextKind.OptionValue, element);
-                }
-
-                // An expression is one native argument syntactically, but its evaluated
-                // argument count cannot be known by this scanner.
-                opaque = GetStaticText(element) == null;
-                pending = null;
-                continue;
-            }
-
-            string? text = GetStaticText(element);
-            if (text == null)
-            {
-                if (current)
-                {
-                    return Context(PwshCompletionContextKind.ScriptPath, element);
-                }
-
-                scriptTarget = element;
-                continue;
-            }
-
-            if (PwshStartupOptions.TryGetSwitchKey(text, out string key))
-            {
-                if (current)
-                {
-                    // Unknown switches can be implicit script paths. Keep filename completion available
-                    // for both dash-prefixed filenames and absolute Unix paths once no option can match.
-                    if (!IsOptionPrefix(key))
-                    {
-                        return Context(PwshCompletionContextKind.ScriptPath, element);
-                    }
-
-                    return Context(PwshCompletionContextKind.OptionName, element);
-                }
-
-                pending = PwshStartupOptions.Find(key);
-                if (pending == null)
-                {
-                    // Unrecognized switches are interpreted as implicit file names by
-                    // the host, including absolute Unix paths beginning with '/'.
-                    if (text == "-")
-                    {
-                        opaque = true;
-                    }
-                    else
-                    {
-                        scriptTarget = element;
-                    }
-                }
-                else if (pending.StopsParsing && pending.ArgumentKind != PwshStartupArgumentKind.ScriptPath)
-                {
-                    // Command payloads, including missing payloads, are deliberately unsupported.
-                    opaque = true;
-                }
-                else if (pending.Consumption == PwshStartupArgumentConsumption.None)
-                {
-                    pending = null;
-                }
-
-                continue;
+                return context;
             }
 
             if (current)
             {
-                return Context(PwshCompletionContextKind.ScriptPath, element);
+                return scanner.CompleteCurrentElement(element);
             }
 
-            scriptTarget = element;
+            context = scanner.Consume(element);
+            if (context != null)
+            {
+                return context;
+            }
         }
 
-        // No element owns a cursor in trailing whitespace; the consumed arguments determine what comes next.
-        return Context(opaque ? PwshCompletionContextKind.Opaque
-            : scriptTarget != null ? PwshCompletionContextKind.ScriptArguments
-            : pending?.ArgumentKind == PwshStartupArgumentKind.ScriptPath ? PwshCompletionContextKind.ScriptPath
-            : pending != null && IsEncodedPayload(pending) ? PwshCompletionContextKind.Opaque
-            : pending != null ? PwshCompletionContextKind.OptionValue
-            : PwshCompletionContextKind.OptionName, null);
+        return scanner.CompleteWhitespace();
+    }
 
-        PwshCompletionContext Context(PwshCompletionContextKind kind, CommandElementAst? current)
-            => new PwshCompletionContext(kind, cursorOffset, pending, current, scriptTarget);
+    /// <summary>Tracks consumed startup arguments and classifies the next completion position.</summary>
+    private sealed class StartupArgumentScanner
+    {
+        private readonly CommandAst _command;
+        private readonly int _cursorOffset;
+        private readonly HashSet<string> _providedOptions = new(StringComparer.OrdinalIgnoreCase);
+        private PwshStartupOption? _pending;
+        private CommandElementAst? _scriptTarget;
+        private bool _opaque;
+        private int _commandOffset = -1;
 
-        CommandElementAst? FindCurrentElement()
+        internal StartupArgumentScanner(CommandAst command, int cursorOffset)
         {
-            foreach (CommandElementAst candidate in command.CommandElements)
+            _command = command;
+            _cursorOffset = cursorOffset;
+        }
+
+        // Once startup parsing ends, the established owner handles the entire remaining suffix.
+        internal PwshCompletionContext? CompleteRemainder(CommandElementAst element, bool current)
+        {
+            if (_commandOffset >= 0)
             {
-                if (candidate.Extent.StartOffset <= cursorOffset && cursorOffset <= candidate.Extent.EndOffset)
+                return Context(PwshCompletionContextKind.Command, FindCurrentElement());
+            }
+
+            if (_opaque)
+            {
+                return Context(PwshCompletionContextKind.Opaque, current ? element : null);
+            }
+
+            if (_scriptTarget != null)
+            {
+                return Context(PwshCompletionContextKind.ScriptArguments, current ? element : FindCurrentElement());
+            }
+
+            return null;
+        }
+
+        internal PwshCompletionContext CompleteCurrentElement(CommandElementAst element)
+        {
+            if (_pending != null)
+            {
+                return Context(PendingValueKind(), element);
+            }
+
+            // Unknown switches can be implicit script paths. Keep filename completion available
+            // for dash-prefixed filenames and absolute Unix paths once no option can match.
+            string? text = GetStaticText(element);
+            bool optionPrefix = text != null
+                && PwshStartupOptions.TryGetSwitchKey(text, out string key)
+                && IsOptionPrefix(key);
+            return Context(optionPrefix ? PwshCompletionContextKind.OptionName
+                : PwshCompletionContextKind.ScriptPath, element);
+        }
+
+        internal PwshCompletionContext? Consume(CommandElementAst element)
+        {
+            if (_pending != null)
+            {
+                return ConsumeOptionValue(element);
+            }
+
+            string? text = GetStaticText(element);
+            if (text != null && PwshStartupOptions.TryGetSwitchKey(text, out string key))
+            {
+                ConsumeSwitch(element, text, key);
+            }
+            else
+            {
+                _scriptTarget = element;
+            }
+
+            return null;
+        }
+
+        private PwshCompletionContext? ConsumeOptionValue(CommandElementAst element)
+        {
+            if (_pending!.ArgumentKind == PwshStartupArgumentKind.ScriptPath)
+            {
+                if (GetStaticText(element) == "-")
+                {
+                    // Standard input has no script metadata to delegate to.
+                    return Context(PwshCompletionContextKind.Opaque, null);
+                }
+
+                _scriptTarget = element;
+            }
+            else
+            {
+                // An expression is one native argument syntactically, but its evaluated
+                // argument count cannot be known by this scanner.
+                _opaque = GetStaticText(element) == null;
+            }
+
+            _pending = null;
+            return null;
+        }
+
+        private void ConsumeSwitch(CommandElementAst element, string text, string key)
+        {
+            _pending = PwshStartupOptions.Find(key);
+            if (_pending == null)
+            {
+                // The host treats unrecognized switches as implicit file names, except for stdin.
+                if (text == "-")
+                {
+                    _opaque = true;
+                }
+                else
+                {
+                    _scriptTarget = element;
+                }
+
+                return;
+            }
+
+            _providedOptions.Add(_pending.Name);
+            if (_pending.ArgumentKind == PwshStartupArgumentKind.Command)
+            {
+                _commandOffset = element.Extent.EndOffset;
+            }
+            else if (_pending.Name == "Help"
+                || (_pending.StopsParsing && _pending.ArgumentKind != PwshStartupArgumentKind.ScriptPath))
+            {
+                // Help aborts startup even though the host continues parsing its remaining arguments.
+                _opaque = true;
+            }
+            else if (_pending.Consumption == PwshStartupArgumentConsumption.None)
+            {
+                _pending = null;
+            }
+        }
+
+        internal PwshCompletionContext CompleteWhitespace()
+        {
+            // No element owns the cursor; the consumed arguments determine what comes next.
+            PwshCompletionContextKind kind = _commandOffset >= 0 ? PwshCompletionContextKind.Command
+                : _opaque ? PwshCompletionContextKind.Opaque
+                : _scriptTarget != null ? PwshCompletionContextKind.ScriptArguments
+                : _pending != null ? PendingValueKind()
+                : PwshCompletionContextKind.OptionName;
+            return Context(kind, null);
+        }
+
+        private PwshCompletionContextKind PendingValueKind()
+            => _pending!.ArgumentKind == PwshStartupArgumentKind.ScriptPath ? PwshCompletionContextKind.ScriptPath
+                : IsEncodedPayload(_pending) ? PwshCompletionContextKind.Opaque
+                : PwshCompletionContextKind.OptionValue;
+
+        private PwshCompletionContext Context(PwshCompletionContextKind kind, CommandElementAst? current)
+            => new(kind, _cursorOffset, _pending, current, _scriptTarget)
+            {
+                ProvidedOptions = _providedOptions,
+                CommandOffset = _commandOffset,
+            };
+
+        private CommandElementAst? FindCurrentElement()
+        {
+            foreach (CommandElementAst candidate in _command.CommandElements)
+            {
+                if (candidate.Extent.StartOffset <= _cursorOffset && _cursorOffset <= candidate.Extent.EndOffset)
                 {
                     return candidate;
                 }
@@ -202,8 +294,8 @@ internal sealed class PwshCompletionContext
 
     // Encoded payloads get no candidates, but consume only one argument; later startup options remain valid.
     private static bool IsEncodedPayload(PwshStartupOption option)
-        => option.ArgumentKind == PwshStartupArgumentKind.EncodedCommand
-            || option.ArgumentKind == PwshStartupArgumentKind.EncodedArguments;
+        => option.ArgumentKind is PwshStartupArgumentKind.EncodedCommand
+            or PwshStartupArgumentKind.EncodedArguments;
 
     private static bool IsOptionPrefix(string key)
     {
