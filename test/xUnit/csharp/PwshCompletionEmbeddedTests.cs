@@ -215,6 +215,59 @@ public sealed class PwshCompletionEmbeddedTests : IDisposable
         Assert.Null(shell.Runspace.SessionStateProxy.GetVariable("CommandBodyRan"));
     }
 
+    [Theory]
+    [InlineData(false, "-CommandWithArgs", "param([ValidateSet('Fast','Slow')] $Mode)", "F<cursor>", "Fast")]
+    [InlineData(true, "-cwa", "param([ValidateSet('Fast','Slow')] $Mode)", "<cursor>", "Fast")]
+    [InlineData(true, "-cwa", "param([ValidateSet('Fast','Slow')] $Mode)", "-Mode F<cursor>", "-Mode Fast")]
+    [InlineData(false, "--commandwithargs", "param([DayOfWeek] $Day)", "Fr<cursor>", "Friday")]
+    [InlineData(true, "/cwa", "param($First, [ValidateSet('Fast','Slow')] $Mode)", "anything F<cursor>", "anything Fast")]
+    [InlineData(false, "-cwa", "param([switch] $Flag, [ValidateSet('Fast','Slow')] $Mode)", "-Flag F<cursor>", "-Flag Fast")]
+    [InlineData(true, "-cwa", "param([ValidateSet('Fast','Slow')] $Mode, $Other)", "F<cursor>ast -Other untouched", "Fast -Other untouched")]
+    [InlineData(false, "-cwa", "param([ValidateSet('Spaced Value')] $Mode)", "Spa<cursor>", "'Spaced Value'")]
+    [InlineData(true, "-cwa", "param([Parameter(Position=1)] [ValidateSet('Later')] $Second, [Parameter(Position=0)] [ValidateSet('First')] $First)", "First La<cursor>", "First Later")]
+    public void CommandWithArgsCompletesDeclaredArgumentValues(
+        bool useAst,
+        string option,
+        string parameters,
+        string markedArguments,
+        string expectedArguments)
+    {
+        using PowerShell shell = PowerShell.Create(RunspaceMode.NewRunspace);
+        string script = parameters + " $global:CommandBodyRan = $true";
+        string prefix = "$unused = 1; " + Invocation + "-NoProfile " + option
+            + " '" + CodeGeneration.EscapeSingleQuotedStringContent(script) + "' ";
+        int cursor = prefix.Length + markedArguments.IndexOf("<cursor>", StringComparison.Ordinal);
+        string input = prefix + markedArguments.Replace("<cursor>", string.Empty);
+
+        CommandCompletion completion = Complete(input, useAst, shell, cursor);
+        Assert.DoesNotContain(completion.CompletionMatches, result => result.ResultType == CompletionResultType.ParameterName);
+        Assert.Contains(completion.CompletionMatches, result =>
+            input.Remove(completion.ReplacementIndex, completion.ReplacementLength)
+                .Insert(completion.ReplacementIndex, result.CompletionText) == prefix + expectedArguments);
+        Assert.Null(shell.Runspace.SessionStateProxy.GetVariable("CommandBodyRan"));
+        shell.AddScript("Test-Path Function:__PwshCommandWithArgsCompletion");
+        Assert.False((bool)Assert.Single(shell.Invoke()).BaseObject);
+    }
+
+    [Theory]
+    [InlineData("Get-CompletionProbe", "-Mo")]
+    [InlineData("Get-CompletionProbe", "-Mode Emb")]
+    [InlineData("'Get-CompletionProbe'", "-Mode Emb")]
+    [InlineData("'param($Mode)'", "-Mo")]
+    [InlineData("'function Nested { param([DayOfWeek] $Day) }'", "Fr")]
+    [InlineData("'$args[0]'", "-NoP")]
+    [InlineData("'param([DayOfWeek] $Day'", "Fr")]
+    [InlineData("\"param([DayOfWeek] $Day)\"", "Fr")]
+    public void CommandWithArgsDoesNotBorrowParametersOrInferUndeclaredValues(string command, string argument)
+    {
+        using PowerShell shell = PowerShell.Create(RunspaceMode.NewRunspace);
+        shell.AddScript("function global:Get-CompletionProbe { param([ValidateSet('EmbeddedValue')] $Mode) $global:CommandBodyRan = $true }").Invoke();
+        shell.Commands.Clear();
+        CommandCompletion completion = Complete(Invocation + "-cwa " + command + " " + argument, false, shell);
+        Assert.Empty(completion.CompletionMatches);
+        Assert.Null(shell.Runspace.SessionStateProxy.GetVariable("CommandBodyRan"));
+    }
+
     [Fact]
     public void FunctionNamedPwshKeepsItsParameters()
     {

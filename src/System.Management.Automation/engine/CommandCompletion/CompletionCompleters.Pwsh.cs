@@ -130,6 +130,11 @@ public static partial class CompletionCompleters
             return;
         }
 
+        if (TryCompletePwshCommandWithArgs(command, source, context, startup, results, ref end))
+        {
+            return;
+        }
+
         string input = source.Substring(offset, end - offset);
         string trimmed = input.TrimStart();
         if (trimmed.Length > 0 && (trimmed[0].IsSingleQuote() || trimmed[0].IsDoubleQuote()))
@@ -145,6 +150,115 @@ public static partial class CompletionCompleters
 
         CommandCompletion delegated = CommandCompletion.CompleteInput(input, startup.CursorOffset - offset, context.Options);
         ApplyPwshScriptCompletion(delegated, input.Length, 0, offset, context, results);
+    }
+
+    /// <summary>
+    /// Handles trailing -CommandWithArgs values, or limits code completion to its first argument.
+    /// </summary>
+    /// <param name="command">The native pwsh invocation being completed.</param>
+    /// <param name="source">The original source containing the invocation.</param>
+    /// <param name="context">The completion state whose replacement range may be updated.</param>
+    /// <param name="startup">The startup option and cursor position identified by the scanner.</param>
+    /// <param name="results">The collection to receive argument value completions.</param>
+    /// <param name="end">
+    /// The end of the source to complete, reduced to the first argument's end when completing command text.
+    /// </param>
+    /// <returns>True when argument value completion is handled; false to continue completing code.</returns>
+    private static bool TryCompletePwshCommandWithArgs(
+        CommandAst command,
+        string source,
+        CompletionContext context,
+        PwshCompletionContext startup,
+        List<CompletionResult> results,
+        ref int end)
+    {
+        if (startup.Option?.Name != "CommandWithArgs")
+        {
+            return false;
+        }
+
+        foreach (CommandElementAst element in command.CommandElements)
+        {
+            if (element.Extent.StartOffset < startup.CommandOffset)
+            {
+                continue;
+            }
+
+            // Only the first native argument is code. Later arguments supply values to that code.
+            if (startup.CursorOffset > element.Extent.EndOffset)
+            {
+                CompletePwshCommandArgumentValues(element, source, end, context, startup, results);
+                return true;
+            }
+
+            end = element.Extent.EndOffset;
+            break;
+        }
+
+        return false;
+    }
+
+    private static void CompletePwshCommandArgumentValues(
+        CommandElementAst commandArgument,
+        string source,
+        int end,
+        CompletionContext context,
+        PwshCompletionContext startup,
+        List<CompletionResult> results)
+    {
+        string? script = PwshCompletionContext.GetStaticText(commandArgument);
+        if (script == null)
+        {
+            // Read expandable source as code for best-effort $args inference, without evaluating it.
+            if (commandArgument is ExpandableStringExpressionAst expandable)
+            {
+                CompletePwshForwardedArgumentValues(expandable.Value, commandArgument, context, startup, results);
+            }
+
+            return;
+        }
+
+        ScriptBlockAst ast = Parser.ParseInput(script, out _, out ParseError[] errors);
+        if (errors.Length != 0)
+        {
+            return;
+        }
+
+        if (ast.ParamBlock == null)
+        {
+            CompletePwshForwardedArgumentValues(script, commandArgument, context, startup, results);
+            return;
+        }
+
+        if (ast.ParamBlock.Parameters.Count == 0)
+        {
+            return;
+        }
+
+        // Completion understands parameters of functions declared in its input. Supply only the root
+        // parameter block: the command body and nested declarations must not influence argument binding.
+        // This definition is parsed for completion, never installed in the runspace or executed.
+        const string name = "__PwshCommandWithArgsCompletion";
+        string prefix = "function " + name + " { " + ast.ParamBlock.Extent.Text + " }; " + name;
+        int suffixOffset = commandArgument.Extent.EndOffset;
+        string input = string.Concat(prefix.AsSpan(), source.AsSpan(suffixOffset, end - suffixOffset));
+        int offsetDelta = suffixOffset - prefix.Length;
+        CommandCompletion? delegated = CompletePwshChildInput(input, startup.CursorOffset - offsetDelta, context, startup);
+        if (delegated == null)
+        {
+            return;
+        }
+
+        var matches = new List<CompletionResult>();
+        ApplyPwshScriptCompletion(delegated, input.Length, prefix.Length, offsetDelta, context, matches);
+        foreach (CompletionResult match in matches)
+        {
+            // Trailing arguments get value suggestions only, even when a parameter name is being typed.
+            if (match.ResultType is not (CompletionResultType.ParameterName or CompletionResultType.Command))
+            {
+                results.Add(match);
+            }
+        }
     }
 
     private static void CompletePwshQuotedCommand(

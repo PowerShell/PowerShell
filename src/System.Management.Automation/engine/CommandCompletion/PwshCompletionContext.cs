@@ -70,6 +70,8 @@ internal sealed class PwshCompletionContext
 
     internal int CommandOffset { get; private init; } = -1;
 
+    internal string? WorkingDirectory { get; private init; }
+
     internal bool CanOffer(PwshStartupOption option)
         => !ProvidedOptions.Contains(option.Name)
             && !(option.Name == "STA" && ProvidedOptions.Contains("MTA"))
@@ -132,6 +134,7 @@ internal sealed class PwshCompletionContext
         private CommandElementAst? _scriptTarget;
         private bool _opaque;
         private int _commandOffset = -1;
+        private string? _workingDirectory;
 
         internal StartupArgumentScanner(CommandAst command, int cursorOffset)
         {
@@ -199,6 +202,11 @@ internal sealed class PwshCompletionContext
 
         private PwshCompletionContext? ConsumeOptionValue(CommandElementAst element)
         {
+            if (_pending!.Name == "WorkingDirectory")
+            {
+                _workingDirectory = GetStaticText(element);
+            }
+
             if (_pending!.ArgumentKind == PwshStartupArgumentKind.ScriptPath)
             {
                 if (GetStaticText(element) == "-")
@@ -276,6 +284,7 @@ internal sealed class PwshCompletionContext
             {
                 ProvidedOptions = _providedOptions,
                 CommandOffset = _commandOffset,
+                WorkingDirectory = _workingDirectory,
             };
 
         private CommandElementAst? FindCurrentElement()
