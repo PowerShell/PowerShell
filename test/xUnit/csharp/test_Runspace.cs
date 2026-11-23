@@ -152,6 +152,16 @@ namespace PSTests.Sequential
             {
                 InitialSessionState iss = InitialSessionState.CreateDefault2();
                 iss.StartupScripts.Add(startupScript);
+
+                // The test host may default to Restricted on Windows which would block the script.
+                // Execution policy is not supported on other platforms.
+                if (Platform.IsWindows)
+                {
+                    iss.ExecutionPolicy = Microsoft.PowerShell.ExecutionPolicy.Bypass;
+                }
+
+                // Fail the open rather than silently skip the script if it cannot run.
+                iss.ThrowOnRunspaceOpenError = true;
                 using Runspace runspace = RunspaceFactory.CreateRunspace(iss);
 
                 bool handlerRan = false;
