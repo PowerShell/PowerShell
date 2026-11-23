@@ -220,7 +220,11 @@ namespace Microsoft.PowerShell
                 }
 
 #if !UNIX
-                TaskbarJumpList.CreateRunAsAdministratorJumpList();
+                if (!s_cpp.NonInteractive &&
+                    ((s_cpp.InitialCommand == null && s_cpp.File == null) || s_cpp.NoExit))
+                {
+                    TaskbarJumpList.CreateRunAsAdministratorJumpList();
+                }
 #endif
                 // First check for and handle PowerShell running in a server mode.
                 if (s_cpp.ServerMode)
