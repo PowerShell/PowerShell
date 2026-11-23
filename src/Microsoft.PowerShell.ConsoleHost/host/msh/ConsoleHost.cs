@@ -221,7 +221,7 @@ namespace Microsoft.PowerShell
 
 #if !UNIX
                 if (!s_cpp.NonInteractive &&
-                    ((s_cpp.InitialCommand == null && s_cpp.File == null) || s_cpp.NoExit))
+                    ((s_cpp.InitialCommand is null && s_cpp.File is null) || s_cpp.NoExit))
                 {
                     TaskbarJumpList.CreateRunAsAdministratorJumpList();
                 }
