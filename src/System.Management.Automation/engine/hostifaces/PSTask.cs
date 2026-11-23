@@ -483,7 +483,7 @@ namespace System.Management.Automation.PSTasks
             InitializePowershell();
 
             // Start the script running in a new thread
-            _powershell.AddScript(_scriptBlockToRun.ToString());
+            _powershell.AddCommand(new Command(_scriptBlockToRun));
             _powershell.Commands.Commands[0].DollarUnderbar = _dollarUnderbar;
             if (_usingValuesMap != null && _usingValuesMap.Count > 0)
             {

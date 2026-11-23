@@ -293,6 +293,69 @@ Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
         $resultStrings | Should -Contain "Terminating Error!"
     }
 
+    It 'Verifies error position uses the original script block extent' {
+
+        # ParseInput controls the file name and lines rather than relying on this test file.
+        $script = {
+            $v = 'foo'
+            1 | ForEach-Object -Parallel {
+                $using:v
+                throw 'Terminating Error!'
+            }
+        }
+        $ast = [System.Management.Automation.Language.Parser]::ParseInput(
+            $script.ToString(),
+            '/fake/MyScript.ps1',
+            [ref]$null,
+            [ref]$null)
+        $result = & $ast.GetScriptBlock() 2>&1
+
+        $result.Count | Should -BeExactly 2
+        $result[0] | Should -BeExactly 'foo'
+        $result[1].FullyQualifiedErrorId | Should -BeExactly 'PSTaskException'
+        $result[1].Exception.ErrorRecord.InvocationInfo.ScriptName | Should -BeExactly '/fake/MyScript.ps1'
+        $result[1].Exception.ErrorRecord.InvocationInfo.ScriptLineNumber | Should -BeExactly 5
+    }
+
+    It 'Verifies PSScriptRoot and PSCommandPath come from the original script block' {
+
+        # A native path keeps Path.GetDirectoryName separators consistent across platforms, the file is not created.
+        $scriptPath = Join-Path $TestDrive 'MyScript.ps1'
+        $ast = [System.Management.Automation.Language.Parser]::ParseInput(
+            '1 | ForEach-Object -Parallel { $PSScriptRoot; $PSCommandPath }',
+            $scriptPath,
+            [ref]$null,
+            [ref]$null)
+        $result = & $ast.GetScriptBlock()
+
+        $result.Count | Should -BeExactly 2
+        $result[0] | Should -BeExactly ([string]$TestDrive)
+        $result[1] | Should -BeExactly $scriptPath
+    }
+
+    It 'Verifies <Name> script block runs unbound from the caller session state' -TestCases @(
+        @{ Name = 'variable'; GetScriptBlock = { $sbk } }
+        @{ Name = 'function'; GetScriptBlock = { ${function:Test-ParallelFunction} } }
+    ) {
+        param ($GetScriptBlock)
+
+        # The task always runs the body in the child session state, so reading $callerValue directly can't tell if the
+        # script block is bound. Invoking the running script block with & uses its own session state, so -Inner only
+        # sees $callerValue if the task ran the script block still bound to this session state. -Inner stops the recursion.
+        $callerValue = 'caller'
+        $sbk = {
+            param($Inner)
+            if ($Inner) { "[$callerValue]" } else { & $MyInvocation.MyCommand.ScriptBlock -Inner $true }
+        }
+        function Test-ParallelFunction {
+            param($Inner)
+            if ($Inner) { "[$callerValue]" } else { & $MyInvocation.MyCommand.ScriptBlock -Inner $true }
+        }
+
+        $result = 1 | ForEach-Object -Parallel (& $GetScriptBlock)
+        $result | Should -BeExactly '[]'
+    }
+
     It 'Verifies non-terminating error streaming' {
 
         $actualError = 1..1 | ForEach-Object -Parallel { Write-Error "Error!" } 2>&1
