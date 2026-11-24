@@ -186,17 +186,21 @@ internal abstract class ScopedSetting(string path)
     internal string Path { get; } = path;
 }
 
-internal sealed class ScopedSetting<T>(string path, T defaultValue) : ScopedSetting(path)
+internal sealed class ScopedSetting<T>(string path, T defaultValue, string variableName = null, Action<T> validate = null) : ScopedSetting(path)
 {
     internal T DefaultValue { get; } = defaultValue;
 
+    internal string VariableName { get; } = variableName;
+
     internal T GetValue(SessionStateScope scope)
     {
+        SessionStateScope target = scope;
         for (; scope is not null; scope = scope.Parent)
         {
-            if (scope.GetScopedSetting(this) is ScopedSettingEntry<T> entry)
+            if (scope.GetScopedSetting(this) is ScopedSettingEntry<T> entry
+                && (scope == target || entry.Variable?.IsPrivate != true))
             {
-                return entry.Value;
+                return entry.Variable is { } variable && variable.Value is T value ? value : entry.Value;
             }
         }
 
@@ -215,23 +219,99 @@ internal sealed class ScopedSetting<T>(string path, T defaultValue) : ScopedSett
         }
     }
 
-    internal T ConvertValue(object value) => LanguagePrimitives.ConvertTo<T>(value);
+    internal T ConvertValue(object value)
+    {
+        T converted = LanguagePrimitives.ConvertTo<T>(value);
+        validate?.Invoke(converted);
+        return converted;
+    }
 
-    internal void Reset(SessionStateScope scope) => scope.RemoveScopedSetting(this);
+    internal void Reset(SessionStateScope scope)
+    {
+        if (scope.GetScopedSetting(this) is not null)
+        {
+            scope.RemoveScopedSetting(this);
+        }
+    }
 }
 
 internal abstract class ScopedSettingEntry
 {
+    private int _bindings;
+
     internal abstract ScopedSetting Setting { get; }
+
+    internal ScopedSettingVariable Variable { get; init; }
+
+    internal abstract object GetValueRaw();
+
+    internal abstract object ConvertValue(object value);
+
+    internal abstract void SetPreparedValue(object value);
+
+    internal void AddBinding() => _bindings++;
+
+    internal void ReleaseBinding(bool markVariableRemoved)
+    {
+        Diagnostics.Assert(_bindings > 0, "A scoped setting entry must be bound before release.");
+        if (--_bindings == 0 && markVariableRemoved)
+        {
+            Variable?.Detach();
+        }
+    }
 }
 
-internal sealed class ScopedSettingEntry<T>(ScopedSetting<T> setting, object value) : ScopedSettingEntry
+internal sealed class ScopedSettingEntry<T> : ScopedSettingEntry
 {
-    internal override ScopedSetting Setting => setting;
+    private readonly ScopedSetting<T> _setting;
 
-    internal T Value { get; private set; } = setting.ConvertValue(value);
+    private ScopedSettingEntry(ScopedSetting<T> setting, object value, string variableName)
+    {
+        _setting = setting;
+        Value = setting.ConvertValue(value);
+        if (variableName is not null)
+        {
+            Variable = new ScopedSettingVariable(variableName, this);
+        }
+    }
 
-    internal void SetValue(object value) => Value = setting.ConvertValue(value);
+    internal ScopedSettingEntry(ScopedSetting<T> setting, object value) : this(setting, value, setting.VariableName)
+    {
+    }
+
+    internal static ScopedSettingEntry<T> Create(ScopedSetting<T> setting, PSVariable source)
+    {
+        var entry = new ScopedSettingEntry<T>(setting, source.Value, source.Name);
+        if (!PSVariable.IsValidValue(source.Attributes, entry.Value))
+        {
+            entry.Variable.ThrowInvalidValue(entry.Value);
+        }
+
+        entry.Variable.CopyMetadataFrom(source, initializing: true);
+        return entry;
+    }
+
+    internal override ScopedSetting Setting => _setting;
+
+    internal T Value { get; private set; }
+
+    internal void SetValue(object value)
+    {
+        if (Variable is { } variable)
+        {
+            variable.Value = value;
+        }
+        else
+        {
+            Value = _setting.ConvertValue(value);
+        }
+    }
+
+    internal override object GetValueRaw() => Value;
+
+    internal override object ConvertValue(object value) => _setting.ConvertValue(value);
+
+    internal override void SetPreparedValue(object value) => Value = (T)value;
 }
 
 internal static class ScopedProperties
@@ -242,6 +322,18 @@ internal static class ScopedProperties
     internal static readonly ScopedSetting<ProgressView> ProgressViewSetting = new(
         ProgressViewPath,
         ProgressView.Minimal);
+
+    internal static readonly ScopedSetting<ActionPreference> ErrorPreferenceSetting = new(
+        ErrorPath,
+        InitialSessionState.DefaultErrorActionPreference,
+        SpecialVariables.ErrorActionPreference,
+        static value =>
+        {
+            if (value == ActionPreference.Suspend)
+            {
+                throw new PSInvalidCastException("InvalidActionPreference", null, ErrorPackage.ActionPreferenceReservedForFutureUseError, value);
+            }
+        });
 
     internal static ActionPreference GetErrorActionPreference(ExecutionContext context, SessionStateScope scope)
         => context.GetEnumPreference(SpecialVariables.ErrorActionPreferenceVarPath, InitialSessionState.DefaultErrorActionPreference, out _, scope);

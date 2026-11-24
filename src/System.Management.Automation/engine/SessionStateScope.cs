@@ -55,19 +55,57 @@ namespace System.Management.Automation
         internal bool IsRemoved { get; private set; }
 
         internal ScopedSettingEntry<T> GetScopedSetting<T>(ScopedSetting<T> setting)
-            => _scopedSettings?.TryGetValue(setting, out ScopedSettingEntry entry) == true ? (ScopedSettingEntry<T>)entry : null;
+        {
+            if (setting.VariableName is not null && _variables is null)
+            {
+                // This initializes the AllScope bindings alongside the ordinary variables.
+                GetPrivateVariables();
+            }
+
+            return _scopedSettings?.TryGetValue(setting, out var entry) == true ? (ScopedSettingEntry<T>)entry : null;
+        }
 
         internal void SetScopedSetting(ScopedSettingEntry entry)
         {
-            (_scopedSettings ??= new())[entry.Setting] = entry;
+            _scopedSettings ??= new();
+            if (_scopedSettings.TryGetValue(entry.Setting, out var previous))
+            {
+                if (ReferenceEquals(previous, entry))
+                {
+                    return;
+                }
+
+                previous.ReleaseBinding(markVariableRemoved: true);
+            }
+
+            _scopedSettings[entry.Setting] = entry;
+            entry.AddBinding();
         }
 
-        internal void RemoveScopedSetting(ScopedSetting setting)
+        internal void RemoveScopedSetting(ScopedSetting setting, bool force = false)
         {
-            _scopedSettings?.Remove(setting);
+            if (_scopedSettings?.TryGetValue(setting, out var entry) == true)
+            {
+                entry.Variable?.ThrowIfNotRemovable(force);
+                _scopedSettings.Remove(setting);
+                entry.ReleaseBinding(markVariableRemoved: true);
+            }
         }
 
-        internal void ClearScopedSettings() => _scopedSettings = null;
+        internal void ClearScopedSettings()
+        {
+            if (_scopedSettings is null)
+            {
+                return;
+            }
+
+            foreach (var entry in _scopedSettings.Values)
+            {
+                entry.ReleaseBinding(markVariableRemoved: false);
+            }
+
+            _scopedSettings = null;
+        }
 
         internal void MarkRemoved()
         {
@@ -1797,6 +1835,17 @@ namespace System.Management.Automation
                 {
                     if (variable.IsAllScope)
                         _variables.Add(variable.Name, variable);
+                }
+
+                if (Parent._scopedSettings is { } scopedSettings)
+                {
+                    foreach (var entry in scopedSettings.Values)
+                    {
+                        if (entry.Variable?.IsAllScope == true)
+                        {
+                            SetScopedSetting(entry);
+                        }
+                    }
                 }
             }
         }

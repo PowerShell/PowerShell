@@ -41,7 +41,13 @@ The prototype covers these two engine-owned scalar settings. Public authoring AP
 ### Baseline validation
 
 Before the canonical storage changes, the build passed with the .NET 11 SDK. The published binaries passed all 19 existing scoped-properties Pester cases and all four xUnit cases in `ScopedPropertiesTests` and `ScopedProgressTests`.
-The Pester run used an explicit module path and temporary registry access for its test fixture. No product failures were observed.
+The scoped Pester run used an explicit module path and temporary registry access for its test fixture. No failures were observed in these scoped test runs.
+
+Selected variable, preference, error-handling, automatic-variable, and module Pester suites passed 336 cases with two pending in each feature-enabled and feature-disabled configuration. The disabled run kept the other generated experimental features enabled.
+The isolated module fixture was also investigated separately. With `Test.Isolated.Init` built, loading it encountered a version conflict between the fixture's 3.0 assembly and the already bound assembly.
+
+The full xUnit baseline encountered seven locale-sensitive `Utils.DisplayHumanReadableFileSize` failures and a refused localhost connection in `RemoteHyperV`, where the run hung.
+An additional run after phase 2 excluded `RemoteHyperV` and reported 417 passes, the same seven locale failures, and six skips. This count includes the five new phase 2 tests.
 
 ## Canonical storage contract
 
@@ -60,6 +66,9 @@ Entries and bound scope views belong to their originating runspace. The console 
 
 When the feature is disabled, `$PS` remains an ordinary variable name, `$ErrorActionPreference` follows the existing variable rules, and `$PSStyle.Progress.View` retains its existing behavior.
 The canonical design is internal to the two prototype settings. `Hidden`, additional settings, and public setting registration are deferred.
+
+The internal variable adapter is tested independently of production routing in `ScopedSettingVariableTests`. One adapter supplies the variable metadata for each entry. Its `Value` reads the entry, and writes through either interface use the same protection and validation checks.
+An incoming `PSVariable` supplies the initial value and metadata for the adapter. Explicit `AllScope` configuration shares the entry and its metadata across scope bindings.
 
 ## Compatibility decisions
 
@@ -129,6 +138,7 @@ Show-DynamicReset
 ```
 
 Removing the override lets nested commands use the inherited preference unless they specify their own `-ErrorAction`.
+When an explicitly configured `AllScope` entry is shared, reset removes the target's binding and preserves the value and metadata available through the remaining bindings. The reset scope can then inherit that entry from its parent.
 An alternative was to preserve the implicit preference for the lifetime of the advanced function. That would make the same reset call behave differently based on how the preference entered the scope.
 Another alternative was to write the default into the target scope. That would keep overriding the parent when it has a different preference.
 

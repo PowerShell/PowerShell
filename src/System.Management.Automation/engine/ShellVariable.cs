@@ -328,20 +328,16 @@ namespace System.Management.Automation
 
         internal void SetOptions(ScopedItemOptions newOptions, bool force)
         {
+            ValidateOptions(newOptions, force);
+            _options = newOptions;
+        }
+
+        internal void ValidateOptions(ScopedItemOptions newOptions, bool force)
+        {
             // Check to see if the variable is constant or readonly, if so
             // throw an exception because the options cannot be changed.
 
-            if (IsConstant || (!force && IsReadOnly))
-            {
-                SessionStateUnauthorizedAccessException e =
-                    new SessionStateUnauthorizedAccessException(
-                            Name,
-                            SessionStateCategory.Variable,
-                            "VariableNotWritable",
-                            SessionStateStrings.VariableNotWritable);
-
-                throw e;
-            }
+            ThrowIfNotWritable(force);
 
             // Now check to see if the caller is trying to set
             // the options to constant. This is only allowed at
@@ -380,8 +376,6 @@ namespace System.Management.Automation
 
                 throw e;
             }
-
-            _options = newOptions;
         }
 
         private ScopedItemOptions _options = ScopedItemOptions.None;
@@ -399,6 +393,24 @@ namespace System.Management.Automation
         }
 
         private PSVariableAttributeCollection _attributes;
+
+        internal void CopyMetadataFrom(PSVariable source, bool initializing)
+        {
+            _options = source.Options;
+            Description = source.Description;
+            Attributes.Clear();
+            AddParameterAttributesNoChecks(source.Attributes);
+
+            if (initializing)
+            {
+                Visibility = source.Visibility;
+                Module = source.Module;
+                if (IsAllScope)
+                {
+                    VariableAnalysis.NoteAllScopeVariable(Name);
+                }
+            }
+        }
 
         /// <summary>
         /// Checks if the given value meets the validation attribute constraints on the PSVariable.
@@ -633,51 +645,45 @@ namespace System.Management.Automation
         /// </exception>
         private void SetValue(object value)
         {
-            // Check to see if the variable is writable
-
-            if ((_options & (ScopedItemOptions.ReadOnly | ScopedItemOptions.Constant)) != ScopedItemOptions.None)
-            {
-                SessionStateUnauthorizedAccessException e =
-                    new SessionStateUnauthorizedAccessException(
-                            Name,
-                            SessionStateCategory.Variable,
-                            "VariableNotWritable",
-                            SessionStateStrings.VariableNotWritable);
-
-                throw e;
-            }
-
-            // Now perform all ArgumentTransformations that are needed
-            object transformedValue = value;
-            if (_attributes != null && _attributes.Count > 0)
-            {
-                transformedValue = TransformValue(_attributes, value);
-
-                // Next check to make sure the value is valid
-
-                if (!IsValidValue(transformedValue))
-                {
-                    ValidationMetadataException e = new ValidationMetadataException(
-                        "ValidateSetFailure",
-                        null,
-                        Metadata.InvalidValueFailure,
-                        Name,
-                        ((transformedValue != null) ? transformedValue.ToString() : "$null"));
-
-                    throw e;
-                }
-            }
-
-            if (transformedValue != null)
-            {
-                transformedValue = CopyMutableValues(transformedValue);
-            }
-
-            // Set the value before triggering any write breakpoints
-            _value = transformedValue;
-
+            ThrowIfNotWritable(force: false);
+            object transformedValue = TransformValueForAssignment(value);
+            ValidateValueForAssignment(transformedValue);
+            _value = transformedValue == null ? null : CopyMutableValues(transformedValue);
             DebuggerCheckVariableWrite();
         }
+
+        internal void ThrowIfNotWritable(bool force)
+        {
+            if (IsConstant || (!force && IsReadOnly))
+            {
+                throw new SessionStateUnauthorizedAccessException(
+                    Name, SessionStateCategory.Variable, "VariableNotWritable", SessionStateStrings.VariableNotWritable);
+            }
+        }
+
+        internal void ThrowIfNotRemovable(bool force)
+        {
+            if (IsConstant || (!force && IsReadOnly))
+            {
+                throw new SessionStateUnauthorizedAccessException(
+                    Name, SessionStateCategory.Variable, "VariableNotRemovable", SessionStateStrings.VariableNotRemovable);
+            }
+        }
+
+        internal object TransformValueForAssignment(object value)
+            => _attributes is { Count: > 0 } ? TransformValue(_attributes, value) : value;
+
+        internal void ValidateValueForAssignment(object value)
+        {
+            if (_attributes is { Count: > 0 } && !IsValidValue(value))
+            {
+                ThrowInvalidValue(value);
+            }
+        }
+
+        internal void ThrowInvalidValue(object value)
+            => throw new ValidationMetadataException(
+                "ValidateSetFailure", null, Metadata.InvalidValueFailure, Name, value?.ToString() ?? "$null");
 
         private void SetValueRawImpl(object newValue, bool preserveValueTypeSemantics)
         {
