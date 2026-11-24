@@ -1027,6 +1027,19 @@ try {
                 $j | Remove-Job
             }
         }
+
+        It "Verify Get-ComputerInfo -Property only loads what the properties need" {
+            try {
+                $j = Start-Job { Get-ComputerInfo -Property OsName }
+                $j | Wait-Job
+                # Operating system and registry information, then Completed
+                $j.ChildJobs[0].Progress | Should -HaveCount 3
+                $j.ChildJobs[0].Progress[-1].RecordType | Should -Be ([System.Management.Automation.ProgressRecordType]::Completed)
+            }
+            finally {
+                $j | Remove-Job
+            }
+        }
     }
 
     Describe "Tests for Get-ComputerInfo" -tags "Feature", "RequireAdminOnWindows" {
@@ -1221,6 +1234,48 @@ try {
                 $computerInfoWithProp = Get-ComputerInfoForTest -properties $propertyFilter
                 $computerInfoWithProp | Should -BeOfType pscustomobject
                 @($computerInfoWithProp.psobject.properties).count | Should -Be 0
+            }
+
+            #
+            # Test 02.011 Filter Property - a property filter only loads the information the
+            # property needs, so check the properties that need more than one source or none
+            #
+            It "Test 02.011 Filter Property - Property filter gives the same value as no filter for <Property>" -TestCases @(
+                @{ Property = "WindowsProductName" }
+                @{ Property = "OsName" }
+                @{ Property = "OsHardwareAbstractionLayer" }
+                @{ Property = "OsHotFixes"; Member = "HotFixID" }
+                @{ Property = "OsPagingFiles" }
+                @{ Property = "OsServerLevel" }
+                @{ Property = "BiosVersion" }
+                @{ Property = "BiosFirmwareType" }
+                @{ Property = "CsName" }
+                @{ Property = "CsNetworkAdapters"; Member = "Description" }
+                @{ Property = "CsProcessors"; Member = "Name" }
+                @{ Property = "CsPhysicallyInstalledMemory" }
+                @{ Property = "KeyboardLayout" }
+                @{ Property = "HyperVisorPresent" }
+                @{ Property = "HyperVRequirementVMMonitorModeExtensions" }
+                @{ Property = "DeviceGuardSmartStatus" }
+                @{ Property = "TimeZone" }
+                @{ Property = "LogonServer" }
+                @{ Property = "PowerPlatformRole" }
+            ) {
+                param ($Property, $Member)
+
+                $computerInfoWithProp = Get-ComputerInfoForTest -properties $Property
+                @($computerInfoWithProp.psobject.properties).count | Should -Be 1
+
+                $full = Get-ComputerInfoForTest
+                $filtered = $computerInfoWithProp.$Property
+                $unfiltered = $full.$Property
+                if ($Member)
+                {
+                    $filtered = $filtered.$Member
+                    $unfiltered = $unfiltered.$Member
+                }
+
+                ($filtered -join ":") | Should -BeExactly ($unfiltered -join ":")
             }
         }
 
