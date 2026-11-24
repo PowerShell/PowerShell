@@ -131,6 +131,20 @@ public sealed class PSScopedActionPreference
         set => SetPreference(ScopedProperties.ErrorPreferenceSetting, value);
     }
 
+    /// <summary>Gets or sets the warning action preference.</summary>
+    public ActionPreference Warning
+    {
+        get => GetPreference(ScopedProperties.WarningPreferenceSetting);
+        set => SetPreference(ScopedProperties.WarningPreferenceSetting, value);
+    }
+
+    /// <summary>Gets or sets the information action preference.</summary>
+    public ActionPreference Information
+    {
+        get => GetPreference(ScopedProperties.InformationPreferenceSetting);
+        set => SetPreference(ScopedProperties.InformationPreferenceSetting, value);
+    }
+
     private ActionPreference GetPreference(ScopedActionPreferenceSetting setting)
     {
         var (context, scope) = _facade.Resolve();
@@ -348,8 +362,18 @@ internal static class ScopedProperties
         InitialSessionState.DefaultErrorActionPreference,
         SpecialVariables.ErrorActionPreferenceVarPath);
 
+    internal static readonly ScopedActionPreferenceSetting WarningPreferenceSetting = new(
+        PreferenceVariable.Warning,
+        InitialSessionState.DefaultWarningPreference,
+        SpecialVariables.WarningPreferenceVarPath);
+
+    internal static readonly ScopedActionPreferenceSetting InformationPreferenceSetting = new(
+        PreferenceVariable.Information,
+        InitialSessionState.DefaultInformationPreference,
+        SpecialVariables.InformationPreferenceVarPath);
+
     internal static IReadOnlyList<ScopedActionPreferenceSetting> PreferenceSettings { get; } =
-        Array.AsReadOnly<ScopedActionPreferenceSetting>([ErrorPreferenceSetting]);
+        Array.AsReadOnly<ScopedActionPreferenceSetting>([ErrorPreferenceSetting, WarningPreferenceSetting, InformationPreferenceSetting]);
 
     private static readonly Dictionary<string, ScopedActionPreferenceSetting> s_preferencesByName =
         PreferenceSettings.ToDictionary(static setting => setting.VariableName, StringComparer.OrdinalIgnoreCase);

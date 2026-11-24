@@ -2562,12 +2562,12 @@ namespace System.Management.Automation
 
             if (_commandRuntime.IsWarningActionSet)
             {
-                _localsTuple.SetPreferenceVariable(PreferenceVariable.Warning, _commandRuntime.WarningPreference);
+                SetActionPreferenceVariable(ScopedProperties.WarningPreferenceSetting, _commandRuntime.WarningPreference);
             }
 
             if (_commandRuntime.IsInformationActionSet)
             {
-                _localsTuple.SetPreferenceVariable(PreferenceVariable.Information, _commandRuntime.InformationPreference);
+                SetActionPreferenceVariable(ScopedProperties.InformationPreferenceSetting, _commandRuntime.InformationPreference);
             }
 
             if (_commandRuntime.IsProgressActionSet)

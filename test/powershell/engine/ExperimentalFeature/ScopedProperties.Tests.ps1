@@ -985,4 +985,115 @@ try { $PS.Style.Progress.View = 'Classic' } catch { $_.FullyQualifiedErrorId }
             'PropertySetterNotSupportedInConstrainedLanguage'
         )
     }
+
+    It 'shares typed Warning and Information values with legacy variables and captured adapters' {
+        $result = Invoke-ScopedPropertiesTest {
+            foreach ($name in 'Warning', 'Information') {
+                & {
+                    $variableName = "${name}Preference"
+                    $view = $PS.AtScope('Local')
+                    "$name/$($view.ActionPreference.$name)"
+                    $view.ActionPreference.$name = 'Stop'
+                    $variable = Get-Variable $variableName -Scope Local
+                    "$($variable.Value.GetType().Name)/$($variable.Value)"
+                    Set-Variable $variableName 'iGnOrE' -Scope Local
+                    $view.ActionPreference.$name
+                    $variable.Value = 'Continue'
+
+                    foreach ($invalid in 'Suspend', 'invalid preference', 500, $null) {
+                        try { $variable.Value = $invalid } catch { "rejected/$($view.ActionPreference.$name)" }
+                    }
+
+                    $view.Reset("actionpreference.$($name.ToUpperInvariant())")
+                    "$($null -eq $variable.Value)/$($view.ActionPreference.$name)"
+                }
+            }
+        }
+        $result | Should -BeExactly @(
+            'Warning/Continue', 'ActionPreference/Stop', 'Ignore',
+            'rejected/Continue', 'rejected/Continue', 'rejected/Continue', 'rejected/Continue', 'True/Continue',
+            'Information/SilentlyContinue', 'ActionPreference/Stop', 'Ignore',
+            'rejected/Continue', 'rejected/Continue', 'rejected/Continue', 'rejected/Continue', 'True/SilentlyContinue'
+        )
+    }
+
+    It 'keeps dotted Error, Warning, and Information overrides independent across command stages' {
+        $result = Invoke-ScopedPropertiesTest {
+            function Test-NamedPreferences {
+                param($WarningPreference, $InformationPreference)
+                "$($WarningPreference.GetType().Name)/$($PS.ActionPreference.Warning)/$($InformationPreference.GetType().Name)/$($PS.ActionPreference.Information)"
+            }
+
+            function Test-DottedPreferences {
+                [CmdletBinding(SupportsShouldProcess)]
+                param(
+                    [ValidateSet('SilentlyContinue')][string] $InformationPreference,
+                    [ValidateSet('Continue')][string] $WarningPreference
+                )
+                begin {
+                    "begin/$ErrorActionPreference/$WarningPreference/$InformationPreference/$ProgressPreference/$WhatIfPreference/$ConfirmPreference"
+                    $frame = (Get-PSCallStack)[0]
+                    $entries = $frame.GetFrameVariables()
+                    "frame/$($entries.ErrorActionPreference.Value)/$($entries.WarningPreference.Value)/$($entries.InformationPreference.Value)"
+
+                    $PS.Reset('actionpreference.WARNING')
+                    "reset/$($frame.GetFrameVariables().ContainsKey('WarningPreference'))/$($PS.ActionPreference.Warning)"
+
+                    $variables = @{}
+                    Get-Variable -Scope Local | ForEach-Object { $variables[$_.Name] = $_ }
+                    "variables/$($variables.ErrorActionPreference.Value)/$($variables.WarningPreference.Value)/$($variables.InformationPreference.Value)"
+                    $WarningPreference = 'Ignore'
+                }
+                process { "process/$($PS.ActionPreference.Error)/$($PS.ActionPreference.Warning)/$($PS.ActionPreference.Information)" }
+                end { "end/$ErrorActionPreference/$WarningPreference/$InformationPreference" }
+                clean { $global:scopedWarningInformationCleanup = "clean/$ErrorActionPreference/$WarningPreference/$InformationPreference" }
+            }
+
+            $PS.ActionPreference.Error = 'Continue'
+            $PS.ActionPreference.Warning = 'SilentlyContinue'
+            $PS.ActionPreference.Information = 'SilentlyContinue'
+            Test-NamedPreferences 'sToP' 'iGnOrE'
+            . Test-DottedPreferences SilentlyContinue Continue -ErrorAction Stop -WarningAction Stop -InformationAction Continue -ProgressAction SilentlyContinue -WhatIf -Confirm:$false
+            $global:scopedWarningInformationCleanup
+            "caller/$ErrorActionPreference/$WarningPreference/$InformationPreference"
+        }
+        $result | Should -BeExactly @(
+            'ActionPreference/Stop/ActionPreference/Ignore',
+            'begin/Stop/Stop/Continue/SilentlyContinue/True/None',
+            'frame/Stop/Stop/Continue', 'reset/False/SilentlyContinue', 'variables/Stop/SilentlyContinue/Continue',
+            'process/Stop/Ignore/Continue', 'end/Stop/Ignore/Continue', 'clean/Stop/Ignore/Continue',
+            'caller/Continue/SilentlyContinue/SilentlyContinue'
+        )
+    }
+
+    It 'uses inherited Warning and Information preferences for stream output and explicit overrides' {
+        $result = Invoke-ScopedPropertiesTest {
+            function Write-ScopedRecords {
+                [CmdletBinding()]
+                param()
+                Write-Warning 'warning record'
+                Write-Information 'information record'
+            }
+
+            $PS.ActionPreference.Warning = 'Ignore'
+            $PS.ActionPreference.Information = 'Ignore'
+            "ignored/$(@(Write-ScopedRecords 3>&1 6>&1).Count)"
+            Write-ScopedRecords -WarningAction Continue -InformationAction Continue 3>&1 6>&1 |
+                ForEach-Object { "override/$($_.GetType().Name)/$_" }
+
+            $PS.ActionPreference.Warning = 'Continue'
+            $PS.ActionPreference.Information = 'Continue'
+            Write-ScopedRecords 3>&1 6>&1 | ForEach-Object { "inherited/$($_.GetType().Name)/$_" }
+
+            $PS.ActionPreference.Warning = 'Stop'
+            try { & { Write-Warning 'stopping warning' 3>$null } } catch { 'warning stopped' }
+            $PS.ActionPreference.Information = 'Stop'
+            try { & { Write-Information 'stopping information' 6>$null } } catch { 'information stopped' }
+        }
+        $result | Should -BeExactly @(
+            'ignored/0', 'override/WarningRecord/warning record', 'override/InformationRecord/information record',
+            'inherited/WarningRecord/warning record', 'inherited/InformationRecord/information record',
+            'warning stopped', 'information stopped'
+        )
+    }
 }
