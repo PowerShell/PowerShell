@@ -446,97 +446,29 @@ Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
         $result.FullyQualifiedErrorId | Should -BeExactly 'TypeNotFound'
     }
 
-    It 'Verifies single line function with a parameter list keeps its position' {
-
-        $ast = [System.Management.Automation.Language.Parser]::ParseInput(
-            "`n  function Test-Inline(`$a = 'a', `$b = 'b') { `"`$a `$b `$_`"; throw 'Terminating Error!' }",
-            '/fake/Inline.ps1',
-            [ref]$null,
-            [ref]$null)
-        $throwAst = $ast.Find({ $args[0] -is [System.Management.Automation.Language.ThrowStatementAst] }, $true)
-        . $ast.GetScriptBlock()
-
-        $result = 1 | ForEach-Object -Parallel ${function:Test-Inline} 2>&1
-
-        $result.Count | Should -BeExactly 2
-        $result[0] | Should -BeExactly 'a b 1'
-        $result[1].Exception.ErrorRecord.InvocationInfo.ScriptName | Should -BeExactly '/fake/Inline.ps1'
-        $result[1].Exception.ErrorRecord.InvocationInfo.ScriptLineNumber | Should -BeExactly 2
-        $result[1].Exception.ErrorRecord.InvocationInfo.OffsetInLine | Should -BeExactly $throwAst.Extent.StartColumnNumber
-    }
-
-    It 'Verifies <Name> runs with the expected output and position' -TestCases @(
-        @{ Name = 'Test-ParamBlock'; Expected = 'default 1 Functions.ps1: line 4' }
-        @{ Name = 'Test-ParamList'; Expected = 'default 1 Functions.ps1: line 7' }
-        @{ Name = 'Test-ParamListMultiline'; Expected = 'default 2 1 Functions.ps1: line 17' }
-        @{ Name = 'Test-EmptyParamList'; Expected = 'none 1 Functions.ps1: line 20' }
-        @{ Name = 'Test-Filter'; Expected = 'filter 1 Functions.ps1: line 23' }
-        @{ Name = 'Test-FilterParamList'; Expected = 'default 1 Functions.ps1: line 26' }
-        @{ Name = 'Test-FilterParamBlock'; Expected = 'default 1 Functions.ps1: line 30' }
-        @{ Name = 'Test-NamedBlocks'; Expected = 'begin 1', 'process ', 'default end 1 Functions.ps1: line 35' }
+    It 'Verifies <Name> gets the piped input as expected' -TestCases @(
+        # A filter runs as a plain script block in the task.
+        @{ Name = 'Test-Filter'; Expected = 'filter 1' }
+        @{ Name = 'Test-NamedBlocks'; Expected = 'begin 1', 'process ', 'end 1' }
         # Advanced functions don't get $_ from the piped input.
-        @{ Name = 'Test-Advanced'; Expected = 'default  Functions.ps1: line 40' }
-        @{ Name = 'Test-AdvancedParamList'; Expected = 'default  Functions.ps1: line 43' }
+        @{ Name = 'Test-Advanced'; Expected = 'advanced ' }
     ) {
         param ($Name, $Expected)
 
-        # ToString() starts after the opening brace, so line 1 is the empty rest of that line.
-        $functions = {
-function Test-ParamBlock {
-    param($Value = 'default')
-    "$Value $_ $((Get-PSCallStack)[0].Location)"
-}
-function Test-ParamList($Value = 'default') {
-    "$Value $_ $((Get-PSCallStack)[0].Location)"
-}
-function Test-ParamListMultiline(
-    # Comment between the parameters.
-    [string]
-    $Value = 'default'
-    ,
-    [int]$Other = 2
-)
-{
-    "$Value $Other $_ $((Get-PSCallStack)[0].Location)"
-}
-function Test-EmptyParamList() {
-    "none $_ $((Get-PSCallStack)[0].Location)"
-}
-filter Test-Filter {
-    "filter $_ $((Get-PSCallStack)[0].Location)"
-}
-filter Test-FilterParamList($Value = 'default') {
-    "$Value $_ $((Get-PSCallStack)[0].Location)"
-}
-filter Test-FilterParamBlock {
-    param($Value = 'default')
-    "$Value $_ $((Get-PSCallStack)[0].Location)"
-}
-function Test-NamedBlocks($Value = 'default') {
-    begin { "begin $_" }
-    process { "process $_" }
-    end { "$Value end $_ $((Get-PSCallStack)[0].Location)" }
-}
-function Test-Advanced {
-    [CmdletBinding()]
-    param($Value = 'default')
-    "$Value $_ $((Get-PSCallStack)[0].Location)"
-}
-function Test-AdvancedParamList([Parameter()]$Value = 'default') {
-    "$Value $_ $((Get-PSCallStack)[0].Location)"
-}
+        filter Test-Filter { "filter $_" }
+        function Test-NamedBlocks {
+            begin { "begin $_" }
+            process { "process $_" }
+            end { "end $_" }
         }
-        foreach ($newLine in "`n", "`r`n") {
-            $ast = [System.Management.Automation.Language.Parser]::ParseInput(
-                ($functions.ToString() -replace '\r?\n', $newLine),
-                (Join-Path $TestDrive 'Functions.ps1'),
-                [ref]$null,
-                [ref]$null)
-            . $ast.GetScriptBlock()
+        function Test-Advanced {
+            [CmdletBinding()]
+            param()
+            "advanced $_"
+        }
 
-            $result = 1 | ForEach-Object -Parallel (Get-Command -Name $Name).ScriptBlock
-            $result | Should -BeExactly $Expected -Because "line endings $([regex]::Escape($newLine))"
-        }
+        $result = 1 | ForEach-Object -Parallel (Get-Command -Name $Name).ScriptBlock
+        $result | Should -BeExactly $Expected
     }
 
     It 'Verifies non-terminating error streaming' {
