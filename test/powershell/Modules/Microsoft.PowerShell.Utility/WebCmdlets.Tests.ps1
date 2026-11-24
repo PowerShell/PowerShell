@@ -873,6 +873,47 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         ($result.Output.Content | ConvertFrom-Json).query | Should -Be "?testparam=testvalue"
     }
 
+    It "Validate Invoke-WebRequest -Method Query is used and body is sent as request content" {
+        $uri = Get-WebListenerUrl -Test 'Query'
+        $command = "Invoke-WebRequest -Uri '$uri' -Method Query -Body @{'testparam'='testvalue'} -ContentType 'application/x-www-form-urlencoded'"
+        $result = ExecuteWebCommand -command $command
+        $result.Error | Should -BeNullOrEmpty
+        $jsonResult = $result.Output.Content | ConvertFrom-Json
+        $jsonResult.method | Should -Be "QUERY"
+        $jsonResult.form.testparam | Should -Be "testvalue"
+        # A hashtable body must be sent as the request content, not converted to URI query parameters
+        $jsonResult.args.testparam | Should -BeNullOrEmpty
+    }
+
+    It "Validate Invoke-WebRequest -Method Query with a string body" {
+        $uri = Get-WebListenerUrl -Test 'Query'
+        $command = "Invoke-WebRequest -Uri '$uri' -Method Query -Body '{`"testparam`":`"testvalue`"}' -ContentType 'application/json'"
+        $result = ExecuteWebCommand -command $command
+        $result.Error | Should -BeNullOrEmpty
+        $jsonResult = $result.Output.Content | ConvertFrom-Json
+        $jsonResult.method | Should -Be "QUERY"
+        $jsonResult.headers.'Content-Type' | Should -Match "application/json"
+        $jsonResult.data | Should -Be '{"testparam":"testvalue"}'
+    }
+
+    It "Validate Invoke-WebRequest -CustomMethod QUERY behaves like -Method Query" {
+        $uri = Get-WebListenerUrl -Test 'Query'
+        $command = "Invoke-WebRequest -Uri '$uri' -CustomMethod QUERY -Body @{'testparam'='testvalue'} -ContentType 'application/x-www-form-urlencoded'"
+        $result = ExecuteWebCommand -command $command
+        $result.Error | Should -BeNullOrEmpty
+        $jsonResult = $result.Output.Content | ConvertFrom-Json
+        $jsonResult.method | Should -Be "QUERY"
+        $jsonResult.form.testparam | Should -Be "testvalue"
+    }
+
+    It 'Validate Invoke-WebRequest empty body -Method Query' {
+        $uri = Get-WebListenerUrl -Test 'Query'
+        $command = "Invoke-WebRequest -Uri '$uri' -Method Query"
+        $result = ExecuteWebCommand -command $command
+        $result.Error | Should -BeNullOrEmpty
+        ($result.Output.Content | ConvertFrom-Json).method | Should -Be "QUERY"
+    }
+
     It "Validate Invoke-WebRequest returns HTTP errors in exception" {
         $query = @{
             body           = "I am a teapot!!!"
@@ -2992,6 +3033,36 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $command = "Invoke-RestMethod -Uri '$uri' -CustomMethod GET -Body @{'testparam'='testvalue'} -NoProxy"
         $result = ExecuteWebCommand -command $command
         $result.Output.Query | Should -Be "?testparam=testvalue"
+    }
+
+    It "Validate Invoke-RestMethod -Method Query is used and body is sent as request content" {
+        $uri = Get-WebListenerUrl -Test 'Query'
+        $command = "Invoke-RestMethod -Uri '$uri' -Method Query -Body @{'testparam'='testvalue'} -ContentType 'application/x-www-form-urlencoded'"
+        $result = ExecuteWebCommand -command $command
+        $result.Error | Should -BeNullOrEmpty
+        $result.Output.method | Should -Be "QUERY"
+        $result.Output.form.testparam | Should -Be "testvalue"
+        # A hashtable body must be sent as the request content, not converted to URI query parameters
+        $result.Output.args.testparam | Should -BeNullOrEmpty
+    }
+
+    It "Validate Invoke-RestMethod -Method Query with a string body" {
+        $uri = Get-WebListenerUrl -Test 'Query'
+        $command = "Invoke-RestMethod -Uri '$uri' -Method Query -Body '{`"testparam`":`"testvalue`"}' -ContentType 'application/json'"
+        $result = ExecuteWebCommand -command $command
+        $result.Error | Should -BeNullOrEmpty
+        $result.Output.method | Should -Be "QUERY"
+        $result.Output.Headers.'Content-Type' | Should -Match "application/json"
+        $result.Output.data | Should -Be '{"testparam":"testvalue"}'
+    }
+
+    It "Validate Invoke-RestMethod -CustomMethod QUERY behaves like -Method Query" {
+        $uri = Get-WebListenerUrl -Test 'Query'
+        $command = "Invoke-RestMethod -Uri '$uri' -CustomMethod QUERY -Body @{'testparam'='testvalue'} -ContentType 'application/x-www-form-urlencoded'"
+        $result = ExecuteWebCommand -command $command
+        $result.Error | Should -BeNullOrEmpty
+        $result.Output.method | Should -Be "QUERY"
+        $result.Output.form.testparam | Should -Be "testvalue"
     }
 
     It "Validate Invoke-RestMethod returns HTTP errors in exception" {
