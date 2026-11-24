@@ -518,14 +518,16 @@ namespace System.Management.Automation
             EngineSessionState.SetVariable(path, newValue, true, CommandOrigin.Internal);
         }
 
-        internal T GetEnumPreference<T>(VariablePath preferenceVariablePath, T defaultPref, out bool defaultUsed)
+        internal T GetEnumPreference<T>(VariablePath preferenceVariablePath, T defaultPref, out bool defaultUsed, SessionStateScope startingScope = null)
         {
-            object val = EngineSessionState.GetVariableValue(preferenceVariablePath, out _, out _);
+            object val = startingScope is null
+                ? EngineSessionState.GetVariableValue(preferenceVariablePath, out _, out _)
+                : EngineSessionState.GetVariableItem(preferenceVariablePath, out _, CommandOrigin.Internal, startingScope)?.Value;
             if (val is T)
             {
                 if (val is ActionPreference actionPreferenceValue)
                 {
-                    CheckActionPreference(preferenceVariablePath, actionPreferenceValue, defaultPref);
+                    CheckActionPreference(preferenceVariablePath, actionPreferenceValue, defaultPref, startingScope);
                 }
 
                 T convertedResult = (T)val;
@@ -555,7 +557,7 @@ namespace System.Management.Automation
 
                     if (result is ActionPreference actionPreferenceValue)
                     {
-                        CheckActionPreference(preferenceVariablePath, actionPreferenceValue, defaultPref);
+                        CheckActionPreference(preferenceVariablePath, actionPreferenceValue, defaultPref, startingScope);
                     }
                 }
                 catch (InvalidCastException)
@@ -571,14 +573,21 @@ namespace System.Management.Automation
             return result;
         }
 
-        private void CheckActionPreference(VariablePath preferenceVariablePath, ActionPreference preference, object defaultValue)
+        private void CheckActionPreference(VariablePath preferenceVariablePath, ActionPreference preference, object defaultValue, SessionStateScope startingScope)
         {
             if (preference == ActionPreference.Suspend)
             {
                 // ActionPreference.Suspend is reserved for future use. When it is used, reset
                 // the variable to its default.
                 string message = StringUtil.Format(ErrorPackage.ReservedActionPreferenceReplacedError, preference, preferenceVariablePath.UserPath, defaultValue);
-                EngineSessionState.SetVariable(preferenceVariablePath, defaultValue, true, CommandOrigin.Internal);
+                if (startingScope is null)
+                {
+                    EngineSessionState.SetVariable(preferenceVariablePath, defaultValue, true, CommandOrigin.Internal);
+                }
+                else
+                {
+                    startingScope.SetVariable(preferenceVariablePath.QualifiedName, defaultValue, asValue: true, force: false, EngineSessionState);
+                }
                 throw new NotSupportedException(message);
             }
         }

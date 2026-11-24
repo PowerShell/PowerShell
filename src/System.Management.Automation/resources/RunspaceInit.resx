@@ -228,4 +228,7 @@
   <data name="PSEditionDescription" xml:space="preserve">
     <value>Edition information for the current PowerShell session</value>
   </data>
+  <data name="PSScopedPropertiesDescription" xml:space="preserve">
+    <value>Provides access to scoped engine settings.</value>
+  </data>
 </root>

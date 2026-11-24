@@ -50,6 +50,34 @@ namespace System.Management.Automation
         /// </summary>
         internal SessionStateScope Parent { get; set; }
 
+        private Dictionary<string, object> _scopedSettings;
+
+        internal bool IsRemoved { get; private set; }
+
+        internal bool TryGetScopedSetting(string key, out object value)
+        {
+            value = null;
+            return _scopedSettings?.TryGetValue(key, out value) == true;
+        }
+
+        internal void SetScopedSetting(string key, object value)
+        {
+            (_scopedSettings ??= new())[key] = value;
+        }
+
+        internal void RemoveScopedSetting(string key)
+        {
+            _scopedSettings?.Remove(key);
+        }
+
+        internal void ClearScopedSettings() => _scopedSettings = null;
+
+        internal void MarkRemoved()
+        {
+            ClearScopedSettings();
+            IsRemoved = true;
+        }
+
         /// <summary>
         /// Defines the origin of the command that resulted in this scope
         /// being created.

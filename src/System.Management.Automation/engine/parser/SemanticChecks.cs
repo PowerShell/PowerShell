@@ -1060,6 +1060,16 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitVariableExpression(VariableExpressionAst variableExpressionAst)
         {
+            VariablePath variablePath = variableExpressionAst.VariablePath;
+            if (ExperimentalFeature.PSScopedProperties
+                && (variablePath.IsGlobal || variablePath.IsScript || variablePath.IsLocal || variablePath.IsPrivate)
+                && variablePath.UnqualifiedPath.Equals("PS", StringComparison.OrdinalIgnoreCase))
+            {
+                _parser.ReportError(variableExpressionAst.Extent,
+                    nameof(ParserStrings.ScopedPSVariableNotSupported),
+                    ParserStrings.ScopedPSVariableNotSupported);
+            }
+
             if (variableExpressionAst.Splatted
                 && variableExpressionAst.Parent is not CommandAst
                 && variableExpressionAst.Parent is not UsingExpressionAst)

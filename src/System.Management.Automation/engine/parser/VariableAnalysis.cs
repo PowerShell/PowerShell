@@ -110,11 +110,21 @@ namespace System.Management.Automation.Language
                 visitor.VisitParameters(ast.Parameters);
             }
 
+            if (visitor._mayResetErrorPreference
+                && visitor._variables.TryGetValue(SpecialVariables.ErrorActionPreference, out var preference)
+                && !preference.PreferenceVariable)
+            {
+                // Like Remove-Variable, Reset needs removable storage. Advanced functions retain
+                // their preallocated preference slot and its existing removal behavior.
+                preference.LocalTupleIndex = VariableAnalysis.ForceDynamic;
+            }
+
             localsAllocated = visitor._variables.Count(static details => details.Value.LocalTupleIndex != VariableAnalysis.Unanalyzed);
             return visitor._variables;
         }
 
         private bool _disableOptimizations;
+        private bool _mayResetErrorPreference;
 
         private readonly Dictionary<string, VariableAnalysisDetails> _variables
             = new Dictionary<string, VariableAnalysisDetails>(StringComparer.OrdinalIgnoreCase);
@@ -298,6 +308,23 @@ namespace System.Management.Automation.Language
                 // errors. (See VariableNotWritableRare for the errors that happen when this issue arises.)
 
                 _disableOptimizations = true;
+            }
+
+            return AstVisitAction.Continue;
+        }
+
+        public override AstVisitAction VisitInvokeMemberExpression(InvokeMemberExpressionAst memberExpressionAst)
+        {
+            if (ExperimentalFeature.PSScopedProperties
+                && !memberExpressionAst.Static
+                && memberExpressionAst.Member is StringConstantExpressionAst method
+                && method.Value.Equals(nameof(PSScopedPropertyFacade.Reset), StringComparison.OrdinalIgnoreCase)
+                && memberExpressionAst.Arguments is { Count: 1 } arguments
+                && (arguments[0] is not StringConstantExpressionAst path
+                    || path.Value.Equals(ScopedProperties.ErrorPath, StringComparison.OrdinalIgnoreCase)))
+            {
+                // A facade can be captured in another variable, so its receiver cannot always be resolved statically.
+                _mayResetErrorPreference = true;
             }
 
             return AstVisitAction.Continue;

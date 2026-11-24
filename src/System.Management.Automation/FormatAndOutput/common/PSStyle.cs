@@ -4,6 +4,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Runspaces;
 
 namespace System.Management.Automation
 {
@@ -331,7 +332,31 @@ namespace System.Management.Automation
             /// <summary>
             /// Gets or sets the view for progress bar.
             /// </summary>
-            public ProgressView View { get; set; } = ProgressView.Minimal;
+            public ProgressView View
+            {
+                get
+                {
+                    if (ExperimentalFeature.PSScopedProperties && LocalPipeline.GetExecutionContextFromTLS() is ExecutionContext context)
+                    {
+                        return ScopedProperties.GetProgressView(context);
+                    }
+
+                    return _view;
+                }
+
+                set
+                {
+                    if (ExperimentalFeature.PSScopedProperties && LocalPipeline.GetExecutionContextFromTLS() is ExecutionContext context)
+                    {
+                        ScopedProperties.SetProgressView(context, value);
+                        return;
+                    }
+
+                    _view = value;
+                }
+            }
+
+            private ProgressView _view = ProgressView.Minimal;
 
             /// <summary>
             /// Gets or sets a value indicating whether to use Operating System Command (OSC) control sequences 'ESC ]9;4;' to show indicator in terminal.

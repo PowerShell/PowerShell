@@ -1414,4 +1414,7 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="ConfigurationNotAllowedOnArm64" xml:space="preserve">
     <value>Configuration keyword is not supported on ARM64 processors.</value>
   </data>
+  <data name="ScopedPSVariableNotSupported" xml:space="preserve">
+    <value>Scope-qualified references to $PS are not supported. Use $PS.AtScope('Local'), $PS.AtScope('Script'), or $PS.AtScope('Global') to target a scope.</value>
+  </data>
 </root>

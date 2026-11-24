@@ -115,6 +115,7 @@ namespace System.Management.Automation
             {
                 // Clear the variable table
                 GlobalScope.Variables.Clear();
+                GlobalScope.ClearScopedSettings();
 
                 // Add in the per-scope default variables.
                 GlobalScope.AddSessionStateScopeDefaultVariables();
@@ -132,6 +133,15 @@ namespace System.Management.Automation
                                                                          ScopedItemOptions.None, attributes,
                                                                          RunspaceInit.PSDefaultParameterValuesDescription);
             GlobalScope.SetVariable(psDefaultParameterValuesVariable.Name, psDefaultParameterValuesVariable, false, false, this, fastPath: true);
+
+            if (ExperimentalFeature.PSScopedProperties)
+            {
+                var scopedProperties = new PSVariable(SpecialVariables.PS, new PSScopedPropertyFacade(), ScopedItemOptions.Constant | ScopedItemOptions.AllScope)
+                {
+                    Description = RunspaceInit.PSScopedPropertiesDescription,
+                };
+                GlobalScope.SetVariable(scopedProperties.Name, scopedProperties, false, false, this, fastPath: true);
+            }
         }
 
         #endregion Constructor

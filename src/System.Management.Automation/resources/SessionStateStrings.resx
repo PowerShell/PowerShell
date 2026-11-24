@@ -655,4 +655,19 @@
     <value>Changing or creating the variable '{0}' scope to AllScope will be prevented in ConstrainedLanguage mode.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
+  <data name="UnknownScopedSetting" xml:space="preserve">
+    <value>'{0}' is not a scoped setting. Specify 'ActionPreference.Error' or 'Style.Progress.View'.</value>
+  </data>
+  <data name="InvalidScopedSettingScope" xml:space="preserve">
+    <value>'{0}' is not a supported scope for scoped settings. Specify 'Local', 'Script', or 'Global'.</value>
+  </data>
+  <data name="NoScopedSettingExecutionContext" xml:space="preserve">
+    <value>Scoped settings require an active PowerShell execution context.</value>
+  </data>
+  <data name="ExpiredScopedSettingScope" xml:space="preserve">
+    <value>The scope bound to this scoped settings view has ended.</value>
+  </data>
+  <data name="ForeignScopedSettingScope" xml:space="preserve">
+    <value>The scope bound to this scoped settings view belongs to a different runspace.</value>
+  </data>
 </root>

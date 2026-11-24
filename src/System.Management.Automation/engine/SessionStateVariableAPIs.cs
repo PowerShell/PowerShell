@@ -529,10 +529,12 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="variablePath"/> is null.
         /// </exception>
+        /// <param name="startingScope">The scope for an unqualified lookup, or null to use the current scope.</param>
         internal PSVariable GetVariableItem(
             VariablePath variablePath,
             out SessionStateScope scope,
-            CommandOrigin origin)
+            CommandOrigin origin,
+            SessionStateScope startingScope = null)
         {
             scope = null;
 
@@ -544,7 +546,7 @@ namespace System.Management.Automation
             Dbg.Diagnostics.Assert(variablePath.IsVariable, "Can't get variable w/ non-variable path");
 
             VariableScopeItemSearcher searcher =
-                new VariableScopeItemSearcher(this, variablePath, origin);
+                new VariableScopeItemSearcher(this, variablePath, origin, startingScope);
 
             PSVariable result = null;
 

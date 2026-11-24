@@ -319,6 +319,7 @@ namespace System.Management.Automation
             }
 
             scope.Parent = null;
+            scope.MarkRemoved();
         }
     }
 }
