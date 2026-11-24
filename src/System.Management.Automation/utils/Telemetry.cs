@@ -861,28 +861,29 @@ namespace Microsoft.PowerShell.Telemetry
                 return;
             }
 
-            // This is the payload which reports the startup information of OS and shell details.
-            var properties = new Dictionary<string, string>();
-
-            // This is the payload for the parameter data which is sent as a metric.
-            var parameters = new Dictionary<string, double>();
-
             // The variable POWERSHELL_DISTRIBUTION_CHANNEL is set in our docker images and
             // by various other environments. This allows us to track the actual docker OS as
             // OSDescription provides only "linuxkit" which has limited usefulness.
             var channel = Environment.GetEnvironmentVariable("POWERSHELL_DISTRIBUTION_CHANNEL");
 
-            // Construct the payload for the OS and shell details.
-            properties.Add("SessionId", s_sessionId);
-            properties.Add("UUID", s_uniqueUserIdentifier);
-            properties.Add("GitCommitID", PSVersionInfo.GitCommitId);
-            properties.Add("OSDescription", RuntimeInformation.OSDescription);
-            properties.Add("RuntimeIdentifier", RuntimeInformation.RuntimeIdentifier);
-            properties.Add("OSChannel", string.IsNullOrEmpty(channel) ? "unknown" : channel);
-            properties.Add("StartMode", string.IsNullOrEmpty(mode) ? "unknown" : mode);
+            // This is the payload which reports the startup information of OS and shell details.
+            var properties = new Dictionary<string, string>
+            {
+                ["SessionId"] = s_sessionId,
+                ["UUID"] = s_uniqueUserIdentifier,
+                ["GitCommitID"] = PSVersionInfo.GitCommitId,
+                ["OSDescription"] = RuntimeInformation.OSDescription,
+                ["RuntimeIdentifier"] = RuntimeInformation.RuntimeIdentifier,
+                ["OSChannel"] = string.IsNullOrEmpty(channel) ? "unknown" : channel,
+                ["StartMode"] = string.IsNullOrEmpty(mode) ? "unknown" : mode,
+            };
 
-            // Construct the payload for the parameters used.
-            parameters.Add("Param", parametersUsed);
+            // This is the payload for the parameter data which is sent as a metric.
+            var parameters = new Dictionary<string, double>
+            {
+                ["Param"] = parametersUsed,
+            };
+
             try
             {
                 s_telemetryClient.TrackEvent("ConsoleHostStartup", properties, parameters);
