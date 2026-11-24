@@ -61,10 +61,18 @@ When the feature is disabled, `$PS` remains an ordinary variable name, `$ErrorAc
 The canonical design is internal to the two prototype settings. `Hidden`, additional settings, and public setting registration are deferred.
 
 Each error preference entry has a variable adapter that supplies the metadata and exposes the entry through `Value`. Explicit `AllScope` configuration shares the entry and its adapter across scope bindings.
-A variable object returned by `Get-Variable` or `New-Variable -PassThru` tracks the live entry. After explicit removal of its last binding, the retained object can be edited independently and leaves the setting absent.
+A variable object returned by `Get-Variable` or `New-Variable -PassThru` tracks the live entry. Explicit removal of its last binding clears its value and variable options and attributes, as with an ordinary removed variable. Editing the retained object afterward leaves that binding absent.
+An object captured from a local scope that exits normally retains its value. With no other live binding, changes to that object stay independent of the caller's preference.
 
-A dot-sourced advanced invocation with an explicit `-ErrorAction` uses a temporary preference binding. Reset removes the temporary override and reveals the caller's preference. Later writes in the same invocation stay temporary until it exits.
-Dot-sourcing without that explicit common parameter writes the caller's scope in the usual way.
+A dot-sourced advanced invocation with an explicit `-ErrorAction`, or a parameter named `ErrorActionPreference`, uses a temporary preference binding. Reset removes the temporary override and reveals the caller's preference. Later writes in the same invocation stay temporary until it exits.
+Dot-sourced assignments without such a binding write the caller's scope in the usual way.
+
+## Migrating scripts
+
+- Use an `ActionPreference` member, a convertible name, or a supported numeric value when setting the error policy. Move any raw data you were storing in a child `$ErrorActionPreference` variable to an ordinary variable.
+- Replace `Clear-Variable ErrorActionPreference` with `$PS.Reset('ActionPreference.Error')` or `Remove-Variable ErrorActionPreference -Scope Local` when the goal is to resume inheritance.
+- After supplying a `PSVariable` through a session-state API, retrieve the installed object with `Get-Variable` if later code needs to edit the setting through `.Value`.
+- Put `-ErrorAction` directly on a nested command when that command needs a specific policy after the function resets its own preference.
 
 ## Compatibility decisions
 
@@ -96,17 +104,22 @@ $ErrorActionPreference = 'sToP'       # Before and after: ActionPreference Stop
 Defined numeric inputs convert to the corresponding enum member. Null, undefined numeric inputs, invalid names, and the reserved `Suspend` value are rejected.
 Failed conversion or validation preserves the previous override, or leaves inheritance in effect if there was no override.
 `Clear-Variable` and `Clear-Item Variable:ErrorActionPreference` attempt to assign null and follow the same rules. A failed forced write also preserves the `ReadOnly` option.
-Scripts that used an untyped child shadow to store a raw or invalid value will need to use an ordinary variable for that value.
+
+The built-in typed variable already rejected `Suspend` at assignment. An untyped shadow could hold `Suspend` until an effective preference read replaced it with the default and raised `NotSupportedException`.
+`Set-Variable` now rejects `Suspend` in that scope with `InvalidActionPreference` and preserves the previous value.
 
 The decision gives variable readers, the facade, and engine consumers the same type and value. Preserving raw shadows and converting on read would leave the two access paths with different results.
 Keeping a raw value alongside the typed value would require defining two observable values for the same setting and synchronizing updates to both.
 
-To reverse this decision, restore the ordinary variable lookup, creation and assignment paths in `SessionStateScope.TryGetVariable` and `SessionStateScope.SetVariable`. Restore the previous variable analysis and compiler treatment for the name.
-Route scoped and engine reads through the legacy `ExecutionContext.GetEnumPreference` conversion and fallback, and preserve the built-in variable's `ArgumentTypeConverterAttribute` in `InitialSessionState`.
-Review the `ScopedSettingVariable` conversion and raw write paths, `SetVariableCommand` and `ClearVariableCommand` force handling, and the variable provider so the reversal applies consistently.
+To reverse this decision, remove the registered-name redirects from `SessionStateScope.TryGetVariable`, `SetVariable`, `NewVariable`, and `SetVariableForce`, including initialization through `SessionStateInternal.AddSessionStateEntry` and `InitialSessionState.ResetRunspaceState`.
+Restore optimized storage for this name in `VariableAnalysis.NoteVariable` and `Compiler.DottedScriptCmdletLocalsNameIndexMap`.
+Revisit `VariableOps.SetVariableValue`, `ScriptBlock.TryBindScopedSettingParameter`, and `ScriptParameterBinder.BindScopedSettingParameter` for direct assignments and parameters.
+Route `ScopedProperties.GetErrorActionPreference` through the legacy branch of `ExecutionContext.GetEnumPreference` and keep the built-in variable's `ArgumentTypeConverterAttribute` in `InitialSessionState`.
+Retire the error descriptor's conversion and validation in `ScopedProperties.ErrorPreferenceSetting`, the associated `ScopedSettingVariable` write paths, and the scoped handling in `SetVariableCommand` and `ClearVariableCommand`. Verify provider writes through `VariableProvider.SetSessionStateItem` as well as the direct paths.
 
 `ScopedProperties.Tests.ps1` covers this decision in `uses typed conversion for the built-in preference and child-scope assignments`, `normalizes variable cmdlet writes and resumes inheritance after removal`, and `shares the canonical error preference with variable-provider item operations`.
-The feature-disabled, forced-write, provider, reserved-value, attribute, and protection cases cover the compatibility boundaries.
+The feature-disabled, forced-write, provider-content, host initialization, attribute, and protection cases cover the compatibility boundaries.
+The `A local $<ActionPreferenceVariableName> variable does not support <DisplayValue>` cases in `ActionPreference.Tests.ps1` cover `Suspend` as an enum and as a string with the feature enabled and disabled.
 
 ### Imported variable objects
 
@@ -127,11 +140,11 @@ Before the cutover, installing an ordinary `PSVariable` in a fresh scope could m
 
 The adapter makes every write to the installed variable go through the target entry's conversion and protection rules. Keeping the supplied object as the stored variable would allow its setter to write an independent raw value or, when the object came from another runspace, modify that runspace's entry.
 To reverse the ownership change, change `ScopedSettingEntry<T>.Create` and `SessionStateScope.SetScopedSettingVariable` to reuse the source object, and provide a way for its `Value` and metadata to forward safely to the destination entry.
-`ImportAndReplacementPreserveMetadataAndRejectInvalidUpdatesAtomically` in `ScopedSettingVariableTests` covers the adapter boundary. The host initialization and session-state API case in `ScopedProperties.Tests.ps1` covers the public setter path.
+`ImportAndReplacementPreserveMetadataAndRejectInvalidUpdatesAtomically` in `ScopedSettingVariableTests` covers the adapter boundary. `copies ordinary and foreign variable objects into the target setting` in `ScopedProperties.Tests.ps1` covers the public setter path and runspace isolation.
 
 Explicitly exported module variables continue to share their original object and metadata when imported into the same runspace. Before the cutover, importing a live module object into another runspace also shared the original variable. A write there could change the source module's preference.
 An import into another runspace now copies the exported value and metadata into a separate adapter. `Remove-Module` removes the imported binding in either case. A still-bound source entry keeps its value and metadata under the same removal rule as `AllScope`.
-Cross-runspace sharing would allow one runspace's commands to affect settings in another. To restore that behavior, remove the runspace check in `SessionStateScope.ImportVariable` and revert the corresponding import-provenance check used by `ModuleCmdletBase.RemoveModule`.
+Cross-runspace sharing would allow one runspace's commands to affect settings in another. To restore that behavior, remove the runspace check in `SessionStateScope.ImportVariable` and revert `SessionStateScope.IsImportedVariable` and `ScopedSettingVariable.ModuleImportSource`, used by `ModuleCmdletBase.RemoveModule`.
 The `shares explicitly exported module preferences only within the same runspace` case in `ScopedProperties.Tests.ps1` verifies shared same-runspace writes, isolated foreign writes, and module removal on both paths.
 
 ### Uniform reset
@@ -177,8 +190,18 @@ Previously, removing a child binding to an `AllScope` variable also cleared the 
 An alternative was to preserve the implicit preference for the lifetime of the advanced function. That would make the same reset call behave differently based on how the preference entered the scope.
 Another alternative was to write the default into the target scope. That would keep overriding the parent when it has a different preference.
 
-To reverse this decision while keeping typed entries, track which entries represent an advanced function's implicit `-ErrorAction` in `SetPreferenceVariables()` in `CompiledScriptBlock.cs` and reinstate the removal restriction in `ScopedProperties.ResetErrorActionPreference` and `SessionStateScope.RemoveScopedSettingVariable`.
-Restore the ordinary optimized-local distinction in `VariableAnalysis` to reinstate the old dynamic reset restriction. Restoring the shared-object clearing behavior would require changing when `ScopedSettingEntry.ReleaseBinding` detaches its adapter.
+To reverse this decision while keeping typed entries, preserve the origin of each implicit `-ErrorAction` value in `PSScriptCmdlet.SetPreferenceVariables` and `SessionStateScope.InitializeErrorPreference`.
+Reinstate the removal restriction in `ScopedProperties.ResetErrorActionPreference` and `SessionStateScope.RemoveScopedSettingVariable`.
+Restore the optimized-local distinction in `VariableAnalysis.NoteVariable` and the former literal-reset analysis to reinstate the old dynamic restriction. For dot-sourced invocations, review `SessionStateScope.TryGetDottedScopedVariableTarget` and `SetVariableCommand.TrySetActiveScopedBinding` as well as the reset path.
+Restoring shared-object clearing would require changing when `ScopedSettingEntry.ReleaseBinding` calls `ScopedSettingVariable.Detach`. Keep normal scope exit behavior in `SessionStateScope.ClearScopedSettings` and `SessionStateScope.DottedScopedVariable.Release` when changing explicit removal.
 
 `ScopedProperties.Tests.ps1` covers reset in `resets implicit advanced-function preferences and keeps explicit command-level precedence`, `resets error overrides in optimized functions with and without a variable breakpoint`, and the dot-sourcing and `AllScope` cases.
-The ordinary reset, bound-scope, and protected-variable cases cover inheritance, targeting, and removal protections.
+`uses the inherited policy for a nested command immediately after either form of reset` covers command execution directly after removal. The captured-variable cases cover the difference between explicit removal and normal scope exit.
+
+## Final validation
+
+The .NET 11 Windows build passed. The selected Pester suites passed 452 tests in each feature-enabled and feature-disabled run, including all 38 scoped-properties cases, variable cmdlets and provider operations, automatic variables, preference and command error handling, clean blocks, module import/removal, and progress. Each run had one console-dependent skip and four pending cases.
+
+The full xUnit run completed with 446 passes, six skips, and eight locale-dependent failures. Seven were the decimal-format expectations in `UtilsTests.DisplayHumanReadableFileSize` reproduced in the baseline. The remaining failure was the unchanged `RemoteHyperVTests.ValidateTokenTimeoutFails` assertion expecting an English socket error message while Windows returned Swedish. The initial baseline also encountered a socket startup race and hung; the final run completed. These failures were not changed or suppressed. All 15 focused scoped-properties, adapter, and progress xUnit cases passed.
+
+The final source audit checked the scope mutation and initialization paths, compiler and parameter binding, tuple and debugger enumeration, module imports, retained variables, and engine preference consumers. Command-level preference caches remain intentional snapshots; no enabled error-preference tuple slot is exposed as an authoritative value. Local validation logs are retained under `artifacts/scoped-properties`.

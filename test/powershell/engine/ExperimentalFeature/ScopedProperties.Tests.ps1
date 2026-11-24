@@ -285,6 +285,30 @@ Describe 'PSScopedProperties' -Tag 'CI' {
         )
     }
 
+    It 'updates retained variables through the provider and detaches them on removal' {
+        $result = Invoke-ScopedPropertiesTest {
+            $PS.ActionPreference.Error = 'Stop'
+            $path = 'Variable:ErrorActionPreference'
+            $retained = Get-Item -LiteralPath $path
+
+            Set-Content -LiteralPath $path -Value 'sIlEnTlYcOnTiNuE'
+            "$($retained.Value.GetType().Name)/$($retained.Value)/$(Get-Content -LiteralPath $path)"
+            try { Set-Content -LiteralPath $path -Value 500 -ErrorAction Stop } catch { 'invalid content rejected' }
+            try { Clear-Content -LiteralPath $path -ErrorAction Stop } catch { 'clear content rejected' }
+            try { Clear-Item -LiteralPath $path -ErrorAction Stop } catch { 'clear item rejected' }
+            "$($retained.Value)/$($PS.ActionPreference.Error)"
+
+            Remove-Item -LiteralPath $path
+            "$($null -eq $retained.Value)/$($PS.ActionPreference.Error)/$(Test-Path -LiteralPath $path)"
+            $retained.Value = 'detached'
+            "$($retained.Value)/$(Test-Path -LiteralPath $path)"
+        }
+        $result | Should -BeExactly @(
+            'ActionPreference/SilentlyContinue/SilentlyContinue', 'invalid content rejected', 'clear content rejected', 'clear item rejected',
+            'SilentlyContinue/SilentlyContinue', 'True/Continue/False', 'detached/False'
+        )
+    }
+
     It 'shares AllScope writes and removes only the target scope binding' {
         $result = Invoke-ScopedPropertiesTest {
             $PS.ActionPreference.Error = 'Stop'
@@ -385,6 +409,30 @@ Describe 'PSScopedProperties' -Tag 'CI' {
             'assigned: SilentlyContinue', 'continued with facade preference',
             'command stopped', 'caller: Continue', 'facade stopped command'
         )
+    }
+
+    It 'uses the inherited policy for a nested command immediately after either form of reset' {
+        $result = Invoke-ScopedPropertiesTest {
+            function Invoke-PreferenceReset {
+                [CmdletBinding()]
+                param([switch] $Dynamic)
+
+                if ($Dynamic) {
+                    $method = 'Reset'
+                    $PS.$method('ActionPreference.Error')
+                } else {
+                    $PS.Reset('ActionPreference.Error')
+                }
+
+                Write-Error 'expected'
+                "continued with $ErrorActionPreference"
+            }
+
+            $PS.ActionPreference.Error = 'SilentlyContinue'
+            Invoke-PreferenceReset -ErrorAction Stop
+            Invoke-PreferenceReset -Dynamic -ErrorAction Stop
+        }
+        $result | Should -BeExactly @('continued with SilentlyContinue', 'continued with SilentlyContinue')
     }
 
     It 'keeps an error preference cached for an existing command and uses new values for later commands' {
@@ -652,6 +700,41 @@ $scriptSettings = $PS.AtScope('Script')
         $result | Should -Be @('Minimal/Classic', 'Minimal', 'expired progress read rejected')
     }
 
+    It 'keeps a captured error variable synchronized until its last binding is reset' {
+        $result = Invoke-ScopedPropertiesTest {
+            $PS.ActionPreference.Error = 'Stop'
+            & {
+                $ErrorActionPreference = 'Continue'
+                $captured = Get-Variable ErrorActionPreference -Scope Local
+                $PS.ActionPreference.Error = 'SilentlyContinue'
+                "$($captured.Value.GetType().Name)/$($captured.Value)"
+                $captured.Value = 'cOnTiNuE'
+                "$ErrorActionPreference/$($PS.ActionPreference.Error)"
+
+                $PS.Reset('ActionPreference.Error')
+                "$($null -eq $captured.Value)/$ErrorActionPreference"
+                $captured.Value = 'detached'
+                "$($captured.Value)/$($null -eq (Get-Variable ErrorActionPreference -Scope Local -ErrorAction Ignore))/$($PS.ActionPreference.Error)"
+            }
+        }
+        $result | Should -BeExactly @('ActionPreference/SilentlyContinue', 'Continue/Continue', 'True/Stop', 'detached/True/Stop')
+    }
+
+    It 'retains a captured error variable value after its scope exits' {
+        $result = Invoke-ScopedPropertiesTest {
+            $PS.ActionPreference.Error = 'Stop'
+            $captured = & {
+                $ErrorActionPreference = 'SilentlyContinue'
+                Get-Variable ErrorActionPreference -Scope Local
+            }
+
+            "$($captured.Value.GetType().Name)/$($captured.Value)/$($PS.ActionPreference.Error)"
+            $captured.Value = 'cOnTiNuE'
+            "$($captured.Value)/$ErrorActionPreference/$($PS.ActionPreference.Error)"
+        }
+        $result | Should -BeExactly @('ActionPreference/SilentlyContinue/Stop', 'Continue/Stop/Stop')
+    }
+
     It 'resolves configured settings in module scopes rather than importing callers' {
         $result = Invoke-ScopedPropertiesTest {
             $PS.ActionPreference.Error = 'Continue'
@@ -697,6 +780,49 @@ $scriptSettings = $PS.AtScope('Script')
             $PSStyle.Progress.View
         }
         $result | Should -Be @('Continue/Minimal', 'foreign view rejected', 'Minimal', 'False', 'Classic')
+    }
+
+    It 'copies ordinary and foreign variable objects into the target setting' {
+        $result = Invoke-ScopedPropertiesTest {
+            $PS.ActionPreference.Error = 'Stop'
+            & {
+                $supplied = [psvariable]::new('ErrorActionPreference', 'SilentlyContinue')
+                $supplied.Description = 'supplied'
+                $ExecutionContext.SessionState.PSVariable.Set($supplied)
+                $stored = Get-Variable ErrorActionPreference -Scope Local
+                "$([object]::ReferenceEquals($supplied, $stored))/$($stored.Value.GetType().Name)/$($stored.Description)"
+                $supplied.Value = 'Stop'
+                "$($supplied.Value)/$($stored.Value)/$($PS.ActionPreference.Error)"
+            }
+
+            $source = Get-Variable ErrorActionPreference -Scope Global
+            $source.Description = 'source runspace'
+            $target = [powershell]::Create()
+            try {
+                $null = $target.AddScript({
+                    param($foreign)
+                    & {
+                        $variables = $ExecutionContext.SessionState.PSVariable
+                        $variables.Set($foreign)
+                        $imported = $variables.Get('ErrorActionPreference')
+                        "$([object]::ReferenceEquals($foreign, $imported))/$($imported.Value)/$($imported.Description)"
+                        $PS.ActionPreference.Error = 'SilentlyContinue'
+                        $imported.Description = 'destination runspace'
+                        "$($imported.Value)/$($foreign.Value)/$($foreign.Description)"
+                    }
+                }).AddArgument($source)
+                $target.Invoke()
+                $target.HadErrors
+            } finally {
+                $target.Dispose()
+            }
+
+            "$($source.Value)/$($source.Description)/$($PS.ActionPreference.Error)"
+        }
+        $result | Should -BeExactly @(
+            'False/ActionPreference/supplied', 'Stop/SilentlyContinue/SilentlyContinue',
+            'False/Stop/source runspace', 'SilentlyContinue/Stop/source runspace', 'False', 'Stop/source runspace/Stop'
+        )
     }
 
     It 'shares explicitly exported module preferences only within the same runspace' {
@@ -786,6 +912,35 @@ $scriptSettings = $PS.AtScope('Script')
             'ActionPreference/SilentlyContinue', 'host write rejected', 'Stop/Stop/Host preference',
             'ActionPreference/Continue/Continue', 'True/Continue', 'False'
         )
+    }
+
+    It 'rejects an invalid host initial preference without replacing the preceding entry' {
+        $result = Invoke-ScopedPropertiesTest {
+            $iss = [initialsessionstate]::CreateDefault2()
+            $iss.Variables.Add([System.Management.Automation.Runspaces.SessionStateVariableEntry]::new(
+                'ErrorActionPreference', 'sToP', 'valid host entry'))
+            $iss.Variables.Add([System.Management.Automation.Runspaces.SessionStateVariableEntry]::new(
+                'ErrorActionPreference', 'invalid host preference', 'invalid host entry'))
+
+            $relaxed = [runspacefactory]::CreateRunspace($iss)
+            try {
+                $relaxed.Open()
+                $variable = $relaxed.SessionStateProxy.PSVariable.Get('ErrorActionPreference')
+                "$($variable.Value.GetType().Name)/$($variable.Value)/$($variable.Description)"
+            } finally {
+                $relaxed.Dispose()
+            }
+
+            $iss.ThrowOnRunspaceOpenError = $true
+            $strict = [runspacefactory]::CreateRunspace($iss)
+            try {
+                try { $strict.Open() } catch { $_.Exception.GetBaseException().Message.Contains('invalid host preference') }
+                $strict.RunspaceStateInfo.State
+            } finally {
+                $strict.Dispose()
+            }
+        }
+        $result | Should -BeExactly @('ActionPreference/Stop/valid host entry', 'True', 'Broken')
     }
 
     It 'rejects <Expression> and directs users to AtScope' -TestCases @(
