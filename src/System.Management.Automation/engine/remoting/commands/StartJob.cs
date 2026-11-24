@@ -27,6 +27,11 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
 
+        /// <summary>
+        /// A job runs in a local process that can see the caller's file, so keep the script block's file and position.
+        /// </summary>
+        protected override bool PreserveScriptBlockFileName => true;
+
         #region Parameters
 
         private const string DefinitionNameParameterSet = "DefinitionName";

@@ -183,6 +183,7 @@ namespace System.Management.Automation
         internal const string CommandText = "Cmd";
         internal const string IsScript = "IsScript";
         internal const string UseLocalScopeNullable = "UseLocalScope";
+        internal const string FileName = "FileName";
         internal const string MergeUnclaimedPreviousCommandResults = "MergePreviousResults";
         internal const string MergeMyResult = "MergeMyResult";
         internal const string MergeToResult = "MergeToResult";
