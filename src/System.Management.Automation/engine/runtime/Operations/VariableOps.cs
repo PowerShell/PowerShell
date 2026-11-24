@@ -36,11 +36,11 @@ namespace System.Management.Automation
                 variablePath = variablePath.CloneAndSetLocal();
             }
 
-            if (ScopedProperties.IsLegacySetting(variablePath.UnqualifiedPath))
+            if (ScopedProperties.TryGetPreferenceSetting(variablePath.UnqualifiedPath, out var setting))
             {
                 SessionStateScope target = variablePath.IsGlobal ? sessionState.GlobalScope
                     : variablePath.IsScript ? sessionState.ScriptScope : sessionState.CurrentScope;
-                var previous = target.GetScopedSettingVariableForWrite(variablePath.UnqualifiedPath);
+                var previous = target.GetScopedSettingVariableForWrite(setting);
                 object incoming = value;
                 if (attributeAsts is not null)
                 {

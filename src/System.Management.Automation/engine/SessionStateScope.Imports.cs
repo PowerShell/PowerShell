@@ -11,7 +11,7 @@ internal sealed partial class SessionStateScope
     /// </summary>
     internal PSVariable ImportVariable(PSVariable variable, bool force, SessionStateInternal sourceState, SessionStateInternal targetState)
     {
-        if (!ScopedProperties.IsLegacySetting(variable.Name))
+        if (!ScopedProperties.TryGetPreferenceSetting(variable.Name, out var setting))
         {
             return NewVariable(variable, force, sourceState);
         }
@@ -24,7 +24,7 @@ internal sealed partial class SessionStateScope
             return imported;
         }
 
-        var existing = GetScopedSettingVariableForWrite(variable.Name);
+        var existing = GetScopedSettingVariableForWrite(setting, out var frame);
         if (existing is not null)
         {
             SessionState.ThrowIfNotVisible(ScopeOrigin, existing);
@@ -41,8 +41,7 @@ internal sealed partial class SessionStateScope
         }
 
         // Module exports share the original variable and its metadata within a runspace.
-        TryGetDottedScopedVariableTarget(variable.Name, out var frame);
-        return BindScopedSettingVariable(variable.Name, entry, frame);
+        return BindScopedSettingVariable(entry, frame);
     }
 
     /// <summary>

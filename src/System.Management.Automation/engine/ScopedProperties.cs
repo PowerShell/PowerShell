@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Collections.Generic;
+using System.Linq;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 
@@ -69,17 +71,22 @@ public sealed class PSScopedPropertyFacade
     public void Reset(string path)
     {
         var (context, scope) = Resolve();
-        if (string.Equals(path, ScopedProperties.ErrorPath, StringComparison.OrdinalIgnoreCase))
+        if (!ScopedProperties.TryGetSetting(path, out var setting))
         {
-            ScopedProperties.ResetErrorActionPreference(context, scope);
+            throw new ArgumentException(StringUtil.Format(SessionStateStrings.UnknownScopedSetting, path), nameof(path));
         }
-        else if (string.Equals(path, ScopedProperties.ProgressViewSetting.Path, StringComparison.OrdinalIgnoreCase))
+
+        CommandOrigin origin = context.EngineSessionState.CurrentScope.ScopeOrigin;
+        if (setting.VariableName is { } name && !ExperimentalFeature.PSScopedProperties)
         {
-            ScopedProperties.ProgressViewSetting.Reset(scope);
+            if (scope.GetVariable(name, origin) is not null)
+            {
+                scope.RemoveVariable(name, force: false);
+            }
         }
         else
         {
-            throw new ArgumentException(StringUtil.Format(SessionStateStrings.UnknownScopedSetting, path), nameof(path));
+            scope.ResetScopedSetting(setting, origin);
         }
     }
 
@@ -120,16 +127,28 @@ public sealed class PSScopedActionPreference
     /// <summary>Gets or sets the error action preference.</summary>
     public ActionPreference Error
     {
-        get
-        {
-            var (context, scope) = _facade.Resolve();
-            return ScopedProperties.GetErrorActionPreference(context, scope);
-        }
+        get => GetPreference(ScopedProperties.ErrorPreferenceSetting);
+        set => SetPreference(ScopedProperties.ErrorPreferenceSetting, value);
+    }
 
-        set
+    private ActionPreference GetPreference(ScopedActionPreferenceSetting setting)
+    {
+        var (context, scope) = _facade.Resolve();
+        return context.GetEnumPreference(setting.VariablePath, setting.DefaultValue, out _, scope);
+    }
+
+    private void SetPreference(ScopedActionPreferenceSetting setting, ActionPreference value)
+    {
+        var (context, scope) = _facade.Resolve();
+        var state = context.EngineSessionState;
+        CommandOrigin origin = state.CurrentScope.ScopeOrigin;
+        if (ExperimentalFeature.PSScopedProperties)
         {
-            var (context, scope) = _facade.Resolve();
-            ScopedProperties.SetErrorActionPreference(context, scope, value);
+            scope.SetScopedSettingValue(setting, value, state, origin);
+        }
+        else
+        {
+            scope.SetVariable(setting.VariableName, value, asValue: true, force: false, state, origin);
         }
     }
 }
@@ -170,13 +189,13 @@ public sealed class PSScopedProgressStyle
         get
         {
             var (_, scope) = _facade.Resolve();
-            return ScopedProperties.ProgressViewSetting.GetValue(scope);
+            return scope.GetScopedSettingValue(ScopedProperties.ProgressViewSetting);
         }
 
         set
         {
             var (_, scope) = _facade.Resolve();
-            ScopedProperties.ProgressViewSetting.SetValue(scope, value);
+            scope.SetScopedSettingValue(ScopedProperties.ProgressViewSetting, value);
         }
     }
 }
@@ -184,47 +203,25 @@ public sealed class PSScopedProgressStyle
 /// <summary>
 /// Identifies a setting independently of the entries holding its values in individual scopes.
 /// </summary>
-internal abstract class ScopedSetting(string path)
+internal abstract class ScopedSetting(string path, string variableName)
 {
     internal string Path { get; } = path;
-}
-
-internal sealed class ScopedSetting<T>(string path, T defaultValue, string variableName = null, Action<T> validate = null) : ScopedSetting(path)
-{
-    internal T DefaultValue { get; } = defaultValue;
 
     internal string VariableName { get; } = variableName;
 
-    /// <summary>
-    /// Resolves the nearest scope entry, excluding private ancestor variables, or returns the setting default.
-    /// Temporary dotted-command bindings are resolved separately by the preference-specific reader.
-    /// </summary>
-    internal T GetValue(SessionStateScope scope)
-    {
-        SessionStateScope target = scope;
-        for (; scope is not null; scope = scope.Parent)
-        {
-            if (scope.GetScopedSetting(this) is ScopedSettingEntry<T> entry
-                && (scope == target || entry.Variable?.IsPrivate != true))
-            {
-                return entry.Variable is { } variable && variable.Value is T value ? value : entry.Value;
-            }
-        }
+    internal abstract ScopedSettingEntry CreateEntry(object value);
 
-        return DefaultValue;
-    }
+    internal abstract ScopedSettingEntry CreateEntryFromVariable(PSVariable source);
+}
 
-    internal void SetValue(SessionStateScope scope, object value)
-    {
-        if (scope.GetScopedSetting(this) is ScopedSettingEntry<T> entry)
-        {
-            entry.SetValue(value);
-        }
-        else
-        {
-            scope.SetScopedSetting(new ScopedSettingEntry<T>(this, value));
-        }
-    }
+internal class ScopedSetting<T>(string path, T defaultValue, string variableName = null, Action<T> validate = null)
+    : ScopedSetting(path, variableName)
+{
+    internal T DefaultValue { get; } = defaultValue;
+
+    internal override ScopedSettingEntry CreateEntry(object value) => new ScopedSettingEntry<T>(this, value);
+
+    internal override ScopedSettingEntry CreateEntryFromVariable(PSVariable source) => ScopedSettingEntry<T>.Create(this, source);
 
     /// <summary>
     /// Converts and validates a candidate value without changing any scope binding.
@@ -235,15 +232,26 @@ internal sealed class ScopedSetting<T>(string path, T defaultValue, string varia
         validate?.Invoke(converted);
         return converted;
     }
+}
 
-    /// <summary>
-    /// Removes the target scope's override so subsequent reads inherit a value or use the setting default.
-    /// </summary>
-    internal void Reset(SessionStateScope scope)
+internal sealed class ScopedActionPreferenceSetting(PreferenceVariable index, ActionPreference defaultValue, VariablePath variablePath)
+    : ScopedSetting<ActionPreference>($"ActionPreference.{index}", defaultValue, variablePath.UnqualifiedPath, Validate)
+{
+    internal PreferenceVariable Index { get; } = index;
+
+    internal VariablePath VariablePath { get; } = variablePath;
+
+    private static void Validate(ActionPreference value)
     {
-        if (scope.GetScopedSetting(this) is not null)
+        if (value == ActionPreference.Suspend)
         {
-            scope.RemoveScopedSetting(this);
+            throw new PSInvalidCastException("InvalidActionPreference", null, ErrorPackage.ActionPreferenceReservedForFutureUseError, value);
+        }
+
+        // Conversion can return an already typed enum value without checking its underlying number.
+        if (!Enum.IsDefined(value))
+        {
+            LanguagePrimitives.EnumSingleTypeConverter.ThrowForUndefinedEnum("UndefinedIntegerToEnum", value, typeof(ActionPreference));
         }
     }
 }
@@ -322,18 +330,6 @@ internal sealed class ScopedSettingEntry<T> : ScopedSettingEntry
 
     internal T Value { get; private set; }
 
-    internal void SetValue(object value)
-    {
-        if (Variable is { } variable)
-        {
-            variable.Value = value;
-        }
-        else
-        {
-            Value = _setting.ConvertValue(value);
-        }
-    }
-
     internal override object GetValueRaw() => Value;
 
     internal override object ConvertValue(object value) => _setting.ConvertValue(value);
@@ -343,71 +339,41 @@ internal sealed class ScopedSettingEntry<T> : ScopedSettingEntry
 
 internal static class ScopedProperties
 {
-    internal const string ErrorPath = "ActionPreference.Error";
-    private const string ProgressViewPath = "Style.Progress.View";
-
-    internal static bool IsLegacySetting(string name)
-        => ExperimentalFeature.PSScopedProperties && name.Equals(SpecialVariables.ErrorActionPreference, StringComparison.OrdinalIgnoreCase);
-
     internal static readonly ScopedSetting<ProgressView> ProgressViewSetting = new(
-        ProgressViewPath,
+        "Style.Progress.View",
         ProgressView.Minimal);
 
-    internal static readonly ScopedSetting<ActionPreference> ErrorPreferenceSetting = new(
-        ErrorPath,
+    internal static readonly ScopedActionPreferenceSetting ErrorPreferenceSetting = new(
+        PreferenceVariable.Error,
         InitialSessionState.DefaultErrorActionPreference,
-        SpecialVariables.ErrorActionPreference,
-        static value =>
-        {
-            if (value == ActionPreference.Suspend)
-            {
-                throw new PSInvalidCastException("InvalidActionPreference", null, ErrorPackage.ActionPreferenceReservedForFutureUseError, value);
-            }
-        });
+        SpecialVariables.ErrorActionPreferenceVarPath);
 
-    internal static ActionPreference GetErrorActionPreference(ExecutionContext context, SessionStateScope scope)
-        => ExperimentalFeature.PSScopedProperties
-            ? GetErrorActionPreference(context, scope, out _)
-            : context.GetEnumPreference(SpecialVariables.ErrorActionPreferenceVarPath, InitialSessionState.DefaultErrorActionPreference, out _, scope);
+    internal static IReadOnlyList<ScopedActionPreferenceSetting> PreferenceSettings { get; } =
+        Array.AsReadOnly<ScopedActionPreferenceSetting>([ErrorPreferenceSetting]);
 
-    /// <summary>
-    /// Resolves the scoped error preference, including active dotted bindings and private-variable inheritance rules.
-    /// Callers must ensure scoped properties are enabled; defaultUsed indicates that no binding was found.
-    /// </summary>
-    internal static ActionPreference GetErrorActionPreference(ExecutionContext context, SessionStateScope scope, out bool defaultUsed)
+    private static readonly Dictionary<string, ScopedActionPreferenceSetting> s_preferencesByName =
+        PreferenceSettings.ToDictionary(static setting => setting.VariableName, StringComparer.OrdinalIgnoreCase);
+
+    private static readonly Dictionary<string, ScopedSetting> s_settingsByPath =
+        PreferenceSettings.Append<ScopedSetting>(ProgressViewSetting).ToDictionary(static setting => setting.Path, StringComparer.OrdinalIgnoreCase);
+
+    internal static bool IsLegacySetting(string name) => TryGetPreferenceSetting(name, out _);
+
+    internal static bool TryGetPreferenceSetting(string name, out ScopedActionPreferenceSetting setting)
     {
-        SessionStateScope target = scope;
-        for (; scope is not null; scope = scope.Parent)
-        {
-            var variable = scope.GetScopedSettingVariable(SpecialVariables.ErrorActionPreference, context.EngineSessionState.CurrentScope.ScopeOrigin);
-            if (variable is not null && (scope == target || !variable.IsPrivate))
-            {
-                defaultUsed = false;
-                return (ActionPreference)variable.Value;
-            }
-        }
-
-        defaultUsed = true;
-        return ErrorPreferenceSetting.DefaultValue;
+        setting = null;
+        return ExperimentalFeature.PSScopedProperties && name is not null && s_preferencesByName.TryGetValue(name, out setting);
     }
 
-    internal static void SetErrorActionPreference(ExecutionContext context, SessionStateScope scope, ActionPreference value)
+    internal static bool TryGetSetting(string path, out ScopedSetting setting)
     {
-        var state = context.EngineSessionState;
-        scope.SetVariable(SpecialVariables.ErrorActionPreference, value, asValue: true, force: false, state, state.CurrentScope.ScopeOrigin);
-    }
-
-    internal static void ResetErrorActionPreference(ExecutionContext context, SessionStateScope scope)
-    {
-        if (scope.GetVariable(SpecialVariables.ErrorActionPreference, context.EngineSessionState.CurrentScope.ScopeOrigin) is not null)
-        {
-            scope.RemoveVariable(SpecialVariables.ErrorActionPreference, force: false);
-        }
+        setting = null;
+        return path is not null && s_settingsByPath.TryGetValue(path, out setting);
     }
 
     internal static ProgressView GetProgressView(ExecutionContext context)
-        => ProgressViewSetting.GetValue(context.EngineSessionState.CurrentScope);
+        => context.EngineSessionState.CurrentScope.GetScopedSettingValue(ProgressViewSetting);
 
     internal static void SetProgressView(ExecutionContext context, ProgressView value)
-        => ProgressViewSetting.SetValue(context.EngineSessionState.CurrentScope, value);
+        => context.EngineSessionState.CurrentScope.SetScopedSettingValue(ProgressViewSetting, value);
 }

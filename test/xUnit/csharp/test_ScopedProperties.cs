@@ -11,6 +11,24 @@ namespace PSTests.Sequential
     public class ScopedPropertiesTests
     {
         [Fact]
+        public void DescriptorLookupUsesCaseInsensitivePathsAndFeatureGatedVariableNames()
+        {
+            var error = ScopedProperties.ErrorPreferenceSetting;
+            Assert.Contains(error, ScopedProperties.PreferenceSettings);
+            Assert.Equal(PreferenceVariable.Error, error.Index);
+            Assert.True(ScopedProperties.TryGetSetting("actionpreference.ERROR", out var setting));
+            Assert.Same(error, setting);
+            Assert.True(ScopedProperties.TryGetSetting("style.progress.VIEW", out setting));
+            Assert.Same(ScopedProperties.ProgressViewSetting, setting);
+            Assert.False(ScopedProperties.TryGetSetting("ActionPreference.Progress", out _));
+
+            bool found = ScopedProperties.TryGetPreferenceSetting("erroractionPREFERENCE", out var preference);
+            Assert.Equal(ExperimentalFeature.PSScopedProperties, found);
+            Assert.Same(found ? error : null, preference);
+            Assert.False(ScopedProperties.TryGetPreferenceSetting("ProgressPreference", out _));
+        }
+
+        [Fact]
         public void FacadeRequiresExecutionContextAndLegacyStyleKeepsItsContextFreeValue()
         {
             Runspace previousRunspace = Runspace.DefaultRunspace;
@@ -83,24 +101,24 @@ namespace PSTests.Sequential
             var child = new SessionStateScope(parent);
 
             Assert.Null(parent.GetScopedSetting(setting));
-            Assert.Equal(ProgressView.Minimal, setting.GetValue(child));
+            Assert.Equal(ProgressView.Minimal, child.GetScopedSettingValue(setting));
 
-            setting.SetValue(parent, 1);
-            setting.Reset(child);
+            parent.SetScopedSettingValue(setting, 1);
+            child.ResetScopedSetting(setting);
             Assert.Null(child.GetScopedSetting(setting));
-            Assert.Equal(ProgressView.Classic, setting.GetValue(child));
+            Assert.Equal(ProgressView.Classic, child.GetScopedSettingValue(setting));
 
-            setting.SetValue(child, ProgressView.Classic);
+            child.SetScopedSettingValue(setting, ProgressView.Classic);
             var entry = child.GetScopedSetting(setting);
             Assert.NotNull(entry);
-            setting.SetValue(child, "minimal");
+            child.SetScopedSettingValue(setting, "minimal");
             Assert.Same(entry, child.GetScopedSetting(setting));
-            Assert.Equal(ProgressView.Minimal, setting.GetValue(child));
-            Assert.Equal(ProgressView.Classic, setting.GetValue(parent));
+            Assert.Equal(ProgressView.Minimal, child.GetScopedSettingValue(setting));
+            Assert.Equal(ProgressView.Classic, parent.GetScopedSettingValue(setting));
 
-            setting.Reset(child);
+            child.ResetScopedSetting(setting);
             Assert.Null(child.GetScopedSetting(setting));
-            Assert.Equal(ProgressView.Classic, setting.GetValue(child));
+            Assert.Equal(ProgressView.Classic, child.GetScopedSettingValue(setting));
         }
 
         [Theory]
@@ -112,17 +130,17 @@ namespace PSTests.Sequential
             var setting = ScopedProperties.ProgressViewSetting;
             var parent = new SessionStateScope(null);
             var child = new SessionStateScope(parent);
-            setting.SetValue(parent, ProgressView.Classic);
+            parent.SetScopedSettingValue(setting, ProgressView.Classic);
 
-            Assert.Throws<PSInvalidCastException>(() => setting.SetValue(child, value));
+            Assert.Throws<PSInvalidCastException>(() => child.SetScopedSettingValue(setting, value));
             Assert.Null(child.GetScopedSetting(setting));
-            Assert.Equal(ProgressView.Classic, setting.GetValue(child));
+            Assert.Equal(ProgressView.Classic, child.GetScopedSettingValue(setting));
 
-            setting.SetValue(child, ProgressView.Minimal);
+            child.SetScopedSettingValue(setting, ProgressView.Minimal);
             var entry = child.GetScopedSetting(setting);
-            Assert.Throws<PSInvalidCastException>(() => setting.SetValue(child, value));
+            Assert.Throws<PSInvalidCastException>(() => child.SetScopedSettingValue(setting, value));
             Assert.Same(entry, child.GetScopedSetting(setting));
-            Assert.Equal(ProgressView.Minimal, setting.GetValue(child));
+            Assert.Equal(ProgressView.Minimal, child.GetScopedSettingValue(setting));
         }
 
         [Fact]

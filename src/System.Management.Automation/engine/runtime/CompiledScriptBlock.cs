@@ -1390,7 +1390,7 @@ namespace System.Management.Automation
 
             var path = new VariablePath(parameter.Name);
             string name = path.UnqualifiedPath;
-            if (!path.IsVariable || !ScopedProperties.IsLegacySetting(name))
+            if (!path.IsVariable || !ScopedProperties.TryGetPreferenceSetting(name, out var setting))
             {
                 return false;
             }
@@ -1398,7 +1398,7 @@ namespace System.Management.Automation
             var variable = new PSVariable(name, value, path.IsPrivate ? ScopedItemOptions.Private : ScopedItemOptions.None, parameter.Attributes);
             if (usesCmdletBinding && path.IsAnyLocal() && backupWhenDotting is null)
             {
-                state.CurrentScope.InitializeErrorPreferenceParameter(variable, state);
+                state.CurrentScope.InitializeScopedSettingParameter(setting, variable, state);
                 return true;
             }
 
@@ -2532,7 +2532,7 @@ namespace System.Management.Automation
         internal void BindErrorPreferenceParameter(PSVariable variable)
         {
             SessionStateInternal state = Context.EngineSessionState;
-            EnsureErrorPreferenceScope(state).InitializeErrorPreferenceParameter(variable, state);
+            EnsureErrorPreferenceScope(state).InitializeScopedSettingParameter(ScopedProperties.ErrorPreferenceSetting, variable, state);
         }
 
         private SessionStateScope EnsureErrorPreferenceScope(SessionStateInternal state)
@@ -2567,7 +2567,7 @@ namespace System.Management.Automation
                 if (ExperimentalFeature.PSScopedProperties)
                 {
                     SessionStateInternal state = Context.EngineSessionState;
-                    EnsureErrorPreferenceScope(state).InitializeErrorPreference(_commandRuntime.ErrorAction, state);
+                    EnsureErrorPreferenceScope(state).InitializeScopedSetting(ScopedProperties.ErrorPreferenceSetting, _commandRuntime.ErrorAction, state);
                 }
                 else
                 {

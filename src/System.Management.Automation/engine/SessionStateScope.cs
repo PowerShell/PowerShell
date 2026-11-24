@@ -59,6 +59,9 @@ namespace System.Management.Automation
         /// Does not search parent scopes for an effective value.
         /// </summary>
         internal ScopedSettingEntry<T> GetScopedSetting<T>(ScopedSetting<T> setting)
+            => (ScopedSettingEntry<T>)GetScopedSetting((ScopedSetting)setting);
+
+        private ScopedSettingEntry GetScopedSetting(ScopedSetting setting)
         {
             if (setting.VariableName is not null && _variables is null)
             {
@@ -66,15 +69,20 @@ namespace System.Management.Automation
                 GetPrivateVariables();
             }
 
-            return _scopedSettings?.TryGetValue(setting, out var entry) == true ? (ScopedSettingEntry<T>)entry : null;
+            return _scopedSettings?.TryGetValue(setting, out var entry) == true ? entry : null;
         }
 
         /// <summary>
         /// Publishes a prepared entry as this scope's binding and releases any previous binding.
         /// Callers must perform applicable protection checks and validation before publication.
         /// </summary>
-        internal void SetScopedSetting(ScopedSettingEntry entry)
+        private void SetScopedSetting(ScopedSettingEntry entry)
         {
+            if (entry.Variable is not null)
+            {
+                GetPrivateVariables();
+            }
+
             _scopedSettings ??= new();
             if (_scopedSettings.TryGetValue(entry.Setting, out var previous))
             {
@@ -88,18 +96,27 @@ namespace System.Management.Automation
 
             _scopedSettings[entry.Setting] = entry;
             entry.AddBinding();
+            if (entry.Variable is { } variable)
+            {
+                _variables[entry.Setting.VariableName] = variable;
+            }
         }
 
         /// <summary>
         /// Removes this scope's binding after checking variable protections.
         /// A shared entry remains attached until its last binding is removed.
         /// </summary>
-        internal void RemoveScopedSetting(ScopedSetting setting, bool force = false)
+        private void RemoveScopedSetting(ScopedSetting setting, bool force = false)
         {
-            if (_scopedSettings?.TryGetValue(setting, out var entry) == true)
+            if (GetScopedSetting(setting) is { } entry)
             {
                 entry.Variable?.ThrowIfNotRemovable(force);
                 _scopedSettings.Remove(setting);
+                if (entry.Variable is not null)
+                {
+                    _variables.Remove(setting.VariableName);
+                }
+
                 entry.ReleaseBinding(markVariableRemoved: true);
             }
         }
@@ -360,9 +377,9 @@ namespace System.Management.Automation
         internal void AddVariable(PSVariable variable, SessionStateInternal sessionState)
         {
             var variables = GetPrivateVariables();
-            if (ScopedProperties.IsLegacySetting(variable.Name) && !variables.ContainsKey(variable.Name))
+            if (ScopedProperties.TryGetPreferenceSetting(variable.Name, out var setting) && !variables.ContainsKey(variable.Name))
             {
-                SetVariable(variable.Name, variable, asValue: false, force: false, sessionState);
+                SetScopedSettingVariable(setting, variable, asValue: false, force: false, sessionState, CommandOrigin.Internal);
             }
             else
             {
@@ -417,9 +434,9 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(name != null, "The caller should verify the name");
 
-            if (ScopedProperties.IsLegacySetting(name))
+            if (ScopedProperties.TryGetPreferenceSetting(name, out var setting))
             {
-                variable = GetScopedSettingVariable(name, origin);
+                variable = GetScopedSettingVariable(setting, origin);
                 return variable is not null;
             }
 
@@ -500,9 +517,9 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(name != null, "The caller should verify the name");
 
-            if (ScopedProperties.IsLegacySetting(name))
+            if (ScopedProperties.TryGetPreferenceSetting(name, out var setting))
             {
-                return SetScopedSettingVariable(name, value, asValue, force, sessionState, origin, replace: fastPath, bypassProtection: fastPath);
+                return SetScopedSettingVariable(setting, value, asValue, force, sessionState, origin, replace: fastPath, bypassProtection: fastPath);
             }
 
             PSVariable variable;
@@ -626,9 +643,9 @@ namespace System.Management.Automation
                 throw new NotImplementedException("SetVariableForce");
             }
 
-            if (ScopedProperties.IsLegacySetting(variableToSet.Name))
+            if (ScopedProperties.TryGetPreferenceSetting(variableToSet.Name, out var setting))
             {
-                SetScopedSettingVariable(variableToSet.Name, variableToSet, asValue: false, force: true, sessionState, CommandOrigin.Internal, replace: true, bypassProtection: true);
+                SetScopedSettingVariable(setting, variableToSet, asValue: false, force: true, sessionState, CommandOrigin.Internal, replace: true, bypassProtection: true);
                 return;
             }
 
@@ -656,9 +673,9 @@ namespace System.Management.Automation
         /// </exception>
         internal PSVariable NewVariable(PSVariable newVariable, bool force, SessionStateInternal sessionState)
         {
-            if (ScopedProperties.IsLegacySetting(newVariable.Name))
+            if (ScopedProperties.TryGetPreferenceSetting(newVariable.Name, out var setting))
             {
-                return SetScopedSettingVariable(newVariable.Name, newVariable, asValue: false, force, sessionState, ScopeOrigin, replace: true);
+                return SetScopedSettingVariable(setting, newVariable, asValue: false, force, sessionState, ScopeOrigin, replace: true);
             }
 
             PSVariable variable;
@@ -735,9 +752,9 @@ namespace System.Management.Automation
         /// </exception>
         internal void RemoveVariable(string name, bool force)
         {
-            if (ScopedProperties.IsLegacySetting(name))
+            if (ScopedProperties.TryGetPreferenceSetting(name, out var setting))
             {
-                RemoveScopedSettingVariable(name, force);
+                RemoveScopedSettingVariable(setting, force);
                 return;
             }
 

@@ -1100,7 +1100,8 @@ namespace Microsoft.PowerShell.Commands
         {
             var state = SessionState.Internal;
             var scope = state.GetScopeByID(Scope);
-            if (ReferenceEquals(matched, scope.GetScopedSettingVariableForWrite(matched.Name)))
+            if (!ScopedProperties.TryGetPreferenceSetting(matched.Name, out var setting)
+                || ReferenceEquals(matched, scope.GetScopedSettingVariableForWrite(setting)))
             {
                 variable = null;
                 return false;

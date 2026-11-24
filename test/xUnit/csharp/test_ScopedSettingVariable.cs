@@ -14,21 +14,22 @@ public class ScopedSettingVariableTests
     public void VariableAndCanonicalWritesUseTheSameTypedEntry()
     {
         var scope = new SessionStateScope(null);
-        s_setting.SetValue(scope, "cOnTiNuE");
+        scope.SetScopedSettingValue(s_setting, "cOnTiNuE");
         var variable = scope.GetScopedSetting(s_setting).Variable;
         Assert.Equal(ActionPreference.Continue, Assert.IsType<ActionPreference>(variable.Value));
 
         variable.Value = 1;
-        Assert.Equal(ActionPreference.Stop, s_setting.GetValue(scope));
-        s_setting.SetValue(scope, ActionPreference.SilentlyContinue);
+        Assert.Equal(ActionPreference.Stop, scope.GetScopedSettingValue(s_setting));
+        scope.SetScopedSettingValue(s_setting, ActionPreference.SilentlyContinue);
         Assert.Equal(ActionPreference.SilentlyContinue, variable.GetValueRaw());
 
         variable.SetValueRaw("Stop", preserveValueTypeSemantics: true);
-        Assert.Equal(ActionPreference.Stop, s_setting.GetValue(scope));
+        Assert.Equal(ActionPreference.Stop, scope.GetScopedSettingValue(s_setting));
         Assert.Throws<PSInvalidCastException>(() => variable.SetValueRaw(ActionPreference.Suspend, preserveValueTypeSemantics: false));
         Assert.Throws<PSInvalidCastException>(() => variable.Value = "invalid");
-        Assert.Throws<PSInvalidCastException>(() => s_setting.SetValue(scope, null));
-        Assert.Throws<PSInvalidCastException>(() => s_setting.SetValue(scope, 500));
+        Assert.Throws<PSInvalidCastException>(() => scope.SetScopedSettingValue(s_setting, null));
+        Assert.Throws<PSInvalidCastException>(() => scope.SetScopedSettingValue(s_setting, 500));
+        Assert.Throws<PSInvalidCastException>(() => scope.SetScopedSettingValue(s_setting, (ActionPreference)500));
         Assert.Equal(ActionPreference.Stop, variable.Value);
     }
 
@@ -36,7 +37,7 @@ public class ScopedSettingVariableTests
     public void AdapterAppliesAttributesAndValidatesAttributeEditsBeforePublication()
     {
         var scope = new SessionStateScope(null);
-        s_setting.SetValue(scope, ActionPreference.Continue);
+        scope.SetScopedSettingValue(s_setting, ActionPreference.Continue);
         var variable = scope.GetScopedSetting(s_setting).Variable;
         var allowed = new ValidateSetAttribute("Continue", "Stop");
         var transform = new TranslatePreferenceAttribute();
@@ -44,8 +45,8 @@ public class ScopedSettingVariableTests
         variable.Attributes.Add(transform);
 
         variable.Value = "halt";
-        Assert.Equal(ActionPreference.Stop, s_setting.GetValue(scope));
-        Assert.Throws<ValidationMetadataException>(() => s_setting.SetValue(scope, ActionPreference.Ignore));
+        Assert.Equal(ActionPreference.Stop, scope.GetScopedSettingValue(s_setting));
+        Assert.Throws<ValidationMetadataException>(() => scope.SetScopedSettingValue(s_setting, ActionPreference.Ignore));
         Assert.Throws<PSInvalidCastException>(() => variable.Attributes.Add(new ReplacePreferenceAttribute("invalid")));
         Assert.Throws<ValidationMetadataException>(() => variable.Attributes[1] = new ReplacePreferenceAttribute("Ignore"));
         Assert.Same(allowed, variable.Attributes[0]);
@@ -59,30 +60,30 @@ public class ScopedSettingVariableTests
     {
         var scope = new SessionStateScope(null);
         var source = new PSVariable(SpecialVariables.ErrorActionPreference, "Continue", ScopedItemOptions.ReadOnly);
-        var entry = ScopedSettingEntry<ActionPreference>.Create(s_setting, source);
-        scope.SetScopedSetting(entry);
+        scope.InitializeScopedSettingParameter(s_setting, source, sessionState: null);
+        var entry = scope.GetScopedSetting(s_setting);
 
-        Assert.Throws<SessionStateUnauthorizedAccessException>(() => s_setting.SetValue(scope, ActionPreference.Stop));
-        Assert.Throws<SessionStateUnauthorizedAccessException>(() => s_setting.Reset(scope));
+        Assert.Throws<SessionStateUnauthorizedAccessException>(() => scope.SetScopedSettingValue(s_setting, ActionPreference.Stop));
+        Assert.Throws<SessionStateUnauthorizedAccessException>(() => scope.ResetScopedSetting(s_setting));
         Assert.Throws<PSInvalidCastException>(() => entry.Variable.SetValue(null, force: true));
         Assert.Equal(ScopedItemOptions.ReadOnly, entry.Variable.Options);
         Assert.Equal(ActionPreference.Continue, entry.Value);
 
         entry.Variable.SetValue("Stop", force: true);
-        Assert.Equal(ActionPreference.Stop, s_setting.GetValue(scope));
-        scope.RemoveScopedSetting(s_setting, force: true);
+        Assert.Equal(ActionPreference.Stop, scope.GetScopedSettingValue(s_setting));
+        scope.RemoveScopedSettingVariable(s_setting, force: true);
         Assert.True(entry.Variable.WasRemoved);
         Assert.Null(entry.Variable.Value);
         Assert.Equal(ScopedItemOptions.None, entry.Variable.Options);
         entry.Variable.Value = "detached";
         Assert.Equal("detached", entry.Variable.Value);
-        Assert.Equal(ActionPreference.Continue, s_setting.GetValue(scope));
+        Assert.Equal(ActionPreference.Continue, scope.GetScopedSettingValue(s_setting));
 
         source = new PSVariable(SpecialVariables.ErrorActionPreference, "Continue", ScopedItemOptions.Constant);
-        entry = ScopedSettingEntry<ActionPreference>.Create(s_setting, source);
-        scope.SetScopedSetting(entry);
+        scope.InitializeScopedSettingParameter(s_setting, source, sessionState: null);
+        entry = scope.GetScopedSetting(s_setting);
         Assert.Throws<SessionStateUnauthorizedAccessException>(() => entry.Variable.SetValue("Stop", force: true));
-        Assert.Throws<SessionStateUnauthorizedAccessException>(() => scope.RemoveScopedSetting(s_setting, force: true));
+        Assert.Throws<SessionStateUnauthorizedAccessException>(() => scope.RemoveScopedSettingVariable(s_setting, force: true));
         Assert.Equal(ActionPreference.Continue, entry.Value);
     }
 
@@ -126,12 +127,12 @@ public class ScopedSettingVariableTests
         var parent = new SessionStateScope(null);
         var child = new SessionStateScope(parent);
         var grandchild = new SessionStateScope(child);
-        s_setting.SetValue(parent, ActionPreference.Stop);
+        parent.SetScopedSettingValue(s_setting, ActionPreference.Stop);
         var source = new PSVariable(SpecialVariables.ErrorActionPreference, "SilentlyContinue", ScopedItemOptions.Private);
-        child.SetScopedSetting(ScopedSettingEntry<ActionPreference>.Create(s_setting, source));
+        child.InitializeScopedSettingParameter(s_setting, source, sessionState: null);
 
-        Assert.Equal(ActionPreference.SilentlyContinue, s_setting.GetValue(child));
-        Assert.Equal(ActionPreference.Stop, s_setting.GetValue(grandchild));
+        Assert.Equal(ActionPreference.SilentlyContinue, child.GetScopedSettingValue(s_setting));
+        Assert.Equal(ActionPreference.Stop, grandchild.GetScopedSettingValue(s_setting));
     }
 
     [Fact]
@@ -140,27 +141,27 @@ public class ScopedSettingVariableTests
         var parent = new SessionStateScope(null);
         var child = new SessionStateScope(parent);
         var scopeThatExits = new SessionStateScope(parent);
-        var source = new PSVariable("AdapterAllScopeProbe", "Stop", ScopedItemOptions.AllScope);
-        var entry = ScopedSettingEntry<ActionPreference>.Create(s_setting, source);
-        parent.SetScopedSetting(entry);
+        var source = new PSVariable(SpecialVariables.ErrorActionPreference, "Stop", ScopedItemOptions.AllScope);
+        parent.InitializeScopedSettingParameter(s_setting, source, sessionState: null);
+        var entry = parent.GetScopedSetting(s_setting);
 
-        s_setting.SetValue(child, "SilentlyContinue");
+        child.SetScopedSettingValue(s_setting, "SilentlyContinue");
         Assert.Same(entry, child.GetScopedSetting(s_setting));
-        Assert.Equal(ActionPreference.SilentlyContinue, s_setting.GetValue(parent));
+        Assert.Equal(ActionPreference.SilentlyContinue, parent.GetScopedSettingValue(s_setting));
         child.GetScopedSetting(s_setting).Variable.Description = "shared";
         Assert.Equal("shared", entry.Variable.Description);
 
-        s_setting.Reset(child);
+        child.ResetScopedSetting(s_setting);
         Assert.Null(child.GetScopedSetting(s_setting));
         Assert.False(entry.Variable.WasRemoved);
-        Assert.Equal(ActionPreference.SilentlyContinue, s_setting.GetValue(child));
+        Assert.Equal(ActionPreference.SilentlyContinue, child.GetScopedSettingValue(s_setting));
 
         Assert.Same(entry, scopeThatExits.GetScopedSetting(s_setting));
         scopeThatExits.MarkRemoved();
         Assert.False(entry.Variable.WasRemoved);
         Assert.Equal(ActionPreference.SilentlyContinue, entry.Variable.Value);
 
-        s_setting.Reset(parent);
+        parent.ResetScopedSetting(s_setting);
         Assert.True(entry.Variable.WasRemoved);
         Assert.Null(entry.Variable.Value);
     }
