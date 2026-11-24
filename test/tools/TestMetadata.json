@@ -1,6 +1,10 @@
 {
   "ExperimentalFeatures": {
     "ExpTest.FeatureOne": [ "test/powershell/engine/ExperimentalFeature/ExperimentalFeature.Basic.Tests.ps1" ],
+    "PSScopedProperties": [
+      "test/powershell/engine/ExperimentalFeature/ScopedProperties.Tests.ps1",
+      "test/powershell/engine/ExperimentalFeature/ScopedProperties.Enabled.Tests.ps1"
+    ],
     "PSSerializeJSONLongEnumAsNumber": [ "test/powershell/Modules/Microsoft.PowerShell.Utility/ConvertTo-Json.PSSerializeJSONLongEnumAsNumber.Tests.ps1" ]
   }
 }
