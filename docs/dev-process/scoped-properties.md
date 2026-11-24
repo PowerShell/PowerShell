@@ -1,5 +1,7 @@
 # Scoped properties prototype
 
+For the proposed expansion beyond this prototype, see the [scoped properties expansion plan](scoped-properties-expansion-plan.md).
+
 Run `Enable-ExperimentalFeature PSScopedProperties` and start a new PowerShell process to activate the feature. If you have no enabled experimental features in your user configuration, you can also save the following as `scoped-properties.json` and start a prototype build with `pwsh -NoProfile -SettingsFile ./scoped-properties.json`. A nonempty list of experimental features in the user configuration takes precedence over the list provided by `-SettingsFile`.
 
 ```json
