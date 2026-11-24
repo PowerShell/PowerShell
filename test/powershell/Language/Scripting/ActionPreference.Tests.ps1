@@ -126,6 +126,24 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
             $DisplayValue
         )
 
+        if ($ActionPreferenceVariableName -eq 'ErrorActionPreference' -and $EnabledExperimentalFeatures.Contains('PSScopedProperties')) {
+            $ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
+            $reachedCommand = $false
+            $e = try {
+                Set-Variable -Name $ActionPreferenceVariableName -Value $Value -ErrorAction Stop
+                $reachedCommand = $true
+                Test-ActionPreferenceVariableSuspendValue -Value $Value
+            } catch {
+                $_
+            }
+
+            $e.FullyQualifiedErrorId | Should -BeExactly 'InvalidActionPreference,Microsoft.PowerShell.Commands.SetVariableCommand'
+            $e.CategoryInfo.Reason | Should -BeExactly 'PSInvalidCastException'
+            $reachedCommand | Should -BeFalse
+            $ErrorActionPreference | Should -BeExactly ([System.Management.Automation.ActionPreference]::SilentlyContinue)
+            return
+        }
+
         $e = {
             Set-Variable -Name $ActionPreferenceVariableName -Value $Value
             Test-ActionPreferenceVariableSuspendValue -Value $Value

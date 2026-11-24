@@ -5195,7 +5195,7 @@ namespace Microsoft.PowerShell.Commands
                         foreach (PSVariable mv in module.SessionState.Internal.ExportedVariables)
                         {
                             PSVariable sv = ss.GetVariable(mv.Name);
-                            if (sv != null && sv == mv)
+                            if (sv != null && SessionStateScope.IsImportedVariable(sv, mv))
                             {
                                 ss.RemoveVariable(sv, BaseForce);
                                 string memberMessage = StringUtil.Format(Modules.RemovingImportedVariable, sv.Name);
@@ -7188,7 +7188,7 @@ namespace Microsoft.PowerShell.Commands
                         v.SetModule(sourceModule);
 
                         var scope = options.Local ? targetSessionState.CurrentScope : targetSessionState.ModuleScope;
-                        PSVariable newVariable = scope.NewVariable(v, true, source);
+                        PSVariable newVariable = scope.ImportVariable(v, true, source, targetSessionState);
 
                         if (isImportModulePrivate)
                         {

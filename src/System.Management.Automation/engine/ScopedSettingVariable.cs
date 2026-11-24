@@ -54,6 +54,8 @@ internal sealed class ScopedSettingVariable(string name, ScopedSettingEntry entr
 
     internal ScopedSettingEntry Entry => _entry;
 
+    internal PSVariable ModuleImportSource { get; set; }
+
     internal override object GetValueRaw() => _entry is { } attached ? attached.GetValueRaw() : base.GetValueRaw();
 
     internal override void SetValueRaw(object newValue, bool preserveValueTypeSemantics)
@@ -85,6 +87,7 @@ internal sealed class ScopedSettingVariable(string name, ScopedSettingEntry entr
     internal void Detach()
     {
         _entry = null;
+        ModuleImportSource = null;
         WasRemoved = true;
     }
 }

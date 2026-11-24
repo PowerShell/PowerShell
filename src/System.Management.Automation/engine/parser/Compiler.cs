@@ -888,9 +888,11 @@ namespace System.Management.Automation.Language
 
             for (i = 0; i < SpecialVariables.PreferenceVariables.Length; ++i)
             {
-                DottedScriptCmdletLocalsNameIndexMap.Add(
-                    SpecialVariables.PreferenceVariables[i],
-                    i + (int)AutomaticVariable.NumberOfAutomaticVariables);
+                string name = SpecialVariables.PreferenceVariables[i];
+                if (!ScopedProperties.IsLegacySetting(name))
+                {
+                    DottedScriptCmdletLocalsNameIndexMap.Add(name, i + (int)AutomaticVariable.NumberOfAutomaticVariables);
+                }
             }
 
             s_builtinAttributeGenerator.Add(typeof(CmdletBindingAttribute), NewCmdletBindingAttribute);

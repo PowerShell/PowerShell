@@ -126,13 +126,36 @@ namespace System.Management.Automation
 
             PSVariable variable = new PSVariable(varPath.UnqualifiedPath, value,
                                                  varPath.IsPrivate ? ScopedItemOptions.Private : ScopedItemOptions.None);
+            if (ScopedProperties.IsLegacySetting(varPath.UnqualifiedPath))
+            {
+                BindScopedSettingParameter(name, varPath, variable);
+                return;
+            }
+
             Context.EngineSessionState.SetVariable(varPath, variable, false, CommandOrigin.Internal);
-            RuntimeDefinedParameter runtimeDefinedParameter;
-            if (Script.RuntimeDefinedParameters.TryGetValue(name, out runtimeDefinedParameter))
+            AddBoundParameterAttributes(name, variable);
+        }
+
+        private void AddBoundParameterAttributes(string name, PSVariable variable)
+        {
+            if (Script.RuntimeDefinedParameters.TryGetValue(name, out RuntimeDefinedParameter runtimeDefinedParameter))
             {
                 // The attributes have already been checked and conversions run, so it is wrong
                 // to do so again.
                 variable.AddParameterAttributesNoChecks(runtimeDefinedParameter.Attributes);
+            }
+        }
+
+        private void BindScopedSettingParameter(string name, VariablePath path, PSVariable variable)
+        {
+            AddBoundParameterAttributes(name, variable);
+            if (path.IsAnyLocal() && Command is PSScriptCmdlet scriptCmdlet)
+            {
+                scriptCmdlet.BindErrorPreferenceParameter(variable);
+            }
+            else
+            {
+                Context.EngineSessionState.SetVariable(path, variable, false, CommandOrigin.Internal);
             }
         }
 

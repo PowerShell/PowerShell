@@ -520,6 +520,11 @@ namespace System.Management.Automation
 
         internal T GetEnumPreference<T>(VariablePath preferenceVariablePath, T defaultPref, out bool defaultUsed, SessionStateScope startingScope = null)
         {
+            if (ScopedProperties.IsLegacySetting(preferenceVariablePath.UnqualifiedPath) && typeof(T) == typeof(ActionPreference))
+            {
+                return (T)(object)ScopedProperties.GetErrorActionPreference(this, startingScope ?? EngineSessionState.CurrentScope, out defaultUsed);
+            }
+
             object val = startingScope is null
                 ? EngineSessionState.GetVariableValue(preferenceVariablePath, out _, out _)
                 : EngineSessionState.GetVariableItem(preferenceVariablePath, out _, CommandOrigin.Internal, startingScope)?.Value;

@@ -1155,7 +1155,7 @@ namespace System.Management.Automation
                                 !(string.Equals(name, "this") || string.Equals(name, "_") || string.Equals(name, "input")),
                                 "The list of variables to set in the scriptblock's scope cannot contain 'this', '_' or 'input'. These variables should be removed before passing the collection to this routine.");
                             index++;
-                            newScope.Variables.Add(name, psvar);
+                            newScope.AddVariable(psvar, context.EngineSessionState);
                         }
                     }
                 }
@@ -1187,7 +1187,8 @@ namespace System.Management.Automation
                     context,
                     !createLocalScope,
                     backupWhenDotting,
-                    locals);
+                    locals,
+                    UsesCmdletBinding);
                 locals.SetAutomaticVariable(AutomaticVariable.Args, args, context);
 
                 context.EngineSessionState.CurrentScope.ScopeOrigin = CommandOrigin.Internal;
@@ -1250,6 +1251,10 @@ namespace System.Management.Automation
                         {
                             context.EngineSessionState.SetVariable(pair.Value, false, CommandOrigin.Internal);
                         }
+                        else if (ScopedProperties.IsLegacySetting(pair.Key))
+                        {
+                            context.EngineSessionState.RemoveVariableAtScope(pair.Key, "local");
+                        }
                         else
                         {
                             context.EngineSessionState.RemoveVariable(pair.Key);
@@ -1291,7 +1296,8 @@ namespace System.Management.Automation
             ExecutionContext context,
             bool dotting,
             Dictionary<string, PSVariable> backupWhenDotting,
-            MutableTuple locals)
+            MutableTuple locals,
+            bool usesCmdletBinding = false)
         {
             var boundParameters = new CommandLineParameters();
 
@@ -1321,25 +1327,30 @@ namespace System.Management.Automation
                     valueToBind = args[i];
                 }
 
-                bool valueSet = false;
-                if (dotting && backupWhenDotting != null)
+                bool boundSetting = TryBindScopedSettingParameter(
+                    parameter, valueToBind, context.EngineSessionState, dotting ? backupWhenDotting : null, usesCmdletBinding);
+                if (!boundSetting)
                 {
-                    backupWhenDotting[parameter.Name] =
-                        context.EngineSessionState.GetVariableAtScope(parameter.Name, "local");
-                }
-                else
-                {
-                    valueSet = locals.TrySetParameter(parameter.Name, valueToBind);
-                }
+                    bool valueSet = false;
+                    if (dotting && backupWhenDotting != null)
+                    {
+                        backupWhenDotting[parameter.Name] =
+                            context.EngineSessionState.GetVariableAtScope(parameter.Name, "local");
+                    }
+                    else
+                    {
+                        valueSet = locals.TrySetParameter(parameter.Name, valueToBind);
+                    }
 
-                if (!valueSet)
-                {
-                    var variable = new PSVariable(
-                        parameter.Name,
-                        valueToBind,
-                        ScopedItemOptions.None,
-                        parameter.Attributes);
-                    context.EngineSessionState.SetVariable(variable, false, CommandOrigin.Internal);
+                    if (!valueSet)
+                    {
+                        var variable = new PSVariable(
+                            parameter.Name,
+                            valueToBind,
+                            ScopedItemOptions.None,
+                            parameter.Attributes);
+                        context.EngineSessionState.SetVariable(variable, false, CommandOrigin.Internal);
+                    }
                 }
 
                 if (!wasDefaulted)
@@ -1363,6 +1374,44 @@ namespace System.Management.Automation
             object[] result = new object[leftOverArgs];
             Array.Copy(args, parameters.Length, result, 0, result.Length);
             return result;
+        }
+
+        private static bool TryBindScopedSettingParameter(
+            RuntimeDefinedParameter parameter,
+            object value,
+            SessionStateInternal state,
+            Dictionary<string, PSVariable> backupWhenDotting,
+            bool usesCmdletBinding)
+        {
+            if (!ExperimentalFeature.PSScopedProperties)
+            {
+                return false;
+            }
+
+            var path = new VariablePath(parameter.Name);
+            string name = path.UnqualifiedPath;
+            if (!path.IsVariable || !ScopedProperties.IsLegacySetting(name))
+            {
+                return false;
+            }
+
+            var variable = new PSVariable(name, value, path.IsPrivate ? ScopedItemOptions.Private : ScopedItemOptions.None, parameter.Attributes);
+            if (usesCmdletBinding && path.IsAnyLocal() && backupWhenDotting is null)
+            {
+                state.CurrentScope.InitializeErrorPreferenceParameter(variable, state);
+                return true;
+            }
+
+            bool removeWhenDone = backupWhenDotting is not null && path.IsAnyLocal() && state.GetVariableAtScope(name, "local") is null;
+            state.SetVariable(path, variable, asValue: false, CommandOrigin.Internal);
+            if (removeWhenDone)
+            {
+                // Register cleanup after binding succeeds so an unsuccessful binding
+                // cannot remove an inherited preference.
+                backupWhenDotting[name] = null;
+            }
+
+            return true;
         }
 
         internal static void SetAutomaticVariable(AutomaticVariable variable, object value, MutableTuple locals)
@@ -2188,6 +2237,7 @@ namespace System.Management.Automation
         private readonly FunctionContext _functionContext;
 
         private MshCommandRuntime _commandRuntime;
+        private SessionStateScope.DottedScopedVariable _dottedErrorPreference;
         private bool _exitWasCalled;
         private bool _anyClauseExecuted;
 
@@ -2444,12 +2494,27 @@ namespace System.Management.Automation
         /// <summary>
         /// If the script cmdlet is dotted, this method is used to push the locals to the 'DottedScopes' of the current scope.
         /// </summary>
-        internal void PushDottedScope(SessionStateScope scope) => scope.DottedScopes.Push(_localsTuple);
+        internal void PushDottedScope(SessionStateScope scope)
+        {
+            scope.DottedScopes.Push(_localsTuple);
+            if (_dottedErrorPreference is not null)
+            {
+                scope.PushDottedScopedVariable(_dottedErrorPreference);
+            }
+        }
 
         /// <summary>
         /// If the script cmdlet is dotted, this method is used to pop the locals from the 'DottedScopes' of the current scope.
         /// </summary>
-        internal void PopDottedScope(SessionStateScope scope) => scope.DottedScopes.Pop();
+        internal void PopDottedScope(SessionStateScope scope)
+        {
+            if (_dottedErrorPreference is not null)
+            {
+                scope.PopDottedScopedVariable(_dottedErrorPreference);
+            }
+
+            scope.DottedScopes.Pop();
+        }
 
         internal void PrepareForBinding(CommandLineParameters commandLineParameters)
         {
@@ -2458,6 +2523,23 @@ namespace System.Management.Automation
                 value: commandLineParameters.GetValueToBindToPSBoundParameters(),
                 this.Context);
             _localsTuple.SetAutomaticVariable(AutomaticVariable.MyInvocation, value: MyInvocation, this.Context);
+        }
+
+        internal void BindErrorPreferenceParameter(PSVariable variable)
+        {
+            SessionStateInternal state = Context.EngineSessionState;
+            EnsureErrorPreferenceScope(state).InitializeErrorPreferenceParameter(variable, state);
+        }
+
+        private SessionStateScope EnsureErrorPreferenceScope(SessionStateInternal state)
+        {
+            SessionStateScope scope = state.CurrentScope;
+            if (!_useLocalScope && _dottedErrorPreference is null)
+            {
+                _dottedErrorPreference = scope.PushDottedScopedVariable(SpecialVariables.ErrorActionPreference, _localsTuple);
+            }
+
+            return scope;
         }
 
         private void SetPreferenceVariables()
@@ -2478,7 +2560,15 @@ namespace System.Management.Automation
 
             if (_commandRuntime.IsErrorActionSet)
             {
-                _localsTuple.SetPreferenceVariable(PreferenceVariable.Error, _commandRuntime.ErrorAction);
+                if (ExperimentalFeature.PSScopedProperties)
+                {
+                    SessionStateInternal state = Context.EngineSessionState;
+                    EnsureErrorPreferenceScope(state).InitializeErrorPreference(_commandRuntime.ErrorAction, state);
+                }
+                else
+                {
+                    _localsTuple.SetPreferenceVariable(PreferenceVariable.Error, _commandRuntime.ErrorAction);
+                }
             }
 
             if (_commandRuntime.IsWarningActionSet)
@@ -2543,6 +2633,7 @@ namespace System.Management.Automation
             commandRuntime = null;
             currentObjectInPipeline = null;
             _input.Clear();
+            _dottedErrorPreference?.Release();
 
             base.InternalDispose(true);
             _disposed = true;

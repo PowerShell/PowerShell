@@ -1808,8 +1808,21 @@ namespace System.Management.Automation
 
         private static void GetScopeVariableTable(SessionStateScope scope, Dictionary<string, PSVariable> result, bool includePrivate)
         {
+            PSVariable scopedVariable = null;
+            bool hasDottedSetting = ExperimentalFeature.PSScopedProperties
+                && scope.TryGetDottedScopedVariable(SpecialVariables.ErrorActionPreference, out scopedVariable);
+            if (hasDottedSetting && (!scopedVariable.IsPrivate || includePrivate))
+            {
+                result.TryAdd(SpecialVariables.ErrorActionPreference, scopedVariable);
+            }
+
             foreach (KeyValuePair<string, PSVariable> entry in scope.Variables)
             {
+                if (hasDottedSetting && ScopedProperties.IsLegacySetting(entry.Key))
+                {
+                    continue;
+                }
+
                 if (!result.ContainsKey(entry.Key))
                 {
                     // Also check to ensure that the variable isn't private

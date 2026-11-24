@@ -14,7 +14,7 @@ namespace System.Management.Automation
     /// A SessionStateScope defines the scope of visibility for a set
     /// of virtual drives and their data.
     /// </summary>
-    internal sealed class SessionStateScope
+    internal sealed partial class SessionStateScope
     {
         #region constructor
 
@@ -341,6 +341,20 @@ namespace System.Management.Automation
         /// </summary>
         internal IDictionary<string, PSVariable> Variables { get { return GetPrivateVariables(); } }
 
+        /// <summary>Adds a supplied variable, rejecting an existing name in this scope.</summary>
+        internal void AddVariable(PSVariable variable, SessionStateInternal sessionState)
+        {
+            var variables = GetPrivateVariables();
+            if (ScopedProperties.IsLegacySetting(variable.Name) && !variables.ContainsKey(variable.Name))
+            {
+                SetVariable(variable.Name, variable, asValue: false, force: false, sessionState);
+            }
+            else
+            {
+                variables.Add(variable.Name, variable);
+            }
+        }
+
         /// <summary>
         /// Gets the specified variable from the variable table.
         /// </summary>
@@ -387,6 +401,12 @@ namespace System.Management.Automation
         internal bool TryGetVariable(string name, CommandOrigin origin, bool fromNewOrSet, out PSVariable variable)
         {
             Diagnostics.Assert(name != null, "The caller should verify the name");
+
+            if (ScopedProperties.IsLegacySetting(name))
+            {
+                variable = GetScopedSettingVariable(name, origin);
+                return variable is not null;
+            }
 
             if (TryGetLocalVariableFromTuple(name, fromNewOrSet, out variable))
             {
@@ -464,6 +484,11 @@ namespace System.Management.Automation
         internal PSVariable SetVariable(string name, object value, bool asValue, bool force, SessionStateInternal sessionState, CommandOrigin origin = CommandOrigin.Internal, bool fastPath = false)
         {
             Diagnostics.Assert(name != null, "The caller should verify the name");
+
+            if (ScopedProperties.IsLegacySetting(name))
+            {
+                return SetScopedSettingVariable(name, value, asValue, force, sessionState, origin, replace: fastPath, bypassProtection: fastPath);
+            }
 
             PSVariable variable;
             PSVariable variableToSet = value as PSVariable;
@@ -586,6 +611,12 @@ namespace System.Management.Automation
                 throw new NotImplementedException("SetVariableForce");
             }
 
+            if (ScopedProperties.IsLegacySetting(variableToSet.Name))
+            {
+                SetScopedSettingVariable(variableToSet.Name, variableToSet, asValue: false, force: true, sessionState, CommandOrigin.Internal, replace: true, bypassProtection: true);
+                return;
+            }
+
             variableToSet.SessionState = sessionState;
             GetPrivateVariables()[variableToSet.Name] = variableToSet;
         }
@@ -610,6 +641,11 @@ namespace System.Management.Automation
         /// </exception>
         internal PSVariable NewVariable(PSVariable newVariable, bool force, SessionStateInternal sessionState)
         {
+            if (ScopedProperties.IsLegacySetting(newVariable.Name))
+            {
+                return SetScopedSettingVariable(newVariable.Name, newVariable, asValue: false, force, sessionState, ScopeOrigin, replace: true);
+            }
+
             PSVariable variable;
             bool varExists = TryGetVariable(newVariable.Name, ScopeOrigin, true, out variable);
 
@@ -684,6 +720,12 @@ namespace System.Management.Automation
         /// </exception>
         internal void RemoveVariable(string name, bool force)
         {
+            if (ScopedProperties.IsLegacySetting(name))
+            {
+                RemoveScopedSettingVariable(name, force);
+                return;
+            }
+
             Diagnostics.Assert(
                 name != null,
                 "The caller should verify the name");
@@ -723,6 +765,11 @@ namespace System.Management.Automation
 
         internal bool TrySetLocalParameterValue(string name, object value)
         {
+            if (ScopedProperties.IsLegacySetting(name))
+            {
+                return false;
+            }
+
             foreach (var dottedScope in _dottedScopes)
             {
                 if (dottedScope.TrySetParameter(name, value))
@@ -742,6 +789,12 @@ namespace System.Management.Automation
         /// </summary>
         internal bool TryGetLocalVariableFromTuple(string name, bool fromNewOrSet, out PSVariable result)
         {
+            if (ScopedProperties.IsLegacySetting(name))
+            {
+                result = null;
+                return false;
+            }
+
             foreach (var dottedScope in _dottedScopes)
             {
                 if (dottedScope.TryGetLocalVariable(name, fromNewOrSet, out result))

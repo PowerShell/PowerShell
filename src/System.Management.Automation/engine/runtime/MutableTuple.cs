@@ -119,20 +119,14 @@ namespace System.Management.Automation
 
         internal void GetVariableTable(Dictionary<string, PSVariable> result, bool includePrivate)
         {
-            // We could cache this array if it was a perf problem.
-            var orderedNames = (from keyValuePairs in _nameToIndexMap
-                                orderby keyValuePairs.Value
-                                select keyValuePairs.Key).ToArray();
-
-            for (int i = 0; i < orderedNames.Length; ++i)
+            foreach (var (name, index) in _nameToIndexMap.OrderBy(static pair => pair.Value))
             {
-                var name = orderedNames[i];
-                if (IsValueSet(i) && !result.ContainsKey(name))
+                if (IsValueSet(index) && !result.ContainsKey(name))
                 {
-                    result.Add(name, new LocalVariable(name, this, i));
+                    result.Add(name, new LocalVariable(name, this, index));
                     if (SpecialVariables.IsUnderbar(name))
                     {
-                        result.Add(SpecialVariables.PSItem, new LocalVariable(SpecialVariables.PSItem, this, i));
+                        result.Add(SpecialVariables.PSItem, new LocalVariable(SpecialVariables.PSItem, this, index));
                     }
                 }
             }

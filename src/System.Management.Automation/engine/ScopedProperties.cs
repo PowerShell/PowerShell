@@ -319,6 +319,9 @@ internal static class ScopedProperties
     internal const string ErrorPath = "ActionPreference.Error";
     private const string ProgressViewPath = "Style.Progress.View";
 
+    internal static bool IsLegacySetting(string name)
+        => ExperimentalFeature.PSScopedProperties && name.Equals(SpecialVariables.ErrorActionPreference, StringComparison.OrdinalIgnoreCase);
+
     internal static readonly ScopedSetting<ProgressView> ProgressViewSetting = new(
         ProgressViewPath,
         ProgressView.Minimal);
@@ -336,7 +339,26 @@ internal static class ScopedProperties
         });
 
     internal static ActionPreference GetErrorActionPreference(ExecutionContext context, SessionStateScope scope)
-        => context.GetEnumPreference(SpecialVariables.ErrorActionPreferenceVarPath, InitialSessionState.DefaultErrorActionPreference, out _, scope);
+        => ExperimentalFeature.PSScopedProperties
+            ? GetErrorActionPreference(context, scope, out _)
+            : context.GetEnumPreference(SpecialVariables.ErrorActionPreferenceVarPath, InitialSessionState.DefaultErrorActionPreference, out _, scope);
+
+    internal static ActionPreference GetErrorActionPreference(ExecutionContext context, SessionStateScope scope, out bool defaultUsed)
+    {
+        SessionStateScope target = scope;
+        for (; scope is not null; scope = scope.Parent)
+        {
+            var variable = scope.GetScopedSettingVariable(SpecialVariables.ErrorActionPreference, context.EngineSessionState.CurrentScope.ScopeOrigin);
+            if (variable is not null && (scope == target || !variable.IsPrivate))
+            {
+                defaultUsed = false;
+                return (ActionPreference)variable.Value;
+            }
+        }
+
+        defaultUsed = true;
+        return ErrorPreferenceSetting.DefaultValue;
+    }
 
     internal static void SetErrorActionPreference(ExecutionContext context, SessionStateScope scope, ActionPreference value)
     {

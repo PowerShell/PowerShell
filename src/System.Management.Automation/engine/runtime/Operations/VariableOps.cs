@@ -36,6 +36,38 @@ namespace System.Management.Automation
                 variablePath = variablePath.CloneAndSetLocal();
             }
 
+            if (ScopedProperties.IsLegacySetting(variablePath.UnqualifiedPath))
+            {
+                SessionStateScope target = variablePath.IsGlobal ? sessionState.GlobalScope
+                    : variablePath.IsScript ? sessionState.ScriptScope : sessionState.CurrentScope;
+                var previous = target.GetScopedSettingVariableForWrite(variablePath.UnqualifiedPath);
+                object incoming = value;
+                if (attributeAsts is not null)
+                {
+                    // Stage replacement attributes and their transformed value together.
+                    // The adapter normalizes and validates the result before publication.
+                    var attributes = GetAttributeCollection(attributeAsts);
+                    incoming = new PSVariable(variablePath.UnqualifiedPath, value, previous?.Options ?? ScopedItemOptions.None, attributes)
+                    {
+                        Description = previous?.Description ?? string.Empty,
+                    };
+                    value = ((PSVariable)incoming).GetValueRaw();
+                }
+
+                var assigned = (PSVariable)sessionState.SetVariable(variablePath, incoming, attributeAsts is null, origin);
+                if (!ReferenceEquals(previous, assigned) && executionContext._debuggingMode > 0)
+                {
+                    executionContext.Debugger.CheckVariableWrite(variablePath.UnqualifiedPath);
+                }
+
+                if (executionContext.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+                {
+                    ExecutionContext.MarkObjectAsUntrustedForVariableAssignment(assigned, target, sessionState);
+                }
+
+                return value;
+            }
+
             SessionStateScope scope;
             PSVariable var = sessionState.GetVariableItem(variablePath, out scope, origin);
 
