@@ -123,38 +123,27 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
         $e.CategoryInfo.Reason | Should -BeExactly 'ArgumentTransformationMetadataException'
     }
 
-    It 'A local $<ActionPreferenceVariableName> variable does not support <DisplayValue>' -TestCases (Join-TestCase -Set1 $actionPreferenceVariableTestCases -Set2 $actionPreferenceVariableValueTestCases) {
-        param(
-            $ActionPreferenceVariableName,
-            $StreamName,
-            $Value,
-            $DisplayValue
-        )
+    $scopedPreferenceVariables = @('DebugPreference', 'ErrorActionPreference', 'InformationPreference', 'VerbosePreference', 'WarningPreference')
+    foreach ($variableCase in $actionPreferenceVariableTestCases) {
+        $testCases = Join-TestCase -Set1 $variableCase -Set2 $actionPreferenceVariableValueTestCases
+        It 'A local $<ActionPreferenceVariableName> variable does not support <DisplayValue>' -TestCases $testCases -Skip:(
+            [ExperimentalFeature]::IsEnabled('PSScopedProperties') -and
+            $variableCase.ActionPreferenceVariableName -in $scopedPreferenceVariables
+        ) {
+            param(
+                $ActionPreferenceVariableName,
+                $StreamName,
+                $Value,
+                $DisplayValue
+            )
 
-        if ($ActionPreferenceVariableName -ne 'ProgressPreference' -and $EnabledExperimentalFeatures.Contains('PSScopedProperties')) {
-            Set-Variable -Name $ActionPreferenceVariableName -Value ([System.Management.Automation.ActionPreference]::SilentlyContinue) -Scope Local
-            $reachedCommand = $false
-            $e = try {
-                Set-Variable -Name $ActionPreferenceVariableName -Value $Value -ErrorAction Stop
-                $reachedCommand = $true
+            $e = {
+                Set-Variable -Name $ActionPreferenceVariableName -Value $Value
                 Test-ActionPreferenceVariableSuspendValue -Value $Value
-            } catch {
-                $_
-            }
+            } | Should -Throw -ErrorId "System.NotSupportedException$(if ($StreamName -ne 'Error') {",Microsoft.PowerShell.Commands.Write${StreamName}Command"})" -PassThru
 
-            $e.FullyQualifiedErrorId | Should -BeExactly 'InvalidActionPreference,Microsoft.PowerShell.Commands.SetVariableCommand'
-            $e.CategoryInfo.Reason | Should -BeExactly 'PSInvalidCastException'
-            $reachedCommand | Should -BeFalse
-            (Get-Variable -Name $ActionPreferenceVariableName -Scope Local).Value | Should -BeExactly ([System.Management.Automation.ActionPreference]::SilentlyContinue)
-            return
+            $e.CategoryInfo.Reason | Should -BeExactly 'NotSupportedException'
         }
-
-        $e = {
-            Set-Variable -Name $ActionPreferenceVariableName -Value $Value
-            Test-ActionPreferenceVariableSuspendValue -Value $Value
-        } | Should -Throw -ErrorId "System.NotSupportedException$(if ($StreamName -ne 'Error') {",Microsoft.PowerShell.Commands.Write${StreamName}Command"})" -PassThru
-
-        $e.CategoryInfo.Reason | Should -BeExactly 'NotSupportedException'
     }
 
     It 'enum disambiguation works' {

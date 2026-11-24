@@ -10,6 +10,11 @@ Describe 'PSScopedProperties in an enabled test host' -Tag 'CI' {
         @{ PreferenceName = 'Debug'; VariableName = 'DebugPreference'; DefaultPreference = 'SilentlyContinue' }
     )
 
+    $suspendCases = foreach ($preferenceCase in $preferenceCases) {
+        $preferenceCase + @{ Value = [System.Management.Automation.ActionPreference]::Suspend; ValueKind = 'an enum' }
+        $preferenceCase + @{ Value = 'Suspend'; ValueKind = 'a string' }
+    }
+
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         $PSDefaultParameterValues['It:Skip'] = -not [ExperimentalFeature]::IsEnabled('PSScopedProperties')
@@ -76,6 +81,30 @@ Describe 'PSScopedProperties in an enabled test host' -Tag 'CI' {
                 Get-Variable -Name $VariableName -Scope Local -ErrorAction Ignore | Should -BeNullOrEmpty
             }
             (Get-Variable -Name $VariableName).Value | Should -Be ([System.Management.Automation.ActionPreference]::Continue)
+        }
+    }
+
+    It 'rejects <PreferenceName> Suspend supplied as <ValueKind> during assignment' -TestCases $suspendCases {
+        param($PreferenceName, $VariableName, $Value, $ValueKind)
+
+        & {
+            $originalPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
+            Set-Variable -Name $VariableName -Value $originalPreference -Scope Local
+
+            $reachedCommand = $false
+            $record = try {
+                Set-Variable -Name $VariableName -Value $Value -Scope Local -ErrorAction Stop
+                $reachedCommand = $true
+                & "Write-$PreferenceName" 'unexpected stream message' *>$null
+            } catch {
+                $_
+            }
+
+            $record.FullyQualifiedErrorId | Should -BeExactly 'InvalidActionPreference,Microsoft.PowerShell.Commands.SetVariableCommand'
+            $record.CategoryInfo.Reason | Should -BeExactly 'PSInvalidCastException'
+            $reachedCommand | Should -BeFalse
+            (Get-Variable -Name $VariableName -Scope Local).Value | Should -BeExactly $originalPreference
+            $PS.ActionPreference.$PreferenceName | Should -BeExactly $originalPreference
         }
     }
 

@@ -132,7 +132,7 @@ Retire the shared `ScopedActionPreferenceSetting` validation, the associated `Sc
 
 `ScopedProperties.Tests.ps1` parameterizes the typed conversion, variable cmdlet, and variable provider cases over the registered preferences.
 The feature-disabled, forced-write, provider-content, host initialization, attribute, and protection cases cover the compatibility boundaries.
-The `A local $<ActionPreferenceVariableName> variable does not support <DisplayValue>` cases in `ActionPreference.Tests.ps1` cover `Suspend` as an enum and as a string with the feature enabled and disabled.
+`ActionPreference.Tests.ps1` covers legacy `Suspend` handling. `ScopedProperties.Enabled.Tests.ps1` covers assignment-time rejection of enum and string `Suspend` values for all five scoped preferences.
 
 ### Imported variable objects
 
