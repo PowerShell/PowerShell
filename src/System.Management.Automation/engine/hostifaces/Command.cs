@@ -82,6 +82,18 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
+        /// <summary>
+        /// Initializes a new script Command whose script is parsed with the file name that will be provided to the
+        /// parser when it builds the ScriptBlock from the script contents.
+        /// </summary>
+        /// <param name="script">The script contents.</param>
+        /// <param name="fileName">The file name the script came from, or null.</param>
+        internal Command(string script, string fileName)
+            : this(script, isScript: true, useLocalScope: null)
+        {
+            _fileName = fileName;
+        }
+
         internal Command(CommandInfo commandInfo)
             : this(commandInfo, false)
         {
@@ -110,6 +122,7 @@ namespace System.Management.Automation.Runspaces
             _mergeUnclaimedPreviousCommandResults = command._mergeUnclaimedPreviousCommandResults;
             IsEndOfStatement = command.IsEndOfStatement;
             CommandInfo = command.CommandInfo;
+            _fileName = command._fileName;
 
             foreach (CommandParameter param in command.Parameters)
             {
@@ -467,7 +480,7 @@ namespace System.Management.Automation.Runspaces
                         null, "ScriptsNotAllowed", ParserStrings.ScriptsNotAllowed);
                 }
 
-                ScriptBlock scriptBlock = executionContext.Engine.ParseScriptBlock(CommandText, addToHistory);
+                ScriptBlock scriptBlock = executionContext.Engine.ParseScriptBlock(CommandText, _fileName, addToHistory);
                 if (origin == Automation.CommandOrigin.Internal)
                 {
                     scriptBlock.LanguageMode = PSLanguageMode.FullLanguage;
@@ -569,6 +582,7 @@ namespace System.Management.Automation.Runspaces
         /// be deprecated, at least for internal use.
         /// </summary>
         private readonly bool? _useLocalScope;
+        private readonly string _fileName;
 
         #endregion Private fields
 

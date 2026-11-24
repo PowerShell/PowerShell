@@ -293,6 +293,184 @@ Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
         $resultStrings | Should -Contain "Terminating Error!"
     }
 
+    It 'Verifies error position uses the original script block extent with <Name> line endings' -TestCases @(
+        @{ Name = 'LF'; NewLine = "`n" }
+        @{ Name = 'CRLF'; NewLine = "`r`n" }
+    ) {
+        param ($NewLine)
+
+        # ParseInput controls the file name and lines rather than relying on this test file.
+        $script = {
+            $v = 'foo'
+            1 | ForEach-Object -Parallel {
+                $using:v
+                throw 'Terminating Error!'
+            }
+        }
+        $ast = [System.Management.Automation.Language.Parser]::ParseInput(
+            ($script.ToString() -replace '\r?\n', $NewLine),
+            '/fake/MyScript.ps1',
+            [ref]$null,
+            [ref]$null)
+        $throwAst = $ast.Find({ $args[0] -is [System.Management.Automation.Language.ThrowStatementAst] }, $true)
+        $result = & $ast.GetScriptBlock() 2>&1
+
+        $result.Count | Should -BeExactly 2
+        $result[0] | Should -BeExactly 'foo'
+        $result[1].FullyQualifiedErrorId | Should -BeExactly 'PSTaskException'
+        $result[1].Exception.ErrorRecord.InvocationInfo.ScriptName | Should -BeExactly '/fake/MyScript.ps1'
+        $result[1].Exception.ErrorRecord.InvocationInfo.ScriptLineNumber | Should -BeExactly 5
+        $result[1].Exception.ErrorRecord.InvocationInfo.OffsetInLine | Should -BeExactly $throwAst.Extent.StartColumnNumber
+    }
+
+    It 'Verifies error position uses the original script block extent with -AsJob' {
+
+        $script = {
+            1 | ForEach-Object -AsJob -Parallel {
+                throw 'Terminating Error!'
+            }
+        }
+        $ast = [System.Management.Automation.Language.Parser]::ParseInput(
+            $script.ToString(),
+            '/fake/MyScript.ps1',
+            [ref]$null,
+            [ref]$null)
+        $job = & $ast.GetScriptBlock()
+
+        try {
+            $null = $job | Wait-Job
+            $errorRecord = $job.ChildJobs[0].JobStateInfo.Reason.ErrorRecord
+            $errorRecord.InvocationInfo.ScriptName | Should -BeExactly '/fake/MyScript.ps1'
+            $errorRecord.InvocationInfo.ScriptLineNumber | Should -BeExactly 3
+        }
+        finally {
+            $job | Remove-Job -Force
+        }
+    }
+
+    It 'Verifies root script block without a file keeps its position' {
+
+        $sbk = [ScriptBlock]::Create("`n  throw 'Terminating Error!'")
+        $result = 1 | ForEach-Object -Parallel $sbk 2>&1
+
+        $result.Exception.ErrorRecord.InvocationInfo.ScriptName | Should -BeExactly ''
+        $result.Exception.ErrorRecord.InvocationInfo.ScriptLineNumber | Should -BeExactly 2
+        $result.Exception.ErrorRecord.InvocationInfo.OffsetInLine | Should -BeExactly 3
+    }
+
+    It 'Verifies root script block keeps its position and using statements' {
+
+        # A root script block has no braces, the whole text is the script.
+        $ast = [System.Management.Automation.Language.Parser]::ParseInput(
+            "using namespace System.Text`r`n[StringBuilder]::new('root').ToString()`r`n  throw 'Terminating Error!'",
+            '/fake/Root.ps1',
+            [ref]$null,
+            [ref]$null)
+        $result = 1 | ForEach-Object -Parallel $ast.GetScriptBlock() 2>&1
+
+        $result.Count | Should -BeExactly 2
+        $result[0] | Should -BeExactly 'root'
+        $result[1].Exception.ErrorRecord.InvocationInfo.ScriptName | Should -BeExactly '/fake/Root.ps1'
+        $result[1].Exception.ErrorRecord.InvocationInfo.ScriptLineNumber | Should -BeExactly 3
+        $result[1].Exception.ErrorRecord.InvocationInfo.OffsetInLine | Should -BeExactly 3
+    }
+
+    It 'Verifies PSScriptRoot and PSCommandPath come from the original script block' {
+
+        # A native path keeps Path.GetDirectoryName separators consistent across platforms, the file is not created.
+        $scriptPath = Join-Path $TestDrive 'MyScript.ps1'
+        $ast = [System.Management.Automation.Language.Parser]::ParseInput(
+            '1 | ForEach-Object -Parallel { $PSScriptRoot; $PSCommandPath }',
+            $scriptPath,
+            [ref]$null,
+            [ref]$null)
+        $result = & $ast.GetScriptBlock()
+
+        $result.Count | Should -BeExactly 2
+        $result[0] | Should -BeExactly ([string]$TestDrive)
+        $result[1] | Should -BeExactly $scriptPath
+    }
+
+    It 'Verifies <Name> script block runs unbound from the caller session state' -TestCases @(
+        @{ Name = 'variable'; GetScriptBlock = { $sbk } }
+        @{ Name = 'function'; GetScriptBlock = { ${function:Test-ParallelFunction} } }
+    ) {
+        param ($GetScriptBlock)
+
+        # The task always runs the body in the child session state, so reading $callerValue directly can't tell if the
+        # script block is bound. Invoking the running script block with & uses its own session state, so -Inner only
+        # sees $callerValue if the task ran the script block still bound to this session state. -Inner stops the recursion.
+        $callerValue = 'caller'
+        $sbk = {
+            param($Inner)
+            if ($Inner) { "[$callerValue]" } else { & $MyInvocation.MyCommand.ScriptBlock -Inner $true }
+        }
+        function Test-ParallelFunction {
+            param($Inner)
+            if ($Inner) { "[$callerValue]" } else { & $MyInvocation.MyCommand.ScriptBlock -Inner $true }
+        }
+
+        $result = 1 | ForEach-Object -Parallel (& $GetScriptBlock)
+        $result | Should -BeExactly '[]'
+    }
+
+    It 'Verifies class static method in a <Name> uses the task script scope' -TestCases @(
+        @{ Name = 'script block'; GetScriptBlock = { $sbk } }
+        @{ Name = 'function'; GetScriptBlock = { ${function:Test-ParallelClassFunction} } }
+    ) {
+        param ($GetScriptBlock)
+
+        $script:classValue = 'caller'
+        $sbk = {
+            class TestParallelClass { static [string] Get() { return $script:classValue } }
+            $script:classValue = "task $_"
+            [TestParallelClass]::Get()
+        }
+        function Test-ParallelClassFunction {
+            class TestParallelFunctionClass { static [string] Get() { return $script:classValue } }
+            $script:classValue = "task $_"
+            [TestParallelFunctionClass]::Get()
+        }
+
+        $result = 1..2 | ForEach-Object -ThrottleLimit 2 -Parallel (& $GetScriptBlock)
+
+        $result | Sort-Object | Should -BeExactly 'task 1', 'task 2'
+        $script:classValue | Should -BeExactly 'caller'
+    }
+
+    It 'Verifies class defined by the caller is not available' {
+
+        class TestParallelCallerClass { static [string] Get() { return 'caller' } }
+        $result = 1 | ForEach-Object -Parallel { [TestParallelCallerClass]::Get() } 2>&1
+
+        $result.FullyQualifiedErrorId | Should -BeExactly 'TypeNotFound'
+    }
+
+    It 'Verifies <Name> gets the piped input as expected' -TestCases @(
+        # A filter runs as a plain script block in the task.
+        @{ Name = 'Test-Filter'; Expected = 'filter 1' }
+        @{ Name = 'Test-NamedBlocks'; Expected = 'begin 1', 'process ', 'end 1' }
+        # Advanced functions don't get $_ from the piped input.
+        @{ Name = 'Test-Advanced'; Expected = 'advanced ' }
+    ) {
+        param ($Name, $Expected)
+
+        filter Test-Filter { "filter $_" }
+        function Test-NamedBlocks {
+            begin { "begin $_" }
+            process { "process $_" }
+            end { "end $_" }
+        }
+        function Test-Advanced {
+            [CmdletBinding()]
+            param()
+            "advanced $_"
+        }
+
+        $result = 1 | ForEach-Object -Parallel (Get-Command -Name $Name).ScriptBlock
+        $result | Should -BeExactly $Expected
+    }
+
     It 'Verifies non-terminating error streaming' {
 
         $actualError = 1..1 | ForEach-Object -Parallel { Write-Error "Error!" } 2>&1
