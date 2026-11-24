@@ -44,6 +44,37 @@ Describe 'PSScopedProperties' -Tag 'CI' {
         $result | Should -Be @('True', 'user value', 'Minimal')
     }
 
+    It 'retains legacy error preferences and untyped child shadows when disabled' {
+        $result = Invoke-ScopedPropertiesTest -Disabled {
+            $EnabledExperimentalFeatures.Contains('PSScopedProperties')
+            $ErrorActionPreference = 'sToP'
+            "$($ErrorActionPreference.GetType().Name)/$ErrorActionPreference"
+            try { $ErrorActionPreference = 'invalid preference' } catch { 'built-in rejected write' }
+            $ErrorActionPreference
+            & {
+                $ErrorActionPreference = 'cOnTiNuE'
+                "$($ErrorActionPreference.GetType().Name)/$ErrorActionPreference"
+                $ErrorActionPreference = 'invalid preference'
+                $ErrorActionPreference
+                Write-Error 'expected' -ErrorAction Ignore
+                'ignored'
+            }
+            function Invoke-DisabledAdvancedPreference {
+                [CmdletBinding()]
+                param()
+                "$($ErrorActionPreference.GetType().Name)/$ErrorActionPreference"
+                Write-Error 'expected' -ErrorAction Ignore
+                'ignored'
+            }
+            Invoke-DisabledAdvancedPreference -ErrorAction SilentlyContinue
+            $ErrorActionPreference
+        }
+        $result | Should -BeExactly @(
+            'False', 'ActionPreference/Stop', 'built-in rejected write', 'Stop',
+            'String/cOnTiNuE', 'invalid preference', 'ignored', 'ActionPreference/SilentlyContinue', 'ignored', 'Stop'
+        )
+    }
+
     It 'registers a constant AllScope facade with read-only grouping properties' {
         $result = Invoke-ScopedPropertiesTest {
             $EnabledExperimentalFeatures.Contains('PSScopedProperties')
@@ -109,14 +140,37 @@ Describe 'PSScopedProperties' -Tag 'CI' {
         $result | Should -Be @('Stop/Minimal', 'SilentlyContinue/Classic', 'Stop/Classic', 'Continue/Classic', 'Minimal', 'Continue/Minimal')
     }
 
+    # Canonical cutover: child assignments will use the same conversion and validation as the built-in variable.
+    It 'converts the built-in preference but permits untyped child-scope shadows' {
+        $result = Invoke-ScopedPropertiesTest {
+            $ErrorActionPreference = 'sToP'
+            "$($ErrorActionPreference.GetType().Name)/$ErrorActionPreference/$($PS.ActionPreference.Error)"
+            try { $ErrorActionPreference = 'invalid preference' } catch { 'built-in rejected write' }
+            "$ErrorActionPreference/$($PS.ActionPreference.Error)"
+            & {
+                $ErrorActionPreference = 'sIlEnTlYcOnTiNuE'
+                "$($ErrorActionPreference.GetType().Name)/$ErrorActionPreference/$($PS.ActionPreference.Error)"
+                $ErrorActionPreference = 'invalid preference'
+                "$ErrorActionPreference/$($PS.ActionPreference.Error)"
+            }
+            "$ErrorActionPreference/$($PS.ActionPreference.Error)"
+        }
+        $result | Should -BeExactly @(
+            'ActionPreference/Stop/Stop', 'built-in rejected write', 'Stop/Stop',
+            'String/sIlEnTlYcOnTiNuE/SilentlyContinue', 'invalid preference/Continue', 'Stop/Stop'
+        )
+    }
+
+    # Canonical cutover: Set-Variable will normalize convertible values and preserve the previous value on failure.
     It 'shares legacy variable operations and preserves raw legacy values' {
         $result = Invoke-ScopedPropertiesTest {
             $PS.ActionPreference.Error = 'Stop'
             & {
-                foreach ($value in ('cOnTiNuE', $null, 'invalid preference')) {
+                foreach ($value in ('cOnTiNuE', 2, $null, 'invalid preference')) {
                     Set-Variable ErrorActionPreference $value -Scope Local
                     $legacyValue = (Get-Variable ErrorActionPreference -Scope Local).Value
-                    "$legacyValue/$($PS.ActionPreference.Error)"
+                    $legacyType = if ($null -eq $legacyValue) { 'null' } else { $legacyValue.GetType().Name }
+                    "$legacyType/$legacyValue/$($PS.ActionPreference.Error)"
                 }
 
                 $PS.ActionPreference.Error = 'SilentlyContinue'
@@ -131,7 +185,7 @@ Describe 'PSScopedProperties' -Tag 'CI' {
             }
         }
         $result | Should -BeExactly @(
-            'cOnTiNuE/Continue', '/Continue', 'invalid preference/Continue',
+            'String/cOnTiNuE/Continue', 'Int32/2/Continue', 'null//Continue', 'String/invalid preference/Continue',
             'ActionPreference', 'SilentlyContinue', 'Stop', 'Continue/Stop', 'True'
         )
     }
@@ -194,6 +248,7 @@ Describe 'PSScopedProperties' -Tag 'CI' {
         )
     }
 
+    # Canonical cutover: Reset will remove the implicit function preference and reveal the caller's preference.
     It 'observes advanced function preferences and command-level ErrorAction precedence' {
         $result = Invoke-ScopedPropertiesTest {
             function Invoke-AdvancedPreference {
@@ -201,6 +256,7 @@ Describe 'PSScopedProperties' -Tag 'CI' {
                 param()
                 "entry: $($PS.ActionPreference.Error)"
                 try { $PS.Reset('ActionPreference.Error') } catch { 'implicit preference cannot be removed' }
+                "after reset: $ErrorActionPreference/$($PS.ActionPreference.Error)"
                 Write-Error 'expected' -ErrorAction Ignore
                 'ignored'
                 $PS.ActionPreference.Error = 'SilentlyContinue'
@@ -216,12 +272,13 @@ Describe 'PSScopedProperties' -Tag 'CI' {
             try { Write-Error 'expected' } catch { 'facade stopped command' }
         }
         $result | Should -Be @(
-            'entry: Stop', 'implicit preference cannot be removed', 'ignored',
+            'entry: Stop', 'implicit preference cannot be removed', 'after reset: Stop/Stop', 'ignored',
             'assigned: SilentlyContinue', 'continued with facade preference',
             'command stopped', 'caller: Continue', 'facade stopped command'
         )
     }
 
+    # Canonical cutover: dynamic Reset will also remove overrides when no debugger is attached.
     It 'honors variable removal rules when Reset is invoked dynamically' {
         $result = Invoke-ScopedPropertiesTest {
             function Test-PreferenceVariable {
