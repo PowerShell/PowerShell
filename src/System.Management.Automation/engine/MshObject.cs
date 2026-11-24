@@ -432,23 +432,23 @@ namespace System.Management.Automation
 
         private static AdapterSet MappedInternalAdapterSet(object obj)
         {
-            if (obj is PSMemberSet) { return PSObject.s_mshMemberSetAdapter; }
+            if (obj is PSMemberSet) { return s_mshMemberSetAdapter; }
 
-            if (obj is PSObject) { return PSObject.s_mshObjectAdapter; }
+            if (obj is PSObject) { return s_mshObjectAdapter; }
 
-            if (obj is CimInstance) { return PSObject.s_cimInstanceAdapter; }
+            if (obj is CimInstance) { return s_cimInstanceAdapter.Value; }
 #if !UNIX
-            if (obj is ManagementClass) { return PSObject.s_managementClassAdapter; }
+            if (obj is ManagementClass) { return s_managementClassAdapter.Value; }
 
-            if (obj is ManagementBaseObject) { return PSObject.s_managementObjectAdapter; }
+            if (obj is ManagementBaseObject) { return s_managementObjectAdapter.Value; }
 
-            if (obj is DirectoryEntry) { return PSObject.s_directoryEntryAdapter; }
+            if (obj is DirectoryEntry) { return s_directoryEntryAdapter.Value; }
 #endif
-            if (obj is DataRowView) { return PSObject.s_dataRowViewAdapter; }
+            if (obj is DataRowView) { return s_dataRowViewAdapter.Value; }
 
-            if (obj is DataRow) { return PSObject.s_dataRowAdapter; }
+            if (obj is DataRow) { return s_dataRowAdapter.Value; }
 
-            if (obj is XmlNode) { return PSObject.s_xmlNodeAdapter; }
+            if (obj is XmlNode) { return s_xmlNodeAdapter.Value; }
 
             return null;
         }
@@ -651,19 +651,19 @@ namespace System.Management.Automation
         private static readonly AdapterSet s_mshMemberSetAdapter = new AdapterSet(new PSMemberSetAdapter(), null);
         private static readonly AdapterSet s_mshObjectAdapter = new AdapterSet(new PSObjectAdapter(), null);
 
-        private static readonly PSObject.AdapterSet s_cimInstanceAdapter =
-            new PSObject.AdapterSet(new ThirdPartyAdapter(typeof(Microsoft.Management.Infrastructure.CimInstance),
-                                                          new Microsoft.PowerShell.Cim.CimInstanceAdapter()),
-                                    PSObject.DotNetInstanceAdapter);
+        private static readonly Lazy<AdapterSet> s_cimInstanceAdapter = new(
+            () => new AdapterSet(
+                new ThirdPartyAdapter(typeof(CimInstance), new Microsoft.PowerShell.Cim.CimInstanceAdapter()),
+                DotNetInstanceAdapter));
 
 #if !UNIX
-        private static readonly AdapterSet s_managementObjectAdapter = new AdapterSet(new ManagementObjectAdapter(), DotNetInstanceAdapter);
-        private static readonly AdapterSet s_managementClassAdapter = new AdapterSet(new ManagementClassApdapter(), DotNetInstanceAdapter);
-        private static readonly AdapterSet s_directoryEntryAdapter = new AdapterSet(new DirectoryEntryAdapter(), DotNetInstanceAdapter);
+        private static readonly Lazy<AdapterSet> s_managementObjectAdapter = new(() => new AdapterSet(new ManagementObjectAdapter(), DotNetInstanceAdapter));
+        private static readonly Lazy<AdapterSet> s_managementClassAdapter = new(() => new AdapterSet(new ManagementClassApdapter(), DotNetInstanceAdapter));
+        private static readonly Lazy<AdapterSet> s_directoryEntryAdapter = new(() => new AdapterSet(new DirectoryEntryAdapter(), DotNetInstanceAdapter));
 #endif
-        private static readonly AdapterSet s_dataRowViewAdapter = new AdapterSet(new DataRowViewAdapter(), s_baseAdapterForAdaptedObjects);
-        private static readonly AdapterSet s_dataRowAdapter = new AdapterSet(new DataRowAdapter(), s_baseAdapterForAdaptedObjects);
-        private static readonly AdapterSet s_xmlNodeAdapter = new AdapterSet(new XmlNodeAdapter(), s_baseAdapterForAdaptedObjects);
+        private static readonly Lazy<AdapterSet> s_dataRowViewAdapter = new(() => new AdapterSet(new DataRowViewAdapter(), s_baseAdapterForAdaptedObjects));
+        private static readonly Lazy<AdapterSet> s_dataRowAdapter = new(() => new AdapterSet(new DataRowAdapter(), s_baseAdapterForAdaptedObjects));
+        private static readonly Lazy<AdapterSet> s_xmlNodeAdapter = new(() => new AdapterSet(new XmlNodeAdapter(), s_baseAdapterForAdaptedObjects));
 
         #endregion fields
 
