@@ -37,6 +37,9 @@ internal sealed partial class SessionStateScope
             }
         }
 
+        /// <summary>
+        /// Ends the command's ownership of its binding while preserving the value of captured variable objects.
+        /// </summary>
         internal void Release()
         {
             // A captured variable keeps its value when the dotted command exits.
@@ -45,6 +48,10 @@ internal sealed partial class SessionStateScope
         }
     }
 
+    /// <summary>
+    /// Creates and activates a temporary binding frame for a dotted command.
+    /// The locals tuple identifies the debugger frame; the preference value is stored separately.
+    /// </summary>
     internal DottedScopedVariable PushDottedScopedVariable(string name, MutableTuple locals)
     {
         var frame = new DottedScopedVariable(name, locals);
@@ -52,15 +59,24 @@ internal sealed partial class SessionStateScope
         return frame;
     }
 
+    /// <summary>
+    /// Activates an existing command frame for another invocation stage, retaining its current binding.
+    /// </summary>
     internal void PushDottedScopedVariable(DottedScopedVariable frame)
         => (_dottedScopedVariables ??= new()).Push(frame);
 
+    /// <summary>
+    /// Deactivates the current command frame without releasing its binding, allowing later stages to reuse it.
+    /// </summary>
     internal void PopDottedScopedVariable(DottedScopedVariable frame)
     {
         DottedScopedVariable popped = _dottedScopedVariables.Pop();
         Diagnostics.Assert(ReferenceEquals(popped, frame), "Dotted scoped variables must be popped in order.");
     }
 
+    /// <summary>
+    /// Finds the innermost active dotted binding for a read, skipping frames whose binding was reset.
+    /// </summary>
     internal bool TryGetDottedScopedVariable(string name, out PSVariable variable)
     {
         if (_dottedScopedVariables is not null)
@@ -79,6 +95,9 @@ internal sealed partial class SessionStateScope
         return false;
     }
 
+    /// <summary>
+    /// Finds the innermost active dotted frame for a write or removal, even when its binding was reset.
+    /// </summary>
     internal bool TryGetDottedScopedVariableTarget(string name, out DottedScopedVariable target)
     {
         if (_dottedScopedVariables is not null)
@@ -97,6 +116,9 @@ internal sealed partial class SessionStateScope
         return false;
     }
 
+    /// <summary>
+    /// Gets the binding belonging to a specific debugger frame without falling back to another frame's binding.
+    /// </summary>
     internal ScopedSettingVariable GetDottedScopedVariableForFrame(string name, MutableTuple locals)
     {
         if (_dottedScopedVariables is not null)

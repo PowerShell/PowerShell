@@ -332,6 +332,10 @@ namespace System.Management.Automation
             _options = newOptions;
         }
 
+        /// <summary>
+        /// Checks whether an option change is permitted without applying it, allowing callers to validate
+        /// a replacement value and its metadata before mutating the variable.
+        /// </summary>
         internal void ValidateOptions(ScopedItemOptions newOptions, bool force)
         {
             // Check to see if the variable is constant or readonly, if so
@@ -394,6 +398,11 @@ namespace System.Management.Automation
 
         private PSVariableAttributeCollection _attributes;
 
+        /// <summary>
+        /// Copies options, description, and attributes without repeating transformation or validation.
+        /// Callers must validate the value and options first. Initialization also copies visibility and module ownership;
+        /// replacement preserves the destination's visibility and module ownership.
+        /// </summary>
         internal void CopyMetadataFrom(PSVariable source, bool initializing)
         {
             _options = source.Options;

@@ -181,6 +181,9 @@ public sealed class PSScopedProgressStyle
     }
 }
 
+/// <summary>
+/// Identifies a setting independently of the entries holding its values in individual scopes.
+/// </summary>
 internal abstract class ScopedSetting(string path)
 {
     internal string Path { get; } = path;
@@ -192,6 +195,10 @@ internal sealed class ScopedSetting<T>(string path, T defaultValue, string varia
 
     internal string VariableName { get; } = variableName;
 
+    /// <summary>
+    /// Resolves the nearest scope entry, excluding private ancestor variables, or returns the setting default.
+    /// Temporary dotted-command bindings are resolved separately by the preference-specific reader.
+    /// </summary>
     internal T GetValue(SessionStateScope scope)
     {
         SessionStateScope target = scope;
@@ -219,6 +226,9 @@ internal sealed class ScopedSetting<T>(string path, T defaultValue, string varia
         }
     }
 
+    /// <summary>
+    /// Converts and validates a candidate value without changing any scope binding.
+    /// </summary>
     internal T ConvertValue(object value)
     {
         T converted = LanguagePrimitives.ConvertTo<T>(value);
@@ -226,6 +236,9 @@ internal sealed class ScopedSetting<T>(string path, T defaultValue, string varia
         return converted;
     }
 
+    /// <summary>
+    /// Removes the target scope's override so subsequent reads inherit a value or use the setting default.
+    /// </summary>
     internal void Reset(SessionStateScope scope)
     {
         if (scope.GetScopedSetting(this) is not null)
@@ -235,6 +248,9 @@ internal sealed class ScopedSetting<T>(string path, T defaultValue, string varia
     }
 }
 
+/// <summary>
+/// Holds a setting's canonical value and optional variable adapter, shared by one or more scope bindings.
+/// </summary>
 internal abstract class ScopedSettingEntry
 {
     private int _bindings;
@@ -247,10 +263,17 @@ internal abstract class ScopedSettingEntry
 
     internal abstract object ConvertValue(object value);
 
+    /// <summary>
+    /// Stores a value already converted and validated by the caller.
+    /// </summary>
     internal abstract void SetPreparedValue(object value);
 
     internal void AddBinding() => _bindings++;
 
+    /// <summary>
+    /// Releases one scope or dotted-frame binding, detaching the adapter only on explicit removal of the last binding.
+    /// Scope exit passes false to preserve the value of captured variable objects.
+    /// </summary>
     internal void ReleaseBinding(bool markVariableRemoved)
     {
         Diagnostics.Assert(_bindings > 0, "A scoped setting entry must be bound before release.");
@@ -279,6 +302,10 @@ internal sealed class ScopedSettingEntry<T> : ScopedSettingEntry
     {
     }
 
+    /// <summary>
+    /// Prepares an independent entry and adapter from a supplied variable, validating its converted value
+    /// against the source attributes before copying metadata. The source variable is not attached to the entry.
+    /// </summary>
     internal static ScopedSettingEntry<T> Create(ScopedSetting<T> setting, PSVariable source)
     {
         var entry = new ScopedSettingEntry<T>(setting, source.Value, source.Name);
@@ -343,6 +370,10 @@ internal static class ScopedProperties
             ? GetErrorActionPreference(context, scope, out _)
             : context.GetEnumPreference(SpecialVariables.ErrorActionPreferenceVarPath, InitialSessionState.DefaultErrorActionPreference, out _, scope);
 
+    /// <summary>
+    /// Resolves the scoped error preference, including active dotted bindings and private-variable inheritance rules.
+    /// Callers must ensure scoped properties are enabled; defaultUsed indicates that no binding was found.
+    /// </summary>
     internal static ActionPreference GetErrorActionPreference(ExecutionContext context, SessionStateScope scope, out bool defaultUsed)
     {
         SessionStateScope target = scope;

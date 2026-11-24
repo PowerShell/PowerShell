@@ -2525,6 +2525,10 @@ namespace System.Management.Automation
             _localsTuple.SetAutomaticVariable(AutomaticVariable.MyInvocation, value: MyInvocation, this.Context);
         }
 
+        /// <summary>
+        /// Binds an ErrorActionPreference parameter to this invocation's setting, creating a temporary
+        /// dotted-command frame when the invocation shares its caller's scope.
+        /// </summary>
         internal void BindErrorPreferenceParameter(PSVariable variable)
         {
             SessionStateInternal state = Context.EngineSessionState;

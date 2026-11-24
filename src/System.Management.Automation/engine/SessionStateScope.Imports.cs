@@ -5,6 +5,10 @@ namespace System.Management.Automation;
 
 internal sealed partial class SessionStateScope
 {
+    /// <summary>
+    /// Imports a module export, sharing its scoped setting entry within the same runspace.
+    /// Imports from another runspace receive an independent entry with source provenance.
+    /// </summary>
     internal PSVariable ImportVariable(PSVariable variable, bool force, SessionStateInternal sourceState, SessionStateInternal targetState)
     {
         if (!ScopedProperties.IsLegacySetting(variable.Name))
@@ -41,6 +45,9 @@ internal sealed partial class SessionStateScope
         return BindScopedSettingVariable(variable.Name, entry, frame);
     }
 
+    /// <summary>
+    /// Identifies an imported binding for module removal, including imports that copied the exported variable.
+    /// </summary>
     internal static bool IsImportedVariable(PSVariable candidate, PSVariable exported)
         => ReferenceEquals(candidate, exported)
             || (candidate is ScopedSettingVariable { ModuleImportSource: { } source } && ReferenceEquals(source, exported));

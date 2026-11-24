@@ -21,6 +21,10 @@ internal sealed class ScopedSettingVariable(string name, ScopedSettingEntry entr
         set => SetValue(value, force: false);
     }
 
+    /// <summary>
+    /// Transforms, converts, and validates an assignment before updating the setting.
+    /// Force permits a read-only write without changing the variable's options.
+    /// </summary>
     internal void SetValue(object value, bool force)
     {
         ThrowIfNotWritable(force);
@@ -30,6 +34,10 @@ internal sealed class ScopedSettingVariable(string name, ScopedSettingEntry entr
         DebuggerCheckVariableWrite();
     }
 
+    /// <summary>
+    /// Applies a supplied variable's value and assignment metadata while retaining this adapter's identity.
+    /// The source value is already transformed; conversion and validation precede mutation.
+    /// </summary>
     internal void Replace(PSVariable source, bool force)
     {
         if (ReferenceEquals(this, source))
@@ -58,6 +66,10 @@ internal sealed class ScopedSettingVariable(string name, ScopedSettingEntry entr
 
     internal override object GetValueRaw() => _entry is { } attached ? attached.GetValueRaw() : base.GetValueRaw();
 
+    /// <summary>
+    /// Writes through the trusted internal path, retaining setting conversion and validation while attached.
+    /// Variable protection checks and attribute processing are the caller's responsibility.
+    /// </summary>
     internal override void SetValueRaw(object newValue, bool preserveValueTypeSemantics)
     {
         if (_entry is { } attached)
@@ -72,6 +84,9 @@ internal sealed class ScopedSettingVariable(string name, ScopedSettingEntry entr
 
     internal object NormalizeValue(object value) => _entry is { } attached ? attached.ConvertValue(value) : value;
 
+    /// <summary>
+    /// Publishes a value that the caller has already converted and validated, without repeating assignment processing.
+    /// </summary>
     internal void SetPreparedValue(object value)
     {
         if (_entry is { } attached)
@@ -84,6 +99,10 @@ internal sealed class ScopedSettingVariable(string name, ScopedSettingEntry entr
         }
     }
 
+    /// <summary>
+    /// Disconnects a removed variable from its setting and clears its variable state.
+    /// Subsequent writes to a captured adapter cannot recreate the removed binding.
+    /// </summary>
     internal void Detach()
     {
         _entry = null;

@@ -54,6 +54,10 @@ namespace System.Management.Automation
 
         internal bool IsRemoved { get; private set; }
 
+        /// <summary>
+        /// Gets this scope's binding, initializing inherited AllScope bindings when needed.
+        /// Does not search parent scopes for an effective value.
+        /// </summary>
         internal ScopedSettingEntry<T> GetScopedSetting<T>(ScopedSetting<T> setting)
         {
             if (setting.VariableName is not null && _variables is null)
@@ -65,6 +69,10 @@ namespace System.Management.Automation
             return _scopedSettings?.TryGetValue(setting, out var entry) == true ? (ScopedSettingEntry<T>)entry : null;
         }
 
+        /// <summary>
+        /// Publishes a prepared entry as this scope's binding and releases any previous binding.
+        /// Callers must perform applicable protection checks and validation before publication.
+        /// </summary>
         internal void SetScopedSetting(ScopedSettingEntry entry)
         {
             _scopedSettings ??= new();
@@ -82,6 +90,10 @@ namespace System.Management.Automation
             entry.AddBinding();
         }
 
+        /// <summary>
+        /// Removes this scope's binding after checking variable protections.
+        /// A shared entry remains attached until its last binding is removed.
+        /// </summary>
         internal void RemoveScopedSetting(ScopedSetting setting, bool force = false)
         {
             if (_scopedSettings?.TryGetValue(setting, out var entry) == true)
@@ -92,6 +104,9 @@ namespace System.Management.Automation
             }
         }
 
+        /// <summary>
+        /// Releases this scope's bindings on scope exit, preserving captured variable values.
+        /// </summary>
         internal void ClearScopedSettings()
         {
             if (_scopedSettings is null)

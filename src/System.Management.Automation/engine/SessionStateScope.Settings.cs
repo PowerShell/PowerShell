@@ -5,19 +5,35 @@ namespace System.Management.Automation;
 
 internal sealed partial class SessionStateScope
 {
+    /// <summary>
+    /// Installs an invocation-owned error preference, replacing parameter metadata and shadowing inherited protections.
+    /// For dotted commands, the preference belongs to the active temporary frame.
+    /// </summary>
     internal void InitializeErrorPreference(ActionPreference value, SessionStateInternal sessionState)
         => SetScopedSettingVariable(SpecialVariables.ErrorActionPreference, value, asValue: true, force: false,
             sessionState, CommandOrigin.Internal, replace: true, bypassProtection: true);
 
+    /// <summary>
+    /// Installs a bound ErrorActionPreference parameter and its metadata as an invocation-owned setting.
+    /// Inherited variable protections do not prevent parameter initialization.
+    /// </summary>
     internal void InitializeErrorPreferenceParameter(PSVariable variable, SessionStateInternal sessionState)
         => SetScopedSettingVariable(SpecialVariables.ErrorActionPreference, variable, asValue: false, force: false,
             sessionState, CommandOrigin.Internal, replace: true, bypassProtection: true);
 
+    /// <summary>
+    /// Gets the binding targeted by a write in this scope. An empty active dotted frame returns null
+    /// so the caller creates a temporary override instead of updating the underlying scope binding.
+    /// </summary>
     internal ScopedSettingVariable GetScopedSettingVariableForWrite(string name)
         => TryGetDottedScopedVariableTarget(name, out var frame)
             ? (ScopedSettingVariable)frame.Variable
             : GetScopedSetting(ScopedProperties.ErrorPreferenceSetting)?.Variable;
 
+    /// <summary>
+    /// Gets the readable binding in this scope, checking visibility and falling through empty dotted frames.
+    /// Parent scopes are not searched.
+    /// </summary>
     internal PSVariable GetScopedSettingVariable(string name, CommandOrigin origin)
     {
         PSVariable variable;
