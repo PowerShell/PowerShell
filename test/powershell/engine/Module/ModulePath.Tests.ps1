@@ -208,23 +208,24 @@ Describe "ModuleIntrinsics.GetPSModulePath API tests" -tag @('CI', 'RequireAdmin
         # create a local repostory and install a module
         $localSourceName = [Guid]::NewGuid().ToString("n")
         $localSourceLocation = Join-Path $PSScriptRoot assets
-        Register-PSRepository -Name $localSourceName -SourceLocation $localSourceLocation -InstallationPolicy Trusted -ErrorAction SilentlyContinue
-        Install-Module -Force -Scope AllUsers -Name PowerShell.TestPackage -Repository $localSourceName -ErrorAction SilentlyContinue
-        Install-Module -Force -Scope CurrentUser -Name PowerShell.TestPackage -Repository $localSourceName -ErrorAction SilentlyContinue
+        Register-PSRepository -Name $localSourceName -SourceLocation $localSourceLocation -InstallationPolicy Trusted -ErrorAction Stop
+        Install-Module -Force -Scope AllUsers -Name PowerShell.TestPackage -Repository $localSourceName -ErrorAction Stop
+        Install-Module -Force -Scope CurrentUser -Name PowerShell.TestPackage -Repository $localSourceName -ErrorAction Stop
 
         $testCases = @(
             @{ Name = "User"   ; Expected = $IsWindows ?
-                (Resolve-Path ([Environment]::GetFolderPath("Personal") + "\PowerShell\Modules")).Path :
-                (Resolve-Path ([System.Management.Automation.Platform]::SelectProductNameForDirectory("USER_MODULES"))).Path
+                [System.IO.Path]::GetFullPath([Environment]::GetFolderPath("Personal") + "\PowerShell\Modules") :
+                [System.IO.Path]::GetFullPath([System.Management.Automation.Platform]::SelectProductNameForDirectory("USER_MODULES"))
                 }
             @{ Name = "Machine" ; Expected = $IsWindows ?
-                [Environment]::GetFolderPath("ProgramFiles") + "\PowerShell\Modules" :
-                (Resolve-Path ([System.Management.Automation.Platform]::SelectProductNameForDirectory("SHARED_MODULES"))).Path
+                [System.IO.Path]::GetFullPath([Environment]::GetFolderPath("ProgramFiles") + "\PowerShell\Modules") :
+                [System.IO.Path]::GetFullPath([System.Management.Automation.Platform]::SelectProductNameForDirectory("SHARED_MODULES"))
             }
-            @{ Name = "Builtin" ; Expected = (Resolve-Path (Join-Path $PSHOME Modules)).Path }
+            @{ Name = "Builtin" ; Expected = [System.IO.Path]::GetFullPath((Join-Path $PSHOME Modules)) }
         )
-        # resolve the paths to ensure they are in the correct format
-        $currentModulePathElements = $env:PSModulePath -split [System.IO.Path]::PathSeparator | Foreach-Object { (Resolve-Path $_).Path }
+        # Normalize the paths without requiring every logical module path to exist.
+        $currentModulePathElements = $env:PSModulePath -split [System.IO.Path]::PathSeparator |
+            ForEach-Object { [System.IO.Path]::GetFullPath($_) }
     }
 
     AfterAll {
@@ -243,7 +244,7 @@ Describe "ModuleIntrinsics.GetPSModulePath API tests" -tag @('CI', 'RequireAdmin
 
     It "The current module path should contain the expected paths for '<Name>'" -testcase $testCases {
         param ( $Name, $Expected )
-        $mPath = (Resolve-Path ([System.Management.Automation.ModuleIntrinsics]::GetPSModulePath($name))).Path
+        $mPath = [System.IO.Path]::GetFullPath([System.Management.Automation.ModuleIntrinsics]::GetPSModulePath($name))
         $currentModulePathElements | Should -Contain $mPath
     }
 }

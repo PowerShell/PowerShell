@@ -1191,14 +1191,19 @@ Describe 'Pwsh startup and PATH' -Tag CI {
         $path = & $pwsh -noprofile -command '$env:PATH'
 
         $ExpectedPath = $PSHOME
-        if ($PSHOME.StartsWith("$env:ProgramFiles\WindowsApps\Microsoft.PowerShell")) {
-            # MSIX installed PowerShell uses the stable path instead of PSHOME.
-            $ExpectedPath = $PSHOME.Replace($env:ProgramFiles, "$env:LOCALAPPDATA\Microsoft")
+        $isMsixInstallation = $false
+        if ($IsWindows) {
+            $utilsType = [System.Management.Automation.PSObject].Assembly.GetType('System.Management.Automation.Utils')
+            $isMsixInstallationMethod = $utilsType.GetMethod(
+                'IsMSIXInstallation',
+                [System.Reflection.BindingFlags]'NonPublic, Static')
+            $invokeArguments = [object[]]@($null)
+            $isMsixInstallation = $isMsixInstallationMethod.Invoke($null, $invokeArguments)
+        }
 
-            # Remove the version-specific part from the expected path.
-            $version = $PSVersionTable.PSVersion
-            $verStrRegex = "$($version.Major)\.$($version.Minor)\.$($version.Build).+__"
-            $ExpectedPath = $ExpectedPath -replace $verStrRegex, ''
+        if ($isMsixInstallation) {
+            # MSIX installed PowerShell uses the stable path instead of PSHOME.
+            $ExpectedPath = Join-Path $env:LOCALAPPDATA "Microsoft\WindowsApps\$($invokeArguments[0])"
         }
 
         $path | Should -BeExactly ($ExpectedPath + [System.IO.Path]::PathSeparator)
