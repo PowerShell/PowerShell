@@ -620,3 +620,151 @@ Describe 'Casting Behaviour of Boolean/Null to Numeral' -Tags CI {
         $result | Should -BeOfType $Type
     }
 }
+
+Describe 'Conversion to multidimensional array types' -Tags 'CI' {
+    BeforeAll {
+        $multidimensionalMessage = 'Converting a value to a multidimensional array type is not supported'
+    }
+
+    It 'reports that the target type is unsupported when casting <Expression>' -TestCases @(
+        @{ Expression = '[int[,]] ((1, 2), (2, 3))' }
+        @{ Expression = '[int[,,]] ((1, 2), (2, 3))' }
+        @{ Expression = '[int[,]] @(1)' }
+        @{ Expression = '[int[,]] 1' }
+        @{ Expression = '[int[,]] $true' }
+        @{ Expression = '[int[,]] [System.DayOfWeek]::Monday' }
+        @{ Expression = '[int[,]] [datetime]''2020-01-01''' }
+        @{ Expression = '[object[,]] ''a''' }
+        @{ Expression = '[long[,]] [int[,]]::new(2, 2)' }
+    ) {
+        param($Expression)
+
+        $sb = [scriptblock]::Create($Expression)
+        $err = $sb | Should -Throw -ErrorId 'InvalidCastToMultidimensionalArray' -PassThru
+        $err.Exception.Message | Should -BeLike "*$multidimensionalMessage*"
+    }
+
+    It 'reports the value and both type names in the error message' {
+        $err = { [int[,]] ((1, 2), (2, 3)) } | Should -Throw -PassThru
+        $err.Exception.Message | Should -BeLike ([WildcardPattern]::Escape('Cannot convert the "System.Object[]" value of type "System.Object[]" to type "System.Int32[,]".') + '*')
+    }
+
+    It 'reports the error when binding an argument to a multidimensional array parameter' {
+        function Test-MultidimensionalParameter ([int[,]] $Array) { $Array }
+
+        $err = { Test-MultidimensionalParameter ((1, 2), (3, 4)) } |
+            Should -Throw -ErrorId 'ParameterArgumentTransformationError,Test-MultidimensionalParameter' -PassThru
+        $err.Exception.Message | Should -BeLike "*$multidimensionalMessage*"
+    }
+
+    It 'returns $null for -as with a multidimensional array type: <Expression>' -TestCases @(
+        @{ Expression = '((1, 2), (3, 4)) -as [int[,]]' }
+        @{ Expression = '(1, 2) -as [int[,]]' }
+        @{ Expression = '1 -as [int[,]]' }
+    ) {
+        param($Expression)
+
+        $result = & ([scriptblock]::Create($Expression))
+        $null -eq $result | Should -BeTrue
+    }
+
+    It 'keeps overload selection for array arguments' {
+        Add-Type -TypeDefinition @'
+namespace MultidimensionalConversionTest {
+    public static class ArrayTarget {
+        public static string Pick(int[,] value) { return "matrix"; }
+        public static string Pick(string value) { return "string"; }
+    }
+}
+'@
+        $err = { [MultidimensionalConversionTest.ArrayTarget]::Pick([int[]] (1, 2)) } | Should -Throw -PassThru
+        $err.Exception.Message | Should -BeLike "*$multidimensionalMessage*"
+    }
+
+    It 'still passes through a value that already is the multidimensional array type' {
+        $array = [int[,]]::new(2, 2)
+        $array[1, 1] = 5
+
+        $result = [int[,]] $array
+        $result.Rank | Should -Be 2
+        $result[1, 1] | Should -Be 5
+    }
+
+    It 'still uses a user-defined conversion to a multidimensional array type' {
+        class MultidimensionalSource {
+            static [int[,]] op_Implicit([MultidimensionalSource] $source) {
+                $array = [int[,]]::new(2, 2)
+                $array[1, 1] = 9
+                return $array
+            }
+        }
+
+        $result = [int[,]] [MultidimensionalSource]::new()
+        $result.Rank | Should -Be 2
+        $result[1, 1] | Should -Be 9
+    }
+
+    It 'keeps overload selection and type converters for user-defined conversions' {
+        Add-Type -TypeDefinition @'
+using System;
+using System.Management.Automation;
+namespace MultidimensionalConversionTest {
+    public class Other { }
+    public class Source {
+        public static explicit operator int(Source value) { throw new InvalidCastException(); }
+        public static implicit operator int[,](Source value) { return new int[,] { { 21 } }; }
+        public static implicit operator Other(Source value) { return new Other(); }
+    }
+    public static class Target {
+        public static string Pick(int[,] value) { return "matrix"; }
+        public static string Pick(Other value) { return "other"; }
+    }
+    public class Converter : PSTypeConverter {
+        public override bool CanConvertFrom(object value, Type target) { return false; }
+        public override object ConvertFrom(object value, Type target, IFormatProvider provider, bool ignoreCase) { throw new NotSupportedException(); }
+        public override bool CanConvertTo(object value, Type target) { return target == typeof(int[,]); }
+        public override object ConvertTo(object value, Type target, IFormatProvider provider, bool ignoreCase) { return new int[,] { { 61 } }; }
+    }
+}
+'@
+        $source = [MultidimensionalConversionTest.Source]::new()
+        [MultidimensionalConversionTest.Target]::Pick($source) | Should -BeExactly 'matrix'
+
+        function Get-FirstElement($value) { ([int[,]] $value)[0, 0] }
+        Get-FirstElement $source | Should -Be 21
+
+        try {
+            Update-TypeData -TypeName MultidimensionalConversionTest.Source -TypeConverter MultidimensionalConversionTest.Converter
+            Get-FirstElement $source | Should -Be 61
+        }
+        finally {
+            Remove-TypeData -TypeName MultidimensionalConversionTest.Source
+        }
+    }
+
+    It 'reports the error when a type converter declines the conversion' {
+        Add-Type -TypeDefinition @'
+using System;
+using System.ComponentModel;
+using System.Globalization;
+namespace MultidimensionalConversionTest {
+    public class DecliningConverter : TypeConverter {
+        public override bool CanConvertTo(ITypeDescriptorContext context, Type target) { return false; }
+    }
+    [TypeConverter(typeof(DecliningConverter))]
+    public class DeclinedSource { }
+}
+'@
+        { [int[,]] [MultidimensionalConversionTest.DeclinedSource]::new() } |
+            Should -Throw -ErrorId 'InvalidCastToMultidimensionalArray'
+    }
+
+    It 'still converts to jagged and single-dimensional array types' {
+        $jagged = [int[][]] ((1, 2), (3, 4))
+        $jagged.Rank | Should -Be 1
+        $jagged[1][0] | Should -Be 3
+
+        $result = [long[]] (1, 2)
+        $result.GetType() | Should -Be ([long[]])
+    }
+}
