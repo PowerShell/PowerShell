@@ -11,7 +11,7 @@ internal sealed partial class SessionStateScope
     /// </summary>
     internal PSVariable ImportVariable(PSVariable variable, bool force, SessionStateInternal sourceState, SessionStateInternal targetState)
     {
-        if (!ScopedProperties.TryGetPreferenceSetting(variable.Name, out var setting))
+        if (!ScopedProperties.TryGetConfigurationSetting(variable.Name, out var setting))
         {
             return NewVariable(variable, force, sourceState);
         }

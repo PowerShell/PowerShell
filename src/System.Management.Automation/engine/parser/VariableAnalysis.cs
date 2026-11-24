@@ -723,12 +723,12 @@ namespace System.Management.Automation.Language
 
             // Keep the other cmdlet preferences at their fixed tuple indices.
             var reservedPreferences = scriptCmdlet && ExperimentalFeature.PSScopedProperties
-                ? ScopedProperties.PreferenceSettings
-                : Array.Empty<ScopedActionPreferenceSetting>();
+                ? ScopedProperties.TuplePreferenceSettings
+                : Array.Empty<ScopedSetting>();
             var tupleTypes = new Type[orderedLocals.Length + reservedPreferences.Count];
             foreach (var setting in reservedPreferences)
             {
-                tupleTypes[(int)setting.Index] = typeof(object);
+                tupleTypes[(int)setting.Index.Value] = typeof(object);
             }
 
             Diagnostics.Assert(!_disableOptimizations

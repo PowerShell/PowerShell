@@ -10,7 +10,7 @@ Run `Enable-ExperimentalFeature PSScopedProperties` and start a new PowerShell p
 
 ## Using scoped settings
 
-The feature registers a constant, AllScope `$PS` variable. Its writable action preference properties share typed `ActionPreference` values with their corresponding legacy variables.
+The feature registers a constant, AllScope `$PS` variable. Its writable preference properties share typed values with their corresponding legacy variables. Action preferences use `ActionPreference`; ShouldProcess settings use the types shown below.
 
 | Facade property | Legacy variable | Default |
 | --- | --- | --- |
@@ -19,8 +19,11 @@ The feature registers a constant, AllScope `$PS` variable. Its writable action p
 | `$PS.ActionPreference.Information` | `$InformationPreference` | `SilentlyContinue` |
 | `$PS.ActionPreference.Verbose` | `$VerbosePreference` | `SilentlyContinue` |
 | `$PS.ActionPreference.Debug` | `$DebugPreference` | `SilentlyContinue` |
+| `$PS.ActionPreference.Progress` | `$ProgressPreference` | `Continue` |
+| `$PS.ShouldProcess.Confirm` | `$ConfirmPreference` | `High` (`ConfirmImpact`) |
+| `$PS.ShouldProcess.WhatIf` | `$WhatIfPreference` | `false` (`Boolean`) |
 
-Each of these five preferences and `$PS.Style.Progress.View` inherits independently through PowerShell scopes. Assignment in a scope without a binding creates a local override. Captured grouping objects resolve their properties against the active scope at each use.
+Each of these eight preferences and `$PS.Style.Progress.View` inherits independently through PowerShell scopes. Assignment in a scope without a binding creates a local override. Captured grouping objects resolve their properties against the active scope at each use.
 
 ```powershell
 $PS.ActionPreference.Error = 'Continue'
@@ -47,7 +50,7 @@ Use `$PS.AtScope('Local')`, `$PS.AtScope('Script')`, or `$PS.AtScope('Global')` 
 
 The console host uses the effective progress view from the latest update for its shared progress pane and may render in classic mode for terminals without the required capabilities.
 
-The prototype covers the five action preferences and the progress rendering view. Progress action, Confirm, WhatIf, other configuration variables, public authoring APIs, mutable collections, and deprecation configuration are outside its scope. Access to the facade requires an active PowerShell execution context and remains subject to constrained language restrictions.
+The prototype covers six action preferences, Confirm, WhatIf, and the progress rendering view. Other configuration variables, public authoring APIs, mutable collections, and deprecation configuration remain outside the implemented scope. Access to the facade requires an active PowerShell execution context and remains subject to constrained language restrictions.
 
 ## Baseline before canonical Error storage
 
@@ -76,7 +79,9 @@ An object captured from a local scope that exits normally retains its value. Wit
 
 ### Invocation bindings
 
-Ordinary and advanced functions bind parameters named after a registered legacy variable as typed preferences. Advanced functions initialize invocation-owned values from explicit `-ErrorAction`, `-WarningAction`, and `-InformationAction` arguments. Explicit `-Verbose` or `-Debug` supplies `Continue`, and an explicit false supplies `SilentlyContinue`. Omitting a common parameter leaves the preference to the named parameter or normal scope inheritance. When both parameters supply the same preference, the explicit common parameter takes precedence.
+Ordinary and advanced functions bind parameters named after a registered legacy variable as typed preferences. Advanced functions initialize invocation-owned values from explicit `-ErrorAction`, `-WarningAction`, `-InformationAction`, and `-ProgressAction` arguments. Explicit `-Verbose` or `-Debug` supplies `Continue`, and an explicit false supplies `SilentlyContinue`. Explicit `-Confirm` supplies `Low`, and `-Confirm:$false` supplies `None`; `-WhatIf` supplies its Boolean value. Omitting a common parameter leaves the preference to the named parameter or normal scope inheritance. When both parameters supply the same preference, the explicit common parameter takes precedence.
+
+With the feature enabled, the invocation's `$WhatIfPreference` is a Boolean even when supplied by a common parameter whose argument is a `SwitchParameter`. Its true/false value is preserved, including explicit false. The disabled feature retains the legacy `SwitchParameter` invocation binding. Confirm assignments reject undefined enum values before changing the override.
 
 A dot-sourced advanced function uses one temporary frame for all invocation-owned preferences. The scope activates the frame during each `begin`, `process`, `end`, and `clean` stage and deactivates it between stages. Nested dotted frames deactivate in reverse activation order. The current bindings survive between stages and are released when the invocation completes.
 
@@ -132,9 +137,9 @@ Revisit `VariableOps.SetVariableValue`, `ScriptBlock.TryBindScopedSettingParamet
 Route the registered preferences through the legacy branch of `ExecutionContext.GetEnumPreference` and preserve the built-in variables' `ArgumentTypeConverterAttribute` in `InitialSessionState`.
 Retire the shared `ScopedActionPreferenceSetting` validation, the associated `ScopedSettingVariable` write paths, and the scoped handling in `SetVariableCommand` and `ClearVariableCommand`. Verify provider writes through `VariableProvider.SetSessionStateItem` as well as the direct paths.
 
-`ScopedProperties.Tests.ps1` parameterizes the typed conversion, variable cmdlet, and variable provider cases over the registered preferences.
+`ScopedProperties.Tests.ps1` parameterizes the typed conversion, variable cmdlet, and variable provider cases over the registered action preferences.
 The feature-disabled, forced-write, provider-content, host initialization, attribute, and protection cases cover the compatibility boundaries.
-`ActionPreference.Tests.ps1` covers legacy `Suspend` handling. `ScopedProperties.Enabled.Tests.ps1` covers assignment-time rejection of enum and string `Suspend` values for all five scoped preferences.
+`ActionPreference.Tests.ps1` covers legacy `Suspend` handling. `ScopedProperties.Enabled.Tests.ps1` covers assignment-time rejection of enum and string `Suspend` values for all six scoped action preferences.
 
 ### Imported variable objects
 
@@ -231,14 +236,13 @@ Two uninterrupted full xUnit attempts and an isolated socket-suite attempt encou
 
 The source audit found no remaining Error-only assumption in shared registration, storage, invocation frames, tuple reservation, or debugger enumeration. Stream-specific runtime policies and their differing cache behavior remain intact. Logs and XML results for this increment are under `artifacts/scoped-properties/expand-*`.
 
-## Expansion feasibility inventory (not implemented)
+## Expansion feasibility inventory (stage zero)
 
 The following is a source inventory for the proposed expansion in
 `scoped-properties-expansion-plan.md`. It records existing producers and
 consumer boundaries; it does not claim that these paths are exposed through
-`$PS`. Runtime expansion and the scalar preference expansion are not
-implemented by this inventory. Existing prototype behavior above remains the
-implemented contract.
+`$PS`. This snapshot predates the scalar preference implementation described
+above; it records the starting architecture and the remaining runtime work.
 
 ### Configuration paths
 
@@ -340,3 +344,26 @@ and host/remoting optional values should follow only after those resolver
 contracts are established. Feature-specific assertions belong in the existing
 metadata-registered scoped-properties suites; do not add feature branches to
 generic suites.
+
+## Progress and ShouldProcess expansion validation
+
+The .NET 11 build and publish succeeded. All 49 focused C# cases passed in
+each verified feature state, including captured ShouldProcess groups from
+expired scopes and foreign runspaces. The build used
+`-p:EmitCompilerGeneratedFiles=false` to avoid the existing generated-file
+cleanup/glob conflict; generators still ran in the compiler.
+
+The first affected Pester regression runs reported 909 passes and five
+failures with the feature enabled, and 890 passes and one failure with it
+disabled. Two enabled failures were legacy Progress Suspend expectations;
+Progress now joins the existing skip list, with assignment-time rejection
+covered in the dedicated feature suite. The corrected generic suite passed
+53 cases with 12 skips enabled and 65 cases disabled. Three executable-module
+fixtures initially hit Windows antivirus error `0x800700E1`; all six binary
+module cases passed on rerun. The disabled Warning child-shadow case passed
+ten isolated repetitions and its complete 160-case scoped suite passed on
+rerun. A narrowed rerun initially omitted the standard harness's process-only
+execution policy and blocked temporary scripts; the corrected rerun passed.
+These results establish coverage through targeted reruns, not an uninterrupted
+clean regression run. Logs and XML results are under
+`artifacts/scoped-properties/expansion-stage1`.

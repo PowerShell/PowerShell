@@ -25,9 +25,9 @@ namespace PSTests.Sequential
             {
                 string name = SpecialVariables.PreferenceVariables[i];
                 int index = i + (int)AutomaticVariable.NumberOfAutomaticVariables;
-                if (ScopedProperties.TryGetPreferenceSetting(name, out var setting))
+                if (ScopedProperties.TryGetConfigurationSetting(name, out var setting))
                 {
-                    Assert.Equal(index, (int)setting.Index);
+                    Assert.Equal(index, (int)setting.Index.Value);
                     Assert.False(nameToIndex.ContainsKey(name));
                     Assert.Null(locals.GetValue(index));
                 }
@@ -53,12 +53,25 @@ namespace PSTests.Sequential
             Assert.Same(error, setting);
             Assert.True(ScopedProperties.TryGetSetting("style.progress.VIEW", out setting));
             Assert.Same(ScopedProperties.ProgressViewSetting, setting);
-            Assert.False(ScopedProperties.TryGetSetting("ActionPreference.Progress", out _));
+            Assert.True(ScopedProperties.TryGetSetting("ActionPreference.Progress", out setting));
+            Assert.Same(ScopedProperties.ProgressPreferenceSetting, setting);
+            Assert.True(ScopedProperties.TryGetSetting("ShouldProcess.Confirm", out setting));
+            Assert.Same(ScopedProperties.ConfirmPreferenceSetting, setting);
+            Assert.True(ScopedProperties.TryGetSetting("ShouldProcess.WhatIf", out setting));
+            Assert.Same(ScopedProperties.WhatIfPreferenceSetting, setting);
 
             bool found = ScopedProperties.TryGetPreferenceSetting("erroractionPREFERENCE", out var preference);
             Assert.Equal(ExperimentalFeature.PSScopedProperties, found);
             Assert.Same(found ? error : null, preference);
-            Assert.False(ScopedProperties.TryGetPreferenceSetting("ProgressPreference", out _));
+            bool progressFound = ScopedProperties.TryGetPreferenceSetting("ProgressPreference", out var progress);
+            Assert.Equal(ExperimentalFeature.PSScopedProperties, progressFound);
+            Assert.Same(progressFound ? ScopedProperties.ProgressPreferenceSetting : null, progress);
+            bool confirmFound = ScopedProperties.TryGetConfigurationSetting("ConfirmPreference", out setting);
+            Assert.Equal(ExperimentalFeature.PSScopedProperties, confirmFound);
+            Assert.Same(confirmFound ? ScopedProperties.ConfirmPreferenceSetting : null, setting);
+            bool whatIfFound = ScopedProperties.TryGetConfigurationSetting("WhatIfPreference", out setting);
+            Assert.Equal(ExperimentalFeature.PSScopedProperties, whatIfFound);
+            Assert.Same(whatIfFound ? ScopedProperties.WhatIfPreferenceSetting : null, setting);
         }
 
         [Fact]
@@ -70,6 +83,7 @@ namespace PSTests.Sequential
             {
                 var facade = new PSScopedPropertyFacade();
                 Assert.Throws<InvalidOperationException>(() => facade.ActionPreference);
+                Assert.Throws<InvalidOperationException>(() => facade.ShouldProcess);
                 Assert.Throws<InvalidOperationException>(() => facade.Style);
                 Assert.Throws<InvalidOperationException>(() => facade.AtScope("Local"));
                 Assert.Throws<InvalidOperationException>(() => facade.Reset("ActionPreference.Error"));
@@ -111,19 +125,31 @@ namespace PSTests.Sequential
 
             var globalView = Assert.Single(shell.AddScript("$facade.AtScope('Global')").Invoke<PSScopedPropertyFacade>());
             shell.Commands.Clear();
+            var globalShouldProcess = Assert.Single(shell.AddScript("$facade.AtScope('Global').ShouldProcess").Invoke<PSScopedShouldProcess>());
+            shell.Commands.Clear();
             var expiredView = Assert.Single(shell.AddScript("& { $facade.AtScope('Local') }").Invoke<PSScopedPropertyFacade>());
             firstRunspace.SessionStateProxy.SetVariable("view", expiredView);
             shell.Commands.Clear();
             var expired = Assert.Single(shell.AddScript("try { $view.Style } catch { $_.Exception.GetBaseException().Message }").Invoke<string>());
             Assert.Equal(SessionStateStrings.ExpiredScopedSettingScope, expired);
+            shell.Commands.Clear();
+            var expiredShouldProcess = Assert.Single(shell.AddScript("& { $facade.AtScope('Local').ShouldProcess }").Invoke<PSScopedShouldProcess>());
+            firstRunspace.SessionStateProxy.SetVariable("group", expiredShouldProcess);
+            shell.Commands.Clear();
+            var expiredGroupMember = Assert.Single(shell.AddScript("try { $group.WhatIf } catch { $_.Exception.GetBaseException().Message }").Invoke<string>());
+            Assert.Equal(SessionStateStrings.ExpiredScopedSettingScope, expiredGroupMember);
 
             using var secondRunspace = RunspaceFactory.CreateRunspace();
             secondRunspace.Open();
             secondRunspace.SessionStateProxy.SetVariable("view", globalView);
+            secondRunspace.SessionStateProxy.SetVariable("group", globalShouldProcess);
             using var foreignShell = PowerShell.Create();
             foreignShell.Runspace = secondRunspace;
             var foreign = Assert.Single(foreignShell.AddScript("try { $view.ActionPreference } catch { $_.Exception.GetBaseException().Message }").Invoke<string>());
             Assert.Equal(SessionStateStrings.ForeignScopedSettingScope, foreign);
+            foreignShell.Commands.Clear();
+            var foreignGroupMember = Assert.Single(foreignShell.AddScript("try { $group.WhatIf } catch { $_.Exception.GetBaseException().Message }").Invoke<string>());
+            Assert.Equal(SessionStateStrings.ForeignScopedSettingScope, foreignGroupMember);
         }
 
         [Fact]

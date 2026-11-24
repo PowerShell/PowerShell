@@ -36,7 +36,7 @@ namespace System.Management.Automation
                 variablePath = variablePath.CloneAndSetLocal();
             }
 
-            if (ScopedProperties.TryGetPreferenceSetting(variablePath.UnqualifiedPath, out var setting))
+            if (ScopedProperties.TryGetConfigurationSetting(variablePath.UnqualifiedPath, out var setting))
             {
                 SessionStateScope target = variablePath.IsGlobal ? sessionState.GlobalScope
                     : variablePath.IsScript ? sessionState.ScriptScope : sessionState.CurrentScope;

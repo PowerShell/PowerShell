@@ -4,13 +4,14 @@
 Describe 'PSScopedProperties' -Tag 'CI' {
     $preferenceCases = @(
         @{ PreferenceName = 'Error'; VariableName = 'ErrorActionPreference'; DefaultPreference = 'Continue' }
+        @{ PreferenceName = 'Progress'; VariableName = 'ProgressPreference'; DefaultPreference = 'Continue' }
         @{ PreferenceName = 'Warning'; VariableName = 'WarningPreference'; DefaultPreference = 'Continue' }
         @{ PreferenceName = 'Information'; VariableName = 'InformationPreference'; DefaultPreference = 'SilentlyContinue' }
         @{ PreferenceName = 'Verbose'; VariableName = 'VerbosePreference'; DefaultPreference = 'SilentlyContinue' }
         @{ PreferenceName = 'Debug'; VariableName = 'DebugPreference'; DefaultPreference = 'SilentlyContinue' }
     )
 
-    $streamCases = @($preferenceCases | Where-Object PreferenceName -NE 'Error')
+    $streamCases = @($preferenceCases | Where-Object { $_.PreferenceName -notin 'Error', 'Progress' })
 
     BeforeAll {
         $enabledConfig = Join-Path $TestDrive 'enabled.json'
@@ -140,6 +141,78 @@ Describe 'PSScopedProperties' -Tag 'CI' {
             'True', 'Constant, AllScope', 'Constant, AllScope',
             'False', 'False', 'False', 'ActionPreference', 'ProgressView',
             'VariableNotWritable,Microsoft.PowerShell.Commands.SetVariableCommand'
+        )
+    }
+
+    It 'shares scoped Progress and ShouldProcess preferences with their legacy variables' {
+        $result = Invoke-ScopedPropertiesTest {
+            "defaults/$($PS.ActionPreference.Progress.GetType().Name)/$($PS.ActionPreference.Progress)/$($PS.ShouldProcess.Confirm.GetType().Name)/$($PS.ShouldProcess.Confirm)/$($PS.ShouldProcess.WhatIf.GetType().Name)/$($PS.ShouldProcess.WhatIf)"
+            "legacy/$($ProgressPreference.GetType().Name)/$ProgressPreference/$($ConfirmPreference.GetType().Name)/$ConfirmPreference/$($WhatIfPreference.GetType().Name)/$WhatIfPreference"
+
+            $PS.ActionPreference.Progress = 'SilentlyContinue'
+            $PS.ShouldProcess.Confirm = 'Low'
+            $PS.ShouldProcess.WhatIf = $true
+            "variables/$ProgressPreference/$ConfirmPreference/$WhatIfPreference"
+
+            & {
+                $ProgressPreference = 'Stop'
+                $ConfirmPreference = 'None'
+                $WhatIfPreference = $false
+                "facade/$($PS.ActionPreference.Progress)/$($PS.ShouldProcess.Confirm)/$($PS.ShouldProcess.WhatIf)"
+                $PS.Reset('ActionPreference.Progress')
+                $PS.Reset('ShouldProcess.Confirm')
+                $PS.Reset('ShouldProcess.WhatIf')
+                "reset/$ProgressPreference/$ConfirmPreference/$WhatIfPreference"
+            }
+            "outer/$($PS.ActionPreference.Progress)/$($PS.ShouldProcess.Confirm)/$($PS.ShouldProcess.WhatIf)"
+
+            $PS.ShouldProcess.WhatIf = [guid]::NewGuid()
+            "whatif truthiness/$($PS.ShouldProcess.WhatIf.GetType().Name)/$($PS.ShouldProcess.WhatIf)"
+
+            $before = $PS.ShouldProcess.Confirm
+            try { $PS.ShouldProcess.Confirm = [guid]::NewGuid() } catch { "confirm rejected/$($PS.ShouldProcess.Confirm)" }
+            $before -eq $PS.ShouldProcess.Confirm
+
+            $globalView = $PS.AtScope('Global')
+            $globalView.ShouldProcess.Confirm = 'Low'
+            $globalView.ShouldProcess.WhatIf = $true
+            "global/$($PS.ShouldProcess.Confirm)/$($PS.ShouldProcess.WhatIf)"
+            $globalView.Reset('ShouldProcess.Confirm')
+            $globalView.Reset('ShouldProcess.WhatIf')
+        }
+        $result | Should -BeExactly @(
+            'defaults/ActionPreference/Continue/ConfirmImpact/High/Boolean/False',
+            'legacy/ActionPreference/Continue/ConfirmImpact/High/Boolean/False',
+            'variables/SilentlyContinue/Low/True',
+            'facade/Stop/None/False',
+            'reset/SilentlyContinue/Low/True',
+            'outer/SilentlyContinue/Low/True',
+            'whatif truthiness/Boolean/True', 'confirm rejected/Low', 'True', 'global/Low/True'
+        )
+    }
+
+    It 'binds explicitly named ConfirmPreference and WhatIfPreference parameters through scoped descriptors' {
+        $result = Invoke-ScopedPropertiesTest {
+            function Test-ExplicitShouldProcessPreferenceParameters {
+                [CmdletBinding()]
+                param(
+                    [ValidateSet('Low', 'High')][System.Management.Automation.ConfirmImpact] $ConfirmPreference,
+                    [bool] $WhatIfPreference
+                )
+                "parameters/$ConfirmPreference/$WhatIfPreference"
+                "facade/$($PS.ShouldProcess.Confirm)/$($PS.ShouldProcess.WhatIf)"
+            }
+
+            $PS.ShouldProcess.Confirm = 'High'
+            $PS.ShouldProcess.WhatIf = $false
+            Test-ExplicitShouldProcessPreferenceParameters -ConfirmPreference Low -WhatIfPreference $true
+            "caller/$($PS.ShouldProcess.Confirm)/$($PS.ShouldProcess.WhatIf)"
+            try { Test-ExplicitShouldProcessPreferenceParameters -ConfirmPreference NotAnImpact -WhatIfPreference $true } catch { 'invalid ConfirmPreference rejected' }
+            "after failure/$($PS.ShouldProcess.Confirm)/$($PS.ShouldProcess.WhatIf)"
+        }
+        $result | Should -BeExactly @(
+            'parameters/Low/True', 'facade/Low/True', 'caller/High/False',
+            'invalid ConfirmPreference rejected', 'after failure/High/False'
         )
     }
 
@@ -750,7 +823,7 @@ Describe 'PSScopedProperties' -Tag 'CI' {
             'WarningPreference/ActionPreference/Stop/ActionPreference/Stop',
             'InformationPreference/ActionPreference/Continue/ActionPreference/Continue',
             'ProgressPreference/ActionPreference/SilentlyContinue/ActionPreference/SilentlyContinue',
-            'WhatIfPreference/SwitchParameter/True/SwitchParameter/True',
+            'WhatIfPreference/Boolean/True/Boolean/True',
             'ConfirmPreference/ConfirmImpact/None/ConfirmImpact/None'
         )
         $result | Should -BeExactly ($expected + $expected)
@@ -834,6 +907,32 @@ Describe 'PSScopedProperties' -Tag 'CI' {
             'end/Stop/Ignore/Ignore/SilentlyContinue/Continue',
             'clean/Stop/Ignore/Ignore/SilentlyContinue/SilentlyContinue',
             'caller/Continue/Continue/Continue/Continue/Continue'
+        )
+    }
+
+    It 'resets all three common parameter preferences from a dotted invocation frame' {
+        $result = Invoke-ScopedPropertiesTest {
+            function Test-DottedShouldProcessPreferences {
+                [CmdletBinding(SupportsShouldProcess)]
+                param()
+
+                "bound/$($PS.ActionPreference.Progress)/$($PS.ShouldProcess.Confirm)/$($PS.ShouldProcess.WhatIf)"
+                $PS.Reset('ActionPreference.Progress')
+                $PS.Reset('ShouldProcess.Confirm')
+                $PS.Reset('ShouldProcess.WhatIf')
+                "reset/$($PS.ActionPreference.Progress)/$($PS.ShouldProcess.Confirm)/$($PS.ShouldProcess.WhatIf)"
+            }
+
+            $PS.ActionPreference.Progress = 'Continue'
+            $PS.ShouldProcess.Confirm = 'High'
+            $PS.ShouldProcess.WhatIf = $false
+            . Test-DottedShouldProcessPreferences -ProgressAction SilentlyContinue -WhatIf:$true -Confirm:$false
+            "caller/$($PS.ActionPreference.Progress)/$($PS.ShouldProcess.Confirm)/$($PS.ShouldProcess.WhatIf)"
+        }
+        $result | Should -BeExactly @(
+            'bound/SilentlyContinue/None/True',
+            'reset/Continue/High/False',
+            'caller/Continue/High/False'
         )
     }
 

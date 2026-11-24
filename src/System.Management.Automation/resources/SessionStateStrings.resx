@@ -674,7 +674,10 @@
     <value>Scoped PowerShell engine settings.</value>
   </data>
   <data name="ScopedActionPreferenceDescription" xml:space="preserve">
-    <value>Scoped action preferences for error, warning, information, verbose, and debug output.</value>
+    <value>Scoped action preferences for error, warning, information, verbose, debug, and progress output.</value>
+  </data>
+  <data name="ScopedShouldProcessDescription" xml:space="preserve">
+    <value>Scoped confirmation threshold and WhatIf settings.</value>
   </data>
   <data name="ScopedStyleDescription" xml:space="preserve">
     <value>Scoped settings for output styling.</value>

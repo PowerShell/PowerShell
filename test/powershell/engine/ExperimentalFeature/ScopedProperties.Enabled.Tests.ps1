@@ -4,6 +4,7 @@
 Describe 'PSScopedProperties in an enabled test host' -Tag 'CI' {
     $preferenceCases = @(
         @{ PreferenceName = 'Error'; VariableName = 'ErrorActionPreference'; DefaultPreference = 'Continue' }
+        @{ PreferenceName = 'Progress'; VariableName = 'ProgressPreference'; DefaultPreference = 'Continue' }
         @{ PreferenceName = 'Warning'; VariableName = 'WarningPreference'; DefaultPreference = 'Continue' }
         @{ PreferenceName = 'Information'; VariableName = 'InformationPreference'; DefaultPreference = 'SilentlyContinue' }
         @{ PreferenceName = 'Verbose'; VariableName = 'VerbosePreference'; DefaultPreference = 'SilentlyContinue' }
@@ -28,6 +29,17 @@ Describe 'PSScopedProperties in an enabled test host' -Tag 'CI' {
         [ExperimentalFeature]::IsEnabled('PSScopedProperties') | Should -BeTrue
         (Get-Variable PS).Options | Should -Be ([System.Management.Automation.ScopedItemOptions]'Constant, AllScope')
         $PS.Style.Progress.View | Should -BeOfType ([System.Management.Automation.ProgressView])
+    }
+
+    It 'exposes the typed scalar preference defaults in the test host' {
+        $PS.ActionPreference.Progress | Should -Be ([System.Management.Automation.ActionPreference]::Continue)
+        $PS.ShouldProcess.Confirm | Should -Be ([System.Management.Automation.ConfirmImpact]::High)
+        $PS.ShouldProcess.WhatIf | Should -BeOfType ([bool])
+        $PS.ShouldProcess.WhatIf | Should -BeFalse
+        $ProgressPreference | Should -Be ([System.Management.Automation.ActionPreference]::Continue)
+        $ConfirmPreference | Should -Be ([System.Management.Automation.ConfirmImpact]::High)
+        $WhatIfPreference | Should -BeOfType ([bool])
+        $WhatIfPreference | Should -BeFalse
     }
 
     It 'exposes the typed <PreferenceName> default in a fresh runspace' -TestCases $preferenceCases {

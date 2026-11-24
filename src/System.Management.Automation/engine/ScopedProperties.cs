@@ -14,6 +14,7 @@ public sealed class PSScopedPropertyFacade
     private readonly WeakReference<ExecutionContext> _owner;
     private readonly WeakReference<SessionStateScope> _scope;
     private readonly PSScopedActionPreference _actionPreference;
+    private readonly PSScopedShouldProcess _shouldProcess;
     private readonly PSScopedStyle _style;
 
     internal PSScopedPropertyFacade(ExecutionContext context = null, SessionStateScope scope = null)
@@ -25,6 +26,7 @@ public sealed class PSScopedPropertyFacade
         }
 
         _actionPreference = new(this);
+        _shouldProcess = new(this);
         _style = new(this);
     }
 
@@ -35,6 +37,16 @@ public sealed class PSScopedPropertyFacade
         {
             Resolve();
             return _actionPreference;
+        }
+    }
+
+    /// <summary>Gets the ShouldProcess settings.</summary>
+    public PSScopedShouldProcess ShouldProcess
+    {
+        get
+        {
+            Resolve();
+            return _shouldProcess;
         }
     }
 
@@ -163,6 +175,13 @@ public sealed class PSScopedActionPreference
         set => SetPreference(ScopedProperties.DebugPreferenceSetting, value);
     }
 
+    /// <summary>Gets or sets the progress action preference.</summary>
+    public ActionPreference Progress
+    {
+        get => GetPreference(ScopedProperties.ProgressPreferenceSetting);
+        set => SetPreference(ScopedProperties.ProgressPreferenceSetting, value);
+    }
+
     /// <summary>Returns a description of the scoped action preference settings.</summary>
     /// <returns>The action preference group description.</returns>
     public override string ToString() => SessionStateStrings.ScopedActionPreferenceDescription;
@@ -170,10 +189,57 @@ public sealed class PSScopedActionPreference
     private ActionPreference GetPreference(ScopedActionPreferenceSetting setting)
     {
         var (context, scope) = _facade.Resolve();
-        return context.GetEnumPreference(setting.VariablePath, setting.DefaultValue, out _, scope);
+        return context.GetScopedConfigurationPreference(setting, scope);
     }
 
     private void SetPreference(ScopedActionPreferenceSetting setting, ActionPreference value)
+    {
+        var (context, scope) = _facade.Resolve();
+        var state = context.EngineSessionState;
+        CommandOrigin origin = state.CurrentScope.ScopeOrigin;
+        if (ExperimentalFeature.PSScopedProperties)
+        {
+            scope.SetScopedSettingValue(setting, value, state, origin);
+        }
+        else
+        {
+            scope.SetVariable(setting.VariableName, value, asValue: true, force: false, state, origin);
+        }
+    }
+}
+
+/// <summary>Provides scoped ShouldProcess settings.</summary>
+public sealed class PSScopedShouldProcess
+{
+    private readonly PSScopedPropertyFacade _facade;
+
+    internal PSScopedShouldProcess(PSScopedPropertyFacade facade) => _facade = facade;
+
+    /// <summary>Gets or sets the confirmation impact threshold.</summary>
+    public ConfirmImpact Confirm
+    {
+        get => GetSetting(ScopedProperties.ConfirmPreferenceSetting);
+        set => SetSetting(ScopedProperties.ConfirmPreferenceSetting, value);
+    }
+
+    /// <summary>Gets or sets whether WhatIf is enabled.</summary>
+    public bool WhatIf
+    {
+        get => GetSetting(ScopedProperties.WhatIfPreferenceSetting);
+        set => SetSetting(ScopedProperties.WhatIfPreferenceSetting, value);
+    }
+
+    /// <summary>Returns a description of the scoped ShouldProcess settings.</summary>
+    /// <returns>The ShouldProcess group description.</returns>
+    public override string ToString() => SessionStateStrings.ScopedShouldProcessDescription;
+
+    private T GetSetting<T>(ScopedSetting<T> setting)
+    {
+        var (context, scope) = _facade.Resolve();
+        return context.GetScopedConfigurationPreference(setting, scope);
+    }
+
+    private void SetSetting<T>(ScopedSetting<T> setting, T value)
     {
         var (context, scope) = _facade.Resolve();
         var state = context.EngineSessionState;
@@ -247,19 +313,21 @@ public sealed class PSScopedProgressStyle
 /// <summary>
 /// Identifies a setting independently of the entries holding its values in individual scopes.
 /// </summary>
-internal abstract class ScopedSetting(string path, string variableName)
+internal abstract class ScopedSetting(string path, string variableName, PreferenceVariable? index = null)
 {
     internal string Path { get; } = path;
 
     internal string VariableName { get; } = variableName;
+
+    internal PreferenceVariable? Index { get; } = index;
 
     internal abstract ScopedSettingEntry CreateEntry(object value);
 
     internal abstract ScopedSettingEntry CreateEntryFromVariable(PSVariable source);
 }
 
-internal class ScopedSetting<T>(string path, T defaultValue, string variableName = null, Action<T> validate = null)
-    : ScopedSetting(path, variableName)
+internal class ScopedSetting<T>(string path, T defaultValue, string variableName = null, Action<T> validate = null, PreferenceVariable? index = null)
+    : ScopedSetting(path, variableName, index)
 {
     internal T DefaultValue { get; } = defaultValue;
 
@@ -279,10 +347,8 @@ internal class ScopedSetting<T>(string path, T defaultValue, string variableName
 }
 
 internal sealed class ScopedActionPreferenceSetting(PreferenceVariable index, ActionPreference defaultValue, VariablePath variablePath)
-    : ScopedSetting<ActionPreference>($"ActionPreference.{index}", defaultValue, variablePath.UnqualifiedPath, Validate)
+    : ScopedSetting<ActionPreference>($"ActionPreference.{index}", defaultValue, variablePath.UnqualifiedPath, Validate, index)
 {
-    internal PreferenceVariable Index { get; } = index;
-
     internal VariablePath VariablePath { get; } = variablePath;
 
     private static void Validate(ActionPreference value)
@@ -296,6 +362,18 @@ internal sealed class ScopedActionPreferenceSetting(PreferenceVariable index, Ac
         if (!Enum.IsDefined(value))
         {
             LanguagePrimitives.EnumSingleTypeConverter.ThrowForUndefinedEnum("UndefinedIntegerToEnum", value, typeof(ActionPreference));
+        }
+    }
+}
+
+internal sealed class ScopedConfirmPreferenceSetting(PreferenceVariable index, ConfirmImpact defaultValue, VariablePath variablePath)
+    : ScopedSetting<ConfirmImpact>("ShouldProcess.Confirm", defaultValue, variablePath.UnqualifiedPath, Validate, index)
+{
+    private static void Validate(ConfirmImpact value)
+    {
+        if (!Enum.IsDefined(value))
+        {
+            LanguagePrimitives.EnumSingleTypeConverter.ThrowForUndefinedEnum("UndefinedIntegerToEnum", value, typeof(ConfirmImpact));
         }
     }
 }
@@ -412,19 +490,47 @@ internal static class ScopedProperties
         InitialSessionState.DefaultInformationPreference,
         SpecialVariables.InformationPreferenceVarPath);
 
+    internal static readonly ScopedActionPreferenceSetting ProgressPreferenceSetting = new(
+        PreferenceVariable.Progress,
+        InitialSessionState.DefaultProgressPreference,
+        SpecialVariables.ProgressPreferenceVarPath);
+
+    internal static readonly ScopedConfirmPreferenceSetting ConfirmPreferenceSetting = new(
+        PreferenceVariable.Confirm,
+        InitialSessionState.DefaultConfirmPreference,
+        SpecialVariables.ConfirmPreferenceVarPath);
+
+    internal static readonly ScopedSetting<bool> WhatIfPreferenceSetting = new(
+        "ShouldProcess.WhatIf",
+        InitialSessionState.DefaultWhatIfPreference,
+        SpecialVariables.WhatIfPreferenceVarPath.UnqualifiedPath,
+        index: PreferenceVariable.WhatIf);
+
     internal static IReadOnlyList<ScopedActionPreferenceSetting> PreferenceSettings { get; } =
         Array.AsReadOnly<ScopedActionPreferenceSetting>(
-            [DebugPreferenceSetting, VerbosePreferenceSetting, ErrorPreferenceSetting, WarningPreferenceSetting, InformationPreferenceSetting]);
+            [DebugPreferenceSetting, VerbosePreferenceSetting, ErrorPreferenceSetting, WarningPreferenceSetting, InformationPreferenceSetting, ProgressPreferenceSetting]);
 
-    private static readonly Dictionary<string, ScopedActionPreferenceSetting> s_preferencesByName =
-        PreferenceSettings.ToDictionary(static setting => setting.VariableName, StringComparer.OrdinalIgnoreCase);
+    internal static IReadOnlyList<ScopedSetting> ConfigurationSettings { get; } =
+        Array.AsReadOnly<ScopedSetting>(PreferenceSettings.Concat<ScopedSetting>([ConfirmPreferenceSetting, WhatIfPreferenceSetting]).ToArray());
+
+    internal static IReadOnlyList<ScopedSetting> TuplePreferenceSettings { get; } =
+        Array.AsReadOnly<ScopedSetting>(ConfigurationSettings.Where(static setting => setting.Index.HasValue).ToArray());
+
+    private static readonly Dictionary<string, ScopedSetting> s_preferencesByName =
+        ConfigurationSettings.ToDictionary(static setting => setting.VariableName, StringComparer.OrdinalIgnoreCase);
 
     private static readonly Dictionary<string, ScopedSetting> s_settingsByPath =
-        PreferenceSettings.Append<ScopedSetting>(ProgressViewSetting).ToDictionary(static setting => setting.Path, StringComparer.OrdinalIgnoreCase);
+        ConfigurationSettings.Append(ProgressViewSetting).ToDictionary(static setting => setting.Path, StringComparer.OrdinalIgnoreCase);
 
-    internal static bool IsLegacySetting(string name) => TryGetPreferenceSetting(name, out _);
+    internal static bool IsLegacySetting(string name) => TryGetConfigurationSetting(name, out _);
 
     internal static bool TryGetPreferenceSetting(string name, out ScopedActionPreferenceSetting setting)
+    {
+        setting = null;
+        return ExperimentalFeature.PSScopedProperties && name is not null && s_preferencesByName.TryGetValue(name, out var descriptor) && (setting = descriptor as ScopedActionPreferenceSetting) is not null;
+    }
+
+    internal static bool TryGetConfigurationSetting(string name, out ScopedSetting setting)
     {
         setting = null;
         return ExperimentalFeature.PSScopedProperties && name is not null && s_preferencesByName.TryGetValue(name, out setting);

@@ -123,7 +123,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
         $e.CategoryInfo.Reason | Should -BeExactly 'ArgumentTransformationMetadataException'
     }
 
-    $scopedPreferenceVariables = @('DebugPreference', 'ErrorActionPreference', 'InformationPreference', 'VerbosePreference', 'WarningPreference')
+    $scopedPreferenceVariables = @('DebugPreference', 'ErrorActionPreference', 'InformationPreference', 'ProgressPreference', 'VerbosePreference', 'WarningPreference')
     foreach ($variableCase in $actionPreferenceVariableTestCases) {
         $testCases = Join-TestCase -Set1 $variableCase -Set2 $actionPreferenceVariableValueTestCases
         It 'A local $<ActionPreferenceVariableName> variable does not support <DisplayValue>' -TestCases $testCases -Skip:(

@@ -377,7 +377,7 @@ namespace System.Management.Automation
         internal void AddVariable(PSVariable variable, SessionStateInternal sessionState)
         {
             var variables = GetPrivateVariables();
-            if (ScopedProperties.TryGetPreferenceSetting(variable.Name, out var setting) && !variables.ContainsKey(variable.Name))
+            if (ScopedProperties.TryGetConfigurationSetting(variable.Name, out var setting) && !variables.ContainsKey(variable.Name))
             {
                 SetScopedSettingVariable(setting, variable, asValue: false, force: false, sessionState, CommandOrigin.Internal);
             }
@@ -434,7 +434,7 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(name != null, "The caller should verify the name");
 
-            if (ScopedProperties.TryGetPreferenceSetting(name, out var setting))
+            if (ScopedProperties.TryGetConfigurationSetting(name, out var setting))
             {
                 variable = GetScopedSettingVariable(setting, origin);
                 return variable is not null;
@@ -517,7 +517,7 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(name != null, "The caller should verify the name");
 
-            if (ScopedProperties.TryGetPreferenceSetting(name, out var setting))
+            if (ScopedProperties.TryGetConfigurationSetting(name, out var setting))
             {
                 return SetScopedSettingVariable(setting, value, asValue, force, sessionState, origin, replace: fastPath, bypassProtection: fastPath);
             }
@@ -643,7 +643,7 @@ namespace System.Management.Automation
                 throw new NotImplementedException("SetVariableForce");
             }
 
-            if (ScopedProperties.TryGetPreferenceSetting(variableToSet.Name, out var setting))
+            if (ScopedProperties.TryGetConfigurationSetting(variableToSet.Name, out var setting))
             {
                 SetScopedSettingVariable(setting, variableToSet, asValue: false, force: true, sessionState, CommandOrigin.Internal, replace: true, bypassProtection: true);
                 return;
@@ -673,7 +673,7 @@ namespace System.Management.Automation
         /// </exception>
         internal PSVariable NewVariable(PSVariable newVariable, bool force, SessionStateInternal sessionState)
         {
-            if (ScopedProperties.TryGetPreferenceSetting(newVariable.Name, out var setting))
+            if (ScopedProperties.TryGetConfigurationSetting(newVariable.Name, out var setting))
             {
                 return SetScopedSettingVariable(setting, newVariable, asValue: false, force, sessionState, ScopeOrigin, replace: true);
             }
@@ -752,7 +752,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void RemoveVariable(string name, bool force)
         {
-            if (ScopedProperties.TryGetPreferenceSetting(name, out var setting))
+            if (ScopedProperties.TryGetConfigurationSetting(name, out var setting))
             {
                 RemoveScopedSettingVariable(setting, force);
                 return;

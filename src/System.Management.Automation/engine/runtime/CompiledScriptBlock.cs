@@ -1390,7 +1390,7 @@ namespace System.Management.Automation
 
             var path = new VariablePath(parameter.Name);
             string name = path.UnqualifiedPath;
-            if (!path.IsVariable || !ScopedProperties.TryGetPreferenceSetting(name, out var setting))
+            if (!path.IsVariable || !ScopedProperties.TryGetConfigurationSetting(name, out var setting))
             {
                 return false;
             }
@@ -2529,7 +2529,7 @@ namespace System.Management.Automation
         /// Binds a preference parameter to this invocation's setting, creating a temporary
         /// dotted-command frame when the invocation shares its caller's scope.
         /// </summary>
-        internal void BindScopedSettingParameter(ScopedActionPreferenceSetting setting, PSVariable variable)
+        internal void BindScopedSettingParameter(ScopedSetting setting, PSVariable variable)
         {
             SessionStateInternal state = Context.EngineSessionState;
             SessionStateScope scope = state.CurrentScope;
@@ -2572,23 +2572,26 @@ namespace System.Management.Automation
 
             if (_commandRuntime.IsProgressActionSet)
             {
-                _localsTuple.SetPreferenceVariable(PreferenceVariable.Progress, _commandRuntime.ProgressPreference);
+                SetPreferenceVariable(ScopedProperties.ProgressPreferenceSetting, _commandRuntime.ProgressPreference);
             }
 
             if (_commandRuntime.IsWhatIfFlagSet)
             {
-                _localsTuple.SetPreferenceVariable(PreferenceVariable.WhatIf, _commandRuntime.WhatIf);
+                SetPreferenceVariable(ScopedProperties.WhatIfPreferenceSetting, _commandRuntime.WhatIf);
             }
 
             if (_commandRuntime.IsConfirmFlagSet)
             {
-                _localsTuple.SetPreferenceVariable(
-                    PreferenceVariable.Confirm,
+                SetPreferenceVariable(
+                    ScopedProperties.ConfirmPreferenceSetting,
                     _commandRuntime.Confirm ? ConfirmImpact.Low : ConfirmImpact.None);
             }
         }
 
         private void SetActionPreferenceVariable(ScopedActionPreferenceSetting setting, ActionPreference value)
+            => SetPreferenceVariable(setting, value);
+
+        private void SetPreferenceVariable<T>(ScopedSetting<T> setting, T value)
         {
             if (ExperimentalFeature.PSScopedProperties)
             {
@@ -2598,7 +2601,7 @@ namespace System.Management.Automation
             }
             else
             {
-                _localsTuple.SetPreferenceVariable(setting.Index, value);
+                _localsTuple.SetPreferenceVariable(setting.Index.Value, value);
             }
         }
 

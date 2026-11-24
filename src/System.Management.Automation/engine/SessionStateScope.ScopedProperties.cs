@@ -147,7 +147,7 @@ internal sealed partial class SessionStateScope
             return;
         }
 
-        foreach (var setting in ScopedProperties.PreferenceSettings)
+        foreach (var setting in ScopedProperties.ConfigurationSettings)
         {
             var variable = GetLocalScopedSettingVariable(setting);
             if (variable is not null && (includePrivate || !variable.IsPrivate))
@@ -174,7 +174,7 @@ internal sealed partial class SessionStateScope
             return;
         }
 
-        foreach (var setting in ScopedProperties.PreferenceSettings)
+        foreach (var setting in ScopedProperties.ConfigurationSettings)
         {
             ScopedSettingVariable variable;
             if (isScopeFrame)
