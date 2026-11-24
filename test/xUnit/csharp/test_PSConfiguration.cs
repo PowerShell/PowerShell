@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Threading;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using PSTests.Internal;
 using Xunit;
 
@@ -419,6 +420,199 @@ namespace PSTests.Sequential
         }
 
         #endregion
+    }
+
+    public sealed class PowerShellConfigReadTests : IDisposable
+    {
+        private readonly string configFile = Path.GetTempFileName();
+        private readonly PowerShellConfig config;
+
+        public PowerShellConfigReadTests()
+        {
+            // Use a separate instance so these tests never modify the real configuration or its cache.
+            config = (PowerShellConfig)Activator.CreateInstance(typeof(PowerShellConfig), nonPublic: true);
+            config.SetSystemConfigFilePath(configFile);
+        }
+
+        public void Dispose()
+        {
+            File.Delete(configFile);
+        }
+
+        [Fact]
+        public void ReadingRootDoesNotResolveSerializerContracts()
+        {
+            File.WriteAllText(configFile, "{\"PSModulePath\":\"modules\"}");
+            var serializerField = typeof(PowerShellConfig).GetField("serializer", BindingFlags.NonPublic | BindingFlags.Instance);
+            var serializer = ((Lazy<JsonSerializer>)serializerField.GetValue(config)).Value;
+            serializer.ContractResolver = new RejectingContractResolver();
+
+            Assert.Null(config.GetPowerShellPolicies(ConfigScope.AllUsers));
+        }
+
+        [Fact]
+        public void SerializerIsCreatedOnlyWhenReadingAnExistingSetting()
+        {
+            File.WriteAllText(configFile, "{\"PSModulePath\":\"modules\"}");
+            var serializerField = typeof(PowerShellConfig).GetField("serializer", BindingFlags.NonPublic | BindingFlags.Instance);
+            var serializer = (Lazy<JsonSerializer>)serializerField.GetValue(config);
+
+            Assert.False(serializer.IsValueCreated);
+
+            Assert.Null(config.GetPowerShellPolicies(ConfigScope.AllUsers));
+            Assert.False(serializer.IsValueCreated);
+
+            Assert.Equal("modules", config.GetModulePath(ConfigScope.AllUsers));
+            Assert.True(serializer.IsValueCreated);
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData(" \r\n\t")]
+        [InlineData("/* comment */ // another comment")]
+        [InlineData("null")]
+        [InlineData("/* comment */ null")]
+        public void EmptyConfigurationReturnsDefaults(string json)
+        {
+            File.WriteAllText(configFile, json);
+
+            Assert.Null(config.GetModulePath(ConfigScope.AllUsers));
+            Assert.Null(config.GetPowerShellPolicies(ConfigScope.AllUsers));
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData(" \r\n\t")]
+        [InlineData("/* comment */ // another comment")]
+        [InlineData("null")]
+        [InlineData("/* comment */ null")]
+        public void AddingSettingToEmptyConfigurationCreatesObject(string json)
+        {
+            File.WriteAllText(configFile, json);
+            Assert.Null(config.GetExecutionPolicy(ConfigScope.AllUsers, "Microsoft.PowerShell"));
+
+            config.SetExecutionPolicy(ConfigScope.AllUsers, "Microsoft.PowerShell", "RemoteSigned");
+
+            Assert.Equal("RemoteSigned", config.GetExecutionPolicy(ConfigScope.AllUsers, "Microsoft.PowerShell"));
+            JObject writtenConfig = JObject.Parse(File.ReadAllText(configFile));
+            Assert.Equal("RemoteSigned", (string)writtenConfig["Microsoft.PowerShell:ExecutionPolicy"]);
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData(" \r\n\t")]
+        [InlineData("/* comment */ // another comment")]
+        [InlineData("null")]
+        [InlineData("/* comment */ null")]
+        public void RemovingSettingFromEmptyConfigurationLeavesFileUnchanged(string json)
+        {
+            File.WriteAllText(configFile, json);
+
+            config.RemoveExecutionPolicy(ConfigScope.AllUsers, "Microsoft.PowerShell");
+
+            Assert.Equal(json, File.ReadAllText(configFile));
+            Assert.Null(config.GetExecutionPolicy(ConfigScope.AllUsers, "Microsoft.PowerShell"));
+        }
+
+        [Fact]
+        public void ReadingSettingsPreservesJsonSyntaxAndTypedConversion()
+        {
+            File.WriteAllText(configFile, """
+                /* leading comment */
+                {
+                    'psmodulepath': 'first',
+                    'psmodulepath': 'second',
+                    'PowerShellPolicies': {
+                        'ScriptExecution': {
+                            'ExecutionPolicy': 'RemoteSigned',
+                            'EnableScripts': true,
+                        },
+                        'ModuleLogging': {
+                            'ModuleNames': ['One', 'Two'],
+                        },
+                    },
+                }
+                """);
+
+            Assert.Equal("second", config.GetModulePath(ConfigScope.AllUsers));
+            PowerShellPolicies policies = config.GetPowerShellPolicies(ConfigScope.AllUsers);
+            Assert.Equal("RemoteSigned", policies.ScriptExecution.ExecutionPolicy);
+            Assert.True(policies.ScriptExecution.EnableScripts);
+            Assert.Equal(new[] { "One", "Two" }, policies.ModuleLogging.ModuleNames);
+            Assert.Null(policies.ModuleLogging.EnableModuleLogging);
+        }
+
+        [Theory]
+        [InlineData("[]")]
+        [InlineData("42")]
+        [InlineData("true")]
+        [InlineData("\"text\"")]
+        [InlineData("undefined")]
+        [InlineData("{\"PSModulePath\":")]
+        public void InvalidSystemConfigurationStillThrows(string json)
+        {
+            File.WriteAllText(configFile, json);
+
+            var exception = Assert.Throws<PSInvalidOperationException>(() => config.GetModulePath(ConfigScope.AllUsers));
+            Assert.IsAssignableFrom<JsonException>(exception.InnerException);
+        }
+
+        [Theory]
+        [InlineData("[]")]
+        [InlineData("{\"PSModulePath\":")]
+        public void InvalidUserConfigurationStillWarnsAndReturnsDefaults(string json)
+        {
+            File.WriteAllText(configFile, json);
+            typeof(PowerShellConfig).GetField("perUserConfigFile", BindingFlags.NonPublic | BindingFlags.Instance)
+                .SetValue(config, configFile);
+
+            using var captured = new StringWriter();
+            TextWriter originalError = Console.Error;
+            try
+            {
+                Console.SetError(captured);
+                Assert.Null(config.GetModulePath(ConfigScope.CurrentUser));
+            }
+            finally
+            {
+                Console.SetError(originalError);
+            }
+
+            Assert.Contains("WARNING:", captured.ToString());
+            Assert.Contains("Falling back to default settings", captured.ToString());
+        }
+
+        [Theory]
+        [InlineData(10, true)]
+        [InlineData(11, false)]
+        public void ConfigurationDepthLimitIsPreserved(int depth, bool accepted)
+        {
+            string json = "0";
+            for (int i = 0; i < depth; i++)
+            {
+                json = "{\"nested\":" + json + "}";
+            }
+
+            File.WriteAllText(configFile, json);
+
+            if (accepted)
+            {
+                Assert.Null(config.GetModulePath(ConfigScope.AllUsers));
+            }
+            else
+            {
+                var exception = Assert.Throws<PSInvalidOperationException>(() => config.GetModulePath(ConfigScope.AllUsers));
+                Assert.IsAssignableFrom<JsonException>(exception.InnerException);
+            }
+        }
+
+        private sealed class RejectingContractResolver : DefaultContractResolver
+        {
+            public override JsonContract ResolveContract(Type type)
+            {
+                throw new InvalidOperationException("Reading the configuration DOM must not resolve serializer contracts.");
+            }
+        }
     }
 
     public class PowerShellPolicyTests : IClassFixture<PowerShellPolicyFixture>
