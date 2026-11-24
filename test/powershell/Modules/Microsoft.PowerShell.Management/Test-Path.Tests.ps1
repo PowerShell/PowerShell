@@ -106,6 +106,27 @@ Describe "Test-Path" -Tags "CI" {
         Test-Path -Path $testfilename -Type Leaf | Should -BeTrue
     }
 
+    It "Should return true when the Container pathtype is used on a directory with different casing" -Skip:($IsLinux) {
+        $dir = New-Item -Path $testdirectory -Name CaseTestDir -ItemType Directory
+        Test-Path -LiteralPath $dir.FullName.ToUpperInvariant() -PathType Container | Should -BeTrue
+        Test-Path -LiteralPath $dir.FullName.ToLowerInvariant() -PathType Container | Should -BeTrue
+        Test-Path -LiteralPath $dir.FullName.ToLowerInvariant() -PathType Leaf | Should -BeFalse
+    }
+
+    It "Should return true when the Container pathtype is used on a directory whose name has wildcard characters" -Skip:($IsWindows) {
+        # '?' matches any character when enumerating a directory, so 'a?b' also matches the files 'a0b' to 'azb'
+        $parent = New-Item -Path $testdirectory -Name WildcardNames -ItemType Directory
+        $dir = Join-Path $parent.FullName 'a?b'
+        $null = [System.IO.Directory]::CreateDirectory($dir)
+        foreach ($c in [char[]]'0123456789abcdefghijklmnopqrstuvwxyz')
+        {
+            [System.IO.File]::WriteAllText((Join-Path $parent.FullName "a${c}b"), '1')
+        }
+
+        Test-Path -LiteralPath $dir -PathType Container | Should -BeTrue
+        Test-Path -LiteralPath $dir -PathType Leaf | Should -BeFalse
+    }
+
     It "Should be able to search multiple regular expressions using the include switch" {
         { Test-Path -Path (Join-Path -Path $testdirectory -ChildPath "*") -Include t* } | Should -BeTrue
     }
