@@ -50,24 +50,21 @@ namespace System.Management.Automation
         /// </summary>
         internal SessionStateScope Parent { get; set; }
 
-        private Dictionary<string, object> _scopedSettings;
+        private Dictionary<ScopedSetting, ScopedSettingEntry> _scopedSettings;
 
         internal bool IsRemoved { get; private set; }
 
-        internal bool TryGetScopedSetting(string key, out object value)
+        internal ScopedSettingEntry<T> GetScopedSetting<T>(ScopedSetting<T> setting)
+            => _scopedSettings?.TryGetValue(setting, out ScopedSettingEntry entry) == true ? (ScopedSettingEntry<T>)entry : null;
+
+        internal void SetScopedSetting(ScopedSettingEntry entry)
         {
-            value = null;
-            return _scopedSettings?.TryGetValue(key, out value) == true;
+            (_scopedSettings ??= new())[entry.Setting] = entry;
         }
 
-        internal void SetScopedSetting(string key, object value)
+        internal void RemoveScopedSetting(ScopedSetting setting)
         {
-            (_scopedSettings ??= new())[key] = value;
-        }
-
-        internal void RemoveScopedSetting(string key)
-        {
-            _scopedSettings?.Remove(key);
+            _scopedSettings?.Remove(setting);
         }
 
         internal void ClearScopedSettings() => _scopedSettings = null;

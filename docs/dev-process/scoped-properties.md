@@ -45,6 +45,10 @@ The Pester run used an explicit module path and temporary registry access for it
 
 ## Canonical storage contract
 
+The progress view uses an internal `ScopedSetting<ProgressView>` descriptor and typed entries owned by each scope.
+The descriptor supplies the default when no override is visible. Both progress interfaces and the console host read from the same scope entries when the feature is enabled and a runspace is active.
+The Error property still uses the legacy variable.
+
 The planned cutover keeps the public `$PS` API, `PSScopedProperties` feature gate, and scope targeting rules. Each setting has a declared type and default.
 Its effective value comes from the nearest visible scope entry, or from the declared default (`Continue` for error action and `Minimal` for progress view) if no entry is visible.
 An assignment to either access path converts and validates before writing the target scope's entry. `Reset()` removes the target scope's entry when present, subject to variable protections, so the setting resumes inheritance.
@@ -90,7 +94,7 @@ The decision gives variable readers, the facade, and engine consumers the same t
 Keeping a raw value alongside the typed value would require defining two observable values for the same setting and synchronizing updates to both.
 
 To reverse this decision, revisit the legacy-name routing and adapter write conversion in session state, as well as the compiler path that routes variable assignments away from independent optimized slots.
-Restore raw shadow creation and the lookup conversion and fallback currently implemented by `ExecutionContext.GetEnumPreference` and `ScopedProperties.Error`.
+Restore raw shadow creation and the lookup conversion and fallback currently implemented by `ExecutionContext.GetEnumPreference` and `ScopedProperties.GetErrorActionPreference`.
 Restore the built-in variable's `ArgumentTypeConverterAttribute` from `InitialSessionState` for its existing typed behavior.
 Review `Set-Variable`, provider writes, and retained `PSVariable` writes alongside direct assignment so the reversal applies consistently.
 
@@ -129,7 +133,7 @@ An alternative was to preserve the implicit preference for the lifetime of the a
 Another alternative was to write the default into the target scope. That would keep overriding the parent when it has a different preference.
 
 To reverse this decision while keeping typed entries, track which entries represent an advanced function's implicit `-ErrorAction` and reinstate its removal restriction in the error setting's override removal path.
-The current behavior originates in `SetPreferenceVariables()` in `CompiledScriptBlock.cs`, its `MutableTuple` preference slot, and the error removal delegate in `ScopedProperties.Error`.
+The current behavior originates in `SetPreferenceVariables()` in `CompiledScriptBlock.cs`, its `MutableTuple` preference slot, and `ScopedProperties.ResetErrorActionPreference`.
 Restoring the old dynamic reset restriction would also require restoring the ordinary optimized-local distinction that `VariableAnalysis` currently uses for its statically named `Reset()` exception.
 Review both reset and legacy removal so the two paths apply the same removal rules.
 

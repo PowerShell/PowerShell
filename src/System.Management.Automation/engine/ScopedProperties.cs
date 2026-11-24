@@ -69,13 +69,13 @@ public sealed class PSScopedPropertyFacade
     public void Reset(string path)
     {
         var (context, scope) = Resolve();
-        if (string.Equals(path, ScopedProperties.Error.Path, StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(path, ScopedProperties.ErrorPath, StringComparison.OrdinalIgnoreCase))
         {
-            ScopedProperties.Error.Reset(context, scope);
+            ScopedProperties.ResetErrorActionPreference(context, scope);
         }
         else if (string.Equals(path, ScopedProperties.ProgressViewSetting.Path, StringComparison.OrdinalIgnoreCase))
         {
-            ScopedProperties.ProgressViewSetting.Reset(context, scope);
+            ScopedProperties.ProgressViewSetting.Reset(scope);
         }
         else
         {
@@ -123,13 +123,13 @@ public sealed class PSScopedActionPreference
         get
         {
             var (context, scope) = _facade.Resolve();
-            return ScopedProperties.Error.GetValue(context, scope);
+            return ScopedProperties.GetErrorActionPreference(context, scope);
         }
 
         set
         {
             var (context, scope) = _facade.Resolve();
-            ScopedProperties.Error.Write(context, scope, value);
+            ScopedProperties.SetErrorActionPreference(context, scope, value);
         }
     }
 }
@@ -169,26 +169,69 @@ public sealed class PSScopedProgressStyle
     {
         get
         {
-            var (context, scope) = _facade.Resolve();
-            return ScopedProperties.ProgressViewSetting.GetValue(context, scope);
+            var (_, scope) = _facade.Resolve();
+            return ScopedProperties.ProgressViewSetting.GetValue(scope);
         }
 
         set
         {
-            var (context, scope) = _facade.Resolve();
-            ScopedProperties.ProgressViewSetting.Write(context, scope, value);
+            var (_, scope) = _facade.Resolve();
+            ScopedProperties.ProgressViewSetting.SetValue(scope, value);
         }
     }
 }
 
-internal sealed record ScopedSetting<T>(
-    string Path,
-    T DefaultValue,
-    Func<ExecutionContext, SessionStateScope, ScopedSetting<T>, T> Read,
-    Action<ExecutionContext, SessionStateScope, T> Write,
-    Action<ExecutionContext, SessionStateScope> Reset)
+internal abstract class ScopedSetting(string path)
 {
-    internal T GetValue(ExecutionContext context, SessionStateScope scope) => Read(context, scope, this);
+    internal string Path { get; } = path;
+}
+
+internal sealed class ScopedSetting<T>(string path, T defaultValue) : ScopedSetting(path)
+{
+    internal T DefaultValue { get; } = defaultValue;
+
+    internal T GetValue(SessionStateScope scope)
+    {
+        for (; scope is not null; scope = scope.Parent)
+        {
+            if (scope.GetScopedSetting(this) is ScopedSettingEntry<T> entry)
+            {
+                return entry.Value;
+            }
+        }
+
+        return DefaultValue;
+    }
+
+    internal void SetValue(SessionStateScope scope, object value)
+    {
+        if (scope.GetScopedSetting(this) is ScopedSettingEntry<T> entry)
+        {
+            entry.SetValue(value);
+        }
+        else
+        {
+            scope.SetScopedSetting(new ScopedSettingEntry<T>(this, value));
+        }
+    }
+
+    internal T ConvertValue(object value) => LanguagePrimitives.ConvertTo<T>(value);
+
+    internal void Reset(SessionStateScope scope) => scope.RemoveScopedSetting(this);
+}
+
+internal abstract class ScopedSettingEntry
+{
+    internal abstract ScopedSetting Setting { get; }
+}
+
+internal sealed class ScopedSettingEntry<T>(ScopedSetting<T> setting, object value) : ScopedSettingEntry
+{
+    internal override ScopedSetting Setting => setting;
+
+    internal T Value { get; private set; } = setting.ConvertValue(value);
+
+    internal void SetValue(object value) => Value = setting.ConvertValue(value);
 }
 
 internal static class ScopedProperties
@@ -196,44 +239,30 @@ internal static class ScopedProperties
     internal const string ErrorPath = "ActionPreference.Error";
     private const string ProgressViewPath = "Style.Progress.View";
 
-    internal static readonly ScopedSetting<ActionPreference> Error = new(
-        ErrorPath,
-        InitialSessionState.DefaultErrorActionPreference,
-        static (context, scope, setting) => context.GetEnumPreference(SpecialVariables.ErrorActionPreferenceVarPath, setting.DefaultValue, out _, scope),
-        static (context, scope, value) =>
-        {
-            var state = context.EngineSessionState;
-            scope.SetVariable(SpecialVariables.ErrorActionPreference, value, asValue: true, force: false, state, state.CurrentScope.ScopeOrigin);
-        },
-        static (context, scope) =>
-        {
-            if (scope.GetVariable(SpecialVariables.ErrorActionPreference, context.EngineSessionState.CurrentScope.ScopeOrigin) is not null)
-            {
-                scope.RemoveVariable(SpecialVariables.ErrorActionPreference, force: false);
-            }
-        });
-
     internal static readonly ScopedSetting<ProgressView> ProgressViewSetting = new(
         ProgressViewPath,
-        ProgressView.Minimal,
-        static (_, scope, setting) =>
-        {
-            for (; scope is not null; scope = scope.Parent)
-            {
-                if (scope.TryGetScopedSetting(setting.Path, out var value))
-                {
-                    return (ProgressView)value;
-                }
-            }
+        ProgressView.Minimal);
 
-            return setting.DefaultValue;
-        },
-        static (_, scope, value) => scope.SetScopedSetting(ProgressViewPath, value),
-        static (_, scope) => scope.RemoveScopedSetting(ProgressViewPath));
+    internal static ActionPreference GetErrorActionPreference(ExecutionContext context, SessionStateScope scope)
+        => context.GetEnumPreference(SpecialVariables.ErrorActionPreferenceVarPath, InitialSessionState.DefaultErrorActionPreference, out _, scope);
+
+    internal static void SetErrorActionPreference(ExecutionContext context, SessionStateScope scope, ActionPreference value)
+    {
+        var state = context.EngineSessionState;
+        scope.SetVariable(SpecialVariables.ErrorActionPreference, value, asValue: true, force: false, state, state.CurrentScope.ScopeOrigin);
+    }
+
+    internal static void ResetErrorActionPreference(ExecutionContext context, SessionStateScope scope)
+    {
+        if (scope.GetVariable(SpecialVariables.ErrorActionPreference, context.EngineSessionState.CurrentScope.ScopeOrigin) is not null)
+        {
+            scope.RemoveVariable(SpecialVariables.ErrorActionPreference, force: false);
+        }
+    }
 
     internal static ProgressView GetProgressView(ExecutionContext context)
-        => ProgressViewSetting.GetValue(context, context.EngineSessionState.CurrentScope);
+        => ProgressViewSetting.GetValue(context.EngineSessionState.CurrentScope);
 
     internal static void SetProgressView(ExecutionContext context, ProgressView value)
-        => ProgressViewSetting.Write(context, context.EngineSessionState.CurrentScope, value);
+        => ProgressViewSetting.SetValue(context.EngineSessionState.CurrentScope, value);
 }
