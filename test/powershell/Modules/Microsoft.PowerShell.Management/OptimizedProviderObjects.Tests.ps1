@@ -1,0 +1,501 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+Describe "Optimized Registry provider instance metadata" -Tags "CI" {
+    BeforeAll {
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+        $PSDefaultParameterValues['It:Skip'] = -not [ExperimentalFeature]::IsEnabled('PSOptimizedProviderObjects')
+
+        if ($IsWindows) {
+            $registryPath = "HKCU:\Software\PowerShellMetadataTests_$([guid]::NewGuid().ToString('N'))"
+            New-Item -Path $registryPath -ErrorAction Stop | Out-Null
+            $keyPath = Join-Path $registryPath "sample[1]"
+            New-Item -Path $keyPath -ErrorAction Stop | Out-Null
+            Set-Item -LiteralPath $keyPath -Value "default value"
+            New-ItemProperty -LiteralPath $keyPath -Name "Named" -Value "value" | Out-Null
+            New-PSDrive -Name RegistryMetadata -PSProvider Registry -Root (Get-Item -LiteralPath $registryPath).Name | Out-Null
+            $registryMetadataEnabled = [bool](Get-ExperimentalFeature -Name PSOptimizedProviderObjects).Enabled
+            Add-Type -TypeDefinition @'
+using System.Management.Automation;
+using System.Reflection;
+
+public static class RegistryMetadataTestHelper
+{
+    public static string SourceType(PSObject item)
+    {
+        object members = typeof(PSObject).GetField("_instanceMembers", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(item);
+        object source = members.GetType().GetField("_providerSource", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(members);
+        return source?.GetType().GenericTypeArguments[0].Name;
+    }
+
+    public static bool HasStorage(PSObject item)
+    {
+        object members = typeof(PSObject).GetField("_instanceMembers", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(item);
+        return members.GetType().GetField("_members", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(members) != null;
+    }
+}
+'@
+        }
+    }
+
+    AfterAll {
+        $global:PSDefaultParameterValues = $originalDefaultParameterValues
+        if ($IsWindows) {
+            Remove-PSDrive -Name RegistryMetadata -Force -ErrorAction Stop
+            Remove-Item -LiteralPath $registryPath -Recurse -Force -ErrorAction Stop
+        }
+    }
+
+    It "preserves registry paths, value names, and member ordering" -Skip:(!$IsWindows) {
+        $item = Get-Item -LiteralPath $keyPath
+        $item.PSPath | Should -BeExactly "Microsoft.PowerShell.Core\Registry::$($item.Name)"
+        $item.PSParentPath | Should -BeExactly "Microsoft.PowerShell.Core\Registry::$((Get-Item -LiteralPath $registryPath).Name)"
+        $item.PSChildName | Should -BeExactly 'sample[1]'
+        $item.PSIsContainer | Should -BeTrue
+        $item.PSDrive.Name | Should -BeExactly "HKCU"
+        $item.PSProvider.Name | Should -BeExactly "Registry"
+        $item.Property | Should -Contain "(default)"
+        $item.Property | Should -Contain "Named"
+
+        $notes = @($item.PSObject.Properties | Where-Object MemberType -EQ NoteProperty)
+        $notes.Name | Should -Be @("Property", "PSPath", "PSParentPath", "PSChildName", "PSDrive", "PSProvider", "PSIsContainer")
+    }
+
+    It "keeps direct registry reads compact until mutation" -Skip:(!$IsWindows) {
+        if (-not $registryMetadataEnabled) {
+            Set-ItResult -Skipped -Because "Requires PSOptimizedProviderObjects"
+            return
+        }
+
+        $item = Get-Item -LiteralPath $keyPath
+        [RegistryMetadataTestHelper]::SourceType($item) | Should -BeExactly "RegistryProviderMetadata"
+        [RegistryMetadataTestHelper]::HasStorage($item) | Should -BeFalse
+
+        $item.Property | Should -Contain "Named"
+        $item.PSPath | Should -Match "Registry::"
+        $item | ForEach-Object -MemberName pschildname | Should -BeExactly 'sample[1]'
+        [RegistryMetadataTestHelper]::HasStorage($item) | Should -BeFalse
+        [RegistryMetadataTestHelper]::SourceType($item) | Should -BeExactly "RegistryProviderMetadata"
+
+        $item.PSPath = "changed"
+        $item.PSPath | Should -BeExactly "changed"
+        [RegistryMetadataTestHelper]::SourceType($item) | Should -BeNullOrEmpty
+        $item.PSObject.Properties.Remove("PSPath")
+        $item.PSObject.Properties["PSPath"] | Should -BeNullOrEmpty
+    }
+
+    It "captures registry metadata from the key and drive at emission" -Skip:(!$IsWindows) {
+        $item = Get-Item -LiteralPath $keyPath
+        if ($registryMetadataEnabled) {
+            [RegistryMetadataTestHelper]::SourceType($item) | Should -BeExactly "RegistryProviderMetadata"
+        }
+        else {
+            [RegistryMetadataTestHelper]::SourceType($item) | Should -BeNullOrEmpty
+        }
+        $item.Property | Should -Contain "(default)"
+        $item.Property | Should -Contain "Named"
+        $item.PSPath | Should -BeExactly "Microsoft.PowerShell.Core\Registry::$($item.Name)"
+        $item.PSParentPath | Should -BeExactly "Microsoft.PowerShell.Core\Registry::$((Get-Item -LiteralPath $registryPath).Name)"
+        $item.PSChildName | Should -BeExactly 'sample[1]'
+        $item.PSDrive.Name | Should -BeExactly "HKCU"
+        $item.PSProvider | Should -BeExactly $item.PSDrive.Provider
+
+        New-ItemProperty -LiteralPath $keyPath -Name "DerivedLater" -Value "value" | Out-Null
+        try {
+            $item.Property | Should -Not -Contain "DerivedLater"
+            (Get-Item -LiteralPath $keyPath).Property | Should -Contain "DerivedLater"
+        }
+        finally {
+            Remove-ItemProperty -LiteralPath $keyPath -Name "DerivedLater" -ErrorAction Stop
+        }
+    }
+
+    It "preserves metadata after closing the key before <Operation>" -Skip:(!$IsWindows) -TestCases @(
+        @{ Operation = 'direct reads' }
+        @{ Operation = 'property inspection' }
+        @{ Operation = 'Add-Member' }
+    ) {
+        param($Operation)
+
+        $item = Get-Item -LiteralPath $keyPath
+        $expectedPath = "Microsoft.PowerShell.Core\Registry::$($item.Name)"
+        $expectedParent = "Microsoft.PowerShell.Core\Registry::$((Get-Item -LiteralPath $registryPath).Name)"
+        $item.Close()
+
+        switch ($Operation) {
+            'property inspection' {
+                $item.PSObject.Properties['PSPath'].Value | Should -BeExactly $expectedPath
+            }
+            'Add-Member' {
+                $item | Add-Member -NotePropertyName Extra -NotePropertyValue 'added' -ErrorAction Stop
+                $item.Extra | Should -BeExactly 'added'
+            }
+        }
+
+        $item.PSPath | Should -BeExactly $expectedPath
+        $item.PSParentPath | Should -BeExactly $expectedParent
+        $item.PSChildName | Should -BeExactly 'sample[1]'
+        $item.Property | Should -Contain '(default)'
+        $item.Property | Should -Contain 'Named'
+        $item.PSDrive.Name | Should -BeExactly 'HKCU'
+        $item.PSProvider.Name | Should -BeExactly 'Registry'
+        $item.PSIsContainer | Should -BeTrue
+    }
+
+    It "preserves Property array identity and edits through promotion" -Skip:(!$IsWindows) {
+        $item = Get-Item -LiteralPath $keyPath
+        try {
+            $first = $item.Property
+            [object]::ReferenceEquals($first, $item.Property) | Should -BeTrue
+            $item.Property[0] = 'Edited note'
+            $item.Property[0] | Should -BeExactly 'Edited note'
+            if ($registryMetadataEnabled) {
+                [RegistryMetadataTestHelper]::HasStorage($item) | Should -BeFalse
+            }
+
+            $item | Add-Member -NotePropertyName Extra -NotePropertyValue 'added' -ErrorAction Stop
+            [object]::ReferenceEquals($first, $item.PSObject.Properties['Property'].Value) | Should -BeTrue
+            $item.Property[0] | Should -BeExactly 'Edited note'
+            (Get-Item -LiteralPath $keyPath).Property | Should -Not -Contain 'Edited note'
+        }
+        finally {
+            $item.Close()
+        }
+    }
+
+    It "preserves the parent boundary of a custom registry drive root: <RootSuffix>" -Skip:(!$IsWindows) -TestCases @(
+        @{ RootSuffix = '\' }
+        @{ RootSuffix = '/' }
+    ) {
+        param($RootSuffix)
+
+        $root = Get-Item -LiteralPath "RegistryMetadata:$RootSuffix"
+        $child = Get-Item -LiteralPath 'RegistryMetadata:\sample[1]'
+        $expectedParent = "Microsoft.PowerShell.Core\Registry::$($root.Name)"
+        $root.Close()
+        $child.Close()
+
+        $root.PSParentPath | Should -BeExactly ''
+        $root.PSObject.Properties['PSParentPath'].Value | Should -BeExactly ''
+        $child.PSParentPath | Should -BeExactly $expectedParent
+        $child.PSObject.Properties['PSParentPath'].Value | Should -BeExactly $expectedParent
+    }
+
+    It "preserves custom drive and drive-less registry metadata" -Skip:(!$IsWindows) {
+        $item = Get-Item -LiteralPath 'RegistryMetadata:\sample[1]'
+        $item.PSDrive.Name | Should -BeExactly "RegistryMetadata"
+        $item.PSChildName | Should -BeExactly 'sample[1]'
+        Push-Location $TestDrive
+        try {
+            $qualified = Get-Item -LiteralPath "Registry::$($item.Name)"
+            $qualified.PSObject.Properties["PSDrive"] | Should -BeNullOrEmpty
+            $qualified.PSProvider.Name | Should -BeExactly "Registry"
+            $qualified.Property | Should -Contain "Named"
+        }
+        finally {
+            Pop-Location
+        }
+    }
+
+    It "compares custom registry drive roots without case sensitivity" -Skip:(!$IsWindows) {
+        $rootName = (Get-Item -LiteralPath $registryPath).Name.ToLowerInvariant()
+        New-PSDrive -Name RegistryMetadataLower -PSProvider Registry -Root $rootName | Out-Null
+        try {
+            $item = Get-Item -LiteralPath 'RegistryMetadataLower:\'
+            $item.Close()
+            $item.PSParentPath | Should -BeExactly ''
+        }
+        finally {
+            Remove-PSDrive -Name RegistryMetadataLower -Force -ErrorAction Stop
+        }
+    }
+
+    It "preserves metadata for created and enumerated registry keys" -Skip:(!$IsWindows) {
+        $created = New-Item -Path (Join-Path $registryPath "created")
+        $item = Get-Item -LiteralPath $keyPath
+        $children = @(Get-ChildItem -LiteralPath $registryPath)
+        $children.Count | Should -Be 2
+        foreach ($registryItem in @($created, $item) + $children) {
+            $registryItem.PSIsContainer | Should -BeTrue
+            $registryItem.PSProvider.Name | Should -BeExactly "Registry"
+            $registryItem.PSObject.Properties["Property"].MemberType | Should -Be "NoteProperty"
+        }
+    }
+}
+
+Describe "Optimized FileSystem provider instance metadata" -Tags "CI" {
+    BeforeAll {
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+        $PSDefaultParameterValues['It:Skip'] = -not [ExperimentalFeature]::IsEnabled('PSOptimizedProviderObjects')
+
+        $file = Join-Path $TestDrive "sample[1].txt"
+        $driveName = "OptMeta"
+        New-PSDrive -Name $driveName -PSProvider FileSystem -Root $TestDrive | Out-Null
+        $script:optimizedMetadataEnabled = [bool](Get-ExperimentalFeature -Name PSOptimizedProviderObjects).Enabled
+    }
+
+    BeforeEach {
+        Remove-Item -LiteralPath (Join-Path $TestDrive "moved.txt") -Force -ErrorAction SilentlyContinue
+        Set-Content -LiteralPath $file -Value @("one", "two", "three")
+        New-Item -ItemType Directory -Path (Join-Path $TestDrive "container") -Force | Out-Null
+    }
+
+    AfterAll {
+        $global:PSDefaultParameterValues = $originalDefaultParameterValues
+        Remove-PSDrive -Name $driveName -Force -ErrorAction SilentlyContinue
+    }
+
+    It "registers the optimization feature" {
+        $feature = Get-ExperimentalFeature -Name PSOptimizedProviderObjects
+        $feature | Should -Not -BeNullOrEmpty
+        $feature.Name | Should -BeExactly "PSOptimizedProviderObjects"
+        $feature.Description | Should -Not -BeNullOrEmpty
+    }
+
+    It "preserves file metadata and ordinary mutation semantics" {
+        $item = Get-Item -LiteralPath $file
+        $item.PSPath | Should -Match "FileSystem::"
+        $item.PSIsContainer | Should -BeFalse
+        $item.PSObject.Properties["PSPath"].MemberType | Should -Be "NoteProperty"
+
+        $item.PSPath = "changed"
+        $item.PSPath | Should -BeExactly "changed"
+        $item.PSObject.Properties.Remove("PSPath")
+        $item.PSObject.Properties["PSPath"] | Should -BeNullOrEmpty
+    }
+
+    It "preserves DirectoryInfo container and path metadata" {
+        $directoryPath = Join-Path $TestDrive "container"
+        $directory = Get-Item -LiteralPath $directoryPath
+        $directory.PSIsContainer | Should -BeTrue
+        $directory.PSPath | Should -Match "FileSystem::"
+        $directory.PSParentPath | Should -Match ([regex]::Escape((Split-Path -Parent $directoryPath)))
+        $directory.PSChildName | Should -BeExactly "container"
+    }
+
+    It "keeps cached member reads correct across ordinary and promoted objects" {
+        function Read-Path($value) { $value.PSPath }
+
+        $optimized = Get-Item -LiteralPath $file
+        $ordinary = [pscustomobject]@{ PSPath = "ordinary-path" }
+        Read-Path $optimized | Should -Match "FileSystem::"
+        Read-Path $ordinary | Should -BeExactly "ordinary-path"
+        Read-Path $optimized | Should -Match "FileSystem::"
+
+        $optimized.PSPath = "promoted-path"
+        Read-Path $optimized | Should -BeExactly "promoted-path"
+        Read-Path $ordinary | Should -BeExactly "ordinary-path"
+        Read-Path $optimized | Should -BeExactly "promoted-path"
+    }
+
+    It "preserves content paths and ReadCount for individual lines" {
+        $results = @(Get-Content -LiteralPath $file -ReadCount 1)
+        $results.Count | Should -Be 3
+        for ($i = 0; $i -lt $results.Count; $i++) {
+            $results[$i].PSPath | Should -BeExactly $file
+            $results[$i].PSParentPath | Should -BeExactly (Split-Path -Parent $file)
+            $results[$i].ReadCount | Should -Be ($i + 1)
+        }
+    }
+
+    It "preserves metadata for scalar byte-stream output" {
+        $byteFile = Join-Path $TestDrive "bytes.bin"
+        [System.IO.File]::WriteAllBytes($byteFile, [byte[]](7, 7, 9))
+        $bytes = @(Get-Content -LiteralPath $byteFile -AsByteStream)
+        $bytes.Count | Should -Be 3
+        $bytes[0].GetType().FullName | Should -BeExactly "System.Byte"
+        $bytes[0].ReadCount | Should -Be 1
+        $bytes[1].ReadCount | Should -Be 2
+        $bytes[2].ReadCount | Should -Be 3
+        $bytes[0].PSPath | Should -BeExactly $byteFile
+        $bytes[0].ReadCount = 99
+        $bytes[0].ReadCount | Should -Be 99
+        $bytes[1].ReadCount | Should -Be 2
+
+        $raw = @(Get-Content -LiteralPath $byteFile -AsByteStream -Raw)
+        $raw.Count | Should -Be 1
+        $raw[0].ReadCount | Should -Be 1
+
+        $batch = @(Get-Content -LiteralPath $byteFile -AsByteStream -ReadCount 2)
+        $batch[0].ReadCount | Should -Be 2
+        $batch[1].ReadCount | Should -Be 3
+
+        $xmlPath = Join-Path $TestDrive "bytes.xml"
+        Get-Content -LiteralPath $byteFile -AsByteStream | Export-Clixml -LiteralPath $xmlPath
+        $roundTrip = @(Import-Clixml -LiteralPath $xmlPath)
+        $roundTrip.Count | Should -Be 3
+        $roundTrip[0].ReadCount | Should -Be 1
+        $roundTrip[1].PSPath | Should -BeExactly $byteFile
+    }
+
+    It "unwraps provider objects for object-typed method arguments" {
+        $item = Get-Item -LiteralPath $file
+        $line = Get-Content -LiteralPath $file -TotalCount 1
+        $byteFile = Join-Path $TestDrive "binding.bin"
+        [System.IO.File]::WriteAllBytes($byteFile, [byte[]](7))
+        $byte = Get-Content -LiteralPath $byteFile -AsByteStream
+
+        foreach ($value in @($item, $line, $byte)) {
+            [object]::ReferenceEquals($value, $value.PSObject.BaseObject) | Should -BeTrue
+        }
+    }
+
+    It "binds scalar byte content to Boolean parameters: <number>" -TestCases @(
+        @{ number = 0; expected = $false }
+        @{ number = 1; expected = $true }
+        @{ number = 255; expected = $true }
+    ) {
+        param($number, $expected)
+
+        function Test-SimpleBool { param([bool] $Value) $Value }
+        function Test-AdvancedBool { [CmdletBinding()] param([bool] $Value) $Value }
+        function Test-NullableBool { [CmdletBinding()] param([Nullable[bool]] $Value) $Value }
+
+        $byteFile = Join-Path $TestDrive "binding.bin"
+        [System.IO.File]::WriteAllBytes($byteFile, [byte[]]($number))
+        $value = Get-Content -LiteralPath $byteFile -AsByteStream
+
+        Test-SimpleBool -Value $value | Should -Be $expected
+        Test-AdvancedBool -Value $value | Should -Be $expected
+        (Get-Item -LiteralPath $file -Force:$value).FullName | Should -BeExactly $file
+        Test-NullableBool -Value $value | Should -Be $expected
+        $value.ReadCount | Should -Be 1
+    }
+
+    It "preserves ReadCount for chunks and raw content" {
+        $chunks = @(Get-Content -LiteralPath $file -ReadCount 2)
+        $chunks.Count | Should -Be 2
+        $chunks[0].ReadCount | Should -Be 2
+        $chunks[1].ReadCount | Should -Be 3
+
+        $raw = @(Get-Content -LiteralPath $file -Raw)
+        $raw.Count | Should -Be 1
+        $raw[0].ReadCount | Should -Be 1
+
+        $all = @(Get-Content -LiteralPath $file -ReadCount 0)
+        $all.Count | Should -Be 1
+        $all[0].ReadCount | Should -Be 3
+    }
+
+    It "isolates metadata for repeated empty lines and preserves custom drive context" {
+        $emptyLineFile = Join-Path $TestDrive "empty-lines.txt"
+        [System.IO.File]::WriteAllText($emptyLineFile, "`n`ntail`n")
+
+        $lines = @(Get-Content -LiteralPath $emptyLineFile -ReadCount 1)
+        $lines.Count | Should -Be 3
+        $lines[0].ReadCount | Should -Be 1
+        $lines[1].ReadCount | Should -Be 2
+        $lines[0].PSObject.Properties.Remove("ReadCount")
+        $lines[1].ReadCount | Should -Be 2
+
+        $drivePath = Join-Path "${driveName}:" 'sample[1].txt'
+        $driveLines = @(Get-Content -LiteralPath $drivePath -ReadCount 1)
+        $driveLines[0].PSDrive.Name | Should -BeExactly $driveName
+        $driveLines[0].PSProvider.Name | Should -BeExactly "FileSystem"
+        $driveLines[0].PSPath | Should -BeExactly $drivePath
+    }
+
+    It "preserves metadata through Export-Clixml and Import-Clixml" {
+        $item = Get-Item -LiteralPath $file
+        $xmlPath = Join-Path $TestDrive "item.xml"
+        $item | Export-Clixml -LiteralPath $xmlPath
+        $deserialized = Import-Clixml -LiteralPath $xmlPath
+        $deserialized.PSPath | Should -Be $item.PSPath
+        $formatted = $deserialized | Format-Table | Out-String -Width 240
+        $formatted | Should -Match ([regex]::Escape($TestDrive))
+    }
+
+    It "preserves primitive content metadata through CLIXML" {
+        $xmlPath = Join-Path $TestDrive "content.xml"
+        Get-Content -LiteralPath $file | Export-Clixml -LiteralPath $xmlPath
+        $deserialized = @(Import-Clixml -LiteralPath $xmlPath)
+        $deserialized.Count | Should -Be 3
+        for ($i = 0; $i -lt $deserialized.Count; $i++) {
+            $deserialized[$i].PSPath | Should -BeExactly $file
+            $deserialized[$i].ReadCount | Should -Be ($i + 1)
+        }
+    }
+
+    It "uses live paths when enabled and preserves legacy snapshots when disabled after FileInfo.MoveTo" {
+        $item = Get-Item -LiteralPath $file
+        $oldPath = $item.PSPath
+        $newPath = Join-Path $TestDrive "moved.txt"
+        $item.MoveTo($newPath)
+        $item.Name | Should -BeExactly "moved.txt"
+
+        if ($script:optimizedMetadataEnabled) {
+            $item.PSChildName | Should -BeExactly "moved.txt"
+            $expectedPath = "Microsoft.PowerShell.Core\FileSystem::{0}" -f $newPath
+            $item.PSPath | Should -BeExactly $expectedPath
+        }
+        else {
+            $item.PSChildName | Should -BeExactly "sample[1].txt"
+            $item.PSPath | Should -BeExactly $oldPath
+        }
+    }
+
+    It "keeps materialized metadata as a snapshot after FileInfo.MoveTo" {
+        $item = Get-Item -LiteralPath $file
+        $oldPath = $item.PSPath
+        $oldChildName = $item.PSChildName
+        $null = $item.PSObject.Properties["PSPath"]
+        $newPath = Join-Path $TestDrive "moved.txt"
+        $item.MoveTo($newPath)
+
+        $item.PSPath | Should -BeExactly $oldPath
+        $item.PSChildName | Should -BeExactly $oldChildName
+    }
+
+    It "preserves custom PSDrive root and PSDrive identity" {
+        $driveItem = Get-Item -LiteralPath "${driveName}:\sample[1].txt"
+        $driveItem.PSDrive | Should -Not -BeNullOrEmpty
+        $driveItem.PSDrive.Name | Should -BeExactly $driveName
+        $driveItem.PSProvider.Name | Should -BeExactly "FileSystem"
+        [object]::ReferenceEquals($driveItem.PSProvider, $driveItem.PSDrive.Provider) | Should -BeTrue
+        $driveItem.PSPath | Should -Match "FileSystem::"
+
+        $literalPathItem = Get-Item -LiteralPath $file
+        $driveItem.PSChildName | Should -BeExactly $literalPathItem.PSChildName
+        if ($script:optimizedMetadataEnabled) {
+            $driveItem.PSParentPath | Should -BeExactly $literalPathItem.PSParentPath
+        }
+
+        $driveRoot = Get-Item -LiteralPath "${driveName}:\"
+        $driveRoot.PSIsContainer | Should -BeTrue
+        if ($script:optimizedMetadataEnabled) {
+            $expectedRootPath = "Microsoft.PowerShell.Core\FileSystem::{0}" -f $driveRoot.FullName
+            $driveRoot.PSPath | Should -BeExactly $expectedRootPath
+            $driveRoot.PSParentPath | Should -BeExactly ""
+            $driveRoot.PSChildName | Should -BeExactly ([System.IO.DirectoryInfo]::new($TestDrive).Name)
+        }
+    }
+
+    It "preserves parent and child metadata for the filesystem root" {
+        $rootPath = [System.IO.Path]::GetPathRoot($file)
+        $rootItem = Get-Item -LiteralPath $rootPath
+        $rootItem.PSIsContainer | Should -BeTrue
+        if ($script:optimizedMetadataEnabled) {
+            $expectedRootPath = "Microsoft.PowerShell.Core\FileSystem::{0}" -f $rootPath
+            $rootItem.PSPath | Should -BeExactly $expectedRootPath
+            $rootItem.PSParentPath | Should -BeExactly ""
+            $expectedRootChildName = if ($IsWindows) { $rootPath } else { "" }
+            $rootItem.PSChildName | Should -BeExactly $expectedRootChildName
+        }
+    }
+
+    It "exposes registry Property and a qualified parent path" -Skip:(!$IsWindows) {
+        $item = Get-Item "HKCU:\Software"
+        $item.PSObject.Properties["Property"] | Should -Not -BeNullOrEmpty
+        $item.Property | Should -HaveCount @($item.PSObject.BaseObject.GetValueNames()).Count
+        $item.PSObject.Properties["Property"].MemberType | Should -Be "NoteProperty"
+        $item.PSParentPath | Should -BeExactly "Microsoft.PowerShell.Core\Registry::HKEY_CURRENT_USER"
+    }
+
+    It "exposes UnixStat and derived fields" -Skip:($IsWindows) {
+        $item = Get-Item -LiteralPath $file
+        $item.UnixStat | Should -Not -BeNullOrEmpty
+        $item.User | Should -Not -BeNullOrEmpty
+        $item.Group | Should -Not -BeNullOrEmpty
+        $item.Size | Should -BeGreaterThan 0
+    }
+}

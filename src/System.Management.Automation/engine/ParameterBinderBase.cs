@@ -1086,10 +1086,9 @@ namespace System.Management.Automation
                             toType == typeof(bool?))
                         {
                             Type boType = null;
-                            if (argumentType == typeof(PSObject))
+                            if (currentValue is PSObject currentValueAsPSObject)
                             {
-                                // Unwrap the PSObject at this point...
-                                PSObject currentValueAsPSObject = (PSObject)currentValue;
+                                // Unwrap ordinary and metadata-backed PSObjects before checking the numeric type.
                                 currentValue = currentValueAsPSObject.BaseObject;
 
                                 if (currentValue is SwitchParameter)
