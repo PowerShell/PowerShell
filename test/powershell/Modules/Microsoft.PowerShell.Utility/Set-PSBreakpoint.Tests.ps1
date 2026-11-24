@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-$ps = Join-Path -Path $PSHOME -ChildPath "pwsh"
+$pwsh = Join-Path -Path $PSHOME -ChildPath "pwsh"
 
 Describe "Set-PSBreakpoint DRT Unit Tests" -Tags "CI" {
     #Set up
@@ -87,12 +87,12 @@ set-psbreakpoint -command foo
     }
 
     It "Should throw Exception when missing mandatory parameter -line" -Pending {
-         $output = & $ps -noninteractive -command "sbp -column 1 -script $scriptFileName"
+         $output = & $pwsh -noninteractive -command "sbp -column 1 -script $scriptFileName"
          [system.string]::Join(" ", $output) | Should -Match "MissingMandatoryParameter,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
     }
 
     It "Should throw Exception when missing mandatory parameter" -Pending {
-         $output = & $ps -noprofile -noninteractive -command "sbp -line 1"
+         $output = & $pwsh -noprofile -noninteractive -command "sbp -line 1"
          [system.string]::Join(" ", $output) | Should -Match "MissingMandatoryParameter,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
     }
 
@@ -147,7 +147,7 @@ set-psbreakpoint -command foo
     }
 
     It "Remove implicit script from 'set-psbreakpoint -script'" {
-        & $ps -noprofile $scriptFileNameBug
+        & $pwsh -noprofile $scriptFileNameBug
 
         $breakpoint = Get-PSBreakpoint -Script $scriptFileNameBug
         $breakpoint | Should -BeNullOrEmpty

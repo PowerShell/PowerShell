@@ -56,7 +56,7 @@ Describe "Stream writer tests" -Tags "CI" {
 
     Context "Write-Information cmdlet" {
         BeforeAll {
-            $ps = [powershell]::Create()
+            $powerShell = [powershell]::Create()
 
             $testInfoData = @(
                 @{ Name = 'defaults'; Command = "Write-Information TestMessage";              returnCount = 1; returnValue = 'TestMessage' }
@@ -68,12 +68,12 @@ Describe "Stream writer tests" -Tags "CI" {
         }
 
         BeforeEach {
-            $ps.Commands.Clear()
-            $ps.Streams.ClearStreams()
+            $powerShell.Commands.Clear()
+            $powerShell.Streams.ClearStreams()
         }
 
         AfterAll {
-            $ps.Dispose()
+            $powerShell.Dispose()
         }
 
        It "Write-Information outputs an information object" {
@@ -98,8 +98,8 @@ Describe "Stream writer tests" -Tags "CI" {
        }
 
        It "Write-Information accept objects from pipe" {
-            $ps.AddScript("'teststring',12345 | Write-Information -InformationAction Continue").Invoke()
-            $result = $ps.Streams.Information
+            $powerShell.AddScript("'teststring',12345 | Write-Information -InformationAction Continue").Invoke()
+            $result = $powerShell.Streams.Information
             $result.Count | Should -Be 2
             $result[0].MessageData | Should -BeExactly "teststring"
             $result[1].MessageData | Should -BeExactly "12345"
@@ -107,9 +107,9 @@ Describe "Stream writer tests" -Tags "CI" {
 
        It "Write-Information works with <Name>" -TestCases:$testInfoData {
             param($Command, $returnCount, $returnValue)
-            $ps.AddScript($Command).Invoke()
+            $powerShell.AddScript($Command).Invoke()
 
-            $result = $ps.Streams.Information
+            $result = $powerShell.Streams.Information
 
             $result.Count | Should -Be $returnCount
             (Compare-Object $result $returnValue -SyncWindow 0).length | Should -Be 0

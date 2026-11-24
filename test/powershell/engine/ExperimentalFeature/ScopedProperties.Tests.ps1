@@ -2,6 +2,16 @@
 # Licensed under the MIT License.
 
 Describe 'PSScopedProperties' -Tag 'CI' {
+    $preferenceCases = @(
+        @{ PreferenceName = 'Error'; VariableName = 'ErrorActionPreference'; DefaultPreference = 'Continue' }
+        @{ PreferenceName = 'Warning'; VariableName = 'WarningPreference'; DefaultPreference = 'Continue' }
+        @{ PreferenceName = 'Information'; VariableName = 'InformationPreference'; DefaultPreference = 'SilentlyContinue' }
+        @{ PreferenceName = 'Verbose'; VariableName = 'VerbosePreference'; DefaultPreference = 'SilentlyContinue' }
+        @{ PreferenceName = 'Debug'; VariableName = 'DebugPreference'; DefaultPreference = 'SilentlyContinue' }
+    )
+
+    $streamCases = @($preferenceCases | Where-Object PreferenceName -NE 'Error')
+
     BeforeAll {
         $enabledConfig = Join-Path $TestDrive 'enabled.json'
         $disabledConfig = Join-Path $TestDrive 'disabled.json'
@@ -14,10 +24,20 @@ Describe 'PSScopedProperties' -Tag 'CI' {
         Add-Type -Path $hookSource.FullName -OutputAssembly $hookAssembly
 
         function Invoke-ScopedPropertiesTest {
-            param([scriptblock] $Script, [switch] $Disabled)
+            param(
+                [scriptblock] $Script,
+                [switch] $Disabled,
+                [string] $PreferenceName,
+                [string] $VariableName
+            )
 
+            $scriptText = $Script.ToString()
+            if ($PreferenceName) {
+                # Keep actual variable syntax in the child script to exercise the compiler and debugger paths.
+                $scriptText = $scriptText.Replace('__PREFERENCE__', $PreferenceName).Replace('__PREFERENCEVARIABLE__', $VariableName)
+            }
             $config = if ($Disabled) { $disabledConfig } else { $enabledConfig }
-            $encodedCommand = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($Script.ToString()))
+            $encodedCommand = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($scriptText))
             $originalHooks = $env:DOTNET_STARTUP_HOOKS
             try {
                 $env:DOTNET_STARTUP_HOOKS = $hookAssembly
@@ -75,6 +95,34 @@ Describe 'PSScopedProperties' -Tag 'CI' {
         )
     }
 
+    It 'retains typed globals and untyped child shadows for <PreferenceName> when disabled' -TestCases $streamCases {
+        param($PreferenceName, $VariableName, $DefaultPreference)
+
+        $result = Invoke-ScopedPropertiesTest -Disabled -PreferenceName $PreferenceName -VariableName $VariableName {
+            $EnabledExperimentalFeatures.Contains('PSScopedProperties')
+            "$($__PREFERENCEVARIABLE__.GetType().Name)/$__PREFERENCEVARIABLE__"
+            $__PREFERENCEVARIABLE__ = 'sToP'
+            "$($__PREFERENCEVARIABLE__.GetType().Name)/$__PREFERENCEVARIABLE__"
+            try { $__PREFERENCEVARIABLE__ = 'invalid preference' } catch { 'global conversion rejected' }
+            try { $__PREFERENCEVARIABLE__ = 'Suspend' } catch { 'global validation rejected' }
+            $__PREFERENCEVARIABLE__
+            & {
+                $__PREFERENCEVARIABLE__ = 'cOnTiNuE'
+                "$($__PREFERENCEVARIABLE__.GetType().Name)/$__PREFERENCEVARIABLE__"
+                $__PREFERENCEVARIABLE__ = 'Suspend'
+                $__PREFERENCEVARIABLE__
+                $__PREFERENCEVARIABLE__ = 'invalid preference'
+                $__PREFERENCEVARIABLE__
+            }
+            $__PREFERENCEVARIABLE__
+        }
+        $result | Should -BeExactly @(
+            'False', "ActionPreference/$DefaultPreference", 'ActionPreference/Stop',
+            'global conversion rejected', 'global validation rejected', 'Stop',
+            'String/cOnTiNuE', 'Suspend', 'invalid preference', 'Stop'
+        )
+    }
+
     It 'registers a constant AllScope facade with read-only grouping properties' {
         $result = Invoke-ScopedPropertiesTest {
             $EnabledExperimentalFeatures.Contains('PSScopedProperties')
@@ -95,20 +143,22 @@ Describe 'PSScopedProperties' -Tag 'CI' {
         )
     }
 
-    It 'resets a local override created through either error preference access path' {
-        $result = Invoke-ScopedPropertiesTest {
-            $PS.ActionPreference.Error = 'Continue'
+    It 'resets a local <PreferenceName> override created through either access path' -TestCases $preferenceCases {
+        param($PreferenceName, $VariableName)
+
+        $result = Invoke-ScopedPropertiesTest -PreferenceName $PreferenceName -VariableName $VariableName {
+            $PS.ActionPreference.__PREFERENCE__ = 'Continue'
             & {
-                $ErrorActionPreference = 'Stop'
-                $PS.ActionPreference.Error
+                $__PREFERENCEVARIABLE__ = 'Stop'
+                $PS.ActionPreference.__PREFERENCE__
 
-                $PS.ActionPreference.Error = 'SilentlyContinue'
-                $ErrorActionPreference
+                $PS.ActionPreference.__PREFERENCE__ = 'SilentlyContinue'
+                $__PREFERENCEVARIABLE__
 
-                $PS.Reset('ActionPreference.Error')
-                $PS.ActionPreference.Error
+                $PS.Reset('aCtIoNpReFeReNcE.__PREFERENCE__')
+                $PS.ActionPreference.__PREFERENCE__
             }
-            $PS.ActionPreference.Error
+            $PS.ActionPreference.__PREFERENCE__
         }
         $result | Should -Be @('Stop', 'SilentlyContinue', 'Continue', 'Continue')
     }
@@ -140,26 +190,28 @@ Describe 'PSScopedProperties' -Tag 'CI' {
         $result | Should -Be @('Stop/Minimal', 'SilentlyContinue/Classic', 'Stop/Classic', 'Continue/Classic', 'Minimal', 'Continue/Minimal')
     }
 
-    It 'uses typed conversion for the built-in preference and child-scope assignments' {
-        $result = Invoke-ScopedPropertiesTest {
-            $ErrorActionPreference = 'sToP'
-            "$($ErrorActionPreference.GetType().Name)/$ErrorActionPreference/$($PS.ActionPreference.Error)"
-            try { $ErrorActionPreference = 'invalid preference' } catch { 'built-in rejected write' }
-            "$ErrorActionPreference/$($PS.ActionPreference.Error)"
+    It 'uses typed conversion for <PreferenceName> global and child-scope assignments' -TestCases $preferenceCases {
+        param($PreferenceName, $VariableName)
+
+        $result = Invoke-ScopedPropertiesTest -PreferenceName $PreferenceName -VariableName $VariableName {
+            $__PREFERENCEVARIABLE__ = 'sToP'
+            "$($__PREFERENCEVARIABLE__.GetType().Name)/$__PREFERENCEVARIABLE__/$($PS.ActionPreference.__PREFERENCE__)"
+            try { $__PREFERENCEVARIABLE__ = 'invalid preference' } catch { 'built-in rejected write' }
+            "$__PREFERENCEVARIABLE__/$($PS.ActionPreference.__PREFERENCE__)"
             & {
-                try { $ErrorActionPreference = 'invalid preference' } catch { 'initial child write rejected' }
-                $null -eq (Get-Variable ErrorActionPreference -Scope Local -ErrorAction Ignore)
-                "$ErrorActionPreference/$($PS.ActionPreference.Error)"
-                $ErrorActionPreference = 'sIlEnTlYcOnTiNuE'
-                "$($ErrorActionPreference.GetType().Name)/$ErrorActionPreference/$($PS.ActionPreference.Error)"
+                try { $__PREFERENCEVARIABLE__ = 'invalid preference' } catch { 'initial child write rejected' }
+                $null -eq (Get-Variable __PREFERENCEVARIABLE__ -Scope Local -ErrorAction Ignore)
+                "$__PREFERENCEVARIABLE__/$($PS.ActionPreference.__PREFERENCE__)"
+                $__PREFERENCEVARIABLE__ = 'sIlEnTlYcOnTiNuE'
+                "$($__PREFERENCEVARIABLE__.GetType().Name)/$__PREFERENCEVARIABLE__/$($PS.ActionPreference.__PREFERENCE__)"
                 foreach ($invalid in @($null, 500, 'invalid preference')) {
-                    try { $ErrorActionPreference = $invalid } catch { 'child write rejected' }
-                    "$ErrorActionPreference/$($PS.ActionPreference.Error)"
+                    try { $__PREFERENCEVARIABLE__ = $invalid } catch { 'child write rejected' }
+                    "$__PREFERENCEVARIABLE__/$($PS.ActionPreference.__PREFERENCE__)"
                 }
-                $ErrorActionPreference = 2
-                "$($ErrorActionPreference.GetType().Name)/$ErrorActionPreference/$($PS.ActionPreference.Error)"
+                $__PREFERENCEVARIABLE__ = 2
+                "$($__PREFERENCEVARIABLE__.GetType().Name)/$__PREFERENCEVARIABLE__/$($PS.ActionPreference.__PREFERENCE__)"
             }
-            "$ErrorActionPreference/$($PS.ActionPreference.Error)"
+            "$__PREFERENCEVARIABLE__/$($PS.ActionPreference.__PREFERENCE__)"
         }
         $result | Should -BeExactly @(
             'ActionPreference/Stop/Stop', 'built-in rejected write', 'Stop/Stop',
@@ -172,33 +224,35 @@ Describe 'PSScopedProperties' -Tag 'CI' {
         )
     }
 
-    It 'normalizes variable cmdlet writes and resumes inheritance after removal' {
-        $result = Invoke-ScopedPropertiesTest {
-            $PS.ActionPreference.Error = 'Stop'
-            & {
-                $created = New-Variable ErrorActionPreference 'cOnTiNuE' -Scope Local -PassThru
-                "$($created.Value.GetType().Name)/$($created.Value)/$($PS.ActionPreference.Error)"
-                Set-Variable ErrorActionPreference 0 -Scope Local
-                $legacyValue = (Get-Variable ErrorActionPreference -Scope Local).Value
-                "$($legacyValue.GetType().Name)/$legacyValue/$($PS.ActionPreference.Error)"
-                try { New-Variable ErrorActionPreference 500 -Scope Local -Force -ErrorAction Stop } catch { 'replacement rejected' }
-                "$ErrorActionPreference/$($PS.ActionPreference.Error)"
-                foreach ($invalid in @($null, 500, 'invalid preference')) {
-                    try { Set-Variable ErrorActionPreference $invalid -Scope Local -ErrorAction Stop } catch { 'set rejected' }
-                    "$ErrorActionPreference/$($PS.ActionPreference.Error)"
-                }
-                try { Clear-Variable ErrorActionPreference -Scope Local -ErrorAction Stop } catch { 'clear rejected' }
-                "$ErrorActionPreference/$($PS.ActionPreference.Error)"
+    It 'normalizes <PreferenceName> variable cmdlet writes and resumes inheritance after removal' -TestCases $preferenceCases {
+        param($PreferenceName, $VariableName)
 
-                $PS.ActionPreference.Error = 'Continue'
-                (Get-Variable ErrorActionPreference -Scope Local).Value.GetType().Name
-                $PS.ActionPreference.Error
-                Remove-Variable ErrorActionPreference -Scope Local
-                "$ErrorActionPreference/$($PS.ActionPreference.Error)"
-                $local:ErrorActionPreference = 'silentlycontinue'
-                "$($local:ErrorActionPreference.GetType().Name)/$($PS.ActionPreference.Error)/$global:ErrorActionPreference"
-                $PS.Reset('ActionPreference.Error')
-                $null -eq (Get-Variable ErrorActionPreference -Scope Local -ErrorAction Ignore)
+        $result = Invoke-ScopedPropertiesTest -PreferenceName $PreferenceName -VariableName $VariableName {
+            $PS.ActionPreference.__PREFERENCE__ = 'Stop'
+            & {
+                $created = New-Variable __PREFERENCEVARIABLE__ 'cOnTiNuE' -Scope Local -PassThru
+                "$($created.Value.GetType().Name)/$($created.Value)/$($PS.ActionPreference.__PREFERENCE__)"
+                Set-Variable __PREFERENCEVARIABLE__ 0 -Scope Local
+                $legacyValue = (Get-Variable __PREFERENCEVARIABLE__ -Scope Local).Value
+                "$($legacyValue.GetType().Name)/$legacyValue/$($PS.ActionPreference.__PREFERENCE__)"
+                try { New-Variable __PREFERENCEVARIABLE__ 500 -Scope Local -Force -ErrorAction Stop } catch { 'replacement rejected' }
+                "$__PREFERENCEVARIABLE__/$($PS.ActionPreference.__PREFERENCE__)"
+                foreach ($invalid in @($null, 500, 'invalid preference')) {
+                    try { Set-Variable __PREFERENCEVARIABLE__ $invalid -Scope Local -ErrorAction Stop } catch { 'set rejected' }
+                    "$__PREFERENCEVARIABLE__/$($PS.ActionPreference.__PREFERENCE__)"
+                }
+                try { Clear-Variable __PREFERENCEVARIABLE__ -Scope Local -ErrorAction Stop } catch { 'clear rejected' }
+                "$__PREFERENCEVARIABLE__/$($PS.ActionPreference.__PREFERENCE__)"
+
+                $PS.ActionPreference.__PREFERENCE__ = 'Continue'
+                (Get-Variable __PREFERENCEVARIABLE__ -Scope Local).Value.GetType().Name
+                $PS.ActionPreference.__PREFERENCE__
+                Remove-Variable __PREFERENCEVARIABLE__ -Scope Local
+                "$__PREFERENCEVARIABLE__/$($PS.ActionPreference.__PREFERENCE__)"
+                $local:__PREFERENCEVARIABLE__ = 'silentlycontinue'
+                "$($local:__PREFERENCEVARIABLE__.GetType().Name)/$($PS.ActionPreference.__PREFERENCE__)/$global:__PREFERENCEVARIABLE__"
+                $PS.Reset('ActionPreference.__PREFERENCE__')
+                $null -eq (Get-Variable __PREFERENCEVARIABLE__ -Scope Local -ErrorAction Ignore)
             }
         }
         $result | Should -BeExactly @(
@@ -210,85 +264,99 @@ Describe 'PSScopedProperties' -Tag 'CI' {
         )
     }
 
-    It 'preserves variable protection and rejects invalid typed assignments' {
-        $result = Invoke-ScopedPropertiesTest {
+    It 'preserves <PreferenceName> read-only and constant protections' -TestCases $preferenceCases {
+        param($PreferenceName, $VariableName)
+
+        $result = Invoke-ScopedPropertiesTest -PreferenceName $PreferenceName -VariableName $VariableName {
             foreach ($option in 'ReadOnly', 'Constant') {
                 & {
-                    New-Variable ErrorActionPreference -Value 'Continue' -Option $option
-                    try { $PS.ActionPreference.Error = 'Stop' } catch { 'write rejected' }
-                    try { $PS.Reset('ActionPreference.Error') } catch { 'reset rejected' }
-                    "$((Get-Variable ErrorActionPreference).Options)/$($PS.ActionPreference.Error)"
+                    New-Variable __PREFERENCEVARIABLE__ -Value 'Continue' -Option $option
+                    try { $PS.ActionPreference.__PREFERENCE__ = 'Stop' } catch { 'write rejected' }
+                    try { $PS.Reset('ActionPreference.__PREFERENCE__') } catch { 'reset rejected' }
+                    "$((Get-Variable __PREFERENCEVARIABLE__).Options)/$($PS.ActionPreference.__PREFERENCE__)"
                 }
             }
-            try { $PS.ActionPreference.Error = 'bad action' } catch { 'invalid action rejected' }
-            try { $PS.Style.Progress.View = 'bad view' } catch { 'invalid view rejected' }
-            try { $PS.ActionPreference.Error = 500 } catch { 'invalid action number rejected' }
-            try { $PS.Style.Progress.View = 500 } catch { 'invalid view number rejected' }
+            try { $PS.ActionPreference.__PREFERENCE__ = 'bad action' } catch { 'invalid action rejected' }
+            try { $PS.ActionPreference.__PREFERENCE__ = 500 } catch { 'invalid action number rejected' }
         }
         $result | Should -Be @(
             'write rejected', 'reset rejected', 'ReadOnly/Continue',
             'write rejected', 'reset rejected', 'Constant/Continue',
-            'invalid action rejected', 'invalid view rejected',
-            'invalid action number rejected', 'invalid view number rejected'
+            'invalid action rejected', 'invalid action number rejected'
         )
     }
 
-    It 'preserves read-only options and the value on failed forced writes' {
+    It 'rejects invalid progress view values' {
         $result = Invoke-ScopedPropertiesTest {
-            $PS.ActionPreference.Error = 'Continue'
+            try { $PS.Style.Progress.View = 'bad view' } catch { 'invalid view rejected' }
+            try { $PS.Style.Progress.View = 500 } catch { 'invalid view number rejected' }
+        }
+        $result | Should -BeExactly @('invalid view rejected', 'invalid view number rejected')
+    }
+
+    It 'preserves <PreferenceName> metadata and value on failed forced writes' -TestCases $preferenceCases {
+        param($PreferenceName, $VariableName)
+
+        $result = Invoke-ScopedPropertiesTest -PreferenceName $PreferenceName -VariableName $VariableName {
+            $PS.ActionPreference.__PREFERENCE__ = 'Continue'
             & {
-                New-Variable ErrorActionPreference 'Stop' -Option ReadOnly
-                try { Set-Variable ErrorActionPreference 500 -Force -ErrorAction Stop } catch { 'forced set rejected' }
-                "$((Get-Variable ErrorActionPreference -Scope Local).Options)/$($PS.ActionPreference.Error)"
-                try { Clear-Variable ErrorActionPreference -Scope Local -Force -ErrorAction Stop } catch { 'forced clear rejected' }
-                "$((Get-Variable ErrorActionPreference -Scope Local).Options)/$ErrorActionPreference"
-                Set-Variable ErrorActionPreference 'silentlyContinue' -Force
-                "$((Get-Variable ErrorActionPreference -Scope Local).Options)/$($PS.ActionPreference.Error)"
-                Set-Variable ErrorActionPreference 'Stop' -Force -Option None
-                "$((Get-Variable ErrorActionPreference -Scope Local).Options)/$($PS.ActionPreference.Error)"
-                Set-Variable ErrorActionPreference 'SilentlyContinue' -Option ReadOnly
-                "$((Get-Variable ErrorActionPreference -Scope Local).Options)/$($PS.ActionPreference.Error)"
+                New-Variable __PREFERENCEVARIABLE__ 'Stop' -Option ReadOnly -Description 'original'
+                try { Set-Variable __PREFERENCEVARIABLE__ 500 -Force -Description 'rejected' -ErrorAction Stop } catch { 'forced set rejected' }
+                $retained = Get-Variable __PREFERENCEVARIABLE__ -Scope Local
+                "$($retained.Options)/$($retained.Description)/$($PS.ActionPreference.__PREFERENCE__)"
+                try { Clear-Variable __PREFERENCEVARIABLE__ -Scope Local -Force -ErrorAction Stop } catch { 'forced clear rejected' }
+                "$((Get-Variable __PREFERENCEVARIABLE__ -Scope Local).Options)/$__PREFERENCEVARIABLE__"
+                Set-Variable __PREFERENCEVARIABLE__ 'silentlyContinue' -Force
+                "$((Get-Variable __PREFERENCEVARIABLE__ -Scope Local).Options)/$($PS.ActionPreference.__PREFERENCE__)"
+                Set-Variable __PREFERENCEVARIABLE__ 'Stop' -Force -Option None
+                "$((Get-Variable __PREFERENCEVARIABLE__ -Scope Local).Options)/$($PS.ActionPreference.__PREFERENCE__)"
+                Set-Variable __PREFERENCEVARIABLE__ 'SilentlyContinue' -Option ReadOnly
+                "$((Get-Variable __PREFERENCEVARIABLE__ -Scope Local).Options)/$($PS.ActionPreference.__PREFERENCE__)"
                 try {
-                    Set-Variable ErrorActionPreference 'Stop' -Force -Option Constant -ErrorAction Stop
+                    Set-Variable __PREFERENCEVARIABLE__ 'Stop' -Force -Option Constant -ErrorAction Stop
                 } catch { 'constant option rejected' }
-                "$((Get-Variable ErrorActionPreference -Scope Local).Options)/$($PS.ActionPreference.Error)"
-                try { Remove-Variable ErrorActionPreference -Scope Local -ErrorAction Stop } catch { 'remove rejected' }
-                Remove-Variable ErrorActionPreference -Scope Local -Force
-                "$ErrorActionPreference/$($PS.ActionPreference.Error)"
+                "$((Get-Variable __PREFERENCEVARIABLE__ -Scope Local).Options)/$($PS.ActionPreference.__PREFERENCE__)"
+                try { Remove-Variable __PREFERENCEVARIABLE__ -Scope Local -ErrorAction Stop } catch { 'remove rejected' }
+                Remove-Variable __PREFERENCEVARIABLE__ -Scope Local -Force
+                "$__PREFERENCEVARIABLE__/$($PS.ActionPreference.__PREFERENCE__)"
             }
         }
         $result | Should -BeExactly @(
-            'forced set rejected', 'ReadOnly/Stop', 'forced clear rejected', 'ReadOnly/Stop',
+            'forced set rejected', 'ReadOnly/original/Stop', 'forced clear rejected', 'ReadOnly/Stop',
             'ReadOnly/SilentlyContinue', 'None/Stop', 'ReadOnly/SilentlyContinue',
             'constant option rejected', 'ReadOnly/SilentlyContinue', 'remove rejected', 'Continue/Continue'
         )
     }
 
-    It 'shares the canonical error preference with variable-provider item operations' {
-        $result = Invoke-ScopedPropertiesTest {
-            $path = 'Variable:ErrorActionPreference'
+    It 'shares <PreferenceName> values with variable-provider item operations' -TestCases $preferenceCases {
+        param($PreferenceName, $VariableName, $DefaultPreference)
+
+        $result = Invoke-ScopedPropertiesTest -PreferenceName $PreferenceName -VariableName $VariableName {
+            $path = 'Variable:__PREFERENCEVARIABLE__'
             Set-Item -LiteralPath $path -Value 'sToP'
             $value = (Get-Item -LiteralPath $path).Value
-            "$($value.GetType().Name)/$value/$($PS.ActionPreference.Error)"
+            "$($value.GetType().Name)/$value/$($PS.ActionPreference.__PREFERENCE__)"
             try { Set-Item -LiteralPath $path -Value 500 -ErrorAction Stop } catch { 'provider set rejected' }
             try { Clear-Item -LiteralPath $path -ErrorAction Stop } catch { 'provider clear rejected' }
-            "$((Get-Item -LiteralPath $path).Value)/$($PS.ActionPreference.Error)"
+            "$((Get-Item -LiteralPath $path).Value)/$($PS.ActionPreference.__PREFERENCE__)"
 
             Remove-Item -LiteralPath $path
-            "$(Test-Path -LiteralPath $path)/$($PS.ActionPreference.Error)"
+            "$(Test-Path -LiteralPath $path)/$($PS.ActionPreference.__PREFERENCE__)"
             $created = New-Item -Path $path -Value 'silentlycontinue'
-            "$($created.Value.GetType().Name)/$($created.Value)/$($PS.ActionPreference.Error)"
+            "$($created.Value.GetType().Name)/$($created.Value)/$($PS.ActionPreference.__PREFERENCE__)"
         }
         $result | Should -BeExactly @(
             'ActionPreference/Stop/Stop', 'provider set rejected', 'provider clear rejected', 'Stop/Stop',
-            'False/Continue', 'ActionPreference/SilentlyContinue/SilentlyContinue'
+            "False/$DefaultPreference", 'ActionPreference/SilentlyContinue/SilentlyContinue'
         )
     }
 
-    It 'updates retained variables through the provider and detaches them on removal' {
-        $result = Invoke-ScopedPropertiesTest {
-            $PS.ActionPreference.Error = 'Stop'
-            $path = 'Variable:ErrorActionPreference'
+    It 'updates retained <PreferenceName> variables through the provider and detaches them on removal' -TestCases $preferenceCases {
+        param($PreferenceName, $VariableName, $DefaultPreference)
+
+        $result = Invoke-ScopedPropertiesTest -PreferenceName $PreferenceName -VariableName $VariableName {
+            $PS.ActionPreference.__PREFERENCE__ = 'Stop'
+            $path = 'Variable:__PREFERENCEVARIABLE__'
             $retained = Get-Item -LiteralPath $path
 
             Set-Content -LiteralPath $path -Value 'sIlEnTlYcOnTiNuE'
@@ -296,84 +364,122 @@ Describe 'PSScopedProperties' -Tag 'CI' {
             try { Set-Content -LiteralPath $path -Value 500 -ErrorAction Stop } catch { 'invalid content rejected' }
             try { Clear-Content -LiteralPath $path -ErrorAction Stop } catch { 'clear content rejected' }
             try { Clear-Item -LiteralPath $path -ErrorAction Stop } catch { 'clear item rejected' }
-            "$($retained.Value)/$($PS.ActionPreference.Error)"
+            "$($retained.Value)/$($PS.ActionPreference.__PREFERENCE__)"
 
             Remove-Item -LiteralPath $path
-            "$($null -eq $retained.Value)/$($PS.ActionPreference.Error)/$(Test-Path -LiteralPath $path)"
+            "$($null -eq $retained.Value)/$($PS.ActionPreference.__PREFERENCE__)/$(Test-Path -LiteralPath $path)"
             $retained.Value = 'detached'
             "$($retained.Value)/$(Test-Path -LiteralPath $path)"
         }
         $result | Should -BeExactly @(
             'ActionPreference/SilentlyContinue/SilentlyContinue', 'invalid content rejected', 'clear content rejected', 'clear item rejected',
-            'SilentlyContinue/SilentlyContinue', 'True/Continue/False', 'detached/False'
+            'SilentlyContinue/SilentlyContinue', "True/$DefaultPreference/False", 'detached/False'
         )
     }
 
-    It 'shares AllScope writes and removes only the target scope binding' {
-        $result = Invoke-ScopedPropertiesTest {
-            $PS.ActionPreference.Error = 'Stop'
-            & {
-                New-Variable ErrorActionPreference 'Continue' -Option AllScope
-                $parent = $PS.AtScope('Local')
-                & {
-                    $ErrorActionPreference = 'SilentlyContinue'
-                    "$((Get-Variable ErrorActionPreference -Scope Local).Options)/$($parent.ActionPreference.Error)"
-                    $PS.Reset('ActionPreference.Error')
-                    $null -eq (Get-Variable ErrorActionPreference -Scope Local -ErrorAction Ignore)
-                    "$ErrorActionPreference/$($PS.ActionPreference.Error)"
+    It 'shares <PreferenceName> AllScope writes and removes only the target scope binding' -TestCases $preferenceCases {
+        param($PreferenceName, $VariableName)
 
-                    $PS.ActionPreference.Error = 'Continue'
-                    "$((Get-Variable ErrorActionPreference -Scope Local).Options)/$ErrorActionPreference/$($parent.ActionPreference.Error)"
+        $result = Invoke-ScopedPropertiesTest -PreferenceName $PreferenceName -VariableName $VariableName {
+            $PS.ActionPreference.__PREFERENCE__ = 'Stop'
+            & {
+                New-Variable __PREFERENCEVARIABLE__ 'Continue' -Option AllScope
+                $parent = $PS.AtScope('Local')
+                $retained = Get-Variable __PREFERENCEVARIABLE__ -Scope Local
+                & {
+                    $__PREFERENCEVARIABLE__ = 'SilentlyContinue'
+                    $shared = Get-Variable __PREFERENCEVARIABLE__ -Scope Local
+                    $shared.Description = 'shared'
+                    "$($shared.Options)/$($parent.ActionPreference.__PREFERENCE__)/$($retained.Description)/$([object]::ReferenceEquals($retained, $shared))"
+                    $PS.Reset('ActionPreference.__PREFERENCE__')
+                    $null -eq (Get-Variable __PREFERENCEVARIABLE__ -Scope Local -ErrorAction Ignore)
+                    "$__PREFERENCEVARIABLE__/$($PS.ActionPreference.__PREFERENCE__)"
+
+                    $PS.ActionPreference.__PREFERENCE__ = 'Continue'
+                    "$((Get-Variable __PREFERENCEVARIABLE__ -Scope Local).Options)/$__PREFERENCEVARIABLE__/$($parent.ActionPreference.__PREFERENCE__)"
                 }
                 & {
-                    Remove-Variable ErrorActionPreference -Scope Local
-                    $null -eq (Get-Variable ErrorActionPreference -Scope Local -ErrorAction Ignore)
-                    "$ErrorActionPreference/$($PS.ActionPreference.Error)"
+                    Remove-Variable __PREFERENCEVARIABLE__ -Scope Local
+                    $null -eq (Get-Variable __PREFERENCEVARIABLE__ -Scope Local -ErrorAction Ignore)
+                    "$__PREFERENCEVARIABLE__/$($PS.ActionPreference.__PREFERENCE__)"
                 }
-                "$ErrorActionPreference/$($PS.ActionPreference.Error)"
+                "$__PREFERENCEVARIABLE__/$($PS.ActionPreference.__PREFERENCE__)"
             }
-            "$ErrorActionPreference/$($PS.ActionPreference.Error)"
+            "$__PREFERENCEVARIABLE__/$($PS.ActionPreference.__PREFERENCE__)"
         }
         $result | Should -BeExactly @(
-            'AllScope/SilentlyContinue', 'True', 'SilentlyContinue/SilentlyContinue',
+            'AllScope/SilentlyContinue/shared/True', 'True', 'SilentlyContinue/SilentlyContinue',
             'None/Continue/SilentlyContinue', 'True', 'SilentlyContinue/SilentlyContinue',
             'SilentlyContinue/SilentlyContinue', 'Stop/Stop'
         )
     }
 
-    It 'uses existing preference validation for assignments of the reserved Suspend value' {
-        $result = Invoke-ScopedPropertiesTest {
-            $PS.ActionPreference.Error = 'SilentlyContinue'
-            try { $ErrorActionPreference = 'Suspend' } catch { $_.Exception.Message.Contains('Suspend') }
-            try { $PS.ActionPreference.Error = 'Suspend' } catch { $_.Exception.Message.Contains('Suspend') }
-            "$ErrorActionPreference/$($PS.ActionPreference.Error)"
+    It 'rejects assignments of Suspend for <PreferenceName>' -TestCases $preferenceCases {
+        param($PreferenceName, $VariableName)
+
+        $result = Invoke-ScopedPropertiesTest -PreferenceName $PreferenceName -VariableName $VariableName {
+            $PS.ActionPreference.__PREFERENCE__ = 'SilentlyContinue'
+            try { $__PREFERENCEVARIABLE__ = 'Suspend' } catch { $_.Exception.Message.Contains('Suspend') }
+            try { $PS.ActionPreference.__PREFERENCE__ = 'Suspend' } catch { $_.Exception.Message.Contains('Suspend') }
+            "$__PREFERENCEVARIABLE__/$($PS.ActionPreference.__PREFERENCE__)"
         }
         $result | Should -Be @('True', 'True', 'SilentlyContinue/SilentlyContinue')
     }
 
-    It 'honors legacy validation attributes and private variable visibility' {
-        $result = Invoke-ScopedPropertiesTest {
-            $PS.ActionPreference.Error = 'Stop'
+    It 'honors <PreferenceName> validation attributes and private visibility' -TestCases $preferenceCases {
+        param($PreferenceName, $VariableName)
+
+        $result = Invoke-ScopedPropertiesTest -PreferenceName $PreferenceName -VariableName $VariableName {
+            $PS.ActionPreference.__PREFERENCE__ = 'Stop'
             & {
-                [ValidateSet('Continue', 'Stop')]$ErrorActionPreference = 'Continue'
-                try { $PS.ActionPreference.Error = 'SilentlyContinue' } catch { 'validation rejected write' }
-                $PS.ActionPreference.Error
-                $PS.ActionPreference.Error = 'Stop'
-                (Get-Variable ErrorActionPreference).Attributes[0].GetType().Name
-                $ErrorActionPreference
+                [ValidateSet('Continue', 'Stop')]$__PREFERENCEVARIABLE__ = 'Continue'
+                try { $PS.ActionPreference.__PREFERENCE__ = 'SilentlyContinue' } catch { 'validation rejected write' }
+                $PS.ActionPreference.__PREFERENCE__
+                $PS.ActionPreference.__PREFERENCE__ = 'Stop'
+                (Get-Variable __PREFERENCEVARIABLE__).Attributes[0].GetType().Name
+                $__PREFERENCEVARIABLE__
             }
             & {
-                New-Variable ErrorActionPreference -Value 'SilentlyContinue' -Option Private
-                $PS.ActionPreference.Error
-                & { $PS.ActionPreference.Error }
-                $PS.ActionPreference.Error = 'Continue'
-                (Get-Variable ErrorActionPreference).Options
-                $PS.ActionPreference.Error
+                New-Variable __PREFERENCEVARIABLE__ -Value 'SilentlyContinue' -Option Private
+                $PS.ActionPreference.__PREFERENCE__
+                & { $PS.ActionPreference.__PREFERENCE__ }
+                $PS.ActionPreference.__PREFERENCE__ = 'Continue'
+                (Get-Variable __PREFERENCEVARIABLE__).Options
+                $PS.ActionPreference.__PREFERENCE__
             }
         }
         $result | Should -Be @(
             'validation rejected write', 'Continue', 'ValidateSetAttribute', 'Stop',
             'SilentlyContinue', 'Stop', 'Private', 'Continue'
+        )
+    }
+
+    It 'preserves <PreferenceName> value and metadata when an attribute edit is rejected' -TestCases $preferenceCases {
+        param($PreferenceName, $VariableName)
+
+        $result = Invoke-ScopedPropertiesTest -PreferenceName $PreferenceName -VariableName $VariableName {
+            & {
+                [ValidateSet('Continue', 'Stop')]$__PREFERENCEVARIABLE__ = 'Continue'
+                $retained = Get-Variable __PREFERENCEVARIABLE__ -Scope Local
+                $retained.Description = 'original'
+                $originalAttribute = $retained.Attributes[0]
+
+                try {
+                    $retained.Attributes.Add([System.Management.Automation.ValidateSetAttribute]::new('Ignore'))
+                } catch { 'attribute rejected' }
+                "$($retained.Attributes.Count)/$([object]::ReferenceEquals($originalAttribute, $retained.Attributes[0]))/$($retained.Description)/$($retained.Value)"
+
+                try {
+                    $ExecutionContext.SessionState.PSVariable.Set([psvariable]::new('__PREFERENCEVARIABLE__', 'Suspend'))
+                } catch { 'replacement rejected' }
+                "$($retained.Attributes.Count)/$($retained.Description)/$($retained.Options)/$($PS.ActionPreference.__PREFERENCE__)"
+
+                $PS.ActionPreference.__PREFERENCE__ = 'Stop'
+                "$($retained.Value)/$__PREFERENCEVARIABLE__"
+            }
+        }
+        $result | Should -BeExactly @(
+            'attribute rejected', '1/True/original/Continue', 'replacement rejected', '1/original/None/Continue', 'Stop/Stop'
         )
     }
 
@@ -471,28 +577,30 @@ Describe 'PSScopedProperties' -Tag 'CI' {
         $result | Should -BeExactly @('Stop/Stop', 'Continue/Continue', 'caller: Continue/Continue', 'child: Continue/Continue/AllScope')
     }
 
-    It 'uses typed entries for error preference parameters and retains their validation' {
-        $result = Invoke-ScopedPropertiesTest {
-            $PS.ActionPreference.Error = 'Continue'
+    It 'uses typed entries for <PreferenceName> parameters and retains their validation' -TestCases $preferenceCases {
+        param($PreferenceName, $VariableName)
+
+        $result = Invoke-ScopedPropertiesTest -PreferenceName $PreferenceName -VariableName $VariableName {
+            $PS.ActionPreference.__PREFERENCE__ = 'Continue'
             $block = {
-                param([ValidateSet('Stop', 'Continue')]$ErrorActionPreference)
-                "$($ErrorActionPreference.GetType().Name)/$ErrorActionPreference/$($PS.ActionPreference.Error)"
-                try { $PS.ActionPreference.Error = 'SilentlyContinue' } catch { 'parameter validation rejected write' }
-                $PS.Reset('ActionPreference.Error')
-                "$ErrorActionPreference/$($PS.ActionPreference.Error)"
+                param([ValidateSet('Stop', 'Continue')]$__PREFERENCEVARIABLE__)
+                "$($__PREFERENCEVARIABLE__.GetType().Name)/$__PREFERENCEVARIABLE__/$($PS.ActionPreference.__PREFERENCE__)"
+                try { $PS.ActionPreference.__PREFERENCE__ = 'SilentlyContinue' } catch { 'parameter validation rejected write' }
+                $PS.Reset('ActionPreference.__PREFERENCE__')
+                "$__PREFERENCEVARIABLE__/$($PS.ActionPreference.__PREFERENCE__)"
             }
             & $block 'sToP'
             $block.Invoke('sToP')
             function Invoke-AdvancedParameter {
                 [CmdletBinding()]
-                param([ValidateSet('Stop', 'Continue')]$ErrorActionPreference)
-                "$($ErrorActionPreference.GetType().Name)/$ErrorActionPreference/$($PS.ActionPreference.Error)"
-                try { $PS.ActionPreference.Error = 'SilentlyContinue' } catch { 'advanced parameter validation rejected write' }
-                $PS.Reset('ActionPreference.Error')
-                "$ErrorActionPreference/$($PS.ActionPreference.Error)"
+                param([ValidateSet('Stop', 'Continue')]$__PREFERENCEVARIABLE__)
+                "$($__PREFERENCEVARIABLE__.GetType().Name)/$__PREFERENCEVARIABLE__/$($PS.ActionPreference.__PREFERENCE__)"
+                try { $PS.ActionPreference.__PREFERENCE__ = 'SilentlyContinue' } catch { 'advanced parameter validation rejected write' }
+                $PS.Reset('ActionPreference.__PREFERENCE__')
+                "$__PREFERENCEVARIABLE__/$($PS.ActionPreference.__PREFERENCE__)"
             }
-            Invoke-AdvancedParameter -ErrorActionPreference 'sToP'
-            "caller: $ErrorActionPreference"
+            Invoke-AdvancedParameter -__PREFERENCEVARIABLE__ 'sToP'
+            "caller: $__PREFERENCEVARIABLE__"
         }
         $result | Should -BeExactly @(
             'ActionPreference/Stop/Stop', 'parameter validation rejected write', 'Continue/Continue',
@@ -564,21 +672,23 @@ Describe 'PSScopedProperties' -Tag 'CI' {
         )
     }
 
-    It 'resets error overrides in optimized functions with and without a variable breakpoint' {
-        $result = Invoke-ScopedPropertiesTest {
+    It 'resets <PreferenceName> overrides in optimized functions with and without variable breakpoints' -TestCases $preferenceCases {
+        param($PreferenceName, $VariableName)
+
+        $result = Invoke-ScopedPropertiesTest -PreferenceName $PreferenceName -VariableName $VariableName {
             function Test-PreferenceVariable {
-                $ErrorActionPreference = 'Stop'
-                $PS.ActionPreference.Error
-                $PS.ActionPreference.Error = 'SilentlyContinue'
-                $ErrorActionPreference
+                $__PREFERENCEVARIABLE__ = 'Stop'
+                $PS.ActionPreference.__PREFERENCE__
+                $PS.ActionPreference.__PREFERENCE__ = 'SilentlyContinue'
+                $__PREFERENCEVARIABLE__
                 $method = 'Reset'
-                $PS.$method('ActionPreference.Error')
-                $ErrorActionPreference
+                $PS.$method('ActionPreference.__PREFERENCE__')
+                $__PREFERENCEVARIABLE__
             }
-            $PS.ActionPreference.Error = 'Continue'
+            $PS.ActionPreference.__PREFERENCE__ = 'Continue'
             Test-PreferenceVariable
             $global:preferenceBreakpointHits = 0
-            $breakpoint = Set-PSBreakpoint -Variable ErrorActionPreference -Mode Write -Action {
+            $breakpoint = Set-PSBreakpoint -Variable __PREFERENCEVARIABLE__ -Mode Write -Action {
                 $global:preferenceBreakpointHits++
             }
             Test-PreferenceVariable
@@ -646,22 +756,234 @@ Describe 'PSScopedProperties' -Tag 'CI' {
         $result | Should -BeExactly ($expected + $expected)
     }
 
-    It 'uses the actual script, local, and global scopes and expires local views' {
+    It 'reuses all active scoped preferences across dotted command stages' {
         $result = Invoke-ScopedPropertiesTest {
-            $PS.ActionPreference.Error = 'Stop'
+            function Invoke-NestedScopedPreferences {
+                [CmdletBinding()]
+                param()
+
+                $observations.Add("nested entry/$WarningPreference/$DebugPreference")
+                $PS.Reset('ActionPreference.Warning')
+                $PS.Reset('ActionPreference.Debug')
+                $observations.Add("nested reset/$WarningPreference/$DebugPreference")
+                $WarningPreference = 'Stop'
+                $PS.ActionPreference.Debug = 'Ignore'
+                $observations.Add("nested write/$WarningPreference/$DebugPreference")
+            }
+
+            function Invoke-StagedScopedPreferences {
+                [CmdletBinding()]
+                param([Parameter(ValueFromPipeline)][int] $Item)
+
+                begin {
+                    $observations.Add("begin/$ErrorActionPreference/$WarningPreference/$InformationPreference/$VerbosePreference/$DebugPreference")
+                    $PS.Reset('ActionPreference.Warning')
+                    $InformationPreference = 'Ignore'
+                    $PS.ActionPreference.Debug = 'Stop'
+                }
+
+                process {
+                    $observations.Add("process/$Item/$ErrorActionPreference/$WarningPreference/$InformationPreference/$VerbosePreference/$DebugPreference")
+                    if ($Item -eq 1) {
+                        . Invoke-NestedScopedPreferences -WarningAction SilentlyContinue -Debug
+                        $observations.Add("after nested/$WarningPreference/$DebugPreference")
+                        $PS.ActionPreference.Warning = 'Ignore'
+                        $PS.Reset('ActionPreference.Debug')
+                    }
+                }
+
+                end {
+                    $observations.Add("end/$ErrorActionPreference/$WarningPreference/$InformationPreference/$VerbosePreference/$DebugPreference")
+                    $DebugPreference = 'SilentlyContinue'
+                }
+
+                clean {
+                    $observations.Add("clean/$ErrorActionPreference/$WarningPreference/$InformationPreference/$VerbosePreference/$DebugPreference")
+                }
+            }
+
+            $PS.ActionPreference.Error = 'Continue'
+            $PS.ActionPreference.Warning = 'Continue'
+            $PS.ActionPreference.Information = 'Continue'
+            $PS.ActionPreference.Verbose = 'Continue'
+            $PS.ActionPreference.Debug = 'Continue'
+            $observations = [System.Collections.Generic.List[string]]::new()
+            $overrides = @{
+                ErrorAction = 'Stop'
+                WarningAction = 'Stop'
+                InformationAction = 'Stop'
+                Verbose = $false
+                Debug = $false
+            }
+            1, 2 | ForEach-Object {
+                $observations.Add("producer/$_/$ErrorActionPreference/$WarningPreference/$InformationPreference/$VerbosePreference/$DebugPreference")
+                $_
+            } | . Invoke-StagedScopedPreferences @overrides
+
+            $observations
+            "caller/$ErrorActionPreference/$WarningPreference/$InformationPreference/$VerbosePreference/$DebugPreference"
+        }
+        $result | Should -BeExactly @(
+            'begin/Stop/Stop/Stop/SilentlyContinue/SilentlyContinue',
+            'producer/1/Continue/Continue/Continue/Continue/Continue',
+            'process/1/Stop/Continue/Ignore/SilentlyContinue/Stop',
+            'nested entry/SilentlyContinue/Continue', 'nested reset/Continue/Stop', 'nested write/Stop/Ignore',
+            'after nested/Continue/Stop',
+            'producer/2/Continue/Continue/Continue/Continue/Continue',
+            'process/2/Stop/Ignore/Ignore/SilentlyContinue/Continue',
+            'end/Stop/Ignore/Ignore/SilentlyContinue/Continue',
+            'clean/Stop/Ignore/Ignore/SilentlyContinue/SilentlyContinue',
+            'caller/Continue/Continue/Continue/Continue/Continue'
+        )
+    }
+
+    It 'keeps <PreferenceName> stream behavior under inherited settings and explicit overrides' -TestCases $streamCases {
+        param($PreferenceName, $VariableName)
+
+        $result = Invoke-ScopedPropertiesTest -PreferenceName $PreferenceName -VariableName $VariableName {
+            $stream = '__PREFERENCE__'
+            $write = "Write-$stream"
+            $usesSwitch = $stream -in 'Verbose', 'Debug'
+            $commonParameter = if ($usesSwitch) { $stream } else { $stream + 'Action' }
+            $quiet = if ($stream -eq 'Information') { 'Ignore' } else { 'SilentlyContinue' }
+
+            $PS.ActionPreference.__PREFERENCE__ = $quiet
+            @(& { & $write 'suppressed' *>&1 }).Count
+            $enable = @{ $commonParameter = if ($usesSwitch) { $true } else { 'Continue' } }
+            $record = & $write 'explicit continuation' @enable *>&1
+            "$($record.GetType().Name)/$record"
+
+            $PS.ActionPreference.__PREFERENCE__ = 'Continue'
+            $record = & { & $write 'inherited continuation' *>&1 }
+            "$($record.GetType().Name)/$record"
+            $disable = @{ $commonParameter = if ($usesSwitch) { $false } else { $quiet } }
+            @(& $write 'explicit suppression' @disable *>&1).Count
+
+            $PS.ActionPreference.__PREFERENCE__ = 'Stop'
+            try {
+                & { & $write 'inherited stop' *>&1 | Out-Null }
+                'unexpected continuation'
+            } catch { $_.Exception.GetType().Name }
+
+            $record = & $write 'explicit override of stop' @enable *>&1
+            "$($record.GetType().Name)/$record"
+
+            if (-not $usesSwitch) {
+                $PS.ActionPreference.__PREFERENCE__ = 'Continue'
+                $stop = @{ $commonParameter = 'Stop' }
+                try {
+                    & $write 'explicit stop' @stop *>&1 | Out-Null
+                    'unexpected continuation'
+                } catch { $_.Exception.GetType().Name }
+            }
+
+            $PS.ActionPreference.__PREFERENCE__ = 'Continue'
+            $records = 'first', 'second' | ForEach-Object {
+                if ($_ -eq 'second') {
+                    $PS.AtScope('Global').ActionPreference.__PREFERENCE__ = $quiet
+                }
+                $_
+            } | & $write *>&1
+            $records -join ','
+            @(& $write 'new command' *>&1).Count
+        }
+        $recordType = $PreferenceName + 'Record'
+        $expected = @(
+            '0', "$recordType/explicit continuation", "$recordType/inherited continuation",
+            '0', 'ActionPreferenceStopException', "$recordType/explicit override of stop"
+        )
+        if ($PreferenceName -in 'Warning', 'Information') {
+            $expected += 'ActionPreferenceStopException'
+        }
+        # Debug and Information cache their inherited preference for an existing command.
+        $expected += if ($PreferenceName -in 'Debug', 'Information') { 'first,second' } else { 'first' }
+        $expected += '0'
+        $result | Should -BeExactly $expected
+    }
+
+    It 'suppresses Information host display while allowing redirected records under SilentlyContinue' {
+        $result = Invoke-ScopedPropertiesTest {
+            $PS.ActionPreference.Information = 'SilentlyContinue'
+            Write-Information 'suppressed host message'
+            $record = Write-Information 'redirected message' 6>&1
+            "$($record.GetType().Name)/$($record.MessageData)"
+            $PS.ActionPreference.Information = 'Continue'
+            & { Write-Information 'inherited host message' }
+            Write-Information 'ignored host message' -InformationAction Ignore
+        }
+        $result | Should -BeExactly @('InformationRecord/redirected message', 'inherited host message')
+    }
+
+    It 'preserves stream prompting and Debug and Verbose interactions in the host' {
+        $result = Invoke-ScopedPropertiesTest {
+            $PS.ActionPreference.Warning = 'SilentlyContinue'
+            $PS.ActionPreference.Verbose = 'SilentlyContinue'
+            $PS.ActionPreference.Debug = 'Inquire'
+            $PS.ActionPreference.Information = 'Inquire'
+
+            $record = Write-Warning 'verbose enables warning' -Verbose 3>&1
+            "$($record.GetType().Name)/$record"
+            $record = Write-Debug 'explicit debug continues' -Debug 5>&1
+            "$($record.GetType().Name)/$record"
+
+            try { Write-Debug 'debug prompts' 5>$null } catch { "Debug/$($_.FullyQualifiedErrorId)" }
+            try { Write-Verbose 'debug enables verbose prompting' -Debug 4>$null } catch { "Verbose/$($_.FullyQualifiedErrorId)" }
+            try { Write-Warning 'debug enables warning prompting' -Debug 3>$null } catch { "Warning/$($_.FullyQualifiedErrorId)" }
+            try { Write-Information 'information prompts' 6>$null } catch { "Information/$($_.FullyQualifiedErrorId)" }
+            $PS.ActionPreference.Warning = 'Inquire'
+            try { Write-Warning 'inherited warning prompts' 3>$null } catch { "Warning/$($_.FullyQualifiedErrorId)" }
+            $PS.ActionPreference.Verbose = 'Inquire'
+            try { Write-Verbose 'inherited verbose prompts' 4>$null } catch { "Verbose/$($_.FullyQualifiedErrorId)" }
+
+            @(Write-Warning 'explicit warning action wins' -Debug -WarningAction SilentlyContinue 3>&1).Count
+            @(Write-Verbose 'explicit false wins' -Debug -Verbose:$false 4>&1).Count
+            @(Write-Debug 'explicit false wins' -Debug:$false 5>&1).Count
+
+            $hostless = [powershell]::Create()
+            try {
+                $null = $hostless.AddScript({
+                    $PS.ActionPreference.Debug = 'Inquire'
+                    $record = Write-Debug 'hostless debug' 5>&1
+                    "$($record.GetType().Name)/$record"
+                    $record = Write-Verbose 'hostless verbose' -Debug 4>&1
+                    "$($record.GetType().Name)/$record"
+                })
+                $hostless.Invoke()
+                $hostless.HadErrors
+            } finally {
+                $hostless.Dispose()
+            }
+        }
+        $result | Should -BeExactly @(
+            'WarningRecord/verbose enables warning', 'DebugRecord/explicit debug continues',
+            'Debug/InvalidOperation,Microsoft.PowerShell.Commands.WriteDebugCommand',
+            'Verbose/InvalidOperation,Microsoft.PowerShell.Commands.WriteVerboseCommand',
+            'Warning/InvalidOperation,Microsoft.PowerShell.Commands.WriteWarningCommand',
+            'Information/InvalidOperation,Microsoft.PowerShell.Commands.WriteInformationCommand',
+            'Warning/InvalidOperation,Microsoft.PowerShell.Commands.WriteWarningCommand',
+            'Verbose/InvalidOperation,Microsoft.PowerShell.Commands.WriteVerboseCommand',
+            '0', '0', '0', 'DebugRecord/hostless debug', 'VerboseRecord/hostless verbose', 'False'
+        )
+    }
+
+    It 'binds <PreferenceName> views to script, local, and global scopes and expires local views' -TestCases $preferenceCases {
+        param($PreferenceName, $VariableName)
+
+        $result = Invoke-ScopedPropertiesTest -PreferenceName $PreferenceName -VariableName $VariableName {
+            $PS.ActionPreference.__PREFERENCE__ = 'Stop'
             $scriptPath = Join-Path ([IO.Path]::GetTempPath()) ("ScopedProperties-{0}.ps1" -f [guid]::NewGuid())
             try {
                 @'
-$script:ErrorActionPreference = 'sToP'
+$script:__PREFERENCEVARIABLE__ = 'sToP'
 $scriptSettings = $PS.AtScope('Script')
 & {
     $localSettings = $PS.AtScope('Local')
-    $local:ErrorActionPreference = 'silentlycontinue'
-    $global:ErrorActionPreference = 'continue'
-    "$($localSettings.ActionPreference.Error)/$($scriptSettings.ActionPreference.Error)/$($PS.AtScope('Global').ActionPreference.Error)"
-    $scriptSettings.Reset('ActionPreference.Error')
-    $localSettings.Reset('ActionPreference.Error')
-    $PS.ActionPreference.Error
+    $local:__PREFERENCEVARIABLE__ = 'silentlycontinue'
+    $global:__PREFERENCEVARIABLE__ = 'continue'
+    "$($localSettings.ActionPreference.__PREFERENCE__)/$($scriptSettings.ActionPreference.__PREFERENCE__)/$($PS.AtScope('Global').ActionPreference.__PREFERENCE__)"
+    $scriptSettings.Reset('ActionPreference.__PREFERENCE__')
+    $localSettings.Reset('ActionPreference.__PREFERENCE__')
+    $PS.ActionPreference.__PREFERENCE__
 }
 '@ | Set-Content -LiteralPath $scriptPath
                 & $scriptPath
@@ -669,15 +991,19 @@ $scriptSettings = $PS.AtScope('Script')
                 Remove-Item -LiteralPath $scriptPath -Force
             }
             $expiredView = & { $PS.AtScope('Local') }
-            try { $expiredView.ActionPreference.Error } catch { 'expired read rejected' }
-            try { $expiredView.ActionPreference.Error = 'Stop' } catch { 'expired assignment rejected' }
-            try { $expiredView.Reset('ActionPreference.Error') } catch { 'expired reset rejected' }
+            try { $expiredView.ActionPreference.__PREFERENCE__ } catch { 'expired read rejected' }
+            try { $expiredView.ActionPreference.__PREFERENCE__ = 'Stop' } catch { 'expired assignment rejected' }
+            try { $expiredView.Reset('ActionPreference.__PREFERENCE__') } catch { 'expired reset rejected' }
+            $expiredGroup = & { $PS.AtScope('Local').ActionPreference }
+            try { $expiredGroup.__PREFERENCE__ } catch { 'expired group read rejected' }
+            try { $expiredGroup.__PREFERENCE__ = 'Stop' } catch { 'expired group assignment rejected' }
             try { $PS.AtScope('Private') } catch { 'unsupported scope rejected' }
             try { $PS.Reset('Style.Progress.Unknown') } catch { 'unknown path rejected' }
         }
         $result | Should -Be @(
             'SilentlyContinue/Stop/Continue', 'Continue', 'expired read rejected',
-            'expired assignment rejected', 'expired reset rejected', 'unsupported scope rejected', 'unknown path rejected'
+            'expired assignment rejected', 'expired reset rejected', 'expired group read rejected',
+            'expired group assignment rejected', 'unsupported scope rejected', 'unknown path rejected'
         )
     }
 
@@ -700,37 +1026,41 @@ $scriptSettings = $PS.AtScope('Script')
         $result | Should -Be @('Minimal/Classic', 'Minimal', 'expired progress read rejected')
     }
 
-    It 'keeps a captured error variable synchronized until its last binding is reset' {
-        $result = Invoke-ScopedPropertiesTest {
-            $PS.ActionPreference.Error = 'Stop'
+    It 'keeps captured <PreferenceName> variables synchronized until their last binding is reset' -TestCases $preferenceCases {
+        param($PreferenceName, $VariableName)
+
+        $result = Invoke-ScopedPropertiesTest -PreferenceName $PreferenceName -VariableName $VariableName {
+            $PS.ActionPreference.__PREFERENCE__ = 'Stop'
             & {
-                $ErrorActionPreference = 'Continue'
-                $captured = Get-Variable ErrorActionPreference -Scope Local
-                $PS.ActionPreference.Error = 'SilentlyContinue'
+                $__PREFERENCEVARIABLE__ = 'Continue'
+                $captured = Get-Variable __PREFERENCEVARIABLE__ -Scope Local
+                $PS.ActionPreference.__PREFERENCE__ = 'SilentlyContinue'
                 "$($captured.Value.GetType().Name)/$($captured.Value)"
                 $captured.Value = 'cOnTiNuE'
-                "$ErrorActionPreference/$($PS.ActionPreference.Error)"
+                "$__PREFERENCEVARIABLE__/$($PS.ActionPreference.__PREFERENCE__)"
 
-                $PS.Reset('ActionPreference.Error')
-                "$($null -eq $captured.Value)/$ErrorActionPreference"
+                $PS.Reset('ActionPreference.__PREFERENCE__')
+                "$($null -eq $captured.Value)/$__PREFERENCEVARIABLE__"
                 $captured.Value = 'detached'
-                "$($captured.Value)/$($null -eq (Get-Variable ErrorActionPreference -Scope Local -ErrorAction Ignore))/$($PS.ActionPreference.Error)"
+                "$($captured.Value)/$($null -eq (Get-Variable __PREFERENCEVARIABLE__ -Scope Local -ErrorAction Ignore))/$($PS.ActionPreference.__PREFERENCE__)"
             }
         }
         $result | Should -BeExactly @('ActionPreference/SilentlyContinue', 'Continue/Continue', 'True/Stop', 'detached/True/Stop')
     }
 
-    It 'retains a captured error variable value after its scope exits' {
-        $result = Invoke-ScopedPropertiesTest {
-            $PS.ActionPreference.Error = 'Stop'
+    It 'retains captured <PreferenceName> variable values after scope exit' -TestCases $preferenceCases {
+        param($PreferenceName, $VariableName)
+
+        $result = Invoke-ScopedPropertiesTest -PreferenceName $PreferenceName -VariableName $VariableName {
+            $PS.ActionPreference.__PREFERENCE__ = 'Stop'
             $captured = & {
-                $ErrorActionPreference = 'SilentlyContinue'
-                Get-Variable ErrorActionPreference -Scope Local
+                $__PREFERENCEVARIABLE__ = 'SilentlyContinue'
+                Get-Variable __PREFERENCEVARIABLE__ -Scope Local
             }
 
-            "$($captured.Value.GetType().Name)/$($captured.Value)/$($PS.ActionPreference.Error)"
+            "$($captured.Value.GetType().Name)/$($captured.Value)/$($PS.ActionPreference.__PREFERENCE__)"
             $captured.Value = 'cOnTiNuE'
-            "$($captured.Value)/$ErrorActionPreference/$($PS.ActionPreference.Error)"
+            "$($captured.Value)/$__PREFERENCEVARIABLE__/$($PS.ActionPreference.__PREFERENCE__)"
         }
         $result | Should -BeExactly @('ActionPreference/SilentlyContinue/Stop', 'Continue/Stop/Stop')
     }
@@ -782,83 +1112,90 @@ $scriptSettings = $PS.AtScope('Script')
         $result | Should -Be @('Continue/Minimal', 'foreign view rejected', 'Minimal', 'False', 'Classic')
     }
 
-    It 'copies ordinary and foreign variable objects into the target setting' {
-        $result = Invoke-ScopedPropertiesTest {
-            $PS.ActionPreference.Error = 'Stop'
+    It 'copies ordinary and foreign <PreferenceName> variable objects into the target setting' -TestCases $preferenceCases {
+        param($PreferenceName, $VariableName, $DefaultPreference)
+
+        $result = Invoke-ScopedPropertiesTest -PreferenceName $PreferenceName -VariableName $VariableName {
+            $PS.ActionPreference.__PREFERENCE__ = 'Stop'
             & {
-                $supplied = [psvariable]::new('ErrorActionPreference', 'SilentlyContinue')
+                $supplied = [psvariable]::new('__PREFERENCEVARIABLE__', 'SilentlyContinue')
                 $supplied.Description = 'supplied'
                 $ExecutionContext.SessionState.PSVariable.Set($supplied)
-                $stored = Get-Variable ErrorActionPreference -Scope Local
+                $stored = Get-Variable __PREFERENCEVARIABLE__ -Scope Local
                 "$([object]::ReferenceEquals($supplied, $stored))/$($stored.Value.GetType().Name)/$($stored.Description)"
                 $supplied.Value = 'Stop'
-                "$($supplied.Value)/$($stored.Value)/$($PS.ActionPreference.Error)"
+                "$($supplied.Value)/$($stored.Value)/$($PS.ActionPreference.__PREFERENCE__)"
             }
 
-            $source = Get-Variable ErrorActionPreference -Scope Global
+            $source = Get-Variable __PREFERENCEVARIABLE__ -Scope Global
             $source.Description = 'source runspace'
             $target = [powershell]::Create()
             try {
                 $null = $target.AddScript({
-                    param($foreign)
+                    param($foreign, $foreignView, $unboundPreferences)
+
+                    try { $foreignView.__PREFERENCE__ } catch { 'foreign view rejected' }
+                    $unboundPreferences.__PREFERENCE__
                     & {
                         $variables = $ExecutionContext.SessionState.PSVariable
                         $variables.Set($foreign)
-                        $imported = $variables.Get('ErrorActionPreference')
+                        $imported = $variables.Get('__PREFERENCEVARIABLE__')
                         "$([object]::ReferenceEquals($foreign, $imported))/$($imported.Value)/$($imported.Description)"
-                        $PS.ActionPreference.Error = 'SilentlyContinue'
+                        $PS.ActionPreference.__PREFERENCE__ = 'SilentlyContinue'
                         $imported.Description = 'destination runspace'
                         "$($imported.Value)/$($foreign.Value)/$($foreign.Description)"
                     }
-                }).AddArgument($source)
+                }).AddArgument($source).AddArgument($PS.AtScope('Global').ActionPreference).AddArgument($PS.ActionPreference)
                 $target.Invoke()
                 $target.HadErrors
             } finally {
                 $target.Dispose()
             }
 
-            "$($source.Value)/$($source.Description)/$($PS.ActionPreference.Error)"
+            "$($source.Value)/$($source.Description)/$($PS.ActionPreference.__PREFERENCE__)"
         }
         $result | Should -BeExactly @(
             'False/ActionPreference/supplied', 'Stop/SilentlyContinue/SilentlyContinue',
-            'False/Stop/source runspace', 'SilentlyContinue/Stop/source runspace', 'False', 'Stop/source runspace/Stop'
+            'foreign view rejected', $DefaultPreference, 'False/Stop/source runspace', 'SilentlyContinue/Stop/source runspace', 'False', 'Stop/source runspace/Stop'
         )
     }
 
-    It 'shares explicitly exported module preferences only within the same runspace' {
-        $result = Invoke-ScopedPropertiesTest {
-            $module = New-Module -Name ScopedPreferenceExport {
-                $ErrorActionPreference = 'Stop'
+    It 'shares exported module <PreferenceName> preferences within the same runspace' -TestCases $preferenceCases {
+        param($PreferenceName, $VariableName, $DefaultPreference)
+
+        $result = Invoke-ScopedPropertiesTest -PreferenceName $PreferenceName -VariableName $VariableName {
+            $module = New-Module -Name ScopedPreferenceExport -Verbose:$false {
+                $__PREFERENCEVARIABLE__ = 'Stop'
                 function Set-ScopedExportedPreference {
-                    $script:ErrorActionPreference = 'SilentlyContinue'
+                    $script:__PREFERENCEVARIABLE__ = 'SilentlyContinue'
                 }
                 function Get-ScopedExportedPreference {
-                    "$($PS.ActionPreference.Error)/$((Get-Variable ErrorActionPreference -Scope Script).Description)"
+                    "$($PS.ActionPreference.__PREFERENCE__)/$((Get-Variable __PREFERENCEVARIABLE__ -Scope Script).Description)"
                 }
-                Export-ModuleMember -Variable ErrorActionPreference -Function Set-ScopedExportedPreference, Get-ScopedExportedPreference
+                Export-ModuleMember -Variable __PREFERENCEVARIABLE__ -Function Set-ScopedExportedPreference, Get-ScopedExportedPreference -Verbose:$false
             }
-            Import-Module $module
-            $exported = $module.ExportedVariables['ErrorActionPreference']
-            $imported = Get-Variable ErrorActionPreference -Scope Global
+            Import-Module $module -Verbose:$false
+            $exported = $module.ExportedVariables['__PREFERENCEVARIABLE__']
+            $imported = Get-Variable __PREFERENCEVARIABLE__ -Scope Global
             [object]::ReferenceEquals($exported, $imported)
             Set-ScopedExportedPreference
             $imported.Description = 'same runspace'
-            "$($imported.Value)/$($PS.ActionPreference.Error)"
+            "$($imported.Value)/$($PS.ActionPreference.__PREFERENCE__)"
             Get-ScopedExportedPreference
 
             $foreignShell = [powershell]::Create()
             try {
                 $null = $foreignShell.AddScript({
                     param($foreignModule)
-                    Import-Module $foreignModule
-                    $foreignExport = $foreignModule.ExportedVariables['ErrorActionPreference']
-                    $foreignImport = Get-Variable ErrorActionPreference -Scope Global
+                    Import-Module $foreignModule -Verbose:$false
+                    $foreignExport = $foreignModule.ExportedVariables['__PREFERENCEVARIABLE__']
+                    $foreignImport = Get-Variable __PREFERENCEVARIABLE__ -Scope Global
                     [object]::ReferenceEquals($foreignExport, $foreignImport)
-                    $PS.ActionPreference.Error = 'Stop'
+                    $PS.ActionPreference.__PREFERENCE__ = 'Stop'
                     $foreignImport.Description = 'other runspace'
                     "$($foreignImport.Value)/$($foreignExport.Value)/$($foreignExport.Description)"
-                    Remove-Module $foreignModule.Name
-                    "$($null -eq (Get-Variable ErrorActionPreference -Scope Global -ErrorAction Ignore))/$($PS.ActionPreference.Error)"
+                    Remove-Module $foreignModule.Name -Verbose:$false
+                    "$($null -eq (Get-Variable __PREFERENCEVARIABLE__ -Scope Global -ErrorAction Ignore))/$($PS.ActionPreference.__PREFERENCE__)"
                 }).AddArgument($module)
                 $foreignShell.Invoke()
                 $foreignShell.Streams.Error.Count
@@ -866,40 +1203,42 @@ $scriptSettings = $PS.AtScope('Script')
                 $foreignShell.Dispose()
             }
 
-            Remove-Module $module.Name
-            "$($null -eq (Get-Variable ErrorActionPreference -Scope Global -ErrorAction Ignore))/$($PS.ActionPreference.Error)/$($exported.Value)"
+            Remove-Module $module.Name -Verbose:$false
+            "$($null -eq (Get-Variable __PREFERENCEVARIABLE__ -Scope Global -ErrorAction Ignore))/$($PS.ActionPreference.__PREFERENCE__)/$($exported.Value)"
         }
         $result | Should -BeExactly @(
             'True', 'SilentlyContinue/SilentlyContinue', 'SilentlyContinue/same runspace',
-            'False', 'Stop/SilentlyContinue/same runspace', 'True/Continue', '0',
-            'True/Continue/SilentlyContinue'
+            'False', 'Stop/SilentlyContinue/same runspace', "True/$DefaultPreference", '0',
+            "True/$DefaultPreference/SilentlyContinue"
         )
     }
 
-    It 'normalizes host initialization and session-state API writes in the same entry' {
-        $result = Invoke-ScopedPropertiesTest {
+    It 'normalizes <PreferenceName> host initialization and session-state API writes in the same entry' -TestCases $preferenceCases {
+        param($PreferenceName, $VariableName, $DefaultPreference)
+
+        $result = Invoke-ScopedPropertiesTest -PreferenceName $PreferenceName -VariableName $VariableName {
             $iss = [System.Management.Automation.Runspaces.InitialSessionState]::CreateDefault2()
             $iss.Variables.Add([System.Management.Automation.Runspaces.SessionStateVariableEntry]::new(
-                'ErrorActionPreference', 'sIlEnTlYcOnTiNuE', 'Host preference'))
+                '__PREFERENCEVARIABLE__', 'sIlEnTlYcOnTiNuE', 'Host preference'))
             $runspace = [runspacefactory]::CreateRunspace($iss)
             $controller = [powershell]::Create()
             try {
                 $runspace.Open()
                 $controller.Runspace = $runspace
                 $proxy = $runspace.SessionStateProxy
-                $value = $proxy.GetVariable('ErrorActionPreference')
+                $value = $proxy.GetVariable('__PREFERENCEVARIABLE__')
                 "$($value.GetType().Name)/$value"
-                $proxy.SetVariable('ErrorActionPreference', 'sToP')
-                try { $proxy.SetVariable('ErrorActionPreference', $null) } catch { 'host write rejected' }
+                $proxy.SetVariable('__PREFERENCEVARIABLE__', 'sToP')
+                try { $proxy.SetVariable('__PREFERENCEVARIABLE__', $null) } catch { 'host write rejected' }
 
                 $null = $controller.AddScript({
                     $variables = $ExecutionContext.SessionState.PSVariable
-                    "$ErrorActionPreference/$($PS.ActionPreference.Error)/$($variables.Get('ErrorActionPreference').Description)"
-                    $variables.Set([psvariable]::new('ErrorActionPreference', 'cOnTiNuE'))
-                    $value = $variables.GetValue('ErrorActionPreference')
-                    "$($value.GetType().Name)/$value/$($PS.ActionPreference.Error)"
-                    $variables.Remove('ErrorActionPreference')
-                    "$($null -eq $variables.Get('ErrorActionPreference'))/$($PS.ActionPreference.Error)"
+                    "$__PREFERENCEVARIABLE__/$($PS.ActionPreference.__PREFERENCE__)/$($variables.Get('__PREFERENCEVARIABLE__').Description)"
+                    $variables.Set([psvariable]::new('__PREFERENCEVARIABLE__', 'cOnTiNuE'))
+                    $value = $variables.GetValue('__PREFERENCEVARIABLE__')
+                    "$($value.GetType().Name)/$value/$($PS.ActionPreference.__PREFERENCE__)"
+                    $variables.Remove('__PREFERENCEVARIABLE__')
+                    "$($null -eq $variables.Get('__PREFERENCEVARIABLE__'))/$($PS.ActionPreference.__PREFERENCE__)"
                 })
                 $controller.Invoke()
                 $controller.HadErrors
@@ -910,22 +1249,24 @@ $scriptSettings = $PS.AtScope('Script')
         }
         $result | Should -BeExactly @(
             'ActionPreference/SilentlyContinue', 'host write rejected', 'Stop/Stop/Host preference',
-            'ActionPreference/Continue/Continue', 'True/Continue', 'False'
+            'ActionPreference/Continue/Continue', "True/$DefaultPreference", 'False'
         )
     }
 
-    It 'rejects an invalid host initial preference without replacing the preceding entry' {
-        $result = Invoke-ScopedPropertiesTest {
+    It 'rejects invalid <PreferenceName> host initialization and retains the preceding entry' -TestCases $preferenceCases {
+        param($PreferenceName, $VariableName)
+
+        $result = Invoke-ScopedPropertiesTest -PreferenceName $PreferenceName -VariableName $VariableName {
             $iss = [initialsessionstate]::CreateDefault2()
             $iss.Variables.Add([System.Management.Automation.Runspaces.SessionStateVariableEntry]::new(
-                'ErrorActionPreference', 'sToP', 'valid host entry'))
+                '__PREFERENCEVARIABLE__', 'sToP', 'valid host entry'))
             $iss.Variables.Add([System.Management.Automation.Runspaces.SessionStateVariableEntry]::new(
-                'ErrorActionPreference', 'invalid host preference', 'invalid host entry'))
+                '__PREFERENCEVARIABLE__', 'invalid host preference', 'invalid host entry'))
 
             $relaxed = [runspacefactory]::CreateRunspace($iss)
             try {
                 $relaxed.Open()
-                $variable = $relaxed.SessionStateProxy.PSVariable.Get('ErrorActionPreference')
+                $variable = $relaxed.SessionStateProxy.PSVariable.Get('__PREFERENCEVARIABLE__')
                 "$($variable.Value.GetType().Name)/$($variable.Value)/$($variable.Description)"
             } finally {
                 $relaxed.Dispose()

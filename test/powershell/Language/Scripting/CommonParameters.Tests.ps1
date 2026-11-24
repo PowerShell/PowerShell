@@ -4,12 +4,12 @@ Describe "Common parameters support for script cmdlets" -Tags "CI" {
     BeforeEach {
         $rs = [system.management.automation.runspaces.runspacefactory]::CreateRunspace()
         $rs.open()
-        $ps = [System.Management.Automation.PowerShell]::Create()
-        $ps.Runspace = $rs
+        $powerShell = [System.Management.Automation.PowerShell]::Create()
+        $powerShell.Runspace = $rs
     }
 
     AfterEach {
-            $ps.Dispose()
+            $powerShell.Dispose()
             $rs.Dispose()
     }
 
@@ -28,23 +28,23 @@ Describe "Common parameters support for script cmdlets" -Tags "CI" {
 
         It "Debug get-foo" {
             $command = 'get-foo'
-            [void] $ps.AddScript($script + $command)
-            $asyncResult = $ps.BeginInvoke()
-            $output = $ps.EndInvoke($asyncResult)
+            [void] $powerShell.AddScript($script + $command)
+            $asyncResult = $powerShell.BeginInvoke()
+            $output = $powerShell.EndInvoke($asyncResult)
 
             $output[0] | Should -BeExactly "output foo"
-            $ps.Streams.Debug.Count | Should -Be 0
+            $powerShell.Streams.Debug.Count | Should -Be 0
         }
 
         It 'get-foo -debug' {
             $command = 'get-foo -debug'
-            [void] $ps.AddScript($script + $command)
-            $asyncResult = $ps.BeginInvoke()
-            $output = $ps.EndInvoke($asyncResult)
+            [void] $powerShell.AddScript($script + $command)
+            $asyncResult = $powerShell.BeginInvoke()
+            $output = $powerShell.EndInvoke($asyncResult)
 
             $output[0] | Should -BeExactly "output foo"
-            $ps.Streams.Debug[0].Message | Should -BeExactly "debug foo"
-            $ps.InvocationStateInfo.State | Should -BeExactly 'Completed'
+            $powerShell.Streams.Debug[0].Message | Should -BeExactly "debug foo"
+            $powerShell.InvocationStateInfo.State | Should -BeExactly 'Completed'
         }
     }
 
@@ -63,24 +63,24 @@ Describe "Common parameters support for script cmdlets" -Tags "CI" {
 
         It 'get-foo' {
             $command = 'get-foo'
-            [void] $ps.AddScript($script + $command)
-            $asyncResult = $ps.BeginInvoke()
-            $output = $ps.EndInvoke($asyncResult)
+            [void] $powerShell.AddScript($script + $command)
+            $asyncResult = $powerShell.BeginInvoke()
+            $output = $powerShell.EndInvoke($asyncResult)
 
             $output[0] | Should -BeExactly "output foo"
-            $ps.streams.verbose.Count | Should -Be 0
+            $powerShell.streams.verbose.Count | Should -Be 0
         }
 
         It 'get-foo -verbose' {
             $command = 'get-foo -verbose'
 
-            [void] $ps.AddScript($script + $command)
-            $asyncResult = $ps.BeginInvoke()
-            $output = $ps.EndInvoke($asyncResult)
+            [void] $powerShell.AddScript($script + $command)
+            $asyncResult = $powerShell.BeginInvoke()
+            $output = $powerShell.EndInvoke($asyncResult)
 
             $output[0] | Should -BeExactly "output foo"
-            $ps.Streams.verbose[0].Message | Should -BeExactly "verbose foo"
-            $ps.InvocationStateInfo.State | Should -BeExactly 'Completed'
+            $powerShell.Streams.verbose[0].Message | Should -BeExactly "verbose foo"
+            $powerShell.InvocationStateInfo.State | Should -BeExactly 'Completed'
         }
     }
 
@@ -100,56 +100,56 @@ Describe "Common parameters support for script cmdlets" -Tags "CI" {
         It 'erroraction' {
 
             $command = 'get-foo'
-            [void] $ps.AddScript($script + $command)
-            $asyncResult = $ps.BeginInvoke()
-            $output = $ps.EndInvoke($asyncResult)
+            [void] $powerShell.AddScript($script + $command)
+            $asyncResult = $powerShell.BeginInvoke()
+            $output = $powerShell.EndInvoke($asyncResult)
 
             $output[0] | Should -BeExactly "output foo"
-            $ps.Streams.error[0].ToString() | Should -Match "error foo"
+            $powerShell.Streams.error[0].ToString() | Should -Match "error foo"
         }
 
         It 'erroraction continue' {
 
             $command = 'get-foo -erroraction Continue'
-            [void] $ps.AddScript($script + $command)
-            $asyncResult = $ps.BeginInvoke()
-            $output = $ps.EndInvoke($asyncResult)
+            [void] $powerShell.AddScript($script + $command)
+            $asyncResult = $powerShell.BeginInvoke()
+            $output = $powerShell.EndInvoke($asyncResult)
 
             $output[0] | Should -BeExactly "output foo"
-            $ps.Streams.error[0].ToString() | Should -Match "error foo"
+            $powerShell.Streams.error[0].ToString() | Should -Match "error foo"
         }
 
         It 'erroraction SilentlyContinue' {
 
             $command = 'get-foo -erroraction SilentlyContinue'
-            [void] $ps.AddScript($script + $command)
-            $asyncResult = $ps.BeginInvoke()
-            $output = $ps.EndInvoke($asyncResult)
+            [void] $powerShell.AddScript($script + $command)
+            $asyncResult = $powerShell.BeginInvoke()
+            $output = $powerShell.EndInvoke($asyncResult)
 
             $output[0] | Should -BeExactly "output foo"
-            $ps.streams.error.count | Should -Be 0
+            $powerShell.streams.error.count | Should -Be 0
         }
 
         It 'erroraction Stop' {
 
             $command = 'get-foo -erroraction Stop'
 
-            [void] $ps.AddScript($script + $command)
-            $asyncResult = $ps.BeginInvoke()
+            [void] $powerShell.AddScript($script + $command)
+            $asyncResult = $powerShell.BeginInvoke()
 
-            { $ps.EndInvoke($asyncResult) } | Should -Throw -ErrorId "ActionPreferenceStopException"
+            { $powerShell.EndInvoke($asyncResult) } | Should -Throw -ErrorId "ActionPreferenceStopException"
             # Exception: "Command execution stopped because the preference variable "ErrorActionPreference" or common parameter is set to Stop: error foo"
 
             # BUG in runspace api.
-            #$ps.error.count | Should -Be 1
+            #$powerShell.error.count | Should -Be 1
 
-            $ps.InvocationStateInfo.State | Should -BeExactly 'Failed'
+            $powerShell.InvocationStateInfo.State | Should -BeExactly 'Failed'
         }
     }
 
     Context "ProgressAction" {
         It "Ignores progress actions on advanced script function with no variables" {
-            $ps.AddScript(
+            $powerShell.AddScript(
 @'
 function test-function {
     [CmdletBinding()]param()
@@ -159,14 +159,14 @@ function test-function {
 test-function -ProgressAction Ignore
 '@).Invoke()
 
-            $ps.Streams.Progress.Count | Should -Be 0
-            $ps.Streams.Error | ForEach-Object {
+            $powerShell.Streams.Progress.Count | Should -Be 0
+            $powerShell.Streams.Error | ForEach-Object {
                 Write-Error -ErrorRecord $_ -ErrorAction Stop
             }
         }
 
         It "Ignores progress actions on advanced script function with variables" {
-            $ps.AddScript(
+            $powerShell.AddScript(
 @'
 function test-function {
     [CmdletBinding()]param([string]$path)
@@ -178,8 +178,8 @@ function test-function {
 test-function -ProgressAction Ignore
 '@).Invoke()
 
-            $ps.Streams.Progress.Count | Should -Be 0
-            $ps.Streams.Error | ForEach-Object {
+            $powerShell.Streams.Progress.Count | Should -Be 0
+            $powerShell.Streams.Error | ForEach-Object {
                 Write-Error -ErrorRecord $_ -ErrorAction Stop
             }
         }
@@ -201,11 +201,11 @@ test-function -ProgressAction Ignore
         It 'SupportShouldprocess' {
 
             $command = 'get-foo'
-            $ps = [system.management.automation.powershell]::Create()
-            [void] $ps.AddScript($script + $command)
-            $ps.RunspacePool = $rp
-            $asyncResult = $ps.BeginInvoke()
-            $output = $ps.EndInvoke($asyncResult)
+            $powerShell = [system.management.automation.powershell]::Create()
+            [void] $powerShell.AddScript($script + $command)
+            $powerShell.RunspacePool = $rp
+            $asyncResult = $powerShell.BeginInvoke()
+            $output = $powerShell.EndInvoke($asyncResult)
 
             $output[0] | Should -BeExactly 'foo action'
         }
@@ -213,25 +213,25 @@ test-function -ProgressAction Ignore
         It 'shouldprocess support -whatif' {
 
             $command = 'get-foo -whatif'
-            $ps = [system.management.automation.powershell]::Create()
-            [void] $ps.AddScript($script + $command)
-            $ps.RunspacePool = $rp
-            $asyncResult = $ps.BeginInvoke()
-            $output = $ps.EndInvoke($asyncResult)
+            $powerShell = [system.management.automation.powershell]::Create()
+            [void] $powerShell.AddScript($script + $command)
+            $powerShell.RunspacePool = $rp
+            $asyncResult = $powerShell.BeginInvoke()
+            $output = $powerShell.EndInvoke($asyncResult)
 
-            $ps.InvocationStateInfo.State | Should -BeExactly 'Completed'
+            $powerShell.InvocationStateInfo.State | Should -BeExactly 'Completed'
         }
 
         It 'shouldprocess support -confirm under the non-interactive host' {
 
             $command = 'get-foo -confirm'
-            [void] $ps.AddScript($script + $command)
+            [void] $powerShell.AddScript($script + $command)
 
-            $asyncResult = $ps.BeginInvoke()
-            $ps.EndInvoke($asyncResult)
+            $asyncResult = $powerShell.BeginInvoke()
+            $powerShell.EndInvoke($asyncResult)
 
-            $ps.Streams.Error.Count | Should -Be 1 # the host does not implement it.
-            $ps.InvocationStateInfo.State | Should -BeExactly 'Completed'
+            $powerShell.Streams.Error.Count | Should -Be 1 # the host does not implement it.
+            $powerShell.InvocationStateInfo.State | Should -BeExactly 'Completed'
         }
     }
 
@@ -252,18 +252,18 @@ test-function -ProgressAction Ignore
 
         It 'get-foo' {
             $command = 'get-foo'
-            [void] $ps.AddScript($script + $command)
-            $asyncResult = $ps.BeginInvoke()
-            $output = $ps.EndInvoke($asyncResult)
+            [void] $powerShell.AddScript($script + $command)
+            $asyncResult = $powerShell.BeginInvoke()
+            $output = $powerShell.EndInvoke($asyncResult)
 
             $output[0] | Should -BeExactly 'foo action'
         }
 
         It 'get-foo -confirm' {
             $command = 'get-foo -confirm'
-            [void] $ps.AddScript($script + $command)
-            $asyncResult = $ps.BeginInvoke()
-            $output = $ps.EndInvoke($asyncResult)
+            [void] $powerShell.AddScript($script + $command)
+            $asyncResult = $powerShell.BeginInvoke()
+            $output = $powerShell.EndInvoke($asyncResult)
 
             $output[0] | Should -BeExactly 'foo action'
         }
@@ -285,9 +285,9 @@ test-function -ProgressAction Ignore
         }
         It 'get-foo' {
             $command = 'get-foo'
-            [void] $ps.AddScript($script + $command)
-            $asyncResult = $ps.BeginInvoke()
-            $output = $ps.EndInvoke($asyncResult)
+            [void] $powerShell.AddScript($script + $command)
+            $asyncResult = $powerShell.BeginInvoke()
+            $output = $powerShell.EndInvoke($asyncResult)
 
             $output[0] | Should -BeExactly 'foo action'
         }
@@ -295,12 +295,12 @@ test-function -ProgressAction Ignore
         It 'get-foo -confirm' {
             $command = 'get-foo -confirm'
 
-            [void] $ps.AddScript($script + $command)
-            $asyncResult = $ps.BeginInvoke()
-            $ps.EndInvoke($asyncResult)
+            [void] $powerShell.AddScript($script + $command)
+            $asyncResult = $powerShell.BeginInvoke()
+            $powerShell.EndInvoke($asyncResult)
 
-            $ps.Streams.Error.Count | Should -Be 1  # the host does not implement it.
-            $ps.InvocationStateInfo.State | Should -BeExactly 'Completed'
+            $powerShell.Streams.Error.Count | Should -Be 1  # the host does not implement it.
+            $powerShell.InvocationStateInfo.State | Should -BeExactly 'Completed'
         }
     }
 
@@ -321,22 +321,22 @@ test-function -ProgressAction Ignore
 
         It 'get-foo' {
             $command = 'get-foo'
-            [void] $ps.AddScript($script + $command)
-            $asyncResult = $ps.BeginInvoke()
-            $output = $ps.EndInvoke($asyncResult)
+            [void] $powerShell.AddScript($script + $command)
+            $asyncResult = $powerShell.BeginInvoke()
+            $output = $powerShell.EndInvoke($asyncResult)
 
             $output[0] | Should -BeExactly 'foo action'
         }
 
         It 'get-foo -confirm' {
             $command = 'get-foo -confirm'
-            [void] $ps.AddScript($script + $command)
+            [void] $powerShell.AddScript($script + $command)
 
-            $asyncResult = $ps.BeginInvoke()
-            $ps.EndInvoke($asyncResult)
+            $asyncResult = $powerShell.BeginInvoke()
+            $powerShell.EndInvoke($asyncResult)
 
-            $ps.Streams.Error.Count | Should -Be 1  # the host does not implement it.
-            $ps.InvocationStateInfo.State | Should -BeExactly 'Completed'
+            $powerShell.Streams.Error.Count | Should -Be 1  # the host does not implement it.
+            $powerShell.InvocationStateInfo.State | Should -BeExactly 'Completed'
         }
     }
 
@@ -357,22 +357,22 @@ test-function -ProgressAction Ignore
 
         It 'get-foo' {
             $command = 'get-foo'
-            [void] $ps.AddScript($script + $command)
-            $asyncResult = $ps.BeginInvoke()
-            $ps.EndInvoke($asyncResult)
+            [void] $powerShell.AddScript($script + $command)
+            $asyncResult = $powerShell.BeginInvoke()
+            $powerShell.EndInvoke($asyncResult)
 
-            $ps.Streams.Error.Count | Should -Be 1 # the host does not implement it.
-            $ps.InvocationStateInfo.State | Should -BeExactly 'Completed'
+            $powerShell.Streams.Error.Count | Should -Be 1 # the host does not implement it.
+            $powerShell.InvocationStateInfo.State | Should -BeExactly 'Completed'
         }
 
         It 'get-foo -confirm' {
             $command = 'get-foo -confirm'
-            [void] $ps.AddScript($script + $command)
-            $asyncResult = $ps.BeginInvoke()
-            $ps.EndInvoke($asyncResult)
+            [void] $powerShell.AddScript($script + $command)
+            $asyncResult = $powerShell.BeginInvoke()
+            $powerShell.EndInvoke($asyncResult)
 
-            $ps.Streams.Error.Count | Should -Be 1 # the host does not implement it.
-            $ps.InvocationStateInfo.State | Should -BeExactly 'Completed'
+            $powerShell.Streams.Error.Count | Should -Be 1 # the host does not implement it.
+            $powerShell.InvocationStateInfo.State | Should -BeExactly 'Completed'
         }
     }
 
@@ -393,13 +393,13 @@ test-function -ProgressAction Ignore
 
         It 'get-foo' {
             $command = 'get-foo'
-            [void] $ps.AddScript($script + $command)
+            [void] $powerShell.AddScript($script + $command)
 
-            $asyncResult = $ps.BeginInvoke()
-            $ps.EndInvoke($asyncResult)
+            $asyncResult = $powerShell.BeginInvoke()
+            $powerShell.EndInvoke($asyncResult)
 
-            $ps.Streams.Error.Count | Should -Be 1   # the host does not implement it.
-            $ps.InvocationStateInfo.State | Should -BeExactly 'Completed'
+            $powerShell.Streams.Error.Count | Should -Be 1   # the host does not implement it.
+            $powerShell.InvocationStateInfo.State | Should -BeExactly 'Completed'
         }
     }
 }

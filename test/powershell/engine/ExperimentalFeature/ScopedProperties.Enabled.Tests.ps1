@@ -2,6 +2,14 @@
 # Licensed under the MIT License.
 
 Describe 'PSScopedProperties in an enabled test host' -Tag 'CI' {
+    $preferenceCases = @(
+        @{ PreferenceName = 'Error'; VariableName = 'ErrorActionPreference'; DefaultPreference = 'Continue' }
+        @{ PreferenceName = 'Warning'; VariableName = 'WarningPreference'; DefaultPreference = 'Continue' }
+        @{ PreferenceName = 'Information'; VariableName = 'InformationPreference'; DefaultPreference = 'SilentlyContinue' }
+        @{ PreferenceName = 'Verbose'; VariableName = 'VerbosePreference'; DefaultPreference = 'SilentlyContinue' }
+        @{ PreferenceName = 'Debug'; VariableName = 'DebugPreference'; DefaultPreference = 'SilentlyContinue' }
+    )
+
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         $PSDefaultParameterValues['It:Skip'] = -not [ExperimentalFeature]::IsEnabled('PSScopedProperties')
@@ -14,34 +22,60 @@ Describe 'PSScopedProperties in an enabled test host' -Tag 'CI' {
     It 'exposes the constant AllScope facade in the test host' {
         [ExperimentalFeature]::IsEnabled('PSScopedProperties') | Should -BeTrue
         (Get-Variable PS).Options | Should -Be ([System.Management.Automation.ScopedItemOptions]'Constant, AllScope')
-        $PS.ActionPreference.Error | Should -BeOfType ([System.Management.Automation.ActionPreference])
         $PS.Style.Progress.View | Should -BeOfType ([System.Management.Automation.ProgressView])
     }
 
-    It 'shares typed values between the facade and legacy preference variable' {
-        & {
-            $ErrorActionPreference = 'sIlEnTlYcOnTiNuE'
-            $PS.ActionPreference.Error | Should -Be ([System.Management.Automation.ActionPreference]::SilentlyContinue)
-            $ErrorActionPreference | Should -BeOfType ([System.Management.Automation.ActionPreference])
+    It 'exposes the typed <PreferenceName> default in a fresh runspace' -TestCases $preferenceCases {
+        param($PreferenceName, $VariableName, $DefaultPreference)
 
-            $PS.ActionPreference.Error = 'Continue'
-            (Get-Variable ErrorActionPreference).Value | Should -Be ([System.Management.Automation.ActionPreference]::Continue)
-
-            { $PS.ActionPreference.Error = 'invalid preference' } | Should -Throw
-            $ErrorActionPreference | Should -Be ([System.Management.Automation.ActionPreference]::Continue)
+        $shell = [powershell]::Create()
+        try {
+            $null = $shell.AddScript({
+                param($name, $variableName)
+                $PS.ActionPreference.$name
+                (Get-Variable -Name $variableName).Value
+            }).AddArgument($PreferenceName).AddArgument($VariableName)
+            $values = $shell.Invoke()
+            $shell.HadErrors | Should -BeFalse
+            $values.Count | Should -Be 2
+            foreach ($value in $values) {
+                $value | Should -BeOfType ([System.Management.Automation.ActionPreference])
+                $value | Should -Be ([System.Management.Automation.ActionPreference]$DefaultPreference)
+            }
+        } finally {
+            $shell.Dispose()
         }
     }
 
-    It 'resets a child preference to the inherited value' {
+    It 'shares typed values between the <PreferenceName> facade and legacy variable' -TestCases $preferenceCases {
+        param($PreferenceName, $VariableName)
+
         & {
-            $PS.ActionPreference.Error = 'Continue'
+            Set-Variable -Name $VariableName -Value 'sIlEnTlYcOnTiNuE'
+            $PS.ActionPreference.$PreferenceName | Should -Be ([System.Management.Automation.ActionPreference]::SilentlyContinue)
+            (Get-Variable -Name $VariableName).Value | Should -BeOfType ([System.Management.Automation.ActionPreference])
+
+            $PS.ActionPreference.$PreferenceName = 'Continue'
+            (Get-Variable -Name $VariableName).Value | Should -Be ([System.Management.Automation.ActionPreference]::Continue)
+
+            { $PS.ActionPreference.$PreferenceName = 'invalid preference' } | Should -Throw
+            (Get-Variable -Name $VariableName).Value | Should -Be ([System.Management.Automation.ActionPreference]::Continue)
+        }
+    }
+
+    It 'resets a child <PreferenceName> preference to the inherited value' -TestCases $preferenceCases {
+        param($PreferenceName, $VariableName)
+
+        & {
+            $PS.ActionPreference.$PreferenceName = 'Continue'
             & {
-                $ErrorActionPreference = 'SilentlyContinue'
-                $PS.ActionPreference.Error | Should -Be ([System.Management.Automation.ActionPreference]::SilentlyContinue)
-                $PS.Reset('ActionPreference.Error')
-                $PS.ActionPreference.Error | Should -Be ([System.Management.Automation.ActionPreference]::Continue)
+                Set-Variable -Name $VariableName -Value 'SilentlyContinue' -Scope Local
+                $PS.ActionPreference.$PreferenceName | Should -Be ([System.Management.Automation.ActionPreference]::SilentlyContinue)
+                $PS.Reset("aCtIoNpReFeReNcE.$PreferenceName")
+                $PS.ActionPreference.$PreferenceName | Should -Be ([System.Management.Automation.ActionPreference]::Continue)
+                Get-Variable -Name $VariableName -Scope Local -ErrorAction Ignore | Should -BeNullOrEmpty
             }
-            $ErrorActionPreference | Should -Be ([System.Management.Automation.ActionPreference]::Continue)
+            (Get-Variable -Name $VariableName).Value | Should -Be ([System.Management.Automation.ActionPreference]::Continue)
         }
     }
 

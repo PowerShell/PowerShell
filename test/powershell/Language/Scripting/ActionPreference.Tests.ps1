@@ -84,16 +84,21 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
     }
 
     It 'Action preference of Ignore can be set as a preference variable using a string value' {
+        $powerShell = [powershell]::Create()
         try {
-            Remove-Variable -Name ErrorActionPreference -Scope Global -Force
-            $GLOBAL:ErrorActionPreference = 'Ignore'
-            $errorCount = $error.Count
-            Get-Process -Name asdfasdfasdf
-            $error.Count | Should -BeExactly $errorCount
+            $null = $powerShell.AddScript({
+                Remove-Variable -Name ErrorActionPreference -Scope Global -Force
+                $global:ErrorActionPreference = 'Ignore'
+                $error.Count
+                Get-Process -Name asdfasdfasdf
+                $error.Count
+            })
+            $results = $powerShell.Invoke()
+            $results.Count | Should -Be 2
+            $results[1] | Should -BeExactly $results[0]
+            $powerShell.Streams.Error | Should -BeNullOrEmpty
         } finally {
-            Remove-Variable -Name ErrorActionPreference -Scope Global
-            # Re-create the action preference variable as a strongly typed variable like it was before
-            [System.Management.Automation.ActionPreference]$GLOBAL:ErrorActionPreference = $orgin
+            $powerShell.Dispose()
         }
     }
 
@@ -126,8 +131,8 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
             $DisplayValue
         )
 
-        if ($ActionPreferenceVariableName -eq 'ErrorActionPreference' -and $EnabledExperimentalFeatures.Contains('PSScopedProperties')) {
-            $ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
+        if ($ActionPreferenceVariableName -ne 'ProgressPreference' -and $EnabledExperimentalFeatures.Contains('PSScopedProperties')) {
+            Set-Variable -Name $ActionPreferenceVariableName -Value ([System.Management.Automation.ActionPreference]::SilentlyContinue) -Scope Local
             $reachedCommand = $false
             $e = try {
                 Set-Variable -Name $ActionPreferenceVariableName -Value $Value -ErrorAction Stop
@@ -140,7 +145,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
             $e.FullyQualifiedErrorId | Should -BeExactly 'InvalidActionPreference,Microsoft.PowerShell.Commands.SetVariableCommand'
             $e.CategoryInfo.Reason | Should -BeExactly 'PSInvalidCastException'
             $reachedCommand | Should -BeFalse
-            $ErrorActionPreference | Should -BeExactly ([System.Management.Automation.ActionPreference]::SilentlyContinue)
+            (Get-Variable -Name $ActionPreferenceVariableName -Scope Local).Value | Should -BeExactly ([System.Management.Automation.ActionPreference]::SilentlyContinue)
             return
         }
 
