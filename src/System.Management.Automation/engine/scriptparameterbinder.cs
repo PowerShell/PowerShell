@@ -126,9 +126,9 @@ namespace System.Management.Automation
 
             PSVariable variable = new PSVariable(varPath.UnqualifiedPath, value,
                                                  varPath.IsPrivate ? ScopedItemOptions.Private : ScopedItemOptions.None);
-            if (ScopedProperties.IsLegacySetting(varPath.UnqualifiedPath))
+            if (ScopedProperties.TryGetPreferenceSetting(varPath.UnqualifiedPath, out var setting))
             {
-                BindScopedSettingParameter(name, varPath, variable);
+                BindScopedSettingParameter(setting, name, varPath, variable);
                 return;
             }
 
@@ -146,12 +146,12 @@ namespace System.Management.Automation
             }
         }
 
-        private void BindScopedSettingParameter(string name, VariablePath path, PSVariable variable)
+        private void BindScopedSettingParameter(ScopedActionPreferenceSetting setting, string name, VariablePath path, PSVariable variable)
         {
             AddBoundParameterAttributes(name, variable);
             if (path.IsAnyLocal() && Command is PSScriptCmdlet scriptCmdlet)
             {
-                scriptCmdlet.BindErrorPreferenceParameter(variable);
+                scriptCmdlet.BindScopedSettingParameter(setting, variable);
             }
             else
             {

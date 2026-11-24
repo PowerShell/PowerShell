@@ -7,131 +7,189 @@ namespace System.Management.Automation;
 
 internal sealed partial class SessionStateScope
 {
-    private Stack<DottedScopedVariable> _dottedScopedVariables;
+    private Stack<DottedScopedSettings> _dottedScopedSettings;
 
-    // A dotted command shares the caller's scope. Its implicit preference is
-    // active only while the command runs, just like its automatic variables.
-    internal sealed class DottedScopedVariable(string name, MutableTuple locals)
+    /// <summary>
+    /// Owns a dotted invocation's temporary bindings. The scope activates the whole frame together,
+    /// so named parameters and common parameters can add bindings in any order.
+    /// </summary>
+    internal sealed class DottedScopedSettings(MutableTuple locals)
     {
-        private ScopedSettingVariable _variable;
-
-        internal string Name { get; } = name;
+        private readonly Dictionary<ScopedSetting, ScopedSettingVariable> _variables = new();
 
         internal MutableTuple Locals { get; } = locals;
 
-        internal ScopedSettingEntry Entry => _variable?.Entry;
+        /// <summary>
+        /// Reports whether a setting belongs to this frame, including an empty binding after reset.
+        /// </summary>
+        internal bool TryGetVariable(ScopedSetting setting, out ScopedSettingVariable variable)
+            => _variables.TryGetValue(setting, out variable);
 
-        internal ScopedSettingVariable Variable
+        internal void SetVariable(ScopedSetting setting, ScopedSettingVariable variable)
         {
-            get => _variable;
-            set
+            if (_variables.TryGetValue(setting, out var previous) && ReferenceEquals(previous, variable))
             {
-                if (ReferenceEquals(_variable, value))
-                {
-                    return;
-                }
-
-                value?.Entry.AddBinding();
-                Entry?.ReleaseBinding(markVariableRemoved: true);
-                _variable = value;
+                return;
             }
+
+            variable?.Entry.AddBinding();
+            previous?.Entry.ReleaseBinding(markVariableRemoved: true);
+            _variables[setting] = variable;
         }
 
         /// <summary>
-        /// Ends the command's ownership of its binding while preserving the value of captured variable objects.
+        /// Ends the invocation's ownership of its bindings, preserving captured variable values.
         /// </summary>
         internal void Release()
         {
-            // A captured variable keeps its value when the dotted command exits.
-            Entry?.ReleaseBinding(markVariableRemoved: false);
-            _variable = null;
+            foreach (ScopedSettingVariable variable in _variables.Values)
+            {
+                variable?.Entry.ReleaseBinding(markVariableRemoved: false);
+            }
+
+            _variables.Clear();
         }
     }
 
-    /// <summary>
-    /// Creates and activates a temporary binding frame for a dotted command.
-    /// The locals tuple identifies the debugger frame; the preference value is stored separately.
-    /// </summary>
-    internal DottedScopedVariable PushDottedScopedVariable(string name, MutableTuple locals)
+    internal DottedScopedSettings ActivateDottedScopedSettings(MutableTuple locals)
     {
-        var frame = new DottedScopedVariable(name, locals);
-        PushDottedScopedVariable(frame);
+        var frame = new DottedScopedSettings(locals);
+        ActivateDottedScopedSettings(frame);
         return frame;
     }
 
     /// <summary>
-    /// Activates an existing command frame for another invocation stage, retaining its current binding.
+    /// Activates an existing frame with the bindings retained from the previous command stage.
     /// </summary>
-    internal void PushDottedScopedVariable(DottedScopedVariable frame)
-        => (_dottedScopedVariables ??= new()).Push(frame);
+    internal void ActivateDottedScopedSettings(DottedScopedSettings frame)
+        => (_dottedScopedSettings ??= new()).Push(frame);
 
     /// <summary>
-    /// Deactivates the current command frame without releasing its binding, allowing later stages to reuse it.
+    /// Deactivates a frame in reverse activation order, retaining its bindings for the next stage.
     /// </summary>
-    internal void PopDottedScopedVariable(DottedScopedVariable frame)
+    internal void DeactivateDottedScopedSettings(DottedScopedSettings frame)
     {
-        DottedScopedVariable popped = _dottedScopedVariables.Pop();
-        Diagnostics.Assert(ReferenceEquals(popped, frame), "Dotted scoped variables must be popped in order.");
+        DottedScopedSettings popped = _dottedScopedSettings.Pop();
+        Diagnostics.Assert(ReferenceEquals(popped, frame), "Dotted scoped settings must be popped in order.");
     }
 
     /// <summary>
-    /// Finds the innermost active dotted binding for a read, skipping frames whose binding was reset.
+    /// Finds the innermost active dotted binding for a read, skipping empty bindings.
     /// </summary>
-    internal bool TryGetDottedScopedVariable(string name, out PSVariable variable)
+    private ScopedSettingVariable GetDottedScopedSettingVariable(ScopedSetting setting)
     {
-        if (_dottedScopedVariables is not null)
+        if (_dottedScopedSettings is not null)
         {
-            foreach (DottedScopedVariable frame in _dottedScopedVariables)
+            foreach (DottedScopedSettings frame in _dottedScopedSettings)
             {
-                if (frame.Variable is { } candidate && string.Equals(frame.Name, name, StringComparison.OrdinalIgnoreCase))
+                if (frame.TryGetVariable(setting, out var variable) && variable is not null)
                 {
-                    variable = candidate;
-                    return true;
-                }
-            }
-        }
-
-        variable = null;
-        return false;
-    }
-
-    /// <summary>
-    /// Finds the innermost active dotted frame for a write or removal, even when its binding was reset.
-    /// </summary>
-    internal bool TryGetDottedScopedVariableTarget(string name, out DottedScopedVariable target)
-    {
-        if (_dottedScopedVariables is not null)
-        {
-            foreach (DottedScopedVariable frame in _dottedScopedVariables)
-            {
-                if (string.Equals(frame.Name, name, StringComparison.OrdinalIgnoreCase))
-                {
-                    target = frame;
-                    return true;
-                }
-            }
-        }
-
-        target = null;
-        return false;
-    }
-
-    /// <summary>
-    /// Gets the binding belonging to a specific debugger frame without falling back to another frame's binding.
-    /// </summary>
-    internal ScopedSettingVariable GetDottedScopedVariableForFrame(string name, MutableTuple locals)
-    {
-        if (_dottedScopedVariables is not null)
-        {
-            foreach (DottedScopedVariable frame in _dottedScopedVariables)
-            {
-                if (ReferenceEquals(frame.Locals, locals) && string.Equals(frame.Name, name, StringComparison.OrdinalIgnoreCase))
-                {
-                    return frame.Variable;
+                    return variable;
                 }
             }
         }
 
         return null;
+    }
+
+    /// <summary>
+    /// Finds the innermost target for a write, including a dotted frame whose binding was reset.
+    /// </summary>
+    private ScopedSettingVariable GetScopedSettingVariableForWrite(
+        ScopedSetting setting,
+        out DottedScopedSettings target,
+        DottedScopedSettings invocationFrame = null)
+    {
+        if (invocationFrame is not null)
+        {
+            // A new invocation binding belongs to its own frame, even if the caller has a binding.
+            target = invocationFrame;
+            target.TryGetVariable(setting, out var variable);
+            return variable;
+        }
+
+        if (_dottedScopedSettings is not null)
+        {
+            foreach (DottedScopedSettings frame in _dottedScopedSettings)
+            {
+                if (frame.TryGetVariable(setting, out var variable))
+                {
+                    target = frame;
+                    return variable;
+                }
+            }
+        }
+
+        target = null;
+        return GetScopedSetting(setting)?.Variable;
+    }
+
+    private DottedScopedSettings GetDottedScopedSettings(MutableTuple locals)
+    {
+        if (_dottedScopedSettings is not null)
+        {
+            foreach (DottedScopedSettings frame in _dottedScopedSettings)
+            {
+                if (ReferenceEquals(frame.Locals, locals))
+                {
+                    return frame;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    internal void AddScopedSettingVariables(Dictionary<string, PSVariable> result, bool includePrivate)
+    {
+        if (!ExperimentalFeature.PSScopedProperties)
+        {
+            return;
+        }
+
+        foreach (var setting in ScopedProperties.PreferenceSettings)
+        {
+            var variable = GetLocalScopedSettingVariable(setting);
+            if (variable is not null && (includePrivate || !variable.IsPrivate))
+            {
+                result.TryAdd(setting.VariableName, variable);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Enumerates bindings owned by the specified debugger frame, without falling back to another frame.
+    /// </summary>
+    internal void AddScopedSettingVariablesForFrame(Dictionary<string, PSVariable> result, MutableTuple locals)
+    {
+        if (!ExperimentalFeature.PSScopedProperties)
+        {
+            return;
+        }
+
+        bool isScopeFrame = ReferenceEquals(LocalsTuple, locals);
+        var dottedFrame = isScopeFrame ? null : GetDottedScopedSettings(locals);
+        if (!isScopeFrame && dottedFrame is null)
+        {
+            return;
+        }
+
+        foreach (var setting in ScopedProperties.PreferenceSettings)
+        {
+            ScopedSettingVariable variable;
+            if (isScopeFrame)
+            {
+                variable = GetScopedSetting(setting)?.Variable;
+            }
+            else
+            {
+                dottedFrame.TryGetVariable(setting, out variable);
+            }
+
+            if (variable is not null)
+            {
+                result.TryAdd(setting.VariableName, variable);
+            }
+        }
     }
 }

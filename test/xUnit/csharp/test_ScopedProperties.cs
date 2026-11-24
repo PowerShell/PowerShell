@@ -3,6 +3,7 @@
 
 using System;
 using System.Management.Automation;
+using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using Xunit;
 
@@ -10,6 +11,38 @@ namespace PSTests.Sequential
 {
     public class ScopedPropertiesTests
     {
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void CmdletTupleRetainsFixedPreferenceIndices(bool disableOptimizations)
+        {
+            var ast = Parser.ParseInput("[CmdletBinding()] param() $localValue = 123; $localValue", out _, out var errors);
+            Assert.Empty(errors);
+
+            var (tupleType, nameToIndex) = VariableAnalysis.Analyze(ast, disableOptimizations, scriptCmdlet: true);
+            var locals = MutableTuple.MakeTuple(tupleType, nameToIndex);
+            for (int i = 0; i < SpecialVariables.PreferenceVariables.Length; i++)
+            {
+                string name = SpecialVariables.PreferenceVariables[i];
+                int index = i + (int)AutomaticVariable.NumberOfAutomaticVariables;
+                if (ScopedProperties.TryGetPreferenceSetting(name, out var setting))
+                {
+                    Assert.Equal(index, (int)setting.Index);
+                    Assert.False(nameToIndex.ContainsKey(name));
+                    Assert.Null(locals.GetValue(index));
+                }
+                else
+                {
+                    Assert.Equal(index, nameToIndex[name]);
+                }
+            }
+
+            if (!disableOptimizations)
+            {
+                Assert.Equal((int)PreferenceVariable.Progress + 1, nameToIndex["localValue"]);
+            }
+        }
+
         [Fact]
         public void DescriptorLookupUsesCaseInsensitivePathsAndFeatureGatedVariableNames()
         {

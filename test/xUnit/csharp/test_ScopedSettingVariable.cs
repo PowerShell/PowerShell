@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Management.Automation;
+using System.Management.Automation.Language;
 using Xunit;
 
 namespace PSTests.Sequential;
@@ -9,6 +10,55 @@ namespace PSTests.Sequential;
 public class ScopedSettingVariableTests
 {
     private static readonly ScopedSetting<ActionPreference> s_setting = ScopedProperties.ErrorPreferenceSetting;
+
+    [Fact]
+    public void DottedFramesKeepIndependentBindingTargetsAcrossStages()
+    {
+        var warning = new ScopedActionPreferenceSetting(
+            PreferenceVariable.Warning, ActionPreference.Continue, SpecialVariables.WarningPreferenceVarPath);
+        var scope = new SessionStateScope(null);
+        scope.SetScopedSettingValue(s_setting, ActionPreference.Continue);
+        scope.SetScopedSettingValue(warning, ActionPreference.Continue);
+
+        var outerLocals = MutableTuple.MakeTuple(Compiler.DottedLocalsTupleType, Compiler.DottedLocalsNameIndexMap);
+        var outer = scope.ActivateDottedScopedSettings(outerLocals);
+        scope.InitializeScopedSetting(warning, ActionPreference.Stop, sessionState: null, outer);
+        scope.InitializeScopedSetting(s_setting, ActionPreference.Ignore, sessionState: null, outer);
+        var outerError = scope.GetScopedSettingVariableForWrite(s_setting);
+        var outerWarning = scope.GetScopedSettingVariableForWrite(warning);
+
+        var innerLocals = MutableTuple.MakeTuple(Compiler.DottedLocalsTupleType, Compiler.DottedLocalsNameIndexMap);
+        var inner = scope.ActivateDottedScopedSettings(innerLocals);
+        Assert.Throws<PSInvalidCastException>(() => scope.InitializeScopedSetting(s_setting, ActionPreference.Suspend, sessionState: null, inner));
+        Assert.Same(outerError, scope.GetScopedSettingVariableForWrite(s_setting));
+
+        scope.InitializeScopedSetting(s_setting, ActionPreference.SilentlyContinue, sessionState: null, inner);
+        var innerError = scope.GetScopedSettingVariableForWrite(s_setting);
+        Assert.NotSame(outerError, innerError);
+        Assert.Same(outerWarning, scope.GetScopedSettingVariableForWrite(warning));
+
+        scope.ResetScopedSetting(s_setting);
+        Assert.True(innerError.WasRemoved);
+        Assert.Null(scope.GetScopedSettingVariableForWrite(s_setting));
+        Assert.Equal(ActionPreference.Ignore, scope.GetScopedSettingValue(s_setting));
+        Assert.Equal(ActionPreference.Stop, scope.GetScopedSettingValue(warning));
+
+        scope.SetScopedSettingValue(s_setting, ActionPreference.Break);
+        var replacement = scope.GetScopedSettingVariableForWrite(s_setting);
+        scope.DeactivateDottedScopedSettings(inner);
+        Assert.Same(outerError, scope.GetScopedSettingVariableForWrite(s_setting));
+        scope.ActivateDottedScopedSettings(inner);
+        Assert.Same(replacement, scope.GetScopedSettingVariableForWrite(s_setting));
+
+        scope.DeactivateDottedScopedSettings(inner);
+        inner.Release();
+        scope.DeactivateDottedScopedSettings(outer);
+        outer.Release();
+        Assert.Equal(ActionPreference.Break, replacement.GetValueRaw());
+        Assert.Equal(ActionPreference.Stop, outerWarning.GetValueRaw());
+        Assert.Equal(ActionPreference.Continue, scope.GetScopedSettingValue(s_setting));
+        Assert.Equal(ActionPreference.Continue, scope.GetScopedSettingValue(warning));
+    }
 
     [Fact]
     public void VariableAndCanonicalWritesUseTheSameTypedEntry()

@@ -5620,12 +5620,7 @@ namespace System.Management.Automation
                 if (scope.LocalsTuple == FunctionContext._localsTuple)
                 {
                     // We can ignore any dotted scopes.
-                    if (ExperimentalFeature.PSScopedProperties
-                        && scope.GetScopedSetting(ScopedProperties.ErrorPreferenceSetting)?.Variable is { } preference)
-                    {
-                        result.Add(preference.Name, preference);
-                    }
-
+                    scope.AddScopedSettingVariablesForFrame(result, FunctionContext._localsTuple);
                     break;
                 }
 
@@ -5643,12 +5638,7 @@ namespace System.Management.Automation
 
                     for (; i < dottedScopes.Length; ++i)
                     {
-                        if (ExperimentalFeature.PSScopedProperties
-                            && scope.GetDottedScopedVariableForFrame(SpecialVariables.ErrorActionPreference, dottedScopes[i]) is { } preference)
-                        {
-                            result.TryAdd(preference.Name, preference);
-                        }
-
+                        scope.AddScopedSettingVariablesForFrame(result, dottedScopes[i]);
                         dottedScopes[i].GetVariableTable(result, true);
                     }
 

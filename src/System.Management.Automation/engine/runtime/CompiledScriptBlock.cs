@@ -2237,7 +2237,7 @@ namespace System.Management.Automation
         private readonly FunctionContext _functionContext;
 
         private MshCommandRuntime _commandRuntime;
-        private SessionStateScope.DottedScopedVariable _dottedErrorPreference;
+        private SessionStateScope.DottedScopedSettings _dottedScopedSettings;
         private bool _exitWasCalled;
         private bool _anyClauseExecuted;
 
@@ -2497,9 +2497,9 @@ namespace System.Management.Automation
         internal void PushDottedScope(SessionStateScope scope)
         {
             scope.DottedScopes.Push(_localsTuple);
-            if (_dottedErrorPreference is not null)
+            if (_dottedScopedSettings is not null)
             {
-                scope.PushDottedScopedVariable(_dottedErrorPreference);
+                scope.ActivateDottedScopedSettings(_dottedScopedSettings);
             }
         }
 
@@ -2508,9 +2508,9 @@ namespace System.Management.Automation
         /// </summary>
         internal void PopDottedScope(SessionStateScope scope)
         {
-            if (_dottedErrorPreference is not null)
+            if (_dottedScopedSettings is not null)
             {
-                scope.PopDottedScopedVariable(_dottedErrorPreference);
+                scope.DeactivateDottedScopedSettings(_dottedScopedSettings);
             }
 
             scope.DottedScopes.Pop();
@@ -2526,25 +2526,18 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Binds an ErrorActionPreference parameter to this invocation's setting, creating a temporary
+        /// Binds a preference parameter to this invocation's setting, creating a temporary
         /// dotted-command frame when the invocation shares its caller's scope.
         /// </summary>
-        internal void BindErrorPreferenceParameter(PSVariable variable)
+        internal void BindScopedSettingParameter(ScopedActionPreferenceSetting setting, PSVariable variable)
         {
             SessionStateInternal state = Context.EngineSessionState;
-            EnsureErrorPreferenceScope(state).InitializeScopedSettingParameter(ScopedProperties.ErrorPreferenceSetting, variable, state);
-        }
-
-        private SessionStateScope EnsureErrorPreferenceScope(SessionStateInternal state)
-        {
             SessionStateScope scope = state.CurrentScope;
-            if (!_useLocalScope && _dottedErrorPreference is null)
-            {
-                _dottedErrorPreference = scope.PushDottedScopedVariable(SpecialVariables.ErrorActionPreference, _localsTuple);
-            }
-
-            return scope;
+            scope.InitializeScopedSettingParameter(setting, variable, state, GetDottedScopedSettings(scope));
         }
+
+        private SessionStateScope.DottedScopedSettings GetDottedScopedSettings(SessionStateScope scope)
+            => _useLocalScope ? null : (_dottedScopedSettings ??= scope.ActivateDottedScopedSettings(_localsTuple));
 
         private void SetPreferenceVariables()
         {
@@ -2564,15 +2557,7 @@ namespace System.Management.Automation
 
             if (_commandRuntime.IsErrorActionSet)
             {
-                if (ExperimentalFeature.PSScopedProperties)
-                {
-                    SessionStateInternal state = Context.EngineSessionState;
-                    EnsureErrorPreferenceScope(state).InitializeScopedSetting(ScopedProperties.ErrorPreferenceSetting, _commandRuntime.ErrorAction, state);
-                }
-                else
-                {
-                    _localsTuple.SetPreferenceVariable(PreferenceVariable.Error, _commandRuntime.ErrorAction);
-                }
+                SetActionPreferenceVariable(ScopedProperties.ErrorPreferenceSetting, _commandRuntime.ErrorAction);
             }
 
             if (_commandRuntime.IsWarningActionSet)
@@ -2600,6 +2585,20 @@ namespace System.Management.Automation
                 _localsTuple.SetPreferenceVariable(
                     PreferenceVariable.Confirm,
                     _commandRuntime.Confirm ? ConfirmImpact.Low : ConfirmImpact.None);
+            }
+        }
+
+        private void SetActionPreferenceVariable(ScopedActionPreferenceSetting setting, ActionPreference value)
+        {
+            if (ExperimentalFeature.PSScopedProperties)
+            {
+                SessionStateInternal state = Context.EngineSessionState;
+                SessionStateScope scope = state.CurrentScope;
+                scope.InitializeScopedSetting(setting, value, state, GetDottedScopedSettings(scope));
+            }
+            else
+            {
+                _localsTuple.SetPreferenceVariable(setting.Index, value);
             }
         }
 
@@ -2637,7 +2636,7 @@ namespace System.Management.Automation
             commandRuntime = null;
             currentObjectInPipeline = null;
             _input.Clear();
-            _dottedErrorPreference?.Release();
+            _dottedScopedSettings?.Release();
 
             base.InternalDispose(true);
             _disposed = true;

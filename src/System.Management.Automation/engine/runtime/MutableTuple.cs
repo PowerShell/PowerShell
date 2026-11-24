@@ -74,6 +74,8 @@ namespace System.Management.Automation
 
         internal void SetPreferenceVariable(PreferenceVariable pref, object value)
         {
+            Diagnostics.Assert(!ScopedProperties.IsLegacySetting(SpecialVariables.PreferenceVariables[(int)pref - (int)AutomaticVariable.NumberOfAutomaticVariables]),
+                "Registered scoped preferences cannot be written into tuple slots.");
             SetValue((int)pref, value);
         }
 

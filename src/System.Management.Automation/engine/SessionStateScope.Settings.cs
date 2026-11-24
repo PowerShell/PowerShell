@@ -7,7 +7,7 @@ internal sealed partial class SessionStateScope
 {
     /// <summary>
     /// Resolves a value from the nearest visible binding, including active dotted bindings.
-    /// A private variable is inherited only when its binding is in the starting scope.
+    /// Private variables in ancestor scopes are skipped. The descriptor default applies when no binding is found.
     /// </summary>
     internal T GetScopedSettingValue<T>(ScopedSetting<T> setting, out bool defaultUsed, CommandOrigin origin = CommandOrigin.Internal)
     {
@@ -66,17 +66,17 @@ internal sealed partial class SessionStateScope
     /// Installs an invocation-owned setting, replacing parameter metadata and shadowing inherited protections.
     /// For dotted commands, the preference belongs to the active temporary frame.
     /// </summary>
-    internal void InitializeScopedSetting<T>(ScopedSetting<T> setting, T value, SessionStateInternal sessionState)
+    internal void InitializeScopedSetting<T>(ScopedSetting<T> setting, T value, SessionStateInternal sessionState, DottedScopedSettings invocationFrame = null)
         => SetScopedSettingVariable(setting, value, asValue: true, force: false,
-            sessionState, CommandOrigin.Internal, replace: true, bypassProtection: true);
+            sessionState, CommandOrigin.Internal, replace: true, bypassProtection: true, invocationFrame);
 
     /// <summary>
     /// Installs a bound parameter and its metadata as an invocation-owned setting.
     /// Inherited variable protections do not prevent parameter initialization.
     /// </summary>
-    internal void InitializeScopedSettingParameter(ScopedSetting setting, PSVariable variable, SessionStateInternal sessionState)
+    internal void InitializeScopedSettingParameter(ScopedSetting setting, PSVariable variable, SessionStateInternal sessionState, DottedScopedSettings invocationFrame = null)
         => SetScopedSettingVariable(setting, variable, asValue: false, force: false,
-            sessionState, CommandOrigin.Internal, replace: true, bypassProtection: true);
+            sessionState, CommandOrigin.Internal, replace: true, bypassProtection: true, invocationFrame);
 
     /// <summary>
     /// Gets the binding targeted by a write in this scope. An empty active dotted frame returns null
@@ -85,10 +85,8 @@ internal sealed partial class SessionStateScope
     internal ScopedSettingVariable GetScopedSettingVariableForWrite(ScopedSetting setting)
         => GetScopedSettingVariableForWrite(setting, out _);
 
-    private ScopedSettingVariable GetScopedSettingVariableForWrite(ScopedSetting setting, out DottedScopedVariable frame)
-        => TryGetDottedScopedVariableTarget(setting.VariableName, out frame)
-            ? frame.Variable
-            : GetScopedSetting(setting)?.Variable;
+    private ScopedSettingVariable GetLocalScopedSettingVariable(ScopedSetting setting)
+        => GetDottedScopedSettingVariable(setting) ?? GetScopedSetting(setting)?.Variable;
 
     /// <summary>
     /// Gets the readable binding in this scope, checking visibility and falling through empty dotted frames.
@@ -96,12 +94,7 @@ internal sealed partial class SessionStateScope
     /// </summary>
     private PSVariable GetScopedSettingVariable(ScopedSetting setting, CommandOrigin origin)
     {
-        PSVariable variable;
-        if (!TryGetDottedScopedVariable(setting.VariableName, out variable))
-        {
-            variable = GetScopedSetting(setting)?.Variable;
-        }
-
+        var variable = GetLocalScopedSettingVariable(setting);
         if (variable is not null)
         {
             SessionState.ThrowIfNotVisible(origin, variable);
@@ -118,10 +111,11 @@ internal sealed partial class SessionStateScope
         SessionStateInternal sessionState,
         CommandOrigin origin,
         bool replace = false,
-        bool bypassProtection = false)
+        bool bypassProtection = false,
+        DottedScopedSettings invocationFrame = null)
     {
         Diagnostics.Assert(setting.VariableName is not null, "A variable binding requires a legacy variable name.");
-        var existing = GetScopedSettingVariableForWrite(setting, out var frame);
+        var existing = GetScopedSettingVariableForWrite(setting, out var frame, invocationFrame);
         if (existing is not null && !bypassProtection)
         {
             SessionState.ThrowIfNotVisible(origin, existing);
@@ -166,11 +160,11 @@ internal sealed partial class SessionStateScope
         return BindScopedSettingVariable(entry, frame);
     }
 
-    private PSVariable BindScopedSettingVariable(ScopedSettingEntry entry, DottedScopedVariable frame)
+    private PSVariable BindScopedSettingVariable(ScopedSettingEntry entry, DottedScopedSettings frame)
     {
         if (frame is not null)
         {
-            frame.Variable = entry.Variable;
+            frame.SetVariable(entry.Setting, entry.Variable);
         }
         else
         {
@@ -182,10 +176,11 @@ internal sealed partial class SessionStateScope
 
     internal void RemoveScopedSettingVariable(ScopedSetting setting, bool force)
     {
-        if (TryGetDottedScopedVariableTarget(setting.VariableName, out var frame))
+        var variable = GetScopedSettingVariableForWrite(setting, out var frame);
+        if (frame is not null)
         {
-            frame.Variable?.ThrowIfNotRemovable(force);
-            frame.Variable = null;
+            variable?.ThrowIfNotRemovable(force);
+            frame.SetVariable(setting, null);
             return;
         }
 

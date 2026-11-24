@@ -17,6 +17,7 @@ internal sealed partial class SessionStateScope
         }
 
         if (variable is not ScopedSettingVariable { Entry: { } entry }
+            || !ReferenceEquals(entry.Setting, setting)
             || !ReferenceEquals(variable.SessionState?.ExecutionContext, targetState.ExecutionContext))
         {
             var imported = (ScopedSettingVariable)NewVariable(variable, force, targetState);

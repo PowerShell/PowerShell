@@ -722,11 +722,13 @@ namespace System.Management.Automation.Language
                                  select details).ToArray();
 
             // Keep the other cmdlet preferences at their fixed tuple indices.
-            bool reserveErrorPreferenceSlot = scriptCmdlet && ExperimentalFeature.PSScopedProperties;
-            var tupleTypes = new Type[orderedLocals.Length + (reserveErrorPreferenceSlot ? 1 : 0)];
-            if (reserveErrorPreferenceSlot)
+            var reservedPreferences = scriptCmdlet && ExperimentalFeature.PSScopedProperties
+                ? ScopedProperties.PreferenceSettings
+                : Array.Empty<ScopedActionPreferenceSetting>();
+            var tupleTypes = new Type[orderedLocals.Length + reservedPreferences.Count];
+            foreach (var setting in reservedPreferences)
             {
-                tupleTypes[(int)PreferenceVariable.Error] = typeof(object);
+                tupleTypes[(int)setting.Index] = typeof(object);
             }
 
             Diagnostics.Assert(!_disableOptimizations
@@ -735,11 +737,15 @@ namespace System.Management.Automation.Language
                 "analysis is incorrectly allocating number of locals when optimizations are disabled.");
 
             var nameToIndexMap = new Dictionary<string, int>(0, StringComparer.OrdinalIgnoreCase);
-            for (int i = 0; i < orderedLocals.Length; ++i)
+            int tupleIndex = 0;
+            foreach (var details in orderedLocals)
             {
-                var details = orderedLocals[i];
+                while (tupleTypes[tupleIndex] is not null)
+                {
+                    ++tupleIndex;
+                }
+
                 var name = details.Name;
-                int tupleIndex = reserveErrorPreferenceSlot && i >= (int)PreferenceVariable.Error ? i + 1 : i;
                 nameToIndexMap.Add(name, tupleIndex);
 
                 if (details.LocalTupleIndex != tupleIndex)
@@ -753,7 +759,7 @@ namespace System.Management.Automation.Language
                 // all other variables, we don't determine the type of the local until we're done
                 // with the analysis.
                 Diagnostics.Assert(details.Type != null, "Type should be resolved already");
-                tupleTypes[tupleIndex] = details.Type;
+                tupleTypes[tupleIndex++] = details.Type;
             }
 
             var tupleType = MutableTuple.MakeTupleType(tupleTypes);
