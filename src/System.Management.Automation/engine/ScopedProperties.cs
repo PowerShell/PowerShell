@@ -145,6 +145,20 @@ public sealed class PSScopedActionPreference
         set => SetPreference(ScopedProperties.InformationPreferenceSetting, value);
     }
 
+    /// <summary>Gets or sets the verbose action preference.</summary>
+    public ActionPreference Verbose
+    {
+        get => GetPreference(ScopedProperties.VerbosePreferenceSetting);
+        set => SetPreference(ScopedProperties.VerbosePreferenceSetting, value);
+    }
+
+    /// <summary>Gets or sets the debug action preference.</summary>
+    public ActionPreference Debug
+    {
+        get => GetPreference(ScopedProperties.DebugPreferenceSetting);
+        set => SetPreference(ScopedProperties.DebugPreferenceSetting, value);
+    }
+
     private ActionPreference GetPreference(ScopedActionPreferenceSetting setting)
     {
         var (context, scope) = _facade.Resolve();
@@ -357,6 +371,16 @@ internal static class ScopedProperties
         "Style.Progress.View",
         ProgressView.Minimal);
 
+    internal static readonly ScopedActionPreferenceSetting DebugPreferenceSetting = new(
+        PreferenceVariable.Debug,
+        InitialSessionState.DefaultDebugPreference,
+        SpecialVariables.DebugPreferenceVarPath);
+
+    internal static readonly ScopedActionPreferenceSetting VerbosePreferenceSetting = new(
+        PreferenceVariable.Verbose,
+        InitialSessionState.DefaultVerbosePreference,
+        SpecialVariables.VerbosePreferenceVarPath);
+
     internal static readonly ScopedActionPreferenceSetting ErrorPreferenceSetting = new(
         PreferenceVariable.Error,
         InitialSessionState.DefaultErrorActionPreference,
@@ -373,7 +397,8 @@ internal static class ScopedProperties
         SpecialVariables.InformationPreferenceVarPath);
 
     internal static IReadOnlyList<ScopedActionPreferenceSetting> PreferenceSettings { get; } =
-        Array.AsReadOnly<ScopedActionPreferenceSetting>([ErrorPreferenceSetting, WarningPreferenceSetting, InformationPreferenceSetting]);
+        Array.AsReadOnly<ScopedActionPreferenceSetting>(
+            [DebugPreferenceSetting, VerbosePreferenceSetting, ErrorPreferenceSetting, WarningPreferenceSetting, InformationPreferenceSetting]);
 
     private static readonly Dictionary<string, ScopedActionPreferenceSetting> s_preferencesByName =
         PreferenceSettings.ToDictionary(static setting => setting.VariableName, StringComparer.OrdinalIgnoreCase);

@@ -1096,4 +1096,106 @@ try { $PS.Style.Progress.View = 'Classic' } catch { $_.FullyQualifiedErrorId }
             'warning stopped', 'information stopped'
         )
     }
+
+    It 'initializes Verbose and Debug only when their switches are explicit' {
+        $result = Invoke-ScopedPropertiesTest {
+            function Get-TracePreferences {
+                [CmdletBinding()]
+                param()
+                $entries = (Get-PSCallStack)[0].GetFrameVariables()
+                "$VerbosePreference/$DebugPreference/$($PS.ActionPreference.Verbose)/$($PS.ActionPreference.Debug)/$($entries.ContainsKey('VerbosePreference'))/$($entries.ContainsKey('DebugPreference'))"
+            }
+
+            $PS.ActionPreference.Verbose = 'Ignore'
+            $PS.ActionPreference.Debug = 'Stop'
+            Get-TracePreferences
+            Get-TracePreferences -Verbose
+            Get-TracePreferences -Debug
+            Get-TracePreferences -Verbose:$false -Debug:$false
+            "caller/$VerbosePreference/$DebugPreference"
+        }
+        $result | Should -BeExactly @(
+            'Ignore/Stop/Ignore/Stop/False/False', 'Continue/Stop/Continue/Stop/True/False',
+            'Ignore/Continue/Ignore/Continue/False/True',
+            'SilentlyContinue/SilentlyContinue/SilentlyContinue/SilentlyContinue/True/True', 'caller/Ignore/Stop'
+        )
+    }
+
+    It 'enumerates all five preferences through nested dotted invocations' {
+        $result = Invoke-ScopedPropertiesTest {
+            function Test-InnerPreferences {
+                [CmdletBinding()]
+                param(
+                    [ValidateSet('Stop')][string] $VerbosePreference,
+                    [ValidateSet('Stop')][string] $DebugPreference
+                )
+
+                $frame = (Get-PSCallStack)[0]
+                $entries = $frame.GetFrameVariables()
+                "frame/$($entries.ErrorActionPreference.Value)/$($entries.WarningPreference.Value)/$($entries.InformationPreference.Value)/$($entries.VerbosePreference.Value)/$($entries.DebugPreference.Value)"
+                "tuple/$ProgressPreference/$WhatIfPreference/$ConfirmPreference"
+
+                $PS.Reset('ActionPreference.Debug')
+                "reset/$($frame.GetFrameVariables()['DebugPreference'].Value)/$($PS.ActionPreference.Debug)/$($PS.ActionPreference.Verbose)"
+                $DebugPreference = 'Ignore'
+                $VerbosePreference = 'Ignore'
+
+                $variables = @{}
+                Get-Variable -Scope Local | ForEach-Object { $variables[$_.Name] = $_ }
+                "variables/$($variables.ErrorActionPreference.Value)/$($variables.WarningPreference.Value)/$($variables.InformationPreference.Value)/$($variables.VerbosePreference.Value)/$($variables.DebugPreference.Value)"
+            }
+
+            function Test-OuterPreferences {
+                [CmdletBinding(SupportsShouldProcess)]
+                param()
+
+                . Test-InnerPreferences -VerbosePreference Stop -DebugPreference Stop -Verbose:$false -Debug:$false -WarningAction Stop
+                "outer/$ErrorActionPreference/$WarningPreference/$InformationPreference/$VerbosePreference/$DebugPreference"
+            }
+
+            $PS.ActionPreference.Error = 'Continue'
+            $PS.ActionPreference.Warning = 'SilentlyContinue'
+            $PS.ActionPreference.Information = 'SilentlyContinue'
+            $PS.ActionPreference.Verbose = 'SilentlyContinue'
+            $PS.ActionPreference.Debug = 'SilentlyContinue'
+            . Test-OuterPreferences -ErrorAction Stop -WarningAction Continue -InformationAction Continue -Verbose -Debug -ProgressAction SilentlyContinue -WhatIf -Confirm:$false
+            "caller/$ErrorActionPreference/$WarningPreference/$InformationPreference/$VerbosePreference/$DebugPreference"
+        }
+        $result | Should -BeExactly @(
+            'frame/Stop/Stop/Continue/SilentlyContinue/SilentlyContinue', 'tuple/SilentlyContinue/True/None',
+            'reset/Continue/Continue/SilentlyContinue', 'variables/Stop/Stop/Continue/Ignore/Ignore',
+            'outer/Stop/Continue/Continue/Continue/Continue', 'caller/Continue/SilentlyContinue/SilentlyContinue/SilentlyContinue/SilentlyContinue'
+        )
+    }
+
+    It 'uses inherited Verbose and Debug preferences and explicit switches for stream output' {
+        $result = Invoke-ScopedPropertiesTest {
+            function Write-ScopedTraceRecords {
+                [CmdletBinding()]
+                param()
+                Write-Verbose 'verbose record'
+                Write-Debug 'debug record'
+            }
+
+            $PS.ActionPreference.Verbose = 'SilentlyContinue'
+            $PS.ActionPreference.Debug = 'SilentlyContinue'
+            "suppressed/$(@(Write-ScopedTraceRecords 4>&1 5>&1).Count)"
+            Write-ScopedTraceRecords -Verbose -Debug 4>&1 5>&1 | ForEach-Object { "explicit/$($_.GetType().Name)/$_" }
+
+            $PS.ActionPreference.Verbose = 'Continue'
+            $PS.ActionPreference.Debug = 'Continue'
+            Write-ScopedTraceRecords 4>&1 5>&1 | ForEach-Object { "inherited/$($_.GetType().Name)/$_" }
+            "explicit false/$(@(Write-ScopedTraceRecords -Verbose:$false -Debug:$false 4>&1 5>&1).Count)"
+
+            $PS.ActionPreference.Verbose = 'Stop'
+            try { & { Write-Verbose 'stopping verbose' 4>$null } } catch { 'verbose stopped' }
+            $PS.ActionPreference.Debug = 'Stop'
+            try { & { Write-Debug 'stopping debug' 5>$null } } catch { 'debug stopped' }
+        }
+        $result | Should -BeExactly @(
+            'suppressed/0', 'explicit/VerboseRecord/verbose record', 'explicit/DebugRecord/debug record',
+            'inherited/VerboseRecord/verbose record', 'inherited/DebugRecord/debug record', 'explicit false/0',
+            'verbose stopped', 'debug stopped'
+        )
+    }
 }

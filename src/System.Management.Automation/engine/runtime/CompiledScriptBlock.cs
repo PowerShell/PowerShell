@@ -2543,15 +2543,15 @@ namespace System.Management.Automation
         {
             if (_commandRuntime.IsDebugFlagSet)
             {
-                _localsTuple.SetPreferenceVariable(
-                    PreferenceVariable.Debug,
+                SetActionPreferenceVariable(
+                    ScopedProperties.DebugPreferenceSetting,
                     _commandRuntime.Debug ? ActionPreference.Continue : ActionPreference.SilentlyContinue);
             }
 
             if (_commandRuntime.IsVerboseFlagSet)
             {
-                _localsTuple.SetPreferenceVariable(
-                    PreferenceVariable.Verbose,
+                SetActionPreferenceVariable(
+                    ScopedProperties.VerbosePreferenceSetting,
                     _commandRuntime.Verbose ? ActionPreference.Continue : ActionPreference.SilentlyContinue);
             }
 
