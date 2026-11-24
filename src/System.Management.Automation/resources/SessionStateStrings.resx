@@ -670,4 +670,16 @@
   <data name="ForeignScopedSettingScope" xml:space="preserve">
     <value>The scope bound to this scoped settings view belongs to a different runspace.</value>
   </data>
+  <data name="ScopedPropertyFacadeDescription" xml:space="preserve">
+    <value>Scoped PowerShell engine settings.</value>
+  </data>
+  <data name="ScopedActionPreferenceDescription" xml:space="preserve">
+    <value>Scoped action preferences for error, warning, information, verbose, and debug output.</value>
+  </data>
+  <data name="ScopedStyleDescription" xml:space="preserve">
+    <value>Scoped settings for output styling.</value>
+  </data>
+  <data name="ScopedProgressStyleDescription" xml:space="preserve">
+    <value>Scoped settings for progress rendering.</value>
+  </data>
 </root>

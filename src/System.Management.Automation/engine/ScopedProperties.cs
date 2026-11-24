@@ -90,6 +90,10 @@ public sealed class PSScopedPropertyFacade
         }
     }
 
+    /// <summary>Returns a description of the scoped settings facade.</summary>
+    /// <returns>The facade description.</returns>
+    public override string ToString() => SessionStateStrings.ScopedPropertyFacadeDescription;
+
     internal (ExecutionContext Context, SessionStateScope Scope) Resolve()
     {
         ExecutionContext context = LocalPipeline.GetExecutionContextFromTLS();
@@ -159,6 +163,10 @@ public sealed class PSScopedActionPreference
         set => SetPreference(ScopedProperties.DebugPreferenceSetting, value);
     }
 
+    /// <summary>Returns a description of the scoped action preference settings.</summary>
+    /// <returns>The action preference group description.</returns>
+    public override string ToString() => SessionStateStrings.ScopedActionPreferenceDescription;
+
     private ActionPreference GetPreference(ScopedActionPreferenceSetting setting)
     {
         var (context, scope) = _facade.Resolve();
@@ -202,6 +210,10 @@ public sealed class PSScopedStyle
             return _progress;
         }
     }
+
+    /// <summary>Returns a description of the scoped style settings.</summary>
+    /// <returns>The style group description.</returns>
+    public override string ToString() => SessionStateStrings.ScopedStyleDescription;
 }
 
 /// <summary>Provides scoped progress rendering settings.</summary>
@@ -226,6 +238,10 @@ public sealed class PSScopedProgressStyle
             scope.SetScopedSettingValue(ScopedProperties.ProgressViewSetting, value);
         }
     }
+
+    /// <summary>Returns a description of the scoped progress rendering settings.</summary>
+    /// <returns>The progress style group description.</returns>
+    public override string ToString() => SessionStateStrings.ScopedProgressStyleDescription;
 }
 
 /// <summary>
