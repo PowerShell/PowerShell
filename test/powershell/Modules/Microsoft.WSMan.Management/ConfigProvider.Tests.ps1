@@ -4,7 +4,7 @@
 [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConvertToSecureStringWithPlainText', '')]
 param()
 
-Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
+Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows,NotWinPE {
     BeforeAll {
         #skip all tests on non-windows platform
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()

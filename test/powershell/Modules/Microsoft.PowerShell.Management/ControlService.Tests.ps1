@@ -33,6 +33,31 @@ Describe "Control Service cmdlet tests" -Tags "Feature","RequireAdminOnWindows" 
     $restartservicecmd.$parameter | Should -Be $value
   }
 
+  It "Failure to control service with '<script>'" -TestCases @(
+    @{script={Stop-Service dcomlaunch -ErrorAction Stop};errorid="ServiceHasDependentServices,Microsoft.PowerShell.Commands.StopServiceCommand"},
+    @{script={Stop-Service $(New-Guid) -ErrorAction Stop};errorid="NoServiceFoundForGivenName,Microsoft.PowerShell.Commands.StopServiceCommand"},
+    @{script={Start-Service $(New-Guid) -ErrorAction Stop};errorid="NoServiceFoundForGivenName,Microsoft.PowerShell.Commands.StartServiceCommand"},
+    @{script={Resume-Service $(New-Guid) -ErrorAction Stop};errorid="NoServiceFoundForGivenName,Microsoft.PowerShell.Commands.ResumeServiceCommand"},
+    @{script={Suspend-Service $(New-Guid) -ErrorAction Stop};errorid="NoServiceFoundForGivenName,Microsoft.PowerShell.Commands.SuspendServiceCommand"},
+    @{script={Restart-Service $(New-Guid) -ErrorAction Stop};errorid="NoServiceFoundForGivenName,Microsoft.PowerShell.Commands.RestartServiceCommand"}
+  ) {
+      param($script,$errorid)
+      { & $script } | Should -Throw -ErrorId $errorid
+  }
+
+}
+
+Describe "WinPE-incompatible service control tests" -Tags "Feature","RequireAdminOnWindows","NotWinPE" {
+  BeforeAll {
+    $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+    if ( -not $IsWindows ) {
+      $PSDefaultParameterValues["it:skip"] = $true
+    }
+  }
+  AfterAll {
+    $global:PSDefaultParameterValues = $originalDefaultParameterValues
+  }
+
   It "Stop/Start/Restart-Service works" {
     $wasStopped = $false
     try {
@@ -81,17 +106,10 @@ Describe "Control Service cmdlet tests" -Tags "Feature","RequireAdminOnWindows" 
   }
 
   It "Failure to control service with '<script>'" -TestCases @(
-    @{script={Stop-Service dcomlaunch -ErrorAction Stop};errorid="ServiceHasDependentServices,Microsoft.PowerShell.Commands.StopServiceCommand"},
     @{script={Suspend-Service winrm -ErrorAction Stop};errorid="CouldNotSuspendServiceNotSupported,Microsoft.PowerShell.Commands.SuspendServiceCommand"},
-    @{script={Resume-Service winrm -ErrorAction Stop};errorid="CouldNotResumeServiceNotSupported,Microsoft.PowerShell.Commands.ResumeServiceCommand"},
-    @{script={Stop-Service $(New-Guid) -ErrorAction Stop};errorid="NoServiceFoundForGivenName,Microsoft.PowerShell.Commands.StopServiceCommand"},
-    @{script={Start-Service $(New-Guid) -ErrorAction Stop};errorid="NoServiceFoundForGivenName,Microsoft.PowerShell.Commands.StartServiceCommand"},
-    @{script={Resume-Service $(New-Guid) -ErrorAction Stop};errorid="NoServiceFoundForGivenName,Microsoft.PowerShell.Commands.ResumeServiceCommand"},
-    @{script={Suspend-Service $(New-Guid) -ErrorAction Stop};errorid="NoServiceFoundForGivenName,Microsoft.PowerShell.Commands.SuspendServiceCommand"},
-    @{script={Restart-Service $(New-Guid) -ErrorAction Stop};errorid="NoServiceFoundForGivenName,Microsoft.PowerShell.Commands.RestartServiceCommand"}
+    @{script={Resume-Service winrm -ErrorAction Stop};errorid="CouldNotResumeServiceNotSupported,Microsoft.PowerShell.Commands.ResumeServiceCommand"}
   ) {
       param($script,$errorid)
       { & $script } | Should -Throw -ErrorId $errorid
   }
-
 }

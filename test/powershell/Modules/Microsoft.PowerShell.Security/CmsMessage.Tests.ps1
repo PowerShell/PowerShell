@@ -80,39 +80,7 @@ Describe "CmsMessage cmdlets and Get-PfxCertificate basic tests" -Tags "CI" {
     }
 }
 
-Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
-
-    BeforeAll{
-        if($IsWindows)
-        {
-            if (-not (Install-TestCertificates) ) {
-                $SetupFailure = $true
-            } else {
-                Push-Location Cert:\
-                $SetupFailure = $false
-            }
-        }
-        else
-        {
-            # Skip for non-Windows platforms
-            $defaultParamValues = $PSDefaultParameterValues.Clone()
-            $PSDefaultParameterValues = @{ "it:skip" = $true }
-        }
-    }
-
-    AfterAll {
-        if($IsWindows -and -not $SetupFailure)
-        {
-            Remove-TestCertificates
-        }
-        else
-        {
-            if ($defaultParamValues -ne $null) {
-                $global:PSDefaultParameterValues = $defaultParamValues
-            }
-
-        }
-    }
+Describe "CMS message recipient resolution by embedded certificate" -Tags "Feature" {
 
     It "Verify message recipient resolution by Base64Cert" {
         $certContent = "
@@ -145,6 +113,40 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
 
             $recipient.Certificates.Count | Should -Be 1
             $recipient.Certificates[0].Subject | Should -Match 'CN=MyDataEnciphermentCert'
+    }
+}
+
+Describe "CmsMessage cmdlets thorough tests" -Tags "Feature", "NotWinPE" {
+    BeforeAll{
+        if($IsWindows)
+        {
+            if (-not (Install-TestCertificates) ) {
+                $SetupFailure = $true
+            } else {
+                Push-Location Cert:\
+                $SetupFailure = $false
+            }
+        }
+        else
+        {
+            # Skip for non-Windows platforms
+            $defaultParamValues = $PSDefaultParameterValues.Clone()
+            $PSDefaultParameterValues = @{ "it:skip" = $true }
+        }
+    }
+
+    AfterAll {
+        if($IsWindows -and -not $SetupFailure)
+        {
+            Remove-TestCertificates
+        }
+        else
+        {
+            if ($defaultParamValues -ne $null) {
+                $global:PSDefaultParameterValues = $defaultParamValues
+            }
+
+        }
     }
 
     It "Verify wildcarded recipient resolution by path [Decryption]" {

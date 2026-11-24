@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-Describe "TestWSMan tests" -Tags 'Feature','RequireAdminOnWindows' {
+Describe "TestWSMan tests" -Tags 'Feature','RequireAdminOnWindows','NotWinPE' {
 
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()

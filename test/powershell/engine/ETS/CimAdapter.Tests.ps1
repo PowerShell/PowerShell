@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe "CIM Objects are adapted properly" -Tag @("CI") {
+Describe "CIM Objects are adapted properly" -Tag @("CI", "NotWinPE") {
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         

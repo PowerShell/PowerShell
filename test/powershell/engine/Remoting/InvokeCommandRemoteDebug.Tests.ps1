@@ -115,7 +115,7 @@ if ($IsWindows) {
 '@
 }
 
-Describe "Invoke-Command remote debugging tests" -Tags 'Feature','RequireAdminOnWindows' {
+Describe "Invoke-Command remote debugging tests" -Tags 'Feature','RequireAdminOnWindows','NotWinPE' {
 
     BeforeAll {
 

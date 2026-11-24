@@ -1009,7 +1009,7 @@ try {
     $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
     $PSDefaultParameterValues["it:skip"] = !$IsWindows
 
-    Describe "Tests for Get-ComputerInfo: Ensure Type returned" -tags "CI", "RequireAdminOnWindows" {
+    Describe "Tests for Get-ComputerInfo: Ensure Type returned" -tags "CI", "RequireAdminOnWindows", "NotWinPE" {
 
         It "Verify type returned by Get-ComputerInfo" {
             $computerInfo = Get-ComputerInfo
@@ -1029,7 +1029,7 @@ try {
         }
     }
 
-    Describe "Tests for Get-ComputerInfo" -tags "Feature", "RequireAdminOnWindows" {
+    Describe "Tests for Get-ComputerInfo" -tags "Feature", "RequireAdminOnWindows", "NotWinPE" {
         Context "Validate All Properties" {
             BeforeAll {
                 # do this once here rather than multiple times in Test 01
@@ -1076,7 +1076,7 @@ try {
             }
         }
 
-        Context "Filter Variations" {
+        Context "Filter Variations requiring computer information" {
             #
             # Test 02.001 Filter Property - Property filter with one valid item
             #
@@ -1105,6 +1105,12 @@ try {
                 }
             }
 
+        }
+
+    }
+
+    Describe "Get-ComputerInfo invalid property filters" -tags "Feature", "RequireAdminOnWindows" {
+        Context "Invalid Filter Variations" {
             #
             # Test 02.003 Filter Property - Property filter with one invalid item
             #
@@ -1129,6 +1135,17 @@ try {
                 @($computerInfoWithProp.psobject.properties).count | Should -Be 0
             }
 
+        }
+
+    }
+
+    Describe "Get-ComputerInfo valid property filters" -tags "Feature", "RequireAdminOnWindows", "NotWinPE" {
+        BeforeAll {
+            $propertyNames = Get-PropertyNamesForComputerInfoTest
+            $Expected = New-ExpectedComputerInfo $propertyNames
+        }
+
+        Context "Filter Variations requiring valid properties" {
             #
             # Test 02.005 Filter Property - Property filter with valid and invalid items: ver #1
             #
@@ -1211,6 +1228,12 @@ try {
                 }
             }
 
+        }
+
+    }
+
+    Describe "Get-ComputerInfo invalid wildcard filter" -tags "Feature", "RequireAdminOnWindows" {
+        Context "Invalid wildcard Filter Variation" {
             #
             # Test 02.010 Filter Property - Property filter with wild card invalid
             #
@@ -1226,7 +1249,7 @@ try {
 
     }
 
-    Describe "Special Case Tests for Get-ComputerInfo" -tags "Feature", "RequireAdminOnWindows" {
+    Describe "Special Case Tests for Get-ComputerInfo" -tags "Feature", "RequireAdminOnWindows", "NotWinPE" {
 
         BeforeAll {
             if ($IsWindows)

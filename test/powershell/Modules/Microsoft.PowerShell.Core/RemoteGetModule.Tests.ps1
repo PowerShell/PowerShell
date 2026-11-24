@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-Describe "Remote module tests" -Tags 'Feature','RequireAdminOnWindows' {
+Describe "Remote module tests" -Tags 'Feature','RequireAdminOnWindows','NotWinPE' {
 
     BeforeAll {
         $pendingTest = (Test-IsWinWow64)

@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe "New-CimSession" -Tag @("CI","RequireAdminOnWindows") {
+Describe "New-CimSession" -Tag @("CI","RequireAdminOnWindows","NotWinPE") {
     BeforeAll {
         $sessions = @()
     }
