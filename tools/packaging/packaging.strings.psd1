@@ -179,12 +179,14 @@ open {0}
         <id>{0}</id>
         <version>{1}</version>
         <authors>Microsoft</authors>
-        <owners>Microsoft,PowerShell</owners>
+        <owners></owners>
         <projectUrl>https://github.com/PowerShell/PowerShell</projectUrl>
         <icon>{2}</icon>
-        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <requireLicenseAcceptance>true</requireLicenseAcceptance>
         <description>PowerShell global tool</description>
+        <readme>README.md</readme>
         <license type="expression">MIT</license>
+        <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
         <tags>PowerShell</tags>
         <language>en-US</language>
         <copyright>&#169; Microsoft Corporation. All rights reserved.</copyright>
@@ -240,12 +242,14 @@ open {0}
         <id>{0}</id>
         <version>{1}</version>
         <authors>Microsoft</authors>
-        <owners>Microsoft,PowerShell</owners>
+        <owners></owners>
         <projectUrl>https://github.com/PowerShell/PowerShell</projectUrl>
         <icon>{2}</icon>
-        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <requireLicenseAcceptance>true</requireLicenseAcceptance>
         <description>PowerShell global tool</description>
+        <readme>README.md</readme>
         <license type="expression">MIT</license>
+        <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
         <tags>PowerShell</tags>
         <language>en-US</language>
         <copyright>&#169; Microsoft Corporation. All rights reserved.</copyright>

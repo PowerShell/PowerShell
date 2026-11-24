@@ -1397,6 +1397,9 @@ Function New-LinkInfo
     }
 }
 
+# Minimum macOS version
+$macOSMinVersion = "11.0"  # macOS Big Sur minimum
+
 function New-MacOsDistributionPackage
 {
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -1459,9 +1462,6 @@ function New-MacOsDistributionPackage
         }
     }
 
-    # Minimum OS version
-    $minOSVersion = "11.0"  # macOS Big Sur minimum
-
     # format distribution template with:
     # 0 - title
     # 1 - version
@@ -1469,7 +1469,7 @@ function New-MacOsDistributionPackage
     # 3 - minimum os version
     # 4 - Package Identifier
     # 5 - host architecture (x86_64 for Intel or arm64 for Apple Silicon)
-    $PackagingStrings.OsxDistributionTemplate -f $PackageName, $Version, $componentFileName, $minOSVersion, $PackageIdentifier, $HostArchitecture | Out-File -Encoding utf8 -FilePath $distributionXmlPath -Force
+    $PackagingStrings.OsxDistributionTemplate -f $PackageName, $Version, $componentFileName, $macOSMinVersion, $PackageIdentifier, $HostArchitecture | Out-File -Encoding utf8 -FilePath $distributionXmlPath -Force
 
     # Build final package path
     # Rename x86_64 to x64 for compatibility
@@ -2046,6 +2046,8 @@ function New-MacOSPackage
 
             Start-NativeExecution -VerboseOutputOnError {
                 pkgbuild --root $pkgRoot `
+                    --compression latest `
+                    --min-os-version $macOSMinVersion `
                     --identifier $pkgIdentifier `
                     --version $Version `
                     --scripts $scriptsDir `
@@ -4120,6 +4122,7 @@ function New-GlobalToolNupkgSource
         default { throw "New-GlobalToolNupkgSource: Unknown package type: $PackageType" }
     }
 
+    Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'globaltool.README.md') -Destination (Join-Path $RootFolder 'README.md') -Force -ErrorAction Stop
     $nuSpec = $packagingStrings.GlobalToolNuSpec -f $PackageName, $PackageVersion, $iconFileName
     $nuSpec | Out-File -FilePath (Join-Path $RootFolder "$PackageName.nuspec") -Encoding ascii
     $toolSettings | Out-File -FilePath (Join-Path $ridFolder "DotnetToolSettings.xml") -Encoding ascii
@@ -4216,6 +4219,55 @@ function New-GlobalToolNupkgFromSource
     Remove-Item -Path $CGManifestPath -Recurse -Force -ErrorAction SilentlyContinue
 }
 
+function Set-GlobalToolNuspecMetadata
+{
+    <#
+    .SYNOPSIS
+    Applies the shared global tool metadata to an SDK-generated nuspec.
+
+    .DESCRIPTION
+    Preserves the generated package identity and SDK-specific metadata, and copies the
+    shared package icon and README alongside the nuspec before the package is reassembled.
+
+    .PARAMETER Path
+    Path to the nuspec in the expanded global tool package.
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)]
+        [string] $Path
+    )
+
+    $nuspecPath = (Resolve-Path -LiteralPath $Path -ErrorAction Stop).ProviderPath
+    $nuspec = [xml] (Get-Content -LiteralPath $nuspecPath -Raw -ErrorAction Stop)
+    $metadata = $nuspec.package.metadata
+    if (-not $metadata.id -or -not $metadata.version) {
+        throw "Global tool nuspec must contain a package id and version: $nuspecPath"
+    }
+
+    $template = [xml] ($packagingStrings.GlobalToolNuSpec -f $metadata.id, $metadata.version, $iconFileName)
+    foreach ($field in $template.package.metadata.ChildNodes) {
+        if ($field.LocalName -in 'id', 'version', 'packageTypes') {
+            continue
+        }
+
+        $element = $metadata.SelectSingleNode("*[local-name()='$($field.LocalName)']")
+        if ($null -eq $element) {
+            $element = $nuspec.CreateElement($field.LocalName, $metadata.NamespaceURI)
+            $null = $metadata.AppendChild($element)
+        }
+
+        $element.InnerText = $field.InnerText
+        foreach ($attribute in $field.Attributes) {
+            $element.SetAttribute($attribute.Name, $attribute.Value)
+        }
+    }
+
+    Copy-Item -LiteralPath $iconPath -Destination (Join-Path (Split-Path $nuspecPath -Parent) $iconFileName) -Force -ErrorAction Stop
+    Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'globaltool.README.md') -Destination (Join-Path (Split-Path $nuspecPath -Parent) 'README.md') -Force -ErrorAction Stop
+    $nuspec.Save($nuspecPath)
+}
+
 <#
 .SYNOPSIS
 Create the NuSpec source directory for the RID-agnostic 'PowerShell' global tool pointer package.
@@ -4226,7 +4278,8 @@ produces only the top-level pointer package (metadata + a v2 DotnetToolSettings.
 supported RID to its sub-package id, e.g. "PowerShell.win-x64"). It does not contain any pwsh
 binaries. The RID-specific sub-packages themselves are produced separately, directly by
 'dotnet pack -r <rid> --no-build' against src/GlobalTools/PowerShell/PowerShell.csproj, on an
-agent matching each RID's OS, then signed like any other build output.
+agent matching each RID's OS, then signed like any other build output. Apply the shared metadata
+with Set-GlobalToolNuspecMetadata when reassembling each expanded RID package.
 
 Callers should build every RID sub-package first, then call this function, then pack the
 resulting source with New-GlobalToolNupkgFromSource, so that the pointer package always ships
@@ -4257,6 +4310,7 @@ function New-GlobalToolPointerNupkgSource
 
     $RootFolder = New-TempFolder
     Copy-Item -Path $iconPath -Destination "$RootFolder/$iconFileName" -Verbose
+    Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'globaltool.README.md') -Destination (Join-Path $RootFolder 'README.md') -Force -ErrorAction Stop
 
     # The SDK places the pointer package's DotnetToolSettings.xml under tools/any/any, since the
     # pointer package itself is not tied to any framework or runtime.

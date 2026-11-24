@@ -7,6 +7,153 @@ Describe "Packaging Module Functions" {
         Import-Module $PSScriptRoot/../../tools/packaging/packaging.psm1 -Force
     }
 
+    Context "Global tool nuspec metadata" {
+        It "Should leave owners empty in the <TemplateName> template" -TestCases @(
+            @{ TemplateName = "GlobalToolNuSpec" }
+            @{ TemplateName = "GlobalToolPointerNuSpec" }
+        ) {
+            param($TemplateName)
+
+            $strings = Import-PowerShellDataFile (Join-Path $PSScriptRoot "../../tools/packaging/packaging.strings.psd1")
+            $nuspec = [xml] ($strings[$TemplateName] -f "PowerShell", "7.8.0-preview.1", "Powershell_black_64.png")
+            $owners = $nuspec.package.metadata.SelectSingleNode("*[local-name()='owners']")
+            $owners | Should -Not -BeNullOrEmpty
+            $owners.InnerText | Should -BeExactly ""
+        }
+
+        It "Should include the MIT compatibility license URL in the <TemplateName> template" -TestCases @(
+            @{ TemplateName = "GlobalToolNuSpec" }
+            @{ TemplateName = "GlobalToolPointerNuSpec" }
+        ) {
+            param($TemplateName)
+
+            $strings = Import-PowerShellDataFile (Join-Path $PSScriptRoot "../../tools/packaging/packaging.strings.psd1")
+            $nuspec = [xml] ($strings[$TemplateName] -f "PowerShell", "7.7.0", "Powershell_black_64.png")
+            $nuspec.package.metadata.license.type | Should -BeExactly "expression"
+            $nuspec.package.metadata.license.InnerText | Should -BeExactly "MIT"
+            $nuspec.package.metadata.licenseUrl | Should -BeExactly "https://licenses.nuget.org/MIT"
+        }
+
+        It "Should include the README in the pointer package source" {
+            $pointerRoot = New-Item -Path (Join-Path $TestDrive "pointer") -ItemType Directory
+            Mock -CommandName New-TempFolder -ModuleName packaging { Join-Path $TestDrive "pointer" }
+            $previousSourcePath = $global:GlobalToolNuSpecSourcePath
+            $previousPackageName = $global:GlobalToolPkgName
+            try {
+                New-GlobalToolPointerNupkgSource -PackageVersion "7.7.0" -RuntimeIdentifiers @("win-x64", "linux-arm") -SkipCGManifest
+
+                $nuspec = [xml] (Get-Content -LiteralPath (Join-Path $pointerRoot "PowerShell.nuspec") -Raw)
+                $nuspec.package.metadata.readme | Should -BeExactly "README.md"
+                $nuspec.package.metadata.requireLicenseAcceptance | Should -BeExactly "true"
+                $nuspec.package.metadata.description | Should -BeExactly "PowerShell global tool"
+                $nuspec.package.metadata.icon | Should -BeExactly "Powershell_black_64.png"
+                Get-Content -LiteralPath (Join-Path $pointerRoot $nuspec.package.metadata.readme) -Raw |
+                    Should -BeExactly (Get-Content -LiteralPath (Join-Path $PSScriptRoot "../../tools/packaging/globaltool.README.md") -Raw)
+            }
+            finally {
+                $global:GlobalToolNuSpecSourcePath = $previousSourcePath
+                $global:GlobalToolPkgName = $previousPackageName
+            }
+        }
+
+        It "Should populate metadata without changing <PackageId> identity or payload" -TestCases @(
+            @{ PackageId = "PowerShell.win-x64"; PackageVersion = "7.7.0"; NamespaceYear = "2011/08" }
+            @{ PackageId = "PowerShell.linux-arm"; PackageVersion = "7.7.0"; NamespaceYear = "2013/05" }
+            @{ PackageId = "PowerShell.linux-arm64"; PackageVersion = "7.8.0-preview.2"; NamespaceYear = "2013/05" }
+            @{ PackageId = "PowerShell.osx-arm64"; PackageVersion = "8.0.1"; NamespaceYear = "2013/05" }
+        ) {
+            param($PackageId, $PackageVersion, $NamespaceYear)
+
+            $packageRoot = New-Item -Path (Join-Path $TestDrive $PackageId) -ItemType Directory
+            $nuspecPath = Join-Path $packageRoot "$PackageId.nuspec"
+            @"
+<package xmlns="http://schemas.microsoft.com/packaging/$NamespaceYear/nuspec.xsd">
+  <metadata>
+    <id>$PackageId</id>
+    <version>$PackageVersion</version>
+    <authors>pwsh</authors>
+    <owners>Microsoft,PowerShell</owners>
+    <description>Package Description</description>
+    <icon>Powershell_64.png</icon>
+    <licenseUrl>https://aka.ms/deprecateLicenseUrl</licenseUrl>
+    <repository type="git" url="https://github.com/PowerShell/PowerShell" commit="abc123" />
+    <packageTypes><packageType name="DotnetToolRidPackage" /></packageTypes>
+  </metadata>
+</package>
+"@ | Set-Content -LiteralPath $nuspecPath
+            $toolSettingsPath = Join-Path $packageRoot "DotnetToolSettings.xml"
+            $toolSettings = '<DotNetCliTool Version="2"><Commands><Command Name="pwsh" Runner="executable" /></Commands></DotNetCliTool>'
+            Set-Content -LiteralPath $toolSettingsPath -Value $toolSettings -NoNewline
+
+            Set-GlobalToolNuspecMetadata -Path $nuspecPath
+            Set-GlobalToolNuspecMetadata -Path $nuspecPath
+
+            $nupkgPath = Join-Path $TestDrive "$PackageId.$PackageVersion.nupkg"
+            [System.IO.Compression.ZipFile]::CreateFromDirectory($packageRoot.FullName, $nupkgPath)
+            $archive = [System.IO.Compression.ZipFile]::OpenRead($nupkgPath)
+            try {
+                $reader = [System.IO.StreamReader]::new($archive.GetEntry("$PackageId.nuspec").Open())
+                try {
+                    $nuspec = [xml] $reader.ReadToEnd()
+                }
+                finally {
+                    $reader.Dispose()
+                }
+
+                $metadata = $nuspec.package.metadata
+                $metadata.id | Should -BeExactly $PackageId
+                $metadata.version | Should -BeExactly $PackageVersion
+                $metadata.authors | Should -BeExactly "Microsoft"
+                $metadata.owners | Should -BeExactly ""
+                $metadata.requireLicenseAcceptance | Should -BeExactly "true"
+                $metadata.license.type | Should -BeExactly "expression"
+                $metadata.license.InnerText | Should -BeExactly "MIT"
+                $metadata.licenseUrl | Should -BeExactly "https://licenses.nuget.org/MIT"
+                $metadata.icon | Should -BeExactly "Powershell_black_64.png"
+                $metadata.projectUrl | Should -BeExactly "https://github.com/PowerShell/PowerShell"
+                $metadata.description | Should -BeExactly "PowerShell global tool"
+                $metadata.readme | Should -BeExactly "README.md"
+                $metadata.copyright | Should -BeExactly "$([char]0xA9) Microsoft Corporation. All rights reserved."
+                $metadata.language | Should -BeExactly "en-US"
+                $metadata.tags | Should -BeExactly "PowerShell"
+                $metadata.packageTypes.packageType.name | Should -BeExactly "DotnetToolRidPackage"
+                $metadata.repository.commit | Should -BeExactly "abc123"
+                @($metadata.ChildNodes | Where-Object NamespaceURI -NE $metadata.NamespaceURI).Count | Should -Be 0
+                @($metadata.ChildNodes | Where-Object LocalName -EQ "authors").Count | Should -Be 1
+                $archive.GetEntry($metadata.icon) | Should -Not -BeNullOrEmpty
+                $reader = [System.IO.StreamReader]::new($archive.GetEntry($metadata.readme).Open())
+                try {
+                    $reader.ReadToEnd() |
+                        Should -BeExactly (Get-Content -LiteralPath (Join-Path $PSScriptRoot "../../tools/packaging/globaltool.README.md") -Raw)
+                }
+                finally {
+                    $reader.Dispose()
+                }
+                $reader = [System.IO.StreamReader]::new($archive.GetEntry("DotnetToolSettings.xml").Open())
+                try {
+                    $reader.ReadToEnd() | Should -BeExactly $toolSettings
+                }
+                finally {
+                    $reader.Dispose()
+                }
+            }
+            finally {
+                $archive.Dispose()
+            }
+
+            (Get-FileHash (Join-Path $packageRoot "Powershell_black_64.png")).Hash |
+                Should -BeExactly (Get-FileHash (Join-Path $PSScriptRoot "../../assets/Powershell_black_64.png")).Hash
+        }
+
+        It "Should reject a nuspec with no package identity" {
+            $nuspecPath = Join-Path $TestDrive "invalid.nuspec"
+            '<package><metadata><description>Invalid package</description></metadata></package>' |
+                Set-Content -LiteralPath $nuspecPath
+
+            { Set-GlobalToolNuspecMetadata -Path $nuspecPath } | Should -Throw "*must contain a package id and version*"
+        }
+    }
+
     Context "Test-IsPreview function" {
         It "Should return True for preview versions" {
             Test-IsPreview -Version "7.6.0-preview.6" | Should -Be $true
