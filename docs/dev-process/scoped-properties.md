@@ -50,7 +50,47 @@ Use `$PS.AtScope('Local')`, `$PS.AtScope('Script')`, or `$PS.AtScope('Global')` 
 
 The console host uses the effective progress view from the latest update for its shared progress pane and may render in classic mode for terminals without the required capabilities.
 
-The prototype covers six action preferences, Confirm, WhatIf, and the progress rendering view. Other configuration variables, public authoring APIs, mutable collections, and deprecation configuration remain outside the implemented scope. Access to the facade requires an active PowerShell execution context and remains subject to constrained language restrictions.
+The prototype covers six action preferences, Confirm, WhatIf, the progress rendering view, and the scalar configuration settings below. Mutable configuration and runtime views remain pending expansion stages. Access to the facade requires an active PowerShell execution context and remains subject to constrained language restrictions.
+
+### Scalar configuration
+
+These properties use the same inheritance, assignment, and reset rules. Paths
+are relative to `$PS`; reads of an absent legacy binding do not create one.
+
+| Path | Legacy variable | Default or fallback |
+| --- | --- | --- |
+| `Formatting.ErrorView` | `ErrorView` | `ConciseView` |
+| `Formatting.EnumerationLimit` | `FormatEnumerationLimit` | 4 |
+| `Formatting.FieldSeparator` | `OFS` | Space; assigned objects retain ordinary references |
+| `NativeCommand.Encoding.ToProcess` | `OutputEncoding` | `Encoding.Default`, subject to existing host initialization |
+| `NativeCommand.Encoding.FromProcess` | `PSApplicationOutputEncoding` | Null; native reader falls back to console output encoding |
+| `NativeCommand.ArgumentPassing` | `PSNativeCommandArgumentPassing` | Windows on Windows, Standard elsewhere |
+| `NativeCommand.UseErrorActionPreference` | `PSNativeCommandUseErrorActionPreference` | False |
+| `Module.AutoLoadingPreference` | `PSModuleAutoLoadingPreference` | Environment preference, otherwise All |
+| `History.MaximumCount` | `MaximumHistoryCount` | 4096, valid range 1–32767 |
+| `Transcription.Path` | `TRANSCRIPT` | Null; transcript command generates its normal filename |
+| `Mail.Server` | `PSEmailServer` | Empty string |
+| `Help.VerboseErrors` | `VerboseHelpErrors` | False |
+| `Logging.EngineHealthEvent`, `.EngineLifecycleEvent` | Corresponding `Log*Event` variables | True |
+| `Logging.CommandHealthEvent`, `.CommandLifecycleEvent` | Corresponding `Log*Event` variables | False |
+| `Logging.ProviderHealthEvent`, `.ProviderLifecycleEvent`, `.SettingsEvent` | Corresponding `Log*Event` variables | True |
+| `Logging.UserData` | `PSLogUserData` | Null; assigned objects retain ordinary references |
+| `Remoting.ConfigurationName` | `PSSessionConfigurationName` | `http://schemas.microsoft.com/powershell/Microsoft.PowerShell` |
+| `Remoting.ApplicationName` | `PSSessionApplicationName` | `wsman` |
+
+Nullable logging and module preferences preserve explicitly assigned null.
+Their consumers apply the existing event default or environment fallback.
+Nullable string settings accept null without turning it into an empty string.
+The native error preference normalizes assignments to Boolean; untyped legacy
+values such as `'Yeah'` and `0` become true and false respectively.
+
+Formatting, module discovery, transcription, and remoting-name consumers now
+resolve the caller's effective setting when enabled. Explicit remoting and
+transcription parameters still take precedence. Native encoding readers,
+history, logging, and help use the shared unqualified context lookup; their
+existing caching and read timing remain intact. Explicitly qualified variable
+lookups retain their scope. The global `PSApplicationPrivateData` startup
+consumer is unchanged and belongs to the pending mutable stage.
 
 ## Baseline before canonical Error storage
 
@@ -367,3 +407,27 @@ execution policy and blocked temporary scripts; the corrected rerun passed.
 These results establish coverage through targeted reruns, not an uninterrupted
 clean regression run. Logs and XML results are under
 `artifacts/scoped-properties/expansion-stage1`.
+
+## Scalar configuration expansion validation
+
+The .NET 11 build and publish succeeded with no compiler warnings. The focused
+C# suite passed all 51 cases in each verified feature state, including null
+logging fallback, qualified global reads, and a remoting resolver cmdlet that
+uses no transport. The final scalar Pester suite passed 29 cases and the
+enabled-host suite passed 34. The complete disabled scoped run passed 160
+cases with 62 skips before the additional enabled-only native case. Initial
+scalar failures were corrected test assertions, including ignored-variable
+probes setting `HadErrors`, static-member argument parsing, Pester 4 matcher
+support, and changing error invocation metadata between formatting samples.
+
+Affected native encoding/error, formatting, history, transcription, and
+Join-String regression suites passed 170 cases enabled (five skips, three
+pending) and 173 disabled (two skips, three pending). Both states retained the
+same six failures: a redirected Documents/default-transcript-path assumption,
+two unavailable noninteractive prompts and two subsequent transcript file
+locks, and a culture-dependent formatted-number expectation. These failures
+are not counted as passes. Generic fixtures now avoid using the reserved
+`$ps` name. Three incompatible legacy assertions are skipped when enabled;
+dedicated feature cases verify typed Boolean normalization with native exits
+and actual scoped enumeration truncation. Results are under
+`artifacts/scoped-properties/expansion-stage2`.

@@ -9,6 +9,24 @@ using Xunit;
 
 namespace PSTests.Sequential
 {
+    [Cmdlet(VerbsCommon.Get, "ScopedRemotingProbe")]
+    public sealed class ScopedRemotingProbeCmdlet : Microsoft.PowerShell.Commands.PSRemotingCmdlet
+    {
+        protected override void BeginProcessing()
+        {
+            // This probe exercises preference resolution without starting a remoting transport.
+        }
+
+        protected override void ProcessRecord()
+        {
+            WriteObject(string.Join("|",
+                ResolveShell(null),
+                ResolveAppName(null),
+                ResolveShell("ExplicitShell"),
+                ResolveAppName("ExplicitApp")));
+        }
+    }
+
     public class ScopedPropertiesTests
     {
         [Theory]
@@ -150,6 +168,85 @@ namespace PSTests.Sequential
             foreignShell.Commands.Clear();
             var foreignGroupMember = Assert.Single(foreignShell.AddScript("try { $group.WhatIf } catch { $_.Exception.GetBaseException().Message }").Invoke<string>());
             Assert.Equal(SessionStateStrings.ForeignScopedSettingScope, foreignGroupMember);
+        }
+
+        [Fact]
+        public void NullableLoggingSettingUsesConsumerFallbackAndQualifiedGlobalLookup()
+        {
+            if (!ExperimentalFeature.PSScopedProperties)
+            {
+                return;
+            }
+
+            using var runspace = RunspaceFactory.CreateRunspace();
+            runspace.Open();
+            runspace.SessionStateProxy.SetVariable(
+                "getSettingWithFallback",
+                (Func<string, object, object>)((path, fallback) =>
+                    LocalPipeline.GetExecutionContextFromTLS().GetVariableValue(new VariablePath(path), fallback)));
+
+            using var shell = PowerShell.Create();
+            shell.Runspace = runspace;
+            shell.AddScript("""
+                $global:LogEngineHealthEvent = $false
+                & {
+                    $PS.Logging.EngineHealthEvent = $null
+                    [pscustomobject]@{
+                        FacadeValue = $PS.Logging.EngineHealthEvent
+                        VariableValue = $LogEngineHealthEvent
+                        ConsumerFallback = $getSettingWithFallback.Invoke('LogEngineHealthEvent', $true)
+                        QualifiedGlobal = $getSettingWithFallback.Invoke('global:LogEngineHealthEvent', $true)
+                    }
+                }
+                """);
+
+            var result = Assert.Single(shell.Invoke<PSObject>());
+            Assert.Empty(shell.Streams.Error);
+            Assert.Null(result.Properties["FacadeValue"].Value);
+            Assert.Null(result.Properties["VariableValue"].Value);
+            Assert.Equal(true, result.Properties["ConsumerFallback"].Value);
+            Assert.Equal(false, result.Properties["QualifiedGlobal"].Value);
+        }
+
+        [Fact]
+        public void RemotingConsumerResolvesScopedAndExplicitNamesWithoutTransport()
+        {
+            var initialState = InitialSessionState.CreateDefault2();
+            initialState.Commands.Add(new SessionStateCmdletEntry(
+                "Get-ScopedRemotingProbe", typeof(ScopedRemotingProbeCmdlet), null));
+
+            using var runspace = RunspaceFactory.CreateRunspace(initialState);
+            runspace.Open();
+            using var shell = PowerShell.Create();
+            shell.Runspace = runspace;
+
+            string result;
+            if (ExperimentalFeature.PSScopedProperties)
+            {
+                shell.AddScript("""
+                    $global:PSSessionConfigurationName = 'GlobalConfiguration'
+                    $global:PSSessionApplicationName = 'GlobalApplication'
+                    & {
+                        $PS.Remoting.ConfigurationName = 'ScopedConfiguration'
+                        $PS.Remoting.ApplicationName = 'ScopedApplication'
+                        Get-ScopedRemotingProbe
+                    }
+                    """);
+                result = Assert.Single(shell.Invoke<string>());
+                Assert.Equal("ScopedConfiguration|ScopedApplication|ExplicitShell|ExplicitApp", result);
+            }
+            else
+            {
+                shell.AddScript("""
+                    $global:PSSessionConfigurationName = 'GlobalConfiguration'
+                    $global:PSSessionApplicationName = 'GlobalApplication'
+                    Get-ScopedRemotingProbe
+                    """);
+                result = Assert.Single(shell.Invoke<string>());
+                Assert.Equal("GlobalConfiguration|GlobalApplication|ExplicitShell|ExplicitApp", result);
+            }
+
+            Assert.Empty(shell.Streams.Error);
         }
 
         [Fact]

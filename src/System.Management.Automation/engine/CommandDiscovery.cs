@@ -1423,7 +1423,9 @@ namespace System.Management.Automation
             }
 
             // check the PSVariable
-            object result = context.GetVariableValue(variablePath);
+            object result = ExperimentalFeature.PSScopedProperties
+                ? context.GetVariableValue(new VariablePath(variablePath.UnqualifiedPath))
+                : context.GetVariableValue(variablePath);
 
             try
             {

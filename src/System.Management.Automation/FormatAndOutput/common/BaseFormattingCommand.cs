@@ -54,6 +54,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal static int FormatEnumerationLimit()
         {
+            if (ExperimentalFeature.PSScopedProperties
+                && LocalPipeline.GetExecutionContextFromTLS() is { } executionContext)
+            {
+                return executionContext.GetScopedConfigurationPreference(
+                    ScopedProperties.EnumerationLimitSetting,
+                    executionContext.EngineSessionState.CurrentScope);
+            }
+
             object enumLimitVal = null;
             try
             {

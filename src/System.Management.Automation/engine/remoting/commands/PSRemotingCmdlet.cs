@@ -240,7 +240,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                resolvedShell = (string)SessionState.Internal.ExecutionContext.GetVariableValue(
+                resolvedShell = (string)GetRemotingPreferenceValue(
                     SpecialVariables.PSSessionConfigurationNameVarPath, DefaultPowerShellRemoteShellName);
             }
 
@@ -265,7 +265,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                resolvedAppName = (string)SessionState.Internal.ExecutionContext.GetVariableValue(
+                resolvedAppName = (string)GetRemotingPreferenceValue(
                     SpecialVariables.PSSessionApplicationNameVarPath,
                     DefaultPowerShellRemoteShellAppName);
             }
@@ -274,6 +274,14 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion
+
+        private object GetRemotingPreferenceValue(VariablePath variablePath, object defaultValue)
+        {
+            System.Management.Automation.ExecutionContext context = SessionState.Internal.ExecutionContext;
+            return ExperimentalFeature.PSScopedProperties
+                ? context.GetVariableValue(new VariablePath(variablePath.UnqualifiedPath), defaultValue)
+                : context.GetVariableValue(variablePath, defaultValue);
+        }
     }
 
     /// <summary>

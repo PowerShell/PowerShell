@@ -8,8 +8,13 @@ using System.Management.Automation.Runspaces;
 
 namespace System.Management.Automation;
 
+/// <summary>Marks a scoped property facade or group whose getter errors must propagate through dynamic binding.</summary>
+internal interface IScopedPropertyContainer
+{
+}
+
 /// <summary>Provides typed access to scoped PowerShell engine settings.</summary>
-public sealed class PSScopedPropertyFacade
+public sealed partial class PSScopedPropertyFacade : IScopedPropertyContainer
 {
     private readonly WeakReference<ExecutionContext> _owner;
     private readonly WeakReference<SessionStateScope> _scope;
@@ -28,6 +33,15 @@ public sealed class PSScopedPropertyFacade
         _actionPreference = new(this);
         _shouldProcess = new(this);
         _style = new(this);
+        _formatting = new(this);
+        _nativeCommand = new(this);
+        _module = new(this);
+        _history = new(this);
+        _transcription = new(this);
+        _mail = new(this);
+        _help = new(this);
+        _logging = new(this);
+        _remoting = new(this);
     }
 
     /// <summary>Gets the action preference settings.</summary>
@@ -134,7 +148,7 @@ public sealed class PSScopedPropertyFacade
 }
 
 /// <summary>Provides scoped action preference settings.</summary>
-public sealed class PSScopedActionPreference
+public sealed class PSScopedActionPreference : IScopedPropertyContainer
 {
     private readonly PSScopedPropertyFacade _facade;
 
@@ -187,29 +201,14 @@ public sealed class PSScopedActionPreference
     public override string ToString() => SessionStateStrings.ScopedActionPreferenceDescription;
 
     private ActionPreference GetPreference(ScopedActionPreferenceSetting setting)
-    {
-        var (context, scope) = _facade.Resolve();
-        return context.GetScopedConfigurationPreference(setting, scope);
-    }
+        => _facade.GetConfiguration(setting);
 
     private void SetPreference(ScopedActionPreferenceSetting setting, ActionPreference value)
-    {
-        var (context, scope) = _facade.Resolve();
-        var state = context.EngineSessionState;
-        CommandOrigin origin = state.CurrentScope.ScopeOrigin;
-        if (ExperimentalFeature.PSScopedProperties)
-        {
-            scope.SetScopedSettingValue(setting, value, state, origin);
-        }
-        else
-        {
-            scope.SetVariable(setting.VariableName, value, asValue: true, force: false, state, origin);
-        }
-    }
+        => _facade.SetConfiguration(setting, value);
 }
 
 /// <summary>Provides scoped ShouldProcess settings.</summary>
-public sealed class PSScopedShouldProcess
+public sealed class PSScopedShouldProcess : IScopedPropertyContainer
 {
     private readonly PSScopedPropertyFacade _facade;
 
@@ -234,29 +233,14 @@ public sealed class PSScopedShouldProcess
     public override string ToString() => SessionStateStrings.ScopedShouldProcessDescription;
 
     private T GetSetting<T>(ScopedSetting<T> setting)
-    {
-        var (context, scope) = _facade.Resolve();
-        return context.GetScopedConfigurationPreference(setting, scope);
-    }
+        => _facade.GetConfiguration(setting);
 
     private void SetSetting<T>(ScopedSetting<T> setting, T value)
-    {
-        var (context, scope) = _facade.Resolve();
-        var state = context.EngineSessionState;
-        CommandOrigin origin = state.CurrentScope.ScopeOrigin;
-        if (ExperimentalFeature.PSScopedProperties)
-        {
-            scope.SetScopedSettingValue(setting, value, state, origin);
-        }
-        else
-        {
-            scope.SetVariable(setting.VariableName, value, asValue: true, force: false, state, origin);
-        }
-    }
+        => _facade.SetConfiguration(setting, value);
 }
 
 /// <summary>Provides scoped style settings.</summary>
-public sealed class PSScopedStyle
+public sealed class PSScopedStyle : IScopedPropertyContainer
 {
     private readonly PSScopedPropertyFacade _facade;
     private readonly PSScopedProgressStyle _progress;
@@ -283,7 +267,7 @@ public sealed class PSScopedStyle
 }
 
 /// <summary>Provides scoped progress rendering settings.</summary>
-public sealed class PSScopedProgressStyle
+public sealed class PSScopedProgressStyle : IScopedPropertyContainer
 {
     private readonly PSScopedPropertyFacade _facade;
 
@@ -321,15 +305,23 @@ internal abstract class ScopedSetting(string path, string variableName, Preferen
 
     internal PreferenceVariable? Index { get; } = index;
 
+    internal abstract object GetDefaultValue();
+
     internal abstract ScopedSettingEntry CreateEntry(object value);
 
     internal abstract ScopedSettingEntry CreateEntryFromVariable(PSVariable source);
 }
 
-internal class ScopedSetting<T>(string path, T defaultValue, string variableName = null, Action<T> validate = null, PreferenceVariable? index = null)
+internal class ScopedSetting<T>(string path, T defaultValue, string variableName = null, Action<T> validate = null, PreferenceVariable? index = null, Func<T> defaultFactory = null, bool preserveNull = false)
     : ScopedSetting(path, variableName, index)
 {
     internal T DefaultValue { get; } = defaultValue;
+
+    internal override object GetDefaultValue() => GetDefaultValueTyped();
+
+    internal T GetDefaultValueTyped() => defaultFactory is null ? DefaultValue : defaultFactory();
+
+    internal bool PreserveNull { get; } = preserveNull;
 
     internal override ScopedSettingEntry CreateEntry(object value) => new ScopedSettingEntry<T>(this, value);
 
@@ -340,6 +332,11 @@ internal class ScopedSetting<T>(string path, T defaultValue, string variableName
     /// </summary>
     internal T ConvertValue(object value)
     {
+        if (value is null && PreserveNull)
+        {
+            return default;
+        }
+
         T converted = LanguagePrimitives.ConvertTo<T>(value);
         validate?.Invoke(converted);
         return converted;
@@ -459,7 +456,7 @@ internal sealed class ScopedSettingEntry<T> : ScopedSettingEntry
     internal override void SetPreparedValue(object value) => Value = (T)value;
 }
 
-internal static class ScopedProperties
+internal static partial class ScopedProperties
 {
     internal static readonly ScopedSetting<ProgressView> ProgressViewSetting = new(
         "Style.Progress.View",
@@ -506,21 +503,26 @@ internal static class ScopedProperties
         SpecialVariables.WhatIfPreferenceVarPath.UnqualifiedPath,
         index: PreferenceVariable.WhatIf);
 
-    internal static IReadOnlyList<ScopedActionPreferenceSetting> PreferenceSettings { get; } =
-        Array.AsReadOnly<ScopedActionPreferenceSetting>(
+    internal static IReadOnlyList<ScopedActionPreferenceSetting> PreferenceSettings { get; }
+
+    internal static IReadOnlyList<ScopedSetting> ConfigurationSettings { get; }
+
+    internal static IReadOnlyList<ScopedSetting> TuplePreferenceSettings { get; }
+
+    private static readonly Dictionary<string, ScopedSetting> s_preferencesByName;
+
+    private static readonly Dictionary<string, ScopedSetting> s_settingsByPath;
+
+    static ScopedProperties()
+    {
+        PreferenceSettings = Array.AsReadOnly<ScopedActionPreferenceSetting>(
             [DebugPreferenceSetting, VerbosePreferenceSetting, ErrorPreferenceSetting, WarningPreferenceSetting, InformationPreferenceSetting, ProgressPreferenceSetting]);
-
-    internal static IReadOnlyList<ScopedSetting> ConfigurationSettings { get; } =
-        Array.AsReadOnly<ScopedSetting>(PreferenceSettings.Concat<ScopedSetting>([ConfirmPreferenceSetting, WhatIfPreferenceSetting]).ToArray());
-
-    internal static IReadOnlyList<ScopedSetting> TuplePreferenceSettings { get; } =
-        Array.AsReadOnly<ScopedSetting>(ConfigurationSettings.Where(static setting => setting.Index.HasValue).ToArray());
-
-    private static readonly Dictionary<string, ScopedSetting> s_preferencesByName =
-        ConfigurationSettings.ToDictionary(static setting => setting.VariableName, StringComparer.OrdinalIgnoreCase);
-
-    private static readonly Dictionary<string, ScopedSetting> s_settingsByPath =
-        ConfigurationSettings.Append(ProgressViewSetting).ToDictionary(static setting => setting.Path, StringComparer.OrdinalIgnoreCase);
+        ConfigurationSettings = Array.AsReadOnly<ScopedSetting>(
+            PreferenceSettings.Concat<ScopedSetting>([ConfirmPreferenceSetting, WhatIfPreferenceSetting]).Concat(ConfigurationSettingsCore).ToArray());
+        TuplePreferenceSettings = Array.AsReadOnly<ScopedSetting>(ConfigurationSettings.Where(static setting => setting.Index.HasValue).ToArray());
+        s_preferencesByName = ConfigurationSettings.ToDictionary(static setting => setting.VariableName, StringComparer.OrdinalIgnoreCase);
+        s_settingsByPath = ConfigurationSettings.Append(ProgressViewSetting).ToDictionary(static setting => setting.Path, StringComparer.OrdinalIgnoreCase);
+    }
 
     internal static bool IsLegacySetting(string name) => TryGetConfigurationSetting(name, out _);
 

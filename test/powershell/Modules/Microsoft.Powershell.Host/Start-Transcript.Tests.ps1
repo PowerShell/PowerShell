@@ -21,17 +21,17 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
 
             try {
                 #execute script
-                $ps = [powershell]::Create()
-                $ps.addscript($scriptToExecute).Invoke()
-                $ps.commands.clear()
+                $testShell = [powershell]::Create()
+                $testShell.addscript($scriptToExecute).Invoke()
+                $testShell.commands.clear()
 
                 if($expectedError) {
-                    $ps.hadErrors | Should -BeTrue
-                    $ps.Streams.Error.FullyQualifiedErrorId | Should -Be $expectedError
+                    $testShell.hadErrors | Should -BeTrue
+                    $testShell.Streams.Error.FullyQualifiedErrorId | Should -Be $expectedError
                 } else {
-                    $ps.addscript("Get-Date").Invoke()
-                    $ps.commands.clear()
-                    $ps.addscript("Stop-Transcript").Invoke()
+                    $testShell.addscript("Get-Date").Invoke()
+                    $testShell.commands.clear()
+                    $testShell.addscript("Stop-Transcript").Invoke()
 
                     Test-Path $outputFilePath | Should -BeTrue
                     $outputFilePath | Should -FileContentMatch "Get-Date"
@@ -40,8 +40,8 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
                     }
                 }
             } finally {
-                if ($null -ne $ps) {
-                    $ps.Dispose()
+                if ($null -ne $testShell) {
+                    $testShell.Dispose()
                 }
             }
         }
@@ -136,16 +136,16 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
     }
     It "Transcription should remain active if other runspace in the host get closed" {
         try {
-            $ps = [powershell]::Create()
-            $ps.addscript("Start-Transcript -path $transcriptFilePath").Invoke()
-            $ps.addscript('$rs = [system.management.automation.runspaces.runspacefactory]::CreateRunspace()').Invoke()
-            $ps.addscript('$rs.open()').Invoke()
-            $ps.addscript('$rs.Dispose()').Invoke()
-            $ps.addscript('Write-Host "After Dispose"').Invoke()
-            $ps.addscript("Stop-Transcript").Invoke()
+            $testShell = [powershell]::Create()
+            $testShell.addscript("Start-Transcript -path $transcriptFilePath").Invoke()
+            $testShell.addscript('$rs = [system.management.automation.runspaces.runspacefactory]::CreateRunspace()').Invoke()
+            $testShell.addscript('$rs.open()').Invoke()
+            $testShell.addscript('$rs.Dispose()').Invoke()
+            $testShell.addscript('Write-Host "After Dispose"').Invoke()
+            $testShell.addscript("Stop-Transcript").Invoke()
         } finally {
-            if ($null -ne $ps) {
-                $ps.Dispose()
+            if ($null -ne $testShell) {
+                $testShell.Dispose()
             }
         }
 

@@ -69,7 +69,7 @@ Describe "Format-Table" -Tags "CI" {
                 $resultStr | Should -Match "test\s+{...}"
         }
 
-        It "Format-Table with Less Count should work" {
+        It "Format-Table with Less Count should work" -Skip:([ExperimentalFeature]::IsEnabled('PSScopedProperties')) {
                 $FormatEnumerationLimit = 1
                 $result = Format-Table -InputObject @{'test'= 1, 2}
                 $resultStr = $result | Out-String
@@ -251,15 +251,15 @@ Describe "Format-Table" -Tags "CI" {
             $ps1xmlPath = Join-Path -Path $TestDrive -ChildPath "alignment.format.ps1xml"
             Set-Content -Path $ps1xmlPath -Value $ps1xml
             # run in own runspace so not affect global sessionstate
-            $ps = [powershell]::Create()
-            $ps.AddScript( {
+            $testShell = [powershell]::Create()
+            $testShell.AddScript( {
                 param($ps1xmlPath)
                 Update-FormatData -AppendPath $ps1xmlPath
                 $a = [PSCustomObject]@{Left=1;Center=2;Right=3}
                 $a.PSObject.TypeNames.Insert(0,"Test.Format")
                 $a | Out-String
             } ).AddArgument($ps1xmlPath) | Out-Null
-            $output = $ps.Invoke()
+            $output = $testShell.Invoke()
 
             $expectedTable = @"
 
@@ -339,14 +339,14 @@ Left Center Right
             $ps1xmlPath = Join-Path -Path $TestDrive -ChildPath "truncation.format.ps1xml"
             Set-Content -Path $ps1xmlPath -Value $ps1xml
             # run in own runspace so not affect global sessionstate
-            $ps = [powershell]::Create()
-            $ps.AddScript( {
+            $testShell = [powershell]::Create()
+            $testShell.AddScript( {
                 param($ps1xmlPath,$view,$object)
                 Update-FormatData -AppendPath $ps1xmlPath
                 $object.PSObject.TypeNames.Insert(0,"Test.Format")
                 $object | Format-Table -View $view | Out-String
             } ).AddArgument($ps1xmlPath).AddArgument($view).AddArgument($object) | Out-Null
-            $output = $ps.Invoke()
+            $output = $testShell.Invoke()
             $output.Replace("`n","").Replace("`r","") | Should -BeExactly $expected
         }
 
@@ -475,20 +475,20 @@ er
             $ps1xmlPath = Join-Path -Path $TestDrive -ChildPath "span.format.ps1xml"
             Set-Content -Path $ps1xmlPath -Value $ps1xml
             # run in own runspace so not affect global sessionstate
-            $ps = [powershell]::Create()
-            $ps.AddScript( {
+            $testShell = [powershell]::Create()
+            $testShell.AddScript( {
                 param($ps1xmlPath, $view)
                 Update-FormatData -AppendPath $ps1xmlPath
                 $a = [PSCustomObject]@{First=1;Second=2;Third=3}
                 $a.PSObject.TypeNames.Insert(0,"Test.Format")
                 $a | Format-Table -View $view | Out-String
             } ).AddArgument($ps1xmlPath).AddArgument($view) | Out-Null
-            $output = $ps.Invoke()
-            foreach ($e in $ps.Streams.Error)
+            $output = $testShell.Invoke()
+            foreach ($e in $testShell.Streams.Error)
             {
                 Write-Verbose $e.ToString() -Verbose
             }
-            $ps.HadErrors | Should -BeFalse
+            $testShell.HadErrors | Should -BeFalse
             $output.Replace("`r","").Replace(" ",".").Replace("`n","^") | Should -BeExactly $expectedTable.Replace("`r","").Replace(" ",".").Replace("`n","^")
         }
 
@@ -672,19 +672,19 @@ er
             $ps1xmlPath = Join-Path -Path $TestDrive -ChildPath "render.format.ps1xml"
             Set-Content -Path $ps1xmlPath -Value $ps1xml
             # run in own runspace so not affect global sessionstate
-            $ps = [powershell]::Create()
-            $ps.AddScript( {
+            $testShell = [powershell]::Create()
+            $testShell.AddScript( {
                 param($ps1xmlPath, $view, $values, $wrap)
                 Update-FormatData -AppendPath $ps1xmlPath
                 $values.PSObject.TypeNames.Insert(0,"Test.Format")
                 $values | Format-Table -View $view -Wrap:$wrap | Out-String
             } ).AddArgument($ps1xmlPath).AddArgument($view).AddArgument($values).AddArgument($wrap) | Out-Null
-            $output = $ps.Invoke()
-            foreach ($e in $ps.Streams.Error)
+            $output = $testShell.Invoke()
+            foreach ($e in $testShell.Streams.Error)
             {
                 Write-Verbose $e.ToString() -Verbose
             }
-            $ps.HadErrors | Should -BeFalse
+            $testShell.HadErrors | Should -BeFalse
             $output.Replace("`r","").Replace(" ","*").Replace("`n","^") | Should -BeExactly $expectedTable.Replace("`r","").Replace(" ",".").Replace("`n","^")
         }
 
@@ -915,14 +915,14 @@ A Name                                  B
             Set-Content -Path $ps1xmlPath -Value $ps1xml
             $object = [pscustomobject]@{Prop = '123'}
             # run in own runspace so not affect global sessionstate
-            $ps = [powershell]::Create()
-            $ps.AddScript( {
+            $testShell = [powershell]::Create()
+            $testShell.AddScript( {
                 param($ps1xmlPath, $object)
                 Update-FormatData -AppendPath $ps1xmlPath
                 $object.PSObject.TypeNames.Insert(0, 'Test.Format')
                 $object | Format-Table | Out-String
             } ).AddArgument($ps1xmlPath).AddArgument($object) | Out-Null
-            $output = $ps.Invoke()
+            $output = $testShell.Invoke()
             $expected = @"
 Prop----123
 "@

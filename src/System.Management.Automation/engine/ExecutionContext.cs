@@ -496,6 +496,11 @@ namespace System.Management.Automation
         /// </summary>
         internal object GetVariableValue(VariablePath path)
         {
+            if (path.IsUnscopedVariable && ScopedProperties.TryGetConfigurationSetting(path.UnqualifiedPath, out var setting))
+            {
+                return EngineSessionState.CurrentScope.GetScopedSettingValue(setting, out _, EngineSessionState.CurrentScope.ScopeOrigin);
+            }
+
             CmdletProviderContext context;
             SessionStateScope scope;
             return EngineSessionState.GetVariableValue(path, out context, out scope);
@@ -507,7 +512,10 @@ namespace System.Management.Automation
         /// </summary>
         internal object GetVariableValue(VariablePath path, object defaultValue)
         {
-            return EngineSessionState.GetVariableValue(path, out _, out _) ?? defaultValue;
+            object value = path.IsUnscopedVariable && ScopedProperties.TryGetConfigurationSetting(path.UnqualifiedPath, out var setting)
+                ? EngineSessionState.CurrentScope.GetScopedSettingValue(setting, out _, EngineSessionState.CurrentScope.ScopeOrigin)
+                : EngineSessionState.GetVariableValue(path, out _, out _);
+            return value ?? defaultValue;
         }
 
         /// <summary>
@@ -520,7 +528,8 @@ namespace System.Management.Automation
 
         internal T GetEnumPreference<T>(VariablePath preferenceVariablePath, T defaultPref, out bool defaultUsed, SessionStateScope startingScope = null)
         {
-            if (ScopedProperties.TryGetConfigurationSetting(preferenceVariablePath.UnqualifiedPath, out var descriptor)
+            if (preferenceVariablePath.IsUnscopedVariable
+                && ScopedProperties.TryGetConfigurationSetting(preferenceVariablePath.UnqualifiedPath, out var descriptor)
                 && descriptor is ScopedSetting<T> setting)
             {
                 var scope = startingScope ?? EngineSessionState.CurrentScope;
@@ -609,7 +618,8 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal bool GetBooleanPreference(VariablePath preferenceVariablePath, bool defaultPref, out bool defaultUsed, SessionStateScope startingScope = null)
         {
-            if (ScopedProperties.TryGetConfigurationSetting(preferenceVariablePath.UnqualifiedPath, out var descriptor)
+            if (preferenceVariablePath.IsUnscopedVariable
+                && ScopedProperties.TryGetConfigurationSetting(preferenceVariablePath.UnqualifiedPath, out var descriptor)
                 && descriptor is ScopedSetting<bool> setting)
             {
                 return (startingScope ?? EngineSessionState.CurrentScope).GetScopedSettingValue(setting, out defaultUsed, EngineSessionState.CurrentScope.ScopeOrigin);
@@ -637,21 +647,32 @@ namespace System.Management.Automation
 
             if (typeof(T).IsEnum)
             {
-                return GetEnumPreference(new VariablePath(setting.VariableName), setting.DefaultValue, out _, startingScope);
+                return GetEnumPreference(new VariablePath(setting.VariableName), setting.GetDefaultValueTyped(), out _, startingScope);
             }
 
             if (typeof(T) == typeof(bool))
             {
-                return (T)(object)GetBooleanPreference(new VariablePath(setting.VariableName), (bool)(object)setting.DefaultValue, out _, startingScope);
+                return (T)(object)GetBooleanPreference(new VariablePath(setting.VariableName), (bool)(object)setting.GetDefaultValueTyped(), out _, startingScope);
             }
 
             VariablePath variablePath = new(setting.VariableName);
-            object value = startingScope is null
-                ? EngineSessionState.GetVariableValue(variablePath, out _, out _)
-                : EngineSessionState.GetVariableItem(variablePath, out _, CommandOrigin.Internal, startingScope)?.Value;
+            PSVariable variable = startingScope is null
+                ? EngineSessionState.GetVariableItem(variablePath, out _, CommandOrigin.Internal)
+                : EngineSessionState.GetVariableItem(variablePath, out _, CommandOrigin.Internal, startingScope);
+            if (variable is null)
+            {
+                return setting.GetDefaultValueTyped();
+            }
+
+            object value = variable.Value;
+            if (value is null && setting.PreserveNull)
+            {
+                return default;
+            }
+
             if (value is null)
             {
-                return setting.DefaultValue;
+                return setting.GetDefaultValueTyped();
             }
 
             return setting.ConvertValue(value);

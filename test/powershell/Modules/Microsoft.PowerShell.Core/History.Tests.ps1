@@ -5,43 +5,43 @@ Describe "History cmdlet test cases" -Tags "CI" {
         BeforeEach {
             $setting = [system.management.automation.psinvocationsettings]::New()
             $setting.AddToHistory = $true
-            $ps = [PowerShell]::Create("NewRunspace")
+            $testShell = [PowerShell]::Create("NewRunspace")
             # we need to be sure that history is added, so use the proper
             # Invoke variant
-            $null = $ps.addcommand("Get-Date").Invoke($null, $setting)
-            $ps.commands.clear()
-            $null = $ps.addscript("1+1").Invoke($null, $setting)
-            $ps.commands.clear()
-            $null = $ps.addcommand("Get-Location").Invoke($null, $setting)
-            $ps.commands.clear()
+            $null = $testShell.addcommand("Get-Date").Invoke($null, $setting)
+            $testShell.commands.clear()
+            $null = $testShell.addscript("1+1").Invoke($null, $setting)
+            $testShell.commands.clear()
+            $null = $testShell.addcommand("Get-Location").Invoke($null, $setting)
+            $testShell.commands.clear()
         }
         AfterEach {
-            $ps.Dispose()
+            $testShell.Dispose()
         }
         It "Get-History returns proper history" {
             # for this case, we'll *not* add to history
-            $result = $ps.AddCommand("Get-History").Invoke()
+            $result = $testShell.AddCommand("Get-History").Invoke()
             $result.Count | Should -Be 3
             $result[0].CommandLine | Should -BeExactly "Get-Date"
             $result[1].CommandLine | Should -Be "1+1"
             $result[2].CommandLine | Should -BeExactly "Get-Location"
         }
         It "Invoke-History invokes proper command" {
-            $result = $ps.AddScript("Invoke-History 2").Invoke()
+            $result = $testShell.AddScript("Invoke-History 2").Invoke()
             $result | Should -Be 2
         }
         It "Clear-History removes history" {
-            $ps.AddCommand("Clear-History").Invoke()
-            $ps.commands.clear()
-            $result = $ps.AddCommand("Get-History").Invoke()
+            $testShell.AddCommand("Clear-History").Invoke()
+            $testShell.commands.clear()
+            $result = $testShell.AddCommand("Get-History").Invoke()
             $result | Should -BeNullOrEmpty
         }
         It "Add-History actually adds to history" {
             # add this invocation to history
-            $ps.AddScript("Get-History|Add-History").Invoke($null, $setting)
+            $testShell.AddScript("Get-History|Add-History").Invoke($null, $setting)
             # that's 4 history lines * 2
-            $ps.Commands.Clear()
-            $result = $ps.AddCommand("Get-History").Invoke()
+            $testShell.Commands.Clear()
+            $result = $testShell.AddCommand("Get-History").Invoke()
             $result.Count | Should -Be 8
             for ($i = 0; $i -lt 4; $i++) {
                 $result[$i + 4].CommandLine | Should -BeExactly $result[$i].CommandLine
@@ -124,22 +124,22 @@ Describe "History cmdlet test cases" -Tags "CI" {
 
         $invocationSettings = New-Object System.Management.Automation.PSInvocationSettings
         $invocationSettings.AddToHistory = $true
-        $ps = [PowerShell]::Create()
-        $null = $ps.AddScript($streamSpammer).Invoke()
-        $ps.Commands.Clear()
-        $null = $ps.AddScript("StreamSpammer");
-        $null = $ps.Invoke($null, $invocationSettings)
-        $ps.Commands.Clear()
-        $null = $ps.AddScript("Invoke-History -id 1")
-        $result = $ps.Invoke($null, $invocationSettings)
+        $testShell = [PowerShell]::Create()
+        $null = $testShell.AddScript($streamSpammer).Invoke()
+        $testShell.Commands.Clear()
+        $null = $testShell.AddScript("StreamSpammer");
+        $null = $testShell.Invoke($null, $invocationSettings)
+        $testShell.Commands.Clear()
+        $null = $testShell.AddScript("Invoke-History -id 1")
+        $result = $testShell.Invoke($null, $invocationSettings)
         $outputCount = $(
-            $ps.Streams.Error;
-            $ps.Streams.Progress;
-            $ps.Streams.Verbose;
-            $ps.Streams.Debug;
-            $ps.Streams.Warning;
-            $ps.Streams.Information).Count
-        $ps.Dispose()
+            $testShell.Streams.Error;
+            $testShell.Streams.Progress;
+            $testShell.Streams.Verbose;
+            $testShell.Streams.Debug;
+            $testShell.Streams.Warning;
+            $testShell.Streams.Information).Count
+        $testShell.Dispose()
 
         ## Twice per stream - once for the original invocation, and once for the re-invocation
         $outputCount | Should -Be 12
@@ -149,16 +149,16 @@ Describe "History cmdlet test cases" -Tags "CI" {
 
         $invocationSettings = New-Object System.Management.Automation.PSInvocationSettings
         $invocationSettings.AddToHistory = $true
-        $ps = [PowerShell]::Create()
-        $null = $ps.AddScript("(Get-Command Get-Process).Visibility = 'Private'").Invoke()
-        $ps.Commands.Clear()
-        $null = $ps.AddScript("Get-Process -id $PID")
-        $null = $ps.Invoke($null, $invocationSettings)
-        $ps.Commands.Clear()
-        $null = $ps.AddScript("Invoke-History -id 1")
-        $result = $ps.Invoke($null, $invocationSettings)
-        $errorResult = $ps.Streams.Error[0].FullyQualifiedErrorId
-        $ps.Dispose()
+        $testShell = [PowerShell]::Create()
+        $null = $testShell.AddScript("(Get-Command Get-Process).Visibility = 'Private'").Invoke()
+        $testShell.Commands.Clear()
+        $null = $testShell.AddScript("Get-Process -id $PID")
+        $null = $testShell.Invoke($null, $invocationSettings)
+        $testShell.Commands.Clear()
+        $null = $testShell.AddScript("Invoke-History -id 1")
+        $result = $testShell.Invoke($null, $invocationSettings)
+        $errorResult = $testShell.Streams.Error[0].FullyQualifiedErrorId
+        $testShell.Dispose()
 
         $errorResult | Should -BeExactly 'CommandNotFoundException'
     }
@@ -185,16 +185,16 @@ Describe "History cmdlet test cases" -Tags "CI" {
 "1","Invoke-History","Completed","7/16/2020 4:33:43 PM","7/16/2020 4:33:43 PM","00:00:00.0724719"
 '@
         try {
-            $ps = [PowerShell]::Create()
-            $ps.AddScript("Import-Csv $TestDrive/history.csv | Add-History").Invoke() > $null
-            $ps.Commands.Clear()
-            $ps.AddCommand("Invoke-History").Invoke() > $null
+            $testShell = [PowerShell]::Create()
+            $testShell.AddScript("Import-Csv $TestDrive/history.csv | Add-History").Invoke() > $null
+            $testShell.Commands.Clear()
+            $testShell.AddCommand("Invoke-History").Invoke() > $null
 
-            $ps.Streams.Error.Count | Should -BeExactly 1
-            $ps.Streams.Error[0].FullyQualifiedErrorId | Should -BeExactly 'InvokeHistoryLoopDetected,Microsoft.PowerShell.Commands.InvokeHistoryCommand'
+            $testShell.Streams.Error.Count | Should -BeExactly 1
+            $testShell.Streams.Error[0].FullyQualifiedErrorId | Should -BeExactly 'InvokeHistoryLoopDetected,Microsoft.PowerShell.Commands.InvokeHistoryCommand'
         }
         finally {
-            $ps.Dispose()
+            $testShell.Dispose()
         }
     }
 
@@ -206,16 +206,16 @@ Describe "History cmdlet test cases" -Tags "CI" {
 "2","tt 1","Completed","7/16/2020 9:54:50 PM","7/16/2020 9:54:50 PM","00:00:00.1687306"
 '@
         try {
-            $ps = [PowerShell]::Create()
-            $ps.AddScript("Import-Csv $TestDrive/history.csv | Add-History; Set-Alias -Name tt -Value Invoke-History").Invoke() > $null
-            $ps.Commands.Clear()
-            $ps.AddCommand("Invoke-History").Invoke() > $null
+            $testShell = [PowerShell]::Create()
+            $testShell.AddScript("Import-Csv $TestDrive/history.csv | Add-History; Set-Alias -Name tt -Value Invoke-History").Invoke() > $null
+            $testShell.Commands.Clear()
+            $testShell.AddCommand("Invoke-History").Invoke() > $null
 
-            $ps.Streams.Error.Count | Should -BeExactly 1
-            $ps.Streams.Error[0].FullyQualifiedErrorId | Should -BeExactly 'InvokeHistoryLoopDetected,Microsoft.PowerShell.Commands.InvokeHistoryCommand'
+            $testShell.Streams.Error.Count | Should -BeExactly 1
+            $testShell.Streams.Error[0].FullyQualifiedErrorId | Should -BeExactly 'InvokeHistoryLoopDetected,Microsoft.PowerShell.Commands.InvokeHistoryCommand'
         }
         finally {
-            $ps.Dispose()
+            $testShell.Dispose()
         }
     }
 }

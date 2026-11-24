@@ -5318,7 +5318,7 @@ namespace System.Management.Automation.Language
                                     expr = Expression.Property(targetExpr, propertyAccessor);
 
                                     // Scoped settings must report invalid scope access and preference errors to callers.
-                                    isScopedPropertyGetter = targetValue is PSScopedPropertyFacade or PSScopedActionPreference or PSScopedShouldProcess or PSScopedStyle or PSScopedProgressStyle;
+                                    isScopedPropertyGetter = targetValue is IScopedPropertyContainer;
                                 }
                             }
                             else

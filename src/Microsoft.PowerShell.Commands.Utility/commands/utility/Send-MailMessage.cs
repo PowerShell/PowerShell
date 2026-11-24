@@ -285,11 +285,20 @@ namespace Microsoft.PowerShell.Commands
 
             // Get the PowerShell environment variable
             // globalEmailServer might be null if it is deleted by: PS> del variable:PSEmailServer
-            PSVariable globalEmailServer = SessionState.Internal.GetVariable(SpecialVariables.PSEmailServer);
-
-            if (SmtpServer == null && globalEmailServer != null)
+            object globalEmailServerValue;
+            if (ExperimentalFeature.PSScopedProperties)
             {
-                SmtpServer = Convert.ToString(globalEmailServer.Value, CultureInfo.InvariantCulture);
+                globalEmailServerValue = SessionState.Internal.ExecutionContext.GetVariableValue(new VariablePath(SpecialVariables.PSEmailServer));
+            }
+            else
+            {
+                PSVariable globalEmailServer = SessionState.Internal.GetVariable(SpecialVariables.PSEmailServer);
+                globalEmailServerValue = globalEmailServer?.Value;
+            }
+
+            if (SmtpServer == null && globalEmailServerValue != null)
+            {
+                SmtpServer = Convert.ToString(globalEmailServerValue, CultureInfo.InvariantCulture);
             }
 
             if (string.IsNullOrEmpty(SmtpServer))

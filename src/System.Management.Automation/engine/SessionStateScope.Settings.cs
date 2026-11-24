@@ -10,6 +10,9 @@ internal sealed partial class SessionStateScope
     /// Private variables in ancestor scopes are skipped. The descriptor default applies when no binding is found.
     /// </summary>
     internal T GetScopedSettingValue<T>(ScopedSetting<T> setting, out bool defaultUsed, CommandOrigin origin = CommandOrigin.Internal)
+        => (T)GetScopedSettingValue((ScopedSetting)setting, out defaultUsed, origin);
+
+    internal object GetScopedSettingValue(ScopedSetting setting, out bool defaultUsed, CommandOrigin origin = CommandOrigin.Internal)
     {
         for (SessionStateScope scope = this; scope is not null; scope = scope.Parent)
         {
@@ -18,18 +21,18 @@ internal sealed partial class SessionStateScope
                 if (scope.GetScopedSetting(setting) is { } entry)
                 {
                     defaultUsed = false;
-                    return entry.Value;
+                    return entry.GetValueRaw();
                 }
             }
             else if (scope.GetScopedSettingVariable(setting, origin) is { } variable && (scope == this || !variable.IsPrivate))
             {
                 defaultUsed = false;
-                return (T)variable.Value;
+                return variable.Value;
             }
         }
 
         defaultUsed = true;
-        return setting.DefaultValue;
+        return setting.GetDefaultValue();
     }
 
     internal T GetScopedSettingValue<T>(ScopedSetting<T> setting) => GetScopedSettingValue(setting, out _);

@@ -51,7 +51,7 @@ Describe 'Native command error handling tests' -Tags 'CI' {
             $stderr[1].Exception.Message | Should -BeExactly ("Program `"$exeName`" ended with non-zero exit code: 1 ({0})." -f ($IsWindows ? '0x00000001' : '0x01'))
         }
 
-        It "Non-boolean value should not cause type casting error when the native command exited with non-zero code" {
+        It "Non-boolean value should not cause type casting error when the native command exited with non-zero code" -Skip:([ExperimentalFeature]::IsEnabled('PSScopedProperties')) {
             $ErrorActionPreference = 'Continue'
 
             $PSNativeCommandUseErrorActionPreference = 'Yeah'
@@ -183,7 +183,7 @@ Describe 'Native command error handling tests' -Tags 'CI' {
             $Error.Count | Should -Be 0
         }
 
-        It "Non-boolean value should not cause type casting error when the native command exited with non-zero code" {
+        It "Non-boolean value should not cause type casting error when the native command exited with non-zero code" -Skip:([ExperimentalFeature]::IsEnabled('PSScopedProperties')) {
             $ErrorActionPreference = 'Continue'
 
             $PSNativeCommandUseErrorActionPreference = 0

@@ -42,6 +42,31 @@ Describe 'PSScopedProperties in an enabled test host' -Tag 'CI' {
         $WhatIfPreference | Should -BeFalse
     }
 
+    It 'normalizes native command error preference values to bool and controls non-zero child exits' {
+        $nativeCommand = Join-Path $PSHOME $(if ($IsWindows) { 'pwsh.exe' } else { 'pwsh' })
+        $PS.NativeCommand.UseErrorActionPreference = 'Yeah'
+        $PS.NativeCommand.UseErrorActionPreference | Should -BeOfType ([bool])
+        $PS.NativeCommand.UseErrorActionPreference | Should -BeTrue
+
+        $ErrorActionPreference = 'Stop'
+        $nativeError = try {
+            & $nativeCommand -NoLogo -NoProfile -Command 'exit 7'
+            $null
+        }
+        catch {
+            $_
+        }
+        $nativeError | Should -Not -BeNullOrEmpty
+        $nativeError.FullyQualifiedErrorId | Should -Be 'ProgramExitedWithNonZeroCode'
+
+        $PS.NativeCommand.UseErrorActionPreference = 0
+        $PS.NativeCommand.UseErrorActionPreference | Should -BeOfType ([bool])
+        $PS.NativeCommand.UseErrorActionPreference | Should -BeFalse
+        $ErrorActionPreference = 'Continue'
+        & $nativeCommand -NoLogo -NoProfile -Command 'exit 7'
+        $LASTEXITCODE | Should -Be 7
+    }
+
     It 'exposes the typed <PreferenceName> default in a fresh runspace' -TestCases $preferenceCases {
         param($PreferenceName, $VariableName, $DefaultPreference)
 

@@ -679,6 +679,36 @@
   <data name="ScopedShouldProcessDescription" xml:space="preserve">
     <value>Scoped confirmation threshold and WhatIf settings.</value>
   </data>
+  <data name="ScopedFormattingDescription" xml:space="preserve">
+    <value>Scoped error display and formatting settings.</value>
+  </data>
+  <data name="ScopedNativeCommandDescription" xml:space="preserve">
+    <value>Scoped settings for native command invocation and output handling.</value>
+  </data>
+  <data name="ScopedNativeCommandEncodingDescription" xml:space="preserve">
+    <value>Scoped text encodings for native process input and output.</value>
+  </data>
+  <data name="ScopedModuleDescription" xml:space="preserve">
+    <value>Scoped module auto-loading settings.</value>
+  </data>
+  <data name="ScopedHistoryDescription" xml:space="preserve">
+    <value>Scoped command history settings.</value>
+  </data>
+  <data name="ScopedTranscriptionDescription" xml:space="preserve">
+    <value>Scoped transcript path settings.</value>
+  </data>
+  <data name="ScopedMailDescription" xml:space="preserve">
+    <value>Scoped mail server settings.</value>
+  </data>
+  <data name="ScopedHelpDescription" xml:space="preserve">
+    <value>Scoped help display settings.</value>
+  </data>
+  <data name="ScopedLoggingDescription" xml:space="preserve">
+    <value>Scoped event logging and user data settings.</value>
+  </data>
+  <data name="ScopedRemotingDescription" xml:space="preserve">
+    <value>Scoped remoting configuration and application name settings.</value>
+  </data>
   <data name="ScopedStyleDescription" xml:space="preserve">
     <value>Scoped settings for output styling.</value>
   </data>

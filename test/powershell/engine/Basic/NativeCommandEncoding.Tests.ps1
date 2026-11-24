@@ -53,10 +53,10 @@ Describe 'Native command output encoding tests' -Tags 'CI' {
     }
 
     It 'Fails to set variable with invalid encoding object' {
-        $ps = [PowerShell]::Create()
-        $ps.AddScript('$PSApplicationOutputEncoding = "utf-8"').Invoke()
+        $testShell = [PowerShell]::Create()
+        $testShell.AddScript('$PSApplicationOutputEncoding = "utf-8"').Invoke()
 
-        $ps.Streams.Error.Count | Should -Be 1
-        [string]$ps.Streams.Error[0] | Should -Be 'Cannot convert the "utf-8" value of type "System.String" to type "System.Text.Encoding".'
+        $testShell.Streams.Error.Count | Should -Be 1
+        [string]$testShell.Streams.Error[0] | Should -Be 'Cannot convert the "utf-8" value of type "System.String" to type "System.Text.Encoding".'
     }
 }
