@@ -13,6 +13,8 @@ using System.Management.Automation.Runspaces;
 using System.Management.Automation.Tracing;
 using System.Runtime.InteropServices;
 
+using Microsoft.Win32;
+
 namespace System.Management.Automation.Security
 {
     /// <summary>
@@ -466,6 +468,177 @@ namespace System.Management.Automation.Security
         private const string AppLockerTestFileName = "__PSScriptPolicyTest_";
         private const string AppLockerTestFileContents = "# PowerShell test file to determine AppLocker lockdown mode ";
 
+        private const string AppLockerScriptPolicyKey = @"SOFTWARE\Policies\Microsoft\Windows\SrpV2\Script";
+        private const string SaferCodeIdentifiersKey = @"SOFTWARE\Policies\Microsoft\Windows\Safer\CodeIdentifiers";
+
+        // Windows can create the CodeIdentifiers key with only this value when no Software Restriction Policy is defined.
+        private const string SaferAuthenticodeEnabledValue = "AuthenticodeEnabled";
+
+        /// <summary>
+        /// Checks whether an AppLocker script policy or a Software Restriction Policy may be in effect.
+        /// Returns true when any of the locations exists or cannot be read.
+        /// </summary>
+        /// <returns>False only when no script policy is configured on the machine.</returns>
+        internal static bool HasAppLockerOrSaferScriptPolicy()
+        {
+            // A 32-bit process on 64-bit Windows sees a redirected system directory, so it cannot check the
+            // compiled policy file reliably. Keep the probe in that case.
+            if (Environment.Is64BitOperatingSystem && !Environment.Is64BitProcess)
+            {
+                return true;
+            }
+
+            // SAFER evaluates the user policy of the impersonated user, but Registry.CurrentUser can still map to the
+            // hive of the process user. Keep the check while the thread impersonates.
+            if (IsThreadImpersonating())
+            {
+                return true;
+            }
+
+            return HasAppLockerOrSaferScriptPolicy(
+                Registry.LocalMachine,
+                Registry.CurrentUser,
+                IO.Path.Combine(Environment.SystemDirectory, "AppLocker"));
+        }
+
+        /// <summary>
+        /// Returns true if the current thread impersonates a user, or if that cannot be determined.
+        /// </summary>
+        internal static bool IsThreadImpersonating()
+        {
+            try
+            {
+                using var identity = System.Security.Principal.WindowsIdentity.GetCurrent(ifImpersonating: true);
+                return identity is not null;
+            }
+            catch (Exception e) when (e is System.Security.SecurityException or UnauthorizedAccessException)
+            {
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// Checks whether an AppLocker script policy or a Software Restriction Policy may be in effect, given the
+        /// registry roots for machine and user policies and the AppLocker policy directory.
+        /// </summary>
+        /// <returns>False only when none of the policy locations exists. True if any of them exists or cannot be read.</returns>
+        internal static bool HasAppLockerOrSaferScriptPolicy(RegistryKey machineRoot, RegistryKey userRoot, string appLockerDirectory)
+        {
+            // AppLocker compiles the effective script rules (group policy, local policy or MDM) into Script.AppLocker.
+            // Policies from the AppLocker CSP are also kept under the MDM folder, so treat that folder as a policy too.
+            return PolicyFileMayExist(IO.Path.Combine(appLockerDirectory, "Script.AppLocker"))
+                || PolicyFileMayExist(IO.Path.Combine(appLockerDirectory, "MDM"))
+                || RegistryKeyMayExist(machineRoot, AppLockerScriptPolicyKey)
+                || !IsPolicyKeyEmpty(machineRoot, SaferCodeIdentifiersKey, SaferAuthenticodeEnabledValue)
+                || !IsPolicyKeyEmpty(userRoot, SaferCodeIdentifiersKey, SaferAuthenticodeEnabledValue);
+        }
+
+        /// <summary>
+        /// Checks whether PowerShell has to ask SAFER (Software Restriction Policies and AppLocker) about each script
+        /// file it loads. The policy locations are read on every call, so a policy applied while the process runs
+        /// is enforced for the files loaded after it.
+        /// </summary>
+        /// <returns>
+        /// False when the system lockdown policy is Enforce, or when no AppLocker script policy or Software Restriction
+        /// Policy exists.
+        /// </returns>
+        internal static bool IsSaferScriptCheckRequired()
+        {
+            return IsSaferScriptCheckRequired(GetSystemLockdownPolicy(), HasAppLockerOrSaferScriptPolicy);
+        }
+
+        /// <summary>
+        /// Checks whether script files need a SAFER check, given the system lockdown policy and a check for an
+        /// AppLocker script policy or Software Restriction Policy. The policy check runs only when it matters.
+        /// </summary>
+        internal static bool IsSaferScriptCheckRequired(SystemEnforcementMode systemLockdownPolicy, Func<bool> scriptPolicyMayExist)
+        {
+            // When the system policy is Enforce, scripts that are not allowed run in ConstrainedLanguage instead of
+            // being blocked, so SAFER is not consulted.
+            if (systemLockdownPolicy == SystemEnforcementMode.Enforce)
+            {
+                return false;
+            }
+
+            // Without an AppLocker script policy or a Software Restriction Policy, SAFER allows every script.
+            return scriptPolicyMayExist();
+        }
+
+        /// <summary>
+        /// Returns false only if the file or its directory does not exist.
+        /// </summary>
+        internal static bool PolicyFileMayExist(string path)
+        {
+            try
+            {
+                IO.File.GetAttributes(path);
+                return true;
+            }
+            catch (IO.FileNotFoundException)
+            {
+                return false;
+            }
+            catch (IO.DirectoryNotFoundException)
+            {
+                return false;
+            }
+            catch (Exception e) when (e is IO.IOException or UnauthorizedAccessException)
+            {
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// Returns false only if the registry key does not exist.
+        /// </summary>
+        internal static bool RegistryKeyMayExist(RegistryKey root, string subKeyPath)
+        {
+            try
+            {
+                using RegistryKey key = root.OpenSubKey(subKeyPath);
+                return key is not null;
+            }
+            catch (Exception e) when (e is System.Security.SecurityException or UnauthorizedAccessException or IO.IOException)
+            {
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// Returns true if the registry key does not exist, or has no subkeys and no values other than
+        /// <paramref name="ignoredValueName"/>. Returns false if the key cannot be read.
+        /// </summary>
+        internal static bool IsPolicyKeyEmpty(RegistryKey root, string subKeyPath, string ignoredValueName)
+        {
+            try
+            {
+                using RegistryKey key = root.OpenSubKey(subKeyPath);
+                if (key is null)
+                {
+                    return true;
+                }
+
+                if (key.SubKeyCount > 0)
+                {
+                    return false;
+                }
+
+                foreach (string valueName in key.GetValueNames())
+                {
+                    if (!string.Equals(valueName, ignoredValueName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception e) when (e is System.Security.SecurityException or UnauthorizedAccessException or IO.IOException)
+            {
+                return false;
+            }
+        }
+
         private static SystemEnforcementMode GetAppLockerPolicy(string path, SafeHandle handle)
         {
             SaferPolicy result = SaferPolicy.Disallowed;
@@ -479,6 +652,13 @@ namespace System.Management.Automation.Security
                 if ((s_cachedSaferSystemPolicy != null) && (!InternalTestHooks.BypassAppLockerPolicyCaching))
                 {
                     result = s_cachedSaferSystemPolicy.Value;
+                }
+                else if (!HasAppLockerOrSaferScriptPolicy())
+                {
+                    // Neither AppLocker nor Software Restriction Policies have a script policy on this machine,
+                    // so the test files below would be allowed. Skip writing and checking them.
+                    result = SaferPolicy.Allowed;
+                    s_cachedSaferSystemPolicy = result;
                 }
                 else
                 {
