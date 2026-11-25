@@ -283,22 +283,14 @@ namespace Microsoft.PowerShell.Commands
             // Set the priority of the mail message to normal
             _mMailMessage.Priority = Priority;
 
-            // Get the PowerShell environment variable
-            // globalEmailServer might be null if it is deleted by: PS> del variable:PSEmailServer
-            object globalEmailServerValue;
-            if (ExperimentalFeature.PSScopedProperties)
-            {
-                globalEmailServerValue = SessionState.Internal.ExecutionContext.GetVariableValue(new VariablePath(SpecialVariables.PSEmailServer));
-            }
-            else
-            {
-                PSVariable globalEmailServer = SessionState.Internal.GetVariable(SpecialVariables.PSEmailServer);
-                globalEmailServerValue = globalEmailServer?.Value;
-            }
+            // Get the PowerShell variable, which may be missing.
+            object emailServerValue = ExperimentalFeature.PSScopedProperties
+                ? SessionState.Internal.ExecutionContext.GetVariableValue(new VariablePath(SpecialVariables.PSEmailServer))
+                : SessionState.Internal.GetVariable(SpecialVariables.PSEmailServer)?.Value;
 
-            if (SmtpServer == null && globalEmailServerValue != null)
+            if (SmtpServer == null && emailServerValue != null)
             {
-                SmtpServer = Convert.ToString(globalEmailServerValue, CultureInfo.InvariantCulture);
+                SmtpServer = Convert.ToString(emailServerValue, CultureInfo.InvariantCulture);
             }
 
             if (string.IsNullOrEmpty(SmtpServer))
