@@ -94,6 +94,7 @@
       -->
       <Version>$(PSCoreFileVersion)</Version>
       <InformationalVersion>$(PSCoreFormattedVersion)</InformationalVersion>
+      <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
       <ProductVersion>$(PSCoreFormattedVersion)</ProductVersion>
 
       <!--
