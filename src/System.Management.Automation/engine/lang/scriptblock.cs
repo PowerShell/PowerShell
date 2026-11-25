@@ -1115,6 +1115,16 @@ namespace System.Management.Automation
         public void Begin(bool expectInput) => Begin(expectInput, commandRuntime: (ICommandRuntime)null);
 
         /// <summary>
+        /// Begin execution with success output sent to the specified pipe instead of
+        /// returned by Process and End.
+        /// </summary>
+        internal void Begin(bool expectInput, Pipe outputPipe)
+        {
+            _pipeline.LinkPipelineSuccessOutput(outputPipe);
+            Begin(expectInput);
+        }
+
+        /// <summary>
         /// Begin execution of a steppable pipeline, using the command running currently in the specified context to figure
         /// out how to route the output and errors.
         /// </summary>
