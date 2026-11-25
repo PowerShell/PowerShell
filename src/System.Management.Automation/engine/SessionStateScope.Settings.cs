@@ -32,10 +32,80 @@ internal sealed partial class SessionStateScope
         }
 
         defaultUsed = true;
-        return setting.GetDefaultValue();
+        return setting.GetDefaultExposedValue();
     }
 
     internal T GetScopedSettingValue<T>(ScopedSetting<T> setting) => GetScopedSettingValue(setting, out _);
+
+    /// <summary>Resolves the raw mutable backing value without exposing its scope-aware view.</summary>
+    internal T GetScopedMutableSettingValue<T>(ScopedMutableSetting<T> setting, out bool defaultUsed, CommandOrigin origin = CommandOrigin.Internal)
+        where T : class
+    {
+        for (SessionStateScope scope = this; scope is not null; scope = scope.Parent)
+        {
+            if (scope.GetScopedSettingVariable(setting, origin) is { } variable
+                && (scope == this || !variable.IsPrivate))
+            {
+                defaultUsed = false;
+                return (T)(variable is ScopedSettingVariable scopedVariable
+                    ? scopedVariable.GetValueBackingRaw()
+                    : variable.Value);
+            }
+        }
+
+        defaultUsed = true;
+        return (T)setting.GetDefaultValue();
+    }
+
+    /// <summary>Creates an engine-owned view anchored to this caller scope.</summary>
+    internal T GetScopedMutableSettingView<T>(ScopedMutableSetting<T> setting, ExecutionContext context, CommandOrigin origin = CommandOrigin.Internal)
+        where T : class
+    {
+        T raw = GetScopedMutableSettingValue(setting, out _, origin);
+        return raw is null ? null : setting.CreateView(new ScopedMutableBinding<T>(setting, context, this), raw);
+    }
+
+    /// <summary>Publishes a candidate created by a successful scope-aware mutation.</summary>
+    internal void PublishScopedMutableSetting<T>(ScopedMutableSetting<T> setting, T value, SessionStateInternal sessionState, CommandOrigin origin)
+        where T : class
+    {
+        ScopedSettingVariable existing = GetScopedSettingVariableForWrite(setting, out var frame);
+        if (existing is not null && existing.Entry is ScopedMutableSettingEntry<T> localEntry)
+        {
+            SessionState.ThrowIfNotVisible(origin, existing);
+            // Object member mutations are permitted even when the variable binding is read-only or constant.
+            localEntry.SetPreparedValue(value);
+            return;
+        }
+
+        var entry = setting.CreateMutableEntry(value);
+        entry.Variable.SessionState = sessionState;
+
+        // A copy-on-write child retains the inherited variable's metadata and attributes.
+        for (SessionStateScope parent = this; parent is not null; parent = parent.Parent)
+        {
+            if (parent.GetScopedSettingVariable(setting, origin) is { } parentVariable
+                && (parent == this || !parentVariable.IsPrivate))
+            {
+                entry.Variable.CopyMetadataFrom(parentVariable, initializing: true);
+                break;
+            }
+        }
+
+        if (ExecutionContext.HasEverUsedConstrainedLanguage)
+        {
+            CheckVariableChangeInConstrainedLanguage(entry.Variable);
+        }
+
+        if (frame is not null)
+        {
+            frame.SetVariable(setting, entry.Variable);
+        }
+        else
+        {
+            SetScopedSetting(entry);
+        }
+    }
 
     internal void SetScopedSettingValue(ScopedSetting setting, object value, SessionStateInternal sessionState = null, CommandOrigin origin = CommandOrigin.Internal)
     {

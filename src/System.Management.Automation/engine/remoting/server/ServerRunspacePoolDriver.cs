@@ -633,20 +633,46 @@ namespace System.Management.Automation
 
                 // if startup script set $PSApplicationPrivateData, then use that value as ApplicationPrivateData
                 // instead of using results from PSSessionConfiguration.GetApplicationPrivateData()
-                if (RunspacePool.RunspacePoolStateInfo.State == RunspacePoolState.Opening)
-                {
-                    object privateDataVariable = args.Runspace.SessionStateProxy.PSVariable.GetValue("global:PSApplicationPrivateData");
-                    if (privateDataVariable != null)
-                    {
-                        _applicationPrivateData = (PSPrimitiveDictionary)LanguagePrimitives.ConvertTo(
-                            privateDataVariable,
-                            typeof(PSPrimitiveDictionary),
-                            true,
-                            CultureInfo.InvariantCulture,
-                            null);
-                    }
-                }
+                _applicationPrivateData = ResolveStartupApplicationPrivateData(
+                    args.Runspace,
+                    RunspacePool.RunspacePoolStateInfo.State,
+                    _applicationPrivateData);
             }
+        }
+
+        /// <summary>
+        /// Reads and snapshots global application private data after startup scripts, preserving the original pool-state gate.
+        /// </summary>
+        internal static PSPrimitiveDictionary ResolveStartupApplicationPrivateData(
+            Runspace runspace,
+            RunspacePoolState state,
+            PSPrimitiveDictionary currentApplicationPrivateData)
+        {
+            if (state != RunspacePoolState.Opening)
+            {
+                return currentApplicationPrivateData;
+            }
+
+            PSVariable variable = runspace.SessionStateProxy.PSVariable.Get("global:PSApplicationPrivateData");
+            object value = variable is ScopedSettingVariable scopedVariable
+                ? scopedVariable.GetValueBackingRaw()
+                : variable?.Value;
+            if (value is null)
+            {
+                return currentApplicationPrivateData;
+            }
+
+            var converted = (PSPrimitiveDictionary)LanguagePrimitives.ConvertTo(
+                value,
+                typeof(PSPrimitiveDictionary),
+                true,
+                CultureInfo.InvariantCulture,
+                null);
+
+            // A scoped dictionary view must not escape the startup boundary as a live runspace proxy.
+            return ExperimentalFeature.PSScopedProperties
+                ? converted.ShallowCloneForScopedSetting()
+                : converted;
         }
 
         /// <summary>

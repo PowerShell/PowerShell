@@ -707,12 +707,33 @@
     <value>Scoped event logging and user data settings.</value>
   </data>
   <data name="ScopedRemotingDescription" xml:space="preserve">
-    <value>Scoped remoting configuration and application name settings.</value>
+    <value>Scoped remoting options, configuration, and application data settings.</value>
   </data>
   <data name="ScopedStyleDescription" xml:space="preserve">
     <value>Scoped settings for output styling.</value>
   </data>
   <data name="ScopedProgressStyleDescription" xml:space="preserve">
     <value>Scoped settings for progress rendering.</value>
+  </data>
+  <data name="ScopedStyleFormattingDescription" xml:space="preserve">
+    <value>Scoped styles for tables, messages, errors, and feedback.</value>
+  </data>
+  <data name="ScopedStyleForegroundDescription" xml:space="preserve">
+    <value>Foreground ANSI colors and color conversion helpers.</value>
+  </data>
+  <data name="ScopedStyleBackgroundDescription" xml:space="preserve">
+    <value>Background ANSI colors and color conversion helpers.</value>
+  </data>
+  <data name="ScopedStyleFileInfoDescription" xml:space="preserve">
+    <value>Scoped styles for files, directories, and symbolic links.</value>
+  </data>
+  <data name="ScopedStyleFileInfoExtensionDescription" xml:space="preserve">
+    <value>Scoped file extension styles.</value>
+  </data>
+  <data name="ScopedCommandDescription" xml:space="preserve">
+    <value>Scoped default parameter values for commands.</value>
+  </data>
+  <data name="ScopedMutableValueUnavailable" xml:space="preserve">
+    <value>The scoped setting {0} has no value compatible with this captured view.</value>
   </data>
 </root>

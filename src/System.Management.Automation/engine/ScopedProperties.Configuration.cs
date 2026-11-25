@@ -52,6 +52,18 @@ public sealed partial class PSScopedPropertyFacade
         return context.GetScopedConfigurationPreference(setting, scope);
     }
 
+    internal T GetScopedStyleSetting<T>(ScopedSetting<T> setting)
+    {
+        var (_, scope) = Resolve();
+        return scope.GetScopedSettingValue(setting);
+    }
+
+    internal void SetScopedStyleSetting<T>(ScopedSetting<T> setting, T value)
+    {
+        var (context, scope) = Resolve();
+        scope.SetScopedSettingValue(setting, value, context.EngineSessionState);
+    }
+
     internal void SetConfiguration<T>(ScopedSetting<T> setting, T value)
         => SetConfiguration((ScopedSetting)setting, value);
 
@@ -341,11 +353,18 @@ public sealed class PSScopedLogging : IScopedPropertyContainer
 }
 
 /// <summary>Provides scoped scalar remoting settings.</summary>
-public sealed class PSScopedRemoting : IScopedPropertyContainer
+public sealed partial class PSScopedRemoting : IScopedPropertyContainer
 {
     private readonly PSScopedPropertyFacade _facade;
+    private readonly System.Management.Automation.Remoting.PSSessionOption _sessionOptions;
 
-    internal PSScopedRemoting(PSScopedPropertyFacade facade) => _facade = facade;
+    internal PSScopedRemoting(PSScopedPropertyFacade facade)
+    {
+        _facade = facade;
+        _sessionOptions = System.Management.Automation.Remoting.PSSessionOption.CreateScopedView(
+            new ScopedMutableBinding<System.Management.Automation.Remoting.PSSessionOption>(ScopedProperties.SessionOptionsSetting, facade));
+        _applicationPrivateDataBinding = new ScopedMutableBinding<object>(ScopedProperties.ApplicationPrivateDataSetting, facade);
+    }
 
     /// <summary>Gets or sets the default remoting configuration name.</summary>
     public object ConfigurationName

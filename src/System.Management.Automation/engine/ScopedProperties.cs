@@ -20,7 +20,7 @@ public sealed partial class PSScopedPropertyFacade : IScopedPropertyContainer
     private readonly WeakReference<SessionStateScope> _scope;
     private readonly PSScopedActionPreference _actionPreference;
     private readonly PSScopedShouldProcess _shouldProcess;
-    private readonly PSScopedStyle _style;
+    private readonly PSStyle _style;
 
     internal PSScopedPropertyFacade(ExecutionContext context = null, SessionStateScope scope = null)
     {
@@ -32,7 +32,7 @@ public sealed partial class PSScopedPropertyFacade : IScopedPropertyContainer
 
         _actionPreference = new(this);
         _shouldProcess = new(this);
-        _style = new(this);
+        _style = PSStyle.CreateScoped(this);
         _formatting = new(this);
         _nativeCommand = new(this);
         _module = new(this);
@@ -65,7 +65,7 @@ public sealed partial class PSScopedPropertyFacade : IScopedPropertyContainer
     }
 
     /// <summary>Gets the style settings.</summary>
-    public PSScopedStyle Style
+    public PSStyle Style
     {
         get
         {
@@ -73,6 +73,8 @@ public sealed partial class PSScopedPropertyFacade : IScopedPropertyContainer
             return _style;
         }
     }
+
+    internal PSStyle GetStyleForRunspaceInitialization() => _style;
 
     /// <summary>Gets a view bound to the current local, script, or global scope.</summary>
     /// <param name="scopeName">The name of the scope to bind.</param>
@@ -307,6 +309,8 @@ internal abstract class ScopedSetting(string path, string variableName, Preferen
 
     internal abstract object GetDefaultValue();
 
+    internal virtual object GetDefaultExposedValue() => GetDefaultValue();
+
     internal abstract ScopedSettingEntry CreateEntry(object value);
 
     internal abstract ScopedSettingEntry CreateEntryFromVariable(PSVariable source);
@@ -330,7 +334,7 @@ internal class ScopedSetting<T>(string path, T defaultValue, string variableName
     /// <summary>
     /// Converts and validates a candidate value without changing any scope binding.
     /// </summary>
-    internal T ConvertValue(object value)
+    internal virtual T ConvertValue(object value)
     {
         if (value is null && PreserveNull)
         {
@@ -518,10 +522,10 @@ internal static partial class ScopedProperties
         PreferenceSettings = Array.AsReadOnly<ScopedActionPreferenceSetting>(
             [DebugPreferenceSetting, VerbosePreferenceSetting, ErrorPreferenceSetting, WarningPreferenceSetting, InformationPreferenceSetting, ProgressPreferenceSetting]);
         ConfigurationSettings = Array.AsReadOnly<ScopedSetting>(
-            PreferenceSettings.Concat<ScopedSetting>([ConfirmPreferenceSetting, WhatIfPreferenceSetting]).Concat(ConfigurationSettingsCore).ToArray());
+            PreferenceSettings.Concat<ScopedSetting>([ConfirmPreferenceSetting, WhatIfPreferenceSetting]).Concat(ConfigurationSettingsCore).Concat(ConfigurationSettingsMutable).Concat(RemotingMutableSettings).ToArray());
         TuplePreferenceSettings = Array.AsReadOnly<ScopedSetting>(ConfigurationSettings.Where(static setting => setting.Index.HasValue).ToArray());
         s_preferencesByName = ConfigurationSettings.ToDictionary(static setting => setting.VariableName, StringComparer.OrdinalIgnoreCase);
-        s_settingsByPath = ConfigurationSettings.Append(ProgressViewSetting).ToDictionary(static setting => setting.Path, StringComparer.OrdinalIgnoreCase);
+        s_settingsByPath = ConfigurationSettings.Concat(StyleSettings).Append(ProgressViewSetting).ToDictionary(static setting => setting.Path, StringComparer.OrdinalIgnoreCase);
     }
 
     internal static bool IsLegacySetting(string name) => TryGetConfigurationSetting(name, out _);

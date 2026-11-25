@@ -2245,7 +2245,8 @@ namespace System.Management.Automation.Runspaces
             // Add all of the variables to session state...
             foreach (SessionStateVariableEntry var in Variables)
             {
-                ss.AddSessionStateEntry(var);
+                SessionStateVariableEntry runspaceEntry = GetRunspaceVariableEntry(ss, var);
+                ss.AddSessionStateEntry(runspaceEntry);
             }
 
             if (etwEnabled)
@@ -3343,13 +3344,14 @@ namespace System.Management.Automation.Runspaces
                 // Add the built-in variables
                 foreach (SessionStateVariableEntry e in InitialSessionState.BuiltInVariables)
                 {
+                    SessionStateVariableEntry runspaceEntry = GetRunspaceVariableEntry(ss, e);
                     PSVariable v = new PSVariable(
-                        e.Name,
-                        e.Value,
-                        e.Options, e.Attributes,
-                        e.Description)
-                    { Visibility = e.Visibility };
-                    ss.GlobalScope.SetVariable(e.Name, v, false, true, ss, fastPath: true);
+                        runspaceEntry.Name,
+                        runspaceEntry.Value,
+                        runspaceEntry.Options, runspaceEntry.Attributes,
+                        runspaceEntry.Description)
+                    { Visibility = runspaceEntry.Visibility };
+                    ss.GlobalScope.SetVariable(runspaceEntry.Name, v, false, true, ss, fastPath: true);
                 }
 
                 ss.InitializeFixedVariables();
@@ -3357,14 +3359,15 @@ namespace System.Management.Automation.Runspaces
                 // Then re-initialize it with variables to session state...
                 foreach (SessionStateVariableEntry e in Variables)
                 {
+                    SessionStateVariableEntry runspaceEntry = GetRunspaceVariableEntry(ss, e);
                     PSVariable v = new PSVariable(
-                        e.Name,
-                        e.Value,
-                        e.Options,
-                        e.Attributes,
-                        e.Description)
-                    { Visibility = e.Visibility };
-                    ss.GlobalScope.SetVariable(e.Name, v, false, true, ss, fastPath: true);
+                        runspaceEntry.Name,
+                        runspaceEntry.Value,
+                        runspaceEntry.Options,
+                        runspaceEntry.Attributes,
+                        runspaceEntry.Description)
+                    { Visibility = runspaceEntry.Visibility };
+                    ss.GlobalScope.SetVariable(runspaceEntry.Name, v, false, true, ss, fastPath: true);
                 }
 
                 InitialSessionState.CreateQuestionVariable(context);
@@ -3379,6 +3382,22 @@ namespace System.Management.Automation.Runspaces
                 context.PSDebugTraceLevel = 0;
                 context.PSDebugTraceStep = false;
             }
+        }
+
+        private static SessionStateVariableEntry GetRunspaceVariableEntry(SessionStateInternal sessionState, SessionStateVariableEntry entry)
+        {
+            if (ExperimentalFeature.PSScopedProperties
+                && entry.Name.Equals(SpecialVariables.PSStyle, StringComparison.OrdinalIgnoreCase)
+                && ReferenceEquals(entry.Value, PSStyle.Instance))
+            {
+                PSScopedPropertyFacade facade = sessionState.GlobalScope.GetVariable(SpecialVariables.PS)?.Value as PSScopedPropertyFacade;
+                if (facade is not null)
+                {
+                    return new SessionStateVariableEntry(entry.Name, facade.GetStyleForRunspaceInitialization(), entry.Description, entry.Options, entry.Attributes, entry.Visibility);
+                }
+            }
+
+            return entry;
         }
 
         internal static void SetSessionStateDrive(ExecutionContext context, bool setLocation)

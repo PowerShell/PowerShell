@@ -50,7 +50,7 @@ Use `$PS.AtScope('Local')`, `$PS.AtScope('Script')`, or `$PS.AtScope('Global')` 
 
 The console host uses the effective progress view from the latest update for its shared progress pane and may render in classic mode for terminals without the required capabilities.
 
-The prototype covers six action preferences, Confirm, WhatIf, the progress rendering view, and the scalar configuration settings below. Mutable configuration and runtime views remain pending expansion stages. Access to the facade requires an active PowerShell execution context and remains subject to constrained language restrictions.
+The prototype covers six action preferences, Confirm, WhatIf, scalar configuration, and mutable configuration including the complete style surface. Runtime views remain a pending expansion stage. Access to the facade requires an active PowerShell execution context and remains subject to constrained language restrictions.
 
 ### Scalar configuration
 
@@ -89,8 +89,46 @@ resolve the caller's effective setting when enabled. Explicit remoting and
 transcription parameters still take precedence. Native encoding readers,
 history, logging, and help use the shared unqualified context lookup; their
 existing caching and read timing remain intact. Explicitly qualified variable
-lookups retain their scope. The global `PSApplicationPrivateData` startup
-consumer is unchanged and belongs to the pending mutable stage.
+lookups retain their scope. The `PSApplicationPrivateData` consumer retains
+its global, startup-only boundary as described below.
+
+### Mutable configuration
+
+`Command.DefaultParameterValues`, `Remoting.SessionOptions`, and
+`Remoting.ApplicationPrivateData` share settings with `PSDefaultParameterValues`,
+`PSSessionOption`, and `PSApplicationPrivateData`. Both access paths expose
+scope-aware objects. A successful property or dictionary mutation creates the
+target scope's override; a failed mutation publishes nothing. Reset removes
+that override. Dictionary entries and built-in option properties are isolated,
+while arbitrary objects stored in those entries retain normal reference
+semantics. Session options also isolate entries in their `ApplicationArguments`
+dictionary. Explicit null remains null.
+
+The public types remain `DefaultParameterDictionary`, `PSSessionOption`, and
+`PSStyle`. Standalone instances retain ordinary behavior. Captured unbound
+views resolve the caller on every use, including a different runspace; they
+do not carry a captured scope's data there. Bound views target their selected
+scope, reject foreign runspaces, and expire when that scope ends. The parameter
+binder captures the caller's effective dictionary before creating command or
+dotted invocation frames. Qualified legacy variable expressions target their
+named scope. `PSVariable.Value` and `Get-Variable -ValueOnly` return the actual
+represented binding's value, so a retained global variable object cannot start
+reading a child's override. A retained variable object from an exited scope
+keeps its value; explicitly removing its final binding clears it. ReadOnly and
+Constant protect binding replacement while allowing object member mutations.
+
+`$PS.Style` and `$PSStyle` expose the complete existing `PSStyle` surface:
+formatting and file styles, extension mappings, progress settings, output
+rendering, automatic sizing, colors, and ANSI helpers. Mutable leaves inherit
+independently. The ANSI `Style.Reset` string remains distinct from the
+facade's `Reset(path)` method. File-extension mutations copy the effective
+extension dictionary, leaving other style settings alone.
+
+Application private data preserves delayed conversion: arbitrary values may
+be assigned, and the server converts the global value to `PSPrimitiveDictionary`
+after a startup script only while the pool is `Opening`. A child override is
+not consumed at that boundary. The published dictionary is a snapshot rather
+than a live scoped proxy; later configuration changes do not republish it.
 
 ## Baseline before canonical Error storage
 
@@ -431,3 +469,25 @@ are not counted as passes. Generic fixtures now avoid using the reserved
 dedicated feature cases verify typed Boolean normalization with native exits
 and actual scoped enumeration truncation. Results are under
 `artifacts/scoped-properties/expansion-stage2`.
+
+## Mutable configuration expansion validation
+
+The .NET 11 build and publish succeeded. All 52 focused C# tests passed in
+each feature state. The final enabled scoped Pester run passed 266 cases; the
+disabled run passed 160 with 106 feature-only skips. These include concrete
+style and remoting types, shallow mutation isolation, explicit null, failed
+mutations, dictionary interfaces, retained variable identity, qualified legacy
+reads, ReadOnly/Constant bindings, and startup application-data state gating.
+Review also caught and corrected recursive application-argument self-assignment
+and getter exceptions hidden by normal property binding.
+
+The affected style, rendering, redirection, and session-option regression
+suites passed 169 cases with five failures in each feature state. The same
+four ANSI word-wrapping failures and one MatchInfo formatting failure reproduce
+with the installed, unmodified PowerShell 7.6.10 (which also has two additional
+multiline-formatting failures). The test environment initially set `NO_COLOR=1`
+and `TERM=dumb`; clearing those settings for the ANSI fixtures resolved their
+default-rendering failure and enabled the terminal-dependent tests. The five
+remaining failures are not counted as passes. Results and comparison logs are
+under `artifacts/scoped-properties/expansion-stage3-accepted`,
+`expansion-stage3-reviewed`, and the adjacent stage 3 logs.

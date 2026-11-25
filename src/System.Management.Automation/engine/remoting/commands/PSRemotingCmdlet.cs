@@ -701,10 +701,26 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_sessionOption == null)
                 {
-                    object tmp = this.SessionState.PSVariable.GetValue(DEFAULT_SESSION_OPTION);
+                    object tmp;
+                    if (ExperimentalFeature.PSScopedProperties
+                        && ScopedProperties.TryGetConfigurationSetting(DEFAULT_SESSION_OPTION, out _))
+                    {
+                        tmp = SessionState.Internal.ExecutionContext.GetVariableValue(
+                            new VariablePath(DEFAULT_SESSION_OPTION));
+                    }
+                    else
+                    {
+                        tmp = this.SessionState.PSVariable.GetValue(DEFAULT_SESSION_OPTION);
+                    }
+
                     if (tmp == null || !LanguagePrimitives.TryConvertTo<PSSessionOption>(tmp, out _sessionOption))
                     {
                         _sessionOption = new PSSessionOption();
+                    }
+                    else if (ExperimentalFeature.PSScopedProperties)
+                    {
+                        // The setting is caller-scoped, but this cmdlet caches an invocation snapshot.
+                        _sessionOption = _sessionOption.CloneForScopedSetting();
                     }
                 }
 
@@ -4339,8 +4355,35 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// Options for a remote PSSession.
     /// </summary>
-    public sealed class PSSessionOption
+    public sealed class PSSessionOption : IScopedPropertyContainer
     {
+        private const string ScopedSettingPath = "Remoting.SessionOptions";
+        private const string ApplicationArgumentsSettingPath = "Remoting.SessionOptions.ApplicationArguments";
+        private ScopedMutableBinding<PSSessionOption> _scopedBinding;
+        private int _maximumConnectionRedirectionCount = WSManConnectionInfo.defaultMaximumConnectionRedirectionCount;
+        private bool _noCompression;
+        private bool _noMachineProfile;
+        private ProxyAccessType _proxyAccessType = ProxyAccessType.None;
+        private AuthenticationMechanism _proxyAuthentication = AuthenticationMechanism.Negotiate;
+        private PSCredential _proxyCredential;
+        private bool _skipCACheck;
+        private bool _skipCNCheck;
+        private bool _skipRevocationCheck;
+        private TimeSpan _operationTimeout = TimeSpan.FromMilliseconds(BaseTransportManager.ClientDefaultOperationTimeoutMs);
+        private bool _noEncryption;
+        private bool _useUTF16;
+        private bool _includePortInSPN;
+        private OutputBufferingMode _outputBufferingMode = WSManConnectionInfo.DefaultOutputBufferingMode;
+        private int _maxConnectionRetryCount = WSManConnectionInfo.DefaultMaxConnectionRetryCount;
+        private CultureInfo _culture;
+        private CultureInfo _uiCulture;
+        private int? _maximumReceivedDataSizePerCommand;
+        private int? _maximumReceivedObjectSize = 200 << 20;
+        private PSPrimitiveDictionary _applicationArguments;
+        private TimeSpan _openTimeout = TimeSpan.FromMilliseconds(RunspaceConnectionInfo.DefaultOpenTimeout);
+        private TimeSpan _cancelTimeout = TimeSpan.FromMilliseconds(RunspaceConnectionInfo.defaultCancelTimeout);
+        private TimeSpan _idleTimeout = TimeSpan.FromMilliseconds(RunspaceConnectionInfo.DefaultIdleTimeout);
+
         /// <summary>
         /// Creates a new instance of <see cref="PSSessionOption"/>
         /// </summary>
@@ -4348,12 +4391,68 @@ namespace System.Management.Automation.Remoting
         {
         }
 
+        internal PSSessionOption(ScopedMutableBinding<PSSessionOption> binding)
+        {
+            _scopedBinding = binding;
+        }
+
+        internal static PSSessionOption CreateScopedView(ScopedMutableBinding<PSSessionOption> binding)
+            => new(binding);
+
+        internal bool HasBackingValue => _scopedBinding is null || _scopedBinding.ReadRaw() is not null;
+
+        internal PSSessionOption CloneForScopedSetting()
+        {
+            PSSessionOption source = _scopedBinding is null
+                ? this
+                : _scopedBinding.ReadRaw() ?? throw new InvalidOperationException(StringUtil.Format(SessionStateStrings.ScopedMutableValueUnavailable, ScopedSettingPath));
+            var clone = (PSSessionOption)source.MemberwiseClone();
+            clone._scopedBinding = null;
+            clone._applicationArguments = source._applicationArguments is null
+                ? null
+                : source._applicationArguments.ShallowCloneForScopedSetting();
+            return clone;
+        }
+
+        private TValue Read<TValue>(Func<PSSessionOption, TValue> getter)
+        {
+            PSSessionOption source = this;
+            if (_scopedBinding is not null)
+            {
+                source = _scopedBinding.ReadRaw()
+                    ?? throw new InvalidOperationException(StringUtil.Format(SessionStateStrings.ScopedMutableValueUnavailable, ScopedSettingPath));
+            }
+
+            return getter(source);
+        }
+
+        private void Write(Action<PSSessionOption> setter)
+        {
+            if (_scopedBinding is null)
+            {
+                setter(this);
+            }
+            else
+            {
+                if (_scopedBinding.ReadRaw() is null)
+                {
+                    throw new InvalidOperationException(StringUtil.Format(SessionStateStrings.ScopedMutableValueUnavailable, ScopedSettingPath));
+                }
+
+                _scopedBinding.Mutate(candidate =>
+                {
+                    setter(candidate);
+                    return 0;
+                });
+            }
+        }
+
         /// <summary>
         /// The MaximumConnectionRedirectionCount parameter enables the implicit redirection functionality.
         /// -1 = no limit
         ///  0 = no redirection.
         /// </summary>
-        public int MaximumConnectionRedirectionCount { get; set; } = WSManConnectionInfo.defaultMaximumConnectionRedirectionCount;
+        public int MaximumConnectionRedirectionCount { get => Read(static option => option._maximumConnectionRedirectionCount); set => Write(option => option._maximumConnectionRedirectionCount = value); }
 
         /// <summary>
         /// If false, underlying WSMan infrastructure will compress data sent on the network.
@@ -4363,20 +4462,20 @@ namespace System.Management.Automation.Remoting
         /// set this property to "true".
         /// By default the value of this property is "false".
         /// </summary>
-        public bool NoCompression { get; set; } = false;
+        public bool NoCompression { get => Read(static option => option._noCompression); set => Write(option => option._noCompression = value); }
 
         /// <summary>
         /// If <see langword="true"/> then Operating System won't load the user profile (i.e. registry keys under HKCU) on the remote server
         /// which can result in a faster session creation time.  This option won't have any effect if the remote machine has
         /// already loaded the profile (i.e. in another session).
         /// </summary>
-        public bool NoMachineProfile { get; set; } = false;
+        public bool NoMachineProfile { get => Read(static option => option._noMachineProfile); set => Write(option => option._noMachineProfile = value); }
 
         /// <summary>
         /// By default, ProxyAccessType is None, that means Proxy information (ProxyAccessType,
         /// ProxyAuthenticationMechanism and ProxyCredential)is not passed to WSMan at all.
         /// </summary>
-        public ProxyAccessType ProxyAccessType { get; set; } = ProxyAccessType.None;
+        public ProxyAccessType ProxyAccessType { get => Read(static option => option._proxyAccessType); set => Write(option => option._proxyAccessType = value); }
 
         /// <summary>
         /// The following is the definition of the input parameter "ProxyAuthentication".
@@ -4393,35 +4492,36 @@ namespace System.Management.Automation.Remoting
         {
             get
             {
-                return _proxyAuthentication;
+                return Read(static option => option._proxyAuthentication);
             }
 
             set
             {
-                switch (value)
+                Write(option =>
                 {
-                    case AuthenticationMechanism.Basic:
-                    case AuthenticationMechanism.Negotiate:
-                    case AuthenticationMechanism.Digest:
-                        _proxyAuthentication = value;
-                        break;
-                    default:
-                        string message = PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.ProxyAmbiguousAuthentication,
-                            value,
-                            nameof(AuthenticationMechanism.Basic),
-                            nameof(AuthenticationMechanism.Negotiate),
-                            nameof(AuthenticationMechanism.Digest));
-                        throw new ArgumentException(message);
-                }
+                    switch (value)
+                    {
+                        case AuthenticationMechanism.Basic:
+                        case AuthenticationMechanism.Negotiate:
+                        case AuthenticationMechanism.Digest:
+                            option._proxyAuthentication = value;
+                            break;
+                        default:
+                            string message = PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.ProxyAmbiguousAuthentication,
+                                value,
+                                nameof(AuthenticationMechanism.Basic),
+                                nameof(AuthenticationMechanism.Negotiate),
+                                nameof(AuthenticationMechanism.Digest));
+                            throw new ArgumentException(message);
+                    }
+                });
             }
         }
-
-        private AuthenticationMechanism _proxyAuthentication = AuthenticationMechanism.Negotiate;
 
         /// <summary>
         /// The following is the definition of the input parameter "ProxyCredential".
         /// </summary>
-        public PSCredential ProxyCredential { get; set; }
+        public PSCredential ProxyCredential { get => Read(static option => option._proxyCredential); set => Write(option => option._proxyCredential = value); }
 
         /// <summary>
         /// When connecting over HTTPS, the client does not validate that the server
@@ -4430,21 +4530,21 @@ namespace System.Management.Automation.Remoting
         /// computer is part of a network that is physically secure and isolated or the
         /// remote computer is listed as a trusted host in WinRM configuration.
         /// </summary>
-        public bool SkipCACheck { get; set; }
+        public bool SkipCACheck { get => Read(static option => option._skipCACheck); set => Write(option => option._skipCACheck = value); }
 
         /// <summary>
         /// Indicates that certificate common name (CN) of the server need not match the
         /// hostname of the server. Used only in remote operations using https. This
         /// option should only be used for trusted machines.
         /// </summary>
-        public bool SkipCNCheck { get; set; }
+        public bool SkipCNCheck { get => Read(static option => option._skipCNCheck); set => Write(option => option._skipCNCheck = value); }
 
         /// <summary>
         /// Indicates that certificate common name (CN) of the server need not match the
         /// hostname of the server. Used only in remote operations using https. This
         /// option should only be used for trusted machines.
         /// </summary>
-        public bool SkipRevocationCheck { get; set; }
+        public bool SkipRevocationCheck { get => Read(static option => option._skipRevocationCheck); set => Write(option => option._skipRevocationCheck = value); }
 
         /// <summary>
         /// The duration for which PowerShell remoting waits before timing out
@@ -4454,27 +4554,27 @@ namespace System.Management.Automation.Remoting
         ///
         /// Default: 3*60*1000 == 3minutes.
         /// </summary>
-        public TimeSpan OperationTimeout { get; set; } = TimeSpan.FromMilliseconds(BaseTransportManager.ClientDefaultOperationTimeoutMs);
+        public TimeSpan OperationTimeout { get => Read(static option => option._operationTimeout); set => Write(option => option._operationTimeout = value); }
 
         /// <summary>
         /// Specifies that no encryption will be used when doing remote operations over
         /// http. Unencrypted traffic is not allowed by default and must be enabled in
         /// the local configuration.
         /// </summary>
-        public bool NoEncryption { get; set; }
+        public bool NoEncryption { get => Read(static option => option._noEncryption); set => Write(option => option._noEncryption = value); }
 
         /// <summary>
         /// Indicates the request is encoded in UTF16 format rather than UTF8 format;
         /// UTF8 is the default.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "UTF")]
-        public bool UseUTF16 { get; set; }
+        public bool UseUTF16 { get => Read(static option => option._useUTF16); set => Write(option => option._useUTF16 = value); }
 
         /// <summary>
         /// Uses Service Principal Name (SPN) along with the Port number during authentication.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "SPN")]
-        public bool IncludePortInSPN { get; set; }
+        public bool IncludePortInSPN { get => Read(static option => option._includePortInSPN); set => Write(option => option._includePortInSPN = value); }
 
         /// <summary>
         /// Determines how server in disconnected state deals with cached output
@@ -4482,42 +4582,77 @@ namespace System.Management.Automation.Remoting
         /// Default value is 'block mode' where command execution is blocked after
         /// the server side data cache becomes filled.
         /// </summary>
-        public OutputBufferingMode OutputBufferingMode { get; set; } = WSManConnectionInfo.DefaultOutputBufferingMode;
+        public OutputBufferingMode OutputBufferingMode { get => Read(static option => option._outputBufferingMode); set => Write(option => option._outputBufferingMode = value); }
 
         /// <summary>
         /// Number of times a connection will be re-attempted when a connection fails due to network
         /// issues.
         /// </summary>
-        public int MaxConnectionRetryCount { get; set; } = WSManConnectionInfo.DefaultMaxConnectionRetryCount;
+        public int MaxConnectionRetryCount { get => Read(static option => option._maxConnectionRetryCount); set => Write(option => option._maxConnectionRetryCount = value); }
 
         /// <summary>
         /// Culture that the remote session should use.
         /// </summary>
-        public CultureInfo Culture { get; set; }
+        public CultureInfo Culture { get => Read(static option => option._culture); set => Write(option => option._culture = value); }
 
         /// <summary>
         /// UI culture that the remote session should use.
         /// </summary>
-        public CultureInfo UICulture { get; set; }
+        public CultureInfo UICulture { get => Read(static option => option._uiCulture); set => Write(option => option._uiCulture = value); }
 
         /// <summary>
         /// Total data (in bytes) that can be received from a remote machine
         /// targeted towards a command. If null, then the size is unlimited.
         /// Default is unlimited data.
         /// </summary>
-        public int? MaximumReceivedDataSizePerCommand { get; set; }
+        public int? MaximumReceivedDataSizePerCommand { get => Read(static option => option._maximumReceivedDataSizePerCommand); set => Write(option => option._maximumReceivedDataSizePerCommand = value); }
 
         /// <summary>
         /// Maximum size (in bytes) of a deserialized object received from a remote machine.
         /// If null, then the size is unlimited. Default is 200MB object size.
         /// </summary>
-        public int? MaximumReceivedObjectSize { get; set; } = 200 << 20;
+        public int? MaximumReceivedObjectSize { get => Read(static option => option._maximumReceivedObjectSize); set => Write(option => option._maximumReceivedObjectSize = value); }
 
         /// <summary>
         /// Application arguments the server can see in <see cref="System.Management.Automation.Remoting.PSSenderInfo.ApplicationArguments"/>
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public PSPrimitiveDictionary ApplicationArguments { get; set; }
+        public PSPrimitiveDictionary ApplicationArguments
+        {
+            get
+            {
+                PSPrimitiveDictionary arguments = Read(static option => option._applicationArguments);
+                if (arguments is null || _scopedBinding is null)
+                {
+                    return arguments;
+                }
+
+                return PSPrimitiveDictionary.CreateScopedView(
+                    () => _scopedBinding.ReadRaw()?._applicationArguments,
+                    mutation => _scopedBinding.Mutate(option =>
+                    {
+                        if (option._applicationArguments is null)
+                        {
+                            throw new InvalidOperationException(StringUtil.Format(SessionStateStrings.ScopedMutableValueUnavailable, ApplicationArgumentsSettingPath));
+                        }
+
+                        mutation(option._applicationArguments);
+                        return 0;
+                    }),
+                    ApplicationArgumentsSettingPath);
+            }
+
+            set
+            {
+                PSPrimitiveDictionary arguments = value;
+                if (_scopedBinding is not null && arguments is not null)
+                {
+                    arguments = arguments.ShallowCloneForScopedSetting();
+                }
+
+                Write(option => option._applicationArguments = arguments);
+            }
+        }
 
         /// <summary>
         /// The duration for which PowerShell remoting waits before timing out on a connection to a remote machine.
@@ -4527,7 +4662,7 @@ namespace System.Management.Automation.Remoting
         ///
         /// Default: 3 * 60 * 1000 = 3 minutes.
         /// </summary>
-        public TimeSpan OpenTimeout { get; set; } = TimeSpan.FromMilliseconds(RunspaceConnectionInfo.DefaultOpenTimeout);
+        public TimeSpan OpenTimeout { get => Read(static option => option._openTimeout); set => Write(option => option._openTimeout = value); }
 
         /// <summary>
         /// The duration for which PowerShell should wait before it times out on cancel operations
@@ -4538,7 +4673,7 @@ namespace System.Management.Automation.Remoting
         ///
         /// Default: 60 * 1000 = 1 minute.
         /// </summary>
-        public TimeSpan CancelTimeout { get; set; } = TimeSpan.FromMilliseconds(RunspaceConnectionInfo.defaultCancelTimeout);
+        public TimeSpan CancelTimeout { get => Read(static option => option._cancelTimeout); set => Write(option => option._cancelTimeout = value); }
 
         /// <summary>
         /// The duration for which a Runspace on server needs to wait before it declares the client dead and closes itself down.
@@ -4547,6 +4682,6 @@ namespace System.Management.Automation.Remoting
         ///
         /// Default: -1 -> Use current server value for IdleTimeout.
         /// </summary>
-        public TimeSpan IdleTimeout { get; set; } = TimeSpan.FromMilliseconds(RunspaceConnectionInfo.DefaultIdleTimeout);
+        public TimeSpan IdleTimeout { get => Read(static option => option._idleTimeout); set => Write(option => option._idleTimeout = value); }
     }
 }

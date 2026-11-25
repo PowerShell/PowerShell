@@ -20,7 +20,17 @@ internal sealed partial class SessionStateScope
             || !ReferenceEquals(entry.Setting, setting)
             || !ReferenceEquals(variable.SessionState?.ExecutionContext, targetState.ExecutionContext))
         {
-            var imported = (ScopedSettingVariable)NewVariable(variable, force, targetState);
+            PSVariable importSource = variable;
+            if (variable is ScopedSettingVariable { Entry: IScopedMutableSettingEntry mutableEntry })
+            {
+                importSource = new PSVariable(variable.Name, mutableEntry.RawValue, variable.Options, variable.Attributes)
+                {
+                    Description = variable.Description,
+                };
+                importSource.CopyMetadataFrom(variable, initializing: true);
+            }
+
+            var imported = (ScopedSettingVariable)NewVariable(importSource, force, targetState);
             imported.ModuleImportSource = variable;
             return imported;
         }

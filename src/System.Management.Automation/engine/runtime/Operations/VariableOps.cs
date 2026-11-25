@@ -228,6 +228,14 @@ namespace System.Management.Automation
 
             if (var != null)
             {
+                if (ScopedProperties.TryGetConfigurationSetting(variablePath.UnqualifiedPath, out var configurationSetting)
+                    && configurationSetting is IScopedMutableSetting mutableSetting)
+                {
+                    // Unqualified reads produce caller-dynamic views. Explicit scope qualifiers
+                    // anchor the view to the requested target so mutations publish there.
+                    return mutableSetting.GetVariableView(sessionState, executionContext, variablePath, origin);
+                }
+
                 return var.Value;
             }
 

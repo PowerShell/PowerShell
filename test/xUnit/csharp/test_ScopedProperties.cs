@@ -250,6 +250,57 @@ namespace PSTests.Sequential
         }
 
         [Fact]
+        public void ApplicationPrivateDataStartupUsesGlobalRawSnapshotAndOpeningGate()
+        {
+            using var runspace = RunspaceFactory.CreateRunspace();
+            runspace.Open();
+            using var shell = PowerShell.Create();
+            shell.Runspace = runspace;
+
+            var globalData = new System.Collections.Hashtable(StringComparer.OrdinalIgnoreCase)
+            {
+                ["marker"] = "global",
+            };
+            var childData = new System.Collections.Hashtable(StringComparer.OrdinalIgnoreCase)
+            {
+                ["marker"] = "child",
+            };
+            runspace.SessionStateProxy.SetVariable("globalData", globalData);
+            runspace.SessionStateProxy.SetVariable("childData", childData);
+            shell.AddScript("$global:PSApplicationPrivateData = $globalData; & { $PSApplicationPrivateData = $childData }");
+            Assert.Empty(shell.Invoke());
+            Assert.Empty(shell.Streams.Error);
+
+            var current = new PSPrimitiveDictionary();
+            current.Add("current", true);
+            var openedData = ServerRunspacePoolDriver.ResolveStartupApplicationPrivateData(runspace, RunspacePoolState.Opened, current);
+            Assert.Same(current, openedData);
+
+            var startupData = ServerRunspacePoolDriver.ResolveStartupApplicationPrivateData(runspace, RunspacePoolState.Opening, current);
+            Assert.NotSame(globalData, startupData);
+            Assert.Equal("global", startupData["marker"]);
+
+            shell.Commands.Clear();
+            shell.AddScript("$global:PSApplicationPrivateData['marker'] = 'changed after startup'");
+            Assert.Empty(shell.Invoke());
+            Assert.Empty(shell.Streams.Error);
+            Assert.Equal("global", startupData["marker"]);
+
+            shell.Commands.Clear();
+            shell.AddScript("$global:PSApplicationPrivateData = 'invalid until startup conversion'");
+            Assert.Empty(shell.Invoke());
+            Assert.Empty(shell.Streams.Error);
+            Assert.Throws<PSInvalidCastException>(() =>
+                ServerRunspacePoolDriver.ResolveStartupApplicationPrivateData(runspace, RunspacePoolState.Opening, current));
+
+            shell.Commands.Clear();
+            shell.AddScript("$global:PSApplicationPrivateData = $null");
+            Assert.Empty(shell.Invoke());
+            Assert.Empty(shell.Streams.Error);
+            Assert.Same(current, ServerRunspacePoolDriver.ResolveStartupApplicationPrivateData(runspace, RunspacePoolState.Opening, current));
+        }
+
+        [Fact]
         public void ProgressResetRemovesTheLocalEntryAndResumesInheritance()
         {
             var setting = ScopedProperties.ProgressViewSetting;

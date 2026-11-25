@@ -64,7 +64,17 @@ internal sealed class ScopedSettingVariable(string name, ScopedSettingEntry entr
 
     internal PSVariable ModuleImportSource { get; set; }
 
+    // A PSVariable object represents this exact binding. Script variable expressions are
+    // resolved separately by VariableOps so their mutable views can retain caller semantics.
     internal override object GetValueRaw() => _entry is { } attached ? attached.GetValueRaw() : base.GetValueRaw();
+
+    internal object GetValueBackingRaw()
+    {
+        DebuggerCheckVariableRead();
+        return GetValueBackingRawForImport();
+    }
+
+    internal object GetValueBackingRawForImport() => _entry is { } attached ? attached.GetValueRaw() : base.GetValueRaw();
 
     /// <summary>
     /// Writes through the trusted internal path, retaining setting conversion and validation while attached.

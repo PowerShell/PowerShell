@@ -4273,9 +4273,66 @@ namespace System.Management.Automation
     /// A versionable hashtable, so the caching of UserInput -> ParameterBindingResult will work.
     /// </summary>
     [SuppressMessage("Microsoft.Usage", "CA2237:MarkISerializableTypesWithSerializable", Justification = "DefaultParameterDictionary will only be used for $PSDefaultParameterValues.")]
-    public sealed class DefaultParameterDictionary : Hashtable
+    public sealed class DefaultParameterDictionary : Hashtable, IEnumerable, IDictionary, IScopedPropertyContainer
     {
         private bool _isChanged;
+        private ScopedMutableBinding<DefaultParameterDictionary> _scopedBinding;
+
+        internal static DefaultParameterDictionary CreateScopedView(ScopedMutableBinding<DefaultParameterDictionary> binding)
+        {
+            var view = new DefaultParameterDictionary
+            {
+                _scopedBinding = binding,
+                _isChanged = false,
+            };
+            return view;
+        }
+
+        internal DefaultParameterDictionary CloneForScopedSetting()
+        {
+            if (_scopedBinding is not null)
+            {
+                return ReadBacking().CloneForScopedSetting();
+            }
+
+            var clone = new DefaultParameterDictionary();
+            IDictionaryEnumerator enumerator = base.GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                clone.AddImpl(enumerator.Key, enumerator.Value, isSelfIndexing: false);
+            }
+
+            clone._isChanged = _isChanged;
+            return clone;
+        }
+
+        internal DefaultParameterDictionary MaterializeForScopedSetting() => CloneForScopedSetting();
+
+        internal bool HasBackingValue => _scopedBinding is null || _scopedBinding.ReadRaw() is not null;
+
+        private DefaultParameterDictionary ReadBacking()
+            => _scopedBinding is null
+                ? this
+                : _scopedBinding.ReadRaw() ?? throw new InvalidOperationException(
+                    StringUtil.Format(SessionStateStrings.ScopedMutableValueUnavailable, ScopedProperties.DefaultParameterValuesSetting.Path));
+
+        private TResult ReadBacking<TResult>(Func<DefaultParameterDictionary, TResult> read)
+            => _scopedBinding is null ? read(this) : read(ReadBacking());
+
+        private void MutateBacking(Action<DefaultParameterDictionary> mutate)
+        {
+            if (_scopedBinding is null)
+            {
+                mutate(this);
+                return;
+            }
+
+            _scopedBinding.Mutate(candidate =>
+            {
+                mutate(candidate);
+                return true;
+            });
+        }
 
         /// <summary>
         /// Check to see if the hashtable has been changed since last check.
@@ -4283,6 +4340,11 @@ namespace System.Management.Automation
         /// <returns>True for changed; false for not changed.</returns>
         public bool ChangeSinceLastCheck()
         {
+            if (_scopedBinding is not null)
+            {
+                return _scopedBinding.Mutate(candidate => candidate.ChangeSinceLastCheck());
+            }
+
             bool ret = _isChanged;
             _isChanged = false;
             return ret;
@@ -4373,6 +4435,11 @@ namespace System.Management.Automation
         /// </summary>
         public override bool Contains(object key)
         {
+            if (_scopedBinding is not null)
+            {
+                return ReadBacking(backing => backing.Contains(key));
+            }
+
             return this.ContainsKey(key);
         }
 
@@ -4381,6 +4448,11 @@ namespace System.Management.Automation
         /// </summary>
         public override bool ContainsKey(object key)
         {
+            if (_scopedBinding is not null)
+            {
+                return ReadBacking(backing => backing.ContainsKey(key));
+            }
+
             if (key == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(key));
@@ -4395,6 +4467,10 @@ namespace System.Management.Automation
             return base.ContainsKey(keyAfterTrim);
         }
 
+        /// <inheritdoc />
+        public override bool ContainsValue(object value)
+            => _scopedBinding is null ? base.ContainsValue(value) : ReadBacking(backing => backing.ContainsValue(value));
+
         /// <summary>
         /// Override the Add to check for key's format and make it versionable.
         /// </summary>
@@ -4402,6 +4478,12 @@ namespace System.Management.Automation
         /// <param name="value">Value.</param>
         public override void Add(object key, object value)
         {
+            if (_scopedBinding is not null)
+            {
+                MutateBacking(candidate => candidate.AddImpl(key, value, isSelfIndexing: false));
+                return;
+            }
+
             AddImpl(key, value, isSelfIndexing: false);
         }
 
@@ -4458,6 +4540,11 @@ namespace System.Management.Automation
         {
             get
             {
+                if (_scopedBinding is not null)
+                {
+                    return ReadBacking(backing => backing[key]);
+                }
+
                 if (key == null)
                 {
                     throw PSTraceSource.NewArgumentNullException(nameof(key));
@@ -4474,6 +4561,12 @@ namespace System.Management.Automation
 
             set
             {
+                if (_scopedBinding is not null)
+                {
+                    MutateBacking(candidate => candidate.AddImpl(key, value, isSelfIndexing: true));
+                    return;
+                }
+
                 AddImpl(key, value, isSelfIndexing: true);
             }
         }
@@ -4484,6 +4577,12 @@ namespace System.Management.Automation
         /// <param name="key">Key.</param>
         public override void Remove(object key)
         {
+            if (_scopedBinding is not null)
+            {
+                MutateBacking(candidate => candidate.Remove(key));
+                return;
+            }
+
             if (key == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(key));
@@ -4507,9 +4606,73 @@ namespace System.Management.Automation
         /// </summary>
         public override void Clear()
         {
+            if (_scopedBinding is not null)
+            {
+                MutateBacking(static candidate => candidate.Clear());
+                return;
+            }
+
             base.Clear();
             _isChanged = true;
         }
+
+        /// <inheritdoc />
+        public override int Count => _scopedBinding is null ? base.Count : ReadBacking(static backing => backing.Count);
+
+        /// <inheritdoc />
+        public override ICollection Keys => _scopedBinding is null ? base.Keys : ReadBacking(static backing => backing.Keys);
+
+        /// <inheritdoc />
+        public override ICollection Values => _scopedBinding is null ? base.Values : ReadBacking(static backing => backing.Values);
+
+        /// <inheritdoc />
+        public override IDictionaryEnumerator GetEnumerator()
+            => _scopedBinding is null ? base.GetEnumerator() : ReadBacking(static backing => backing.GetEnumerator());
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        object IDictionary.this[object key]
+        {
+            get => this[key];
+            set => this[key] = value;
+        }
+
+        ICollection IDictionary.Keys => Keys;
+
+        ICollection IDictionary.Values => Values;
+
+        bool IDictionary.IsReadOnly => false;
+
+        bool IDictionary.IsFixedSize => false;
+
+        void IDictionary.Add(object key, object value) => Add(key, value);
+
+        void IDictionary.Clear() => Clear();
+
+        bool IDictionary.Contains(object key) => Contains(key);
+
+        IDictionaryEnumerator IDictionary.GetEnumerator() => GetEnumerator();
+
+        void IDictionary.Remove(object key) => Remove(key);
+
+        void ICollection.CopyTo(Array array, int index) => CopyTo(array, index);
+
+        /// <inheritdoc />
+        public override void CopyTo(Array array, int index)
+        {
+            if (_scopedBinding is null)
+            {
+                base.CopyTo(array, index);
+            }
+            else
+            {
+                ReadBacking(backing => { backing.CopyTo(array, index); return true; });
+            }
+        }
+
+        /// <inheritdoc />
+        public override object Clone()
+            => _scopedBinding is null ? base.Clone() : ReadBacking().CloneForScopedSetting();
 
         #region KeyValidation
 
