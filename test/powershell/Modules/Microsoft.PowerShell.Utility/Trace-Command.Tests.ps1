@@ -134,6 +134,8 @@ public sealed class OverloadTests
     {
         val = 1;
     }
+
+    public static int CalledBeforeTracing(int value) => value;
 }
 '@
         }
@@ -246,6 +248,17 @@ public sealed class OverloadTests
                 [System.Linq.Enumerable]::Union([int[]]@(1, 2), [int[]]@(3, 4))
             } -FilePath $filePath
             Get-Content $filePath | Should -BeLike "*Invoking method: static System.Collections.Generic.IEnumerable``[int``] Union``[int``](System.Collections.Generic.IEnumerable``[int``] first, System.Collections.Generic.IEnumerable``[int``] second)"
+        }
+
+        It "Traces method that was already invoked before tracing was enabled" {
+            # The binder caches the expression tree generated (by arg type) so
+            # we call it once before enabling tracing to populate the cache.
+            [TraceCommandTests.OverloadTests]::CalledBeforeTracing(1)
+
+            Trace-Command -Name MethodInvocation -Expression {
+                [TraceCommandTests.OverloadTests]::CalledBeforeTracing(1)
+            } -FilePath $filePath
+            Get-Content $filePath | Should -BeLike "*Invoking method: static int CalledBeforeTracing(int value)"
         }
     }
 
