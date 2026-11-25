@@ -2467,7 +2467,35 @@ namespace Microsoft.PowerShell.Commands
                 string action = FileSystemProviderStrings.NewItemActionJunction;
                 string resource = StringUtil.Format(FileSystemProviderStrings.NewItemActionTemplate, path);
 
-                if (ShouldProcess(resource, action))
+                if (!ShouldProcess(resource, action))
+                {
+                    return;
+                }
+
+                // Check the volume containing the new junction, not its target. Reject unsupported
+                // filesystems before deleting an existing directory or creating the junction directory.
+                bool supportsJunctions;
+                try
+                {
+                    supportsJunctions = InternalSymbolicLinkLinkCodeMethods.SupportsJunctions(path);
+                }
+                catch (Exception exception) when (exception is Win32Exception || exception is IOException || exception is UnauthorizedAccessException)
+                {
+                    WriteError(new ErrorRecord(exception, "JunctionFileSystemError", ErrorCategory.ReadError, path));
+                    return;
+                }
+
+                if (!supportsJunctions)
+                {
+                    string message = FileSystemProviderStrings.JunctionNotSupported;
+                    WriteError(new ErrorRecord(
+                        new PlatformNotSupportedException(message),
+                        "JunctionNotSupported",
+                        ErrorCategory.NotImplemented,
+                        path));
+                    return;
+                }
+
                 {
                     bool isDirectory = false;
                     string strTargetPath = value?.ToString();
@@ -8105,6 +8133,73 @@ namespace Microsoft.PowerShell.Commands
             bool succeeded = InternalSymbolicLinkLinkCodeMethods.GetFileInformationByHandle(handle, out handleInfo);
             return succeeded && (handleInfo.NumberOfLinks > 1);
         }
+
+        internal static bool SupportsJunctions(string path)
+        {
+#if UNIX
+            return false;
+#else
+            // The final component is replaced when -Force is used. Resolve its parent through
+            // a handle so mounted folders (and parents reached through links) use their own volume.
+            string parent = Path.GetDirectoryName(Path.GetFullPath(path));
+            if (parent is null)
+            {
+                // A drive or UNC share root cannot be replaced with a junction.
+                // Reject it before -Force can remove any existing data.
+                throw new IOException(path);
+            }
+
+            while (true)
+            {
+                try
+                {
+                    if ((File.GetAttributes(parent) & FileAttributes.Directory) == 0)
+                    {
+                        throw new IOException(parent);
+                    }
+
+                    break;
+                }
+                catch (Exception exception) when (exception is DirectoryNotFoundException || exception is FileNotFoundException)
+                {
+                    string ancestor = Path.GetDirectoryName(parent);
+                    if (string.IsNullOrEmpty(ancestor))
+                    {
+                        throw;
+                    }
+
+                    parent = ancestor;
+                }
+            }
+
+            using SafeFileHandle handle = Interop.Windows.CreateFileWithSafeFileHandle(
+                parent, (FileAccess)0, FileShare.ReadWrite | FileShare.Delete, FileMode.Open,
+                Interop.Windows.FileAttributes.BackupSemantics);
+            if (handle.IsInvalid)
+            {
+                throw new Win32Exception(Marshal.GetLastPInvokeError());
+            }
+
+            var fileSystem = new StringBuilder(256);
+            if (!GetVolumeInformationByHandleW(handle, null, 0, out _, out _, out _, fileSystem, fileSystem.Capacity))
+            {
+                throw new Win32Exception(Marshal.GetLastPInvokeError());
+            }
+
+            string format = fileSystem.ToString();
+            return format.Equals("NTFS", StringComparison.OrdinalIgnoreCase)
+                || format.Equals("ReFS", StringComparison.OrdinalIgnoreCase);
+#endif
+        }
+
+#if !UNIX
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, ExactSpelling = true, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool GetVolumeInformationByHandleW(
+            SafeFileHandle handle, StringBuilder volumeName, int volumeNameSize,
+            out uint serialNumber, out uint maximumComponentLength, out uint flags,
+            StringBuilder fileSystemName, int fileSystemNameSize);
+#endif
 
         internal static bool CreateJunction(string path, string target)
         {
