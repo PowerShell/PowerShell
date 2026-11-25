@@ -53,6 +53,41 @@ Describe "Read-Host Test" -Tag "CI" {
         $result | Should -BeExactly 'this is a prompt response'
     }
 
+    Context "-DefaultValue" {
+        AfterEach {
+            $th.UI.promptResponse = 'this is a prompt response'
+            $th.UI.ReadLineData = 'This is readline data'
+        }
+
+        It "Read-Host -DefaultValue shows the default in the prompt" {
+            $null = $ps.AddScript("Read-Host -Prompt myprompt -DefaultValue blue").Invoke()
+            # The test host records "caption:message:name"; caption and message are empty here.
+            $th.ui.streams.prompt[0] | Should -BeExactly '::myprompt (default: blue)'
+        }
+
+        It "Read-Host -DefaultValue returns the default when the prompt answer is empty" {
+            $th.UI.promptResponse = ''
+            $result = $ps.AddScript("Read-Host -Prompt myprompt -DefaultValue blue").Invoke()
+            $result | Should -BeExactly 'blue'
+        }
+
+        It "Read-Host -DefaultValue returns what the user typed when it is not empty" {
+            $result = $ps.AddScript("Read-Host -Prompt myprompt -DefaultValue blue").Invoke()
+            $result | Should -BeExactly 'this is a prompt response'
+        }
+
+        It "Read-Host -DefaultValue without -Prompt returns the default when the line is empty" {
+            $th.UI.ReadLineData = ''
+            $result = $ps.AddScript("Read-Host -DefaultValue blue").Invoke()
+            $result | Should -BeExactly 'blue'
+        }
+
+        It "Read-Host -DefaultValue cannot be used with -AsSecureString" {
+            $errorId = "AmbiguousParameterSet,Microsoft.PowerShell.Commands.ReadHostCommand"
+            { Read-Host -AsSecureString -DefaultValue blue } | Should -Throw -ErrorId $errorId
+        }
+    }
+
     It "Read-Host throws an error when both -AsSecureString parameter and -MaskInput parameter are used" {
         # Contrary to the rest of the tests this does not need to be invoked through a runspace since it is going to throw an error.
         $errorId = "AmbiguousParameterSet,Microsoft.PowerShell.Commands.ReadHostCommand"

@@ -175,4 +175,10 @@
     <value>Invoke-Expression cmdlet script block will be run in ConstrainedLanguage mode.</value>
     <comment>{StrContains="Invoke-Expression"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
+  <data name="ReadHostPromptWithDefault" xml:space="preserve">
+    <value>{0} (default: {1})</value>
+  </data>
+  <data name="ReadHostDefaultOnly" xml:space="preserve">
+    <value>(default: {0}): </value>
+  </data>
 </root>
