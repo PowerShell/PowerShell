@@ -871,6 +871,11 @@ namespace System.Management.Automation
                                 startInfo.RedirectStandardInput = false;
                                 startInfo.RedirectStandardOutput = false;
                                 startInfo.RedirectStandardError = false;
+
+                                // The encodings are only allowed when the matching stream is redirected, so clear them too.
+                                // Otherwise 'Process.Start' throws an 'InvalidOperationException' before ShellExecute is tried.
+                                startInfo.StandardOutputEncoding = null;
+                                startInfo.StandardErrorEncoding = null;
                                 _nativeProcess.Start();
                             }
                             else
