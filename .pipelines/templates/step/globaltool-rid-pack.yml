@@ -1,5 +1,5 @@
-# DRAFT template - publish/pack steps have been validated against a real pipeline run; the
-# cross-RID PowerShell.SDK build and OneBranch non-Windows signing risks below are still open.
+# DRAFT template - publish/pack steps have been validated against a real pipeline run;
+# OneBranch non-Windows signing risks below are still open.
 #
 # Publishes, signs, and packs ONE RID-specific sub-package of the RID-specific 'PowerShell'
 # global tool (src/GlobalTools/PowerShell/PowerShell.csproj). This generalizes the existing,
@@ -27,11 +27,6 @@
 #    in this file).
 #
 # Known open risks / TODO before relying on this in production:
-#  - Confirm 'dotnet publish -r <rid>' / 'dotnet pack -r <rid> --no-build', run on a Windows
-#    agent for linux-*/osx-* RIDs, correctly restores every native asset. This was validated
-#    for a trivial console tool in a local spike (cross-OS framework-dependent publish worked
-#    fine from Windows), but has not been validated against the full PowerShell.SDK project
-#    graph.
 #  - Confirm OneBranch signing accepts non-Windows binaries signed from this pool. The existing
 #    Sign_Linux_* and Sign_Package_macOS_* jobs already do this successfully for the "regular"
 #    pwsh binaries via the same onebranch.pipeline.signing@1 task and 'type: windows' pool, so
@@ -56,6 +51,9 @@ steps:
     Find-DotNet
 
     $rid = '${{ parameters.Rid }}'
+    # IsWindows must be global: SDK project-reference builds can remove RuntimeIdentifier,
+    # and PowerShell.Common.props otherwise defaults to the Windows build host.
+    $targetIsWindows = $rid -like 'win-*'
     $projDir = Join-Path '$(PowerShellRoot)' 'src' 'GlobalTools' 'PowerShell'
     $artifactsPath = Join-Path '${{ parameters.ArtifactsRoot }}' $rid
 
@@ -73,7 +71,7 @@ steps:
       # going through Start-PSBuild, on a fresh checkout that has never generated these files,
       # so they must be produced explicitly first.
       Write-Verbose -Verbose "Restoring PowerShell global tool for RID: $rid"
-      dotnet restore .\PowerShell.csproj -r $rid
+      dotnet restore .\PowerShell.csproj -r $rid /property:IsWindows=$targetIsWindows
       if ($LASTEXITCODE -ne 0) { throw "dotnet restore failed for RID $rid" }
 
       Write-Verbose -Verbose "Running ResGen and TypeGen"
@@ -81,7 +79,7 @@ steps:
       Start-TypeGen
 
       Write-Verbose -Verbose "Publishing PowerShell global tool for RID: $rid"
-      dotnet publish -r $rid --no-self-contained --artifacts-path $artifactsPath /property:PackageVersion=$(Version) --configuration Release /property:ReleaseTag=$ReleaseTagToUse
+      dotnet publish -r $rid --no-self-contained --artifacts-path $artifactsPath /property:IsWindows=$targetIsWindows /property:PackageVersion=$(Version) --configuration Release /property:ReleaseTag=$ReleaseTagToUse
       if ($LASTEXITCODE -ne 0) { throw "dotnet publish failed for RID $rid" }
     }
     finally {
@@ -149,7 +147,8 @@ steps:
     Push-Location $projDir
     try {
       Write-Verbose -Verbose "Packing PowerShell global tool for RID: $rid"
-      dotnet pack -r $rid --no-build --output $outputPath --artifacts-path $artifactsPath /property:PackageVersion=$(Version) /property:PackageIcon=Powershell_64.png /property:Version=$(Version) /property:ReleaseTag=$ReleaseTagToUse
+      $targetIsWindows = $rid -like 'win-*'
+      dotnet pack -r $rid --no-build --output $outputPath --artifacts-path $artifactsPath /property:IsWindows=$targetIsWindows /property:PackageVersion=$(Version) /property:PackageIcon=Powershell_64.png /property:Version=$(Version) /property:ReleaseTag=$ReleaseTagToUse
       if ($LASTEXITCODE -ne 0) { throw "dotnet pack failed for RID $rid" }
     }
     finally {
