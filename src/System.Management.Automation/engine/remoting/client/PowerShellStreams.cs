@@ -97,19 +97,9 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Dispose implementation.
+        /// Release all resources.
         /// </summary>
         public void Dispose()
-        {
-            this.Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Protected virtual implementation of Dispose.
-        /// </summary>
-        /// <param name="disposing"></param>
-        private void Dispose(bool disposing)
         {
             if (_disposed)
                 return;
@@ -118,26 +108,23 @@ namespace System.Management.Automation
             {
                 if (!_disposed)
                 {
-                    if (disposing)
-                    {
-                        _inputStream.Dispose();
-                        _outputStream.Dispose();
-                        _errorStream.Dispose();
-                        _warningStream.Dispose();
-                        _progressStream.Dispose();
-                        _verboseStream.Dispose();
-                        _debugStream.Dispose();
-                        _informationStream.Dispose();
+                    _inputStream.Dispose();
+                    _outputStream.Dispose();
+                    _errorStream.Dispose();
+                    _warningStream.Dispose();
+                    _progressStream.Dispose();
+                    _verboseStream.Dispose();
+                    _debugStream.Dispose();
+                    _informationStream.Dispose();
 
-                        _inputStream = null;
-                        _outputStream = null;
-                        _errorStream = null;
-                        _warningStream = null;
-                        _progressStream = null;
-                        _verboseStream = null;
-                        _debugStream = null;
-                        _informationStream = null;
-                    }
+                    _inputStream = null;
+                    _outputStream = null;
+                    _errorStream = null;
+                    _warningStream = null;
+                    _progressStream = null;
+                    _verboseStream = null;
+                    _debugStream = null;
+                    _informationStream = null;
 
                     _disposed = true;
                 }
