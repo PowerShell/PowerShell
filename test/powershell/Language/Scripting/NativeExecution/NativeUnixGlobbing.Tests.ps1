@@ -50,9 +50,9 @@ Describe 'Native UNIX globbing tests' -tags "CI" {
     }
     # Test globbing with absolute paths - it shouldn't turn absolute paths into relative paths (#7089)
     It 'Should not normalize absolute paths' {
-        $Matches = /bin/echo /etc/*
+        $matchedPath = /bin/echo /etc/*
         # Matched path should start with '/etc/' not '../..'
-        $Matches.substring(0,5) | Should -Be '/etc/'
+        $matchedPath.substring(0,5) | Should -Be '/etc/'
     }
 	It 'Globbing should not happen with quoted expressions' {
 	    $v = "$TESTDRIVE/abc*"
