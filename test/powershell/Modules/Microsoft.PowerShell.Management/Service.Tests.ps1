@@ -117,7 +117,7 @@ exec "${@:2}"
 
     Context "systemd (systemctl)" {
         It "Get-Service enumerates units with status, start type and description" {
-            Reset-Shim -Stdout "sshd.service loaded active running OpenSSH server daemon`nfoo.service loaded inactive dead Foo service`nfailed.service loaded failed failed Failed service`ntemplate@.service loaded active running Template unit" `
+            Reset-Shim -Stdout "sshd.service loaded active running OpenSSH server daemon`nfoo.service loaded inactive dead Foo service`nfailed.service loaded failed failed Failed service`nreloading.service loaded reloading reloading Reload service`ntemplate@.service loaded active running Template unit" `
                 -UnitFilesStdout "sshd.service enabled enabled`nfoo.service disabled enabled`nmasked.service masked enabled"
 
             $services = Get-Service
@@ -142,6 +142,10 @@ exec "${@:2}"
             $failed.Status.ToString() | Should -Be "Stopped"
             $failed.SubState | Should -Be "failed"
 
+            # a unit reloading its configuration is still running
+            $reloading = $services | Where-Object { $_.Name -eq "reloading" }
+            $reloading.Status.ToString() | Should -Be "Running"
+
             # masked services come from list-unit-files only
             $masked = $services | Where-Object { $_.Name -eq "masked" }
             $masked.StartType.ToString() | Should -Be "Disabled"
@@ -156,6 +160,10 @@ exec "${@:2}"
 
             (Get-Service -Name "sshd").Name | Should -Be "sshd"
             (Get-Service -Name "sshd.service").Name | Should -Be "sshd"
+
+            # case-insensitive matches resolve to the canonical native name, so that
+            # subsequent operations target the service systemd actually knows about
+            (Get-Service -Name "SSHD").Name | Should -Be "sshd"
         }
 
         It "Get-Service supports wildcard patterns in -Name" {
@@ -242,8 +250,10 @@ exec "${@:2}"
 
             $services = Get-Service -Name "sshd"
             $services | Stop-Service -WhatIf
-            # -WhatIf must not invoke the stop operation again
-            @(Get-InvocationLog | Where-Object { $_ -match "^stop sshd\.service$" }).Count | Should -Be 1
+            # -WhatIf must not invoke the stop operation again; assign the log to a
+            # variable first so that Where-Object counts individual invocations
+            $log = Get-InvocationLog
+            @($log | Where-Object { $_ -match "^stop sshd\.service$" }).Count | Should -Be 1
         }
 
         It "reports a non-terminating error with stderr when the command fails" {
@@ -468,6 +478,10 @@ exec "${@:2}"
                 $env:PATH = $script:emptyDir
 
                 { Get-Service -ErrorAction Stop } |
+                    Should -Throw -ErrorId "NoServiceManagerFound,Microsoft.PowerShell.Commands.GetServiceCommand"
+
+                # named invocations must also report the missing manager, not a missing service
+                { Get-Service -Name "sshd" -ErrorAction Stop } |
                     Should -Throw -ErrorId "NoServiceManagerFound,Microsoft.PowerShell.Commands.GetServiceCommand"
             } finally {
                 $env:PATH = $savedPath

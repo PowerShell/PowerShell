@@ -14,6 +14,7 @@ using System.IO; // Path, File
 using System.Management.Automation; // PSObject
 using System.ServiceProcess;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -370,10 +371,14 @@ namespace Microsoft.PowerShell.Commands
         {
             using Process process = new() { StartInfo = startInfo };
             process.Start();
-            string stdout = process.StandardOutput.ReadToEnd();
-            string stderr = process.StandardError.ReadToEnd();
+
+            // Drain both streams concurrently; reading them sequentially can deadlock when
+            // the child process fills one pipe buffer while the other stream is still open.
+            Task<string> stdoutTask = process.StandardOutput.ReadToEndAsync();
+            Task<string> stderrTask = process.StandardError.ReadToEndAsync();
             process.WaitForExit();
-            return (stdout, stderr, process.ExitCode);
+
+            return (stdoutTask.GetAwaiter().GetResult(), stderrTask.GetAwaiter().GetResult(), process.ExitCode);
         }
 
         private static string RunQueryCommand(string command, string[] arguments, bool mergeErrorStream = false)
@@ -500,13 +505,36 @@ namespace Microsoft.PowerShell.Commands
                 ? new[] { "list-dependencies", "--reverse", "--plain", UnitName() }
                 : new[] { "list-dependencies", "--plain", UnitName() };
             string output = RunQueryCommand("systemctl", arguments);
-            List<UnixServiceController> result = new();
-            foreach (string dependencyName in UnixServiceParser.ParseSystemdDependencyUnits(output))
+            List<string> dependencyNames = UnixServiceParser.ParseSystemdDependencyUnits(output);
+            if (dependencyNames.Count == 0)
             {
-                if (!string.Equals(dependencyName, Name, StringComparison.OrdinalIgnoreCase))
+                return Array.Empty<UnixServiceController>();
+            }
+
+            // Resolve the dependencies against a single enumeration snapshot instead of
+            // re-enumerating the whole catalog for every dependency.
+            UnixServiceController[] services = GetServices();
+            List<UnixServiceController> result = new();
+            foreach (string dependencyName in dependencyNames)
+            {
+                if (string.Equals(dependencyName, Name, StringComparison.OrdinalIgnoreCase))
                 {
-                    result.Add(new UnixServiceController(dependencyName));
+                    continue;
                 }
+
+                UnixServiceController? match = MatchService(services, dependencyName);
+                if (match is null)
+                {
+                    // The dependency isn't reported by the enumeration (for example a
+                    // template instance); resolve it by name instead.
+                    result.Add(new UnixServiceController(dependencyName));
+                    continue;
+                }
+
+                var dependent = new UnixServiceController();
+                dependent.CopyFrom(match);
+                dependent.AttachDisplaySettings();
+                result.Add(dependent);
             }
 
             return result.ToArray();
@@ -522,45 +550,52 @@ namespace Microsoft.PowerShell.Commands
             _resolved = true;
             _exists = false;
 
-            UnixServiceController[] services = GetServices();
-            UnixServiceController? match = null;
-
-            // Prefer the exact native name; fall back to the Windows-style
-            // case-insensitive lookup only when there is no exact match.
-            foreach (UnixServiceController candidate in services)
-            {
-                if (string.Equals(candidate.Name, Name, StringComparison.Ordinal))
-                {
-                    match = candidate;
-                    break;
-                }
-            }
-
-            if (match is null)
-            {
-                foreach (UnixServiceController candidate in services)
-                {
-                    if (string.Equals(candidate.Name, Name, StringComparison.OrdinalIgnoreCase))
-                    {
-                        match = candidate;
-                        break;
-                    }
-                }
-            }
-
+            UnixServiceController? match = MatchService(GetServices(), Name);
             if (match is not null)
             {
-                DisplayName = match.DisplayName;
-                Status = match.Status;
-                StartType = match.StartType;
-                Description = match.Description;
-                SubState = match.SubState;
-                UnitFileState = match.UnitFileState;
-                _managerKind = match._managerKind;
-                _exists = true;
+                CopyFrom(match);
             }
 
             AttachDisplaySettings();
+        }
+
+        private static UnixServiceController? MatchService(UnixServiceController[] services, string name)
+        {
+            foreach (UnixServiceController candidate in services)
+            {
+                if (string.Equals(candidate.Name, name, StringComparison.Ordinal))
+                {
+                    return candidate;
+                }
+            }
+
+            // Fall back to the Windows-style case-insensitive lookup only when there is
+            // no exact match.
+            foreach (UnixServiceController candidate in services)
+            {
+                if (string.Equals(candidate.Name, name, StringComparison.OrdinalIgnoreCase))
+                {
+                    return candidate;
+                }
+            }
+
+            return null;
+        }
+
+        private void CopyFrom(UnixServiceController match)
+        {
+            // Adopt the canonical native name so that subsequent operations target the
+            // service that was actually resolved, even when the lookup only matched
+            // case-insensitively.
+            Name = match.Name;
+            DisplayName = match.DisplayName;
+            Status = match.Status;
+            StartType = match.StartType;
+            Description = match.Description;
+            SubState = match.SubState;
+            UnitFileState = match.UnitFileState;
+            _managerKind = match._managerKind;
+            _exists = true;
         }
 
         private void AttachDisplaySettings()

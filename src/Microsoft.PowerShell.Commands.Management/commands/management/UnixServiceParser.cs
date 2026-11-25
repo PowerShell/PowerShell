@@ -204,7 +204,7 @@ namespace Microsoft.PowerShell.Commands
         {
             return activeState switch
             {
-                "active" => ServiceControllerStatus.Running,
+                "active" or "reloading" => ServiceControllerStatus.Running,
                 "activating" => ServiceControllerStatus.StartPending,
                 "deactivating" => ServiceControllerStatus.StopPending,
                 _ => ServiceControllerStatus.Stopped, // inactive, failed, unknown

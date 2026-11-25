@@ -324,8 +324,15 @@ namespace Microsoft.PowerShell.Commands
                 // No exception, then this is an existing, valid service. Return it.
                 return sc;
             }
-            catch (InvalidOperationException) { }
-            catch (ArgumentException) { }
+            catch (InvalidOperationException e) when (!e.Data.Contains("NoServiceManagerFound"))
+            {
+                // The service doesn't exist. A tagged exception means no service manager
+                // was found at all, which is an infrastructure failure that must not be
+                // reported as a missing service.
+            }
+            catch (ArgumentException)
+            {
+            }
 
             return null;
         }
@@ -1063,6 +1070,7 @@ namespace Microsoft.PowerShell.Commands
             // if the service is not running, but this is not an error.
 
             List<ServiceController> stoppedServices = new();
+#if !UNIX
             ServiceController[] dependentServices = null;
 
             try
@@ -1118,6 +1126,12 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+#else
+            // On Unix, the system service manager handles service ordering and dependencies
+            // itself, so the Windows dependency precheck is skipped and **Force** is accepted
+            // for script compatibility. Dependent services can still be queried explicitly
+            // through **DependentServices**.
+#endif
 
             Exception exception = null;
             try
@@ -1197,10 +1211,12 @@ namespace Microsoft.PowerShell.Commands
         /// True if all dependent services are stopped
         /// False if not all dependent services are stopped
         /// </returns>
+#if !UNIX
         private static bool HaveAllDependentServicesStopped(ServiceController[] dependentServices)
         {
             return Array.TrueForAll(dependentServices, static service => service.Status == ServiceControllerStatus.Stopped);
         }
+#endif
 
         /// <summary>
         /// This removes all services that are not stopped from a list of services.
