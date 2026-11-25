@@ -70,6 +70,7 @@ resources:
   pipelines:
     - pipeline: CoOrdinatedBuildPipeline
       source: 'PowerShell-Coordinated Binaries-Official'
+      branch: $(BUILD.SOURCEBRANCHNAME)
       trigger:
         branches:
           include:
