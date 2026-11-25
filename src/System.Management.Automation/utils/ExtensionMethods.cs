@@ -85,12 +85,12 @@ namespace System.Management.Automation
 
         internal static bool IsNumeric(this Type type)
         {
-            return LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(type));
+            return LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(type)) || type.IsInt128Type() || type.IsUInt128Type();
         }
 
         internal static bool IsNumericOrPrimitive(this Type type)
         {
-            return type.IsPrimitive || LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(type));
+            return type.IsPrimitive || type.IsInt128Type() || type.IsUInt128Type() || LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(type));
         }
 
         internal static bool IsSafePrimitive(this Type type)
@@ -105,8 +105,12 @@ namespace System.Management.Automation
 
         internal static bool IsInteger(this Type type)
         {
-            return LanguagePrimitives.IsInteger(LanguagePrimitives.GetTypeCode(type));
+            return LanguagePrimitives.IsInteger(LanguagePrimitives.GetTypeCode(type)) || type.IsInt128Type() || type.IsUInt128Type();
         }
+
+        internal static bool IsInt128Type(this Type type) => type == typeof(Int128);
+
+        internal static bool IsUInt128Type(this Type type) => type == typeof(UInt128);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static TypeCode GetTypeCode(this Type type)
