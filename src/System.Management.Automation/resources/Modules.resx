@@ -144,6 +144,9 @@
   <data name="CantUseAsCustomObjectWithBinaryModule" xml:space="preserve">
     <value>No custom object was returned for module '{0}' because the -AsCustomObject parameter can only be used with script modules.</value>
   </data>
+  <data name="SkipModuleWithInvalidModuleName" xml:space="preserve">
+    <value>Module with name '{0}' was skipped as the name contains invalid character(s).</value>
+  </data>
   <data name="InvalidModuleManifest" xml:space="preserve">
     <value>The module manifest '{0}' could not be processed because it is not a valid PowerShell module manifest file. Remove the elements that are not permitted: {1}</value>
   </data>
