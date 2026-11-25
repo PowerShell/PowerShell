@@ -731,6 +731,8 @@ namespace System.Management.Automation.Configuration
         public UpdatableHelp UpdatableHelp { get; set; }
 
         public ConsoleSessionConfiguration ConsoleSessionConfiguration { get; set; }
+
+        public TrustedHosts TrustedHosts { get; set; }
     }
 
     internal abstract class PolicyBase { }
@@ -805,6 +807,14 @@ namespace System.Management.Automation.Configuration
         public bool? EnableProtectedEventLogging { get; set; }
 
         public string[] EncryptionCertificate { get; set; }
+    }
+
+    /// <summary>
+    /// Setting about TrustedHosts for security zone evaluation.
+    /// </summary>
+    internal sealed class TrustedHosts : PolicyBase
+    {
+        public string[] Patterns { get; set; }
     }
 
     #endregion
