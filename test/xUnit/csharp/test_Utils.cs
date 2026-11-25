@@ -4,6 +4,7 @@
 using System;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Threading;
@@ -36,6 +37,7 @@ namespace PSTests.Parallel
         [InlineData(long.MaxValue, "8.000000000 EB")]
         public static void DisplayHumanReadableFileSize(long bytes, string expected)
         {
+            expected = expected.Replace(".", CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator);
             Assert.Equal(expected, Utils.DisplayHumanReadableFileSize(bytes));
         }
 
