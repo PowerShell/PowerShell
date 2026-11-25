@@ -226,6 +226,10 @@ namespace System.Management.Automation
 
         internal static readonly VariablePath IsCoreCLRPath = new VariablePath("IsCoreCLR");
 
+        internal const string IsElevated = "IsElevated";
+
+        internal static readonly VariablePath IsElevatedPath = new VariablePath("IsElevated");
+
         #endregion
 
         #region Preference Variables
