@@ -496,15 +496,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             PSPropertyExpressionFactory expressionFactory,
             out PSPropertyExpressionResult result)
         {
-            result = null;
-            List<PSPropertyExpressionResult> resList = ex.GetValues(so);
-
-            if (resList.Count == 0)
+            result = ex.GetValueForFormatting(so);
+            if (result == null)
             {
                 return string.Empty;
             }
 
-            result = resList[0];
             if (result.Exception != null)
             {
                 return string.Empty;
@@ -641,8 +638,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return ex;
             }
 
-            // we do not cache if it is just a property name
-            return new PSPropertyExpression(et.expressionValue);
+            _expressionCache ??= new Dictionary<ExpressionToken, PSPropertyExpression>();
+            if (!_expressionCache.TryGetValue(et, out PSPropertyExpression propertyExpression))
+            {
+                propertyExpression = new PSPropertyExpression(et.expressionValue);
+                _expressionCache.Add(et, propertyExpression);
+            }
+
+            return propertyExpression;
         }
 
         private Dictionary<ExpressionToken, PSPropertyExpression> _expressionCache;

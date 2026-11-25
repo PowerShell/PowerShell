@@ -44,6 +44,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// </summary>
     internal class InnerFormatShapeCommand : InnerFormatShapeCommandBase
     {
+        private readonly OutOfBandFormatViewManager _outOfBandViewManager = new();
+
         /// <summary>
         /// Constructor to glue to the CRO.
         /// </summary>
@@ -320,7 +322,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             List<ErrorRecord> errors;
-            var fed = OutOfBandFormatViewManager.GenerateOutOfBandData(this.TerminatingErrorContext, _expressionFactory,
+            var fed = _outOfBandViewManager.GenerateOutOfBandData(this.TerminatingErrorContext, _expressionFactory,
                 _typeInfoDataBase, so, _enumerationLimit, false, out errors);
             WriteErrorRecords(errors);
 
@@ -352,7 +354,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private bool ProcessOutOfBand(PSObject so, bool isProcessingError)
         {
             List<ErrorRecord> errors;
-            FormatEntryData fed = OutOfBandFormatViewManager.GenerateOutOfBandData(this.TerminatingErrorContext, _expressionFactory,
+            FormatEntryData fed = _outOfBandViewManager.GenerateOutOfBandData(this.TerminatingErrorContext, _expressionFactory,
                                     _typeInfoDataBase, so, _enumerationLimit, true, out errors);
             if (!isProcessingError)
                 WriteErrorRecords(errors);

@@ -389,7 +389,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     // Soft hyphen = \u00AD - Should break, and add a hyphen if needed.
                     // If not needed for a break, hyphen should be absent.
-                    delimiter = new string(s[i], 1);
+                    if (s[i] == SoftHyphen)
+                    {
+                        delimiter = "\u00AD";
+                    }
+                    else
+                    {
+                        // Include ordinary delimiters before materializing the word.
+                        sb.Append(s[i]);
+                        delimiter = string.Empty;
+                    }
                 }
                 else if (s[i] is HardHyphen or NonBreakingSpace)
                 {
