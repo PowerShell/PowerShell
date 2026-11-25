@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Language;
 
 using Microsoft.Management.Infrastructure;
 
@@ -82,6 +83,18 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
+        /// <summary>
+        /// Initializes a new script Command whose script is parsed with the file name that will be provided to the
+        /// parser when it builds the ScriptBlock from the script contents.
+        /// </summary>
+        /// <param name="script">The script contents.</param>
+        /// <param name="fileName">The file name the script came from, or null.</param>
+        internal Command(string script, string fileName)
+            : this(script, isScript: true, useLocalScope: null)
+        {
+            _fileName = fileName;
+        }
+
         internal Command(CommandInfo commandInfo)
             : this(commandInfo, false)
         {
@@ -110,6 +123,8 @@ namespace System.Management.Automation.Runspaces
             _mergeUnclaimedPreviousCommandResults = command._mergeUnclaimedPreviousCommandResults;
             IsEndOfStatement = command.IsEndOfStatement;
             CommandInfo = command.CommandInfo;
+            _fileName = command._fileName;
+            _isRemoteFileName = command._isRemoteFileName;
 
             foreach (CommandParameter param in command.Parameters)
             {
@@ -467,7 +482,12 @@ namespace System.Management.Automation.Runspaces
                         null, "ScriptsNotAllowed", ParserStrings.ScriptsNotAllowed);
                 }
 
-                ScriptBlock scriptBlock = executionContext.Engine.ParseScriptBlock(CommandText, addToHistory);
+                ScriptBlock scriptBlock = executionContext.Engine.ParseScriptBlock(CommandText, _fileName, addToHistory);
+                if (_isRemoteFileName)
+                {
+                    Dbg.Assert(scriptBlock.Ast.Extent is InternalScriptExtent, "Parsed script should have an InternalScriptExtent");
+                    ((InternalScriptExtent)scriptBlock.Ast.Extent).PositionHelper.IsFileFromRemoting = true;
+                }
                 if (origin == Automation.CommandOrigin.Internal)
                 {
                     scriptBlock.LanguageMode = PSLanguageMode.FullLanguage;
@@ -569,6 +589,8 @@ namespace System.Management.Automation.Runspaces
         /// be deprecated, at least for internal use.
         /// </summary>
         private readonly bool? _useLocalScope;
+        private string _fileName;
+        private bool _isRemoteFileName;
 
         #endregion Private fields
 
@@ -599,6 +621,17 @@ namespace System.Management.Automation.Runspaces
             bool isScript = RemotingDecoder.GetPropertyValue<bool>(commandAsPSObject, RemoteDataNameStrings.IsScript);
             bool? useLocalScopeNullable = RemotingDecoder.GetPropertyValue<bool?>(commandAsPSObject, RemoteDataNameStrings.UseLocalScopeNullable);
             Command command = new Command(commandText, isScript, useLocalScopeNullable);
+
+            // Older clients don't send the file name, and a client may omit it when not targeting localhost.
+            if (isScript && commandAsPSObject.Properties[RemoteDataNameStrings.FileName] != null)
+            {
+                string fileName = RemotingDecoder.GetPropertyValue<string>(commandAsPSObject, RemoteDataNameStrings.FileName);
+                if (!string.IsNullOrEmpty(fileName))
+                {
+                    command._fileName = fileName;
+                    command._isRemoteFileName = true;
+                }
+            }
 
             // For V2 backwards compatibility.
             PipelineResultTypes mergeMyResult = RemotingDecoder.GetPropertyValue<PipelineResultTypes>(commandAsPSObject, RemoteDataNameStrings.MergeMyResult);
@@ -654,6 +687,13 @@ namespace System.Management.Automation.Runspaces
             commandAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.CommandText, this.CommandText));
             commandAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.IsScript, this.IsScript));
             commandAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.UseLocalScopeNullable, this.UseLocalScopeNullable));
+
+            // Older servers ignore unknown properties so it is safe to include them without dealing with a
+            // protocol version check/bump.
+            if (!string.IsNullOrEmpty(_fileName))
+            {
+                commandAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.FileName, _fileName));
+            }
 
             // For V2 backwards compatibility.
             commandAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.MergeMyResult, this.MergeMyResult));

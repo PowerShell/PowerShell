@@ -2250,6 +2250,12 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Whether to keep the script block's source file name and position when sending it for execution. Only safe
+        /// when the target runs on the local machine and can see the caller's file, so it is off for remote targets.
+        /// </summary>
+        protected virtual bool PreserveScriptBlockFileName => false;
+
+        /// <summary>
         /// Get the PowerShell instance for the PSv3 (or later) remote end
         /// Generate the PowerShell instance by using the text of the scriptblock.
         /// </summary>
@@ -2311,11 +2317,24 @@ namespace Microsoft.PowerShell.Commands
                 usingValuesInDict = ScriptBlockToPowerShellConverter.GetUsingValuesAsDictionary(_scriptBlock, allowUsingExpressions, Context, null);
             }
 
-            string textOfScriptBlock = this.MyInvocation.ExpectingInput
-                ? _scriptBlock.GetWithInputHandlingForInvokeCommand()
-                : _scriptBlock.ToString();
+            string fileName = null;
+            string textOfScriptBlock;
+            if (this.MyInvocation.ExpectingInput)
+            {
+                // shortcut: the $input rewrite doesn't keep the source position, so piped input jobs lose the file name.
+                textOfScriptBlock = _scriptBlock.GetWithInputHandlingForInvokeCommand();
+            }
+            else if (PreserveScriptBlockFileName)
+            {
+                // A job runs in a local process that can see the caller's file, so keep the file and position.
+                textOfScriptBlock = _scriptBlock.GetScriptWithPosition(out fileName);
+            }
+            else
+            {
+                textOfScriptBlock = _scriptBlock.ToString();
+            }
 
-            _powershellV3 = System.Management.Automation.PowerShell.Create().AddScript(textOfScriptBlock);
+            _powershellV3 = System.Management.Automation.PowerShell.Create().AddCommand(new Command(textOfScriptBlock, fileName));
 
             if (_args != null)
             {

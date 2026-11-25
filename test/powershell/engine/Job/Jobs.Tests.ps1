@@ -59,6 +59,33 @@ Describe 'Basic Job Tests' -Tags 'Feature' {
             $ev[0].Exception.Message | Should -BeExactly 'MyError'
         }
 
+        It 'Preserves the script block file and position' {
+            $sbk = {
+                $v = 'foo'
+                $job = Start-Job {
+                    "$using:v"; $PSScriptRoot; $PSCommandPath
+                    throw 'MyError'
+                }
+            }
+            $scriptPath = Join-Path $TestDrive 'MyJob.ps1'
+            $ast = [System.Management.Automation.Language.Parser]::ParseInput(
+                $sbk.ToString(),
+                $scriptPath,
+                [ref]$null,
+                [ref]$null)
+            . $ast.GetScriptBlock()
+
+            $result = $job | Wait-Job | Receive-Job -ErrorVariable ev -ErrorAction SilentlyContinue
+            $result | Should -BeExactly 'foo', ([string]$TestDrive), $scriptPath
+            $ev[0].ScriptStackTrace | Should -BeLike "*MyJob.ps1: line 5"
+        }
+
+        It 'Preserves the file with -FilePath' {
+            $scriptPath = Join-Path $TestDrive 'FileJob.ps1'
+            Set-Content -LiteralPath $scriptPath -Value '$PSCommandPath'
+            Start-Job -FilePath $scriptPath | Wait-Job | Receive-Job | Should -BeExactly $scriptPath
+        }
+
         It 'Can get warning messages from job' {
             $job = Start-Job -ScriptBlock { Write-Warning 'MyWarning' } | Wait-Job
             Receive-Job -Job $job -WarningVariable wv -WarningAction SilentlyContinue

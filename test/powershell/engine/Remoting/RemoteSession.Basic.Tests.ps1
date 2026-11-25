@@ -23,6 +23,31 @@ Describe "New-PSSession basic test" -Tag @("CI") {
     }
 }
 
+Describe "Remote session script block source" -Tag @("CI") {
+    BeforeAll {
+        $processInstance = [System.Management.Automation.Runspaces.PowerShellProcessInstance]::new()
+        $runspace = [runspacefactory]::CreateOutOfProcessRunspace($null, $processInstance)
+        $runspace.Open()
+        $session = [System.Management.Automation.Runspaces.PSSession]::Create($runspace, 'OutOfProc', $null)
+    }
+
+    AfterAll {
+        if ($null -ne $session) { Remove-PSSession -Session $session -ErrorAction SilentlyContinue }
+        if ($null -ne $runspace) { $runspace.Dispose() }
+    }
+
+    It "Does not send the caller script file to the remote session" {
+        # We build a ScriptBlock with a filename to ensure that the inner ScriptBlock provided
+        # to Invoke-Command does not preserve the Ast file Extent across a remote boundary.
+        $ast = [System.Management.Automation.Language.Parser]::ParseInput(
+            'Invoke-Command -Session $session { "[$PSCommandPath][$PSScriptRoot]" }',
+            '/fake/Caller.ps1',
+            [ref]$null,
+            [ref]$null)
+        & $ast.GetScriptBlock() | Should -BeExactly '[][]'
+    }
+}
+
 Describe "Basic Auth over HTTP not allowed on Unix" -Tag @("CI") {
     It "New-PSSession should throw when specifying Basic Auth over HTTP on Unix" -Skip:($IsWindows) {
         if ( -not (Get-WsManSupport)) {

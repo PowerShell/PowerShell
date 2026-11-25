@@ -407,6 +407,12 @@ namespace System.Management.Automation.Language
 
         public string File { get; }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the file name was provided by a remoting client. Every Ast from the
+        /// same parse shares this, including copies.
+        /// </summary>
+        internal bool IsFileFromRemoting { get; set; }
+
         internal int LineFromOffset(int offset)
         {
             int line = Array.BinarySearch<int>(_lineStartMap, offset);
