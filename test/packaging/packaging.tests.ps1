@@ -7,6 +7,70 @@ Describe "Packaging Module Functions" {
         Import-Module $PSScriptRoot/../../tools/packaging/packaging.psm1 -Force
     }
 
+    Context "Global tool target platform" {
+        BeforeAll {
+            $automationProject = Join-Path $PSScriptRoot "../../src/System.Management.Automation/System.Management.Automation.csproj"
+            $dotnetExecutable = (Get-Command dotnet -CommandType Application).Source
+            $templatePath = Join-Path $PSScriptRoot "../../.pipelines/templates/step/globaltool-rid-pack.yml"
+            $toolCommands = foreach ($line in Get-Content $templatePath) {
+                if ($line -match '^\s*\$targetIsWindows\s*=') {
+                    $platformAssignment = [scriptblock]::Create($line.Trim())
+                }
+                elseif ($line -match '^\s*dotnet (restore|publish|pack) ') {
+                    @{
+                        PlatformAssignment = $platformAssignment
+                        Command = [scriptblock]::Create($line.Trim().Replace('$(Version)', '7.8.0-preview.1'))
+                    }
+                }
+            }
+
+            function dotnet {
+                $script:dotnetCalls.Add([string[]] $args)
+            }
+        }
+
+        It "Should restore, publish, and pack <Rid> for its target OS rather than <HostOS>" -TestCases @(
+            @{ Rid = "win-x64"; HostOS = "Unix"; Windows = $true }
+            @{ Rid = "win-arm64"; HostOS = "Unix"; Windows = $true }
+            @{ Rid = "linux-x64"; HostOS = "Windows_NT"; Windows = $false }
+            @{ Rid = "linux-arm"; HostOS = "Windows_NT"; Windows = $false }
+            @{ Rid = "linux-arm64"; HostOS = "Windows_NT"; Windows = $false }
+            @{ Rid = "linux-musl-x64"; HostOS = "Windows_NT"; Windows = $false }
+            @{ Rid = "osx-x64"; HostOS = "Windows_NT"; Windows = $false }
+            @{ Rid = "osx-arm64"; HostOS = "Windows_NT"; Windows = $false }
+        ) {
+            param($Rid, $HostOS, $Windows)
+
+            $artifactsPath = $TestDrive
+            $outputPath = $TestDrive
+            $ReleaseTagToUse = "7.8.0-preview.1"
+            $script:dotnetCalls = [System.Collections.Generic.List[object]]::new()
+            foreach ($toolCommand in $toolCommands) {
+                . $toolCommand.PlatformAssignment
+                & $toolCommand.Command
+            }
+
+            $script:dotnetCalls.Count | Should -Be 3
+            $platformProperty = "/property:IsWindows=$Windows"
+            foreach ($arguments in $script:dotnetCalls) {
+                $arguments | Should -Contain $platformProperty
+            }
+
+            # Referenced library builds can lose the RID, but must retain the global OS property.
+            $output = & $dotnetExecutable msbuild $automationProject -nologo $platformProperty "-p:OS=$HostOS" `
+                "-getProperty:IsWindows,DefineConstants" "-getItem:Compile,ProjectReference"
+            $LASTEXITCODE | Should -Be 0
+            $project = ($output -join "`n") | ConvertFrom-Json
+
+            [bool]::Parse($project.Properties.IsWindows) | Should -Be $Windows
+            ($project.Properties.DefineConstants.Split(";") -contains "UNIX") | Should -Be (-not $Windows)
+            @($project.Items.ProjectReference | Where-Object Identity -Like "*Microsoft.PowerShell.CoreCLR.Eventing.csproj").Count |
+                Should -Be ([int] $Windows)
+            @($project.Items.Compile | Where-Object { $_.Identity -match 'engine[\\/]Interop[\\/]Windows[\\/]' }).Count -gt 0 |
+                Should -Be $Windows
+        }
+    }
+
     Context "Global tool nuspec metadata" {
         It "Should leave owners empty in the <TemplateName> template" -TestCases @(
             @{ TemplateName = "GlobalToolNuSpec" }
