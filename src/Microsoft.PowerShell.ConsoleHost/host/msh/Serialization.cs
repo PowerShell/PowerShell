@@ -135,6 +135,21 @@ namespace Microsoft.PowerShell
             }
         }
 
+        /// <summary>
+        /// Writes text to the given writer from now on, as the console replaces its writers when
+        /// [Console]::OutputEncoding changes. XML stays on the writer its document began on.
+        /// </summary>
+        /// <param name="writer">The writer to write text to.</param>
+        internal
+        void
+        FollowTextWriter(TextWriter writer)
+        {
+            if (format != DataFormat.XML)
+            {
+                textWriter = writer;
+            }
+        }
+
         internal TextWriter textWriter;
         private readonly XmlWriter _xmlWriter;
         private Serializer _xmlSerializer;
