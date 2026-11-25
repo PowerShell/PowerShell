@@ -131,6 +131,21 @@ Describe "Copy-Item with -PreservePathFrom" -Tags "CI" {
         Join-Path $destinationDirectory "Root.log" | Should -Exist
     }
 
+    It "Globs the base path even when the item paths come from the pipeline" {
+        $wildcardBase = Join-Path (Split-Path $sourceDirectory -Parent) "PreservePathFromSo*"
+
+        Get-ChildItem $sourceDirectory -File -Recurse |
+            Copy-Item -PreservePathFrom $wildcardBase -Destination $destinationDirectory
+
+        $separator = [IO.Path]::DirectorySeparatorChar
+        Get-RelativeFilePathsBelow $destinationDirectory | Should -Be @(
+            "Root.log"
+            "Sub1${separator}Deep${separator}Second.log"
+            "Sub1${separator}First.log"
+            "Sub2${separator}Third.log"
+        )
+    }
+
     It "Copies to the existing target directory instead of nesting it again" {
         New-Item -ItemType Directory (Join-Path $destinationDirectory "Sub1") -Force | Out-Null
 

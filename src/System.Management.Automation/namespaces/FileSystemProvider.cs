@@ -3603,7 +3603,10 @@ namespace Microsoft.PowerShell.Commands
 
             // Resolve the base path with an isolated context so that the Include,
             // Exclude, and Filter settings of the copy or move operation are not
-            // applied to the base directory while it is being resolved.
+            // applied to the base directory while it is being resolved. The base
+            // path is an argument of its own, so it is always globbed normally
+            // even when the item paths come from the pipeline and are treated as
+            // literal paths by the operation context.
             Collection<string> resolvedBasePaths = null;
             ProviderInfo baseProvider = null;
 
@@ -3612,13 +3615,29 @@ namespace Microsoft.PowerShell.Commands
                 new Collection<string>(),
                 new Collection<string>(),
                 null);
+            resolutionContext.SuppressWildcardExpansion = false;
+
+            // Save the context of the running operation and restore it after the
+            // resolution: the path resolution calls back into providers and must
+            // not leave the provider running on the temporary context. The
+            // temporary context is also removed from the stop referrals of the
+            // operation context so that it is not retained by it.
+            CmdletProviderContext operationContext = Context;
 
             try
             {
-                resolvedBasePaths = Context.ExecutionContext.SessionState.Path.GetResolvedProviderPathFromPSPath(
-                    preservePathFrom,
-                    resolutionContext,
-                    out baseProvider);
+                try
+                {
+                    resolvedBasePaths = Context.ExecutionContext.SessionState.Path.GetResolvedProviderPathFromPSPath(
+                        preservePathFrom,
+                        resolutionContext,
+                        out baseProvider);
+                }
+                finally
+                {
+                    Context = operationContext;
+                    resolutionContext.RemoveStopReferral();
+                }
             }
             catch (ItemNotFoundException pathNotFound)
             {
@@ -3633,6 +3652,14 @@ namespace Microsoft.PowerShell.Commands
             catch (ProviderNotFoundException providerNotFound)
             {
                 WriteError(new ErrorRecord(providerNotFound, "PreservePathFromProviderNotFound", ErrorCategory.InvalidArgument, preservePathFrom));
+                return false;
+            }
+
+            // Forward errors that the path resolution accumulated on the
+            // temporary context instead of throwing them.
+            if (resolutionContext.HasErrors())
+            {
+                WriteError(resolutionContext.GetAccumulatedErrorObjects()[0]);
                 return false;
             }
 
