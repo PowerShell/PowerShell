@@ -1562,17 +1562,19 @@ namespace System.Management.Automation
         /// units, similar to how Windows File Explorer displays file sizes. The value is scaled to the largest
         /// unit that keeps it below 1024 and rendered with at most one decimal digit, for example
         /// "745 B", "16.7 KB", "62.9 MB", "820.2 MB", or "1.2 TB". The value is truncated, rather than
-        /// rounded, so that it never renders as "1024" of a unit.
+        /// rounded, so that it never renders as "1024" of a unit. The scaling and truncation use decimal
+        /// arithmetic so that the full range of a 64-bit byte count is handled precisely; for example,
+        /// 1152921504606846975 bytes (1 EB minus one byte) renders as "1023.9 PB", not "1 EB".
         /// </summary>
         /// <param name="bytes">The size in bytes.</param>
         /// <returns>The human-readable size string.</returns>
         internal static string ToHumanReadableSize(long bytes)
         {
-            double size = bytes;
+            decimal size = bytes;
             int unitIndex = 0;
-            while (unitIndex < SizeUnitSuffixes.Length - 1 && Math.Abs(size) >= 1024)
+            while (unitIndex < SizeUnitSuffixes.Length - 1 && Math.Abs(size) >= 1024m)
             {
-                size /= 1024;
+                size /= 1024m;
                 unitIndex++;
             }
 
@@ -1581,7 +1583,7 @@ namespace System.Management.Automation
                 return string.Create(CultureInfo.CurrentCulture, $"{bytes} B");
             }
 
-            double truncated = Math.Truncate(size * 10) / 10;
+            decimal truncated = Math.Truncate(size * 10m) / 10m;
             return string.Create(CultureInfo.CurrentCulture, $"{truncated:0.#} {SizeUnitSuffixes[unitIndex]}");
         }
 

@@ -58,6 +58,32 @@ Describe 'Tests for human-readable rendering of file sizes and timestamps' -Tag 
             (Get-Item $kiloFile).LengthString | Should -BeExactly $expected
         }
 
+        It 'ToHumanReadableSize preserves precision at unit boundaries for <bytes> bytes' -TestCases @(
+            @{ Bytes = [long]1024; Scaled = 1; Unit = 'KB' }
+            @{ Bytes = [long]1048575; Scaled = 1023.9; Unit = 'KB' }              # 1 MB - 1
+            @{ Bytes = [long]1099511627775; Scaled = 1023.9; Unit = 'GB' }        # 1 TB - 1
+            @{ Bytes = [long]1125899906842623; Scaled = 1023.9; Unit = 'TB' }     # 1 PB - 1
+            @{ Bytes = [long]1152921504606846975; Scaled = 1023.9; Unit = 'PB' }  # 1 EB - 1
+            @{ Bytes = [long]::MaxValue; Scaled = 7.9; Unit = 'EB' }
+        ) {
+            param($Bytes, $Scaled, $Unit)
+
+            # Byte counts of this size cannot be created as real files, so the internal
+            # ToHumanReadableSize helper is invoked through reflection. The Utils class
+            # is internal, so it is resolved from the assembly rather than by name.
+            $utilsType = [System.Management.Automation.PSStyle].Assembly.GetType(
+                'System.Management.Automation.Utils')
+            $utilsType | Should -Not -BeNullOrEmpty
+            $method = $utilsType.GetMethod(
+                'ToHumanReadableSize',
+                [System.Reflection.BindingFlags]'NonPublic, Static')
+            $method | Should -Not -BeNullOrEmpty
+
+            # The expected value is computed with the current culture's decimal separator.
+            $expected = '{0:0.#} {1}' -f $Scaled, $Unit
+            $method.Invoke($null, @($Bytes)) | Should -BeExactly $expected
+        }
+
         It 'Zero-length file renders as "0 B"' {
             $path = Join-Path $root 'empty.bin'
             $null = New-Item -ItemType File -Path $path -Force
