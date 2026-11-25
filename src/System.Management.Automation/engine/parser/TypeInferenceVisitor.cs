@@ -2355,6 +2355,17 @@ namespace System.Management.Automation
                                 break;
                             }
                         }
+                        else if (currentAst is BinaryExpressionAst binaryExpression
+                            && binaryExpression.Operator is TokenKind.Creplace or TokenKind.Ireplace
+                            && binaryExpression.Right is ArrayLiteralAst arrayLiteral
+                            && arrayLiteral.Elements.Count == 2
+                            && arrayLiteral.Elements[1] is ScriptBlockExpressionAst sbExpression
+                            && sbExpression.ScriptBlock.Find(ast => ast == variableExpressionAst, searchNestedScriptBlocks: false) is not null)
+                        {
+                            // $_ is used inside a regex replacement scriptblock, like: "123" -replace '2', {[int]$_.Value + 2}
+                            inferredTypes.Add(new PSTypeName(typeof(Match)));
+                            return;
+                        }
                     }
 
                     currentAst = currentAst.Parent;
