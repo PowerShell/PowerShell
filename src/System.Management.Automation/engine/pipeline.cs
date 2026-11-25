@@ -152,7 +152,9 @@ namespace System.Management.Automation.Internal
         internal void LogExecutionError(InvocationInfo invocationInfo, ErrorRecord errorRecord)
         {
             if (errorRecord == null)
+            {
                 return;
+            }
 
             string message = StringUtil.Format(PipelineStrings.PipelineExecutionNonTerminatingError, GetCommand(invocationInfo), errorRecord.ToString());
             Log(message, invocationInfo, PipelineExecutionStatus.Error);
@@ -162,11 +164,18 @@ namespace System.Management.Automation.Internal
 
         internal void LogExecutionException(Exception exception)
         {
+            if (exception is FlowControlException)
+            {
+                return;
+            }
+
             _executionFailed = true;
 
             // Only log one terminating error for pipeline execution.
             if (_terminatingErrorLogged)
+            {
                 return;
+            }
 
             _terminatingErrorLogged = true;
 
