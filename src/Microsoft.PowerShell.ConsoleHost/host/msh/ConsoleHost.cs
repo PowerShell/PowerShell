@@ -220,7 +220,11 @@ namespace Microsoft.PowerShell
                 }
 
 #if !UNIX
-                TaskbarJumpList.CreateRunAsAdministratorJumpList();
+                if (IsInteractiveStartup())
+                {
+                    // Try creating JumpList only during interactive startup.
+                    TaskbarJumpList.CreateRunAsAdministratorJumpList();
+                }
 #endif
                 // First check for and handle PowerShell running in a server mode.
                 if (s_cpp.ServerMode)
@@ -304,7 +308,7 @@ namespace Microsoft.PowerShell
                     throw hostException;
                 }
 
-                if (LoadPSReadline())
+                if (IsInteractiveStartup())
                 {
                     ProfileOptimization.StartProfile("StartupProfileData-Interactive");
                 }
@@ -1723,7 +1727,7 @@ namespace Microsoft.PowerShell
             }
         }
 
-        private static bool LoadPSReadline()
+        private static bool IsInteractiveStartup()
         {
             // Don't load PSReadline if:
             //   * we don't think the process will be interactive, e.g. -command or -file
@@ -1781,7 +1785,7 @@ namespace Microsoft.PowerShell
                 //    powershell -command "Update-Module PSReadline"
                 // This should work just fine as long as no other instances of PowerShell are running.
                 ReadOnlyCollection<ModuleSpecification> defaultImportModulesList = null;
-                if (!customConfigurationProvided && LoadPSReadline())
+                if (!customConfigurationProvided && IsInteractiveStartup())
                 {
                     // Create and open Runspace with PSReadline.
                     defaultImportModulesList = DefaultInitialSessionState.Modules;
