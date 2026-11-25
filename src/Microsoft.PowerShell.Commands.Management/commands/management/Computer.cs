@@ -29,6 +29,164 @@ namespace Microsoft.PowerShell.Commands
     #region Restart-Computer
 
     /// <summary>
+    /// Supported ShutdownReason for restarting or shutting down.
+    /// </summary>
+    public enum ShutdownReason : uint
+    {
+        /// <summary>
+        /// ApplicationHung related shutdown/restart.
+        /// </summary>
+        ApplicationHung = 0x00040000 | 0x00000005,
+
+        /// <summary>
+        /// ApplicationInstallationPlanned related shutdown/restart.
+        /// </summary>
+        ApplicationInstallationPlanned = 0x00040000 | 0x00000002 | 0x80000000,
+
+        /// <summary>
+        /// ApplicationMaintenance related shutdown/restart.
+        /// </summary>
+        ApplicationMaintenance = 0x00040000 | 0x00000001,
+
+        /// <summary>
+        /// ApplicationMaintenancePlanned related shutdown/restart.
+        /// </summary>
+        ApplicationMaintenancePlanned = 0x00040000 | 0x00000001 | 0x80000000,
+
+        /// <summary>
+        /// ApplicationUnstable related shutdown/restart.
+        /// </summary>
+        ApplicationUnstable = 0x00040000 | 0x00000006,
+
+        /// <summary>
+        /// HardwareInstallation related shutdown/restart.
+        /// </summary>
+        HardwareInstallation = 0x00010000 | 0x00000002,
+
+        /// <summary>
+        /// HardwareInstallationPlanned related shutdown/restart.
+        /// </summary>
+        HardwareInstallationPlanned = 0x00010000 | 0x00000002 | 0x80000000,
+
+        /// <summary>
+        /// HardwareMaintenance related shutdown/restart.
+        /// </summary>
+        HardwareMaintenance = 0x00010000 | 0x00000001,
+
+        /// <summary>
+        /// HardwareMaintenancePlanned related shutdown/restart.
+        /// </summary>
+        HardwareMaintenancePlanned = 0x00010000 | 0x00000001 | 0x80000000,
+
+        /// <summary>
+        /// LegacyApi related shutdown/restart.
+        /// </summary>
+        LegacyApi = 0x00070000,
+
+        /// <summary>
+        /// OperatingSystemHotfix related shutdown/restart.
+        /// </summary>
+        OperatingSystemHotfix = 0x00020000 | 0x00000011,
+
+        /// <summary>
+        /// OperatingSystemHotfixPlanned related shutdown/restart.
+        /// </summary>
+        OperatingSystemHotfixPlanned = 0x00020000 | 0x00000011 | 0x80000000,
+
+        /// <summary>
+        /// OperatingSystemReconfig related shutdown/restart.
+        /// </summary>
+        OperatingSystemReconfig = 0x00020000 | 0x00000004,
+
+        /// <summary>
+        /// OperatingSystemReconfigPlanned related shutdown/restart.
+        /// </summary>
+        OperatingSystemReconfigPlanned = 0x00020000 | 0x00000004 | 0x80000000,
+
+        /// <summary>
+        /// OperatingSystemSecurityFix related shutdown/restart.
+        /// </summary>
+        OperatingSystemSecurityFix = 0x00020000 | 0x00000012,
+
+        /// <summary>
+        /// OperatingSystemSecurityFixPlanned related shutdown/restart.
+        /// </summary>
+        OperatingSystemSecurityFixPlanned = 0x00020000 | 0x00000012 | 0x80000000,
+
+        /// <summary>
+        /// OperatingSystemServicePackPlanned related shutdown/restart.
+        /// </summary>
+        OperatingSystemServicePackPlanned = 0x00020000 | 0x00000010 | 0x80000000,
+
+        /// <summary>
+        /// OperatingsystemUpgradePlanned related shutdown/restart.
+        /// </summary>
+        OperatingSystemUpgradePlanned = 0x00020000 | 0x00000003 | 0x80000000,
+
+        /// <summary>
+        /// Other related shutdown/restart.
+        /// </summary>
+        Other = 0x00000000,
+
+        /// <summary>
+        /// OtherPlanned related shutdown/restart.
+        /// </summary>
+        OtherPlanned = 0x00000000 | 0x80000000,
+
+        /// <summary>
+        /// OtherHung related shutdown/restart.
+        /// </summary>
+        OtherHung = 0x00000000 | 0x00000005,
+
+        /// <summary>
+        /// PowerCordUnplugged related shutdown/restart.
+        /// </summary>
+        PowerCordUnplugged = 0x00060000 | 0x0000000b,
+
+        /// <summary>
+        /// PowerEnvironment related shutdown/restart.
+        /// </summary>
+        PowerEnvironment = 0x00060000 | 0x0000000c,
+
+        /// <summary>
+        /// SystemBlueScreen related shutdown/restart.
+        /// </summary>
+        SystemBlueScreen = 0x00050000 | 0x0000000F,
+
+        /// <summary>
+        /// SystemNetworkConnectivity related shutdown/restart.
+        /// </summary>
+        SystemNetworkConnectivity = 0x00050000 | 0x00000014,
+
+        /// <summary>
+        /// SystemSecurity related shutdown/restart.
+        /// </summary>
+        SystemSecurity = 0x00050000 | 0x00000013,
+    }
+
+    /// <summary>
+    /// Defines the services that Restart-Computer can wait on.
+    /// </summary>
+    [SuppressMessage("Microsoft.Design", "CA1027:MarkEnumsWithFlags")]
+    public enum WaitForServiceTypes
+    {
+        /// <summary>
+        /// Wait for the WMI service to be ready.
+        /// </summary>
+        Wmi = 0x0,
+
+        /// <summary>
+        /// Wait for the WinRM service to be ready.
+        /// </summary>
+        WinRM = 0x1,
+
+        /// <summary>
+        /// Wait for the PowerShell to be ready.
+        /// </summary>
+        PowerShell = 0x2,
+    }
+
+    /// <summary>
     /// This exception is thrown when the timeout expires before a computer finishes restarting.
     /// </summary>
     public sealed class RestartComputerTimeoutException : RuntimeException
@@ -82,28 +240,6 @@ namespace Microsoft.PowerShell.Commands
         /// An exception that led to this exception.
         /// </param>
         public RestartComputerTimeoutException(string message, Exception innerException) : base(message, innerException) { }
-    }
-
-    /// <summary>
-    /// Defines the services that Restart-Computer can wait on.
-    /// </summary>
-    [SuppressMessage("Microsoft.Design", "CA1027:MarkEnumsWithFlags")]
-    public enum WaitForServiceTypes
-    {
-        /// <summary>
-        /// Wait for the WMI service to be ready.
-        /// </summary>
-        Wmi = 0x0,
-
-        /// <summary>
-        /// Wait for the WinRM service to be ready.
-        /// </summary>
-        WinRM = 0x1,
-
-        /// <summary>
-        /// Wait for the PowerShell to be ready.
-        /// </summary>
-        PowerShell = 0x2,
     }
 
     /// <summary>
@@ -161,12 +297,34 @@ namespace Microsoft.PowerShell.Commands
         public PSCredential Credential { get; set; }
 
         /// <summary>
+        /// Gets or sets the comment for rebooting the computer.
+        /// </summary>
+        [Parameter]
+        [ValidateNotNull]
+        [ValidateLength(0, 512)]
+        public string Comment { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the reason for rebooting the computer.
+        /// </summary>
+        [Parameter]
+        public ShutdownReason Reason { get; set; } = ShutdownReason.Other;
+
+        /// <summary>
         /// Using Force in conjunction with Reboot on a
         /// remote computer immediately reboots the remote computer.
         /// </summary>
         [Parameter]
         [Alias("f")]
         public SwitchParameter Force { get; set; }
+
+        /// <summary>
+        /// Gets or sets the delay before the reboot occurs.
+        /// MAX_SHUTDOWN_TIMEOUT supported by Win32ShutdownTracker is 315360000.
+        /// </summary>
+        [Parameter(ParameterSetName = DefaultParameterSet)]
+        [ValidateRange(0, 315360000)]
+        public uint RestartDelaySec { get; set; }
 
         /// <summary>
         /// Specify the Wait parameter. Prompt will be blocked is the Timeout is not 0.
@@ -786,10 +944,11 @@ $result
             // Validate parameters
             ValidateComputerNames();
 
-            object[] flags = new object[] { 2, 0 };
+            object[] flags = new object[] { RestartDelaySec, Comment, (uint)Reason, 2 };
+
             if (Force)
             {
-                flags[0] = forcedReboot;
+                flags[3] = forcedReboot;
             }
 
             if (ParameterSetName.Equals(DefaultParameterSet, StringComparison.OrdinalIgnoreCase))
@@ -829,7 +988,7 @@ $result
                     }
 
                     bool isSuccess =
-                        ComputerWMIHelper.InvokeWin32ShutdownUsingWsman(this, isLocal, compname, flags, Credential, WsmanAuthentication, ComputerResources.RestartcomputerFailed, "RestartcomputerFailed", _cancel.Token);
+                        ComputerWMIHelper.InvokeWin32ShutdownTrackerUsingWsman(this, isLocal, compname, flags, Credential, WsmanAuthentication, ComputerResources.RestartcomputerFailed, "RestartcomputerFailed", _cancel.Token);
 
                     if (isSuccess && Wait && _timeout != 0)
                     {
@@ -1170,6 +1329,28 @@ $result
         public PSCredential Credential { get; set; }
 
         /// <summary>
+        /// Gets or sets the delay before the shutdown.
+        /// MAX_SHUTDOWN_TIMEOUT supported by Win32ShutdownTracker is 315360000.
+        /// </summary>
+        [Parameter]
+        [ValidateRange(0, 315360000)]
+        public uint ShutdownDelaySec { get; set; }
+
+        /// <summary>
+        /// Gets or sets the comment for shutting down the computer.
+        /// </summary>
+        [Parameter]
+        [ValidateNotNull]
+        [ValidateLength(0, 512)]
+        public string Comment { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the reason for shutting down the computer.
+        /// </summary>
+        [Parameter]
+        public ShutdownReason Reason { get; set; } = ShutdownReason.Other;
+
+        /// <summary>
         /// Force the operation to take place if possible.
         /// </summary>
         [Parameter]
@@ -1197,9 +1378,12 @@ $result
         [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling")]
         protected override void ProcessRecord()
         {
-            object[] flags = new object[] { 1, 0 };
+            object[] flags = new object[] { ShutdownDelaySec, Comment, (uint)Reason, 1 };
+
             if (Force.IsPresent)
-                flags[0] = forcedShutdown;
+            {
+                flags[3] = forcedShutdown;
+            }
 
             ProcessWSManProtocol(flags);
         }
@@ -1251,7 +1435,7 @@ $result
                 }
                 else
                 {
-                    ComputerWMIHelper.InvokeWin32ShutdownUsingWsman(
+                    ComputerWMIHelper.InvokeWin32ShutdownTrackerUsingWsman(
                         this,
                         isLocalHost,
                         compname,
@@ -1541,8 +1725,15 @@ $result
                             if (_restart)
                             {
                                 // If successful and the Restart parameter is specified, restart the computer
-                                object[] flags = new object[] { 6, 0 };
-                                ComputerWMIHelper.InvokeWin32ShutdownUsingWsman(
+                                object[] flags = new object[]
+                                                 {
+                                                    0u,
+                                                    StringUtil.Format(ComputerResources.RestartcomputerAfterRename, newName),
+                                                    (uint)ShutdownReason.OperatingSystemReconfigPlanned,
+                                                    6,
+                                                 };
+
+                                ComputerWMIHelper.InvokeWin32ShutdownTrackerUsingWsman(
                                     this,
                                     isLocalhost,
                                     computerName,
@@ -1787,7 +1978,7 @@ $result
         /// <summary>
         /// CimOperatingSystemShutdownMethod.
         /// </summary>
-        internal const string CimOperatingSystemShutdownMethod = "Win32shutdown";
+        internal const string CimOperatingSystemShutdownMethod = "Win32ShutdownTracker";
 
         /// <summary>
         /// CimQueryDialect.
@@ -2040,21 +2231,21 @@ $result
         }
 
         /// <summary>
-        /// Invokes the Win32Shutdown command on provided target computer using WSMan
+        /// Invokes the Win32ShutdownTracker command on provided target computer using WSMan
         /// over a CIMSession.  The flags parameter determines the type of shutdown operation
         /// such as shutdown, reboot, force etc.
         /// </summary>
         /// <param name="cmdlet">Cmdlet host for reporting errors.</param>
         /// <param name="isLocalhost">True if local host computer.</param>
         /// <param name="computerName">Target computer.</param>
-        /// <param name="flags">Win32Shutdown flags.</param>
+        /// <param name="flags">Win32ShutdownTracker flags.</param>
         /// <param name="credential">Optional credential.</param>
         /// <param name="authentication">Optional authentication.</param>
         /// <param name="formatErrorMessage">Error message format string that takes two parameters.</param>
         /// <param name="ErrorFQEID">Fully qualified error Id.</param>
         /// <param name="cancelToken">Cancel token.</param>
         /// <returns>True on success.</returns>
-        internal static bool InvokeWin32ShutdownUsingWsman(
+        internal static bool InvokeWin32ShutdownTrackerUsingWsman(
             PSCmdlet cmdlet,
             bool isLocalhost,
             string computerName,
@@ -2065,7 +2256,7 @@ $result
             string ErrorFQEID,
             CancellationToken cancelToken)
         {
-            Dbg.Diagnostics.Assert(flags.Length == 2, "Caller need to verify the flags passed in");
+            Dbg.Diagnostics.Assert(flags.Length == 4, "Caller needs to verify the flags passed in");
 
             bool isSuccess = false;
             string targetMachine = isLocalhost ? "localhost" : computerName;
@@ -2098,14 +2289,26 @@ $result
                     var methodParameters = new CimMethodParametersCollection();
                     int retVal;
                     methodParameters.Add(CimMethodParameter.Create(
-                        "Flags",
+                        "Timeout",
                         flags[0],
-                        Microsoft.Management.Infrastructure.CimType.SInt32,
+                        Microsoft.Management.Infrastructure.CimType.UInt32,
                         CimFlags.None));
 
                     methodParameters.Add(CimMethodParameter.Create(
-                        "Reserved",
+                        "Comment",
                         flags[1],
+                        Microsoft.Management.Infrastructure.CimType.String,
+                        CimFlags.None));
+
+                    methodParameters.Add(CimMethodParameter.Create(
+                        "ReasonCode",
+                        flags[2],
+                        Microsoft.Management.Infrastructure.CimType.UInt32,
+                        CimFlags.None));
+
+                    methodParameters.Add(CimMethodParameter.Create(
+                        "Flags",
+                        flags[3],
                         Microsoft.Management.Infrastructure.CimType.SInt32,
                         CimFlags.None));
 
