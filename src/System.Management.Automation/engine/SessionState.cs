@@ -9,6 +9,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
+using System.Runtime.InteropServices;
 using System.Security;
 
 using Dbg = System.Management.Automation;
@@ -305,6 +306,89 @@ namespace System.Management.Automation
                     RunspaceInit.PSHostDescription);
             this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);
 
+            // $PSClipboardActions
+            Hashtable clipboardActions = null;
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                clipboardActions = new Hashtable {
+                    { "Clip", new Hashtable {
+                        { "UseWindowsClipboard", true }
+                    }},
+
+                    { "Paste", new Hashtable {
+                        { "UseWindowsClipboard", true }
+                    }}
+                };
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                string waylandEnv = Environment.GetEnvironmentVariable("WAYLAND_DISPLAY");
+                bool isWayland = !(string.IsNullOrEmpty(waylandEnv));
+
+                if (isWayland)
+                {
+                    clipboardActions = new Hashtable {
+                        { "Clip", new Hashtable {
+                            { "Command", "wl-copy" },
+                            { "Arguments", null }
+                        }},
+                        
+                        { "Paste", new Hashtable {
+                            { "Command", "wl-paste" },
+                            { "Arguments", null }
+                        }}
+                    };
+                }
+                else
+                {
+                    // Previous behavior: use xclip regardless of env:WAYLAND_DISPLAY
+                    clipboardActions = new Hashtable {
+                        { "Clip", new Hashtable {
+                            { "Command", "xclip" },
+                            { "Arguments", new String[] { "-selection", "clipboard", "-in" } }
+                            
+                        }},
+
+                        { "Paste", new Hashtable {
+                            { "Command", "xclip" },
+                            { "Arguments", new String[] { "-selection", "clipboard", "-out" } }
+                        }}
+                    };
+                }
+                
+            } else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
+                clipboardActions = new Hashtable {
+                    { "Clip", new Hashtable {
+                        { "Command", "pbcopy" },
+                        { "Arguments", null }  
+                    }},
+
+                    { "Paste", new Hashtable {
+                        { "Command", "pbpaste" },
+                        { "Arguments", null }
+                    }}
+                };
+                    
+            } else {
+                clipboardActions = new Hashtable {
+                    { "Clip", new Hashtable {
+                        { "Command", null },
+                        { "Arguments", null }  
+                    }},
+
+                    { "Paste", new Hashtable {
+                        { "Command", null },
+                        { "Arguments", null }
+                    }}
+                };
+            }
+            v = new PSVariable(SpecialVariables.PSClipboardActions,
+                    clipboardActions,
+                    ScopedItemOptions.AllScope,
+                    "nodesc");
+            this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath:true);
+            
             // $HOME - indicate where a user's home directory is located in the file system.
             //    -- %USERPROFILE% on windows
             //    -- %HOME% on unix
