@@ -655,4 +655,103 @@
     <value>Changing or creating the variable '{0}' scope to AllScope will be prevented in ConstrainedLanguage mode.</value>
     <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
+  <data name="UnknownScopedSetting" xml:space="preserve">
+    <value>'{0}' is not a scoped setting. Specify 'ActionPreference.Error' or 'Style.Progress.View'.</value>
+  </data>
+  <data name="InvalidScopedSettingScope" xml:space="preserve">
+    <value>'{0}' is not a supported scope for scoped settings. Specify 'Local', 'Script', or 'Global'.</value>
+  </data>
+  <data name="NoScopedSettingExecutionContext" xml:space="preserve">
+    <value>Scoped settings require an active PowerShell execution context.</value>
+  </data>
+  <data name="ExpiredScopedSettingScope" xml:space="preserve">
+    <value>The scope bound to this scoped settings view has ended.</value>
+  </data>
+  <data name="ForeignScopedSettingScope" xml:space="preserve">
+    <value>The scope bound to this scoped settings view belongs to a different runspace.</value>
+  </data>
+  <data name="ScopedPropertyFacadeDescription" xml:space="preserve">
+    <value>Scoped PowerShell engine settings.</value>
+  </data>
+  <data name="ScopedActionPreferenceDescription" xml:space="preserve">
+    <value>Scoped action preferences for error, warning, information, verbose, debug, and progress output.</value>
+  </data>
+  <data name="ScopedShouldProcessDescription" xml:space="preserve">
+    <value>Scoped confirmation threshold and WhatIf settings.</value>
+  </data>
+  <data name="ScopedFormattingDescription" xml:space="preserve">
+    <value>Scoped error display and formatting settings.</value>
+  </data>
+  <data name="ScopedNativeCommandDescription" xml:space="preserve">
+    <value>Scoped settings for native command invocation and output handling.</value>
+  </data>
+  <data name="ScopedNativeCommandEncodingDescription" xml:space="preserve">
+    <value>Scoped text encodings for native process input and output.</value>
+  </data>
+  <data name="ScopedModuleDescription" xml:space="preserve">
+    <value>Scoped module auto-loading settings.</value>
+  </data>
+  <data name="ScopedHistoryDescription" xml:space="preserve">
+    <value>Scoped command history settings.</value>
+  </data>
+  <data name="ScopedTranscriptionDescription" xml:space="preserve">
+    <value>Scoped transcript path settings.</value>
+  </data>
+  <data name="ScopedMailDescription" xml:space="preserve">
+    <value>Scoped mail server settings.</value>
+  </data>
+  <data name="ScopedHelpDescription" xml:space="preserve">
+    <value>Scoped help display settings.</value>
+  </data>
+  <data name="ScopedLoggingDescription" xml:space="preserve">
+    <value>Scoped event logging and user data settings.</value>
+  </data>
+  <data name="ScopedRemotingDescription" xml:space="preserve">
+    <value>Scoped remoting options, configuration, and application data settings.</value>
+  </data>
+  <data name="ScopedStyleDescription" xml:space="preserve">
+    <value>Scoped settings for output styling.</value>
+  </data>
+  <data name="ScopedProgressStyleDescription" xml:space="preserve">
+    <value>Scoped settings for progress rendering.</value>
+  </data>
+  <data name="ScopedStyleFormattingDescription" xml:space="preserve">
+    <value>Scoped styles for tables, messages, errors, and feedback.</value>
+  </data>
+  <data name="ScopedStyleForegroundDescription" xml:space="preserve">
+    <value>Foreground ANSI colors and color conversion helpers.</value>
+  </data>
+  <data name="ScopedStyleBackgroundDescription" xml:space="preserve">
+    <value>Background ANSI colors and color conversion helpers.</value>
+  </data>
+  <data name="ScopedStyleFileInfoDescription" xml:space="preserve">
+    <value>Scoped styles for files, directories, and symbolic links.</value>
+  </data>
+  <data name="ScopedStyleFileInfoExtensionDescription" xml:space="preserve">
+    <value>Scoped file extension styles.</value>
+  </data>
+  <data name="ScopedCommandDescription" xml:space="preserve">
+    <value>Scoped default parameter values for commands.</value>
+  </data>
+  <data name="ScopedMutableValueUnavailable" xml:space="preserve">
+    <value>The scoped setting {0} has no value compatible with this captured view.</value>
+  </data>
+  <data name="ScopedInvocationDescription" xml:space="preserve">
+    <value>Invocation variables and frame state.</value>
+  </data>
+  <data name="ScopedDiagnosticsDescription" xml:space="preserve">
+    <value>Diagnostic variables and debugger state.</value>
+  </data>
+  <data name="ScopedRuntimeDescription" xml:space="preserve">
+    <value>Runtime identity and platform variables.</value>
+  </data>
+  <data name="ScopedSessionDescription" xml:space="preserve">
+    <value>Host and session variables.</value>
+  </data>
+  <data name="ScopedEventDescription" xml:space="preserve">
+    <value>Event action variables.</value>
+  </data>
+  <data name="ScopedConstantsDescription" xml:space="preserve">
+    <value>PowerShell language constants.</value>
+  </data>
 </root>

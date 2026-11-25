@@ -58,11 +58,11 @@ namespace System.Management.Automation
         /// </exception>
         protected override void InsertItem(int index, Attribute item)
         {
-            object variableValue = VerifyNewAttribute(item);
+            object variableValue = VerifyNewAttribute(item, excludedIndex: -1);
 
             base.InsertItem(index, item);
 
-            _variable.SetValueRaw(variableValue, true);
+            SetPreparedValue(variableValue);
         }
 
         /// <summary>
@@ -80,11 +80,11 @@ namespace System.Management.Automation
         /// </exception>
         protected override void SetItem(int index, Attribute item)
         {
-            object variableValue = VerifyNewAttribute(item);
+            object variableValue = VerifyNewAttribute(item, excludedIndex: index);
 
             base.SetItem(index, item);
 
-            _variable.SetValueRaw(variableValue, true);
+            SetPreparedValue(variableValue);
         }
         #endregion Collection overrides
 
@@ -110,11 +110,12 @@ namespace System.Management.Automation
         /// <param name="item">
         /// The new attribute to be added to the collection.
         /// </param>
+        /// <param name="excludedIndex">The index of the replaced attribute, or -1 for insertion.</param>
         /// <returns>
         /// The new variable value. This may change from the original value if the
         /// new attribute is an ArgumentTransformationAttribute.
         /// </returns>
-        private object VerifyNewAttribute(Attribute item)
+        private object VerifyNewAttribute(Attribute item, int excludedIndex)
         {
             object variableValue = _variable.Value;
 
@@ -135,20 +136,42 @@ namespace System.Management.Automation
                 variableValue = argumentTransformation.TransformInternal(engine, variableValue);
             }
 
+            if (_variable is ScopedSettingVariable { IsAttached: true } scopedVariable)
+            {
+                variableValue = scopedVariable.NormalizeValue(variableValue);
+                for (int i = 0; i < Count; i++)
+                {
+                    if (i != excludedIndex && !PSVariable.IsValidValue(variableValue, this[i]))
+                    {
+                        ThrowInvalidMetadata();
+                    }
+                }
+            }
+
             if (!PSVariable.IsValidValue(variableValue, item))
             {
-                ValidationMetadataException e = new ValidationMetadataException(
-                    "ValidateSetFailure",
-                    null,
-                    Metadata.InvalidMetadataForCurrentValue,
-                    _variable.Name,
-                    ((_variable.Value != null) ? _variable.Value.ToString() : string.Empty));
-
-                throw e;
+                ThrowInvalidMetadata();
             }
 
             return variableValue;
         }
+
+        private void SetPreparedValue(object value)
+        {
+            if (_variable is ScopedSettingVariable { IsAttached: true } scopedVariable)
+            {
+                scopedVariable.SetPreparedValue(value);
+            }
+            else
+            {
+                _variable.SetValueRaw(value, preserveValueTypeSemantics: true);
+            }
+        }
+
+        private void ThrowInvalidMetadata()
+            => throw new ValidationMetadataException(
+                "ValidateSetFailure", null, Metadata.InvalidMetadataForCurrentValue, _variable.Name,
+                _variable.Value?.ToString() ?? string.Empty);
 
         /// <summary>
         /// The variable whose value needs to be verified anytime

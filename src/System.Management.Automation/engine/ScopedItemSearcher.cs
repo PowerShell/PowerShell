@@ -25,13 +25,15 @@ namespace System.Management.Automation
         /// <param name="lookupPath">
         /// The parsed name of the item to lookup.
         /// </param>
+        /// <param name="startingScope">The scope for an unqualified lookup, or null to use the current scope.</param>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="sessionState"/> or <paramref name="lookupPath"/>
         /// is null.
         /// </exception>
         internal ScopedItemSearcher(
             SessionStateInternal sessionState,
-            VariablePath lookupPath)
+            VariablePath lookupPath,
+            SessionStateScope startingScope = null)
         {
             if (sessionState == null)
             {
@@ -45,6 +47,7 @@ namespace System.Management.Automation
 
             this.sessionState = sessionState;
             _lookupPath = lookupPath;
+            _startingScope = startingScope;
             InitializeScopeEnumerator();
         }
 
@@ -203,7 +206,7 @@ namespace System.Management.Automation
             // Define the lookup scope and if we have to do single
             // level or dynamic lookup based on the lookup variable
 
-            _initialScope = sessionState.CurrentScope;
+            _initialScope = AccessScope;
 
             if (_lookupPath.IsGlobal)
             {
@@ -230,7 +233,11 @@ namespace System.Management.Automation
 
         private T _current;
         protected SessionStateInternal sessionState;
+
+        protected SessionStateScope AccessScope => _startingScope ?? sessionState.CurrentScope;
+
         private readonly VariablePath _lookupPath;
+        private readonly SessionStateScope _startingScope;
         private SessionStateScopeEnumerator _scopeEnumerable;
         private bool _isSingleScopeLookup;
         private bool _isInitialized;
@@ -246,7 +253,8 @@ namespace System.Management.Automation
         public VariableScopeItemSearcher(
             SessionStateInternal sessionState,
             VariablePath lookupPath,
-            CommandOrigin origin) : base(sessionState, lookupPath)
+            CommandOrigin origin,
+            SessionStateScope startingScope = null) : base(sessionState, lookupPath, startingScope)
         {
             _origin = origin;
         }
@@ -287,7 +295,7 @@ namespace System.Management.Automation
 
             if (variable == null ||
                 (variable.IsPrivate &&
-                 scope != sessionState.CurrentScope))
+                 scope != AccessScope))
             {
                 result = false;
             }

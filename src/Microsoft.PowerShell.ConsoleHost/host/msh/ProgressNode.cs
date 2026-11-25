@@ -65,10 +65,6 @@ namespace Microsoft.PowerShell
             this.SecondsRemaining = record.SecondsRemaining;
             this.RecordType = record.RecordType;
 
-            this.Style = IsMinimalProgressRenderingEnabled()
-                ? RenderStyle.Ansi
-                : RenderStyle.FullPlus;
-
             this.SourceId = sourceId;
         }
 
@@ -349,11 +345,6 @@ namespace Microsoft.PowerShell
                         secRemain,
                         StatusDescription),
                     maxWidth));
-        }
-
-        internal static bool IsMinimalProgressRenderingEnabled()
-        {
-            return PSStyle.Instance.Progress.View == ProgressView.Minimal;
         }
 
         /// <summary>

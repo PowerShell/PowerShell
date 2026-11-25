@@ -36,6 +36,38 @@ namespace System.Management.Automation
                 variablePath = variablePath.CloneAndSetLocal();
             }
 
+            if (ScopedProperties.TryGetConfigurationSetting(variablePath.UnqualifiedPath, out var setting))
+            {
+                SessionStateScope target = variablePath.IsGlobal ? sessionState.GlobalScope
+                    : variablePath.IsScript ? sessionState.ScriptScope : sessionState.CurrentScope;
+                var previous = target.GetScopedSettingVariableForWrite(setting);
+                object incoming = value;
+                if (attributeAsts is not null)
+                {
+                    // Stage replacement attributes and their transformed value together.
+                    // The adapter normalizes and validates the result before publication.
+                    var attributes = GetAttributeCollection(attributeAsts);
+                    incoming = new PSVariable(variablePath.UnqualifiedPath, value, previous?.Options ?? ScopedItemOptions.None, attributes)
+                    {
+                        Description = previous?.Description ?? string.Empty,
+                    };
+                    value = ((PSVariable)incoming).GetValueRaw();
+                }
+
+                var assigned = (PSVariable)sessionState.SetVariable(variablePath, incoming, attributeAsts is null, origin);
+                if (!ReferenceEquals(previous, assigned) && executionContext._debuggingMode > 0)
+                {
+                    executionContext.Debugger.CheckVariableWrite(variablePath.UnqualifiedPath);
+                }
+
+                if (executionContext.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+                {
+                    ExecutionContext.MarkObjectAsUntrustedForVariableAssignment(assigned, target, sessionState);
+                }
+
+                return value;
+            }
+
             SessionStateScope scope;
             PSVariable var = sessionState.GetVariableItem(variablePath, out scope, origin);
 
@@ -196,6 +228,14 @@ namespace System.Management.Automation
 
             if (var != null)
             {
+                if (ScopedProperties.TryGetConfigurationSetting(variablePath.UnqualifiedPath, out var configurationSetting)
+                    && configurationSetting is IScopedMutableSetting mutableSetting)
+                {
+                    // Unqualified reads produce caller-dynamic views. Explicit scope qualifiers
+                    // anchor the view to the requested target so mutations publish there.
+                    return mutableSetting.GetVariableView(sessionState, executionContext, variablePath, origin);
+                }
+
                 return var.Value;
             }
 

@@ -283,13 +283,11 @@ namespace Microsoft.PowerShell.Commands
             // Set the priority of the mail message to normal
             _mMailMessage.Priority = Priority;
 
-            // Get the PowerShell environment variable
-            // globalEmailServer might be null if it is deleted by: PS> del variable:PSEmailServer
-            PSVariable globalEmailServer = SessionState.Internal.GetVariable(SpecialVariables.PSEmailServer);
+            object emailServerValue = GetDefaultSmtpServerValue();
 
-            if (SmtpServer == null && globalEmailServer != null)
+            if (SmtpServer == null && emailServerValue != null)
             {
-                SmtpServer = Convert.ToString(globalEmailServer.Value, CultureInfo.InvariantCulture);
+                SmtpServer = Convert.ToString(emailServerValue, CultureInfo.InvariantCulture);
             }
 
             if (string.IsNullOrEmpty(SmtpServer))
@@ -395,6 +393,14 @@ namespace Microsoft.PowerShell.Commands
                 // If we don't dispose the attachments, the sender can't modify or use the files sent.
                 _mMailMessage.Attachments.Dispose();
             }
+        }
+
+        private object GetDefaultSmtpServerValue()
+        {
+            // Get the PowerShell variable, which may be missing.
+            return ExperimentalFeature.PSScopedProperties
+                ? SessionState.Internal.ExecutionContext.GetVariableValue(new VariablePath(SpecialVariables.PSEmailServer))
+                : SessionState.Internal.GetVariable(SpecialVariables.PSEmailServer)?.Value;
         }
 
         #endregion

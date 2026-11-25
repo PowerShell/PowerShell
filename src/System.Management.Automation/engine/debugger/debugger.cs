@@ -5620,6 +5620,7 @@ namespace System.Management.Automation
                 if (scope.LocalsTuple == FunctionContext._localsTuple)
                 {
                     // We can ignore any dotted scopes.
+                    scope.AddScopedSettingVariablesForFrame(result, FunctionContext._localsTuple);
                     break;
                 }
 
@@ -5637,6 +5638,7 @@ namespace System.Management.Automation
 
                     for (; i < dottedScopes.Length; ++i)
                     {
+                        scope.AddScopedSettingVariablesForFrame(result, dottedScopes[i]);
                         dottedScopes[i].GetVariableTable(result, true);
                     }
 

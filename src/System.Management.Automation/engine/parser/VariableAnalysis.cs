@@ -203,6 +203,12 @@ namespace System.Management.Automation.Language
         {
             if (!_variables.ContainsKey(variableName))
             {
+                if (ScopedProperties.IsLegacySetting(variableName))
+                {
+                    index = VariableAnalysis.ForceDynamic;
+                    preferenceVariable = false;
+                }
+
                 var details = new VariableAnalysisDetails
                 {
                     BitIndex = _variables.Count,
@@ -715,32 +721,48 @@ namespace System.Management.Automation.Language
                                  orderby details.LocalTupleIndex
                                  select details).ToArray();
 
+            // Keep the other cmdlet preferences at their fixed tuple indices.
+            var reservedPreferences = scriptCmdlet && ExperimentalFeature.PSScopedProperties
+                ? ScopedProperties.TuplePreferenceSettings
+                : Array.Empty<ScopedSetting>();
+            var tupleTypes = new Type[orderedLocals.Length + reservedPreferences.Count];
+            foreach (var setting in reservedPreferences)
+            {
+                tupleTypes[(int)setting.Index.Value] = typeof(object);
+            }
+
             Diagnostics.Assert(!_disableOptimizations
-                || orderedLocals.Length == (int)AutomaticVariable.NumberOfAutomaticVariables +
+                || tupleTypes.Length == (int)AutomaticVariable.NumberOfAutomaticVariables +
                         (scriptCmdlet ? SpecialVariables.PreferenceVariables.Length : 0),
                 "analysis is incorrectly allocating number of locals when optimizations are disabled.");
 
             var nameToIndexMap = new Dictionary<string, int>(0, StringComparer.OrdinalIgnoreCase);
-            for (int i = 0; i < orderedLocals.Length; ++i)
+            int tupleIndex = 0;
+            foreach (var details in orderedLocals)
             {
-                var details = orderedLocals[i];
-                var name = details.Name;
-                nameToIndexMap.Add(name, i);
+                while (tupleTypes[tupleIndex] is not null)
+                {
+                    ++tupleIndex;
+                }
 
-                if (details.LocalTupleIndex != i)
+                var name = details.Name;
+                nameToIndexMap.Add(name, tupleIndex);
+
+                if (details.LocalTupleIndex != tupleIndex)
                 {
                     foreach (var ast in details.AssociatedAsts)
                     {
-                        FixTupleIndex(ast, i);
+                        FixTupleIndex(ast, tupleIndex);
                     }
                 }
                 // Automatic variables assign the type directly, not relying on any analysis.  For
                 // all other variables, we don't determine the type of the local until we're done
                 // with the analysis.
                 Diagnostics.Assert(details.Type != null, "Type should be resolved already");
+                tupleTypes[tupleIndex++] = details.Type;
             }
 
-            var tupleType = MutableTuple.MakeTupleType((from l in orderedLocals select l.Type).ToArray());
+            var tupleType = MutableTuple.MakeTupleType(tupleTypes);
             return Tuple.Create(tupleType, nameToIndexMap);
         }
 

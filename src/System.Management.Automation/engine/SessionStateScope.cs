@@ -14,7 +14,7 @@ namespace System.Management.Automation
     /// A SessionStateScope defines the scope of visibility for a set
     /// of virtual drives and their data.
     /// </summary>
-    internal sealed class SessionStateScope
+    internal sealed partial class SessionStateScope
     {
         #region constructor
 
@@ -49,6 +49,101 @@ namespace System.Management.Automation
         /// for the global scope.
         /// </summary>
         internal SessionStateScope Parent { get; set; }
+
+        private Dictionary<ScopedSetting, ScopedSettingEntry> _scopedSettings;
+
+        internal bool IsRemoved { get; private set; }
+
+        /// <summary>
+        /// Gets this scope's binding, initializing inherited AllScope bindings when needed.
+        /// Does not search parent scopes for an effective value.
+        /// </summary>
+        internal ScopedSettingEntry<T> GetScopedSetting<T>(ScopedSetting<T> setting)
+            => (ScopedSettingEntry<T>)GetScopedSetting((ScopedSetting)setting);
+
+        private ScopedSettingEntry GetScopedSetting(ScopedSetting setting)
+        {
+            if (setting.VariableName is not null && _variables is null)
+            {
+                // This initializes the AllScope bindings alongside the ordinary variables.
+                GetPrivateVariables();
+            }
+
+            return _scopedSettings?.TryGetValue(setting, out var entry) == true ? entry : null;
+        }
+
+        /// <summary>
+        /// Publishes a prepared entry as this scope's binding and releases any previous binding.
+        /// Callers must perform applicable protection checks and validation before publication.
+        /// </summary>
+        private void SetScopedSetting(ScopedSettingEntry entry)
+        {
+            if (entry.Variable is not null)
+            {
+                GetPrivateVariables();
+            }
+
+            _scopedSettings ??= new();
+            if (_scopedSettings.TryGetValue(entry.Setting, out var previous))
+            {
+                if (ReferenceEquals(previous, entry))
+                {
+                    return;
+                }
+
+                previous.ReleaseBinding(markVariableRemoved: true);
+            }
+
+            _scopedSettings[entry.Setting] = entry;
+            entry.AddBinding();
+            if (entry.Variable is { } variable)
+            {
+                _variables[entry.Setting.VariableName] = variable;
+            }
+        }
+
+        /// <summary>
+        /// Removes this scope's binding after checking variable protections.
+        /// A shared entry remains attached until its last binding is removed.
+        /// </summary>
+        private void RemoveScopedSetting(ScopedSetting setting, bool force = false)
+        {
+            if (GetScopedSetting(setting) is { } entry)
+            {
+                entry.Variable?.ThrowIfNotRemovable(force);
+                _scopedSettings.Remove(setting);
+                if (entry.Variable is not null)
+                {
+                    _variables.Remove(setting.VariableName);
+                }
+
+                entry.ReleaseBinding(markVariableRemoved: true);
+            }
+        }
+
+        /// <summary>
+        /// Releases this scope's bindings on scope exit, preserving captured variable values.
+        /// </summary>
+        internal void ClearScopedSettings()
+        {
+            if (_scopedSettings is null)
+            {
+                return;
+            }
+
+            foreach (var entry in _scopedSettings.Values)
+            {
+                entry.ReleaseBinding(markVariableRemoved: false);
+            }
+
+            _scopedSettings = null;
+        }
+
+        internal void MarkRemoved()
+        {
+            ClearScopedSettings();
+            IsRemoved = true;
+        }
 
         /// <summary>
         /// Defines the origin of the command that resulted in this scope
@@ -278,6 +373,20 @@ namespace System.Management.Automation
         /// </summary>
         internal IDictionary<string, PSVariable> Variables { get { return GetPrivateVariables(); } }
 
+        /// <summary>Adds a supplied variable, rejecting an existing name in this scope.</summary>
+        internal void AddVariable(PSVariable variable, SessionStateInternal sessionState)
+        {
+            var variables = GetPrivateVariables();
+            if (ScopedProperties.TryGetConfigurationSetting(variable.Name, out var setting) && !variables.ContainsKey(variable.Name))
+            {
+                SetScopedSettingVariable(setting, variable, asValue: false, force: false, sessionState, CommandOrigin.Internal);
+            }
+            else
+            {
+                variables.Add(variable.Name, variable);
+            }
+        }
+
         /// <summary>
         /// Gets the specified variable from the variable table.
         /// </summary>
@@ -324,6 +433,12 @@ namespace System.Management.Automation
         internal bool TryGetVariable(string name, CommandOrigin origin, bool fromNewOrSet, out PSVariable variable)
         {
             Diagnostics.Assert(name != null, "The caller should verify the name");
+
+            if (ScopedProperties.TryGetConfigurationSetting(name, out var setting))
+            {
+                variable = GetScopedSettingVariable(setting, origin);
+                return variable is not null;
+            }
 
             if (TryGetLocalVariableFromTuple(name, fromNewOrSet, out variable))
             {
@@ -401,6 +516,11 @@ namespace System.Management.Automation
         internal PSVariable SetVariable(string name, object value, bool asValue, bool force, SessionStateInternal sessionState, CommandOrigin origin = CommandOrigin.Internal, bool fastPath = false)
         {
             Diagnostics.Assert(name != null, "The caller should verify the name");
+
+            if (ScopedProperties.TryGetConfigurationSetting(name, out var setting))
+            {
+                return SetScopedSettingVariable(setting, value, asValue, force, sessionState, origin, replace: fastPath, bypassProtection: fastPath);
+            }
 
             PSVariable variable;
             PSVariable variableToSet = value as PSVariable;
@@ -523,6 +643,12 @@ namespace System.Management.Automation
                 throw new NotImplementedException("SetVariableForce");
             }
 
+            if (ScopedProperties.TryGetConfigurationSetting(variableToSet.Name, out var setting))
+            {
+                SetScopedSettingVariable(setting, variableToSet, asValue: false, force: true, sessionState, CommandOrigin.Internal, replace: true, bypassProtection: true);
+                return;
+            }
+
             variableToSet.SessionState = sessionState;
             GetPrivateVariables()[variableToSet.Name] = variableToSet;
         }
@@ -547,6 +673,11 @@ namespace System.Management.Automation
         /// </exception>
         internal PSVariable NewVariable(PSVariable newVariable, bool force, SessionStateInternal sessionState)
         {
+            if (ScopedProperties.TryGetConfigurationSetting(newVariable.Name, out var setting))
+            {
+                return SetScopedSettingVariable(setting, newVariable, asValue: false, force, sessionState, ScopeOrigin, replace: true);
+            }
+
             PSVariable variable;
             bool varExists = TryGetVariable(newVariable.Name, ScopeOrigin, true, out variable);
 
@@ -621,6 +752,12 @@ namespace System.Management.Automation
         /// </exception>
         internal void RemoveVariable(string name, bool force)
         {
+            if (ScopedProperties.TryGetConfigurationSetting(name, out var setting))
+            {
+                RemoveScopedSettingVariable(setting, force);
+                return;
+            }
+
             Diagnostics.Assert(
                 name != null,
                 "The caller should verify the name");
@@ -660,6 +797,11 @@ namespace System.Management.Automation
 
         internal bool TrySetLocalParameterValue(string name, object value)
         {
+            if (ScopedProperties.IsLegacySetting(name))
+            {
+                return false;
+            }
+
             foreach (var dottedScope in _dottedScopes)
             {
                 if (dottedScope.TrySetParameter(name, value))
@@ -679,6 +821,12 @@ namespace System.Management.Automation
         /// </summary>
         internal bool TryGetLocalVariableFromTuple(string name, bool fromNewOrSet, out PSVariable result)
         {
+            if (ScopedProperties.IsLegacySetting(name))
+            {
+                result = null;
+                return false;
+            }
+
             foreach (var dottedScope in _dottedScopes)
             {
                 if (dottedScope.TryGetLocalVariable(name, fromNewOrSet, out result))
@@ -1772,6 +1920,17 @@ namespace System.Management.Automation
                 {
                     if (variable.IsAllScope)
                         _variables.Add(variable.Name, variable);
+                }
+
+                if (Parent._scopedSettings is { } scopedSettings)
+                {
+                    foreach (var entry in scopedSettings.Values)
+                    {
+                        if (entry.Variable?.IsAllScope == true)
+                        {
+                            SetScopedSetting(entry);
+                        }
+                    }
                 }
             }
         }

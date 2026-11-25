@@ -84,16 +84,21 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
     }
 
     It 'Action preference of Ignore can be set as a preference variable using a string value' {
+        $powerShell = [powershell]::Create()
         try {
-            Remove-Variable -Name ErrorActionPreference -Scope Global -Force
-            $GLOBAL:ErrorActionPreference = 'Ignore'
-            $errorCount = $error.Count
-            Get-Process -Name asdfasdfasdf
-            $error.Count | Should -BeExactly $errorCount
+            $null = $powerShell.AddScript({
+                Remove-Variable -Name ErrorActionPreference -Scope Global -Force
+                $global:ErrorActionPreference = 'Ignore'
+                $error.Count
+                Get-Process -Name asdfasdfasdf
+                $error.Count
+            })
+            $results = $powerShell.Invoke()
+            $results.Count | Should -Be 2
+            $results[1] | Should -BeExactly $results[0]
+            $powerShell.Streams.Error | Should -BeNullOrEmpty
         } finally {
-            Remove-Variable -Name ErrorActionPreference -Scope Global
-            # Re-create the action preference variable as a strongly typed variable like it was before
-            [System.Management.Automation.ActionPreference]$GLOBAL:ErrorActionPreference = $orgin
+            $powerShell.Dispose()
         }
     }
 
@@ -118,20 +123,27 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
         $e.CategoryInfo.Reason | Should -BeExactly 'ArgumentTransformationMetadataException'
     }
 
-    It 'A local $<ActionPreferenceVariableName> variable does not support <DisplayValue>' -TestCases (Join-TestCase -Set1 $actionPreferenceVariableTestCases -Set2 $actionPreferenceVariableValueTestCases) {
-        param(
-            $ActionPreferenceVariableName,
-            $StreamName,
-            $Value,
-            $DisplayValue
-        )
+    $scopedPreferenceVariables = @('DebugPreference', 'ErrorActionPreference', 'InformationPreference', 'ProgressPreference', 'VerbosePreference', 'WarningPreference')
+    foreach ($variableCase in $actionPreferenceVariableTestCases) {
+        $testCases = Join-TestCase -Set1 $variableCase -Set2 $actionPreferenceVariableValueTestCases
+        It 'A local $<ActionPreferenceVariableName> variable does not support <DisplayValue>' -TestCases $testCases -Skip:(
+            [ExperimentalFeature]::IsEnabled('PSScopedProperties') -and
+            $variableCase.ActionPreferenceVariableName -in $scopedPreferenceVariables
+        ) {
+            param(
+                $ActionPreferenceVariableName,
+                $StreamName,
+                $Value,
+                $DisplayValue
+            )
 
-        $e = {
-            Set-Variable -Name $ActionPreferenceVariableName -Value $Value
-            Test-ActionPreferenceVariableSuspendValue -Value $Value
-        } | Should -Throw -ErrorId "System.NotSupportedException$(if ($StreamName -ne 'Error') {",Microsoft.PowerShell.Commands.Write${StreamName}Command"})" -PassThru
+            $e = {
+                Set-Variable -Name $ActionPreferenceVariableName -Value $Value
+                Test-ActionPreferenceVariableSuspendValue -Value $Value
+            } | Should -Throw -ErrorId "System.NotSupportedException$(if ($StreamName -ne 'Error') {",Microsoft.PowerShell.Commands.Write${StreamName}Command"})" -PassThru
 
-        $e.CategoryInfo.Reason | Should -BeExactly 'NotSupportedException'
+            $e.CategoryInfo.Reason | Should -BeExactly 'NotSupportedException'
+        }
     }
 
     It 'enum disambiguation works' {

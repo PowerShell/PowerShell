@@ -1036,9 +1036,14 @@ namespace System.Management.Automation.Runspaces
                     .StartEntry()
                         .AddScriptBlockExpressionBinding(
                             """
+                                    if ($EnabledExperimentalFeatures -contains 'PSScopedProperties') {
+                                        $scopedErrorView = $PS.Formatting.ErrorView
+                                    } else {
+                                        $scopedErrorView = $ErrorView
+                                    }
                                     $errorColor = ''
                                     $commandPrefix = ''
-                                    if (@('NativeCommandErrorMessage','NativeCommandError') -notcontains $_.FullyQualifiedErrorId -and @('CategoryView','ConciseView','DetailedView') -notcontains $ErrorView)
+                                    if (@('NativeCommandErrorMessage','NativeCommandError') -notcontains $_.FullyQualifiedErrorId -and @('CategoryView','ConciseView','DetailedView') -notcontains $scopedErrorView)
                                     {
                                         $myinv = $_.InvocationInfo
                                         if ($Host.UI.SupportsVirtualTerminal) {
@@ -1098,6 +1103,11 @@ namespace System.Management.Automation.Runspaces
                                     Set-StrictMode -Off
                                     $ErrorActionPreference = 'Stop'
                                     trap { 'Error found in error view definition: ' + $_.Exception.Message }
+                                    if ($EnabledExperimentalFeatures -contains 'PSScopedProperties') {
+                                        $scopedErrorView = $PS.Formatting.ErrorView
+                                    } else {
+                                        $scopedErrorView = $ErrorView
+                                    }
                                     $newline = [Environment]::Newline
 
                                     $resetColor = ''
@@ -1352,18 +1362,18 @@ namespace System.Management.Automation.Runspaces
                                         return "${errorColor}$($err.Exception.Message)${resetcolor}"
                                     }
 
-                                    if ($ErrorView -eq 'DetailedView') {
+                                    if ($scopedErrorView -eq 'DetailedView') {
                                         $message = Get-Error | Out-String
                                         return "${errorColor}${message}${resetcolor}"
                                     }
 
-                                    if ($ErrorView -eq 'CategoryView') {
+                                    if ($scopedErrorView -eq 'CategoryView') {
                                         $message = $err.CategoryInfo.GetMessage()
                                         return "${errorColor}${message}${resetcolor}"
                                     }
 
                                     $posmsg = ''
-                                    if ($ErrorView -eq 'ConciseView') {
+                                    if ($scopedErrorView -eq 'ConciseView') {
                                         $posmsg = Get-ConciseViewPositionMessage
                                     }
                                     elseif ($myinv -and ($myinv.MyCommand -or ($err.CategoryInfo.Category -ne 'ParserError'))) {
@@ -1377,7 +1387,7 @@ namespace System.Management.Automation.Runspaces
                                         $posmsg = ' : ' +  $err.PSMessageDetails + $posmsg
                                     }
 
-                                    if ($ErrorView -eq 'ConciseView') {
+                                    if ($scopedErrorView -eq 'ConciseView') {
                                         $recommendedAction = $_.ErrorDetails.RecommendedAction
                                         if (-not [String]::IsNullOrWhiteSpace($recommendedAction)) {
                                             $recommendedAction = $newline +

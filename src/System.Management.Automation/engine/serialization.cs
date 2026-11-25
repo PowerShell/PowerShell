@@ -5949,8 +5949,12 @@ namespace System.Management.Automation
     /// 2) values that can be serialized and deserialized during PowerShell remoting handshake
     ///    (in major-version compatible versions of PowerShell remoting)
     /// </summary>
-    public sealed class PSPrimitiveDictionary : Hashtable
+    public sealed class PSPrimitiveDictionary : Hashtable, IScopedPropertyContainer, IEnumerable, IDictionary, ICollection
     {
+        private readonly Func<PSPrimitiveDictionary> _scopedRead;
+        private readonly Action<Action<PSPrimitiveDictionary>> _scopedMutate;
+        private readonly string _scopedSettingPath;
+
         #region Constructors
 
         /// <summary>
@@ -5960,6 +5964,59 @@ namespace System.Management.Automation
             : base(StringComparer.OrdinalIgnoreCase)
         {
         }
+
+        private PSPrimitiveDictionary(
+            Func<PSPrimitiveDictionary> scopedRead,
+            Action<Action<PSPrimitiveDictionary>> scopedMutate,
+            string scopedSettingPath)
+            : base(StringComparer.OrdinalIgnoreCase)
+        {
+            _scopedRead = scopedRead;
+            _scopedMutate = scopedMutate;
+            _scopedSettingPath = scopedSettingPath;
+        }
+
+        internal static PSPrimitiveDictionary CreateScopedView(
+            Func<PSPrimitiveDictionary> scopedRead,
+            Action<Action<PSPrimitiveDictionary>> scopedMutate,
+            string scopedSettingPath = "Remoting.ApplicationPrivateData")
+            => new(scopedRead, scopedMutate, scopedSettingPath);
+
+        private PSPrimitiveDictionary ReadBacking()
+        {
+            if (_scopedRead is null)
+            {
+                return null;
+            }
+
+            return _scopedRead()
+                ?? throw new InvalidOperationException(StringUtil.Format(SessionStateStrings.ScopedMutableValueUnavailable, _scopedSettingPath));
+        }
+
+        internal PSPrimitiveDictionary GetScopedBackingValue() => _scopedRead is null ? this : _scopedRead();
+
+        private void MutateBacking(Action<PSPrimitiveDictionary> mutation, Action standaloneMutation)
+        {
+            if (_scopedMutate is null) standaloneMutation();
+            else _scopedMutate(mutation);
+        }
+
+        internal PSPrimitiveDictionary ShallowCloneForScopedSetting()
+        {
+            var clone = new PSPrimitiveDictionary();
+            foreach (DictionaryEntry entry in this)
+            {
+                clone.AddRawEntryForScopedSetting((string)entry.Key, entry.Value);
+            }
+
+            return clone;
+        }
+
+        private void AddRawEntryForScopedSetting(string key, object value)
+            => base.Add(key, value);
+
+        private void SetRawEntryForScopedSetting(string key, object value)
+            => base[key] = value;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PSPrimitiveDictionary"/> class with contents
@@ -6105,7 +6162,7 @@ namespace System.Management.Automation
         {
             string keyAsString = VerifyKey(key);
             VerifyValue(value);
-            base.Add(keyAsString, value);
+            MutateBacking(backing => backing.AddRawEntryForScopedSetting(keyAsString, value), () => base.Add(keyAsString, value));
         }
 
         /// <summary>
@@ -6126,14 +6183,14 @@ namespace System.Management.Automation
         {
             get
             {
-                return base[key];
+                return _scopedRead is null ? base[key] : ReadBacking()?[key];
             }
 
             set
             {
                 string keyAsString = VerifyKey(key);
                 VerifyValue(value);
-                base[keyAsString] = value;
+                MutateBacking(backing => backing.SetRawEntryForScopedSetting(keyAsString, value), () => base[keyAsString] = value);
             }
         }
 
@@ -6155,14 +6212,78 @@ namespace System.Management.Automation
         {
             get
             {
-                return base[key];
+                return _scopedRead is null ? base[key] : ReadBacking()?[key];
             }
 
             set
             {
                 VerifyValue(value);
-                base[key] = value;
+                MutateBacking(backing => backing.SetRawEntryForScopedSetting(key, value), () => base[key] = value);
             }
+        }
+
+        /// <inheritdoc />
+        public override int Count => _scopedRead is null ? base.Count : ReadBacking()?.Count ?? 0;
+
+        /// <inheritdoc />
+        public override ICollection Keys => _scopedRead is null ? base.Keys : ReadBacking()?.Keys ?? Array.Empty<object>();
+
+        /// <inheritdoc />
+        public override ICollection Values => _scopedRead is null ? base.Values : ReadBacking()?.Values ?? Array.Empty<object>();
+
+        /// <inheritdoc />
+        public override bool Contains(object key) => _scopedRead is null ? base.Contains(key) : ReadBacking()?.Contains(key) ?? false;
+
+        /// <inheritdoc />
+        public override bool ContainsKey(object key) => _scopedRead is null ? base.ContainsKey(key) : ReadBacking()?.ContainsKey(key) ?? false;
+
+        /// <inheritdoc />
+        public override bool ContainsValue(object value) => _scopedRead is null ? base.ContainsValue(value) : ReadBacking()?.ContainsValue(value) ?? false;
+
+        /// <inheritdoc />
+        public override IDictionaryEnumerator GetEnumerator() => _scopedRead is null ? base.GetEnumerator() : ReadBacking()?.GetEnumerator() ?? new Hashtable().GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        int ICollection.Count => Count;
+
+        bool ICollection.IsSynchronized => _scopedRead is null ? base.IsSynchronized : ReadBacking() is ICollection collection && collection.IsSynchronized;
+
+        object ICollection.SyncRoot => _scopedRead is null ? base.SyncRoot : (ReadBacking() as ICollection)?.SyncRoot;
+
+        void ICollection.CopyTo(Array array, int index) => CopyTo(array, index);
+
+        object IDictionary.this[object key] { get => this[key]; set => this[key] = value; }
+
+        ICollection IDictionary.Keys => Keys;
+
+        ICollection IDictionary.Values => Values;
+
+        bool IDictionary.IsReadOnly => _scopedRead is null ? base.IsReadOnly : ReadBacking() is IDictionary dictionary && dictionary.IsReadOnly;
+
+        bool IDictionary.IsFixedSize => _scopedRead is null ? base.IsFixedSize : ReadBacking() is IDictionary dictionary && dictionary.IsFixedSize;
+
+        void IDictionary.Add(object key, object value) => Add(key, value);
+
+        void IDictionary.Clear() => Clear();
+
+        bool IDictionary.Contains(object key) => Contains(key);
+
+        IDictionaryEnumerator IDictionary.GetEnumerator() => GetEnumerator();
+
+        void IDictionary.Remove(object key) => Remove(key);
+
+        /// <inheritdoc />
+        public override void Clear() => MutateBacking(static backing => backing.Clear(), base.Clear);
+
+        /// <inheritdoc />
+        public override void Remove(object key) => MutateBacking(backing => backing.Remove(key), () => base.Remove(key));
+
+        /// <inheritdoc />
+        public override void CopyTo(Array array, int index)
+        {
+            if (_scopedRead is null) base.CopyTo(array, index);
+            else ReadBacking()?.CopyTo(array, index);
         }
 
         #endregion
@@ -6175,7 +6296,9 @@ namespace System.Management.Automation
         /// <returns></returns>
         public override object Clone()
         {
-            return new PSPrimitiveDictionary(this);
+            return _scopedRead is null
+                ? new PSPrimitiveDictionary(this)
+                : ReadBacking().Clone();
         }
 
         /// <summary>

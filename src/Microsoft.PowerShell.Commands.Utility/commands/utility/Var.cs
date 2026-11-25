@@ -519,15 +519,16 @@ namespace Microsoft.PowerShell.Commands
                     newVariable.Description = Description;
                 }
 
+                object installedVariable;
                 try
                 {
                     if (string.IsNullOrEmpty(Scope))
                     {
-                        SessionState.Internal.NewVariable(newVariable, Force);
+                        installedVariable = SessionState.Internal.NewVariable(newVariable, Force);
                     }
                     else
                     {
-                        SessionState.Internal.NewVariableAtScope(newVariable, Scope, Force);
+                        installedVariable = SessionState.Internal.NewVariableAtScope(newVariable, Scope, Force);
                     }
                 }
                 catch (SessionStateException sessionStateException)
@@ -549,7 +550,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (_passThru)
                 {
-                    WriteObject(newVariable);
+                    WriteObject(installedVariable is ScopedSettingVariable ? installedVariable : newVariable);
                 }
             }
         }
@@ -976,19 +977,42 @@ namespace Microsoft.PowerShell.Commands
 
                             try
                             {
+                                if (matchingVariable is ScopedSettingVariable { IsAttached: true } &&
+                                    TrySetActiveScopedBinding(matchingVariable, varValue, origin, out var activeVariable))
+                                {
+                                    if (_passThru)
+                                    {
+                                        WriteObject(activeVariable);
+                                    }
+
+                                    continue;
+                                }
+
                                 // Since the variable existed in the specified scope, or
                                 // in the local scope if no scope was specified, use
                                 // the reference returned to set the variable properties.
 
-                                // If we want to force setting over a readonly variable
-                                // we have to temporarily mark the variable writable.
+                                var scopedVariable = Force && matchingVariable is ScopedSettingVariable { IsAttached: true } adapter
+                                    ? adapter
+                                    : null;
+                                if (scopedVariable is not null)
+                                {
+                                    if (_options is { } requestedOptions)
+                                    {
+                                        scopedVariable.ValidateOptions(requestedOptions, force: true);
+                                    }
+                                    else if (scopedVariable.IsReadOnly)
+                                    {
+                                        scopedVariable.ThrowIfNotWritable(force: true);
+                                    }
+                                }
 
-                                bool wasReadOnly = false;
-                                if (Force &&
-                                    (matchingVariable.Options & ScopedItemOptions.ReadOnly) != 0)
+                                // Ordinary variables use a temporary option change for -Force.
+                                bool wasReadOnly = Force && scopedVariable is null &&
+                                    (matchingVariable.Options & ScopedItemOptions.ReadOnly) != 0;
+                                if (wasReadOnly)
                                 {
                                     matchingVariable.SetOptions(matchingVariable.Options & ~ScopedItemOptions.ReadOnly, true);
-                                    wasReadOnly = true;
                                 }
 
                                 // Now change the value, options, or description
@@ -996,7 +1020,14 @@ namespace Microsoft.PowerShell.Commands
 
                                 if (varValue != AutomationNull.Value)
                                 {
-                                    matchingVariable.Value = varValue;
+                                    if (scopedVariable is not null)
+                                    {
+                                        scopedVariable.SetValue(varValue, force: true);
+                                    }
+                                    else
+                                    {
+                                        matchingVariable.Value = varValue;
+                                    }
 
                                     if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
                                     {
@@ -1016,14 +1047,18 @@ namespace Microsoft.PowerShell.Commands
 
                                 if (_options != null)
                                 {
-                                    matchingVariable.Options = (ScopedItemOptions)_options;
-                                }
-                                else
-                                {
-                                    if (wasReadOnly)
+                                    if (scopedVariable is not null)
                                     {
-                                        matchingVariable.SetOptions(matchingVariable.Options | ScopedItemOptions.ReadOnly, true);
+                                        scopedVariable.SetOptions((ScopedItemOptions)_options, force: true);
                                     }
+                                    else
+                                    {
+                                        matchingVariable.Options = (ScopedItemOptions)_options;
+                                    }
+                                }
+                                else if (wasReadOnly)
+                                {
+                                    matchingVariable.SetOptions(matchingVariable.Options | ScopedItemOptions.ReadOnly, true);
                                 }
 
                                 // If visibility was specified, set it on the variable
@@ -1059,6 +1094,33 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+        }
+
+        private bool TrySetActiveScopedBinding(PSVariable matched, object value, CommandOrigin origin, out PSVariable variable)
+        {
+            var state = SessionState.Internal;
+            var scope = state.GetScopeByID(Scope);
+            if (!ScopedProperties.TryGetPreferenceSetting(matched.Name, out var setting)
+                || ReferenceEquals(matched, scope.GetScopedSettingVariableForWrite(setting)))
+            {
+                variable = null;
+                return false;
+            }
+
+            // A dotted invocation can still enumerate the caller's variable after resetting its override.
+            ScopedItemOptions options = _options ?? ScopedItemOptions.None;
+            if (string.Equals(Scope, System.Management.Automation.StringLiterals.Private, StringComparison.OrdinalIgnoreCase))
+            {
+                options |= ScopedItemOptions.Private;
+            }
+
+            var incoming = new PSVariable(matched.Name, value == AutomationNull.Value ? matched.Value : value, options)
+            {
+                Description = Description ?? string.Empty,
+                Visibility = _visibility ?? SessionStateEntryVisibility.Public,
+            };
+            variable = scope.SetVariable(matched.Name, incoming, asValue: false, Force, state, origin);
+            return true;
         }
     }
 
@@ -1345,7 +1407,13 @@ namespace Microsoft.PowerShell.Commands
 
                         try
                         {
-                            if (_force &&
+                            if (matchingVariable is ScopedSettingVariable { IsAttached: true })
+                            {
+                                var state = SessionState.Internal;
+                                var scope = state.GetScopeByID(Scope);
+                                result = scope.SetVariable(matchingVariable.Name, null, asValue: true, _force, state, MyInvocation.CommandOrigin);
+                            }
+                            else if (_force &&
                                 (matchingVariable.Options & ScopedItemOptions.ReadOnly) != 0)
                             {
                                 // Remove the ReadOnly bit to set the value and then reapply

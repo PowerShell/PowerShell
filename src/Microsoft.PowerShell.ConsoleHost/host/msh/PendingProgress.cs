@@ -27,6 +27,8 @@ namespace Microsoft.PowerShell
     internal
     class PendingProgress
     {
+        internal ProgressView View { get; private set; }
+
         #region Updating Code
 
         /// <summary>
@@ -41,9 +43,10 @@ namespace Microsoft.PowerShell
         /// The ProgressRecord received that will either update the status of an activity which we are already tracking, or
         /// represent a new activity that we need to track.
         /// </param>
+        /// <param name="view">The effective render view at the time the record was received.</param>
         internal
         void
-        Update(long sourceId, ProgressRecord record)
+        Update(long sourceId, ProgressRecord record, ProgressView view)
         {
             Dbg.Assert(record != null, "record should not be null");
 
@@ -138,7 +141,8 @@ namespace Microsoft.PowerShell
 
             // At this point the tree is up-to-date.  Make a pass to age all of the nodes
 
-            AgeNodesAndResetStyle();
+            View = view;
+            AgeNodesAndResetStyle(view == ProgressView.Minimal ? ProgressNode.RenderStyle.Ansi : ProgressNode.RenderStyle.FullPlus);
         }
 
         private
@@ -503,15 +507,20 @@ namespace Microsoft.PowerShell
 
         private sealed class AgeAndResetStyleVisitor : NodeVisitor
         {
+            private readonly ProgressNode.RenderStyle _style;
+
+            internal AgeAndResetStyleVisitor(ProgressNode.RenderStyle style)
+            {
+                _style = style;
+            }
+
             internal override
             bool
             Visit(ProgressNode node, ArrayList unused, int unusedToo)
             {
                 node.Age = Math.Min(node.Age + 1, Int32.MaxValue - 1);
 
-                node.Style = ProgressNode.IsMinimalProgressRenderingEnabled()
-                    ? ProgressNode.RenderStyle.Ansi
-                    : node.Style = ProgressNode.RenderStyle.FullPlus;
+                node.Style = _style;
 
                 return true;
             }
@@ -519,15 +528,15 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// Increments the age of each of the nodes in the given list, and all their children.  Also sets the rendering
-        /// style of each node to "full."
+        /// style of each node to the initial style for the current view.
         ///
         /// All nodes are aged every time a new ProgressRecord is received.
         /// </summary>
         private
         void
-        AgeNodesAndResetStyle()
+        AgeNodesAndResetStyle(ProgressNode.RenderStyle style)
         {
-            AgeAndResetStyleVisitor arsv = new AgeAndResetStyleVisitor();
+            AgeAndResetStyleVisitor arsv = new AgeAndResetStyleVisitor(style);
             NodeVisitor.VisitNodes(_topLevelNodes, arsv);
         }
 
@@ -579,7 +588,7 @@ namespace Microsoft.PowerShell
 
             ArrayList result = new ArrayList();
 
-            if (ProgressNode.IsMinimalProgressRenderingEnabled())
+            if (View == ProgressView.Minimal)
             {
                 RenderHelper(result, _topLevelNodes, indentation: 0, maxWidth, rawUI);
                 return (string[])result.ToArray(typeof(string));

@@ -394,24 +394,24 @@ Describe "It should be possible to reset runspace debugging" -Tag "Feature" {
         $debuggerBeforeReset = $rs.Debugger
 
         # Create PowerShell to run script.
-        $ps = [powershell]::Create()
-        $ps.Runspace = $rs
+        $powerShell = [powershell]::Create()
+        $powerShell.Runspace = $rs
 
         # Set breakpoints in runspace.
-        $result = $ps.AddScript("Set-PSBreakpoint -Script '$scriptPath' -line 1").Invoke()
-        $ps.Commands.Clear()
-        $result = $ps.AddScript("Set-PSBreakpoint -Script '$scriptPath' -line 3").Invoke()
-        $ps.Commands.Clear()
-        $breakpoints = $ps.AddScript("Get-PSBreakpoint").Invoke()
+        $result = $powerShell.AddScript("Set-PSBreakpoint -Script '$scriptPath' -line 1").Invoke()
+        $powerShell.Commands.Clear()
+        $result = $powerShell.AddScript("Set-PSBreakpoint -Script '$scriptPath' -line 3").Invoke()
+        $powerShell.Commands.Clear()
+        $breakpoints = $powerShell.AddScript("Get-PSBreakpoint").Invoke()
 
         # Run script file until breakpoint hit.
-        $ar = $ps.AddScript("$scriptPath").BeginInvoke()
+        $ar = $powerShell.AddScript("$scriptPath").BeginInvoke()
         $completed = Wait-UntilTrue { $rs.Debugger.InBreakPoint -eq $true } -timeout 10000 -interval 200
-        $ps.Stop()
+        $powerShell.Stop()
         $rs.ResetRunspaceState()
     }
     AfterAll {
-        if ( $null -ne $ps ) { $ps.Dispose() }
+        if ( $null -ne $powerShell ) { $powerShell.Dispose() }
         if ( $null -ne $ss ) { $rs.Dispose() }
     }
     It "2 breakpoints should have been set" {
@@ -433,11 +433,11 @@ Describe "It should be possible to reset runspace debugging" -Tag "Feature" {
         $rs.Debugger | Should -Be $debuggerBeforeReset
     }
     It "The breakpoints should be gone after reset" {
-        $ps.Commands.clear()
-        $ps.AddCommand("Get-PSBreakpoint").Invoke() | Should -BeNullOrEmpty
+        $powerShell.Commands.clear()
+        $powerShell.AddCommand("Get-PSBreakpoint").Invoke() | Should -BeNullOrEmpty
     }
     It "The script should run without a break" {
-        $ps.Commands.Clear()
-        $ps.addscript($scriptPath).Invoke().Count | Should -Be 3
+        $powerShell.Commands.Clear()
+        $powerShell.addscript($scriptPath).Invoke().Count | Should -Be 3
     }
 }

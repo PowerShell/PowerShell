@@ -3445,7 +3445,10 @@ namespace System.Management.Automation
                     // SilentlyContinue, or Inquire (Continue), so we just continue....
                     if (_batchInvocationSettings == null)
                     {
-                        ActionPreference preference = (ActionPreference)Runspace.SessionStateProxy.GetVariable("ErrorActionPreference");
+                        object preferenceValue = Runspace.SessionStateProxy.GetVariable("ErrorActionPreference");
+                        ActionPreference preference = ExperimentalFeature.PSScopedProperties && preferenceValue is null
+                            ? ScopedProperties.ErrorPreferenceSetting.DefaultValue
+                            : (ActionPreference)preferenceValue;
 
                         switch (preference)
                         {
@@ -3522,9 +3525,10 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    preference = (Runspace != null) ?
-                        (ActionPreference)Runspace.SessionStateProxy.GetVariable("ErrorActionPreference")
-                        : ActionPreference.Continue;
+                    object preferenceValue = Runspace?.SessionStateProxy.GetVariable("ErrorActionPreference");
+                    preference = Runspace is null || (ExperimentalFeature.PSScopedProperties && preferenceValue is null)
+                        ? ActionPreference.Continue
+                        : (ActionPreference)preferenceValue;
                 }
 
                 switch (preference)

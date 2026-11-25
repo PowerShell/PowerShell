@@ -75,7 +75,10 @@ namespace Microsoft.PowerShell
                 _pendingProgress = new PendingProgress();
             }
 
-            _pendingProgress.Update(sourceId, record);
+            bool supportsVirtualTerminal = SupportsVirtualTerminal;
+            ProgressView view = GetProgressViewForRendering(supportsVirtualTerminal);
+            bool viewChanged = view != _pendingProgress.View;
+            _pendingProgress.Update(sourceId, record, view);
 
             if (_progPane == null)
             {
@@ -96,11 +99,11 @@ namespace Microsoft.PowerShell
                 }
             }
 
-            if (Interlocked.CompareExchange(ref progPaneUpdateFlag, 0, 1) == 1 || record.RecordType == ProgressRecordType.Completed)
+            if (Interlocked.CompareExchange(ref progPaneUpdateFlag, 0, 1) == 1 || record.RecordType == ProgressRecordType.Completed || viewChanged)
             {
                 // Update the progress pane only when the timer set up the update flag or WriteProgress is completed.
                 // As a result, we do not block WriteProgress and whole script and eliminate unnecessary console locks and updates.
-                if (SupportsVirtualTerminal && !PSHost.IsStdOutputRedirected && PSStyle.Instance.Progress.UseOSCIndicator)
+                if (supportsVirtualTerminal && !PSHost.IsStdOutputRedirected && PSStyle.Instance.Progress.UseOSCIndicator)
                 {
                     int percentComplete = record.PercentComplete;
                     if (percentComplete < 0)
@@ -115,14 +118,19 @@ namespace Microsoft.PowerShell
                     Console.Write($"\x1b]9;4;1;{percentComplete}\x1b\\");
                 }
 
-                // If VT is not supported, we change ProgressView to classic
-                if (!SupportsVirtualTerminal)
+                // Retain the legacy side effect when scoped properties are disabled.
+                if (!supportsVirtualTerminal && !ExperimentalFeature.PSScopedProperties)
                 {
                     PSStyle.Instance.Progress.View = ProgressView.Classic;
                 }
 
                 _progPane.Show(_pendingProgress);
             }
+        }
+
+        internal static ProgressView GetProgressViewForRendering(bool supportsVirtualTerminal)
+        {
+            return supportsVirtualTerminal ? PSStyle.Instance.Progress.View : ProgressView.Classic;
         }
 
         /// <summary>

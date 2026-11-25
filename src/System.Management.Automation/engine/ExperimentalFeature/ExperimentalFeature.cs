@@ -114,6 +114,10 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: PSProfileDSCResource,
                     description: "DSC v3 resources for managing PowerShell profile."
+                ),
+                new ExperimentalFeature(
+                    name: nameof(PSScopedProperties),
+                    description: "Expose scoped engine settings through the $PS variable."
                 )
             };
 
@@ -138,7 +142,10 @@ namespace System.Management.Automation
             catch (Exception e) when (LogException(e)) { }
 
             EnabledExperimentalFeatureNames = ProcessEnabledFeatures(enabledFeatures);
+            PSScopedProperties = IsEnabled(nameof(PSScopedProperties));
         }
+
+        internal static bool PSScopedProperties { get; }
 
         /// <summary>
         /// We need to notify which features were not enabled.

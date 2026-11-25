@@ -191,12 +191,12 @@ Describe "Runspace Debugging API tests" -Tag CI {
             $monitorInfo = [PSStandaloneMonitorRunspaceInfo]::new($runspace)
             $instanceId = $runspace.InstanceId
             $parentDebuggerId = [guid]::newguid()
-            $ps = [powershell]::Create()
-            $embeddedRunspaceInfo = [PSEmbeddedMonitorRunspaceInfo]::New($runspace,$runspaceType,$ps, $parentDebuggerId)
+            $powerShell = [powershell]::Create()
+            $embeddedRunspaceInfo = [PSEmbeddedMonitorRunspaceInfo]::New($runspace,$runspaceType,$powerShell, $parentDebuggerId)
         }
         AfterAll {
             $runspace.Dispose()
-            $ps.dispose()
+            $powerShell.dispose()
         }
 
         It "PSStandaloneMonitorRunspaceInfo should throw when called with a null argument to the constructor" {
@@ -213,7 +213,7 @@ Describe "Runspace Debugging API tests" -Tag CI {
         It "Embedded runspace properties should have proper values" {
             $embeddedRunspaceInfo.Runspace.InstanceId | Should -Be $InstanceId
             $embeddedRunspaceInfo.ParentDebuggerId | Should -Be $parentDebuggerId
-            $embeddedRunspaceInfo.Command.InstanceId | Should -Be $ps.InstanceId
+            $embeddedRunspaceInfo.Command.InstanceId | Should -Be $powerShell.InstanceId
             $embeddedRunspaceInfo.NestedDebugger | Should -BeNullOrEmpty
         }
     }

@@ -1077,8 +1077,13 @@ namespace System.Management.Automation.Internal
 
             // We want the value of PSDefaultParameterValues before possibly changing to the commands scopes.
             // This ensures we use the value from the caller's scope, not the callee's scope.
-            IDictionary psDefaultParameterValues =
-                firstcommandProcessor.Context.GetVariableValue(SpecialVariables.PSDefaultParameterValuesVarPath, false) as IDictionary;
+            ExecutionContext pipelineContext = firstcommandProcessor.Context;
+            IDictionary psDefaultParameterValues = ExperimentalFeature.PSScopedProperties
+                ? pipelineContext.EngineSessionState.CurrentScope.GetScopedMutableSettingValue(
+                    ScopedProperties.DefaultParameterValuesSetting,
+                    out _,
+                    pipelineContext.EngineSessionState.CurrentScope.ScopeOrigin) as IDictionary
+                : pipelineContext.GetVariableValue(SpecialVariables.PSDefaultParameterValuesVarPath, false) as IDictionary;
 
             _executionStarted = true;
 

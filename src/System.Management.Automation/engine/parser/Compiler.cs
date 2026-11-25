@@ -888,9 +888,11 @@ namespace System.Management.Automation.Language
 
             for (i = 0; i < SpecialVariables.PreferenceVariables.Length; ++i)
             {
-                DottedScriptCmdletLocalsNameIndexMap.Add(
-                    SpecialVariables.PreferenceVariables[i],
-                    i + (int)AutomaticVariable.NumberOfAutomaticVariables);
+                string name = SpecialVariables.PreferenceVariables[i];
+                if (!ScopedProperties.IsLegacySetting(name))
+                {
+                    DottedScriptCmdletLocalsNameIndexMap.Add(name, i + (int)AutomaticVariable.NumberOfAutomaticVariables);
+                }
             }
 
             s_builtinAttributeGenerator.Add(typeof(CmdletBindingAttribute), NewCmdletBindingAttribute);
@@ -6342,7 +6344,32 @@ namespace System.Management.Automation.Language
                 ? DynamicExpression.Dynamic(PSGetMemberBinder.Get(memberNameAst.Value, _memberFunctionType, memberExpressionAst.Static), typeof(object), target)
                 : DynamicExpression.Dynamic(PSGetDynamicMemberBinder.Get(_memberFunctionType, memberExpressionAst.Static), typeof(object), target, Compile(memberExpressionAst.Member));
 
+            memberAccessExpr = PreserveRuntimeInterpolation(memberExpressionAst, memberAccessExpr);
             return memberExpressionAst.NullConditional ? GetNullConditionalWrappedExpression(target, memberAccessExpr) : memberAccessExpr;
+        }
+
+        internal static Expression PreserveRuntimeInterpolation(MemberExpressionAst memberExpressionAst, Expression memberAccessExpr)
+        {
+            // Strict mode 1 permits undefined variables inside expandable strings.
+            // Runtime views carry the same absence through property access. Catch
+            // only that signal; ordinary getter and scope errors must still propagate.
+            for (Ast parent = memberExpressionAst.Parent; parent is not null; parent = parent.Parent)
+            {
+                if (parent is ExpandableStringExpressionAst)
+                {
+                    memberAccessExpr = Expression.TryCatch(
+                        memberAccessExpr,
+                        Expression.Catch(
+                            typeof(ScopedRuntimeUndefinedVariableException),
+                            Expression.Condition(
+                                IsStrictMode(2),
+                                Expression.Rethrow(typeof(object)),
+                                ExpressionCache.NullConstant)));
+                    break;
+                }
+            }
+
+            return memberAccessExpr;
         }
 
         internal static PSMethodInvocationConstraints GetInvokeMemberConstraints(InvokeMemberExpressionAst invokeMemberExpressionAst)
@@ -6689,7 +6716,9 @@ namespace System.Management.Automation.Language
             if (memberNameAst != null)
             {
                 string name = memberNameAst.Value;
-                return DynamicExpression.Dynamic(PSGetMemberBinder.Get(name, compiler._memberFunctionType, MemberExpression.Static), typeof(object), targetTemp);
+                return Compiler.PreserveRuntimeInterpolation(
+                    MemberExpression,
+                    DynamicExpression.Dynamic(PSGetMemberBinder.Get(name, compiler._memberFunctionType, MemberExpression.Static), typeof(object), targetTemp));
             }
 
             var propertyExpr = GetPropertyExpr(compiler);
@@ -6697,7 +6726,9 @@ namespace System.Management.Automation.Language
             temps.Add(propertyNameTemp);
             exprs.Add(Expression.Assign(propertyNameTemp, compiler.Compile(MemberExpression.Member)));
             CachedPropertyExpr = propertyNameTemp;
-            return DynamicExpression.Dynamic(PSGetDynamicMemberBinder.Get(compiler._memberFunctionType, MemberExpression.Static), typeof(object), targetTemp, propertyNameTemp);
+            return Compiler.PreserveRuntimeInterpolation(
+                MemberExpression,
+                DynamicExpression.Dynamic(PSGetDynamicMemberBinder.Get(compiler._memberFunctionType, MemberExpression.Static), typeof(object), targetTemp, propertyNameTemp));
         }
 
         public Expression SetValue(Compiler compiler, Expression rhs)

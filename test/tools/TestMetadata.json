@@ -1,6 +1,15 @@
 {
   "ExperimentalFeatures": {
     "ExpTest.FeatureOne": [ "test/powershell/engine/ExperimentalFeature/ExperimentalFeature.Basic.Tests.ps1" ],
+    "PSScopedProperties": [
+      "test/powershell/engine/ExperimentalFeature/ScopedProperties.Tests.ps1",
+      "test/powershell/engine/ExperimentalFeature/ScopedProperties.Enabled.Tests.ps1",
+      "test/powershell/engine/ExperimentalFeature/ScopedProperties.Configuration.Tests.ps1",
+      "test/powershell/engine/ExperimentalFeature/ScopedProperties.Style.Tests.ps1",
+      "test/powershell/engine/ExperimentalFeature/ScopedProperties.Mutable.Tests.ps1",
+      "test/powershell/engine/ExperimentalFeature/ScopedProperties.Remoting.Tests.ps1",
+      "test/powershell/engine/ExperimentalFeature/ScopedProperties.Runtime.Tests.ps1"
+    ],
     "PSSerializeJSONLongEnumAsNumber": [ "test/powershell/Modules/Microsoft.PowerShell.Utility/ConvertTo-Json.PSSerializeJSONLongEnumAsNumber.Tests.ps1" ]
   }
 }

@@ -5217,6 +5217,7 @@ namespace System.Management.Automation.Language
             BindingRestrictions restrictions;
             PSMemberInfo memberInfo;
             Expression expr = null;
+            bool isScopedPropertyGetter = false;
             if (_hasInstanceMember && TryGetInstanceMember(target.Value, Name, out memberInfo))
             {
                 // If there is an instance member, we generate (roughly) the following:
@@ -5315,6 +5316,9 @@ namespace System.Management.Automation.Language
                                 else
                                 {
                                     expr = Expression.Property(targetExpr, propertyAccessor);
+
+                                    // Scoped settings must report invalid scope access and preference errors to callers.
+                                    isScopedPropertyGetter = targetValue is IScopedPropertyContainer;
                                 }
                             }
                             else
@@ -5389,7 +5393,7 @@ namespace System.Management.Automation.Language
             }
 
             return expr != null
-                ? new DynamicMetaObject(WrapGetMemberInTry(expr), restrictions).WriteToDebugLog(this)
+                ? new DynamicMetaObject(isScopedPropertyGetter ? expr.Cast(typeof(object)) : WrapGetMemberInTry(expr), restrictions).WriteToDebugLog(this)
                 : (errorSuggestion ?? PropertyDoesntExist(target, restrictions)).WriteToDebugLog(this);
         }
 

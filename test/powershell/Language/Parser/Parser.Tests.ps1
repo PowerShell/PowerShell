@@ -1323,15 +1323,15 @@ foo``u{2195}abc
             $settings = [System.Management.Automation.PSInvocationSettings]::new()
             $settings.AddToHistory = $true
 
-            $ps = [powershell]::Create()
+            $testShell = [powershell]::Create()
         }
 
         AfterAll {
-            $ps.Dispose()
+            $testShell.Dispose()
         }
 
         AfterEach {
-            $ps.Commands.Clear()
+            $testShell.Commands.Clear()
         }
 
         $TokenResetTests = @(
@@ -1344,9 +1344,9 @@ foo``u{2195}abc
         It "Correctly resets the first and last tokens in the tokenizer after nested scan in script" -TestCases $TokenResetTests {
             param($script, $firstToken, $lastToken)
 
-            $ps.AddScript($script)
-            $ps.AddScript("(`$^,`$`$)")
-            $tokens = $ps.Invoke(@(), $settings)
+            $testShell.AddScript($script)
+            $testShell.AddScript("(`$^,`$`$)")
+            $tokens = $testShell.Invoke(@(), $settings)
 
             $tokens[0] | Should -BeExactly $firstToken
             $tokens[1] | Should -BeExactly $lastToken

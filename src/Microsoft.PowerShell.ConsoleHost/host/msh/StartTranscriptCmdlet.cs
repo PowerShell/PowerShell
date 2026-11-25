@@ -159,7 +159,9 @@ namespace Microsoft.PowerShell.Commands
             if (!_isFilenameSet)
             {
                 // read the filename from $TRANSCRIPT
-                object value = this.GetVariableValue("global:TRANSCRIPT", null);
+                object value = ExperimentalFeature.PSScopedProperties
+                    ? SessionState.Internal.ExecutionContext.GetVariableValue(new VariablePath("TRANSCRIPT"), null)
+                    : this.GetVariableValue("global:TRANSCRIPT", null);
 
                 // $TRANSCRIPT is not set, so create a file name (the default: $HOME/My Documents/PowerShell_transcript.YYYYMMDDmmss.txt)
                 if (value == null)
