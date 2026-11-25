@@ -1,9 +1,9 @@
-# Proposed scoped properties expansion plan
+# Scoped properties expansion plan
 
-> **Status: proposed; not implemented.** This plan describes the planned
-> expansion beyond the current prototype. The existing
-> [scoped properties prototype](scoped-properties.md) documents implemented
-> behavior and its validation history. This file does not change that account.
+> **Status: implemented in separately tested stages.** This document retains
+> the expansion design and delivery plan. The
+> [scoped properties prototype](scoped-properties.md) documents the implemented
+> behavior, compatibility boundaries, and validation results.
 
 ## Goal and design
 
@@ -213,10 +213,9 @@ branches. Test before, during, and after each relevant lifetime.
   execution, including effective feature state.
 
 Run focused C# and Pester checks for each stage, affected regression suites,
-then the broader C# suite. Report known or pre-existing failures separately;
-do not describe them as passing. Keep the implementation inventory and contracts
-in `docs/dev-process/scoped-properties.md` when work is implemented; this
-proposed plan does not change that prototype document.
+then the broader C# suite. The staged implementation and its results are recorded in
+`docs/dev-process/scoped-properties.md`. Known or pre-existing failures are
+reported separately and are not counted as passes.
 
 ## Source locations for Stage 0
 

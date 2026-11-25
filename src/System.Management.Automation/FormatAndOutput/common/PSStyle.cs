@@ -900,87 +900,87 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets value to turn off all attributes.
         /// </summary>
-        public string Reset { get; } = "\x1b[0m";
+        public string Reset => GetAnsiCode("\x1b[0m");
 
         /// <summary>
         /// Gets value to turn off blink.
         /// </summary>
-        public string BlinkOff { get; } = "\x1b[25m";
+        public string BlinkOff => GetAnsiCode("\x1b[25m");
 
         /// <summary>
         /// Gets value to turn on blink.
         /// </summary>
-        public string Blink { get; } = "\x1b[5m";
+        public string Blink => GetAnsiCode("\x1b[5m");
 
         /// <summary>
         /// Gets value to turn off bold.
         /// </summary>
-        public string BoldOff { get; } = "\x1b[22m";
+        public string BoldOff => GetAnsiCode("\x1b[22m");
 
         /// <summary>
         /// Gets value to turn on blink.
         /// </summary>
-        public string Bold { get; } = "\x1b[1m";
+        public string Bold => GetAnsiCode("\x1b[1m");
 
         /// <summary>
         /// Gets value to turn off dim.
         /// </summary>
-        public string DimOff { get; } = "\x1b[22m";
+        public string DimOff => GetAnsiCode("\x1b[22m");
 
         /// <summary>
         /// Gets value to turn on dim.
         /// </summary>
-        public string Dim { get; } = "\x1b[2m";
+        public string Dim => GetAnsiCode("\x1b[2m");
 
         /// <summary>
         /// Gets value to turn on hidden.
         /// </summary>
-        public string Hidden { get; } = "\x1b[8m";
+        public string Hidden => GetAnsiCode("\x1b[8m");
 
         /// <summary>
         /// Gets value to turn off hidden.
         /// </summary>
-        public string HiddenOff { get; } = "\x1b[28m";
+        public string HiddenOff => GetAnsiCode("\x1b[28m");
 
         /// <summary>
         /// Gets value to turn on reverse.
         /// </summary>
-        public string Reverse { get; } = "\x1b[7m";
+        public string Reverse => GetAnsiCode("\x1b[7m");
 
         /// <summary>
         /// Gets value to turn off reverse.
         /// </summary>
-        public string ReverseOff { get; } = "\x1b[27m";
+        public string ReverseOff => GetAnsiCode("\x1b[27m");
 
         /// <summary>
         /// Gets value to turn off standout.
         /// </summary>
-        public string ItalicOff { get; } = "\x1b[23m";
+        public string ItalicOff => GetAnsiCode("\x1b[23m");
 
         /// <summary>
         /// Gets value to turn on standout.
         /// </summary>
-        public string Italic { get; } = "\x1b[3m";
+        public string Italic => GetAnsiCode("\x1b[3m");
 
         /// <summary>
         /// Gets value to turn off underlined.
         /// </summary>
-        public string UnderlineOff { get; } = "\x1b[24m";
+        public string UnderlineOff => GetAnsiCode("\x1b[24m");
 
         /// <summary>
         /// Gets value to turn on underlined.
         /// </summary>
-        public string Underline { get; } = "\x1b[4m";
+        public string Underline => GetAnsiCode("\x1b[4m");
 
         /// <summary>
         /// Gets value to turn off strikethrough.
         /// </summary>
-        public string StrikethroughOff { get; } = "\x1b[29m";
+        public string StrikethroughOff => GetAnsiCode("\x1b[29m");
 
         /// <summary>
         /// Gets value to turn on strikethrough.
         /// </summary>
-        public string Strikethrough { get; } = "\x1b[9m";
+        public string Strikethrough => GetAnsiCode("\x1b[9m");
 
         /// <summary>
         /// Gets ANSI representation of a hyperlink.
@@ -1046,6 +1046,12 @@ namespace System.Management.Automation
         internal static PSStyle CreateScoped(PSScopedPropertyFacade facade) => new(facade);
 
         internal void ValidateView() => _scopedFacade?.Resolve();
+
+        private string GetAnsiCode(string code)
+        {
+            ValidateView();
+            return code;
+        }
 
         internal static OutputRendering DefaultOutputRendering => s_psstyle._outputRendering;
 

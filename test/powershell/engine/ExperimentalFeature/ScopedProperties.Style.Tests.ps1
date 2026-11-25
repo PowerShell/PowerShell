@@ -96,10 +96,18 @@ Describe 'PSScopedProperties PSStyle configuration' -Tag 'CI' {
     It 'binds AtScope style views and rejects a captured view after its target scope expires' {
         $style = & { $PS.AtScope('Local').Style }
         { $style.Progress.Style } | Should -Throw
+        foreach ($property in 'Reset', 'BlinkOff', 'Blink', 'BoldOff', 'Bold', 'DimOff', 'Dim', 'Hidden', 'HiddenOff', 'Reverse', 'ReverseOff', 'ItalicOff', 'Italic', 'UnderlineOff', 'Underline', 'StrikethroughOff', 'Strikethrough') {
+            { $style.$property } | Should -Throw
+        }
 
         $foreground = & { $PS.AtScope('Local').Style.Foreground }
         { $foreground.Red } | Should -Throw
         { $foreground.FromRgb(1, 2, 3) } | Should -Throw
+    }
+
+    It 'preserves standalone ANSI constants' {
+        [System.Management.Automation.PSStyle]::Instance.Reset | Should -Be "`e[0m"
+        [System.Management.Automation.PSStyle]::Instance.Bold | Should -Be "`e[1m"
     }
 
     It 'copies only the file extension dictionary when it is successfully mutated' {
@@ -154,18 +162,23 @@ Describe 'PSScopedProperties PSStyle configuration' -Tag 'CI' {
             $values = $second.AddScript({
                 param($styleView)
                 $PS.Style.OutputRendering = [System.Management.Automation.OutputRendering]::Ansi
-                $styleView.OutputRendering
+                @($styleView.OutputRendering, $styleView.Reset)
             }).AddArgument($unboundStyle).Invoke()
-            $values[-1] | Should -Be ([System.Management.Automation.OutputRendering]::Ansi)
+            $values[0] | Should -Be ([System.Management.Automation.OutputRendering]::Ansi)
+            $values[1] | Should -Be "`e[0m"
 
             $first.Commands.Clear()
             $boundStyle = $first.AddScript({ $PS.AtScope('Global').Style }).Invoke()[0]
             $second.Commands.Clear()
             $second.Streams.Error.Clear()
-            $second.AddScript({ param($styleView) $styleView.OutputRendering }).AddArgument($boundStyle) | Out-Null
-            $null = $second.Invoke()
-            $second.HadErrors | Should -BeTrue
-            $second.Streams.Error[0].Exception.Message | Should -Match 'runspace'
+            foreach ($property in 'OutputRendering', 'Bold', 'Reset') {
+                $second.Commands.Clear()
+                $second.Streams.Error.Clear()
+                $second.AddScript({ param($styleView, $propertyName) $styleView.$propertyName }).AddArgument($boundStyle).AddArgument($property) | Out-Null
+                $null = $second.Invoke()
+                $second.HadErrors | Should -BeTrue
+                $second.Streams.Error[0].Exception.Message | Should -Match 'runspace'
+            }
         }
         finally {
             $first.Dispose()

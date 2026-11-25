@@ -1,6 +1,6 @@
 # Scoped properties prototype
 
-For the proposed expansion beyond this prototype, see the [scoped properties expansion plan](scoped-properties-expansion-plan.md).
+This document describes the implemented experimental feature. The [expansion plan](scoped-properties-expansion-plan.md) records the design and staged delivery sequence.
 
 Run `Enable-ExperimentalFeature PSScopedProperties` and start a new PowerShell process to activate the feature. If you have no enabled experimental features in your user configuration, you can also save the following as `scoped-properties.json` and start a prototype build with `pwsh -NoProfile -SettingsFile ./scoped-properties.json`. A nonempty list of experimental features in the user configuration takes precedence over the list provided by `-SettingsFile`.
 
@@ -92,6 +92,18 @@ existing caching and read timing remain intact. Explicitly qualified variable
 lookups retain their scope. The `PSApplicationPrivateData` consumer retains
 its global, startup-only boundary as described below.
 
+The final consumer audit confirmed these routes:
+
+| Consumer | Enabled resolution and retained timing |
+| --- | --- |
+| General scalar readers | `ExecutionContext.GetVariableValue` and its default-value overload route registered, unqualified names through the current scope's descriptor. Explicitly qualified lookups retain their target. `GetBooleanPreference` also uses typed descriptors. |
+| Formatting and stringification | `InnerFormatShapeCommand.FormatEnumerationLimit` uses the scoped descriptor before its legacy global fallback. `MshObject` resolves `OFS` through the context lookup. |
+| Native processes | `NativeCommandProcessor` obtains input/output encodings and native-error policy through the context hooks; `NativeCommandParameterBinder` resolves argument-passing policy there too. Existing console fallbacks remain. |
+| Module discovery, transcription, remoting names | Their enabled branches use unqualified context lookups; disabled branches retain legacy global behavior. Explicit command parameters still win. |
+| History, help, mail, logging | Existing unqualified variable/context reads reach canonical settings. History limits, nullable logging defaults, and consumer cache lifetimes remain intact. |
+| Command defaults and session options | The pipeline captures the caller's dictionary before entering command frames. Remoting cmdlets retain their per-invocation options snapshot. |
+| Style and startup private data | Engine style access uses the scoped backing when a context exists and host fallback fields otherwise. Application private data deliberately remains a global startup-only consumer. |
+
 ### Mutable configuration
 
 `Command.DefaultParameterValues`, `Remoting.SessionOptions`, and
@@ -124,6 +136,16 @@ independently. The ANSI `Style.Reset` string remains distinct from the
 facade's `Reset(path)` method. File-extension mutations copy the effective
 extension dictionary, leaving other style settings alone.
 
+| Style surface | Members retained from `PSStyle` |
+| --- | --- |
+| Rendering | `OutputRendering`, `AutoSizeDefaultFormatting` |
+| `Progress` | `View`, `Style`, `MaxWidth`, `UseOSCIndicator` |
+| `Formatting` | `FormatAccent`, `TableHeader`, `CustomTableHeaderLabel`, `ErrorAccent`, `Error`, `Warning`, `Verbose`, `Debug`, `FeedbackName`, `FeedbackText`, `FeedbackAction` |
+| `FileInfo` | `Directory`, `SymbolicLink`, `Executable`, and `Extension` with its indexer, `Add`, `Remove`, `Clear`, `ContainsKey`, and `Keys` |
+| `Foreground`, `Background` | Black, Red, Green, Yellow, Blue, Magenta, Cyan, White and their Bright variants; both `FromRgb` overloads and `FromConsoleColor` |
+| ANSI attributes | `Reset`; Blink, Bold, Dim, Hidden, Reverse, Italic, Underline, Strikethrough and their Off variants |
+| Hyperlinks and static helpers | `FormatHyperlink`; the existing static color-mapping methods remain on the `PSStyle` type |
+
 Application private data preserves delayed conversion: arbitrary values may
 be assigned, and the server converts the global value to `PSPrimitiveDictionary`
 after a startup script only while the pool is `Opening`. A child override is
@@ -155,6 +177,43 @@ return the live legacy culture-name strings. `$?` reads the existing success
 flag, separately from the initially absent native exit code. Event values and
 event-local error lists persist within their subscription. Debugger and nested
 prompt views follow their producers' creation and cleanup boundaries.
+
+## Runtime map: legacy source, producer, presence, owner, writes
+
+The `ScopedRuntimeProperties` descriptor registry maps these paths; non-automatic entries resolve with `SessionStateInternal.GetVariableItem`, automatic tuple entries use `SessionStateScope.GetAutomaticVariableValue`, and `?` reads `ExecutionContext.QuestionMarkVariableValue`. `RuntimePropertyResolvers.Write` targets the facade's selected scope and calls `SessionStateScope.SetVariable`; it does not implement configuration inheritance/COW. The “initial/presence” column describes the legacy producer; a facade read never invents a runtime value to fill an absent slot.
+
+| Facade path | Legacy variable / producer and presence | Owner/lifetime and write implications |
+|---|---|---|
+| `LastStatementSuccessful` | `$?`; always present from `ExecutionContext.QuestionMarkVariableValue` | Current execution context; read-only facade. It is not `$LASTEXITCODE`. |
+| `LastExitCode` | `$LASTEXITCODE`; not initialized to zero; first native exit creates it | Legacy global producer/variable ownership. Writable through facade with normal variable setter rules; absence remains absent until a producer/assignment creates it. |
+| `Invocation.Arguments`, `.Input`, `.This`, `.Cmdlet`, `.BoundParameters`, `.Info`, `.ScriptRoot`, `.CommandPath` | `args`, `input`, `this`, `PSCmdlet`, `PSBoundParameters`, `MyInvocation`, `PSScriptRoot`, `PSCommandPath`; automatic tuple indices Args=1, This=2, Input=3, PSCmdlet=4, PSBoundParameters=5, MyInvocation=6, PSScriptRoot=7, PSCommandPath=8 | Resolve the active dotted invocation tuple first and then the scope tuple/fallback. Nested invocations can have distinct tuples inside one scope. Input returns the active enumerator/reference and must not be consumed by read/display. `Invocation.ScriptRoot` and `.CommandPath` describe the current script. `Invocation.Info.PSScriptRoot` and `.PSCommandPath` are caller fields from `MyInvocation`; they are intentionally different. Existing automatic-variable tuple setters remain writable where legacy assignment permits. |
+| `Invocation.ForEachEnumerator`, `.SwitchEnumerator`, `.Matches` | `foreach`, `switch`, `Matches`; loop variables are producer-managed; `$Matches` is retained from last successful match and not cleared by a later nonmatch | Current loop/script runtime; ordinary value/reference semantics. Reads do not call MoveNext. Writes use ordinary selected-scope variable setter, not configuration COW. |
+| `Diagnostics.Errors` | `$Error`; global error history normally, event action script-scope persistent list while executing an event action | Error list is a mutable reference; facade does not copy it. Event `$Error` is separate from global `$Error` and persists with event subscription/action script state. Variable replacement follows normal setter/permissions; mutating returned list is ordinary shared mutation. |
+| `Diagnostics.StackTrace` | `$StackTrace`; initialized null in initial session state | Runspace/session variable; null is present, not absent. Normally mutable variable. |
+| `Diagnostics.DebugContext` | `$PSDebugContext`; debugger sets on stop and removes in resume cleanup | Debugger-stop scope/lifetime; absent outside a stop unless user creates a binding. Strict handling distinguishes absent from present null. |
+| `History.FirstToken`, `.LastToken` | `^` and `$$` (`$`/`SpecialVariables.LastToken` descriptor); initialized null in initial session state | History/interactive token producer. Null is present; both remain ordinary variable writes under legacy permissions. |
+| `Session.Host` | `$Host`; initialized from engine host | Runspace host object; Constant/AllScope variable: replacement rejected, object itself remains the legacy reference. |
+| `Session.ExecutionContext` | `$ExecutionContext`; initialized as `EngineIntrinsics` wrapper | Runspace engine intrinsics; Constant/AllScope replacement rejected. |
+| `Session.Home` | `$HOME`; initialized from home environment | ReadOnly/AllScope string; replacement rejected. |
+| `Session.CurrentLocation` | `$PWD`; location API sets it to `CurrentLocation`, usually global path | Runspace-owned current location plus legacy variable path. The facade setter follows the legacy variable-assignment route for `$PWD` (scope `SetVariable`); it does not call `Set-Location` or independently fire a location-change event. This preserves the variable-path setter contract rather than making the property a second location API. |
+| `Session.Profile` | `$PROFILE`; optional, normally host-created | Host/script state; no default is synthesized. Missing remains missing (strict-mode behavior applies). |
+| `Session.NestedPromptLevel` | `$NestedPromptLevel`; initialized to zero and changed by nested-prompt producer | Runspace/session state; mutable legacy variable. |
+| `Session.CurrentlyExecutingCommand` | `$CurrentlyExecutingCommand`; optional prompt producer | Nested prompt saves/restores this state. Existing producer may write null on exit even when no value was initially present, so a post-prompt present-null binding can be observable. Do not claim exit always restores absence. |
+| `Runtime.ProcessId` | `$PID`; initialized as constant/all-scope process id | Process identity; Constant/AllScope replacement rejected. |
+| `Runtime.InstallationDirectory` | `$PSHOME`; initialized constant/all-scope | Installation identity; replacement rejected. |
+| `Runtime.ShellId` | `$ShellId`; initialized constant/all-scope | Runspace/shell identity; replacement rejected. |
+| `Runtime.VersionTable` | `$PSVersionTable`; initialized constant/all-scope `PSVersionHashTable` | Replacement rejected; returned hashtable remains mutable by ordinary reference semantics. No COW. |
+| `Runtime.Edition` | `$PSEdition`; initialized constant/all-scope | Replacement rejected. |
+| `Runtime.EnabledExperimentalFeatures` | `$EnabledExperimentalFeatures`; initialized constant/all-scope read-only bag | Replacement rejected; actual exposed bag follows legacy type/reference behavior. |
+| `Runtime.Culture`, `.UICulture` | `$PSCulture`, `$PSUICulture`; specialized `CultureVariable` getters return current thread culture names | Live runspace execution thread, not a copied `CultureInfo` or process-global default. Variables are ReadOnly/AllScope; replacement rejected. |
+| `Runtime.IsWindows`, `.IsLinux`, `.IsMacOS`, `.IsCoreCLR` | Corresponding initialized read-only/all-scope variables | Process/runtime identity, read-only variable writes rejected. |
+| `Event.Record`, `.Subscriber`, `.Arguments`, `.Sender` | `Event`, `EventSubscriber`, `EventArgs`, `Sender`; `EventManager.PSEventJob` populates action session state | Per event action/subscription script state. Values persist between callbacks and are not global or automatically cleared at callback return. Existing producer types and references are returned; writes follow ordinary variable setter. |
+| `Remoting.SenderInfo` | `$PSSenderInfo`; optional remoting-owned variable | Remoting/session lifetime; absent outside remoting unless user creates it. No facade-created default. |
+| `Constants.True`, `.False`, `.Null` | `$true`, `$false`, `$null` | Language constants; read-only facade. `$null` is special/present-null. The underlying constant objects and option semantics remain engine-defined. |
+
+### Class, strict-mode, and visibility boundaries
+
+The runtime facade does not bypass parser or language restrictions. Existing class rules prohibit unqualified `$PS` variable access in class bodies, and the feature parser rejects qualified `$script:PS`; code needing runtime facade access in a class should receive the facade as an explicit parameter. Module/private visibility is resolved using the normal session-state variable lookup and caller origin. Missing variable behavior remains legacy-compatible in ordinary reads and strict modes. In expandable strings, only the new sentinel representing an absent runtime backing is softened for strict mode 1; strict mode 2 still throws. A present `$null` is not converted into absence.
 
 ## Baseline before canonical Error storage
 
@@ -340,13 +399,12 @@ Two uninterrupted full xUnit attempts and an isolated socket-suite attempt encou
 
 The source audit found no remaining Error-only assumption in shared registration, storage, invocation frames, tuple reservation, or debugger enumeration. Stream-specific runtime policies and their differing cache behavior remain intact. Logs and XML results for this increment are under `artifacts/scoped-properties/expand-*`.
 
-## Expansion feasibility inventory (stage zero)
+## Historical expansion feasibility inventory (stage zero)
 
-The following is a source inventory for the proposed expansion in
-`scoped-properties-expansion-plan.md`. It records existing producers and
-consumer boundaries; it does not claim that these paths are exposed through
-`$PS`. This snapshot predates the scalar preference implementation described
-above; it records the starting architecture and the remaining runtime work.
+This historical snapshot records the starting architecture before expansion.
+Its prospective wording describes the work identified at stage zero, rather
+than outstanding implementation tasks. The implemented mapping above and the
+staged validation below supersede those feasibility caveats.
 
 ### Configuration paths
 
@@ -546,3 +604,40 @@ for floating-point limits. Both failures also reproduce with the installed,
 unmodified PowerShell 7.6.10 and are not counted as passes. Results are under
 `artifacts/scoped-properties/expansion-stage4-accepted`,
 `expansion-stage4-xunit-final`, and adjacent stage 4 logs.
+
+## Final integration validation
+
+The final audit reconciled the configuration registry, runtime descriptors,
+legacy producers, and consumer routing against the expansion plan. It also
+closed a lifetime gap in the fixed ANSI string properties: a captured bound
+style now rejects expired scopes and foreign runspaces for `Reset`, `Bold`,
+and the other attribute strings, just as its mutable leaves and helpers do.
+Standalone `PSStyle.Instance` and portable unbound views retain their behavior.
+
+The final .NET 11 build and publish succeeded. The complete scoped Pester
+suites passed 282 cases enabled and 160 disabled, with 122 feature-only skips
+in the disabled run. Both effective feature states were verified. The affected
+style, rendering, redirection, and session-option regressions again passed
+169 cases with the same five previously reproduced baseline failures in each
+mode. No baseline failure is counted as a pass.
+
+The final broad C# run completed with 500 passed, six skipped, and seven
+locale-dependent `DisplayHumanReadableFileSize` failures in each verified
+feature state. All 92 focused scoped tests passed within each run. The seven
+failures expect decimal points while this machine formats decimal commas;
+they match the previously recorded baseline. The broad run excluded
+`RemoteHyperVTests` after full-suite attempts in both states hit the 90-second
+inactivity timeout while `ValidateFailsWhenTokensMismatch` was active. Those
+aborted attempts are not described as complete passes.
+
+Initial broad attempts also exposed fixture permission errors and a validation
+hook that redirected configuration-policy fixtures. The final rerun used the
+required fixture permissions and a testhost-only hook that restores ordinary
+configuration paths and caches after initializing the requested feature state;
+all configuration-policy cases then passed. Child `pwsh` policy fixtures use
+their native configuration.
+
+Final logs and XML are under `artifacts/scoped-properties/expansion-stage5-accepted`
+and `expansion-stage5-broad-final`; full-suite timeout evidence is retained in
+`expansion-stage5-full-final`. Adjacent stage 5 logs record build, publish, and
+affected regression results. Each delivery stage is reviewed and tested before its separate local commit; no changes were pushed.
