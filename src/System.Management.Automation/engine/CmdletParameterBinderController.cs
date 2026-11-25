@@ -193,6 +193,91 @@ namespace System.Management.Automation
             // between each pipeline object.
 
             _prePipelineProcessingParameterSetFlags = _currentParameterSetFlag;
+            _pipelineInputBindingAttemptCount = 0;
+            _pipelineInputParameter = isPipelineInputExpected ? GetSinglePipelineInputParameter(out _pipelineInputBindingAttemptCount) : null;
+        }
+
+        private MergedCompiledCommandParameter GetSinglePipelineInputParameter(out int bindingAttemptCount)
+        {
+            bindingAttemptCount = 0;
+
+            // Limit the cached destination to compiled cmdlets without dynamic or delayed
+            // binding. Keep those interactions and prioritized parameter-set searches on the general path.
+            if (DefaultParameterBinder is not ReflectionParameterBinder ||
+                _commandMetadata.ImplementsDynamicParameters ||
+                _delayBindScriptBlocks.Count != 0 ||
+                _parameterSetToBePrioritizedInPipelineBinding != 0)
+            {
+                return null;
+            }
+
+            // Keep commands with matching $PSDefaultParameterValues entries on normal binding,
+            // even if those defaults have not bound yet: they can be retried after pipeline binding.
+            if (_allDefaultParameterValuePairs != null && _allDefaultParameterValuePairs.Count != 0)
+            {
+                return null;
+            }
+
+            uint parameterSet = _prePipelineProcessingParameterSetFlags;
+            // Require command-line binding to have resolved the parameter set; do not use pipeline
+            // input to choose it here. MaxValue represents all sets and is safe only if at most one exists.
+            if (parameterSet == 0 ||
+                (parameterSet == uint.MaxValue
+                    ? BindableParameters.ParameterSetCount > 1
+                    // Check whether more than one bit is set - namely, whether multiple parameter sets are still valid.
+                    : (parameterSet & (parameterSet - 1)) != 0))
+            {
+                return null;
+            }
+
+            uint defaultParameterSet = _commandMetadata.DefaultParameterSetFlag;
+            bool preferDefaultParameterSet = defaultParameterSet != 0 && (parameterSet & defaultParameterSet) != 0;
+            MergedCompiledCommandParameter candidate = null;
+            // Explicitly bound parameters are already absent from this list.
+            foreach (MergedCompiledCommandParameter parameter in UnboundParameters)
+            {
+                if (!parameter.Parameter.DoesParameterSetTakePipelineInput(parameterSet))
+                {
+                    continue;
+                }
+
+                // Use normal binding if more than one unbound parameter accepts pipeline input in this set,
+                // either by value or by property name. Also exclude unsupported types and attributes.
+                // Supported arrays still use the existing binder for collection construction and coercion.
+                if (candidate != null ||
+                    (parameter.Parameter.Type != typeof(PSObject) &&
+                     parameter.Parameter.Type != typeof(object) &&
+                     parameter.Parameter.Type != typeof(PSObject[]) &&
+                     parameter.Parameter.Type != typeof(object[])) ||
+                    parameter.Parameter.ArgumentTransformationAttributes.Length != 0 ||
+                    parameter.Parameter.ValidationAttributes.Length != 0 ||
+                    parameter.Parameter.PSTypeName != null)
+                {
+                    return null;
+                }
+
+                foreach (ParameterSetSpecificMetadata setData in parameter.Parameter.GetMatchingParameterSetData(parameterSet))
+                {
+                    // Cache only a by-value destination. Property-name binding depends on each input
+                    // object's members and must retain the normal binding-phase precedence.
+                    if (!setData.ValueFromPipeline || setData.ValueFromPipelineByPropertyName)
+                    {
+                        return null;
+                    }
+
+                    // Within each by-value phase, normal binding tries the parameter once per
+                    // matching parameter-set entry, stopping when binding succeeds.
+                    // If binding in the default set fails, normal binding removes that set from
+                    // the search mask and searches again. The mask can be zero, but AllSets entries
+                    // still match and get another attempt. No other named set can match because
+                    // this invocation already has only one valid parameter set.
+                    bindingAttemptCount += preferDefaultParameterSet && setData.IsInAllSets ? 2 : 1;
+                }
+
+                candidate = parameter;
+            }
+
+            return candidate;
         }
 
         /// <summary>
@@ -3281,6 +3366,37 @@ namespace System.Management.Automation
             // Now restore the parameter set flags
 
             _currentParameterSetFlag = _prePipelineProcessingParameterSetFlags;
+
+            if (_pipelineInputParameter != null)
+            {
+                const string fastPathTraceMessage = "Using fast-path pipeline input binding for parameter [{0}].";
+                ParameterBinderBase.bindingTracer.WriteLine(fastPathTraceMessage, _pipelineInputParameter.Parameter.Name);
+                s_tracer.WriteLine(fastPathTraceMessage, _pipelineInputParameter.Parameter.Name);
+
+                // Retain all uncoerced attempts before coercion, including default-set and overlapping-metadata retries.
+                for (int attempt = 0; !result && attempt < _pipelineInputBindingAttemptCount; attempt++)
+                {
+                    result = BindValueFromPipeline(inputToOperateOn, _pipelineInputParameter, ParameterBindingFlags.None);
+                }
+
+                for (int attempt = 0; !result && attempt < _pipelineInputBindingAttemptCount; attempt++)
+                {
+                    result = BindValueFromPipeline(inputToOperateOn, _pipelineInputParameter, ParameterBindingFlags.ShouldCoerceType);
+                }
+
+                ValidateParameterSets(prePipelineInput: false, setDefault: true);
+            }
+            else
+            {
+                result = BindPipelineParametersWithNormalBinding(inputToOperateOn);
+            }
+
+            return result;
+        }
+
+        private bool BindPipelineParametersWithNormalBinding(PSObject inputToOperateOn)
+        {
+            bool result = false;
             uint validParameterSets = _currentParameterSetFlag;
             bool needToPrioritizeOneSpecificParameterSet = _parameterSetToBePrioritizedInPipelineBinding != 0;
             int steps = needToPrioritizeOneSpecificParameterSet ? 2 : 1;
@@ -3902,7 +4018,16 @@ namespace System.Management.Automation
 
         #endregion DefaultParameterBindingStructures
 
+        // When multiple parameter sets remain valid, try all pipeline-binding phases for this set
+        // before trying the remaining sets. Zero means no set needs this priority.
         private uint _parameterSetToBePrioritizedInPipelineBinding = 0;
+
+        // The pipeline parameter selected for the fast-path pipeline input by-value binding; null means use normal binding.
+        private MergedCompiledCommandParameter _pipelineInputParameter;
+
+        // Maximum fast-path attempts per input in each by-value phase (without coercion, then with coercion).
+        // Preserves normal binding's retries; each phase stops when binding succeeds.
+        private int _pipelineInputBindingAttemptCount;
 
         /// <summary>
         /// The cmdlet metadata.

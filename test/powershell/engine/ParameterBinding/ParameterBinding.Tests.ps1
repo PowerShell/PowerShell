@@ -1,5 +1,756 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
+Describe "Compiled object pipeline parameter binding" -Tags "CI" {
+    BeforeAll {
+        $types = Add-Type -PassThru -TypeDefinition @'
+using System;
+using System.Collections.Generic;
+using System.Management.Automation;
+
+namespace PipelineBindingTests
+{
+    public class Record
+    {
+        public object Value;
+        public object BoundValue;
+        public bool IsBound;
+        public string ParameterSet;
+        public object[] Assignments;
+        public string Label;
+        public int Attempts;
+    }
+
+    public abstract class RecordCommand : PSCmdlet
+    {
+        private PSObject _value = new PSObject("initial");
+        private readonly List<object> _assignments = new List<object>();
+
+        public virtual PSObject Value
+        {
+            get { return _value; }
+            set { _value = value; _assignments.Add(value); }
+        }
+
+        [Parameter]
+        public string Label { get; set; }
+
+        protected override void ProcessRecord()
+        {
+            WriteObject(new Record {
+                Value = Value,
+                IsBound = MyInvocation.BoundParameters.ContainsKey("Value"),
+                BoundValue = MyInvocation.BoundParameters.ContainsKey("Value") ? MyInvocation.BoundParameters["Value"] : null,
+                ParameterSet = ParameterSetName,
+                Label = Label,
+                Assignments = _assignments.ToArray()
+            });
+        }
+    }
+
+    [Cmdlet("Test", "PipelineRecord")]
+    public sealed class RecordInputCommand : RecordCommand
+    {
+        [Parameter(ValueFromPipeline = true)]
+        public override PSObject Value { get { return base.Value; } set { base.Value = value; } }
+    }
+
+    [Cmdlet("Test", "MandatoryPipelineRecord")]
+    public sealed class MandatoryInputCommand : RecordCommand
+    {
+        [Parameter(Mandatory = true, ValueFromPipeline = true)]
+        public override PSObject Value { get { return base.Value; } set { base.Value = value; } }
+    }
+
+    [Cmdlet("Test", "ObjectPipelineRecord")]
+    public sealed class ObjectInputCommand : PSCmdlet
+    {
+        private object _value = "initial";
+        private readonly List<object> _assignments = new List<object>();
+
+        [Parameter(ValueFromPipeline = true)]
+        public object Value
+        {
+            get { return _value; }
+            set { _value = value; _assignments.Add(value); }
+        }
+
+        protected override void ProcessRecord()
+        {
+            WriteObject(new Record {
+                Value = Value,
+                IsBound = MyInvocation.BoundParameters.ContainsKey("Value"),
+                BoundValue = MyInvocation.BoundParameters["Value"],
+                Assignments = _assignments.ToArray()
+            });
+        }
+    }
+
+    [Cmdlet("Test", "ArrayPipelineRecord")]
+    public class ArrayInputCommand : PSCmdlet
+    {
+        private PSObject[] _value = new[] { new PSObject("initial") };
+        private readonly List<object> _assignments = new List<object>();
+
+        [Parameter(ValueFromPipeline = true)]
+        public virtual PSObject[] Value
+        {
+            get { return _value; }
+            set { _value = value; _assignments.Add(value); }
+        }
+
+        protected override void ProcessRecord()
+        {
+            WriteObject(new Record {
+                Value = Value,
+                IsBound = MyInvocation.BoundParameters.ContainsKey("Value"),
+                BoundValue = MyInvocation.BoundParameters["Value"],
+                Assignments = _assignments.ToArray()
+            });
+        }
+    }
+
+    [Cmdlet("Test", "MandatoryArrayPipelineRecord")]
+    public sealed class MandatoryArrayInputCommand : ArrayInputCommand
+    {
+        [Parameter(Mandatory = true, ValueFromPipeline = true)]
+        public override PSObject[] Value { get { return base.Value; } set { base.Value = value; } }
+    }
+
+    [Cmdlet("Test", "ObjectArrayPipelineRecord", DefaultParameterSetName = "Chosen")]
+    public class ObjectArrayInputCommand : PSCmdlet
+    {
+        private object[] _value = new object[] { "initial" };
+        private int _attempts;
+        private readonly List<object> _assignments = new List<object>();
+
+        [Parameter]
+        public int RejectedAttemptCount { get; set; }
+
+        [Parameter(ParameterSetName = "Chosen")]
+        public SwitchParameter Choose { get; set; }
+
+        [Parameter(ValueFromPipeline = true)]
+        [Parameter(ValueFromPipeline = true, ParameterSetName = "Chosen")]
+        public virtual object[] Value
+        {
+            get { return _value; }
+            set
+            {
+                _assignments.Add(value);
+                if (value != null && value.Length == 1 &&
+                    Equals(value[0], "retry") && ++_attempts <= RejectedAttemptCount)
+                    throw new PSInvalidCastException("Retryable setter failure.");
+                _value = value;
+            }
+        }
+
+        protected override void ProcessRecord()
+        {
+            WriteObject(new Record {
+                Value = Value,
+                IsBound = MyInvocation.BoundParameters.ContainsKey("Value"),
+                BoundValue = MyInvocation.BoundParameters["Value"],
+                ParameterSet = ParameterSetName,
+                Assignments = _assignments.ToArray(),
+                Attempts = _attempts
+            });
+        }
+    }
+
+    [Cmdlet("Test", "MandatoryObjectArrayPipelineRecord", DefaultParameterSetName = "Chosen")]
+    public sealed class MandatoryObjectArrayInputCommand : ObjectArrayInputCommand
+    {
+        [Parameter(Mandatory = true, ValueFromPipeline = true)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "Chosen")]
+        public override object[] Value { get { return base.Value; } set { base.Value = value; } }
+    }
+
+    [Cmdlet("Test", "RetryPipelineRecord")]
+    public sealed class RetryInputCommand : RecordCommand
+    {
+        private int _attempts;
+
+        [Parameter(ValueFromPipeline = true)]
+        public override PSObject Value
+        {
+            get { return base.Value; }
+            set
+            {
+                if (Equals(value?.BaseObject, "retry") && ++_attempts == 1)
+                    throw new PSInvalidCastException("Retry binding with coercion.");
+                base.Value = value;
+            }
+        }
+
+        protected override void ProcessRecord() { WriteObject(_attempts); }
+    }
+
+    public abstract class RetryScheduleCommand : PSCmdlet
+    {
+        private PSObject _value = new PSObject("initial");
+        private int _attempts;
+        private readonly List<object> _assignments = new List<object>();
+
+        [Parameter]
+        public int RejectedAttemptCount { get; set; } = 2;
+
+        [Parameter(ParameterSetName = "Chosen")]
+        public SwitchParameter Choose { get; set; }
+
+        public virtual PSObject Value
+        {
+            get { return _value; }
+            set
+            {
+                _assignments.Add(value?.BaseObject);
+                if (Equals(value?.BaseObject, "retry") && ++_attempts <= RejectedAttemptCount)
+                    throw new PSInvalidCastException("Retryable setter failure.");
+                _value = value;
+            }
+        }
+
+        protected override void ProcessRecord()
+        {
+            WriteObject(new Record {
+                Value = Value,
+                BoundValue = MyInvocation.BoundParameters["Value"],
+                IsBound = MyInvocation.BoundParameters.ContainsKey("Value"),
+                ParameterSet = ParameterSetName,
+                Assignments = _assignments.ToArray(),
+                Attempts = _attempts
+            });
+        }
+    }
+
+    [Cmdlet("Test", "DefaultSetRetry", DefaultParameterSetName = "Chosen")]
+    public sealed class DefaultSetRetryCommand : RetryScheduleCommand
+    {
+        [Parameter(ValueFromPipeline = true)]
+        public override PSObject Value { get { return base.Value; } set { base.Value = value; } }
+    }
+
+    [Cmdlet("Test", "DefaultSetOverlappingRetry", DefaultParameterSetName = "Chosen")]
+    public sealed class DefaultSetOverlappingRetryCommand : RetryScheduleCommand
+    {
+        [Parameter(ValueFromPipeline = true)]
+        [Parameter(ValueFromPipeline = true, ParameterSetName = "Chosen")]
+        public override PSObject Value { get { return base.Value; } set { base.Value = value; } }
+    }
+
+    [Cmdlet("Test", "OverlappingRetry")]
+    public sealed class OverlappingRetryCommand : RetryScheduleCommand
+    {
+        [Parameter(ValueFromPipeline = true)]
+        [Parameter(ValueFromPipeline = true, ParameterSetName = "Chosen")]
+        public override PSObject Value { get { return base.Value; } set { base.Value = value; } }
+    }
+
+    public sealed class PrefixAttribute : ArgumentTransformationAttribute
+    {
+        public override object Transform(EngineIntrinsics engineIntrinsics, object inputData)
+        {
+            return new PSObject("transformed:" + inputData);
+        }
+    }
+
+    [Cmdlet("Test", "TransformedPipelineRecord")]
+    public sealed class TransformedInputCommand : RecordCommand
+    {
+        [Parameter(ValueFromPipeline = true)]
+        [Prefix]
+        [ValidatePattern("^transformed:")]
+        public override PSObject Value { get { return base.Value; } set { base.Value = value; } }
+    }
+
+    [Cmdlet("Test", "PropertyPipelineRecord")]
+    public sealed class PropertyInputCommand : RecordCommand
+    {
+        [Parameter(ValueFromPipeline = true)]
+        public override PSObject Value { get { return base.Value; } set { base.Value = value; } }
+
+        [Parameter(ValueFromPipelineByPropertyName = true)]
+        public string Name { get; set; }
+
+        protected override void ProcessRecord() { WriteObject(Name ?? "missing"); }
+    }
+
+    [Cmdlet("Test", "TypedPipelineRecord")]
+    public sealed class TypedInputCommand : RecordCommand
+    {
+        [Parameter(ValueFromPipeline = true)]
+        [PSTypeName("Pipeline.Record")]
+        public override PSObject Value { get { return base.Value; } set { base.Value = value; } }
+    }
+}
+'@
+        $bindingModule = Import-Module -Assembly $types[0].Assembly -PassThru
+
+        function Invoke-RetrySchedule {
+            param(
+                [string]$Command,
+                [int]$RejectedAttemptCount,
+                [switch]$NormalBinding,
+                [switch]$TraceBinding
+            )
+
+            # A matching default overridden by the explicit argument forces normal binding
+            # without applying a default value or changing the setter's retry behavior.
+            $PSDefaultParameterValues = if ($NormalBinding) { @{ "${Command}:RejectedAttemptCount" = 0 } } else { @{} }
+            $state = @{ Records = @(); Errors = @(); AttemptKind = @(); TraceText = '' }
+            $expression = {
+                $bindingErrors = @()
+                $state.Records = @('retry', 'next' | & $Command -Choose -RejectedAttemptCount $RejectedAttemptCount -ErrorAction SilentlyContinue -ErrorVariable bindingErrors)
+                $state.Errors = $bindingErrors
+            }
+
+            if ($TraceBinding) {
+                $tracePath = Join-Path $TestDrive "$Command-$RejectedAttemptCount-$NormalBinding-trace.txt"
+                Trace-Command -Name ParameterBinding -Expression $expression -FilePath $tracePath
+                $state.TraceText = Get-Content $tracePath -Raw
+                $pattern = 'Parameter \[Value\] PIPELINE INPUT ValueFromPipeline (NO COERCION|WITH COERCION)'
+                $state.AttemptKind = @([regex]::Matches($state.TraceText, $pattern) | ForEach-Object { $_.Groups[1].Value })
+            } else {
+                . $expression
+            }
+
+            $state
+        }
+
+        function Invoke-ObjectArrayBinding {
+            param(
+                [object[]]$InputRecord,
+                [string]$Command = 'Test-ObjectArrayPipelineRecord',
+                [switch]$NormalBinding
+            )
+
+            $PSDefaultParameterValues = if ($NormalBinding) { @{ "${Command}:RejectedAttemptCount" = 1 } } else { @{} }
+            $state = @{ Records = @(); Errors = @(); TraceText = '' }
+            $tracePath = Join-Path $TestDrive "$Command-$NormalBinding-array-trace.txt"
+            Trace-Command -Name ParameterBinding -Expression {
+                $bindingErrors = @()
+                $state.Records = @($InputRecord | & $Command -Choose -RejectedAttemptCount 0 -ErrorAction SilentlyContinue -ErrorVariable bindingErrors)
+                $state.Errors = $bindingErrors
+            } -FilePath $tracePath
+            $state.TraceText = Get-Content $tracePath -Raw
+            $state
+        }
+    }
+
+    AfterAll {
+        Remove-Module $bindingModule
+    }
+
+    It "assigns each input and restores the original value between records" {
+        $result = 1, 'two', $null, 4 | Test-PipelineRecord
+        $result.Count | Should -Be 4
+        $result[0].Value | Should -Be 1
+        $result[1].Value | Should -Be 'two'
+        $result[2].Value | Should -BeNullOrEmpty
+        $result[3].Value | Should -Be 4
+        $result[3].Assignments.Count | Should -Be 7
+        $result[3].Assignments[1] | Should -Be 'initial'
+        $result[3].Assignments[3] | Should -Be 'initial'
+        $result[3].Assignments[5] | Should -Be 'initial'
+        foreach ($record in $result) {
+            $record.IsBound | Should -BeTrue
+            [object]::ReferenceEquals($record.Value, $record.BoundValue) | Should -BeTrue
+            $record.ParameterSet | Should -Be '__AllParameterSets'
+        }
+    }
+
+    It "preserves wrapped object identity and does not enumerate collection inputs" {
+        $item = [pscustomobject]@{ Name = 'record' }
+        $collection = @(1, 2)
+        $result = $item, $collection | Test-PipelineRecord
+        [object]::ReferenceEquals($result[0].Value, $item) | Should -BeTrue
+        [object]::ReferenceEquals($result[1].Value, $collection) | Should -BeTrue
+    }
+
+    It "binds object parameters without unwrapping inputs and restores their original value" {
+        $item = [pscustomobject]@{ Name = 'record' }
+        $collection = @(1, 2)
+        $result = $item, $collection, $null, 4 | Test-ObjectPipelineRecord
+        $result.Count | Should -Be 4
+        [object]::ReferenceEquals($result[0].Value, $item) | Should -BeTrue
+        [object]::ReferenceEquals($result[1].Value, $collection) | Should -BeTrue
+        $result[2].Value | Should -BeNullOrEmpty
+        $result[3].Value | Should -Be 4
+        $result[3].Assignments.Count | Should -Be 7
+        foreach ($index in 1, 3, 5) {
+            $result[3].Assignments[$index] | Should -Be 'initial'
+        }
+        foreach ($record in $result) {
+            $record.IsBound | Should -BeTrue
+            [object]::ReferenceEquals($record.Value, $record.BoundValue) | Should -BeTrue
+        }
+    }
+
+    It "constructs PSObject arrays from scalar and collection records without losing extended properties" {
+        $item = [pscustomobject]@{ Name = 'record' }
+        $collection = @(1, $item, $null)
+        $result = 1, $item, $collection, 4 | Test-ArrayPipelineRecord
+        $result.Count | Should -Be 4
+        $result[0].Value.GetType() | Should -Be ([psobject[]])
+        $result[0].Value.Count | Should -Be 1
+        $result[0].Value[0] | Should -Be 1
+        [object]::ReferenceEquals($result[1].Value[0], $item) | Should -BeTrue
+        $result[2].Value.Count | Should -Be 3
+        $result[2].Value[0] | Should -Be 1
+        [object]::ReferenceEquals($result[2].Value[1], $item) | Should -BeTrue
+        $result[2].Value[2] | Should -BeNullOrEmpty
+        $result[3].Value[0] | Should -Be 4
+        $result[3].Assignments.Count | Should -Be 7
+        foreach ($index in 1, 3, 5) {
+            [object]::ReferenceEquals($result[3].Assignments[$index], $result[3].Assignments[1]) | Should -BeTrue
+            $result[3].Assignments[$index][0] | Should -Be 'initial'
+        }
+        foreach ($record in $result) {
+            $record.IsBound | Should -BeTrue
+            [object]::ReferenceEquals($record.Value, $record.BoundValue) | Should -BeTrue
+        }
+    }
+
+    It "preserves an existing PSObject array and distinguishes null from empty arrays" {
+        $array = [psobject[]]@(1, 2)
+        $empty = [psobject[]]@()
+        $result = $array, $null, $empty, 3 | Test-ArrayPipelineRecord
+        $result.Count | Should -Be 4
+        [object]::ReferenceEquals($result[0].Value, $array) | Should -BeTrue
+        [object]::ReferenceEquals($result[1].Value, $null) | Should -BeTrue
+        $result[2].Value.GetType() | Should -Be ([psobject[]])
+        $result[2].Value.Count | Should -Be 0
+        $result[3].Value[0] | Should -Be 3
+    }
+
+    It "enforces mandatory array null, empty, and element checks and continues with subsequent records" {
+        $bindingErrors = @()
+        $empty = [psobject[]]@()
+        $withNull = [psobject[]]@(1, $null)
+        $result = 1, $null, $empty, $withNull, 2 | Test-MandatoryArrayPipelineRecord -ErrorAction SilentlyContinue -ErrorVariable bindingErrors
+        $result.Count | Should -Be 2
+        $result[0].Value[0] | Should -Be 1
+        $result[1].Value[0] | Should -Be 2
+        $bindingErrors.Count | Should -Be 3
+        $bindingErrors[0].FullyQualifiedErrorId | Should -Be 'ParameterArgumentValidationErrorNullNotAllowed,PipelineBindingTests.MandatoryArrayInputCommand'
+        $bindingErrors[1].FullyQualifiedErrorId | Should -Be 'ParameterArgumentValidationErrorEmptyArrayNotAllowed,PipelineBindingTests.MandatoryArrayInputCommand'
+        $bindingErrors[2].FullyQualifiedErrorId | Should -Be 'ParameterArgumentValidationErrorNullNotAllowed,PipelineBindingTests.MandatoryArrayInputCommand'
+    }
+
+    It "preserves object array construction, identity, and restoration with fast binding" {
+        $item = [pscustomobject]@{ Name = 'record' }
+        $array = [object[]]@(1, $item, $null)
+        $covariant = [string[]]@('one', 'two')
+        $wrappedElements = [psobject[]]@(1, $item)
+        $list = [System.Collections.ArrayList]::new()
+        $null = $list.Add($item)
+        $null = $list.Add($null)
+        $empty = [object[]]@()
+        $wrappedArray = [psobject]::AsPSObject($array)
+        $inputRecord = @(1, $item, $array, $covariant, $wrappedElements, $list, $null, $empty, $wrappedArray)
+        $normal = Invoke-ObjectArrayBinding -InputRecord $inputRecord -NormalBinding
+        $fast = Invoke-ObjectArrayBinding -InputRecord $inputRecord
+
+        $normal.Errors.Count | Should -Be 0
+        $fast.Errors.Count | Should -Be 0
+        $normal.TraceText | Should -Not -Match 'Using fast-path pipeline input binding'
+        $fast.TraceText | Should -Match 'Using fast-path pipeline input binding for parameter \[Value\]'
+        $fast.Records.Count | Should -Be $inputRecord.Count
+        ($fast.Records | ConvertTo-Json -Depth 6 -Compress) | Should -Be ($normal.Records | ConvertTo-Json -Depth 6 -Compress)
+        $fast.Records[0].Value.GetType() | Should -Be ([object[]])
+        $fast.Records[0].Value.Count | Should -Be 1
+        $fast.Records[0].Value[0] | Should -Be 1
+        [object]::ReferenceEquals($fast.Records[1].Value[0], $item) | Should -BeTrue
+        foreach ($index in 2, 3, 4, 8) {
+            [object]::ReferenceEquals($fast.Records[$index].Value, $inputRecord[$index]) | Should -BeTrue
+        }
+        $fast.Records[3].Value.GetType() | Should -Be ([string[]])
+        $fast.Records[4].Value.GetType() | Should -Be ([psobject[]])
+        $fast.Records[5].Value.Count | Should -Be 2
+        $fast.Records[5].Value[0].Name | Should -Be 'record'
+        $fast.Records[5].Value[1] | Should -BeNullOrEmpty
+        [object]::ReferenceEquals($fast.Records[6].Value, $null) | Should -BeTrue
+        [object]::ReferenceEquals($fast.Records[7].Value, $empty) | Should -BeTrue
+        $last = $fast.Records[-1]
+        $last.Assignments.Count | Should -Be (2 * $inputRecord.Count - 1)
+        for ($index = 1; $index -lt $last.Assignments.Count; $index += 2) {
+            [object]::ReferenceEquals($last.Assignments[$index], $last.Assignments[1]) | Should -BeTrue
+            $last.Assignments[$index][0] | Should -Be 'initial'
+        }
+        foreach ($record in $fast.Records) {
+            $record.IsBound | Should -BeTrue
+            $record.ParameterSet | Should -Be 'Chosen'
+            [object]::ReferenceEquals($record.Value, $record.BoundValue) | Should -BeTrue
+        }
+    }
+
+    It "preserves mandatory object array errors and continues with subsequent records" {
+        $inputRecord = @(1, $null, [object[]]@(), [object[]]@(1, $null), 2)
+        $normal = Invoke-ObjectArrayBinding -InputRecord $inputRecord -Command Test-MandatoryObjectArrayPipelineRecord -NormalBinding
+        $fast = Invoke-ObjectArrayBinding -InputRecord $inputRecord -Command Test-MandatoryObjectArrayPipelineRecord
+
+        $normal.TraceText | Should -Not -Match 'Using fast-path pipeline input binding'
+        $fast.TraceText | Should -Match 'Using fast-path pipeline input binding'
+        $fast.Records.Count | Should -Be 2
+        $fast.Records.Value | Should -Be @(1, 2)
+        ($fast.Records | ConvertTo-Json -Depth 5 -Compress) | Should -Be ($normal.Records | ConvertTo-Json -Depth 5 -Compress)
+        $fast.Errors.Count | Should -Be 3
+        $fast.Errors.FullyQualifiedErrorId | Should -Be $normal.Errors.FullyQualifiedErrorId
+        $fast.Errors[0].FullyQualifiedErrorId | Should -Be 'ParameterArgumentValidationErrorNullNotAllowed,PipelineBindingTests.MandatoryObjectArrayInputCommand'
+        $fast.Errors[1].FullyQualifiedErrorId | Should -Be 'ParameterArgumentValidationErrorEmptyArrayNotAllowed,PipelineBindingTests.MandatoryObjectArrayInputCommand'
+        $fast.Errors[2].FullyQualifiedErrorId | Should -Be 'ParameterArgumentValidationErrorNullNotAllowed,PipelineBindingTests.MandatoryObjectArrayInputCommand'
+    }
+
+    It "keeps explicit <Command> values out of pipeline candidate selection" -TestCases @(
+        @{ Command = 'Test-ObjectPipelineRecord'; TypeName = 'ObjectInputCommand' }
+        @{ Command = 'Test-ArrayPipelineRecord'; TypeName = 'ArrayInputCommand' }
+        @{ Command = 'Test-ObjectArrayPipelineRecord'; TypeName = 'ObjectArrayInputCommand' }
+    ) {
+        param($Command, $TypeName)
+        $bindingErrors = @()
+        $result = 1, 2 | & $Command -Value 'explicit' -ErrorAction SilentlyContinue -ErrorVariable bindingErrors
+        $result | Should -BeNullOrEmpty
+        $bindingErrors.Count | Should -Be 2
+        $bindingErrors[0].FullyQualifiedErrorId | Should -Be "InputObjectNotBound,PipelineBindingTests.$TypeName"
+    }
+
+    It "serializes mixed pipeline records through ConvertTo-Json" {
+        $result = 1, [pscustomobject]@{ Name = 'record' }, $null, @(2, 3) | ConvertTo-Json -Compress
+        $result | Should -Be '[1,{"Name":"record"},null,[2,3]]'
+    }
+
+    It "does not bind an AutomationNull sentinel as a pipeline record for <Command>" -TestCases @(
+        @{ Command = 'Test-PipelineRecord' }
+        @{ Command = 'Test-ObjectPipelineRecord' }
+        @{ Command = 'Test-ArrayPipelineRecord' }
+        @{ Command = 'Test-ObjectArrayPipelineRecord' }
+    ) {
+        param($Command)
+        $result = 1, [System.Management.Automation.Internal.AutomationNull]::Value, 2 | & $Command
+        $result.Count | Should -Be 2
+        $result.Value | Should -Be @(1, 2)
+    }
+
+    It "does not replace an explicitly bound value with pipeline input" {
+        $bindingErrors = @()
+        $result = 1, 2 | Test-PipelineRecord -Value 'explicit' -ErrorAction SilentlyContinue -ErrorVariable bindingErrors
+        $result | Should -BeNullOrEmpty
+        $bindingErrors.Count | Should -Be 2
+        $bindingErrors[0].FullyQualifiedErrorId | Should -Be 'InputObjectNotBound,PipelineBindingTests.RecordInputCommand'
+    }
+
+    It "preserves default parameter binding for <Command>" -TestCases @(
+        @{ Command = 'Test-PipelineRecord'; TypeName = 'RecordInputCommand' }
+        @{ Command = 'Test-ObjectPipelineRecord'; TypeName = 'ObjectInputCommand' }
+        @{ Command = 'Test-ArrayPipelineRecord'; TypeName = 'ArrayInputCommand' }
+        @{ Command = 'Test-ObjectArrayPipelineRecord'; TypeName = 'ObjectArrayInputCommand' }
+    ) {
+        param($Command, $TypeName)
+        $PSDefaultParameterValues = @{ "${Command}:Value" = 'default' }
+        $result = & $Command
+        $result.Value | Should -Be 'default'
+        $result.IsBound | Should -BeTrue
+        $bindingErrors = @()
+        $result = 1, 2 | & $Command -ErrorAction SilentlyContinue -ErrorVariable bindingErrors
+        $result | Should -BeNullOrEmpty
+        $bindingErrors.Count | Should -Be 2
+        $bindingErrors[0].FullyQualifiedErrorId | Should -Be "InputObjectNotBound,PipelineBindingTests.$TypeName"
+    }
+
+    It "binds pipeline records when a default has bound another parameter" {
+        $PSDefaultParameterValues = @{ 'Test-PipelineRecord:Label' = 'default label' }
+        $result = 1, 2 | Test-PipelineRecord
+        $result.Value | Should -Be @(1, 2)
+        $result.Label | Should -Be @('default label', 'default label')
+        $result[1].Assignments.Count | Should -Be 3
+        $result[1].Assignments[1] | Should -Be 'initial'
+    }
+
+    It "binds pipeline records when an explicit argument overrides a discovered default" {
+        $PSDefaultParameterValues = @{ 'Test-PipelineRecord:Label' = 'default label' }
+        $result = 1, 2 | Test-PipelineRecord -Label 'explicit label'
+        $result.Value | Should -Be @(1, 2)
+        $result.Label | Should -Be @('explicit label', 'explicit label')
+    }
+
+    It "retries script-block defaults after pipeline binding without replacing the input" {
+        $PSDefaultParameterValues = @{
+            'Test-PipelineRecord:Label' = {
+                param($BindingState)
+                if ($BindingState.BoundParameters.Contains('Value')) {
+                    'late label'
+                }
+            }
+        }
+        $result = 1, 2 | Test-PipelineRecord
+        $result.Value | Should -Be @(1, 2)
+        $result.Label | Should -Be @('late label', 'late label')
+        $result[1].Assignments.Count | Should -Be 3
+    }
+
+    It "retains default-related error elaboration for mandatory pipeline parameters" {
+        $PSDefaultParameterValues = @{ 'Test-MandatoryPipelineRecord:Label' = 'default label' }
+        $bindingErrors = @()
+        $result = 1, $null, 2 | Test-MandatoryPipelineRecord -ErrorAction SilentlyContinue -ErrorVariable bindingErrors
+        $result.Value | Should -Be @(1, 2)
+        $bindingErrors.Count | Should -Be 1
+        $bindingErrors[0].Exception.Message | Should -Match 'default'
+    }
+
+    It "retains delayed script-block argument binding for <Command>" -TestCases @(
+        @{ Command = 'Test-PipelineRecord' }
+        @{ Command = 'Test-ArrayPipelineRecord' }
+    ) {
+        param($Command)
+        $result = 1, 2 | & $Command -Value { $_ * 2 }
+        $result.Value | Should -Be @(2, 4)
+    }
+
+    It "keeps an explicitly bound object array script block out of pipeline binding" {
+        $invoked = $false
+        $callback = { $invoked = $true; $_ * 2 }
+        $result = Test-ObjectArrayPipelineRecord -Value $callback
+        [object]::ReferenceEquals($result.Value[0], $callback) | Should -BeTrue
+        $bindingErrors = @()
+        $result = 1, 2 | Test-ObjectArrayPipelineRecord -Value $callback -ErrorAction SilentlyContinue -ErrorVariable bindingErrors
+        $result | Should -BeNullOrEmpty
+        $invoked | Should -BeFalse
+        $bindingErrors.Count | Should -Be 2
+        $bindingErrors[0].FullyQualifiedErrorId | Should -Be 'InputObjectNotBound,PipelineBindingTests.ObjectArrayInputCommand'
+    }
+
+    It "retries with coercion when a PSObject setter rejects the first binding attempt" {
+        $result = 1, 'retry', 3 | Test-RetryPipelineRecord
+        $result | Should -Be @(0, 2, 2)
+    }
+
+    It "preserves <Command> retry order when <RejectedAttemptCount> setter attempts fail" -TestCases @(
+        @{ Command = 'Test-DefaultSetRetry'; RejectedAttemptCount = 2; AttemptsPerPhase = 2 }
+        @{ Command = 'Test-DefaultSetOverlappingRetry'; RejectedAttemptCount = 2; AttemptsPerPhase = 3 }
+        @{ Command = 'Test-OverlappingRetry'; RejectedAttemptCount = 2; AttemptsPerPhase = 2 }
+        @{ Command = 'Test-DefaultSetRetry'; RejectedAttemptCount = 3; AttemptsPerPhase = 2 }
+        @{ Command = 'Test-DefaultSetOverlappingRetry'; RejectedAttemptCount = 5; AttemptsPerPhase = 3 }
+        @{ Command = 'Test-OverlappingRetry'; RejectedAttemptCount = 3; AttemptsPerPhase = 2 }
+        @{ Command = 'Test-ObjectArrayPipelineRecord'; RejectedAttemptCount = 2; AttemptsPerPhase = 3 }
+        @{ Command = 'Test-ObjectArrayPipelineRecord'; RejectedAttemptCount = 5; AttemptsPerPhase = 3 }
+    ) {
+        param($Command, $RejectedAttemptCount, $AttemptsPerPhase)
+
+        $normal = Invoke-RetrySchedule -Command $Command -RejectedAttemptCount $RejectedAttemptCount -NormalBinding -TraceBinding
+        $fast = Invoke-RetrySchedule -Command $Command -RejectedAttemptCount $RejectedAttemptCount -TraceBinding
+        $normal.TraceText | Should -Not -Match 'Using fast-path pipeline input binding'
+        $fast.TraceText | Should -Match 'Using fast-path pipeline input binding'
+        $fast.Errors.Count | Should -Be 0
+        $normal.Errors.Count | Should -Be 0
+        $fast.Records.Value | Should -Be @('retry', 'next')
+        $fast.Records[0].Attempts | Should -Be ($RejectedAttemptCount + 1)
+        $fast.Records[1].Attempts | Should -Be ($RejectedAttemptCount + 1)
+        ($fast.Records | ConvertTo-Json -Depth 4 -Compress) | Should -Be ($normal.Records | ConvertTo-Json -Depth 4 -Compress)
+        foreach ($record in $fast.Records) {
+            $record.IsBound | Should -BeTrue
+            $record.ParameterSet | Should -Be 'Chosen'
+            [object]::ReferenceEquals($record.Value, $record.BoundValue) | Should -BeTrue
+        }
+
+        $expectedKind = @('NO COERCION') * $AttemptsPerPhase
+        $expectedKind += @('WITH COERCION') * ($RejectedAttemptCount + 1 - $AttemptsPerPhase)
+        $expectedKind += 'NO COERCION'
+        $normal.AttemptKind | Should -Be $expectedKind
+        $fast.AttemptKind | Should -Be $expectedKind
+    }
+
+    It "preserves <Command> exhausted retries and continues with the next record" -TestCases @(
+        @{ Command = 'Test-DefaultSetRetry'; TypeName = 'DefaultSetRetryCommand'; AttemptsPerPhase = 2 }
+        @{ Command = 'Test-DefaultSetOverlappingRetry'; TypeName = 'DefaultSetOverlappingRetryCommand'; AttemptsPerPhase = 3 }
+        @{ Command = 'Test-OverlappingRetry'; TypeName = 'OverlappingRetryCommand'; AttemptsPerPhase = 2 }
+        @{ Command = 'Test-ObjectArrayPipelineRecord'; TypeName = 'ObjectArrayInputCommand'; AttemptsPerPhase = 3 }
+    ) {
+        param($Command, $TypeName, $AttemptsPerPhase)
+
+        $normal = Invoke-RetrySchedule -Command $Command -RejectedAttemptCount 100 -NormalBinding -TraceBinding
+        $fast = Invoke-RetrySchedule -Command $Command -RejectedAttemptCount 100 -TraceBinding
+        $normal.TraceText | Should -Not -Match 'Using fast-path pipeline input binding'
+        $fast.TraceText | Should -Match 'Using fast-path pipeline input binding'
+        $fast.Errors.Count | Should -Be 1
+        $normal.Errors.Count | Should -Be 1
+        $fast.Errors[0].FullyQualifiedErrorId | Should -Be "InputObjectNotBound,PipelineBindingTests.$TypeName"
+        $fast.Errors[0].FullyQualifiedErrorId | Should -Be $normal.Errors[0].FullyQualifiedErrorId
+        $fast.Errors[0].TargetObject | Should -Be 'retry'
+        $fast.Records.Count | Should -Be 1
+        $fast.Records[0].Value | Should -Be 'next'
+        $fast.Records[0].Attempts | Should -Be (2 * $AttemptsPerPhase)
+        ($fast.Records | ConvertTo-Json -Depth 4 -Compress) | Should -Be ($normal.Records | ConvertTo-Json -Depth 4 -Compress)
+        $expectedKind = @('NO COERCION') * $AttemptsPerPhase + @('WITH COERCION') * $AttemptsPerPhase + @('NO COERCION')
+        $normal.AttemptKind | Should -Be $expectedKind
+        $fast.AttemptKind | Should -Be $expectedKind
+    }
+
+    It "keeps fast-path binding enabled when <TraceSource> tracing is enabled" -TestCases @(
+        @{ TraceSource = 'ParameterBinding' }
+        @{ TraceSource = 'ParameterBinderController' }
+    ) {
+        param($TraceSource)
+
+        $tracePath = Join-Path $TestDrive "$TraceSource-fast-path.txt"
+        $untraced = 1, 2 | Test-PipelineRecord
+        $traced = Trace-Command -Name $TraceSource -Expression { 1, 2 | Test-PipelineRecord } -FilePath $tracePath
+        $traced.Value | Should -Be @(1, 2)
+        ($traced | ConvertTo-Json -Depth 4 -Compress) | Should -Be ($untraced | ConvertTo-Json -Depth 4 -Compress)
+        $traceText = Get-Content $tracePath -Raw
+        $traceText | Should -Match 'Using fast-path pipeline input binding for parameter \[Value\]'
+        if ($TraceSource -eq 'ParameterBinding') {
+            $traceText | Should -Match 'PIPELINE INPUT ValueFromPipeline NO COERCION'
+        }
+    }
+
+    It "does not identify normal binding as fast-path binding in traces" {
+        $PSDefaultParameterValues = @{ 'Test-PipelineRecord:Label' = 'default label' }
+        $tracePath = Join-Path $TestDrive 'normal-pipeline-binding.txt'
+        $result = Trace-Command -Name ParameterBinding, ParameterBinderController -Expression { 1, 2 | Test-PipelineRecord } -FilePath $tracePath
+        $result.Value | Should -Be @(1, 2)
+        $result.Label | Should -Be @('default label', 'default label')
+        $traceText = Get-Content $tracePath -Raw
+        $traceText | Should -Not -Match 'Using fast-path pipeline input binding'
+        $traceText | Should -Match 'PIPELINE INPUT ValueFromPipeline NO COERCION'
+    }
+
+    It "reports mandatory null errors and continues with subsequent records" {
+        $bindingErrors = @()
+        $result = 1, $null, 2 | Test-MandatoryPipelineRecord -ErrorAction SilentlyContinue -ErrorVariable bindingErrors
+        $result.Value | Should -Be @(1, 2)
+        $bindingErrors.Count | Should -Be 1
+        $bindingErrors[0].FullyQualifiedErrorId | Should -Be 'ParameterArgumentValidationErrorNullNotAllowed,PipelineBindingTests.MandatoryInputCommand'
+    }
+
+    It "retains transformations and validation on the general path" {
+        $result = 1, 2 | Test-TransformedPipelineRecord
+        $result.Value | Should -Be @('transformed:1', 'transformed:2')
+    }
+
+    It "binds competing property-name parameters and restores their defaults" {
+        $result = [pscustomobject]@{ Name = 'first' }, [pscustomobject]@{ Other = 'second' } | Test-PropertyPipelineRecord
+        $result | Should -Be @('first', 'missing')
+    }
+
+    It "continues enforcing PSTypeName constraints" {
+        $item = [pscustomobject]@{ PSTypeName = 'Pipeline.Record'; Name = 'typed' }
+        $bindingErrors = @()
+        $result = $item, 1 | Test-TypedPipelineRecord -ErrorAction SilentlyContinue -ErrorVariable bindingErrors
+        $result.Value | Should -Be $item
+        $bindingErrors.Count | Should -Be 1
+        $bindingErrors[0].FullyQualifiedErrorId | Should -Be 'InputObjectNotBound,PipelineBindingTests.TypedInputCommand'
+    }
+
+    It "keeps ForEach-Object callback scope and invocation behavior" {
+        $total = 0
+        $result = 1, 2, 3 | ForEach-Object -Begin { $total = 10 } -Process { $total += $_ } -End { $total }
+        $result | Should -Be 16
+        $total | Should -Be 16
+        $filtered = 1, 2, 3 | Where-Object { $_ -gt 1 }
+        $filtered | Should -Be @(2, 3)
+    }
+}
+
 Describe "Parameter Binding Tests" -Tags "CI" {
     It "Should throw a parameter binding exception when two parameters have the same position" {
         function test-PositionalBinding1 {

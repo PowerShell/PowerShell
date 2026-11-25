@@ -52,6 +52,37 @@ Start-Benchmarking -Runtime <string[]> [-Filter <string[]>] [-Artifacts <string>
 ```
 Run `Get-Help Start-Benchmarking -Full` to see the description of each parameter.
 
+### Pipeline input binding
+
+The candidate-selection prototype supports single by-value `PSObject`, `object`,
+`PSObject[]`, and `object[]` pipeline parameters in an already-resolved parameter
+set, subject to its other metadata exclusions. Array construction, element wrapping, and any
+coercion retry still use the existing binder; caching the destination does not
+eliminate those costs.
+Commands with matching `$PSDefaultParameterValues` entries use normal binding,
+whether or not those defaults have bound. Entries for unrelated commands do not
+disable the fast path.
+The plan also preserves the normal number of attempts in each by-value phase,
+including repeated AllSets attempts after default-set preference and overlapping
+matching metadata. All uncoerced attempts precede coercion attempts.
+Tracing does not change the selected binding path. The `ParameterBinding` and
+`ParameterBinderController` trace sources identify fast-path pipeline input binding
+when it is used.
+
+`Engine.PipelineInputBinding` measures `ForEach-Object {}`, `Where-Object { $false }`,
+and a compiled sink over 10,000 input records. `BindOnly` reuses a completed sink's
+binder and one `PSObject` to isolate steady-state `BindPipelineParameters` costs;
+its time and allocation results are **per record**, not per 10,000 records.
+It excludes command construction, `ProcessRecord`, callback invocation, and the
+command processor's mandatory-parameter checks. The other three benchmarks
+include pipeline construction and processing.
+
+Compare Release builds of the same source revision with only the binding change
+applied. Keep the runtime, publication options (including ReadyToRun), host, and
+benchmark settings identical. Use the memory diagnoser as well as elapsed time,
+alternate baseline/prototype runs, and inspect iteration data for warmup or
+tiered-compilation effects before interpreting callback speedups.
+
 ### Regression Detection
 
 We use the tool [`ResultsComparer`](../dotnet-tools/ResultsComparer) to compare the provided benchmark results.
