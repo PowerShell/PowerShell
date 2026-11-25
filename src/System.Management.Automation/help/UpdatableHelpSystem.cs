@@ -815,7 +815,7 @@ namespace System.Management.Automation.Help
                             HttpResponseMessage response = responseMsg.Result;
                             if (response.IsSuccessStatusCode)
                             {
-                                WriteResponseToFile(response, fileName);
+                                WriteResponseToFileAsync(response, fileName).Wait();
                             }
                             else
                             {
@@ -838,17 +838,19 @@ namespace System.Management.Automation.Help
         /// </summary>
         /// <param name="response"></param>
         /// <param name="fileName"></param>
-        private void WriteResponseToFile(HttpResponseMessage response, string fileName)
+        private async Task WriteResponseToFileAsync(HttpResponseMessage response, string fileName)
         {
-            // TODO: Settings to use? FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite
-            using (FileStream downloadedFileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            try
             {
-                Task copyStreamOp = response.Content.CopyToAsync(downloadedFileStream);
-                copyStreamOp.Wait();
-                if (copyStreamOp.Exception != null)
+                // TODO: Settings to use? FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite
+                using (FileStream downloadedFileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
                 {
-                    Errors.Add(copyStreamOp.Exception);
+                    await response.Content.CopyToAsync(downloadedFileStream);
                 }
+            }
+            catch (Exception ex)
+            {
+                Errors.Add(ex);
             }
         }
 
