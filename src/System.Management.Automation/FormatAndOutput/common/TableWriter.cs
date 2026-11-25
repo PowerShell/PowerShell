@@ -507,7 +507,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             int length = dc.Length(field);
             if (length > width)
             {
-                field = GenerateRowField(field, width, alignment, dc, addPadding);
+                field = GenerateRowField(field, length, width, alignment, dc, addPadding);
                 builder.Append(field);
                 return field;
             }
@@ -530,6 +530,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             string s = StringManipulationHelper.TruncateAtNewLine(val);
             int currentValueDisplayLength = dc.Length(s);
 
+            return GenerateRowField(s, currentValueDisplayLength, width, alignment, dc, addPadding);
+        }
+
+        private static string GenerateRowField(string s, int currentValueDisplayLength, int width, int alignment, DisplayCells dc, bool addPadding)
+        {
             if (currentValueDisplayLength < width)
             {
                 // the string is shorter than the width of the column

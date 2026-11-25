@@ -3,9 +3,11 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Dynamic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -38,6 +40,10 @@ namespace PSTests.Parallel
             Assert.Same(first, manager.GetOutOfBandView(factory, database, names));
             names[0] = "Second";
             Assert.Same(second, manager.GetOutOfBandView(factory, database, names));
+            names.Add("First");
+            Assert.Same(second, manager.GetOutOfBandView(factory, database, names));
+            names.RemoveAt(0);
+            Assert.Same(first, manager.GetOutOfBandView(factory, database, names));
         }
 
         [Fact]
@@ -272,6 +278,94 @@ namespace PSTests.Parallel
             Assert.Throws<IndexOutOfRangeException>(() => cells.Length(text, -1));
             Assert.Equal(0, cells.Length(null, -1));
             Assert.Equal(0, cells.Length(string.Empty, -1));
+        }
+
+        [Theory]
+        [InlineData(TextAlignment.Left, "a      b")]
+        [InlineData(TextAlignment.Right, "     a      b")]
+        [InlineData(TextAlignment.Center, "  a      b")]
+        public static void TableRowsPreserveAlignmentAndFinalColumnPadding(int alignment, string expected)
+        {
+            var rows = RenderTableRows(new[] { 6, 6 }, new[] { alignment, alignment }, new[] { new[] { "a", "b" } });
+            Assert.Equal(new[] { expected }, rows);
+        }
+
+        [Theory]
+        [InlineData(TextAlignment.Left, "\u4e2d\u2026  z")]
+        [InlineData(TextAlignment.Right, " \u2026\u5b57  z")]
+        [InlineData(TextAlignment.Center, "\u4e2d\u2026  z")]
+        public static void TableRowsPreserveWideCharacterTruncation(int alignment, string expected)
+        {
+            var rows = RenderTableRows(new[] { 4, 2 }, new[] { alignment, alignment }, new[] { new[] { "\u4e2d\u6587\u5b57", "z" } });
+            Assert.Equal(new[] { expected }, rows);
+        }
+
+        [Theory]
+        [InlineData("\x1b[31mred", "\x1b[31mred  \x1b[0m x")]
+        [InlineData("\x1b[31mred\x1b[0m", "\x1b[31mred\x1b[0m   x")]
+        [InlineData("\x1b[31mabcdef\x1b[0m", "\x1b[31mabcd\u2026\x1b[0m x")]
+        public static void TableRowsPreserveAnsiResets(string value, string expected)
+        {
+            var rows = RenderTableRows(new[] { 5, 2 }, new[] { TextAlignment.Left, TextAlignment.Left }, new[] { new[] { value, "x" } });
+            Assert.Equal(new[] { expected }, rows);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public static void TableRowsReuseTheBuilderWithoutLeakingPreviousContent(bool multiLine)
+        {
+            string[] values = { new string('a', 400), "short", string.Empty, new string('b', 500), "z" };
+            var rows = RenderTableRows(new[] { 600 }, new[] { TextAlignment.Left }, values.Select(value => new[] { value }).ToArray(), multiLine);
+            Assert.Equal(values, rows);
+        }
+
+        [Theory]
+        [InlineData("abcdef\nignored")]
+        [InlineData("\x1b[31mabcdef\x1b[0m\nignored")]
+        public static void TableTruncationMeasuresThePreparedFieldOnlyOnce(string value)
+        {
+            string field = string.Concat(value.AsSpan(0, value.IndexOf('\n')), "\u2026");
+            var cells = new CountingDisplayCells(field);
+            var rows = RenderTableRows(new[] { 5 }, new[] { TextAlignment.Left }, new[] { new[] { value } }, cells: cells);
+            Assert.Equal(1, cells.MeasurementCount);
+            Assert.Equal("abcd\u2026", ValueStringDecorated.AnsiRegex.Replace(Assert.Single(rows), string.Empty));
+        }
+
+        private static List<string> RenderTableRows(int[] widths, int[] alignment, string[][] values, bool multiLine = false, DisplayCells cells = null)
+        {
+            var writer = new TableWriter();
+            var output = new TextWriterLineOutput(TextWriter.Null, 1200);
+            writer.Initialize(0, 1200, widths, alignment, default, suppressHeader: true);
+            var rows = new List<string>();
+            foreach (string[] value in values)
+            {
+                writer.GenerateRow(value, output, multiLine, default, cells ?? output.DisplayCells, rows);
+            }
+
+            return rows;
+        }
+
+        private sealed class CountingDisplayCells : DisplayCells
+        {
+            private readonly string _field;
+
+            internal CountingDisplayCells(string field)
+            {
+                _field = field;
+            }
+
+            internal int MeasurementCount { get; private set; }
+
+            internal override int Length(string str, int offset)
+            {
+                if (str == _field && offset == 0)
+                {
+                    MeasurementCount++;
+                }
+
+                return base.Length(str, offset);
+            }
         }
 
         private static ViewDefinition AddOutOfBandView(TypeInfoDataBase database, string typeName)

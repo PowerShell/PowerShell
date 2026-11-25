@@ -24,5 +24,21 @@
         </TableRowEntries>
       </TableControl>
     </View>
+    <View>
+      <Name>FormatProfileNotice</Name>
+      <ViewSelectedBy>
+        <TypeName>FormatProfile.Notice</TypeName>
+      </ViewSelectedBy>
+      <OutOfBand />
+      <ListControl>
+        <ListEntries>
+          <ListEntry>
+            <ListItems>
+              <ListItem><Label>Notice</Label><PropertyName>Message</PropertyName></ListItem>
+            </ListItems>
+          </ListEntry>
+        </ListEntries>
+      </ListControl>
+    </View>
   </ViewDefinitions>
 </Configuration>

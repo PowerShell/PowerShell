@@ -523,7 +523,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             _cachedView = DisplayDataQuery.GetOutOfBandView(expressionFactory, db, typeNames);
             // Snapshot the values, not the mutable PSObject type-name collection.
-            _cachedTypeNames = new string[typeNames.Count];
+            if (_cachedTypeNames == null || _cachedTypeNames.Length != typeNames.Count)
+            {
+                _cachedTypeNames = new string[typeNames.Count];
+            }
+
             typeNames.CopyTo(_cachedTypeNames, 0);
             return _cachedView;
         }
