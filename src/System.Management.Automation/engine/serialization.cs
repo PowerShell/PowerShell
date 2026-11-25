@@ -164,8 +164,13 @@ namespace System.Management.Automation
         /// <summary>
         /// Deserializes PowerShell CliXml into an object.
         /// </summary>
-        /// <param name="source">The CliXml the represents the object to deserialize.</param>
-        /// <returns>An object that represents the serialized content.</returns>
+        /// <param name="source">The CliXml that represents the object to deserialize.</param>
+        /// <returns>
+        /// The shape of the returned value depends on how many objects the CliXml contains:
+        /// <see langword="null"/> if it contains no objects, the single deserialized object if it
+        /// contains exactly one, or an <see cref="object"/>[] if it contains more than one.
+        /// Use <see cref="DeserializeAsList(string)"/> instead if a consistent return type is needed.
+        /// </returns>
         public static object Deserialize(string source)
         {
             object[] results = DeserializeAsList(source);
@@ -188,8 +193,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Deserializes PowerShell CliXml into a list of objects.
         /// </summary>
-        /// <param name="source">The CliXml the represents the object to deserialize.</param>
-        /// <returns>An object array represents the serialized content.</returns>
+        /// <param name="source">The CliXml that represents the object to deserialize.</param>
+        /// <returns>An object array that represents the serialized content.</returns>
         public static object[] DeserializeAsList(string source)
         {
             List<object> results = new List<object>();
