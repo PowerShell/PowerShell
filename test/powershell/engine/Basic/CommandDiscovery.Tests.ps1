@@ -86,6 +86,37 @@ Describe "Command Discovery tests" -Tags "CI" {
         (& 'location').Path | Should -Be (Get-Location).Path
     }
 
+    It "Get-Command prepends Get- to noun-only command names" {
+        function Get-DefaultVerbCommandTest {}
+
+        (Get-Command DefaultVerbCommandTest).Name | Should -BeExactly 'Get-DefaultVerbCommandTest'
+    }
+
+    It "Get-Command prefers an exact noun-only command name" {
+        function DefaultVerbCommandTest {}
+        function Get-DefaultVerbCommandTest {}
+
+        (Get-Command DefaultVerbCommandTest).Name | Should -BeExactly 'DefaultVerbCommandTest'
+    }
+
+    It "Get-Command applies command type filtering before the default verb fallback" {
+        Set-Alias DefaultVerbCommandTest Get-Date
+        function Get-DefaultVerbCommandTest {}
+
+        (Get-Command DefaultVerbCommandTest -CommandType Function).Name | Should -BeExactly 'Get-DefaultVerbCommandTest'
+    }
+
+    It "Get-Command does not prepend Get- to wildcard command names" {
+        function Get-DefaultVerbCommandTest {}
+
+        Get-Command 'DefaultVerbCommand*' | Should -BeNullOrEmpty
+    }
+
+    It "Get-Command reports the original noun-only name when no command is found" {
+        { Get-Command DefaultVerbMissingCommandTest -ErrorAction Stop } |
+            Should -Throw -ErrorId 'CommandNotFoundException,Microsoft.PowerShell.Commands.GetCommandCommand'
+    }
+
     Context "Use literal path first when executing scripts" {
         BeforeAll {
             $firstFileName = '[test1].ps1'
