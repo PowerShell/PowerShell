@@ -278,7 +278,7 @@ namespace Microsoft.PowerShell.Commands
         private const string queryOpenerTemplate = "<Query Id=\"{0}\" Path=\"{1}\"><Select Path=\"{1}\">*";
         private const string queryCloser = "</Query>";
         private const string SelectCloser = "</Select>";
-        private const string suppressOpener = "<Suppress>*";
+        private const string suppressOpener = "<Suppress Path=\"{1}\">*";
         private const string suppressCloser = "</Suppress>";
         private const char propOpen = '[';
         private const char propClose = ']';
