@@ -66,6 +66,20 @@ a,b,c
         $actualData.PSObject.TypeNames[0] | Should -BeExactly "My.Custom.Object"
         $actualData.PSObject.TypeNames[1] | Should -BeExactly "CSV:My.Custom.Object"
     }
+
+    It "Preserves a literal #Fields: column after '<typeLine>' in piped CSV" -TestCases @(
+        @{ typeLine = '#TYPE My.Custom.Object'; expectedType = 'My.Custom.Object' }
+        @{ typeLine = '#TYPE'; expectedType = 'System.Management.Automation.PSCustomObject' }
+    ) {
+        param($typeLine, $expectedType)
+
+        $rows = @(@($typeLine, '#Fields: Column2', 'one two') | ConvertFrom-Csv -Delimiter ' ')
+
+        $rows.Count | Should -Be 1
+        $rows[0].'#Fields:' | Should -BeExactly 'one'
+        $rows[0].Column2 | Should -BeExactly 'two'
+        $rows[0].PSObject.TypeNames[0] | Should -BeExactly $expectedType
+    }
 }
 
 Describe "ConvertFrom-Csv DRT Unit Tests" -Tags "CI" {
@@ -78,5 +92,32 @@ Describe "ConvertFrom-Csv DRT Unit Tests" -Tags "CI" {
         $result[0].Header2 | Should -BeExactly "Second"
         $result[1].Header1 | Should -BeExactly "1"
         $result[1].Header2 | Should -BeExactly "2"
+    }
+}
+
+Describe "ConvertFrom-Csv W3C Extended Log File Format" -Tags "CI" {
+    BeforeAll {
+        $logLines = @(
+            '#Version: 1.0'
+            '#Software: Example server'
+            '#Fields: time cs-method cs-uri'
+            '00:34:23 GET /first'
+            '12:21:16 POST /second'
+        )
+    }
+
+    It "Uses the #Fields directive in a space-delimited W3C log from <name>" -TestCases @(
+        @{ name = 'a single string'; convert = { ConvertFrom-Csv -InputObject ($logLines -join [Environment]::NewLine) -Delimiter ' ' } }
+        @{ name = 'piped lines'; convert = { $logLines | ConvertFrom-Csv -Delimiter ' ' } }
+    ) {
+        param($convert)
+
+        $rows = @(& $convert)
+
+        $rows.Count | Should -Be 2
+        $rows[0].PSObject.Properties.Name | Should -Be @('time', 'cs-method', 'cs-uri')
+        $rows.time | Should -Be @('00:34:23', '12:21:16')
+        $rows.'cs-method' | Should -Be @('GET', 'POST')
+        $rows.'cs-uri' | Should -Be @('/first', '/second')
     }
 }
