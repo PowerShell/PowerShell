@@ -76,7 +76,7 @@ resources:
 
   pipelines:
     - pipeline: CoOrdinatedBuildPipeline
-      source: 'PowerShell-Coordinated_Packages-NonOfficial'
+      source: 'PowerShell-Coordinated Binaries-NonOfficial'
 
     # NOTE: The alias name "PSPackagesOfficial" is intentionally reused here even
     # for the NonOfficial pipeline source. Downstream shared templates (for example,

@@ -127,7 +127,7 @@
     <value>[제한된 언어 감사 모드: 제한 없음]</value>
   </data>
   <data name="ShellBannerNLMode" xml:space="preserve">
-    <value>[언어 없음 모드]</value>
+    <value>[언어 모드 없음]</value>
   </data>
   <data name="ShellBannerRLMode" xml:space="preserve">
     <value>[제한된 언어 모드]</value>

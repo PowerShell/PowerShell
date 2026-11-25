@@ -135,7 +135,7 @@
  	 WorkflowId: {0}</value>
 </data>
   <data name="PS_PROVIDEReventE_O_M3PWorkflowRunspacePoolCreated" xml:space="preserve">
-    <value>Der Workflowrunspacepool wurde erstellt.
+    <value>Workflow-Runspace-Pool wurde erstellt.
  	 WorkflowId: {0}
  	 ManagedNode: {1}</value>
 </data>

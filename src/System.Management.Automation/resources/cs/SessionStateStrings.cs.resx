@@ -653,5 +653,6 @@
   </data>
   <data name="WDACSessionStateVarLogMessage" xml:space="preserve">
     <value>V režimu ConstrainedLanguage nebude možné změnit ani vytvořit proměnnou {0} s oborem AllScope.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

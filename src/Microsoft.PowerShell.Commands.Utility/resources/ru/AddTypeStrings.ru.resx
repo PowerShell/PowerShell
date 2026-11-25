@@ -142,7 +142,7 @@
     <value>Не удается добавить тип. Для параметра OutputType необходимо указать параметр OutputAssembly.</value>
   </data>
   <data name="CannotDefineNewType" xml:space="preserve">
-    <value>Не удается добавить тип. Определение новых типов не поддерживается в этом языковом режиме.</value>
+    <value>Не удается добавить тип. Определение новых типов не поддерживается в этом режиме языка.</value>
   </data>
   <data name="ReferenceAssemblyIgnored" xml:space="preserve">
     <value>Указанная базовая сборка "{0}" не требуется и не учитывается.</value>
@@ -155,5 +155,6 @@
   </data>
   <data name="AddTypeLogMessage" xml:space="preserve">
     <value>Командлет Add-Type не будет разрешен в режиме ConstrainedLanguage.</value>
+    <comment>{StrContains="Add-Type"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

@@ -626,9 +626,10 @@
   </data>
   <data name="ImportPSFileNotAllowedInConstrainedLanguage" xml:space="preserve">
     <value>Importowanie plików *.ps1 jako modułów jest niedozwolone w trybie ConstrainedLanguage.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="MismatchedLanguageModes" xml:space="preserve">
-    <value>Wystąpił błąd podczas ładowania modułu skryptu {0}, ponieważ ma on inny tryb językowy niż manifest modułu. Tryb językowy manifestu to {1}, a tryb językowy modułu to {2}. Upewnij się, że wszystkie pliki modułu są podpisane lub w inny sposób znajdują się na liście dozwolonych aplikacji.</value>
+    <value>Wystąpił błąd podczas ładowania modułu skryptu {0}, ponieważ ma on inny tryb języka niż manifest modułu. Tryb języka manifestu to {1}, a tryb języka modułu to {2}. Upewnij się, że wszystkie pliki modułu są podpisane lub w inny sposób znajdują się na liście dozwolonych aplikacji.</value>
   </data>
   <data name="CannotUseDotSourceWithWildCardFunctionExport" xml:space="preserve">
     <value>Ten moduł używa operatora dot-source podczas eksportowania funkcji przy użyciu symboli wieloznacznych, a jest to niedozwolone, gdy system wymusza weryfikację aplikacji.</value>
@@ -638,6 +639,7 @@
   </data>
   <data name="CannotCreateModuleWithScriptBlock" xml:space="preserve">
     <value>Nie można utworzyć nowego modułu, gdy sesja jest w trybie ConstrainedLanguage.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="CannotFindCoreCompatibleBuiltInModule" xml:space="preserve">
     <value>Nie można znaleźć wbudowanego modułu „{0}”, który jest zgodny z edycją „Core”. Upewnij się, że wbudowane moduły programu PowerShell są dostępne. Zazwyczaj są dostarczane z pakietem programu PowerShell w ścieżce modułu $PSHOME i są wymagane do prawidłowego działania programu PowerShell.</value>
@@ -646,42 +648,49 @@
     <value>Polecenie cmdlet Export-ModuleMember</value>
   </data>
   <data name="WDACExportModuleCommandLogMessage" xml:space="preserve">
-    <value>Eksportowanie elementów modułu w trybie języka z ograniczeniami zakończy się niepowodzeniem, ponieważ moduł „{0}” ma tryb języka „{1}”, który różni się od bieżącej sesji „{2}”.</value>
+    <value>Eksportowanie elementów członkowskich modułu w trybie ConstrainedLanguage zakończy się niepowodzeniem, ponieważ moduł „{0}” ma tryb języka „{1}”, który różni się od bieżącej sesji „{2}”.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACImplicitFunctionExportLogTitle" xml:space="preserve">
     <value>Niejawny eksport funkcji modułu</value>
   </data>
   <data name="WDACImplicitFunctionExportLogMessage" xml:space="preserve">
-    <value>Niejawny eksport funkcji dla modułu „{0}” zostanie odrzucony, ponieważ moduł jest zaufany (działa w trybie Full Language), ale sesja nie jest zaufana (działa w trybie Constrained Language). Najlepszym rozwiązaniem jest zawsze eksportowanie funkcji modułu osobno, używając pełnej nazwy.</value>
+    <value>Eksport niejawnej funkcji dla modułu '{0}' zostanie odrzucony, ponieważ jest on zaufany (działa w trybie FullLanguage), ale sesja nie jest zaufana (działa w trybie ConstrainedLanguage). Najlepszym rozwiązaniem jest zawsze eksportowanie funkcji modułu indywidualnie według pełnej nazwy.</value>
+    <comment>{StrContains="FullLanguage"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACScriptFileImportLogTitle" xml:space="preserve">
     <value>Importowanie pliku skryptu jako modułu</value>
   </data>
   <data name="WDACScriptFileImportLogMessage" xml:space="preserve">
     <value>Importowanie pliku skryptu „{0}” jako modułu będzie niedozwolone w trybie ConstrainedLanguage.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACModuleDotSourceLogTitle" xml:space="preserve">
     <value>Moduł zawiera operator dot-source</value>
   </data>
   <data name="WDACModuleDotSourceLogMessage" xml:space="preserve">
-    <value>Importowanie modułu „{0}” zakończy się niepowodzeniem w trybie języka z ograniczeniami, ponieważ eksportuje funkcje przy użyciu symboli wieloznacznych, a jednocześnie używa operatora dot-source.</value>
+    <value>Importowanie modułu „{0}” zakończy się niepowodzeniem w trybie ConstrainedLanguage, ponieważ eksportuje funkcje przy użyciu symboli wieloznacznych, a jednocześnie używa operatora dot-source.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACModuleFnExportWithNestedModulesLogTitle" xml:space="preserve">
-    <value>„Funkcje eksportowane przez moduł</value>
+    <value>Funkcje eksportowane przez moduł</value>
   </data>
   <data name="WDACModuleFnExportWithNestedModulesLogMessage" xml:space="preserve">
-    <value>Moduł „{0}” eksportuje funkcje przy użyciu symboli wieloznacznych w nazwie. Wszystkie nazwy funkcji zagnieżdżonych modułów zostaną usunięte podczas działania w trybie języka z ograniczeniami.</value>
+    <value>Moduł '{0}' eksportuje funkcje przy użyciu symboli wieloznacznych nazwy. Wszystkie zagnieżdżone nazwy funkcji modułu zostaną usunięte podczas działania w trybie ConstrainedLanguage.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACNewModuleCommandLogTitle" xml:space="preserve">
-    <value>„Polecenie cmdlet New-Module</value>
+    <value>Polecenie cmdlet New-Module</value>
   </data>
   <data name="WDACNewModuleCommandLogMessage" xml:space="preserve">
-    <value>Nowy moduł z niezaufanej sesji języka z ograniczeniami będzie blokowany przed udostępnianiem bloku skryptu FullLanguage.</value>
+    <value>Nowy moduł z niezaufanej sesji ConstrainedLanguage będzie blokowany przed udostępnianiem bloku skryptu FullLanguage.</value>
+    <comment>{StrContains="ConstrainedLanguage"}{StrContains="FullLanguage"}</comment>
   </data>
   <data name="WDACMismatchedLanguageModesTitle" xml:space="preserve">
-    <value>„Niezgodne tryby języka modułu</value>
+    <value>Niezgodne tryby języka modułu</value>
   </data>
   <data name="WDACMismatchedLanguageModesMessage" xml:space="preserve">
-    <value>Trwa ładowanie modułu zależnego, który ma inny tryb języka niż moduł nadrzędny. W trybie Constrained Language nie będzie to dozwolone.</value>
+    <value>Trwa ładowanie modułu zależnego, który ma inny tryb języka niż moduł nadrzędny. W trybie ConstrainedLanguage nie będzie to dozwolone.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

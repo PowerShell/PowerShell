@@ -250,12 +250,14 @@
     <value>No se permite invocar una propiedad o un método</value>
   </data>
   <data name="WDACBinderInvocationLogMessage" xml:space="preserve">
-    <value>No se permitirá invocar el Método o la Propiedad "{0}" en el tipo "{1}" en el modo de lenguaje restringido para scripts que no son de confianza.</value>
+    <value>La invocación del método o la propiedad "{0}" en el tipo "{1}" no se permitirá en el modo ConstrainedLanguage para scripts que no son de confianza.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACBinderTypeCreationLogTitle" xml:space="preserve">
     <value>No se permite crear tipos</value>
   </data>
   <data name="WDACBinderTypeCreationLogMessage" xml:space="preserve">
-    <value>No se permitirá la creación del tipo "{0}" durante el enlace de parámetros en el modo de lenguaje restringido para scripts que no son de confianza.</value>
+    <value>No se permitirá la creación del tipo "{0}" durante el enlace de parámetros en modo ConstrainedLanguage para scripts que no son de confianza.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

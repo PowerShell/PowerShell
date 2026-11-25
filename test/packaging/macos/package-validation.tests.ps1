@@ -36,33 +36,11 @@ Describe "Verify macOS Package" {
             Write-Verbose "Expanding package to: $($script:expandDir)" -Verbose
             # pkgutil will create the directory itself, so don't pre-create it
             Start-NativeExecution {
-                pkgutil --expand $package.FullName $script:expandDir
-            }
-
-            # Extract the payload to verify files
-            $script:payloadDir = Join-Path "TestDrive:" -ChildPath "package-payload-test"
-            $payloadDirResolved = (Resolve-Path "TestDrive:").ProviderPath
-            $script:payloadDir = Join-Path $payloadDirResolved -ChildPath "package-payload-test"
-
-            # Create payload directory since cpio needs it
-            if (-not (Test-Path $script:payloadDir)) {
-                $null = New-Item -ItemType Directory -Path $script:payloadDir -Force
-            }
-
-            $componentPkg = Get-ChildItem -Path $script:expandDir -Filter "*.pkg" -Recurse | Select-Object -First 1
-            if ($componentPkg) {
-                Write-Verbose "Extracting payload from: $($componentPkg.FullName)" -Verbose
-                Push-Location $script:payloadDir
-                try {
-                    $payloadFile = Join-Path $componentPkg.FullName "Payload"
-                    Get-Content -Path $payloadFile -Raw -AsByteStream | & cpio -i 2>&1 | Out-Null
-                } finally {
-                    Pop-Location
-                }
+                pkgutil --expand-full $package.FullName $script:expandDir
             }
 
             # Get all extracted files for verification
-            $script:extractedFiles = Get-ChildItem -Path $script:payloadDir -Recurse -ErrorAction SilentlyContinue
+            $script:extractedFiles = Get-ChildItem -Path $script:expandDir -Recurse -ErrorAction SilentlyContinue
             Write-Verbose "Extracted $($script:extractedFiles.Count) files" -Verbose
         }
     }
@@ -107,11 +85,6 @@ Describe "Verify macOS Package" {
         It "Package should have a component package" {
             $componentPkg = Get-ChildItem -Path $script:expandDir -Filter "*.pkg" -Recurse -ErrorAction SilentlyContinue
             $componentPkg | Should -Not -BeNullOrEmpty -Because "Package should contain a component.pkg"
-        }
-
-        It "Payload should extract successfully" {
-            $script:payloadDir | Should -Exist
-            $script:extractedFiles | Should -Not -BeNullOrEmpty -Because "Package payload should contain files"
         }
     }
 

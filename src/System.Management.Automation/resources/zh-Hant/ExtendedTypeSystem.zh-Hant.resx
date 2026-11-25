@@ -396,11 +396,13 @@ PS&gt; [System.Collections.Generic.Comparer``1]::get_Default()
   </data>
   <data name="WDACHashTypeLogMessage" xml:space="preserve">
     <value>ConstrainedLanguage 模式不允許類型從 HashTable 轉換為 '{0}'。</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
   <data name="WDACTypeConversionLogTitle" xml:space="preserve">
     <value>延伸類型系統雜湊表轉換</value>
   </data>
   <data name="WDACTypeConversionLogMessage" xml:space="preserve">
     <value>ConstrainedLanguage 模式不允許類型從 '{0}' 轉換為 '{1}'。</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

@@ -173,5 +173,6 @@
   </data>
   <data name="IEXWDACLogMessage" xml:space="preserve">
     <value>Le bloc de script de l’applet de commande Invoke-Expression s’exécutera en mode ConstrainedLanguage.</value>
+    <comment>{StrContains="Invoke-Expression"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

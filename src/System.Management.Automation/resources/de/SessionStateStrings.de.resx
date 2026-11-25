@@ -652,6 +652,7 @@
     <value>Sitzungszustandsvariablen</value>
   </data>
   <data name="WDACSessionStateVarLogMessage" xml:space="preserve">
-    <value>Das Ändern oder Erstellen des Bereichs der Variablen „{0}“ in AllScope wird im ConstrainedLanguage-Modus verhindert.</value>
+    <value>Das Ändern oder Erstellen des Scope der Variablen '{0}' in AllScope wird im ConstrainedLanguage-Modus verhindert.</value>
+    <comment>{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>

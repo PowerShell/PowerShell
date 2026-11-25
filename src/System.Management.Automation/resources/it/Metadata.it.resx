@@ -262,6 +262,7 @@
     <value>Errore di controllo dell'attributo ValidateTrustedData</value>
   </data>
   <data name="WDACParameterArgNotTrustedMessage" xml:space="preserve">
-    <value>L'argomento del parametro '{0}' non è attendibile e il controllo dell'attributo del parametro ValidateTrustedData in modalità di linguaggio vincolato avrà esito negativo.</value>
+    <value>L'argomento parametro '{0}' non è attendibile e non supererà il controllo dell'attributo del parametro ValidateTrustedData in modalità ConstrainedLanguage.</value>
+    <comment>{StrContains="ValidateTrustedData"}{StrContains="ConstrainedLanguage"}</comment>
   </data>
 </root>
