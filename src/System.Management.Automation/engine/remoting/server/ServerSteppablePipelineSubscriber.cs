@@ -85,7 +85,8 @@ namespace System.Management.Automation
                         driver.LocalPowerShell.InformationalBuffers,
                         driver.RemoteHost))
                 {
-                    driver.SteppablePipeline = driver.LocalPowerShell.GetSteppablePipeline();
+                    // The pipeline runs for the remote client, not for whatever command this event interrupted.
+                    driver.SteppablePipeline = driver.LocalPowerShell.GetIndependentSteppablePipeline();
                     driver.SteppablePipeline.Begin(!driver.NoInput);
                 }
 

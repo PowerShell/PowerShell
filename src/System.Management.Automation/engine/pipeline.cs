@@ -1316,7 +1316,40 @@ namespace System.Management.Automation.Internal
             CommandProcessorBase LastCommandProcessor = _commands[_commands.Count - 1];
             ValidateCommandProcessorNotNull(LastCommandProcessor, errorMessage: null);
 
-            LastCommandProcessor.CommandRuntime.OutputPipe = pipeToUse;
+            // Leave a redirection of the command's own output, such as *> to a file, in place, as PipelineOps.InvokePipeline() does.
+            MshCommandRuntime commandRuntime = LastCommandProcessor.CommandRuntime;
+            Pipe successPipe = commandRuntime.OutputPipe;
+            if (successPipe != null && successPipe.IsRedirected)
+            {
+                _linkedSuccessOutput = true;
+                return;
+            }
+
+            // Take any stream the command merges into its success output, such as with 3>&1, along to the new pipe.
+            if (successPipe != null)
+            {
+                if (commandRuntime.WarningOutputPipe == successPipe)
+                {
+                    commandRuntime.WarningOutputPipe = pipeToUse;
+                }
+
+                if (commandRuntime.VerboseOutputPipe == successPipe)
+                {
+                    commandRuntime.VerboseOutputPipe = pipeToUse;
+                }
+
+                if (commandRuntime.DebugOutputPipe == successPipe)
+                {
+                    commandRuntime.DebugOutputPipe = pipeToUse;
+                }
+
+                if (commandRuntime.InformationOutputPipe == successPipe)
+                {
+                    commandRuntime.InformationOutputPipe = pipeToUse;
+                }
+            }
+
+            commandRuntime.OutputPipe = pipeToUse;
             _linkedSuccessOutput = true;
         }
 
@@ -1328,7 +1361,8 @@ namespace System.Management.Automation.Internal
             {
                 ValidateCommandProcessorNotNull(commandProcessor, errorMessage: null);
 
-                if (commandProcessor.CommandRuntime.ErrorOutputPipe.DownstreamCmdlet == null)
+                // Leave a redirection of the command's own errors, to a file or to $null, in place, but not an error pipe it took from its function.
+                if (!commandProcessor.CommandRuntime.ErrorOutputRedirected && commandProcessor.CommandRuntime.ErrorOutputPipe.DownstreamCmdlet == null)
                 {
                     commandProcessor.CommandRuntime.ErrorOutputPipe = pipeToUse;
                 }

@@ -2199,32 +2199,23 @@ namespace System.Management.Automation
         internal MergeDataStream ErrorMergeTo { get; set; }
 
         /// <summary>
-        /// Method to set data stream merging based on passed in runtime object.
+        /// Gets or sets a value indicating whether the command redirects its own errors to a file or to $null,
+        /// rather than writing them to an error pipe it was given, such as its function's.
+        /// </summary>
+        internal bool ErrorOutputRedirected { get; set; }
+
+        /// <summary>
+        /// Method to set data stream merging based on passed in runtime object, for each stream other than errors that this runtime does not already redirect.
+        /// Errors reach a command that merges them into its output through SteppablePipeline.Begin(), straight from each command in the pipeline.
         /// </summary>
         /// <param name="fromRuntime">MshCommandRuntime object.</param>
         internal void SetMergeFromRuntime(MshCommandRuntime fromRuntime)
         {
-            this.ErrorMergeTo = fromRuntime.ErrorMergeTo;
-
-            if (fromRuntime.WarningOutputPipe != null)
-            {
-                this.WarningOutputPipe = fromRuntime.WarningOutputPipe;
-            }
-
-            if (fromRuntime.VerboseOutputPipe != null)
-            {
-                this.VerboseOutputPipe = fromRuntime.VerboseOutputPipe;
-            }
-
-            if (fromRuntime.DebugOutputPipe != null)
-            {
-                this.DebugOutputPipe = fromRuntime.DebugOutputPipe;
-            }
-
-            if (fromRuntime.InformationOutputPipe != null)
-            {
-                this.InformationOutputPipe = fromRuntime.InformationOutputPipe;
-            }
+            // The command's own redirections, such as 3>&1 on a command in a steppable pipeline, take precedence over its caller's.
+            this.WarningOutputPipe ??= fromRuntime.WarningOutputPipe;
+            this.VerboseOutputPipe ??= fromRuntime.VerboseOutputPipe;
+            this.DebugOutputPipe ??= fromRuntime.DebugOutputPipe;
+            this.InformationOutputPipe ??= fromRuntime.InformationOutputPipe;
         }
 
         //
