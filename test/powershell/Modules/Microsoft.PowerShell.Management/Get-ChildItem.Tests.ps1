@@ -328,6 +328,142 @@ Describe "Get-ChildItem" -Tags "CI" {
         }
     }
 
+    Context 'ExcludeDirectory dynamic parameter' {
+
+        BeforeAll {
+            $excludeRoot = New-Item -Path $TestDrive -Name "ExcludeDirectoryRoot" -ItemType Directory
+            $null = New-Item -Path $excludeRoot -Name "keep1.txt" -ItemType File
+            $null = New-Item -Path $excludeRoot -Name "node_modules" -ItemType Directory
+            $null = New-Item -Path $excludeRoot\node_modules -Name "lib.js" -ItemType File
+            $null = New-Item -Path $excludeRoot\node_modules -Name "nested" -ItemType Directory
+            $null = New-Item -Path $excludeRoot\node_modules\nested -Name "deep.js" -ItemType File
+            $null = New-Item -Path $excludeRoot -Name "src" -ItemType Directory
+            $null = New-Item -Path $excludeRoot\src -Name "app.js" -ItemType File
+            $null = New-Item -Path $excludeRoot\src -Name "node_modules" -ItemType Directory
+            $null = New-Item -Path $excludeRoot\src\node_modules -Name "lib2.js" -ItemType File
+            $null = New-Item -Path $excludeRoot -Name "Temp" -ItemType Directory
+            $null = New-Item -Path $excludeRoot\Temp -Name "t.txt" -ItemType File
+        }
+
+        It 'excludes matching directories and their subtrees when recursing' {
+            $result = Get-ChildItem -Path $excludeRoot -Recurse -ExcludeDirectory node_modules
+
+            $result | Should -HaveCount 5
+            ($result | Where-Object { $_.FullName -like '*node_modules*' }) | Should -BeNullOrEmpty
+            $result.Name | Should -Contain 'keep1.txt'
+            $result.Name | Should -Contain 'src'
+            $result.Name | Should -Contain 'app.js'
+            $result.Name | Should -Contain 'Temp'
+            $result.Name | Should -Contain 't.txt'
+        }
+
+        It 'accepts an array of exclusion patterns' {
+            $result = Get-ChildItem -Path $excludeRoot -Recurse -ExcludeDirectory node_modules, Temp
+
+            $result | Should -HaveCount 3
+            ($result | Where-Object { $_.Name -eq 'Temp' }) | Should -BeNullOrEmpty
+            ($result | Where-Object { $_.FullName -like '*node_modules*' }) | Should -BeNullOrEmpty
+        }
+
+        It 'supports wildcards in the exclusion patterns' {
+            $result = Get-ChildItem -Path $excludeRoot -Recurse -ExcludeDirectory '*modules'
+
+            $result | Should -HaveCount 5
+            ($result | Where-Object { $_.FullName -like '*node_modules*' }) | Should -BeNullOrEmpty
+        }
+
+        It 'matches patterns case-insensitively' {
+            $result = Get-ChildItem -Path $excludeRoot -Recurse -ExcludeDirectory 'NODE_MODULES'
+
+            ($result | Where-Object { $_.FullName -like '*node_modules*' }) | Should -BeNullOrEmpty
+        }
+
+        It 'excludes matching directories without -Recurse' {
+            $result = Get-ChildItem -Path $excludeRoot -ExcludeDirectory node_modules
+
+            $result | Should -HaveCount 3
+            $result.Name | Should -Contain 'keep1.txt'
+            $result.Name | Should -Contain 'src'
+            $result.Name | Should -Contain 'Temp'
+        }
+
+        It 'excludes matching directories and their subtrees with -Name' {
+            $result = Get-ChildItem -Path $excludeRoot -Recurse -Name -ExcludeDirectory node_modules
+
+            $result | Should -HaveCount 5
+            ($result | Where-Object { $_ -like '*node_modules*' }) | Should -BeNullOrEmpty
+        }
+
+        It 'excludes matching directories when combined with -Exclude' {
+            $result = Get-ChildItem -Path $excludeRoot -Recurse -Exclude *.js -ExcludeDirectory node_modules
+
+            $result | Should -HaveCount 4
+            ($result | Where-Object { $_.FullName -like '*node_modules*' }) | Should -BeNullOrEmpty
+            $result.Name | Should -Contain 'keep1.txt'
+            $result.Name | Should -Contain 't.txt'
+        }
+
+        It 'excludes matching directories when combined with -Include' {
+            $result = Get-ChildItem -Path "$excludeRoot\*" -Recurse -Include *.js, *.txt -ExcludeDirectory node_modules
+
+            $result | Should -HaveCount 3
+            $result.Name | Should -Contain 'keep1.txt'
+            $result.Name | Should -Contain 'app.js'
+            $result.Name | Should -Contain 't.txt'
+        }
+
+        It 'does not exclude files that match the exclusion patterns' {
+            $fileLikeDir = New-Item -Path $excludeRoot -Name "node_modules_file" -ItemType File
+            try {
+                $result = Get-ChildItem -Path $excludeRoot -ExcludeDirectory '*node_modules*'
+
+                $result.Name | Should -Contain 'node_modules_file'
+                $result.Name | Should -Not -Contain 'node_modules'
+            }
+            finally {
+                Remove-Item -LiteralPath $fileLikeDir.FullName -Force
+            }
+        }
+
+        It 'does not exclude the directory specified by -LiteralPath itself' {
+            $result = Get-ChildItem -LiteralPath (Join-Path $excludeRoot 'node_modules') -Recurse -ExcludeDirectory node_modules
+
+            $result | Should -HaveCount 3
+            $result.Name | Should -Contain 'lib.js'
+            $result.Name | Should -Contain 'nested'
+            $result.Name | Should -Contain 'deep.js'
+        }
+
+        It 'keeps an exactly targeted directory accessible without other filters' {
+            $result = Get-ChildItem -Path (Join-Path $excludeRoot 'node_modules') -ExcludeDirectory node_modules
+
+            $result | Should -HaveCount 2
+            $result.Name | Should -Contain 'lib.js'
+            $result.Name | Should -Contain 'nested'
+        }
+
+        It 'keeps an exactly targeted directory accessible with -LiteralPath and -Exclude' {
+            $result = Get-ChildItem -LiteralPath (Join-Path $excludeRoot 'node_modules') -Exclude *.js -ExcludeDirectory node_modules
+
+            $result | Should -HaveCount 1
+            $result.Name | Should -BeExactly 'nested'
+        }
+
+        # When -Exclude/-Include is present, the engine resolves even a wildcard-free -Path by globbing
+        # it, so the target's own name is subject to the active filters. -ExcludeDirectory therefore
+        # behaves the same way -Exclude itself does for an exactly named target (see issue #28466);
+        # -LiteralPath keeps such targets accessible.
+        It 'excludes an exactly targeted directory itself when other filters force globbing' {
+            $result = Get-ChildItem -Path (Join-Path $excludeRoot 'node_modules') -Exclude *.js -ExcludeDirectory node_modules
+
+            $result | Should -BeNullOrEmpty
+        }
+
+        It 'rejects an empty exclusion pattern' {
+            { Get-ChildItem -Path $excludeRoot -ExcludeDirectory '' } | Should -Throw
+        }
+    }
+
     Context 'Env: Provider' {
 
         It 'can handle mixed case in Env variables' {
