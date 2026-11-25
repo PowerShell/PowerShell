@@ -175,6 +175,23 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $transcriptFilePath | Should -FileContentMatch $machineName
     }
 
+    It "Transcription should record double-width characters from native command output once with code page <CodePage>" -Skip:(!$IsWindows) -TestCases @(
+        @{ CodePage = 932 }
+        @{ CodePage = 65001 }
+    ) {
+        param($CodePage)
+
+        # Run in a new console window, so the output of 'cmd.exe' goes to the console
+        # and the transcript gets it by reading the screen buffer.
+        $text = "$([char]0x65E5)$([char]0x672C) Japan"
+        $command = "chcp.com $CodePage > `$null; Start-Transcript -LiteralPath '$transcriptFilePath' > `$null; cmd.exe /c echo $text; Stop-Transcript > `$null"
+        $encodedCommand = [Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes($command))
+        Start-Process -FilePath "$PSHOME\pwsh.exe" -ArgumentList '-NoProfile', '-NonInteractive', '-EncodedCommand', $encodedCommand -WindowStyle Hidden -Wait
+
+        $transcriptFilePath | Should -Exist
+        $transcriptFilePath | Should -FileContentMatchExactly "^$text$"
+    }
+
     It "Transcription should record Write-Information output when InformationAction is set to Continue" {
         [String]$message = New-Guid
         $script = {
