@@ -247,7 +247,8 @@ namespace System.Management.Automation
                 if (candidate != null ||
                     (parameter.Parameter.Type != typeof(PSObject) &&
                      parameter.Parameter.Type != typeof(object) &&
-                     parameter.Parameter.Type != typeof(PSObject[])) ||
+                     parameter.Parameter.Type != typeof(PSObject[]) &&
+                     parameter.Parameter.Type != typeof(object[])) ||
                     parameter.Parameter.ArgumentTransformationAttributes.Length != 0 ||
                     parameter.Parameter.ValidationAttributes.Length != 0 ||
                     parameter.Parameter.PSTypeName != null)

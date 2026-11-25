@@ -55,8 +55,8 @@ Run `Get-Help Start-Benchmarking -Full` to see the description of each parameter
 ### Pipeline input binding
 
 The candidate-selection prototype supports single by-value `PSObject`, `object`,
-and `PSObject[]` pipeline parameters in an already-resolved parameter set, subject
-to its other metadata exclusions. Array construction, element wrapping, and any
+`PSObject[]`, and `object[]` pipeline parameters in an already-resolved parameter
+set, subject to its other metadata exclusions. Array construction, element wrapping, and any
 coercion retry still use the existing binder; caching the destination does not
 eliminate those costs.
 Commands with matching `$PSDefaultParameterValues` entries use normal binding,
