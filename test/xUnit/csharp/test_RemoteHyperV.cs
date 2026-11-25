@@ -669,10 +669,10 @@ namespace PSTests.Sequential
         }
 
         [SkippableTheory]
-        [InlineData(5500, "A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond.", "SocketException")] // test the socket timeout
-        [InlineData(3200, "canceled", "System.OperationCanceledException")] // test the cancellation token
-        [InlineData(10, "", "")]
-        public async Task ValidateTokenTimeoutFails(int timeoutMs, string expectedMessage, string expectedExceptionType = "SocketException")
+        [InlineData(5500, typeof(SocketException))] // test the socket timeout
+        [InlineData(3200, typeof(OperationCanceledException))] // test the cancellation token
+        [InlineData(10, null)]
+        public async Task ValidateTokenTimeoutFails(int timeoutMs, Type expectedExceptionType)
         {
             string token = "testToken";
             string expectedToken = token;
@@ -696,15 +696,18 @@ namespace PSTests.Sequential
             using (var client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
             {
                 ConnectWithRetry(client, IPAddress.Loopback, port, _output);
-                if (expectedMessage.Length > 0)
+                if (expectedExceptionType != null)
                 {
                     var exception = Record.Exception(
                         () => System.Management.Automation.Remoting.RemoteSessionHyperVSocketServer.ValidateToken(client, expectedToken, DateTimeOffset.UtcNow, 5)); // set the timeout to  5 seconds or 5000 ms
                     Assert.NotNull(exception);
                     string exceptionType = exception.GetType().FullName;
                     _output.WriteLine($"Caught exception of type {exceptionType} with message: {exception.Message}");
-                    Assert.Contains(expectedExceptionType, exceptionType, StringComparison.OrdinalIgnoreCase);
-                    Assert.Contains(expectedMessage, exception.Message, StringComparison.OrdinalIgnoreCase);
+                    Assert.IsType(expectedExceptionType, exception);
+                    if (exception is SocketException socketException)
+                    {
+                        Assert.Equal(SocketError.TimedOut, socketException.SocketErrorCode);
+                    }
                 }
                 else
                 {
@@ -713,7 +716,7 @@ namespace PSTests.Sequential
                 System.Threading.Thread.Sleep(100); // Allow time for server to process
             }
 
-            if (expectedMessage.Length == 0)
+            if (expectedExceptionType == null)
             {
                 await serverTask;
             }
