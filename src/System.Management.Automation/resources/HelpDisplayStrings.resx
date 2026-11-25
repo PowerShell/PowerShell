@@ -449,6 +449,9 @@ To update help again, add the Force parameter to your command.</value>
   <data name="InvalidHelpInfoUriFormat" xml:space="preserve">
     <value>The HelpInfoURI {0} does not start with HTTP.</value>
   </data>
+  <data name="InvalidModuleName" xml:space="preserve">
+    <value>The module name '{0}' contains invalid characters and cannot be used to save help content.</value>
+  </data>
   <data name="RootElementMustBeHelpItems" xml:space="preserve">
     <value>The root level element of the help content must be "helpItems".</value>
   </data>
