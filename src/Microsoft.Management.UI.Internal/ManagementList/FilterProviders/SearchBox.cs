@@ -46,7 +46,7 @@ namespace Microsoft.Management.UI.Internal
         {
             get
             {
-                return string.IsNullOrEmpty(this.Text) == false;
+                return !string.IsNullOrWhiteSpace(this.Text);
             }
         }
 
@@ -99,7 +99,7 @@ namespace Microsoft.Management.UI.Internal
 
         partial void OnClearTextCanExecuteImplementation(CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = this.HasFilterExpression;
+            e.CanExecute = !string.IsNullOrEmpty(this.Text);
         }
 
         partial void OnClearTextExecutedImplementation(ExecutedRoutedEventArgs e)
