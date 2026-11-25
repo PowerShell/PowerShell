@@ -1,10 +1,11 @@
 # Get Changed Files Action
 
-A reusable composite action that retrieves the list of files changed in a pull request or push event.
+A reusable composite action that retrieves the list of files changed in a pull request or push event, or all matching files for scheduled and manual runs.
 
 ## Features
 
 - Supports both `pull_request` and `push` events
+- Supports `schedule` and `workflow_dispatch` events (returns all matching files)
 - Optional filtering by file pattern
 - Returns files as JSON array for easy consumption
 - Filters out deleted files (only returns added, modified, or renamed files)
@@ -53,12 +54,26 @@ A reusable composite action that retrieves the list of files changed in a pull r
     event-types: 'pull_request,push'
 ```
 
+### Support Scheduled and Manual Runs
+
+For `schedule` and `workflow_dispatch` events there is no diff to compare, so
+the action returns **all** repository files that match the filter.
+
+```yaml
+- name: Get all matching files (schedule/dispatch)
+  id: all-files
+  uses: "./.github/actions/infrastructure/get-changed-files"
+  with:
+    filter: '*.md'
+    event-types: 'pull_request,push,schedule,workflow_dispatch'
+```
+
 ## Inputs
 
 | Name | Description | Required | Default |
 |------|-------------|----------|---------|
 | `filter` | Optional filter pattern (e.g., `*.md` for markdown files, `.github/` for GitHub files) | No | `''` |
-| `event-types` | Comma-separated list of event types to support (`pull_request`, `push`) | No | `pull_request` |
+| `event-types` | Comma-separated list of event types to support (`pull_request`, `push`, `schedule`, `workflow_dispatch`) | No | `pull_request` |
 
 ## Outputs
 
