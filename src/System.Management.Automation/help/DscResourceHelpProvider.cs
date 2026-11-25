@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -33,7 +32,7 @@ namespace System.Management.Automation
         ///
         /// This will avoid one help file getting loaded again and again.
         /// </summary>
-        private readonly Hashtable _helpFiles = new Hashtable();
+        private readonly HashSet<string> _helpFiles = new();
 
         [TraceSource("DscResourceHelpProvider", "DscResourceHelpProvider")]
         private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("DscResourceHelpProvider", "DscResourceHelpProvider");
@@ -308,7 +307,7 @@ namespace System.Management.Automation
                 null); /* default maxCharactersInDocument */
 
             // Add this file into _helpFiles hashtable to prevent it to be loaded again.
-            _helpFiles[helpFile] = 0;
+            _helpFiles.Add(helpFile);
 
             XmlNode helpItemsNode = null;
 
