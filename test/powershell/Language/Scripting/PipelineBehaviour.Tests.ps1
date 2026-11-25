@@ -491,6 +491,25 @@ Describe 'Function Pipeline Behaviour' -Tag 'CI' {
             ## but it should skip calling '$steppablePipeline.Clean()' in this case. 
             { TestProxyGci -Attributes } | Should -Throw -ErrorId 'MissingArgument,TestProxyGci'
         }
+
+        It "A command in a steppable pipeline can redirect '<Stream>' to `$null" -TestCases @(
+            @{ Stream = 'Error'; Script = { Write-Error -Message 'boom' 2>$null } }
+            @{ Stream = 'Warning'; Script = { Write-Warning -Message 'boom' 3>$null } }
+            @{ Stream = 'All'; Script = { Write-Error -Message 'boom' *>$null } }
+        ) {
+            param($Script)
+
+            $step = $Script.GetSteppablePipeline()
+
+            try {
+                $step.Begin($false)
+                $step.Process() | Should -BeNullOrEmpty
+                $step.End() | Should -BeNullOrEmpty
+            }
+            finally {
+                $step.Dispose()
+            }
+        }
     }
 
     Context "'exit' statement in command" {

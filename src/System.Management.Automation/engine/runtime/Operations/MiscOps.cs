@@ -822,7 +822,9 @@ namespace System.Management.Automation
             if (fileRedirection != null)
             {
                 object fileName = Compiler.GetExpressionValue(fileRedirection.Location, isTrusted, context);
-                return new FileRedirection(fileRedirection.FromStream, fileRedirection.Append, fileName.ToString());
+
+                // Convert the location as compiled script does, so a redirection to $null discards the stream.
+                return new FileRedirection(fileRedirection.FromStream, fileRedirection.Append, PSObject.ToStringParser(context, fileName));
             }
 
             var mergingRedirectionAst = (MergingRedirectionAst)redirectionAst;
