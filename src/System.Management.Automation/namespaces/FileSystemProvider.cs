@@ -902,7 +902,14 @@ namespace Microsoft.PowerShell.Commands
 #if UNIX
                             continue;
 #else
-                            displayRoot = GetRootPathForNetworkDriveOrDosDevice(newDrive);
+                            try
+                            {
+                                displayRoot = GetRootPathForNetworkDriveOrDosDevice(newDrive);
+                            }
+                            catch (Win32Exception)
+                            {
+                                // Mapping information is optional; retain the drive-letter root when unavailable.
+                            }
 #endif
                         }
 
