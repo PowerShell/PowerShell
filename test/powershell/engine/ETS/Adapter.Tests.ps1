@@ -329,6 +329,20 @@ Describe "DataRow and DataRowView Adapter tests" -tags "CI" {
             $row.LastName | Should -Be "soe"
             $row.YearsInMS | Should -Be 5
         }
+
+        It "Should set DateTime columns from PSObject values through properties and indexers" {
+            $table = [System.Data.DataTable]::new()
+            $null = $table.Columns.Add("Date", [DateTime])
+            $row = $table.Rows.Add((Get-Date))
+
+            $date = Get-Date
+            $row.Date = $date
+            $row.Date.Ticks | Should -Be $date.Ticks
+
+            $date = Get-Date
+            $row["Date"] = $date
+            $row.Date.Ticks | Should -Be $date.Ticks
+        }
     }
 
     Context "DataRowView Adapter tests" {
@@ -347,6 +361,21 @@ Describe "DataRow and DataRowView Adapter tests" -tags "CI" {
             $rowView.FirstName | Should -Be "edmund`todd `n"
             $rowView.LastName | Should -Be "bush"
             $rowView.YearsInMS | Should -Be 9
+        }
+
+        It "Should set DateTime columns from PSObject values through properties and indexers" {
+            $table = [System.Data.DataTable]::new()
+            $null = $table.Columns.Add("Date", [DateTime])
+            $null = $table.Rows.Add((Get-Date))
+            $rowView = [System.Data.DataView]::new($table)[0]
+
+            $date = Get-Date
+            $rowView.Date = $date
+            $rowView.Date.Ticks | Should -Be $date.Ticks
+
+            $date = Get-Date
+            $rowView["Date"] = $date
+            $rowView.Date.Ticks | Should -Be $date.Ticks
         }
     }
 }
