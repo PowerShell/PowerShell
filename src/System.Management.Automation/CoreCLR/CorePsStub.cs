@@ -849,7 +849,7 @@ namespace Microsoft.PowerShell
 {
     internal static class NativeCultureResolver
     {
-        internal static void SetThreadUILanguage(Int16 langId) { }
+        internal static void SetThreadUILanguage(short langId) { }
 
         internal static CultureInfo UICulture
         {

@@ -306,7 +306,7 @@ namespace System.Management.Automation.Interpreter
         private sealed class VariableScope
         {
             public readonly int Start;
-            public int Stop = Int32.MaxValue;
+            public int Stop = int.MaxValue;
             public readonly LocalVariable Variable;
             public readonly VariableScope Parent;
             public List<VariableScope> ChildScopes;

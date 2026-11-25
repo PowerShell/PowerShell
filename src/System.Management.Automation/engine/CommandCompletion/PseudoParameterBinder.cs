@@ -386,7 +386,7 @@ namespace System.Management.Automation.Language
             // Check if there is exactly one parameter set valid. In that case,
             // ValidParameterSetFlags is exactly a power of two. Otherwise,
             // add to the binding exceptions.
-            bool parameterSetSpecified = bindingInfo.ValidParameterSetsFlags != UInt32.MaxValue;
+            bool parameterSetSpecified = bindingInfo.ValidParameterSetsFlags != uint.MaxValue;
             bool remainingParameterSetIncludesDefault =
                 (bindingInfo.DefaultParameterSetFlag != 0) &&
                 ((bindingInfo.ValidParameterSetsFlags & bindingInfo.DefaultParameterSetFlag) ==
@@ -1030,7 +1030,7 @@ namespace System.Management.Automation.Language
                 // (x & (x -1 ) == 0) is a bit hack to determine if something is
                 // exactly a power of two.
                 bool parameterSetSpecified = (_currentParameterSetFlag != 0) &&
-                    (_currentParameterSetFlag != UInt32.MaxValue);
+                    (_currentParameterSetFlag != uint.MaxValue);
                 bool onlyOneRemainingParameterSet = (_currentParameterSetFlag != 0) &&
                     (_currentParameterSetFlag & (_currentParameterSetFlag - 1)) == 0;
                 if ((bindingType != BindingType.ParameterCompletion) && parameterSetSpecified && (!onlyOneRemainingParameterSet))
