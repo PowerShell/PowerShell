@@ -151,10 +151,73 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Gets or sets whether to prefix each transcribed line of command
+        /// input and output with the time at which it was recorded to the
+        /// transcript, using the default format 'yyyy-MM-dd HH:mm:ss' or
+        /// the format specified by <see cref="TimeStampFormat"/>. Standalone
+        /// native command output on Windows is captured from the console
+        /// buffer only after the process exits, so all lines of such output
+        /// receive the completion time of the command. Piping native command
+        /// output into a PowerShell command (for example, 'native.exe |
+        /// Out-Host') records each line as it is produced, while redirecting
+        /// it directly to a file bypasses transcription.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter IncludeTimeStamp
+        {
+            get; set;
+        }
+
+        /// <summary>
+        /// Gets or sets a .NET standard or custom date and time format string
+        /// used for the timestamp prefix on transcribed lines, for example
+        /// 'HH:mm:ss', 'o' or 'dddd, yyyy-MM-dd'. The default format is
+        /// 'yyyy-MM-dd HH:mm:ss'. Specifying this parameter enables timestamps,
+        /// so -IncludeTimeStamp does not need to be supplied as well.
+        /// </summary>
+        [Parameter]
+        [ValidateNotNullOrEmpty]
+        public string TimeStampFormat
+        {
+            get; set;
+        }
+
+        private static readonly char[] s_timeStampNewLineChars = { '\r', '\n' };
+
+        /// <summary>
         /// Starts the transcription.
         /// </summary>
         protected override void BeginProcessing()
         {
+            // Specifying a timestamp format implies -IncludeTimeStamp, so that the
+            // timestamps are enabled even when the switch itself is not supplied.
+            bool includeTimeStamp = IncludeTimeStamp.IsPresent || (TimeStampFormat != null);
+
+            // Validate the timestamp format before touching the file system so that
+            // an invalid format fails fast. Rendering a sample also catches format
+            // strings that would span multiple lines, which would corrupt the
+            // per-line transcript format.
+            if (TimeStampFormat != null)
+            {
+                string sampleTimeStamp = null;
+                try
+                {
+                    sampleTimeStamp = DateTime.Now.ToString(
+                        TimeStampFormat, System.Globalization.CultureInfo.InvariantCulture);
+                }
+                catch (FormatException)
+                {
+                }
+
+                if (sampleTimeStamp is null || sampleTimeStamp.IndexOfAny(s_timeStampNewLineChars) >= 0)
+                {
+                    Exception inner = new FormatException(
+                        StringUtil.Format(TranscriptStrings.InvalidTimeStampFormat, TimeStampFormat));
+                    ThrowTerminatingError(new ErrorRecord(
+                        inner, "InvalidTimeStampFormat", ErrorCategory.InvalidArgument, TimeStampFormat));
+                }
+            }
+
             // If they haven't specified a path, figure out the correct output path.
             if (!_isFilenameSet)
             {
@@ -234,7 +297,7 @@ namespace Microsoft.PowerShell.Commands
 
                 System.Management.Automation.Remoting.PSSenderInfo psSenderInfo =
                     this.SessionState.PSVariable.GetValue("PSSenderInfo") as System.Management.Automation.Remoting.PSSenderInfo;
-                Host.UI.StartTranscribing(effectiveFilePath, psSenderInfo, IncludeInvocationHeader.ToBool(), UseMinimalHeader.IsPresent);
+                Host.UI.StartTranscribing(effectiveFilePath, psSenderInfo, IncludeInvocationHeader.ToBool(), UseMinimalHeader.IsPresent, includeTimeStamp, TimeStampFormat);
 
                 // ch.StartTranscribing(effectiveFilePath, Append);
 
