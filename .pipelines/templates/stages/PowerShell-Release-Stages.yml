@@ -112,6 +112,49 @@ stages:
       DOTNET_SDK_VERSION: ${{ parameters.DOTNET_SDK_VERSION }}
       dotnetArch: 'linux-x64'
 
+  # Install the pointer package without a RID override so the SDK selects each platform's payload.
+  - template: /.pipelines/templates/release-validate-globaltools.yml@self
+    parameters:
+      jobName: "WindowsPointerGlobalTool"
+      displayName: "Windows x64 Pointer Global Tool Validation"
+      jobtype: windows
+      imageName: windows-2025
+      artifactName: drop_nupkg_build_globaltool_pointer
+      globalToolExeName: 'pwsh.cmd' # The SDK generates a command script for RID-specific tools.
+      globalToolPackageName: 'PowerShell'
+      IsEarlyAccess: ${{ parameters.IsEarlyAccess }}
+      DOTNET_RUNTIME_VERSION: ${{ parameters.DOTNET_RUNTIME_VERSION }}
+      DOTNET_SDK_VERSION: ${{ parameters.DOTNET_SDK_VERSION }}
+      dotnetArch: 'win-x64'
+
+  - template: /.pipelines/templates/release-validate-globaltools.yml@self
+    parameters:
+      jobName: "MacOSPointerGlobalTool"
+      displayName: "macOS Pointer Global Tool Validation"
+      jobtype: linux
+      imageName: macOS-15
+      artifactName: drop_nupkg_build_globaltool_pointer
+      globalToolExeName: 'pwsh'
+      globalToolPackageName: 'PowerShell'
+      IsEarlyAccess: ${{ parameters.IsEarlyAccess }}
+      DOTNET_RUNTIME_VERSION: ${{ parameters.DOTNET_RUNTIME_VERSION }}
+      DOTNET_SDK_VERSION: ${{ parameters.DOTNET_SDK_VERSION }}
+      dotnetArch: 'osx-x64'
+
+  - template: /.pipelines/templates/release-validate-globaltools.yml@self
+    parameters:
+      jobName: "UbuntuPointerGlobalTool"
+      displayName: "Ubuntu 26.04 Pointer Global Tool Validation"
+      jobtype: linux
+      imageName: ubuntu-26.04
+      artifactName: drop_nupkg_build_globaltool_pointer
+      globalToolExeName: 'pwsh'
+      globalToolPackageName: 'PowerShell'
+      IsEarlyAccess: ${{ parameters.IsEarlyAccess }}
+      DOTNET_RUNTIME_VERSION: ${{ parameters.DOTNET_RUNTIME_VERSION }}
+      DOTNET_SDK_VERSION: ${{ parameters.DOTNET_SDK_VERSION }}
+      dotnetArch: 'linux-x64'
+
 - stage: fxdpackages
   displayName: 'Validate FXD Packages'
   dependsOn: [downloadDotnetEarlyAccess]
