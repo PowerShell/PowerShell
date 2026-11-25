@@ -1308,7 +1308,7 @@ function Start-CrossGen {
     param(
         [Parameter(Mandatory= $true)]
         [ValidateNotNullOrEmpty()]
-        [String]
+        [string]
         $PublishPath,
 
         [Parameter(Mandatory=$true)]
@@ -1330,12 +1330,12 @@ function Start-CrossGen {
         param (
             [Parameter(Mandatory = $true)]
             [ValidateNotNullOrEmpty()]
-            [String[]]
+            [string[]]
             $AssemblyPath,
 
             [Parameter(Mandatory = $true)]
             [ValidateNotNullOrEmpty()]
-            [String]
+            [string]
             $CrossgenPath,
 
             [Parameter(Mandatory = $true)]

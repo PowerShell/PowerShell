@@ -112,7 +112,7 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
             $beforeCount = Get-WindowCountMacOS -Name TextEdit
             Invoke-Item -Path $TestFile
             $startTime = Get-Date
-            $title = [String]::Empty
+            $title = [string]::Empty
             while (((Get-Date) - $startTime).TotalSeconds -lt 30 -and ($title -ne $expectedTitle))
             {
                 Start-Sleep -Milliseconds 100
@@ -249,7 +249,7 @@ Categories=Application;
                 Invoke-Item -Path $PSHOME
                 $startTime = Get-Date
                 $expectedTitle = Split-Path $PSHOME -Leaf
-                $title = [String]::Empty
+                $title = [string]::Empty
                 while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and ($title -ne $expectedTitle))
                 {
                     Start-Sleep -Milliseconds 100

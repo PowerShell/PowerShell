@@ -368,17 +368,17 @@ Specifies the order of sorting for one or more properties.</value>
 Specifies the order of sorting for one or more properties.</value>
   </data>
   <data name="LogNameHashtableKeyDescription" xml:space="preserve">
-    <value>[String[]]
+    <value>[string[]]
 Specifies the log names to get events from.
 Supports wildcards.</value>
   </data>
   <data name="ProviderNameHashtableKeyDescription" xml:space="preserve">
-    <value>[String[]]
+    <value>[string[]]
 Specifies the event log providers to get events from.
 Supports wildcards.</value>
   </data>
   <data name="PathHashtableKeyDescription" xml:space="preserve">
-    <value>[String[]]
+    <value>[string[]]
 Specifies file paths to log files to get events from.
 Valid file formats are: .etl, .evt, and .evtx</value>
   </data>
