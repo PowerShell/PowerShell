@@ -131,7 +131,8 @@ runs:
             toolsCiPsm1Changed;
           console.log(`→ Packaging changed: ${packagingChanged}`);
 
-          const source = mainSourceChanged || toolsChanged || githubChanged || propsChanged || testsChanged || globalConfigChanged || localizationConfigChanged;
+          const executableCodeChanged = files.some(file => /\.(cs|ps1|psm1|psd1)$/i.test(file));
+          const source = mainSourceChanged || toolsChanged || githubChanged || propsChanged || testsChanged || globalConfigChanged || localizationConfigChanged || executableCodeChanged;
           console.log(`→ Source (composite): ${source}`);
 
           core.endGroup();

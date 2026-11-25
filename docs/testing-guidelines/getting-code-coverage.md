@@ -1,6 +1,88 @@
 # Getting Code Coverage Analysis for PowerShell
 
-**Note: Code coverage is currently only supported on Windows, since we use OpenCover.**
+## Pull request CI coverage
+
+GitHub Actions `PR-CI` runs the existing Pester CI/Others, elevated/unelevated
+(including experimental-feature runs), and xUnit suites once per platform on
+Windows, Linux, and macOS, using native x64 and Arm64 runners.
+Coverage is collected during that single test pass for every PR, including PRs
+without C# or PowerShell changes, so current total coverage is always reported.
+PowerShell-only changes collect **C# execution coverage**, not PowerShell
+statement coverage.
+
+`tools/codecoverage.psm1` uses pinned `dotnet-coverage` static instrumentation;
+this supports Arm64 on Linux and macOS and includes instrumented subprocesses.
+Coverage builds retain symbols. xUnit dependencies are built before instrumentation
+and tests use `--no-build` so instrumented binaries are not overwritten.
+Collection/reporting functions live in this module; no external coverage service
+or write-enabled token is required by the PR test workflow.
+During collection, `PS_CODE_COVERAGE=1` lets the startup assembly check account
+for the static tracker's two additional dependencies without relaxing normal builds.
+On Unix, collection creates separate, private runtime directories for the runner
+and sudo processes. Elevated tests and their collector receive explicit
+`XDG_RUNTIME_DIR` and `TMPDIR` sudo overrides, avoiding .NET mutex ownership
+conflicts with the runner and older runtimes without changing existing permissions.
+Directory names are kept short to accommodate Unix-domain socket path limits.
+The temporary directories are removed after collection. Collector diagnostic logs
+are included in the coverage artifact; startup failures print the last log entries.
+These environment variables are restored after collection, including on failure.
+Windows x64 unelevated Pester uses a collector at the same restricted trust level
+as the test process; collector readiness is checked before tests start.
+
+The aggregate job unions executable source lines across all platform/architecture
+and test suites: a line hit anywhere counts as covered once. It does not average
+percentages or count test/non-repository source as product code.
+Portable PDB sequence points supply uncovered lines for assemblies never loaded
+by any test, so these assemblies cannot silently inflate coverage. The metric
+includes all executable lines in tracked product C# files, including auto-properties
+and tracked generated code; collector attribute exclusions are disabled to match
+this denominator.
+The job summary shows current total coverage, per-run coverage, and coverage of
+added/modified executable C# lines using the same collected data. When no C# files
+changed, patch coverage is labeled **not applicable** and total coverage is still
+shown. Download the `codecoverage-report` artifact
+and open `index.html` for the PR diff: covered executable lines are green,
+uncovered executable lines are red, unknown C# coverage is yellow, and
+non-executable lines, removed lines, and PowerShell changes are neutral.
+
+After `PR-CI` completes, `codecoverage-comment.yml` posts the same summary and a
+report download link in a PR comment, updating the bot's existing coverage comment
+on subsequent runs. Incomplete reports retain their warning and suite statuses.
+This separate `workflow_run` publisher has comment-write permission and uses only
+default-branch code; it never executes PR code or artifact contents. It also works
+for fork PRs, skips closed PRs and superseded heads, and prevents an older report
+from replacing a newer one. Automatic comments become active once the publisher
+workflow is present on the default branch. The HTML colored diff remains in the
+downloadable artifact because GitHub comments cannot render its coverage colors.
+
+Base coverage and the before/after coverage delta are explicitly **unavailable**:
+tests run only once and CI does not retain a historical baseline. Patch coverage
+is not a coverage delta, and a single run cannot isolate the causal effect of
+changed PowerShell code or tests on existing C# coverage.
+
+The diff uses immutable base/head commit IDs from the PR event. For a synthetic
+merge it compares the event base to the tested merge commit, so line annotations
+match the tested source and changes already pulled from the base are excluded.
+For a head checkout it uses the merge base, which also handles rebases.
+Artifacts are scoped to the same workflow run and tested commit; missing or failed
+suites produce an explicitly incomplete report and fail the aggregate job.
+Rerunning failed jobs retains coverage from successful suites in earlier attempts
+of that same run, without rerunning those tests. Each rerun replaces its suite's
+artifact, and the aggregate report is replaced as well. The summary records each
+suite's attempt; invalid or future attempts, other runs/commits, and duplicate
+suites are rejected.
+Only platform/architecture/suite artifacts are downloaded as aggregate inputs;
+the generated `codecoverage-report` is excluded, including on reruns.
+
+The platform workflows remain available for push/manual runs. PR triggers now
+live in `pr-ci.yml`, allowing one aggregate to depend on all six runner variants
+without rerunning tests or looking up artifacts in another workflow run.
+Repository branch protection rules that match the old standalone job names
+must be updated for the `PR-CI` reusable-workflow job names.
+
+## Legacy local Windows coverage
+
+**The legacy OpenCover workflow below only supports Windows.**
 
 The PowerShell code base is configured to build with code coverage support using [OpenCover].
 

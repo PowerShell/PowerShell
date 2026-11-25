@@ -1,0 +1,47 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+name: Comment PR coverage
+
+on:
+  workflow_run:
+    workflows: [PR-CI]
+    types: [completed]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: coverage-comment-${{ github.event.workflow_run.head_repository.full_name }}-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: false
+
+jobs:
+  comment:
+    if: github.event.workflow_run.event == 'pull_request'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      actions: read
+      pull-requests: write
+    steps:
+      # Never check out PR code in this write-enabled workflow.
+      - name: Checkout trusted publishing code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Download completed coverage report
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          name: codecoverage-report
+          path: ${{ runner.temp }}/coverage-comment
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+      - name: Update coverage comment
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          Import-Module ./tools/codecoverage.psm1
+          $event = Get-Content -LiteralPath $env:GITHUB_EVENT_PATH -Raw | ConvertFrom-Json
+          Publish-CodeCoverageComment -ReportDirectory "$env:RUNNER_TEMP/coverage-comment" `
+            -RunId $event.workflow_run.id -RunAttempt $event.workflow_run.run_attempt
