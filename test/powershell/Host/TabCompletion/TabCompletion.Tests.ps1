@@ -3234,6 +3234,24 @@ dir -Recurse `
             $res.CompletionMatches.CompletionText | Should -Not -Contain "Count"
         }
 
+        It 'Should complete members of custom objects in an array literal' {
+            $inputStr = '[pscustomobject]@{Test="Hej"},[pscustomobject]@{Test="Hej2"} | Select-Object '
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches.CompletionText | Should -Contain 'Test'
+        }
+
+        It 'Should complete members of custom objects in an array literal piped to ForEach-Object' {
+            $inputStr = '[pscustomobject]@{Test="Hej"},[pscustomobject]@{Test="Hej2"} | ForEach-Object { $_.'
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches.CompletionText | Should -Contain 'Test'
+        }
+
+        It 'Should complete hashtable keys for an index expression' {
+            $inputStr = '$IndexedHashtable = @{Key = 1}; $IndexedHashtable['
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches.CompletionText | Should -Contain "'Key'"
+        }
+
         It '<Intent>' -TestCases @(
             @{
                 Intent = 'Complete loop labels with no input'
