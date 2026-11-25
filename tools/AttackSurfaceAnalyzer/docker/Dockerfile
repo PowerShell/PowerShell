@@ -6,7 +6,7 @@
 # Stage 2: Extract reports to scratch layer
 
 # Stage 1: Test execution environment
-FROM mcr.microsoft.com/dotnet/sdk:9.0-windowsservercore-ltsc2022@sha256:28f3a59216a7f91dfc4730ea47e236e2ffbb519975725bf8231f57e69dab3ca8 AS asa-runner
+FROM mcr.microsoft.com/dotnet/sdk:9.0-windowsservercore-ltsc2022@sha256:cb171fbed1d295688e8feb0df50fc7a21e4ed2fc4b02718370a37a6950fa43a9 AS asa-runner
 
 # Set shell to PowerShell for easier scripting
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
