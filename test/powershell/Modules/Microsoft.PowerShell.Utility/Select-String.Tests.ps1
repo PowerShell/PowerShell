@@ -76,8 +76,22 @@ Describe "Select-String" -Tags "CI" {
             ($testinputtwo | Select-String -Quiet "hello" -CaseSensitive) | Should -BeTrue
         }
 
-        It "Should be empty when select string does not return a result when the quiet switch is used" {
-            $testinputtwo | Select-String -Quiet "goodbye"  | Should -BeNullOrEmpty
+        It "Should be false when select string does not return a result when the quiet switch is used" {
+            $result = $testinputtwo | Select-String -Quiet "goodbye"
+            ,$result | Should -BeOfType System.Boolean
+            $result | Should -BeFalse
+        }
+
+        It "Should be false when the input object switch is used with the quiet switch and the pattern does not exist" {
+            $result = Select-String -InputObject "hello" -Pattern "goodbye" -Quiet
+            ,$result | Should -BeOfType System.Boolean
+            $result | Should -BeFalse
+        }
+
+        It "Should return a single result when the quiet switch is used and only a later input matches" {
+            $result = "goodbye", "hello" | Select-String -Quiet "hello"
+            $result | Should -HaveCount 1
+            $result | Should -BeTrue
         }
 
         It "Should return an array of non matching strings when the switch of NotMatch is used and the string do not match" {
@@ -152,6 +166,12 @@ Describe "Select-String" -Tags "CI" {
 
         AfterEach {
             Remove-Item $testInputFile -Force
+        }
+
+        It "Should return a single true when a non-matching string is followed by a matching file in quiet mode" {
+            $result = "no match here", (Get-Item $testInputFile) | Select-String -Quiet "second"
+            $result | Should -HaveCount 1
+            $result | Should -BeTrue
         }
 
         It "Should return an object when a match is found is the file on only one line" {
