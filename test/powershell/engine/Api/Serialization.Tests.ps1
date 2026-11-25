@@ -102,4 +102,31 @@ Describe "Serialization Tests" -tags "CI" {
 
         SerializeAndDeserialize($versionObject).TestScriptProperty | Should -Be $versionObject.TestScriptProperty
     }
+
+    It 'Deserializes a CIM instance whether or not its CIM class can be rehydrated' {
+        # Serialized on Windows with class metadata (__ClassMetadata/MiXml). Where the native MI library is
+        # available the object is rehydrated into a CimInstance; where it is not (e.g. macOS) the deserialized
+        # property bag must be returned instead of failing the whole deserialization.
+        $xml = Get-Content -Raw -Path (Join-Path $PSScriptRoot 'assets' 'CimInstance-Win32_TimeZone.clixml')
+
+        $result = [System.Management.Automation.PSSerializer]::Deserialize($xml)
+
+        $result.Bias | Should -Be 180
+        $result.Caption | Should -Not -BeNullOrEmpty
+        $result.PSTypeNames -match 'Win32_TimeZone' | Should -Not -BeNullOrEmpty
+    }
+
+    It 'Keeps the CIM metadata of a deserialized CIM instance hidden but serializable' {
+        # The serialization metadata must not show up as properties of the object, but serializing the object
+        # again must still carry it so that a receiver able to rehydrate CIM instances gets a CimInstance.
+        $xml = Get-Content -Raw -Path (Join-Path $PSScriptRoot 'assets' 'CimInstance-Win32_TimeZone.clixml')
+        $result = [System.Management.Automation.PSSerializer]::Deserialize($xml)
+
+        ($result | Select-Object -Property *).PSObject.Properties.Name | Should -Not -Contain '__ClassMetadata'
+        ($result | Format-List -Property * | Out-String) | Should -Not -Match '__ClassMetadata'
+
+        $roundTrip = [System.Management.Automation.PSSerializer]::Serialize($result, 1)
+        $roundTrip | Should -Match '__ClassMetadata'
+        ([System.Management.Automation.PSSerializer]::Deserialize($roundTrip)).Bias | Should -Be 180
+    }
 }
