@@ -1988,16 +1988,38 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             { Invoke-WebRequest @params } | Should -Throw -ErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
         }
 
-        It "Verifies Invoke-WebRequest Negotiated -Credential Can use HTTP with -AllowUnencryptedAuthentication" {
+        It "Verifies Invoke-WebRequest Negotiated -Credential Can use HTTP with -AllowUnencryptedAuthentication (WithoutScheme: <WithoutScheme>, PreserveAuthorizationOnRedirect: <PreserveAuthorizationOnRedirect>)" -TestCases @(
+            @{WithoutScheme = $false; PreserveAuthorizationOnRedirect = $false}
+            @{WithoutScheme = $true; PreserveAuthorizationOnRedirect = $false}
+            @{WithoutScheme = $false; PreserveAuthorizationOnRedirect = $true}
+            @{WithoutScheme = $true; PreserveAuthorizationOnRedirect = $true}
+        ) {
+            param($WithoutScheme, $PreserveAuthorizationOnRedirect)
+
             $params = @{
-                Uri                            = $httpBasicUri
-                Credential                     = $credential
-                AllowUnencryptedAuthentication = $true
+                Uri                             = if ($WithoutScheme) { $httpBasicUri -replace '^http://', '' } else { $httpBasicUri }
+                Credential                      = $credential
+                AllowUnencryptedAuthentication  = $true
+                SessionVariable                 = 'credentialSession'
+                PreserveAuthorizationOnRedirect = $PreserveAuthorizationOnRedirect
             }
             $Response = Invoke-WebRequest @params
             $result = $response.Content | ConvertFrom-Json
 
             $result.Headers.Authorization | Should -BeExactly "Basic dGVzdHVzZXI6dGVzdHBhc3N3b3Jk"
+
+            foreach ($scheme in 'Basic', 'Digest', 'NTLM', 'Negotiate') {
+                $otherPath = [uri]::new([uri]$httpBasicUri, '/other-directory/resource')
+                $credentialSession.Credentials.GetCredential($otherPath, $scheme).UserName | Should -BeExactly 'testuser'
+                $otherOrigin = [System.UriBuilder]::new($otherPath)
+                $otherOrigin.Host = 'different.invalid'
+                if ($PreserveAuthorizationOnRedirect) {
+                    $credentialSession.Credentials.GetCredential($otherOrigin.Uri, $scheme).UserName | Should -BeExactly 'testuser'
+                } else {
+                    $credentialSession.Credentials.GetCredential($otherOrigin.Uri, $scheme) | Should -BeNullOrEmpty
+                }
+            }
+            $credentialSession.Dispose()
         }
 
         # UseDefaultCredentials is only reliably testable on Windows
@@ -4031,15 +4053,37 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             { Invoke-RestMethod @params } | Should -Throw -ErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
         }
 
-        It "Verifies Invoke-RestMethod Negotiated -Credential Can use HTTP with -AllowUnencryptedAuthentication" {
+        It "Verifies Invoke-RestMethod Negotiated -Credential Can use HTTP with -AllowUnencryptedAuthentication (WithoutScheme: <WithoutScheme>, PreserveAuthorizationOnRedirect: <PreserveAuthorizationOnRedirect>)" -TestCases @(
+            @{WithoutScheme = $false; PreserveAuthorizationOnRedirect = $false}
+            @{WithoutScheme = $true; PreserveAuthorizationOnRedirect = $false}
+            @{WithoutScheme = $false; PreserveAuthorizationOnRedirect = $true}
+            @{WithoutScheme = $true; PreserveAuthorizationOnRedirect = $true}
+        ) {
+            param($WithoutScheme, $PreserveAuthorizationOnRedirect)
+
             $params = @{
-                Uri                            = $httpBasicUri
-                Credential                     = $credential
-                AllowUnencryptedAuthentication = $true
+                Uri                             = if ($WithoutScheme) { $httpBasicUri -replace '^http://', '' } else { $httpBasicUri }
+                Credential                      = $credential
+                AllowUnencryptedAuthentication  = $true
+                SessionVariable                 = 'credentialSession'
+                PreserveAuthorizationOnRedirect = $PreserveAuthorizationOnRedirect
             }
             $result = Invoke-RestMethod @params
 
             $result.Headers.Authorization | Should -BeExactly "Basic dGVzdHVzZXI6dGVzdHBhc3N3b3Jk"
+
+            foreach ($scheme in 'Basic', 'Digest', 'NTLM', 'Negotiate') {
+                $otherPath = [uri]::new([uri]$httpBasicUri, '/other-directory/resource')
+                $credentialSession.Credentials.GetCredential($otherPath, $scheme).UserName | Should -BeExactly 'testuser'
+                $otherOrigin = [System.UriBuilder]::new($otherPath)
+                $otherOrigin.Host = 'different.invalid'
+                if ($PreserveAuthorizationOnRedirect) {
+                    $credentialSession.Credentials.GetCredential($otherOrigin.Uri, $scheme).UserName | Should -BeExactly 'testuser'
+                } else {
+                    $credentialSession.Credentials.GetCredential($otherOrigin.Uri, $scheme) | Should -BeNullOrEmpty
+                }
+            }
+            $credentialSession.Dispose()
         }
 
         # UseDefaultCredentials is only reliably testable on Windows
