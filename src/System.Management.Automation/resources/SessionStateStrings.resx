@@ -736,4 +736,22 @@
   <data name="ScopedMutableValueUnavailable" xml:space="preserve">
     <value>The scoped setting {0} has no value compatible with this captured view.</value>
   </data>
+  <data name="ScopedInvocationDescription" xml:space="preserve">
+    <value>Invocation variables and frame state.</value>
+  </data>
+  <data name="ScopedDiagnosticsDescription" xml:space="preserve">
+    <value>Diagnostic variables and debugger state.</value>
+  </data>
+  <data name="ScopedRuntimeDescription" xml:space="preserve">
+    <value>Runtime identity and platform variables.</value>
+  </data>
+  <data name="ScopedSessionDescription" xml:space="preserve">
+    <value>Host and session variables.</value>
+  </data>
+  <data name="ScopedEventDescription" xml:space="preserve">
+    <value>Event action variables.</value>
+  </data>
+  <data name="ScopedConstantsDescription" xml:space="preserve">
+    <value>PowerShell language constants.</value>
+  </data>
 </root>

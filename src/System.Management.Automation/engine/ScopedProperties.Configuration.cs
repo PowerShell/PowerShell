@@ -209,7 +209,7 @@ public sealed class PSScopedModule : IScopedPropertyContainer
 }
 
 /// <summary>Provides scoped history settings.</summary>
-public sealed class PSScopedHistory : IScopedPropertyContainer
+public sealed partial class PSScopedHistory : IScopedPropertyContainer
 {
     private readonly PSScopedPropertyFacade _facade;
 

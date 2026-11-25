@@ -42,6 +42,12 @@ public sealed partial class PSScopedPropertyFacade : IScopedPropertyContainer
         _help = new(this);
         _logging = new(this);
         _remoting = new(this);
+        _invocation = new(this);
+        _diagnostics = new(this);
+        _runtime = new(this);
+        _session = new(this);
+        _event = new(this);
+        _constants = new(this);
     }
 
     /// <summary>Gets the action preference settings.</summary>

@@ -50,7 +50,7 @@ Use `$PS.AtScope('Local')`, `$PS.AtScope('Script')`, or `$PS.AtScope('Global')` 
 
 The console host uses the effective progress view from the latest update for its shared progress pane and may render in classic mode for terminals without the required capabilities.
 
-The prototype covers six action preferences, Confirm, WhatIf, scalar configuration, and mutable configuration including the complete style surface. Runtime views remain a pending expansion stage. Access to the facade requires an active PowerShell execution context and remains subject to constrained language restrictions.
+The prototype covers six action preferences, Confirm, WhatIf, scalar and mutable configuration, the complete style surface, and live runtime views. Access to the facade requires an active PowerShell execution context and remains subject to constrained language restrictions.
 
 ### Scalar configuration
 
@@ -129,6 +129,32 @@ be assigned, and the server converts the global value to `PSPrimitiveDictionary`
 after a startup script only while the pool is `Opening`. A child override is
 not consumed at that boundary. The published dictionary is a snapshot rather
 than a live scoped proxy; later configuration changes do not republish it.
+
+### Runtime views
+
+`Invocation`, `Diagnostics`, `Session`, `Runtime`, `Event`, and `Constants`
+expose live runtime state. `History.FirstToken` and `.LastToken`,
+`Remoting.SenderInfo`, and the top-level `LastStatementSuccessful` and
+`LastExitCode` complete the runtime surface. These descriptors are separate
+from configuration: they supply no defaults, reject reset, and return ordinary
+object references without copy-on-write. Setters follow the underlying
+variable's permissions, conversion, visibility, and debugger checks.
+
+Invocation getters follow active dotted and local tuples, then legacy parent
+fallback. Captured unbound containers resolve the current caller; bound views
+retain their selected scope and its existing lifetime checks. A missing value
+returns null outside strict mode, while explicitly assigned null remains
+present. Strict mode 1 permits missing values inside interpolated strings;
+strict mode 2 reports `VariableIsUndefined`. The compiler handles that narrow
+absence signal without suppressing other property or scope errors. Container
+display does not enumerate runtime values or consume input.
+
+Runtime writes target the selected scope. In particular, a local `LASTEXITCODE`
+or `PWD` assignment can shadow the producer's global value. Culture properties
+return the live legacy culture-name strings. `$?` reads the existing success
+flag, separately from the initially absent native exit code. Event values and
+event-local error lists persist within their subscription. Debugger and nested
+prompt views follow their producers' creation and cleanup boundaries.
 
 ## Baseline before canonical Error storage
 
@@ -491,3 +517,32 @@ default-rendering failure and enabled the terminal-dependent tests. The five
 remaining failures are not counted as passes. Results and comparison logs are
 under `artifacts/scoped-properties/expansion-stage3-accepted`,
 `expansion-stage3-reviewed`, and the adjacent stage 3 logs.
+
+## Runtime expansion validation
+
+The .NET 11 build and publish succeeded. The focused C# suite passed 92 cases
+in each verified feature state, including 25 success-flag comparisons, captured
+facades, debugger stop/resume, a cmdlet-driven nested prompt, and sender-info
+installation/removal without a remote transport. Dedicated tests verify tuple
+and scope selection, object identity, variable permissions, restricted language,
+missing versus null values, and matching `VariableIsUndefined` error IDs.
+Strict-mode interpolation also covers compound assignments and expired views;
+the implementation uses a catch body supported by both the interpreter and
+compiled expression trees.
+
+The complete scoped Pester suites passed 281 cases enabled and 160 disabled
+with 121 feature-only skips. Runtime cases cover class/ETS contexts, input
+consumption, loop restoration through exceptions and early exit, repeated event
+callbacks, subscription-local error histories, and persistent event values.
+Classes receive a facade as a method argument, preserving existing class
+variable restrictions.
+
+Affected parser, invocation, status, event, debugger, and restricted-language
+regressions initially passed 598 cases enabled and 602 disabled, with eight
+pending in each mode. An enabled parser fixture used the now-reserved `$ps`
+name; renaming it restored its four tokenizer checks. The complete parser
+rerun passed 421 cases in each mode, retaining two decimal-separator failures
+for floating-point limits. Both failures also reproduce with the installed,
+unmodified PowerShell 7.6.10 and are not counted as passes. Results are under
+`artifacts/scoped-properties/expansion-stage4-accepted`,
+`expansion-stage4-xunit-final`, and adjacent stage 4 logs.
