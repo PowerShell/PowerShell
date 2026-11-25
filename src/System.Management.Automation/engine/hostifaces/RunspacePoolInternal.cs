@@ -1259,7 +1259,11 @@ namespace System.Management.Automation.Runspaces.Internal
             Dbg.Assert(_initialSessionState != null, "_initialSessionState should not be null");
             // TODO: exceptions thrown here need to be documented
             // runspace.Open() did not document all the exceptions.
-            Runspace result = RunspaceFactory.CreateRunspaceFromSessionStateNoClone(host, _initialSessionState);
+
+            // Each runspace gets its own copy of the InitialSessionState: opening a runspace and importing modules
+            // into it update the InitialSessionState (e.g. the loaded type and format files), so it must not be
+            // shared with the other runspaces in the pool.
+            Runspace result = RunspaceFactory.CreateRunspace(host, _initialSessionState);
 
             result.ThreadOptions = this.ThreadOptions == PSThreadOptions.Default ? PSThreadOptions.ReuseThread : this.ThreadOptions;
             result.ApartmentState = this.ApartmentState;
