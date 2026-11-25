@@ -3430,13 +3430,16 @@ namespace System.Management.Automation
                     continue;
                 }
 
-                // Get the appropriate parameter set data
-                var parameterSetData = parameter.Parameter.GetMatchingParameterSetData(validParameterSets);
-
                 bool bindResult = false;
 
-                foreach (ParameterSetSpecificMetadata parameterSetMetadata in parameterSetData)
+                foreach (ParameterSetSpecificMetadata parameterSetMetadata in parameter.Parameter.ParameterSetData.Values)
                 {
+                    if (!parameterSetMetadata.IsInAllSets &&
+                        (parameterSetMetadata.ParameterSetFlag & validParameterSets) == 0)
+                    {
+                        continue;
+                    }
+
                     // In the first phase we try to bind the value from the pipeline without
                     // type coercion
 
@@ -4112,7 +4115,7 @@ namespace System.Management.Automation
 
                 // Now bind the new value
                 CommandParameterInternal param = CommandParameterInternal.CreateParameterWithArgument(
-                    /*parameterAst*/null, parameter.Parameter.Name, "-" + parameter.Parameter.Name + ":",
+                    /*parameterAst*/null, parameter.Parameter.Name, parameter.Parameter.ParameterText,
                     /*argumentAst*/null, parameterValue,
                     false);
 
@@ -4130,11 +4133,11 @@ namespace System.Management.Automation
             return result;
         }
 
-        protected override void SaveDefaultScriptParameterValue(string name, object value)
+        protected override void SaveDefaultScriptParameterValue(CompiledCommandParameter parameter, object value)
         {
-            _defaultParameterValues.Add(name,
+            _defaultParameterValues.Add(parameter.Name,
                 CommandParameterInternal.CreateParameterWithArgument(
-                    /*parameterAst*/null, name, "-" + name + ":",
+                    /*parameterAst*/null, parameter.Name, parameter.ParameterText,
                     /*argumentAst*/null, value,
                     false));
         }
@@ -4157,7 +4160,7 @@ namespace System.Management.Automation
                 _defaultParameterValues.Add(
                     parameter.Parameter.Name,
                     CommandParameterInternal.CreateParameterWithArgument(
-                        /*parameterAst*/null, parameter.Parameter.Name, "-" + parameter.Parameter.Name + ":",
+                        /*parameterAst*/null, parameter.Parameter.Name, parameter.Parameter.ParameterText,
                         /*argumentAst*/null, defaultParameterValue,
                         false));
             }

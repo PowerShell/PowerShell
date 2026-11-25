@@ -27,6 +27,8 @@ namespace System.Management.Automation
 
         private readonly Type[] _convertTypes;
 
+        private ParameterCollectionTypeInformation[] _collectionTypeInformation;
+
         internal Type TargetType
         {
             get
@@ -116,7 +118,10 @@ namespace System.Management.Automation
                     {
                         // Check for conversion to something like bool[] or ICollection<bool>, but only for cmdlet binding
                         // to stay compatible with V1.
-                        ParameterCollectionTypeInformation collectionTypeInfo = new ParameterCollectionTypeInformation(_convertTypes[i]);
+                        // Each conversion in a chain can have a different collection element type.
+                        var collectionTypeInformation = _collectionTypeInformation ??= new ParameterCollectionTypeInformation[_convertTypes.Length];
+                        ParameterCollectionTypeInformation collectionTypeInfo =
+                            collectionTypeInformation[i] ??= new ParameterCollectionTypeInformation(_convertTypes[i]);
                         if (collectionTypeInfo.ParameterCollectionType != ParameterCollectionType.NotCollection
                             && LanguagePrimitives.IsBoolOrSwitchParameterType(collectionTypeInfo.ElementType))
                         {

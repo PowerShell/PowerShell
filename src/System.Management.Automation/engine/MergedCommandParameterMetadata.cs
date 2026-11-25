@@ -453,14 +453,23 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
-            Collection<MergedCompiledCommandParameter> matchingParameters =
-                new Collection<MergedCompiledCommandParameter>();
-
             // Skip the leading '-' if present
             if (name.Length > 0 && CharExtensions.IsDash(name[0]))
             {
                 name = name.Substring(1);
             }
+
+            if (tryExactMatching)
+            {
+                if (_bindableParameters.TryGetValue(name, out MergedCompiledCommandParameter parameter) ||
+                    _aliasedParameters.TryGetValue(name, out parameter))
+                {
+                    return parameter;
+                }
+            }
+
+            Collection<MergedCompiledCommandParameter> matchingParameters =
+                new Collection<MergedCompiledCommandParameter>();
 
             // First try to match the bindable parameters
 
@@ -468,17 +477,7 @@ namespace System.Management.Automation
             {
                 if (CultureInfo.InvariantCulture.CompareInfo.IsPrefix(parameterName, name, CompareOptions.IgnoreCase))
                 {
-                    // If it is an exact match then only return the exact match
-                    // as the result
-
-                    if (tryExactMatching && string.Equals(parameterName, name, StringComparison.OrdinalIgnoreCase))
-                    {
-                        return _bindableParameters[parameterName];
-                    }
-                    else
-                    {
-                        matchingParameters.Add(_bindableParameters[parameterName]);
-                    }
+                    matchingParameters.Add(_bindableParameters[parameterName]);
                 }
             }
 
@@ -486,22 +485,10 @@ namespace System.Management.Automation
 
             foreach (string parameterName in _aliasedParameters.Keys)
             {
-                if (CultureInfo.InvariantCulture.CompareInfo.IsPrefix(parameterName, name, CompareOptions.IgnoreCase))
+                if (CultureInfo.InvariantCulture.CompareInfo.IsPrefix(parameterName, name, CompareOptions.IgnoreCase) &&
+                    !matchingParameters.Contains(_aliasedParameters[parameterName]))
                 {
-                    // If it is an exact match then only return the exact match
-                    // as the result
-
-                    if (tryExactMatching && string.Equals(parameterName, name, StringComparison.OrdinalIgnoreCase))
-                    {
-                        return _aliasedParameters[parameterName];
-                    }
-                    else
-                    {
-                        if (!matchingParameters.Contains(_aliasedParameters[parameterName]))
-                        {
-                            matchingParameters.Add(_aliasedParameters[parameterName]);
-                        }
-                    }
+                    matchingParameters.Add(_aliasedParameters[parameterName]);
                 }
             }
 

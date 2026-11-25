@@ -1247,7 +1247,7 @@ namespace System.Management.Automation
         /// If the parameter binder might use the value more than once, this it can save the value to avoid
         /// re-evaluating complicated expressions.
         /// </summary>
-        protected virtual void SaveDefaultScriptParameterValue(string name, object value)
+        protected virtual void SaveDefaultScriptParameterValue(CompiledCommandParameter parameter, object value)
         {
             // By default, parameter binders don't need to remember the value, the exception being the cmdlet parameter binder.
         }
@@ -1277,9 +1277,9 @@ namespace System.Management.Automation
                     }
 
                     object result = spb.GetDefaultScriptParameterValue(runtimeDefinedParameter, implicitUsingParameters);
-                    SaveDefaultScriptParameterValue(parameter.Parameter.Name, result);
+                    SaveDefaultScriptParameterValue(parameter.Parameter, result);
                     CommandParameterInternal argument = CommandParameterInternal.CreateParameterWithArgument(
-                        /*parameterAst*/null, parameter.Parameter.Name, "-" + parameter.Parameter.Name + ":",
+                        /*parameterAst*/null, parameter.Parameter.Name, parameter.Parameter.ParameterText,
                         /*argumentAst*/null, result,
                         false);
                     ParameterBindingFlags flags = ParameterBindingFlags.IsDefaultValue;
