@@ -11,6 +11,77 @@ using MicroBenchmarks;
 
 namespace Engine
 {
+    [MemoryDiagnoser]
+    [BenchmarkCategory(Categories.Engine, Categories.Internal)]
+    public class PipelineInputBinding
+    {
+        private Runspace runspace;
+        private ScriptBlock forEach;
+        private ScriptBlock where;
+        private ScriptBlock sink;
+        private CmdletParameterBinderController binder;
+        private readonly PSObject value = new PSObject(1);
+
+        [GlobalSetup]
+        public void Setup()
+        {
+            var state = InitialSessionState.CreateDefault2();
+            state.Commands.Add(new SessionStateCmdletEntry("Test-PipelineSink", typeof(PipelineSinkCommand), null));
+            runspace = RunspaceFactory.CreateRunspace(state);
+            runspace.Open();
+            Runspace.DefaultRunspace = runspace;
+            forEach = ScriptBlock.Create("1..10000 | ForEach-Object {}");
+            where = ScriptBlock.Create("1..10000 | Where-Object { $false }");
+            sink = ScriptBlock.Create("1..10000 | Test-PipelineSink");
+            forEach.Invoke();
+            where.Invoke();
+            sink.Invoke();
+            binder = PipelineSinkCommand.Binder;
+            PipelineSinkCommand.Binder = null;
+        }
+
+        [Benchmark]
+        public void ForEachObject() => forEach.Invoke();
+
+        [Benchmark]
+        public void WhereObject() => where.Invoke();
+
+        [Benchmark]
+        public void CompiledSink() => sink.Invoke();
+
+        [Benchmark(OperationsPerInvoke = 10000)]
+        public void BindOnly()
+        {
+            for (int i = 0; i < 10000; i++)
+            {
+                binder.BindPipelineParameters(value);
+            }
+        }
+
+        [GlobalCleanup]
+        public void Cleanup()
+        {
+            PipelineSinkCommand.Binder = null;
+            binder = null;
+            runspace.Dispose();
+            Runspace.DefaultRunspace = null;
+        }
+
+        [Cmdlet("Test", "PipelineSink")]
+        public sealed class PipelineSinkCommand : PSCmdlet
+        {
+            internal static CmdletParameterBinderController Binder;
+
+            [Parameter(ValueFromPipeline = true)]
+            public PSObject Value { get; set; }
+
+            protected override void BeginProcessing()
+            {
+                Binder = ((CommandProcessor)Context.CurrentCommandProcessor).CmdletParameterBinderController;
+            }
+        }
+    }
+
     [BenchmarkCategory(Categories.Engine, Categories.Public)]
     public class Scripting
     {
