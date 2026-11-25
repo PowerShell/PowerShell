@@ -315,7 +315,7 @@ namespace System.Management.Automation.Runspaces
 
             // Reset the AMSI session so that it is re-initialized
             // when the next script block is parsed.
-            AmsiUtils.CloseSession();
+            AmsiUtils.CloseSession(resetSession: true);
         }
 
         #endregion constructor
