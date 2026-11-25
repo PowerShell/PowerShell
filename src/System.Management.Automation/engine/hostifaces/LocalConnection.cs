@@ -685,14 +685,24 @@ namespace System.Management.Automation.Runspaces
             }
 
             SetRunspaceState(RunspaceState.Opened);
-            RunspaceOpening.Set();
 
-            // Raise the event
-            RaiseRunspaceStateEvents();
-            s_runspaceInitTracer.WriteLine("runspace opened successfully");
+            // Raised before the Opened state event so handlers can configure the runspace (e.g. a
+            // debugger setting breakpoints) before anything else is told it is available.
+            Exception initError = RaiseRunspaceOpened(this);
+            if (initError == null)
+            {
+                // Signalled after the handlers so a Close() waiting on the Opening state does not
+                // run concurrently with them.
+                RunspaceOpening.Set();
 
-            // Now do initial state configuration that requires an active runspace
-            Exception initError = InitialSessionState.BindRunspace(this, s_runspaceInitTracer);
+                // Raise the event
+                RaiseRunspaceStateEvents();
+                s_runspaceInitTracer.WriteLine("runspace opened successfully");
+
+                // Now do initial state configuration that requires an active runspace
+                initError = InitialSessionState.BindRunspace(this, s_runspaceInitTracer);
+            }
+
             if (initError != null)
             {
                 // Log engine health event
@@ -705,6 +715,10 @@ namespace System.Management.Automation.Runspaces
 
                 // Open failed. Set the RunspaceState to Broken.
                 SetRunspaceState(RunspaceState.Broken, initError);
+
+                // Release a Close() waiting on the Opening state if a RunspaceOpened handler
+                // failed. This is done after Broken is set so it does not see Opened.
+                RunspaceOpening.Set();
 
                 // Raise the event
                 RaiseRunspaceStateEvents();

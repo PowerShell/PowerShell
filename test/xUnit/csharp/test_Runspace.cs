@@ -2,6 +2,9 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
@@ -99,6 +102,145 @@ namespace PSTests.Sequential
                 }
 
                 runspace.Close();
+            }
+        }
+
+        [Fact]
+        public void TestRunspaceOpenedEvent()
+        {
+            using Runspace runspace = RunspaceFactory.CreateRunspace();
+            var order = new List<string>();
+            int openThread = Environment.CurrentManagedThreadId;
+            int handlerThread = -1;
+            RunspaceState stateInHandler = RunspaceState.BeforeOpen;
+            Debugger debuggerInHandler = null;
+
+            runspace.StateChanged += (s, args) => order.Add(args.RunspaceStateInfo.State.ToString());
+            EventHandler<RunspaceOpenedEventArgs> handler = (sender, e) =>
+            {
+                if (e.Runspace == runspace)
+                {
+                    handlerThread = Environment.CurrentManagedThreadId;
+                    stateInHandler = e.Runspace.RunspaceStateInfo.State;
+                    debuggerInHandler = e.Runspace.Debugger;
+                    order.Add("RunspaceOpened");
+                }
+            };
+
+            Runspace.RunspaceOpened += handler;
+            try
+            {
+                runspace.Open();
+            }
+            finally
+            {
+                Runspace.RunspaceOpened -= handler;
+            }
+
+            Assert.Equal(openThread, handlerThread);
+            Assert.Equal(RunspaceState.Opened, stateInHandler);
+            Assert.NotNull(debuggerInHandler);
+            Assert.Equal(new[] { "Opening", "RunspaceOpened", "Opened" }, order);
+        }
+
+        [Fact]
+        public void TestRunspaceOpenedEventRaisedBeforeStartupScripts()
+        {
+            string startupScript = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.ps1");
+            File.WriteAllText(startupScript, "$global:FromStartupScript = 'set'");
+            try
+            {
+                InitialSessionState iss = InitialSessionState.CreateDefault2();
+                iss.StartupScripts.Add(startupScript);
+
+                // The test host may default to Restricted on Windows which would block the script.
+                // Execution policy is not supported on other platforms.
+                if (Platform.IsWindows)
+                {
+                    iss.ExecutionPolicy = Microsoft.PowerShell.ExecutionPolicy.Bypass;
+                }
+
+                // Fail the open rather than silently skip the script if it cannot run.
+                iss.ThrowOnRunspaceOpenError = true;
+                using Runspace runspace = RunspaceFactory.CreateRunspace(iss);
+
+                bool handlerRan = false;
+                object valueInHandler = "not checked";
+                EventHandler<RunspaceOpenedEventArgs> handler = (sender, e) =>
+                {
+                    if (e.Runspace == runspace)
+                    {
+                        handlerRan = true;
+                        valueInHandler = e.Runspace.SessionStateProxy.GetVariable("FromStartupScript");
+                    }
+                };
+
+                Runspace.RunspaceOpened += handler;
+                try
+                {
+                    runspace.Open();
+                }
+                finally
+                {
+                    Runspace.RunspaceOpened -= handler;
+                }
+
+                Assert.True(handlerRan);
+                Assert.Null(valueInHandler);
+                Assert.Equal("set", runspace.SessionStateProxy.GetVariable("FromStartupScript"));
+            }
+            finally
+            {
+                File.Delete(startupScript);
+            }
+        }
+
+        [Fact]
+        public void TestRunspaceOpenedEventForRunspacePool()
+        {
+            var opened = new ConcurrentDictionary<Guid, bool>();
+            EventHandler<RunspaceOpenedEventArgs> handler = (sender, e) => opened[e.Runspace.InstanceId] = true;
+
+            Runspace.RunspaceOpened += handler;
+            try
+            {
+                using RunspacePool pool = RunspaceFactory.CreateRunspacePool(1, 1);
+                pool.Open();
+
+                using PowerShell ps = PowerShell.Create();
+                ps.RunspacePool = pool;
+                Guid poolRunspaceId = ps.AddScript("[runspace]::DefaultRunspace.InstanceId").Invoke<Guid>()[0];
+
+                Assert.True(opened.ContainsKey(poolRunspaceId));
+            }
+            finally
+            {
+                Runspace.RunspaceOpened -= handler;
+            }
+        }
+
+        [Fact]
+        public void TestRunspaceOpenedEventHandlerFailureBreaksRunspace()
+        {
+            using Runspace runspace = RunspaceFactory.CreateRunspace();
+            EventHandler<RunspaceOpenedEventArgs> handler = (sender, e) =>
+            {
+                if (e.Runspace == runspace)
+                {
+                    throw new InvalidOperationException("handler failure");
+                }
+            };
+
+            Runspace.RunspaceOpened += handler;
+            try
+            {
+                var exc = Assert.Throws<InvalidOperationException>(() => runspace.Open());
+                Assert.Equal("handler failure", exc.Message);
+                Assert.Equal(RunspaceState.Broken, runspace.RunspaceStateInfo.State);
+            }
+            finally
+            {
+                Runspace.RunspaceOpened -= handler;
             }
         }
 
