@@ -169,13 +169,13 @@
     <value>Skript jetzt nicht von diesem Herausgeber ausführen und mich in Zukunft nicht auffordern, dieses Skript auszuführen. Zukünftige Versuche, dieses Skript auszuführen, führen zu einem stillen Fehler.</value>
   </data>
   <data name="Choice_DoNotRun" xml:space="preserve">
-    <value>Nicht &amp;ausführen</value>
+    <value>&amp;Nicht ausführen</value>
   </data>
   <data name="Choice_DoNotRun_Help" xml:space="preserve">
     <value>Skript jetzt nicht von diesem Herausgeber ausführen und mich in Zukunft weiterhin auffordern, dieses Skript auszuführen.</value>
   </data>
   <data name="Choice_RunOnce" xml:space="preserve">
-    <value>Einmal &amp;ausführen</value>
+    <value>Ein&amp;mal ausführen</value>
   </data>
   <data name="Choice_RunOnce_Help" xml:space="preserve">
     <value>Skript jetzt von diesem Herausgeber ausführen und mich in Zukunft weiterhin auffordern, dieses Skript auszuführen.</value>
