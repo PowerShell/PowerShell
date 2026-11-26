@@ -154,13 +154,19 @@ namespace Microsoft.PowerShell.Commands
 
 #if UNIX
         /// <summary>
+        /// Gets the invocation token that correlates this cmdlet run with its in-flight
+        /// service manager commands, so a pipeline stop cancels exactly this run's commands.
+        /// </summary>
+        internal Guid ServiceInvocationToken { get; } = Guid.NewGuid();
+
+        /// <summary>
         /// Cancels a blocking service-manager command when the pipeline is stopped,
         /// so a hung init script or manager command can't keep the pipeline waiting
         /// after <see cref="Cmdlet.StopProcessing"/> or remoting cancellation.
         /// </summary>
         protected override void StopProcessing()
         {
-            UnixServiceController.CancelActiveCommand();
+            UnixServiceController.CancelActiveCommand(ServiceInvocationToken);
         }
 #endif
         #endregion Internal
@@ -319,7 +325,28 @@ namespace Microsoft.PowerShell.Commands
         /// but it is reasonable to expect that SecurityException is
         /// among them.  Errors here will terminate the cmdlet.
         /// </exception>
+#if UNIX
+        internal ServiceController[] AllServices
+        {
+            get
+            {
+                if (_allServices is null)
+                {
+                    _allServices = ServiceController.GetServices();
+                    foreach (ServiceController service in _allServices)
+                    {
+                        // Correlate each service with this cmdlet run so a pipeline stop
+                        // cancels the commands launched through it.
+                        ((UnixServiceController)service).OwnerToken = ServiceInvocationToken;
+                    }
+                }
+
+                return _allServices;
+            }
+        }
+#else
         internal ServiceController[] AllServices => _allServices ??= ServiceController.GetServices();
+#endif
 
         private ServiceController[] _allServices;
 
@@ -330,6 +357,11 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 var sc = new ServiceController(nameOfService);
+#if UNIX
+                // Correlate the service with this cmdlet run so a pipeline stop cancels
+                // the commands launched through it.
+                sc.OwnerToken = ServiceInvocationToken;
+#endif
                 // This will throw if the service doesn't exist
                 var unused = sc.Status;
 

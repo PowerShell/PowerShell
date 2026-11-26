@@ -6,6 +6,7 @@
 #if UNIX
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel; // Win32Exception
 using System.Diagnostics; // Process
@@ -61,8 +62,8 @@ namespace Microsoft.PowerShell.Commands
             ("rc-service", "rc-status", ServiceManagerKind.OpenRC),
         };
 
-        private static readonly object s_activeProcessLock = new();
-        private static Process? s_activeProcess;
+        private static readonly ConcurrentDictionary<Guid, Process> s_activeProcesses = new();
+        private static readonly ConcurrentDictionary<Guid, CancellationTokenSource> s_cancellationSources = new();
 
         private bool _resolved;
         private bool _exists = true;
@@ -104,6 +105,13 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>Gets the name of the service. Same as <see cref="Name"/> on Unix.</summary>
         public string ServiceName => Name;
+
+        /// <summary>
+        /// Gets or sets the invocation token that correlates this instance with the service
+        /// cmdlet run that owns it, so a pipeline stop cancels the commands launched for it.
+        /// Instances without a token use their own isolated execution key.
+        /// </summary>
+        internal Guid? OwnerToken { get; set; }
 
         /// <summary>Gets the display name of the service.</summary>
         public string DisplayName { get; internal set; } = string.Empty;
@@ -188,6 +196,9 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>All services reported by the service manager, sorted by name.</returns>
         public static UnixServiceController[] GetServices()
         {
+            // Enumeration queries aren't tied to a cmdlet invocation token; they run on a
+            // transient instance with their own isolated execution key.
+            var query = new UnixServiceController();
             (string control, _, ServiceManagerKind kind) = ResolveManager();
             List<UnixServiceController> services;
 
@@ -197,8 +208,8 @@ namespace Microsoft.PowerShell.Commands
                     {
                         // --plain keeps failed units from being prefixed with a marker,
                         // so their rows still start with the unit name.
-                        string units = RunQueryCommand(control, new[] { "list-units", "--type=service", "--all", "--plain", "--no-legend", "--no-pager" });
-                        string unitFiles = RunQueryCommand(control, new[] { "list-unit-files", "--type=service", "--no-legend", "--no-pager" });
+                        string units = query.RunQueryCommand(control, new[] { "list-units", "--type=service", "--all", "--plain", "--no-legend", "--no-pager" });
+                        string unitFiles = query.RunQueryCommand(control, new[] { "list-unit-files", "--type=service", "--no-legend", "--no-pager" });
                         services = UnixServiceParser.ParseSystemdListUnits(units);
                         UnixServiceParser.MergeSystemdUnitFiles(services, unitFiles);
                     }
@@ -207,7 +218,7 @@ namespace Microsoft.PowerShell.Commands
 
                 case ServiceManagerKind.LaunchD:
                     {
-                        services = UnixServiceParser.ParseLaunchCtlList(RunQueryCommand("launchctl", new[] { "list" }));
+                        services = UnixServiceParser.ParseLaunchCtlList(query.RunQueryCommand("launchctl", new[] { "list" }));
                     }
 
                     break;
@@ -215,7 +226,7 @@ namespace Microsoft.PowerShell.Commands
                 case ServiceManagerKind.SysVInit:
                     {
                         // Some init scripts write their status to standard error.
-                        string output = RunQueryCommand("service", new[] { "--status-all" }, mergeErrorStream: true);
+                        string output = query.RunQueryCommand("service", new[] { "--status-all" }, mergeErrorStream: true);
                         services = UnixServiceParser.ParseSysVStatusAll(output);
                     }
 
@@ -223,7 +234,7 @@ namespace Microsoft.PowerShell.Commands
 
                 case ServiceManagerKind.OpenRC:
                     {
-                        services = UnixServiceParser.ParseOpenRcStatusAll(RunQueryCommand("rc-status", new[] { "--all" }));
+                        services = UnixServiceParser.ParseOpenRcStatusAll(query.RunQueryCommand("rc-status", new[] { "--all" }));
                     }
 
                     break;
@@ -342,24 +353,34 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Kills the in-flight service manager command, if any. Called from the service
         /// cmdlets' <see cref="Cmdlet.StopProcessing"/> when the pipeline is stopped, so a
-        /// hung init script or manager command can't keep the pipeline waiting.
+        /// hung init script or manager command can't keep the pipeline waiting. The
+        /// cancellation persists for the invocation: a manager command launched later for
+        /// the same owner token is terminated immediately.
         /// </summary>
-        internal static void CancelActiveCommand()
+        /// <param name="ownerToken">The invocation token whose commands to cancel.</param>
+        internal static void CancelActiveCommand(Guid ownerToken)
         {
-            lock (s_activeProcessLock)
+            CancellationTokenSource cts = s_cancellationSources.GetOrAdd(ownerToken, static _ => new CancellationTokenSource());
+            cts.Cancel();
+            if (s_activeProcesses.TryRemove(ownerToken, out Process? process))
             {
-                try
-                {
-                    s_activeProcess?.Kill(entireProcessTree: true);
-                }
-                catch (InvalidOperationException)
-                {
-                    // The process has not started or already exited.
-                }
-                catch (Win32Exception)
-                {
-                    // The process could not be killed because it already exited.
-                }
+                CancelActiveProcess(process);
+            }
+        }
+
+        private static void CancelActiveProcess(Process process)
+        {
+            try
+            {
+                process.Kill(entireProcessTree: true);
+            }
+            catch (InvalidOperationException)
+            {
+                // The process has not started or already exited.
+            }
+            catch (Win32Exception)
+            {
+                // The process could not be killed because it already exited.
             }
         }
 
@@ -379,25 +400,10 @@ namespace Microsoft.PowerShell.Commands
 
         private static bool IsExecutable(string path)
         {
-            // A command is only usable when the execute bit is set; skipping
-            // non-executable files lets discovery fall through to the next candidate
-            // on PATH, or to the next manager in the fallback chain.
-            const UnixFileMode ExecuteBits = UnixFileMode.UserExecute
-                | UnixFileMode.GroupExecute
-                | UnixFileMode.OtherExecute;
-
-            try
-            {
-                return (File.GetUnixFileMode(path) & ExecuteBits) != 0;
-            }
-            catch (IOException)
-            {
-                return false;
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return false;
-            }
+            // access(X_OK) checks whether the current user can actually execute the file,
+            // honoring ownership and group permissions; a mere execute bit on a file owned
+            // by another user would let discovery select an unusable command.
+            return UnixServiceNativeMethods.CanExecute(path);
         }
 
         private static ProcessStartInfo CreateStartInfo(string fileName, string[] arguments)
@@ -417,14 +423,18 @@ namespace Microsoft.PowerShell.Commands
             return startInfo;
         }
 
-        private static (string Stdout, string Stderr, int ExitCode) Execute(ProcessStartInfo startInfo)
+        private (string Stdout, string Stderr, int ExitCode) Execute(ProcessStartInfo startInfo)
         {
-            using Process process = new() { StartInfo = startInfo };
-            lock (s_activeProcessLock)
+            Guid executionKey = OwnerToken ?? Guid.NewGuid();
+            CancellationTokenSource cts = s_cancellationSources.GetOrAdd(executionKey, static _ => new CancellationTokenSource());
+            if (cts.IsCancellationRequested)
             {
-                s_activeProcess = process;
+                // The pipeline was stopped before this command could launch.
+                throw new OperationCanceledException(cts.Token);
             }
 
+            using Process process = new() { StartInfo = startInfo };
+            s_activeProcesses[executionKey] = process;
             try
             {
                 process.Start();
@@ -434,22 +444,31 @@ namespace Microsoft.PowerShell.Commands
                 Task<string> stdoutTask = process.StandardOutput.ReadToEndAsync();
                 Task<string> stderrTask = process.StandardError.ReadToEndAsync();
 
-                // StopProcessing kills the process when the pipeline is stopped, which closes
-                // the pipes, completes both stream reads, and releases this wait.
-                process.WaitForExit();
+                // StopProcessing cancels the invocation token when the pipeline is stopped.
+                // The registration is placed after Start, so a cancellation that arrived
+                // before launch is applied here immediately, and a later one kills the
+                // process, closes the pipes, completes both stream reads, and releases
+                // this wait.
+                using (cts.Token.Register(
+                    static state => CancelActiveProcess((Process)state!),
+                    process))
+                {
+                    process.WaitForExit();
+                }
 
                 return (stdoutTask.GetAwaiter().GetResult(), stderrTask.GetAwaiter().GetResult(), process.ExitCode);
             }
             finally
             {
-                lock (s_activeProcessLock)
+                s_activeProcesses.TryRemove(executionKey, out _);
+                if (!cts.IsCancellationRequested)
                 {
-                    s_activeProcess = null;
+                    s_cancellationSources.TryRemove(executionKey, out _);
                 }
             }
         }
 
-        private static string RunQueryCommand(string command, string[] arguments, bool mergeErrorStream = false)
+        private string RunQueryCommand(string command, string[] arguments, bool mergeErrorStream = false)
         {
             string? commandPath = FindCommandOnPath(command, GetPathDirectories());
             if (commandPath is null)

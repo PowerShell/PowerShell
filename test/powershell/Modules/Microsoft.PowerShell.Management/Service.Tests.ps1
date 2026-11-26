@@ -498,6 +498,29 @@ exec "${@:2}"
                 $env:PATH = $savedPath
             }
         }
+
+        It "skips non-executable manager commands during discovery" {
+            if ($script:isRoot) {
+                Set-ItResult -Skipped -Because "root can execute files regardless of the execute bit"
+                return
+            }
+
+            $dir = Join-Path $script:shimDir "nonexec"
+            New-Item -ItemType Directory -Path $dir -Force | Out-Null
+            Copy-Item (Join-Path $script:shimDir "systemctl") (Join-Path $dir "systemctl")
+            $null = & chmod -x (Join-Path $dir "systemctl")
+            $savedPath = $env:PATH
+            $env:PATH = $dir
+            try {
+                # a file without the execute bit is not a usable manager command; discovery
+                # must skip it and report the missing manager instead of failing to launch
+                { Get-Service -Name "sshd" -ErrorAction Stop } |
+                    Should -Throw -ErrorId "NoServiceManagerFound,Microsoft.PowerShell.Commands.GetServiceCommand"
+            } finally {
+                $env:PATH = $savedPath
+                Remove-Item $dir -Recurse -Force -ErrorAction SilentlyContinue
+            }
+        }
     }
 
     Context "aliases" {
