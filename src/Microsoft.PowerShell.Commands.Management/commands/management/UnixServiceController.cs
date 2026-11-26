@@ -77,7 +77,9 @@ namespace Microsoft.PowerShell.Commands
         /// <see cref="InvalidOperationException"/> when the service does not exist.
         /// </summary>
         /// <param name="serviceName">The service name, with or without the '.service' suffix.</param>
-        public UnixServiceController(string serviceName)
+        /// <param name="ownerToken">The invocation token used to correlate commands launched
+        /// during resolution with the owning cmdlet run for cancellation.</param>
+        public UnixServiceController(string serviceName, Guid? ownerToken = null)
         {
             // The '.service' suffix is a systemd naming detail; other managers
             // use the name exactly as provided.
@@ -85,6 +87,7 @@ namespace Microsoft.PowerShell.Commands
             Name = ResolveManager().Kind == ServiceManagerKind.Systemd
                 ? UnixServiceParser.RemoveServiceSuffix(trimmed)
                 : trimmed;
+            OwnerToken = ownerToken;
             Resolve();
             AttachDisplaySettings();
         }
@@ -194,11 +197,11 @@ namespace Microsoft.PowerShell.Commands
         /// Enumerates all services known to the service manager.
         /// </summary>
         /// <returns>All services reported by the service manager, sorted by name.</returns>
-        public static UnixServiceController[] GetServices()
+        public static UnixServiceController[] GetServices(Guid? ownerToken = null)
         {
-            // Enumeration queries aren't tied to a cmdlet invocation token; they run on a
-            // transient instance with their own isolated execution key.
-            var query = new UnixServiceController();
+            // Enumeration queries run on a transient instance carrying the caller's
+            // invocation token, so cancellation reaches the manager commands.
+            var query = new UnixServiceController { OwnerToken = ownerToken };
             (string control, _, ServiceManagerKind kind) = ResolveManager();
             List<UnixServiceController> services;
 
@@ -368,6 +371,19 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        /// <summary>
+        /// Releases the cancellation state of a finished cmdlet invocation. Called from the
+        /// service cmdlets' <see cref="Cmdlet.EndProcessing"/>.
+        /// </summary>
+        /// <param name="ownerToken">The invocation token to clean up.</param>
+        internal static void EndInvocation(Guid ownerToken)
+        {
+            if (s_cancellationSources.TryRemove(ownerToken, out CancellationTokenSource? cts))
+            {
+                cts.Dispose();
+            }
+        }
+
         private static void CancelActiveProcess(Process process)
         {
             try
@@ -461,8 +477,11 @@ namespace Microsoft.PowerShell.Commands
             finally
             {
                 s_activeProcesses.TryRemove(executionKey, out _);
-                if (!cts.IsCancellationRequested)
+                if (OwnerToken is null && !cts.IsCancellationRequested)
                 {
+                    // Transient executions have no cmdlet run to clean up after them;
+                    // owned sources persist until EndInvocation, so a cancellation that
+                    // lands between manager commands still terminates the next one.
                     s_cancellationSources.TryRemove(executionKey, out _);
                 }
             }
@@ -637,7 +656,7 @@ namespace Microsoft.PowerShell.Commands
             _resolved = true;
             _exists = false;
 
-            UnixServiceController? match = MatchService(GetServices(), Name);
+            UnixServiceController? match = MatchService(GetServices(OwnerToken), Name);
             if (match is not null)
             {
                 CopyFrom(match);
@@ -683,6 +702,36 @@ namespace Microsoft.PowerShell.Commands
             UnitFileState = match.UnitFileState;
             _managerKind = match._managerKind;
             _exists = true;
+        }
+
+        internal UnixServiceController CreateInvocationLocal(Guid ownerToken)
+        {
+            // Input objects carry the producer run's owner token; create an invocation-local
+            // controller so refresh and mutation run under the consuming run's token and are
+            // cancellable by it.
+            var local = new UnixServiceController { OwnerToken = ownerToken };
+            local.Name = Name;
+            local.DisplayName = DisplayName;
+            local.StartType = StartType;
+            local.Description = Description;
+            local.SubState = SubState;
+            local.UnitFileState = UnitFileState;
+            local._managerKind = _managerKind;
+            try
+            {
+                local.Status = Status;
+                local._exists = _exists;
+            }
+            catch (InvalidOperationException)
+            {
+                // The producer resolved a service that no longer exists; keep the local view
+                // consistent so the consumer surfaces the manager-side error instead.
+                local.Status = ServiceControllerStatus.Stopped;
+                local._exists = true;
+            }
+
+            local.AttachDisplaySettings();
+            return local;
         }
 
         private void AttachDisplaySettings()

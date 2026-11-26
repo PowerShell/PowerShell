@@ -523,6 +523,48 @@ exec "${@:2}"
         }
     }
 
+    Context "cancellation" {
+        It "cancels a blocking service manager command when the pipeline is stopped" {
+            $dir = Join-Path $script:shimDir "blocking"
+            New-Item -ItemType Directory -Path $dir -Force | Out-Null
+            $blockingBody = @'
+#!/bin/bash
+case "$1" in
+    list-unit-files) exit 0 ;;
+    list-units) printf 'blocking.service loaded active running Blocking\n'; exit 0 ;;
+    list-dependencies) exit 0 ;;
+    stop) sleep 60 ;;
+    *) exit 0 ;;
+esac
+'@
+            $shimPath = Join-Path $dir "systemctl"
+            Set-Content -Path $shimPath -Value ($blockingBody -replace "`r", "")
+            $null = & chmod +x $shimPath
+            $savedPath = $env:PATH
+            $env:PATH = $dir
+            $ps = $null
+            try {
+                $ps = [PowerShell]::Create()
+                $null = $ps.AddScript('Stop-Service -Name blocking -WarningAction SilentlyContinue -ErrorAction SilentlyContinue')
+                $async = $ps.BeginInvoke()
+                # wait until the blocking stop command is in flight, then stop the pipeline
+                Start-Sleep -Seconds 2
+                $ps.Stop()
+                $completed = $async.AsyncWaitHandle.WaitOne(15000)
+                $completed | Should -BeTrue
+                $ps.InvocationStateInfo.State | Should -Be "Stopped"
+            } finally {
+                if ($ps) {
+                    $ps.Stop()
+                    $ps.Dispose()
+                }
+
+                $env:PATH = $savedPath
+                Remove-Item $dir -Recurse -Force -ErrorAction SilentlyContinue
+            }
+        }
+    }
+
     Context "aliases" {
         It "gsv, sasv and spsv are available on Unix" {
             (Get-Alias gsv).Definition | Should -Be "Get-Service"

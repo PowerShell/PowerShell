@@ -168,6 +168,14 @@ namespace Microsoft.PowerShell.Commands
         {
             UnixServiceController.CancelActiveCommand(ServiceInvocationToken);
         }
+
+        /// <summary>
+        /// Releases the cancellation state of this cmdlet invocation when it completes.
+        /// </summary>
+        protected override void EndProcessing()
+        {
+            UnixServiceController.EndInvocation(ServiceInvocationToken);
+        }
 #endif
         #endregion Internal
     }
@@ -332,7 +340,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_allServices is null)
                 {
-                    _allServices = ServiceController.GetServices();
+                    _allServices = ServiceController.GetServices(ServiceInvocationToken);
                     foreach (ServiceController service in _allServices)
                     {
                         // Correlate each service with this cmdlet run so a pipeline stop
@@ -356,11 +364,10 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                var sc = new ServiceController(nameOfService);
 #if UNIX
-                // Correlate the service with this cmdlet run so a pipeline stop cancels
-                // the commands launched through it.
-                sc.OwnerToken = ServiceInvocationToken;
+                var sc = new ServiceController(nameOfService, ServiceInvocationToken);
+#else
+                var sc = new ServiceController(nameOfService);
 #endif
                 // This will throw if the service doesn't exist
                 var unused = sc.Status;
@@ -559,11 +566,22 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewInvalidOperationException();
             }
 
+#if UNIX
+            // Create invocation-local controllers for the input objects: they carry the
+            // producer run's owner token, so refresh and mutation must run under the
+            // consuming run's token and stay cancellable by it.
+            foreach (ServiceController service in InputObject)
+            {
+                UnixServiceController local = ((UnixServiceController)service).CreateInvocationLocal(ServiceInvocationToken);
+                IncludeExcludeAdd(matchingServices, local, false);
+            }
+#else
             foreach (ServiceController service in InputObject)
             {
                 service.Refresh();
                 IncludeExcludeAdd(matchingServices, service, false);
             }
+#endif
 
             return matchingServices;
         }
