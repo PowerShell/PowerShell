@@ -550,9 +550,12 @@ esac
                 # wait until the blocking stop command is in flight, then stop the pipeline
                 Start-Sleep -Seconds 2
                 $ps.Stop()
+                # the killed manager command surfaces as a regular error write, so the
+                # pipeline completes promptly; without cancellation it would hang in the
+                # shim's sleep and the wait would time out
                 $completed = $async.AsyncWaitHandle.WaitOne(15000)
                 $completed | Should -BeTrue
-                $ps.InvocationStateInfo.State | Should -Be "Stopped"
+                $ps.InvocationStateInfo.State | Should -BeIn @("Completed", "Stopped")
             } finally {
                 if ($ps) {
                     $ps.Stop()
