@@ -3581,6 +3581,11 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="preservePathFrom">
         /// The user-specified base path from which the relative path is preserved.
         /// </param>
+        /// <param name="resolvedBasePath">
+        /// The resolved base path. It is null on the first call of an invocation
+        /// and is then filled with the resolved base path so that subsequent
+        /// items of the same invocation reuse it.
+        /// </param>
         /// <param name="destinationPath">
         /// The destination provider path. When this method returns true it contains
         /// the destination adjusted to preserve the relative path of the item.
@@ -3596,114 +3601,127 @@ namespace Microsoft.PowerShell.Commands
         private bool TryGetPreservedDestination(
             string path,
             string preservePathFrom,
+            ref string resolvedBasePath,
             ref string destinationPath,
             out bool destinationIsExactTarget)
         {
             destinationIsExactTarget = false;
 
-            // Resolve the base path with an isolated context so that the Include,
-            // Exclude, and Filter settings of the copy or move operation are not
-            // applied to the base directory while it is being resolved. The base
-            // path is an argument of its own, so it is always globbed normally
-            // even when the item paths come from the pipeline and are treated as
-            // literal paths by the operation context.
-            Collection<string> resolvedBasePaths = null;
-            ProviderInfo baseProvider = null;
+            // The base path is resolved only once per invocation and cached by
+            // the caller, because the provider processes every item in a separate
+            // call: re-resolving (and re-globbing) the base path for each item
+            // would be wasteful and would allow the base path to resolve
+            // differently, or to stop resolving at all, mid-operation.
+            string basePath = resolvedBasePath;
 
-            CmdletProviderContext resolutionContext = new CmdletProviderContext(Context);
-            resolutionContext.SetFilters(
-                new Collection<string>(),
-                new Collection<string>(),
-                null);
-            resolutionContext.SuppressWildcardExpansion = false;
-
-            // Save the context of the running operation and restore it after the
-            // resolution: the path resolution calls back into providers and must
-            // not leave the provider running on the temporary context. The
-            // temporary context is also removed from the stop referrals of the
-            // operation context so that it is not retained by it.
-            CmdletProviderContext operationContext = Context;
-
-            try
+            if (basePath == null)
             {
+                // Resolve the base path with an isolated context so that the Include,
+                // Exclude, and Filter settings of the copy or move operation are not
+                // applied to the base directory while it is being resolved. The base
+                // path is an argument of its own, so it is always globbed normally
+                // even when the item paths come from the pipeline and are treated as
+                // literal paths by the operation context.
+                Collection<string> resolvedBasePaths = null;
+                ProviderInfo baseProvider = null;
+
+                CmdletProviderContext resolutionContext = new CmdletProviderContext(Context);
+                resolutionContext.SetFilters(
+                    new Collection<string>(),
+                    new Collection<string>(),
+                    null);
+                resolutionContext.SuppressWildcardExpansion = false;
+
+                // Save the context of the running operation and restore it after the
+                // resolution: the path resolution calls back into providers and must
+                // not leave the provider running on the temporary context. The
+                // temporary context is also removed from the stop referrals of the
+                // operation context so that it is not retained by it.
+                CmdletProviderContext operationContext = Context;
+
                 try
                 {
-                    resolvedBasePaths = Context.ExecutionContext.SessionState.Path.GetResolvedProviderPathFromPSPath(
-                        preservePathFrom,
-                        resolutionContext,
-                        out baseProvider);
+                    try
+                    {
+                        resolvedBasePaths = Context.ExecutionContext.SessionState.Path.GetResolvedProviderPathFromPSPath(
+                            preservePathFrom,
+                            resolutionContext,
+                            out baseProvider);
+                    }
+                    finally
+                    {
+                        Context = operationContext;
+                        resolutionContext.RemoveStopReferral();
+                    }
                 }
-                finally
+                catch (ItemNotFoundException pathNotFound)
                 {
-                    Context = operationContext;
-                    resolutionContext.RemoveStopReferral();
+                    WriteError(new ErrorRecord(pathNotFound, "PreservePathFromPathNotFound", ErrorCategory.ObjectNotFound, preservePathFrom));
+                    return false;
                 }
-            }
-            catch (ItemNotFoundException pathNotFound)
-            {
-                WriteError(new ErrorRecord(pathNotFound, "PreservePathFromPathNotFound", ErrorCategory.ObjectNotFound, preservePathFrom));
-                return false;
-            }
-            catch (System.Management.Automation.DriveNotFoundException driveNotFound)
-            {
-                WriteError(new ErrorRecord(driveNotFound, "PreservePathFromDriveNotFound", ErrorCategory.ObjectNotFound, preservePathFrom));
-                return false;
-            }
-            catch (ProviderNotFoundException providerNotFound)
-            {
-                WriteError(new ErrorRecord(providerNotFound, "PreservePathFromProviderNotFound", ErrorCategory.InvalidArgument, preservePathFrom));
-                return false;
-            }
+                catch (System.Management.Automation.DriveNotFoundException driveNotFound)
+                {
+                    WriteError(new ErrorRecord(driveNotFound, "PreservePathFromDriveNotFound", ErrorCategory.ObjectNotFound, preservePathFrom));
+                    return false;
+                }
+                catch (ProviderNotFoundException providerNotFound)
+                {
+                    WriteError(new ErrorRecord(providerNotFound, "PreservePathFromProviderNotFound", ErrorCategory.InvalidArgument, preservePathFrom));
+                    return false;
+                }
 
-            // Forward errors that the path resolution accumulated on the
-            // temporary context instead of throwing them.
-            if (resolutionContext.HasErrors())
-            {
-                WriteError(resolutionContext.GetAccumulatedErrorObjects()[0]);
-                return false;
-            }
+                // Forward errors that the path resolution accumulated on the
+                // temporary context instead of throwing them.
+                if (resolutionContext.HasErrors())
+                {
+                    WriteError(resolutionContext.GetAccumulatedErrorObjects()[0]);
+                    return false;
+                }
 
-            if (baseProvider == null || baseProvider.ImplementingType != typeof(FileSystemProvider))
-            {
-                string error = StringUtil.Format(
-                    FileSystemProviderStrings.PreservePathFromWrongProvider,
-                    preservePathFrom,
-                    ProviderInfo.Name);
-                WriteError(new ErrorRecord(
-                    new ArgumentException(error),
-                    "PreservePathFromWrongProvider",
-                    ErrorCategory.InvalidArgument,
-                    preservePathFrom));
-                return false;
-            }
+                if (baseProvider == null || baseProvider.ImplementingType != typeof(FileSystemProvider))
+                {
+                    string error = StringUtil.Format(
+                        FileSystemProviderStrings.PreservePathFromWrongProvider,
+                        preservePathFrom,
+                        ProviderInfo.Name);
+                    WriteError(new ErrorRecord(
+                        new ArgumentException(error),
+                        "PreservePathFromWrongProvider",
+                        ErrorCategory.InvalidArgument,
+                        preservePathFrom));
+                    return false;
+                }
 
-            if (resolvedBasePaths.Count != 1)
-            {
-                string error = StringUtil.Format(
-                    FileSystemProviderStrings.PreservePathFromAmbiguous,
-                    preservePathFrom,
-                    resolvedBasePaths.Count);
-                WriteError(new ErrorRecord(
-                    new ArgumentException(error),
-                    "PreservePathFromAmbiguous",
-                    ErrorCategory.InvalidArgument,
-                    preservePathFrom));
-                return false;
-            }
+                if (resolvedBasePaths.Count != 1)
+                {
+                    string error = StringUtil.Format(
+                        FileSystemProviderStrings.PreservePathFromAmbiguous,
+                        preservePathFrom,
+                        resolvedBasePaths.Count);
+                    WriteError(new ErrorRecord(
+                        new ArgumentException(error),
+                        "PreservePathFromAmbiguous",
+                        ErrorCategory.InvalidArgument,
+                        preservePathFrom));
+                    return false;
+                }
 
-            string basePath = NormalizePath(resolvedBasePaths[0]);
+                basePath = NormalizePath(resolvedBasePaths[0]);
 
-            if (!IsItemContainer(basePath))
-            {
-                string error = StringUtil.Format(
-                    FileSystemProviderStrings.PreservePathFromNotDirectory,
-                    basePath);
-                WriteError(new ErrorRecord(
-                    new ArgumentException(error),
-                    "PreservePathFromNotDirectory",
-                    ErrorCategory.InvalidArgument,
-                    basePath));
-                return false;
+                if (!IsItemContainer(basePath))
+                {
+                    string error = StringUtil.Format(
+                        FileSystemProviderStrings.PreservePathFromNotDirectory,
+                        basePath);
+                    WriteError(new ErrorRecord(
+                        new ArgumentException(error),
+                        "PreservePathFromNotDirectory",
+                        ErrorCategory.InvalidArgument,
+                        basePath));
+                    return false;
+                }
+
+                resolvedBasePath = basePath;
             }
 
             // Compute the relative path of the item below the base path.
@@ -3833,15 +3851,19 @@ namespace Microsoft.PowerShell.Commands
                     return;
                 }
 
+                string resolvedBasePath = copyDynamicParameter.ResolvedPreservePathFrom;
+
                 if (!TryGetPreservedDestination(
                         path,
                         copyDynamicParameter.PreservePathFrom,
+                        ref resolvedBasePath,
                         ref destinationPath,
                         out bool destinationIsExactTarget))
                 {
                     return;
                 }
 
+                copyDynamicParameter.ResolvedPreservePathFrom = resolvedBasePath;
                 preservePath = destinationIsExactTarget;
             }
 
@@ -4077,6 +4099,22 @@ namespace Microsoft.PowerShell.Commands
                 if (!destinationIsExactTarget && IsItemContainer(destination))
                 {
                     destination = MakePath(destination, directory.Name);
+                }
+                else if (destinationIsExactTarget && ItemExists(destination) && !IsItemContainer(destination))
+                {
+                    // The destination is an existing file. Copying the directory
+                    // would overwrite the file with the contents of the copied
+                    // children, so the copy is rejected before any child is copied.
+                    string error = StringUtil.Format(
+                        FileSystemProviderStrings.CopyDirectoryItemTargetIsFile,
+                        directory.FullName,
+                        destination);
+                    WriteError(new ErrorRecord(
+                        new IOException(error),
+                        "CopyDirectoryItemTargetIsFile",
+                        ErrorCategory.WriteError,
+                        destination));
+                    return;
                 }
             }
             else
@@ -6154,16 +6192,36 @@ namespace Microsoft.PowerShell.Commands
 
             if (!string.IsNullOrEmpty(moveDynamicParameter?.PreservePathFrom))
             {
+                string resolvedBasePath = moveDynamicParameter.ResolvedPreservePathFrom;
+
                 if (!TryGetPreservedDestination(
                         path,
                         moveDynamicParameter.PreservePathFrom,
+                        ref resolvedBasePath,
                         ref destination,
                         out bool destinationIsExactTarget))
                 {
                     return;
                 }
 
+                moveDynamicParameter.ResolvedPreservePathFrom = resolvedBasePath;
                 preservePath = destinationIsExactTarget;
+            }
+
+            // Moving an item onto itself is rejected up front: the move would be
+            // a no-op at best and, when the move fails and -Force is specified,
+            // the retry logic deletes the destination, which is the item itself.
+            if (preservePath && InternalSymbolicLinkLinkCodeMethods.IsSameFileSystemItem(path, destination))
+            {
+                string sameItemError = StringUtil.Format(
+                    FileSystemProviderStrings.MoveItemSameItemError,
+                    path);
+                WriteError(new ErrorRecord(
+                    new IOException(sameItemError),
+                    "MoveItemSameItemError",
+                    ErrorCategory.WriteError,
+                    path));
+                return;
             }
 
             try
@@ -7689,6 +7747,13 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [ValidateNotNullOrEmpty]
         public string PreservePathFrom { get; set; }
+
+        /// <summary>
+        /// Gets or sets the resolved base path of the <see cref="PreservePathFrom"/>
+        /// parameter. The base path is resolved once per invocation and cached here
+        /// because the provider processes every item in a separate call.
+        /// </summary>
+        internal string ResolvedPreservePathFrom { get; set; }
     }
 
     /// <summary>
@@ -7703,6 +7768,13 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [ValidateNotNullOrEmpty]
         public string PreservePathFrom { get; set; }
+
+        /// <summary>
+        /// Gets or sets the resolved base path of the <see cref="PreservePathFrom"/>
+        /// parameter. The base path is resolved once per invocation and cached here
+        /// because the provider processes every item in a separate call.
+        /// </summary>
+        internal string ResolvedPreservePathFrom { get; set; }
     }
 
     /// <summary>

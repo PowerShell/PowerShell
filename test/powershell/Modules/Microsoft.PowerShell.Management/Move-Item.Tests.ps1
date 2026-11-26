@@ -189,6 +189,19 @@ Describe "Move-Item with -PreservePathFrom" -Tag "CI" {
         Join-Path $sourceDirectory "Sub1" | Should -Exist
     }
 
+    It "Rejects moving an item onto itself" {
+        $selfFile = Join-Path $sourceDirectory "Root.log"
+
+        $errorRecord = $null
+        Move-Item $selfFile `
+            -PreservePathFrom $sourceDirectory `
+            -Destination $sourceDirectory -Force -ErrorVariable errorRecord -ErrorAction SilentlyContinue
+
+        $errorRecord.FullyQualifiedErrorId | Should -Be "MoveItemSameItemError,Microsoft.PowerShell.Commands.MoveItemCommand"
+        $selfFile | Should -Exist
+        $selfFile | Should -FileContentMatchExactly "root"
+    }
+
     It "Writes a non-terminating error when the item is not below the base path" {
         $outsideFile = "$TESTDRIVE/PreservePathFromOutside.log"
         Set-Content $outsideFile -Value "outside"

@@ -158,6 +158,20 @@ Describe "Copy-Item with -PreservePathFrom" -Tags "CI" {
         Join-Path $destinationDirectory "Sub1/Sub1" | Should -Not -Exist
     }
 
+    It "Does not overwrite an existing file at the target of a directory copy" {
+        New-Item -ItemType Directory $destinationDirectory -Force | Out-Null
+        $targetFile = Join-Path $destinationDirectory "Sub1"
+        Set-Content $targetFile -Value "existing content" -NoNewline
+
+        $errorRecord = $null
+        Copy-Item (Join-Path $sourceDirectory "Sub1") `
+            -PreservePathFrom $sourceDirectory `
+            -Destination $destinationDirectory -Recurse -Force -ErrorVariable errorRecord -ErrorAction SilentlyContinue
+
+        $errorRecord.FullyQualifiedErrorId | Should -Be "CopyDirectoryItemTargetIsFile,Microsoft.PowerShell.Commands.CopyItemCommand"
+        Get-Content $targetFile -Raw | Should -Be "existing content"
+    }
+
     It "Returns the copied items with the preserved paths when using -PassThru" {
         $result = Get-ChildItem $sourceDirectory -File -Recurse |
             Copy-Item -PreservePathFrom $sourceDirectory -Destination $destinationDirectory -PassThru

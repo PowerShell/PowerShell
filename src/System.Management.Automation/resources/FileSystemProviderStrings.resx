@@ -225,6 +225,12 @@
   <data name="PreservePathFromOutsideBasePath" xml:space="preserve">
     <value>Cannot copy or move item {0} because its path is not below the base path {1}.</value>
   </data>
+  <data name="CopyDirectoryItemTargetIsFile" xml:space="preserve">
+    <value>Cannot copy the directory {0} to {1} because the destination is an existing file.</value>
+  </data>
+  <data name="MoveItemSameItemError" xml:space="preserve">
+    <value>Cannot move the item {0} onto itself.</value>
+  </data>
   <data name="DriveRootError" xml:space="preserve">
     <value>The specified drive root "{0}" either does not exist, or it is not a folder.</value>
   </data>
