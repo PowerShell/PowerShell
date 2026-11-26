@@ -126,12 +126,30 @@ public sealed class PwshCompletionEmbeddedTests : IDisposable
     [InlineData("-of XML -", "-OutputFormat")]
     [InlineData("-STA -", "-MTA")]
     [InlineData("-MTA -", "-STA")]
+    [InlineData("-Interactive -", "-NonInteractive")]
+    [InlineData("-NonInteractive -", "-Interactive")]
+    [InlineData("-i -", "-NonInteractive")]
+    [InlineData("-noni -", "-Interactive")]
+    [InlineData("-NoProfile -", "-Login")]
     public void OmitsProvidedAndConflictingOptions(string arguments, string excluded)
     {
         using PowerShell shell = PowerShell.Create(RunspaceMode.NewRunspace);
         CommandCompletion completion = Complete(Invocation + arguments, false, shell);
         Assert.DoesNotContain(completion.CompletionMatches, result => result.CompletionText == excluded);
         Assert.Contains(completion.CompletionMatches, result => result.CompletionText == "-NoLogo");
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void StartupCompletionOmitsSshServerMode(bool useAst)
+    {
+        using PowerShell shell = PowerShell.Create(RunspaceMode.NewRunspace);
+        CommandCompletion completion = Complete(Invocation + "-", useAst, shell);
+        Assert.DoesNotContain(completion.CompletionMatches, result => result.CompletionText == "-SSHServerMode");
+        Assert.Contains(completion.CompletionMatches, result => result.CompletionText == "-Interactive");
+        Assert.Contains(completion.CompletionMatches, result => result.CompletionText == "-NonInteractive");
+        Assert.Equal(!Platform.IsWindows, System.Linq.Enumerable.Any(completion.CompletionMatches, result => result.CompletionText == "-Login"));
     }
 
     [Theory]

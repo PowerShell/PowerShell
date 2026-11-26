@@ -93,6 +93,16 @@ public class PwshCompletionContextTests
     [InlineData("pwsh -NoP|rofile", "NoProfile", true)]
     [InlineData("pwsh -STA -|", "MTA", false)]
     [InlineData("pwsh -MTA -|", "STA", false)]
+    [InlineData("pwsh -Interactive -|", "NonInteractive", false)]
+    [InlineData("pwsh -NonInteractive -|", "Interactive", false)]
+    [InlineData("pwsh -i -|", "NonInteractive", false)]
+    [InlineData("pwsh -noni -|", "Interactive", false)]
+    [InlineData("pwsh -|", "Interactive", true)]
+    [InlineData("pwsh -|", "NonInteractive", true)]
+    [InlineData("pwsh -|", "Login", true)]
+    [InlineData("pwsh -L|ogin -NoProfile", "Login", true)]
+    [InlineData("pwsh -NoProfile -|", "Login", false)]
+    [InlineData("pwsh -of XML -|", "Login", false)]
     public void FiltersConsumedOptions(string input, string name, bool expected)
     {
         Assert.Equal(expected, Scan(input).CanOffer(PwshStartupOptions.Find(name)!));

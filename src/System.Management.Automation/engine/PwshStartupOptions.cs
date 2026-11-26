@@ -140,7 +140,7 @@ internal static class PwshStartupOptions
 #endif
         new("ServerMode", 1, PwshStartupPlatform.All, PwshStartupArgumentKind.None, PwshStartupArgumentConsumption.None, false),
         new("NamedPipeServerMode", 3, PwshStartupPlatform.All, PwshStartupArgumentKind.None, PwshStartupArgumentConsumption.None, false),
-        new("SSHServerMode", 4, PwshStartupPlatform.All, PwshStartupArgumentKind.None, PwshStartupArgumentConsumption.None, true),
+        new("SSHServerMode", 4, PwshStartupPlatform.All, PwshStartupArgumentKind.None, PwshStartupArgumentConsumption.None, false),
         new("NoProfileLoadTime", 17, PwshStartupPlatform.All, PwshStartupArgumentKind.None, PwshStartupArgumentConsumption.None, true),
         new("Interactive", 1, PwshStartupPlatform.All, PwshStartupArgumentKind.None, PwshStartupArgumentConsumption.None, true),
         new("ConfigurationFile", 17, PwshStartupPlatform.All, PwshStartupArgumentKind.FilePath, PwshStartupArgumentConsumption.One, true),

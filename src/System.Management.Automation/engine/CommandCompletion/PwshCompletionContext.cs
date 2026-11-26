@@ -75,7 +75,10 @@ internal sealed class PwshCompletionContext
     internal bool CanOffer(PwshStartupOption option)
         => !ProvidedOptions.Contains(option.Name)
             && !(option.Name == "STA" && ProvidedOptions.Contains("MTA"))
-            && !(option.Name == "MTA" && ProvidedOptions.Contains("STA"));
+            && !(option.Name == "MTA" && ProvidedOptions.Contains("STA"))
+            && !(option.Name == "Interactive" && ProvidedOptions.Contains("NonInteractive"))
+            && !(option.Name == "NonInteractive" && ProvidedOptions.Contains("Interactive"))
+            && !(option.Name == "Login" && ProvidedOptions.Count > 0);
 
     /// <summary>The start of the original source suffix to copy for script delegation.</summary>
     internal int ScriptArgumentsOffset => ScriptTarget?.Extent.EndOffset ?? -1;
