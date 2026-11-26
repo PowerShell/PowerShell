@@ -637,6 +637,30 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Contains settings for rendering data, such as file sizes and timestamps, in a human-readable form.
+        /// </summary>
+        public sealed class HumanReadableData
+        {
+            /// <summary>
+            /// Gets or sets a value indicating whether sizes, such as the Length of a file in a directory
+            /// listing, are rendered in a human-readable format, for example "1.2 TB" instead of "1374389534720".
+            /// </summary>
+            public bool Size { get; set; } = true;
+
+            /// <summary>
+            /// Gets or sets a value indicating whether datetime values, such as the LastWriteTime of a file
+            /// in a directory listing, are rendered in a human-readable relative format, for example "3 min ago".
+            /// </summary>
+            public bool Datetime { get; set; }
+
+            /// <summary>
+            /// Gets or sets a value indicating whether timespan values are rendered in a human-readable format.
+            /// Reserved for future use; currently this setting has no effect.
+            /// </summary>
+            public bool Timespan { get; set; }
+        }
+
+        /// <summary>
         /// Gets or sets the rendering mode for output.
         /// </summary>
         public OutputRendering OutputRendering { get; set; } = OutputRendering.Host;
@@ -767,6 +791,11 @@ namespace System.Management.Automation
         /// </summary>
         public FileInfoFormatting FileInfo { get; }
 
+        /// <summary>
+        /// Gets the settings for human-readable rendering of data.
+        /// </summary>
+        public HumanReadableData HumanReadable { get; }
+
         private static readonly PSStyle s_psstyle = new PSStyle();
 
         private PSStyle()
@@ -776,6 +805,7 @@ namespace System.Management.Automation
             Foreground = new ForegroundColor();
             Background = new BackgroundColor();
             FileInfo = new FileInfoFormatting();
+            HumanReadable = new HumanReadableData();
         }
 
         private static string ValidateNoContent(string text)
