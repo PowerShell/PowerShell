@@ -95,7 +95,7 @@ namespace Microsoft.PowerShell
 
                 exitCode = ConsoleHost.Start(
                     bannerText: banner,
-                    helpText: ManagedEntranceStrings.UsageHelp,
+                    helpText: PwshHelp.UsageHelp,
                     issProvidedExternally: false);
             }
             catch (HostException e)

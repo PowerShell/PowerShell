@@ -294,6 +294,11 @@
           "OutputPath": "src\\System.Management.Automation\\resources\\"
         },
         {
+          "SourceFile": "src\\System.Management.Automation\\resources\\PwshHelpStrings.resx",
+          "CopyOption": "LangIDOnPathAndName",
+          "OutputPath": "src\\System.Management.Automation\\resources\\"
+        },
+        {
           "SourceFile": "src\\System.Management.Automation\\resources\\RegistryProviderStrings.resx",
           "CopyOption": "LangIDOnPathAndName",
           "OutputPath": "src\\System.Management.Automation\\resources\\"

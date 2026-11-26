@@ -14,6 +14,96 @@ namespace PSTests.Parallel
 {
     public static class PSCommandLineParserTests
     {
+#nullable enable
+        [Theory]
+        [InlineData("cwa", "CommandWithArgs")]
+        [InlineData("co", "Command")]
+        [InlineData("config", "ConfigurationName")]
+        [InlineData("configurationf", null)]
+        [InlineData("e", "EncodedCommand")]
+        [InlineData("ec", "EncodedCommand")]
+        [InlineData("encodeda", "EncodedArguments")]
+        [InlineData("of", "OutputFormat")]
+        [InlineData("if", "InputFormat")]
+        [InlineData("ep", "ExecutionPolicy")]
+        [InlineData("wd", "WorkingDirectory")]
+        [InlineData("no", null)]
+        [InlineData("noprofilel", null)]
+        public static void StartupOptionRecognitionPreservesAbbreviations(string key, string? expected)
+        {
+            Assert.Equal(expected, PwshStartupOptions.Find(key)?.Name);
+        }
+
+        [Theory]
+        [InlineData("-NoP", "NoP")]
+        [InlineData("--NoP", "NoP")]
+        [InlineData("/NoP", "NoP")]
+        [InlineData("\u2013\u2013NoP", "NoP")]
+        [InlineData("//NoP", "/NoP")]
+        public static void StartupOptionPrefixes(string argument, string expected)
+        {
+            Assert.True(PwshStartupOptions.TryGetSwitchKey(argument, out string actual));
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public static void StartupOptionMetadataDescribesPlatformAndConsumption()
+        {
+            Assert.Equal(PwshStartupPlatform.Windows, GetStartupOption("w").Platforms);
+            Assert.Equal(Platform.IsWindows, GetStartupOption("w").IsSupportedOnCurrentPlatform);
+            Assert.Equal(PwshStartupArgumentConsumption.Remaining, GetStartupOption("f").Consumption);
+            Assert.Equal(PwshStartupArgumentConsumption.Remaining, GetStartupOption("cwa").Consumption);
+            Assert.Equal(PwshStartupArgumentConsumption.One, GetStartupOption("ec").Consumption);
+            Assert.True(GetStartupOption("v").StopsParsing);
+            Assert.False(GetStartupOption("ec").StopsParsing);
+            Assert.False(GetStartupOption("s").Advertised);
+            Assert.True(GetStartupOption("nop").Advertised);
+        }
+
+        [Theory]
+        [InlineData("sta", false, false, false, false)]
+        [InlineData("mta", false, false, false, false)]
+        [InlineData("sta", true, false, false, false)]
+        [InlineData("sta", true, false, true, false)]
+        [InlineData("mta", true, false, true, false)]
+        [InlineData("sta", true, true, false, false)]
+        [InlineData("sta", true, true, true, true)]
+        [InlineData("mta", true, true, false, true)]
+        [InlineData("mta", true, true, true, true)]
+        [InlineData("w", true, false, false, true)]
+        [InlineData("nop", false, false, false, true)]
+        public static void StartupApartmentOptionsRespectPlatformCapabilities(
+            string key,
+            bool isWindows,
+            bool isWindowsDesktop,
+            bool isStaSupported,
+            bool expected)
+        {
+            PwshStartupOption? option = PwshStartupOptions.Find(key);
+            Assert.NotNull(option);
+            Assert.Equal(expected, option.IsSupportedOnPlatform(isWindows, isWindowsDesktop, isStaSupported));
+        }
+
+        [Fact]
+        public static void StartupApartmentOptionsReflectCurrentHostCapabilities()
+        {
+            Assert.Equal(Platform.IsWindowsDesktop && Platform.IsStaSupported, GetStartupOption("sta").IsSupportedOnCurrentPlatform);
+            Assert.Equal(Platform.IsWindowsDesktop, GetStartupOption("mta").IsSupportedOnCurrentPlatform);
+        }
+
+        [Theory]
+        [InlineData("-v")]
+        [InlineData("/V")]
+        [InlineData("--version")]
+        public static void VersionTerminatesStartupParsing(string argument)
+        {
+            var parser = new CommandLineParameterParser();
+            parser.Parse(new[] { argument, "-DefinitelyInvalid" });
+            Assert.True(parser.ShowVersion);
+            Assert.Null(parser.ErrorMessage);
+        }
+
+#nullable restore
         [Fact]
         public static void TestDefaults()
         {
@@ -1328,5 +1418,10 @@ namespace PSTests.Parallel
                 File.Delete(cpp.File);
             }
         }
+
+#nullable enable
+        private static PwshStartupOption GetStartupOption(string key)
+            => Assert.IsType<PwshStartupOption>(PwshStartupOptions.Find(key));
+#nullable restore
     }
 }

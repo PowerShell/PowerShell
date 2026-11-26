@@ -32,7 +32,7 @@ namespace System.Management.Automation
 {
     /// <summary>
     /// </summary>
-    public static class CompletionCompleters
+    public static partial class CompletionCompleters
     {
         static CompletionCompleters()
         {
@@ -1479,6 +1479,19 @@ namespace System.Management.Automation
                         return result;
                     }
                 }
+
+#nullable enable
+                // Keep pwsh completion in the engine so every host gets it without profile
+                // or native-completer registration. The native-completer contract returns
+                // candidates, but cannot update the replacement range needed when delegating
+                // script arguments to a synthesized invocation. This internal fallback can
+                // translate that range and explicitly report handled input with no candidates.
+                // Registered native completers run first so they retain their precedence.
+                if (TryCompletePwsh(commandAst, context, result))
+                {
+                    return result;
+                }
+#nullable restore
 
                 var clearLiteralPathKey = false;
                 if (pseudoBinding == null)
