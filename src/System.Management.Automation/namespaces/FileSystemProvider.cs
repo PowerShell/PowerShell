@@ -3779,6 +3779,27 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Determines whether the destination is the source itself or a path
+        /// below the source, so that an item is not copied or moved into its
+        /// own subtree.
+        /// </summary>
+        /// <param name="path">The path of the item being copied or moved.</param>
+        /// <param name="destination">The destination path of the item.</param>
+        /// <returns>
+        /// True if the destination is the source or below the source.
+        /// </returns>
+        private static bool IsDestinationInsideSource(string path, string destination)
+        {
+            string pathWithoutEndingSeparator = Path.TrimEndingDirectorySeparator(path);
+            StringComparison comparison = Platform.IsWindows
+                ? StringComparison.OrdinalIgnoreCase
+                : StringComparison.Ordinal;
+
+            return destination.StartsWith(pathWithoutEndingSeparator + Path.DirectorySeparatorChar, comparison)
+                || destination.Equals(pathWithoutEndingSeparator, comparison);
+        }
+
+        /// <summary>
         /// Copies an item at the specified path to the given destination.
         /// </summary>
         /// <param name="path">
@@ -3865,6 +3886,23 @@ namespace Microsoft.PowerShell.Commands
 
                 copyDynamicParameter.ResolvedPreservePathFrom = resolvedBasePath;
                 preservePath = destinationIsExactTarget;
+            }
+
+            // Reject copying a directory into its own subtree when the folder
+            // structure is preserved: the copy would create the target below
+            // the source and then copy the target into itself while enumerating
+            // the source, until the path length limit is reached.
+            if (preservePath && IsItemContainer(path) && IsDestinationInsideSource(path, destinationPath))
+            {
+                string insideSourceError = StringUtil.Format(
+                    FileSystemProviderStrings.TargetCannotBeSubdirectoryOfSource,
+                    destinationPath);
+                WriteError(new ErrorRecord(
+                    new IOException(insideSourceError),
+                    "CopyItemTargetInsideSource",
+                    ErrorCategory.InvalidArgument,
+                    destinationPath));
+                return;
             }
 
             _excludeMatcher = SessionStateUtilities.CreateWildcardsFromStrings(Exclude, WildcardOptions.IgnoreCase);
@@ -4253,6 +4291,23 @@ namespace Microsoft.PowerShell.Commands
                 if (!destinationIsExactTarget && IsItemContainer(destinationPath))
                 {
                     destinationPath = MakePath(destinationPath, file.Name);
+                }
+                else if (destinationIsExactTarget && ItemExists(destinationPath) && IsItemContainer(destinationPath))
+                {
+                    // The destination is an existing directory. The copy would
+                    // fail at the latest when the file is written, but not before
+                    // the retry logic has cleared attributes of the directory, so
+                    // the copy is rejected up front with a non-terminating error.
+                    string error = StringUtil.Format(
+                        FileSystemProviderStrings.CopyFileItemTargetIsDirectory,
+                        file.FullName,
+                        destinationPath);
+                    WriteError(new ErrorRecord(
+                        new IOException(error),
+                        "CopyFileItemTargetIsDirectory",
+                        ErrorCategory.WriteError,
+                        destinationPath));
+                    return;
                 }
 
                 // if the source and destination path are same then flag it as error.
@@ -6241,9 +6296,11 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     // Don't allow moving a directory into itself or its sub-directory.
-                    string pathWithoutEndingSeparator = Path.TrimEndingDirectorySeparator(path);
-                    if (destination.StartsWith(pathWithoutEndingSeparator + Path.DirectorySeparatorChar)
-                        || destination.Equals(pathWithoutEndingSeparator, StringComparison.OrdinalIgnoreCase))
+                    // The comparison is case-insensitive on Windows so that a
+                    // differently cased destination cannot bypass the check, which
+                    // would create the destination parent inside the source tree
+                    // before the filesystem rejects the move.
+                    if (IsDestinationInsideSource(path, destination))
                     {
                         string error = StringUtil.Format(FileSystemProviderStrings.TargetCannotBeSubdirectoryOfSource, destination);
                         var e = new IOException(error);

@@ -172,6 +172,42 @@ Describe "Copy-Item with -PreservePathFrom" -Tags "CI" {
         Get-Content $targetFile -Raw | Should -Be "existing content"
     }
 
+    It "Rejects copying a directory into its own subtree" {
+        $errorRecord = $null
+        Copy-Item (Join-Path $sourceDirectory "Sub1") `
+            -PreservePathFrom $sourceDirectory `
+            -Destination (Join-Path $sourceDirectory "Sub1") -Recurse -ErrorVariable errorRecord -ErrorAction SilentlyContinue
+
+        $errorRecord.FullyQualifiedErrorId | Should -Be "CopyItemTargetInsideSource,Microsoft.PowerShell.Commands.CopyItemCommand"
+        Join-Path $sourceDirectory "Sub1/Sub1" | Should -Not -Exist
+        (Get-ChildItem (Join-Path $sourceDirectory "Sub1") -Recurse -File).Count | Should -Be 2
+    }
+
+    It "Copies every wildcard match when the destination is created by the first item" {
+        Copy-Item (Join-Path $sourceDirectory "Sub*") `
+            -PreservePathFrom $sourceDirectory `
+            -Destination $destinationDirectory -Recurse
+
+        Join-Path $destinationDirectory "Sub1/First.log" | Should -Exist
+        Join-Path $destinationDirectory "Sub1/Deep/Second.log" | Should -Exist
+        Join-Path $destinationDirectory "Sub2/Third.log" | Should -Exist
+    }
+
+    It "Rejects an existing directory at the target of a file copy" {
+        New-Item -ItemType Directory (Join-Path $destinationDirectory "Root.log") -Force | Out-Null
+        (Get-Item (Join-Path $destinationDirectory "Root.log") -Force).Attributes = [IO.FileAttributes]::ReadOnly
+
+        $errorRecord = $null
+        Get-ChildItem $sourceDirectory -File -Recurse |
+            Copy-Item -PreservePathFrom $sourceDirectory -Destination $destinationDirectory -Force -ErrorVariable errorRecord -ErrorAction SilentlyContinue
+
+        $errorRecord.FullyQualifiedErrorId | Should -Be "CopyFileItemTargetIsDirectory,Microsoft.PowerShell.Commands.CopyItemCommand"
+        (Get-Item (Join-Path $destinationDirectory "Root.log") -Force).Attributes.HasFlag([IO.FileAttributes]::ReadOnly) | Should -BeTrue
+
+        # The error is non-terminating, so the other piped items are still processed.
+        Join-Path $destinationDirectory "Sub1/First.log" | Should -Exist
+    }
+
     It "Returns the copied items with the preserved paths when using -PassThru" {
         $result = Get-ChildItem $sourceDirectory -File -Recurse |
             Copy-Item -PreservePathFrom $sourceDirectory -Destination $destinationDirectory -PassThru

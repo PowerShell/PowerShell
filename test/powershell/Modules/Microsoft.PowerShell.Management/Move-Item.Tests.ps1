@@ -176,6 +176,19 @@ Describe "Move-Item with -PreservePathFrom" -Tag "CI" {
         Join-Path $sourceDirectory "Sub1/Export" | Should -Not -Exist
     }
 
+    It "Rejects a differently cased destination inside the source" -Skip:(!$IsWindows) {
+        $casedDestination = Join-Path (Split-Path $sourceDirectory -Parent) "PRESERVEPATHFROMSOURCE/Sub1/Export"
+
+        $errorRecord = $null
+        Move-Item (Join-Path $sourceDirectory "Sub1") `
+            -PreservePathFrom $sourceDirectory `
+            -Destination $casedDestination -ErrorVariable errorRecord -ErrorAction SilentlyContinue
+
+        $errorRecord.FullyQualifiedErrorId | Should -Be "MoveItemArgumentError,Microsoft.PowerShell.Commands.MoveItemCommand"
+        Join-Path $sourceDirectory "Sub1/Export" | Should -Not -Exist
+        Join-Path $sourceDirectory "Sub1" | Should -Exist
+    }
+
     It "Reports an error for an existing target directory instead of nesting it again" {
         New-Item -ItemType Directory (Join-Path $destinationDirectory "Sub1") -Force | Out-Null
 

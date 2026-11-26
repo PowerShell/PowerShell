@@ -228,6 +228,9 @@
   <data name="CopyDirectoryItemTargetIsFile" xml:space="preserve">
     <value>Cannot copy the directory {0} to {1} because the destination is an existing file.</value>
   </data>
+  <data name="CopyFileItemTargetIsDirectory" xml:space="preserve">
+    <value>Cannot copy the file {0} to {1} because the destination is an existing directory.</value>
+  </data>
   <data name="MoveItemSameItemError" xml:space="preserve">
     <value>Cannot move the item {0} onto itself.</value>
   </data>

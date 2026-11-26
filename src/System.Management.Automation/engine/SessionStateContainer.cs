@@ -4333,6 +4333,18 @@ namespace System.Management.Automation
                         continue;
                     }
 
+                    // When the folder structure is preserved, the first copied item
+                    // can create the destination path, so the destination type is
+                    // refreshed for each item instead of using only the value that
+                    // was computed before any item was copied.
+                    if (dynamicParams?.PreservePathFrom != null)
+                    {
+                        destinationIsContainer = IsItemContainer(
+                            providerInstance,
+                            providerDestinationPath,
+                            context);
+                    }
+
                     bool sourceIsContainer =
                          IsItemContainer(
                             providerInstance,
