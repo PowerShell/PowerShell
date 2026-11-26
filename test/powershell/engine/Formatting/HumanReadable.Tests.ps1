@@ -164,7 +164,10 @@ Describe 'Tests for human-readable rendering of file sizes and timestamps' -Tag 
 
             $PSStyle.HumanReadable.Datetime = $true
             $item = Get-Item $timeFile
-            $item.LastWriteTime = (Get-Date) - $Delta
+            # Set the timestamp in UTC from UtcNow so the file is exactly $Delta older than
+            # the current time. Subtracting from the local 'Get-Date' instead would be wrong
+            # across a daylight-saving transition, where wall-clock and elapsed time diverge.
+            $item.LastWriteTimeUtc = [DateTime]::UtcNow - $Delta
 
             (Get-Item $timeFile).LastWriteTimeString | Should -BeExactly $Expected
         }
@@ -177,7 +180,7 @@ Describe 'Tests for human-readable rendering of file sizes and timestamps' -Tag 
 
             $PSStyle.HumanReadable.Datetime = $true
             $item = Get-Item $timeFile
-            $item.LastWriteTime = (Get-Date) - $Delta
+            $item.LastWriteTimeUtc = [DateTime]::UtcNow - $Delta
 
             $item = Get-Item $timeFile
             $item.LastWriteTimeString | Should -BeExactly ('{0,10:d} {0,8:t}' -f $item.LastWriteTime)
@@ -186,7 +189,7 @@ Describe 'Tests for human-readable rendering of file sizes and timestamps' -Tag 
         It 'Directory listing shows a relative timestamp when enabled' {
             $PSStyle.HumanReadable.Datetime = $true
             $item = Get-Item $timeFile
-            $item.LastWriteTime = (Get-Date) - [TimeSpan]::FromMinutes(5.5)
+            $item.LastWriteTimeUtc = [DateTime]::UtcNow - [TimeSpan]::FromMinutes(5.5)
 
             $out = Get-Item $timeFile | Format-Table -View children | Out-String
             $out.Contains('5 min ago') | Should -BeTrue
