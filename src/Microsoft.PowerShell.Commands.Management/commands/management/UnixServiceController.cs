@@ -61,6 +61,9 @@ namespace Microsoft.PowerShell.Commands
             ("rc-service", "rc-status", ServiceManagerKind.OpenRC),
         };
 
+        private static readonly object s_activeProcessLock = new();
+        private static Process? s_activeProcess;
+
         private bool _resolved;
         private bool _exists = true;
         private ServiceManagerKind _managerKind = ServiceManagerKind.Systemd;
@@ -336,18 +339,65 @@ namespace Microsoft.PowerShell.Commands
             throw NewServiceManagerNotFoundException();
         }
 
+        /// <summary>
+        /// Kills the in-flight service manager command, if any. Called from the service
+        /// cmdlets' <see cref="Cmdlet.StopProcessing"/> when the pipeline is stopped, so a
+        /// hung init script or manager command can't keep the pipeline waiting.
+        /// </summary>
+        internal static void CancelActiveCommand()
+        {
+            lock (s_activeProcessLock)
+            {
+                try
+                {
+                    s_activeProcess?.Kill(entireProcessTree: true);
+                }
+                catch (InvalidOperationException)
+                {
+                    // The process has not started or already exited.
+                }
+                catch (Win32Exception)
+                {
+                    // The process could not be killed because it already exited.
+                }
+            }
+        }
+
         private static string? FindCommandOnPath(string command, string[] pathDirectories)
         {
             foreach (string directory in pathDirectories)
             {
                 string candidate = Path.Combine(directory, command);
-                if (File.Exists(candidate))
+                if (File.Exists(candidate) && IsExecutable(candidate))
                 {
                     return candidate;
                 }
             }
 
             return null;
+        }
+
+        private static bool IsExecutable(string path)
+        {
+            // A command is only usable when the execute bit is set; skipping
+            // non-executable files lets discovery fall through to the next candidate
+            // on PATH, or to the next manager in the fallback chain.
+            const UnixFileMode ExecuteBits = UnixFileMode.UserExecute
+                | UnixFileMode.GroupExecute
+                | UnixFileMode.OtherExecute;
+
+            try
+            {
+                return (File.GetUnixFileMode(path) & ExecuteBits) != 0;
+            }
+            catch (IOException)
+            {
+                return false;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return false;
+            }
         }
 
         private static ProcessStartInfo CreateStartInfo(string fileName, string[] arguments)
@@ -370,15 +420,33 @@ namespace Microsoft.PowerShell.Commands
         private static (string Stdout, string Stderr, int ExitCode) Execute(ProcessStartInfo startInfo)
         {
             using Process process = new() { StartInfo = startInfo };
-            process.Start();
+            lock (s_activeProcessLock)
+            {
+                s_activeProcess = process;
+            }
 
-            // Drain both streams concurrently; reading them sequentially can deadlock when
-            // the child process fills one pipe buffer while the other stream is still open.
-            Task<string> stdoutTask = process.StandardOutput.ReadToEndAsync();
-            Task<string> stderrTask = process.StandardError.ReadToEndAsync();
-            process.WaitForExit();
+            try
+            {
+                process.Start();
 
-            return (stdoutTask.GetAwaiter().GetResult(), stderrTask.GetAwaiter().GetResult(), process.ExitCode);
+                // Drain both streams concurrently; reading them sequentially can deadlock when
+                // the child process fills one pipe buffer while the other stream is still open.
+                Task<string> stdoutTask = process.StandardOutput.ReadToEndAsync();
+                Task<string> stderrTask = process.StandardError.ReadToEndAsync();
+
+                // StopProcessing kills the process when the pipeline is stopped, which closes
+                // the pipes, completes both stream reads, and releases this wait.
+                process.WaitForExit();
+
+                return (stdoutTask.GetAwaiter().GetResult(), stderrTask.GetAwaiter().GetResult(), process.ExitCode);
+            }
+            finally
+            {
+                lock (s_activeProcessLock)
+                {
+                    s_activeProcess = null;
+                }
+            }
         }
 
         private static string RunQueryCommand(string command, string[] arguments, bool mergeErrorStream = false)
@@ -610,7 +678,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 new PSPropertySet("DefaultDisplayPropertySet", new string[] { "Status", "Name", "DisplayName", "StartType" }),
             };
-            serviceAsPSObj.Members.Add(new PSMemberSet("PSStandardMember", defaultPropertySet));
+            serviceAsPSObj.Members.Add(new PSMemberSet("PSStandardMembers", defaultPropertySet));
             _displayMemberSet = serviceAsPSObj;
         }
     }

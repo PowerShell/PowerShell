@@ -130,6 +130,9 @@ exec "${@:2}"
             $sshd.UnitFileState | Should -Be "enabled"
             $sshd.SubState | Should -Be "running"
 
+            # the default display property set is attached through PSStandardMembers
+            $sshd.PSObject.Members["PSStandardMembers"] | Should -Not -BeNullOrEmpty
+
             $foo = $services | Where-Object { $_.Name -eq "foo" }
             $foo.Status.ToString() | Should -Be "Stopped"
             $foo.StartType.ToString() | Should -Be "Manual"
@@ -483,6 +486,14 @@ exec "${@:2}"
                 # named invocations must also report the missing manager, not a missing service
                 { Get-Service -Name "sshd" -ErrorAction Stop } |
                     Should -Throw -ErrorId "NoServiceManagerFound,Microsoft.PowerShell.Commands.GetServiceCommand"
+
+                # every service cmdlet translates the missing manager the same way
+                { Start-Service -Name "sshd" -ErrorAction Stop } |
+                    Should -Throw -ErrorId "NoServiceManagerFound,Microsoft.PowerShell.Commands.StartServiceCommand"
+                { Stop-Service -Name "sshd" -ErrorAction Stop } |
+                    Should -Throw -ErrorId "NoServiceManagerFound,Microsoft.PowerShell.Commands.StopServiceCommand"
+                { Restart-Service -Name "sshd" -ErrorAction Stop } |
+                    Should -Throw -ErrorId "NoServiceManagerFound,Microsoft.PowerShell.Commands.RestartServiceCommand"
             } finally {
                 $env:PATH = $savedPath
             }

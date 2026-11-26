@@ -151,6 +151,18 @@ namespace Microsoft.PowerShell.Commands
             }
 #endif // !UNIX
         }
+
+#if UNIX
+        /// <summary>
+        /// Cancels a blocking service-manager command when the pipeline is stopped,
+        /// so a hung init script or manager command can't keep the pipeline waiting
+        /// after <see cref="Cmdlet.StopProcessing"/> or remoting cancellation.
+        /// </summary>
+        protected override void StopProcessing()
+        {
+            UnixServiceController.CancelActiveCommand();
+        }
+#endif
         #endregion Internal
     }
     #endregion ServiceBaseCommand
@@ -345,18 +357,35 @@ namespace Microsoft.PowerShell.Commands
         internal List<ServiceController> MatchingServices()
         {
             List<ServiceController> matchingServices;
-            switch (selectionMode)
+            try
             {
-                case SelectionMode.DisplayName:
-                    matchingServices = MatchingServicesByDisplayName();
-                    break;
-                case SelectionMode.InputObject:
-                    matchingServices = MatchingServicesByInput();
-                    break;
-                default:
-                    matchingServices = MatchingServicesByServiceName();
-                    break;
+                switch (selectionMode)
+                {
+                    case SelectionMode.DisplayName:
+                        matchingServices = MatchingServicesByDisplayName();
+                        break;
+                    case SelectionMode.InputObject:
+                        matchingServices = MatchingServicesByInput();
+                        break;
+                    default:
+                        matchingServices = MatchingServicesByServiceName();
+                        break;
+                }
             }
+            catch (InvalidOperationException e) when (e.Data.Contains("NoServiceManagerFound"))
+            {
+                // On Unix, no supported service manager was found on PATH. Report the
+                // documented terminating error for every service cmdlet instead of
+                // letting the tagged exception escape with a generic error ID.
+                ErrorRecord err = new ErrorRecord(
+                    e,
+                    "NoServiceManagerFound",
+                    ErrorCategory.ObjectNotFound,
+                    null);
+                ThrowTerminatingError(err);
+                throw;
+            }
+
             // 2004/12/16 Note that the services will be sorted
             //  before being stopped.  JimTru confirms that this is OK.
             matchingServices.Sort(ServiceComparison);
