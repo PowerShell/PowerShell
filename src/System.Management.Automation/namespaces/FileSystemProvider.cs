@@ -3795,8 +3795,33 @@ namespace Microsoft.PowerShell.Commands
                 ? StringComparison.OrdinalIgnoreCase
                 : StringComparison.Ordinal;
 
-            return destination.StartsWith(pathWithoutEndingSeparator + Path.DirectorySeparatorChar, comparison)
-                || destination.Equals(pathWithoutEndingSeparator, comparison);
+            // A destination that is textually equal to or below the source is
+            // inside the source. This also covers destinations below not yet
+            // existing subdirectories of the source.
+            if (destination.StartsWith(pathWithoutEndingSeparator + Path.DirectorySeparatorChar, comparison)
+                || destination.Equals(pathWithoutEndingSeparator, comparison))
+            {
+                return true;
+            }
+
+            // The textual comparison can be bypassed by differently cased paths on
+            // case-insensitive filesystems (for example the default APFS on macOS)
+            // and by paths that reach the source through a symbolic link, so each
+            // existing ancestor of the destination is also compared with the source
+            // by file identity, which resolves both.
+            string parent = Path.GetDirectoryName(Path.TrimEndingDirectorySeparator(destination));
+
+            while (!string.IsNullOrEmpty(parent))
+            {
+                if (InternalSymbolicLinkLinkCodeMethods.IsSameFileSystemItem(parent, path))
+                {
+                    return true;
+                }
+
+                parent = Path.GetDirectoryName(parent);
+            }
+
+            return false;
         }
 
         /// <summary>
