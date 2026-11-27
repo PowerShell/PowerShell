@@ -6,7 +6,7 @@ Describe "Tab completion bug fix" -Tags "CI" {
         @{ valueKind = 'AutomationNull'; valueFactory = { & {} } }
         @{ valueKind = '$null'; valueFactory = { $null } }
     ) {
-        param($valueKind, $valueFactory)
+        param($ValueKind, $ValueFactory)
 
         $completionTarget24737 = & $valueFactory
         $result = TabExpansion2 -inputScript '$completionTarget24737.'
