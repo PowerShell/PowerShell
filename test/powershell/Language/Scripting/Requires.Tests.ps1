@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
 Describe "Requires tests" -Tags "CI" {
     Context "Parser error" {
 
@@ -16,6 +17,84 @@ Describe "Requires tests" -Tags "CI" {
         It "throws ParserException - <testname>" -TestCases $testcases {
             param($command)
             { [scriptblock]::Create($command) } | Should -Throw -ErrorId "ParseException"
+        }
+    }
+
+    Context "Issue#20107 - Requires parameter validation" {
+        It "Rejects an unknown #requires parameter before running the script" {
+            $scriptPath = Join-Path $TestDrive 'UnknownRequires.ps1'
+            $outputPath = Join-Path $TestDrive 'ShouldNotExist.txt'
+            Set-Content -LiteralPath $scriptPath -Value "#requires -RunAsAdminstrator`nSet-Content -LiteralPath '$outputPath' -Value 'ran'"
+
+            { & $scriptPath } | Should -Throw -ErrorId 'RequiresUnknownParameter'
+            $outputPath | Should -Not -Exist
+        }
+
+        It "Reports an unknown parameter for '<ParameterName>' with <ArgumentKind>" -TestCases @(
+            @{ ParameterName = 'RunAsAdminstrator'; Argument = ''; ArgumentKind = 'no argument' }
+            @{ ParameterName = 'RunAsAdminstrator'; Argument = ' ignored'; ArgumentKind = 'a separate argument' }
+            @{ ParameterName = 'RunAsAdminstrator'; Argument = ':ignored'; ArgumentKind = 'an inline argument' }
+            @{ ParameterName = 'RunAsAdminstrator'; Argument = ' $value'; ArgumentKind = 'a variable argument' }
+            @{ ParameterName = 'RunAsAdminstrator'; Argument = ':$value'; ArgumentKind = 'an inline variable argument' }
+            @{ ParameterName = 'Unknown'; Argument = ''; ArgumentKind = 'no argument' }
+            @{ ParameterName = 'Verson'; Argument = ' 7.0'; ArgumentKind = 'a separate argument' }
+        ) {
+            param([string]$ParameterName, [string]$Argument, [string]$ArgumentKind)
+
+            $parseErrors = $null
+            $null = [System.Management.Automation.Language.Parser]::ParseInput(
+                "#requires -$ParameterName$Argument", [ref]$null, [ref]$parseErrors)
+
+            $parseErrors | Should -HaveCount 1
+            $parseErrors[0].ErrorId | Should -BeExactly 'RequiresUnknownParameter'
+            $parseErrors[0].Extent.Text | Should -BeLike "-$ParameterName*"
+            $parseErrors[0].Message | Should -Match ([regex]::Escape($ParameterName))
+        }
+
+        It "Preserves <ExpectedErrorId> for '<Script>'" -TestCases @(
+            @{ Script = '#requires -ShellId'; ExpectedErrorId = 'ParameterRequiresArgument' }
+            @{ Script = '#requires -s'; ExpectedErrorId = 'ParameterRequiresArgument' }
+            @{ Script = '#requires -PSSnapin'; ExpectedErrorId = 'ParameterRequiresArgument' }
+            @{ Script = '#requires -pss'; ExpectedErrorId = 'ParameterRequiresArgument' }
+            @{ Script = '#requires -Version'; ExpectedErrorId = 'ParameterRequiresArgument' }
+            @{ Script = '#requires -v'; ExpectedErrorId = 'ParameterRequiresArgument' }
+            @{ Script = '#requires -PSEdition'; ExpectedErrorId = 'ParameterRequiresArgument' }
+            @{ Script = '#requires -pse'; ExpectedErrorId = 'ParameterRequiresArgument' }
+            @{ Script = '#requires -Assembly'; ExpectedErrorId = 'ParameterRequiresArgument' }
+            @{ Script = '#requires -a'; ExpectedErrorId = 'ParameterRequiresArgument' }
+            @{ Script = '#requires -Modules'; ExpectedErrorId = 'ParameterRequiresArgument' }
+            @{ Script = '#requires -m'; ExpectedErrorId = 'ParameterRequiresArgument' }
+            @{ Script = '#requires -Version $value'; ExpectedErrorId = 'RequiresArgumentMustBeConstant' }
+            @{ Script = '#requires -Modules $value'; ExpectedErrorId = 'RequiresArgumentMustBeConstant' }
+            @{ Script = '#requires -RunAsAdministrator ignored'; ExpectedErrorId = 'ParameterCannotHaveArgument' }
+            @{ Script = '#requires -r:ignored'; ExpectedErrorId = 'ParameterCannotHaveArgument' }
+        ) {
+            param([string]$Script, [string]$ExpectedErrorId)
+
+            $parseErrors = $null
+            $null = [System.Management.Automation.Language.Parser]::ParseInput($Script, [ref]$null, [ref]$parseErrors)
+
+            $parseErrors | Should -HaveCount 1
+            $parseErrors[0].ErrorId | Should -BeExactly $ExpectedErrorId
+        }
+
+        It "Accepts the supported abbreviation or casing in '<Script>'" -TestCases @(
+            @{ Script = '#requires -s Microsoft.PowerShell' }
+            @{ Script = '#requires -pss TestSnapin' }
+            @{ Script = '#requires -v 7.0' }
+            @{ Script = '#requires -pse Core' }
+            @{ Script = '#requires -a System.Runtime' }
+            @{ Script = '#requires -m TestModule' }
+            @{ Script = '#requires -r' }
+            @{ Script = '#requires -VERSION 7.0' }
+            @{ Script = '#requires -RUNASADMINISTRATOR' }
+        ) {
+            param([string]$Script)
+
+            $parseErrors = $null
+            $null = [System.Management.Automation.Language.Parser]::ParseInput($Script, [ref]$null, [ref]$parseErrors)
+
+            $parseErrors | Should -HaveCount 0
         }
     }
 
