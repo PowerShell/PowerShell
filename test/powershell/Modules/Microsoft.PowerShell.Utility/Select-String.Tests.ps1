@@ -279,6 +279,19 @@ Describe "Select-String" -Tags "CI" {
             $manyFiles = Get-ChildItem -Path $manyDirectory -File | Sort-Object -Property Name
         }
 
+        It "Should take -Context lines from results as changed downstream" {
+            $empty = Join-Path $TestDrive 'context-empty.txt'
+            $data = Join-Path $TestDrive 'context-data.txt'
+            Set-Content -LiteralPath $empty -Value @() -NoNewline
+            Set-Content -LiteralPath $data -Value 'pad', 'hit1', 'hit2'
+            $actual = Select-String -LiteralPath $empty, $data -Pattern '^hit' -Context 1, 0 | ForEach-Object {
+                if ($_.Line -eq 'hit1') { $_.Line = 'edited' }
+                else { $_.Context.PreContext[0] }
+            }
+
+            $actual | Should -BeExactly 'edited'
+        }
+
         It "Should return the matches of many files in input order: <name>" -TestCases @(
             @{ name = 'piped one at a time' }
             @{ name = 'named together in -LiteralPath' }

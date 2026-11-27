@@ -1580,8 +1580,8 @@ namespace Microsoft.PowerShell.Commands
                     foundMatch = SearchFilesInParallel(expandedPaths, expandedPathsMaybeDirectory);
                 }
 
-                // No results in any files.
-                if (Quiet && !foundMatch)
+                // No results in any files (and the command is not being stopped).
+                if (Quiet && !foundMatch && !_cancel.IsCancellationRequested)
                 {
                     WriteObject(List ? null : Boxed.False);
                 }
@@ -1696,6 +1696,7 @@ namespace Microsoft.PowerShell.Commands
             using var recordCancel = CancellationTokenSource.CreateLinkedTokenSource(_cancel.Token);
             var record = new RecordState();
             var token = recordCancel.Token;
+            bool hasContext = _preContext > 0 || _postContext > 0;
             var queue = new Queue<PlannedFile>();
             int next = 0;
             bool planningStopped = false;
@@ -1703,30 +1704,46 @@ namespace Microsoft.PowerShell.Commands
             {
                 while (true)
                 {
-                    // Plan up to s_maxQueued files ahead of the one being written.
-                    while (!planningStopped && next < files.Count && queue.Count < s_maxQueued)
+                    // Plan up to s_maxQueued files ahead of the one being written. The record's first file is searched
+                    // in its turn on the pipeline thread, writing each match as it is found, so an early match is
+                    // written at once while later files are searched ahead.
+                    while (!planningStopped && next < files.Count && queue.Count < s_maxQueued && !token.IsCancellationRequested)
                     {
+                        bool first = next == 0;
                         string name = files[next++];
                         PlannedFile planned;
+                        bool leftOut;
                         try
                         {
-                            planned = IsFolderToSkip(name, maybeDirectory) || !MeetsIncludeExcludeCriteria(name)
-                                ? new PlannedFile(name, null, leftOut: true, null)
-                                : IsSearchableAhead(name)
-                                    ? new PlannedFile(name, s_workers.StartNew(() => SearchFile(name, maybeDirectory, record, token), token), false, null)
-                                    : new PlannedFile(name, null, false, null);
+                            leftOut = IsFolderToSkip(name, maybeDirectory) || !MeetsIncludeExcludeCriteria(name);
                         }
                         catch (Exception e) when (e is not OperationCanceledException)
                         {
                             // Raised in this file's turn; nothing after it is planned.
-                            planned = new PlannedFile(name, null, false, e);
+                            queue.Enqueue(new PlannedFile(name, null, false, e));
                             planningStopped = true;
+                            break;
+                        }
+
+                        if (leftOut)
+                        {
+                            planned = new PlannedFile(name, null, leftOut: true, null);
+                        }
+                        // With -Context every file is searched in its turn: context lines are taken from earlier
+                        // results, which downstream commands may change, and a file's context can hold many matches.
+                        else if (!first && !hasContext && IsSearchableAhead(name))
+                        {
+                            planned = new PlannedFile(name, s_workers.StartNew(() => SearchFile(name, maybeDirectory, record, token), token), false, null);
+                        }
+                        else
+                        {
+                            planned = new PlannedFile(name, null, false, null);
                         }
 
                         queue.Enqueue(planned);
                     }
 
-                    if (queue.Count == 0)
+                    if (queue.Count == 0 || token.IsCancellationRequested)
                     {
                         return false;
                     }
@@ -1800,10 +1817,28 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private static bool IsSearchableAhead(string path)
         {
-            // A symbolic link reports the length of its target's name, not of the target (which may be a pipe or
-            // /dev/stdin), so links are opened only in their turn too.
-            var info = new FileInfo(path);
-            return info.Exists && info.Length > 0 && info.LinkTarget == null && (info.Attributes & FileAttributes.ReparsePoint) == 0;
+            // Only a regular file with content, not reached through a link: a link reports the length of its target's
+            // name and its target may be a pipe or /dev/stdin, and on some systems a pipe reports the bytes waiting in
+            // it as its length. Anything that cannot be checked is searched in its turn, where an error is reported as
+            // before.
+            try
+            {
+#if UNIX
+                if (Platform.Unix.GetLStat(path).ItemType != Platform.Unix.ItemType.File)
+                {
+                    return false;
+                }
+#endif
+                var info = new FileInfo(path);
+                return info.Exists
+                    && info.Length > 0
+                    && (info.Attributes & (FileAttributes.ReparsePoint | FileAttributes.Device)) == 0
+                    && info.LinkTarget == null;
+            }
+            catch (Exception e) when (e is not OperationCanceledException)
+            {
+                return false;
+            }
         }
 
         /// <summary>
@@ -2205,7 +2240,13 @@ namespace Microsoft.PowerShell.Commands
                 if (_end == _buffer.Length)
                 {
                     // One line fills the buffer: take a larger one from the pool.
-                    char[] larger = System.Buffers.ArrayPool<char>.Shared.Rent(_buffer.Length * 2);
+                    // Doubling past Array.MaxLength would overflow; a line longer than that cannot be held as before.
+                    if (_buffer.Length >= Array.MaxLength)
+                    {
+                        throw new OutOfMemoryException();
+                    }
+
+                    char[] larger = System.Buffers.ArrayPool<char>.Shared.Rent((int)Math.Min((long)_buffer.Length * 2, Array.MaxLength));
                     Array.Copy(_buffer, larger, _end);
                     System.Buffers.ArrayPool<char>.Shared.Return(_buffer);
                     _buffer = larger;
@@ -2247,7 +2288,16 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private static bool IsPlainDecoding(Encoding encoding)
         {
-            return encoding?.DecoderFallback is DecoderReplacementFallback fallback && fallback.MaxCharCount <= 1;
+            // Only the runtime's own encoding classes: another class can report a replacement fallback while its
+            // decoder throws, and the larger reads would then raise that error before lines read as before.
+            if (encoding == null
+                || (encoding.GetType().Assembly != typeof(Encoding).Assembly
+                    && encoding.GetType().Assembly != typeof(CodePagesEncodingProvider).Assembly))
+            {
+                return false;
+            }
+
+            return encoding.DecoderFallback is DecoderReplacementFallback fallback && fallback.MaxCharCount <= 1;
         }
 
         /// <summary>
