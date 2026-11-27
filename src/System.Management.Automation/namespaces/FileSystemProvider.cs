@@ -3785,10 +3785,18 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="path">The path of the item being copied or moved.</param>
         /// <param name="destination">The destination path of the item.</param>
+        /// <param name="checkSourceAliases">
+        /// True to also detect destinations that reach the source through a
+        /// symbolic link or a differently cased path by comparing file
+        /// identities. This must be false when a symbolic link is moved,
+        /// because the link entry is renamed instead of its referent being
+        /// moved, so a destination inside the referent is not inside the
+        /// source.
+        /// </param>
         /// <returns>
         /// True if the destination is the source or below the source.
         /// </returns>
-        private static bool IsDestinationInsideSource(string path, string destination)
+        private static bool IsDestinationInsideSource(string path, string destination, bool checkSourceAliases = true)
         {
             string pathWithoutEndingSeparator = Path.TrimEndingDirectorySeparator(path);
             StringComparison comparison = Platform.IsWindows
@@ -3802,6 +3810,13 @@ namespace Microsoft.PowerShell.Commands
                 || destination.Equals(pathWithoutEndingSeparator, comparison))
             {
                 return true;
+            }
+
+            // The aliases of the source are only compared when the directory
+            // itself is moved or copied.
+            if (!checkSourceAliases)
+            {
+                return false;
             }
 
             // The textual comparison can be bypassed by differently cased paths on
@@ -6324,8 +6339,12 @@ namespace Microsoft.PowerShell.Commands
                     // The comparison is case-insensitive on Windows so that a
                     // differently cased destination cannot bypass the check, which
                     // would create the destination parent inside the source tree
-                    // before the filesystem rejects the move.
-                    if (IsDestinationInsideSource(path, destination))
+                    // before the filesystem rejects the move. A symbolic link is
+                    // moved by renaming the link entry instead of moving its
+                    // referent, so a destination inside the directory the link
+                    // points to is not inside the source, and aliases of the source
+                    // are not checked for symbolic links.
+                    if (IsDestinationInsideSource(path, destination, checkSourceAliases: dir.LinkTarget is null))
                     {
                         string error = StringUtil.Format(FileSystemProviderStrings.TargetCannotBeSubdirectoryOfSource, destination);
                         var e = new IOException(error);

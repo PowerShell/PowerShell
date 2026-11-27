@@ -189,6 +189,35 @@ Describe "Move-Item with -PreservePathFrom" -Tag "CI" {
         Join-Path $sourceDirectory "Sub1" | Should -Exist
     }
 
+    It "Moves a directory symbolic link into its referent" {
+        $linkPath = Join-Path (Split-Path $sourceDirectory -Parent) "PreservePathFromLink"
+        $link = New-Item -ItemType SymbolicLink -Path $linkPath -Target (Join-Path $sourceDirectory "Sub1") -ErrorAction SilentlyContinue
+
+        if ($null -eq $link) {
+            # Creating a symbolic link requires elevated privileges on Windows.
+            Write-Warning "Skipping the test because a symbolic link could not be created."
+            return
+        }
+
+        try {
+            # Moving a symbolic link renames the link entry, so moving it into the
+            # directory it points to must not be rejected as a move into the source.
+            $errorRecord = $null
+            Move-Item $linkPath -Destination (Join-Path $sourceDirectory "Sub1") -ErrorVariable errorRecord -ErrorAction SilentlyContinue
+
+            $errorRecord | Should -BeNullOrEmpty
+            Join-Path $sourceDirectory "Sub1/PreservePathFromLink" | Should -Exist
+            (Get-Item (Join-Path $sourceDirectory "Sub1/PreservePathFromLink") -Force).LinkTarget | Should -Be (Join-Path $sourceDirectory "Sub1")
+
+            # The target directory itself is not moved and keeps its contents.
+            (Get-ChildItem (Join-Path $sourceDirectory "Sub1") -File -Recurse).Count | Should -Be 2
+        }
+        finally {
+            Remove-Item $linkPath -Force -ErrorAction SilentlyContinue
+            Remove-Item (Join-Path $sourceDirectory "Sub1/PreservePathFromLink") -Force -ErrorAction SilentlyContinue
+        }
+    }
+
     It "Reports an error for an existing target directory instead of nesting it again" {
         New-Item -ItemType Directory (Join-Path $destinationDirectory "Sub1") -Force | Out-Null
 
