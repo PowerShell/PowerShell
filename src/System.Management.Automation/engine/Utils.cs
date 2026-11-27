@@ -1665,6 +1665,7 @@ namespace System.Management.Automation.Internal
 
         // Select-String tests: hold fewer matches per file before searching it again on the pipeline thread
         internal static int SelectStringMaxHeldMatches;
+        internal static int SelectStringMaxHeldMatchesPerRecord;
 
         // It's useful to test that we don't depend on the ScriptBlock and AST objects and can use a re-parsed version.
         internal static bool IgnoreScriptBlockCache;

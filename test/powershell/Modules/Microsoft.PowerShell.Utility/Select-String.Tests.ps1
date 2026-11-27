@@ -295,6 +295,34 @@ Describe "Select-String" -Tags "CI" {
             $actual[0] | Should -BeExactly 'file001.txt:2'
         }
 
+        It "Should write every match found before the command feeding it fails" {
+            $written = [System.Collections.Generic.List[object]]::new()
+            {
+                & { $manyFiles[1..5]; throw 'upstream stopped' } | Select-String -Pattern 'match' | ForEach-Object { $written.Add($_) }
+            } | Should -Throw 'upstream stopped'
+            $written.Count | Should -Be 10
+        }
+
+        It "Should give the same results for files named together in -Path when they hold too many matches" {
+            $paths = $manyFiles.FullName
+            $normal = Select-String -Path $paths -Pattern 'match' | ForEach-Object { '{0}:{1}' -f $_.Filename, $_.LineNumber }
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('SelectStringMaxHeldMatchesPerRecord', 7)
+            try {
+                $limited = Select-String -Path $paths -Pattern 'match' | ForEach-Object { '{0}:{1}' -f $_.Filename, $_.LineNumber }
+            }
+            finally {
+                [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('SelectStringMaxHeldMatchesPerRecord', 0)
+            }
+
+            $normal.Count | Should -Be $expectedMatches.Count
+            ($limited -join "`n") | Should -BeExactly ($normal -join "`n")
+        }
+
+        It "Should return one -Quiet result for files named together in -Path" {
+            Select-String -Path $manyFiles.FullName -Pattern 'match' -Quiet | Should -BeExactly $true
+            Select-String -Path $manyFiles.FullName -Pattern 'not present anywhere' -Quiet | Should -BeExactly $false
+        }
+
         It "Should stop when a later command needs no more input" {
             $actual = $manyFiles | Select-String -Pattern 'match' | Select-Object -First 1
             '{0}:{1}' -f $actual.Filename, $actual.LineNumber | Should -BeExactly 'file001.txt:2'

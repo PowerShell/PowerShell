@@ -1483,51 +1483,53 @@ namespace Microsoft.PowerShell.Commands
         // 1.4 to 2.0 s, 4,096 ahead 1.0 to 1.2 s (workers sat idle while the oldest file was awaited).
         private static readonly int s_maxQueued = Math.Max(256, Environment.ProcessorCount * 256);
 
-        private sealed class RecordState
-        {
-            public bool Stopped;
-        }
-
-        private sealed class FileResult
-        {
-            public readonly List<List<MatchInfo>> Batches = new();
-            public ErrorRecord Error;
-            public Exception Fatal;
-            public bool FoundMatch;
-
-            // Set when the file had more than MaxHeldMatches matches: it is searched again on the pipeline thread.
-            public bool Heavy;
-            public int Held;
-            public string Filename;
-            public bool MaybeDirectory;
-        }
-
-        // Matches one file may hold until it is written. Holding many long-lived MatchInfo objects forces full garbage
-        // collections: 1.2 million held matches paused the process for 1.6 to 1.7 s, against 0.02 s when each match is
-        // written as it is found.
+        // Matches one file may hold until it is written, and all files of one record together. Holding many long-lived
+        // MatchInfo objects forces full garbage collections (1.2 million held matches paused the process for 1.6 to
+        // 1.7 s, against 0.02 s when each match is written as it is found) and could exhaust memory. A file that would
+        // pass either limit is searched again on the pipeline thread, which writes each match as it is found.
         private static int MaxHeldMatches => InternalTestHooks.SelectStringMaxHeldMatches > 0 ? InternalTestHooks.SelectStringMaxHeldMatches : 20000;
 
-        // One queued item: a file being searched, or the end of a pipeline record (where -Quiet may write $false).
-        private readonly struct QueuedItem
-        {
-            public QueuedItem(Task<FileResult> file, RecordState record)
-            {
-                File = file;
-                Record = record;
-            }
-
-            public Task<FileResult> File { get; }
-
-            public RecordState Record { get; }
-        }
+        private static int MaxHeldMatchesPerRecord => InternalTestHooks.SelectStringMaxHeldMatchesPerRecord > 0 ? InternalTestHooks.SelectStringMaxHeldMatchesPerRecord : 200000;
 
         // At most one search per processor: more threads reading at once made each file slower.
         private static readonly TaskFactory s_workers = new(new ConcurrentExclusiveSchedulerPair(TaskScheduler.Default, Environment.ProcessorCount).ConcurrentScheduler);
 
-        private readonly Queue<QueuedItem> _queue = new();
         private readonly CancellationTokenSource _cancel = new();
         private bool _shouldEmphasize;
         private CompareInfo _compareInfo;
+
+        /// <summary>
+        /// The state shared by the searches of one input record's files.
+        /// </summary>
+        private sealed class RecordState
+        {
+            private int _held;
+
+            public bool Stopped { get; set; }
+
+            /// <summary>Adds to the number of matches held by this record's searches and returns the new total.</summary>
+            public int AddHeld(int count) => Interlocked.Add(ref _held, count);
+        }
+
+        private sealed class FileResult
+        {
+            public List<List<MatchInfo>> Batches { get; } = new();
+
+            public ErrorRecord Error { get; set; }
+
+            public Exception Fatal { get; set; }
+
+            public bool FoundMatch { get; set; }
+
+            // Set when the file had too many matches to hold: it is searched again on the pipeline thread.
+            public bool Heavy { get; set; }
+
+            public int Held { get; set; }
+
+            public string Filename { get; set; }
+
+            public bool MaybeDirectory { get; set; }
+        }
 
         /// <summary>
         /// Process the input.
@@ -1547,17 +1549,7 @@ namespace Microsoft.PowerShell.Commands
             List<string> expandedPaths = null;
             if (Path != null)
             {
-                try
-                {
-                    expandedPaths = ResolveFilePaths(Path, _isLiteralPath);
-                }
-                catch
-                {
-                    // Anything already found is written before the error, as it would have been.
-                    DrainQueue();
-                    throw;
-                }
-
+                expandedPaths = ResolveFilePaths(Path, _isLiteralPath);
                 if (expandedPaths == null)
                 {
                     return;
@@ -1576,31 +1568,33 @@ namespace Microsoft.PowerShell.Commands
 
             if (expandedPaths != null)
             {
-                var record = new RecordState();
+                // Every file of this input record is searched and written before ProcessRecord returns. PowerShell gives
+                // a command no chance to write after the command feeding it fails, so results must not be held back
+                // across records. A record with one file (for example a FileInfo from Get-ChildItem) is searched here,
+                // writing each match as it is found; several files named in one record (-Path with a list or wildcards)
+                // are searched in parallel and written in order.
+                var files = new List<string>(expandedPaths.Count);
                 foreach (var filename in expandedPaths)
                 {
                     // see if the file is one the include exclude list...
-                    if (!MeetsIncludeExcludeCriteria(filename))
+                    if (MeetsIncludeExcludeCriteria(filename))
                     {
-                        continue;
+                        files.Add(filename);
                     }
-
-                    string name = filename;
-                    bool maybeDirectory = expandedPathsMaybeDirectory;
-                    var task = s_workers.StartNew(() => SearchFile(name, maybeDirectory), _cancel.Token);
-                    _queue.Enqueue(new QueuedItem(task, record));
-                    WriteReady(_queue.Count > s_maxQueued);
                 }
 
-                // End of this record: if -Quiet found nothing in any of its files, write $false (or $null with -List).
-                _queue.Enqueue(new QueuedItem(null, record));
-                WriteReady(false);
+                bool foundMatch = files.Count == 1
+                    ? SearchFileHere(files[0], expandedPathsMaybeDirectory)
+                    : SearchFilesInParallel(files, expandedPathsMaybeDirectory);
+
+                // No results in any files.
+                if (Quiet && !foundMatch)
+                {
+                    WriteObject(List ? null : Boxed.False);
+                }
             }
             else
             {
-                // Strings are matched here, in order, after everything queued before them is written.
-                DrainQueue();
-
                 // Set the line number in the matched object to be the record number
                 _inputRecordNumber++;
 
@@ -1648,71 +1642,100 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Write queued results whose search has finished, in order. With <paramref name="waitForOne"/>,
-        /// first wait for the oldest one, so no more than a bounded number of files are ever ahead.
+        /// Search one file on the pipeline thread, writing each match as it is found, as the one-file-at-a-time loop
+        /// did. Returns whether it matched.
         /// </summary>
-        private void WriteReady(bool waitForOne)
+        private bool SearchFileHere(string filename, bool maybeDirectory)
         {
-            while (_queue.Count > 0)
-            {
-                var item = _queue.Peek();
-                if (item.File != null && !item.File.IsCompleted && !waitForOne)
-                {
-                    return;
-                }
-
-                waitForOne = false;
-                _queue.Dequeue();
-                WriteItem(item);
-            }
-        }
-
-        private void DrainQueue()
-        {
-            while (_queue.Count > 0)
-            {
-                WriteItem(_queue.Dequeue());
-            }
-        }
-
-        private void WriteItem(QueuedItem item)
-        {
-            var record = item.Record;
-            if (item.File == null)
-            {
-                // No results in any files.
-                if (Quiet && !record.Stopped)
-                {
-                    WriteObject(List ? null : Boxed.False);
-                }
-
-                return;
-            }
-
-            FileResult result;
+            var result = new FileResult { Filename = filename, MaybeDirectory = maybeDirectory };
             try
             {
-                result = item.File.GetAwaiter().GetResult();
+                SearchFileCore(filename, maybeDirectory, result, record: null, _cancel.Token);
             }
             catch (OperationCanceledException)
             {
-                // Only happens while the command is being stopped.
-                return;
+                return false;
             }
-
-            if (record.Stopped)
+            catch (Exception e)
             {
-                // -Quiet already answered for this record; later files are not reported.
-                return;
+                result.Fatal = e;
             }
 
+            WriteResult(result);
+            return result.FoundMatch;
+        }
+
+        /// <summary>
+        /// Search the files of one input record on worker threads and write their results in order. With -Quiet,
+        /// files after the first that matched are not reported, and their searches are cancelled.
+        /// Returns whether any file matched.
+        /// </summary>
+        private bool SearchFilesInParallel(List<string> files, bool maybeDirectory)
+        {
+            using var recordCancel = CancellationTokenSource.CreateLinkedTokenSource(_cancel.Token);
+            var record = new RecordState();
+            var token = recordCancel.Token;
+            var queue = new Queue<Task<FileResult>>();
+            int next = 0;
+            try
+            {
+                while (next < files.Count || queue.Count > 0)
+                {
+                    // Keep up to s_maxQueued files searching ahead of the one being written.
+                    while (next < files.Count && queue.Count < s_maxQueued && !record.Stopped)
+                    {
+                        string name = files[next++];
+                        queue.Enqueue(s_workers.StartNew(() => SearchFile(name, maybeDirectory, record, token), token));
+                    }
+
+                    if (queue.Count == 0)
+                    {
+                        break;
+                    }
+
+                    FileResult result;
+                    try
+                    {
+                        result = queue.Dequeue().GetAwaiter().GetResult();
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        // The command is being stopped.
+                        return record.Stopped;
+                    }
+
+                    record.AddHeld(-result.Held);
+                    WriteResult(result);
+                    if (Quiet && result.FoundMatch)
+                    {
+                        // -Quiet has its answer for this record: later files are not reported.
+                        record.Stopped = true;
+                        recordCancel.Cancel();
+                        return true;
+                    }
+                }
+            }
+            finally
+            {
+                // Searches still running belong to files that will not be reported.
+                recordCancel.Cancel();
+            }
+
+            return record.Stopped;
+        }
+
+        /// <summary>
+        /// Write what a search found: its matches, then a read error, then a terminating exception. A file that had
+        /// too many matches to hold is searched again here, writing each match as it is found.
+        /// </summary>
+        private void WriteResult(FileResult result)
+        {
             if (result.Heavy)
             {
-                // Too many matches to hold: search the file again here and write each match as it is found.
                 var again = new FileResult { Filename = result.Filename, MaybeDirectory = result.MaybeDirectory };
                 try
                 {
-                    SearchFileCore(again.Filename, again.MaybeDirectory, again, writeNow: true);
+                    SearchFileCore(again.Filename, again.MaybeDirectory, again, record: null, _cancel.Token);
                 }
                 catch (OperationCanceledException)
                 {
@@ -1723,6 +1746,7 @@ namespace Microsoft.PowerShell.Commands
                     again.Fatal = e;
                 }
 
+                result.FoundMatch = again.FoundMatch;
                 result = again;
             }
 
@@ -1739,11 +1763,6 @@ namespace Microsoft.PowerShell.Commands
             if (result.Fatal != null)
             {
                 System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(result.Fatal).Throw();
-            }
-
-            if (Quiet && result.FoundMatch)
-            {
-                record.Stopped = true;
             }
         }
 
@@ -1779,12 +1798,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Search one file on a worker thread. Writes nothing; returns what the original loop would have written.
         /// </summary>
-        private FileResult SearchFile(string filename, bool maybeDirectory)
+        private FileResult SearchFile(string filename, bool maybeDirectory, RecordState record, CancellationToken token)
         {
             var result = new FileResult { Filename = filename, MaybeDirectory = maybeDirectory };
             try
             {
-                SearchFileCore(filename, maybeDirectory, result, writeNow: false);
+                SearchFileCore(filename, maybeDirectory, result, record, token);
             }
             catch (OperationCanceledException)
             {
@@ -1799,14 +1818,15 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Search one file. On a worker thread (<paramref name="writeNow"/> false) the matches are held in
-        /// <paramref name="result"/>; past MaxHeldMatches the search stops and the file is marked heavy. On the
-        /// pipeline thread each match is written as it is found.
+        /// Search one file. On a worker thread (<paramref name="record"/> set) the matches are held in
+        /// <paramref name="result"/>; past MaxHeldMatches for the file or MaxHeldMatchesPerRecord for the record the
+        /// search stops and the file is marked heavy. On the pipeline thread (<paramref name="record"/> null) each match
+        /// is written as it is found.
         /// </summary>
-        private void SearchFileCore(string filename, bool maybeDirectory, FileResult result, bool writeNow)
+        private void SearchFileCore(string filename, bool maybeDirectory, FileResult result, RecordState record, CancellationToken token)
         {
             var contextTracker = GetContextTracker();
-            var token = _cancel.Token;
+            bool writeNow = record == null;
 
             // A line can only become output if it matches, unless -NotMatch inverts that or context lines are kept.
             // In that case the line is tested in place, and only a matching line is turned into a string and
@@ -1818,7 +1838,6 @@ namespace Microsoft.PowerShell.Commands
                 using (var handle = File.OpenHandle(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, FileOptions.SequentialScan))
                 using (FileStream fs = new(handle, FileAccess.Read, 1))
                 {
-                    fs.Position = 0;
                     using (StreamReader sr = new(fs, Encoding, true, 16 * 1024))
                     using (var reader = new LineReader(sr))
                     {
@@ -1867,10 +1886,8 @@ namespace Microsoft.PowerShell.Commands
                                 {
                                     FlushTrackerQueue(contextTracker);
                                 }
-                                else if (TakeQueue(contextTracker, result) && result.Held > MaxHeldMatches)
+                                else if (!HoldQueue(contextTracker, result, record))
                                 {
-                                    result.Batches.Clear();
-                                    result.Heavy = true;
                                     return;
                                 }
                             }
@@ -1883,9 +1900,17 @@ namespace Microsoft.PowerShell.Commands
                 // mode, or by reaching EOF before we collected all
                 // our postcontext.
                 contextTracker.TrackEOF();
-                if (writeNow ? FlushTrackerQueue(contextTracker) : TakeQueue(contextTracker, result))
+                if (writeNow)
+                {
+                    if (FlushTrackerQueue(contextTracker))
+                    {
+                        result.FoundMatch = true;
+                    }
+                }
+                else if (contextTracker.EmitQueue.Count > 0)
                 {
                     result.FoundMatch = true;
+                    HoldQueue(contextTracker, result, record);
                 }
             }
             catch (System.NotSupportedException nse)
@@ -1918,17 +1943,27 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private static bool TakeQueue(IContextTracker contextTracker, FileResult result)
+        /// <summary>
+        /// Hold the tracker's emit queue as one batch of the file's result. Returns false, and marks the file heavy
+        /// with nothing held, when the file or the record would then hold more matches than allowed.
+        /// </summary>
+        private static bool HoldQueue(IContextTracker contextTracker, FileResult result, RecordState record)
         {
-            if (contextTracker.EmitQueue.Count < 1)
-            {
-                return false;
-            }
-
-            result.Held += contextTracker.EmitQueue.Count;
+            int count = contextTracker.EmitQueue.Count;
+            result.Held += count;
+            int recordHeld = record.AddHeld(count);
             result.Batches.Add(new List<MatchInfo>(contextTracker.EmitQueue));
             contextTracker.EmitQueue.Clear();
-            return true;
+            if (result.Held <= MaxHeldMatches && recordHeld <= MaxHeldMatchesPerRecord)
+            {
+                return true;
+            }
+
+            record.AddHeld(-result.Held);
+            result.Held = 0;
+            result.Batches.Clear();
+            result.Heavy = true;
+            return false;
         }
 
         /// <summary>
@@ -2089,8 +2124,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            DrainQueue();
-
             // Check for a leftover match that was still tracking context.
             _globalContextTracker.TrackEOF();
             if (!_doneProcessing)
@@ -2345,9 +2378,6 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!provider.NameEquals(base.Context.ProviderNames.FileSystem))
                 {
-                    // Results already found come first, as they would have.
-                    DrainQueue();
-
                     // "The current provider ({0}) cannot open a file"
                     WriteError(BuildErrorRecord(MatchStringStrings.FileOpenError, provider.FullName, "ProcessingFile", null));
                     continue;
