@@ -1,6 +1,5 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-
 Describe "Update-FormatData" -Tags "CI" {
 
     BeforeEach {
