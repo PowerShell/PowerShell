@@ -194,7 +194,9 @@ namespace Microsoft.PowerShell
             {
                 // Product binaries are always trusted
                 // This avoids signature and security zone checks
-                if (SecuritySupport.IsProductBinary(path))
+                // Local CDXML also needs no signature under Unrestricted.
+                if ((string.Equals(fi.Extension, ".cdxml", StringComparison.OrdinalIgnoreCase) && IsLocalFile(fi.FullName)) ||
+                    SecuritySupport.IsProductBinary(path))
                     return true;
 
                 // We need to give the "Remote File" warning
