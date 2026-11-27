@@ -1666,6 +1666,7 @@ namespace System.Management.Automation.Internal
         // Select-String tests (0 means the normal value): hold fewer matches per file or chunk before searching it
         // again on the pipeline thread, and make small files take the large-file path
         internal static int SelectStringMaxHeldMatches;
+        internal static int SelectStringMaxHeldMatchesPerRecord;
         internal static long SelectStringSplitMinLength;
         internal static int SelectStringChunkLength;
 

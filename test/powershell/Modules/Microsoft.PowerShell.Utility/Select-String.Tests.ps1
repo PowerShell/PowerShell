@@ -279,9 +279,74 @@ Describe "Select-String" -Tags "CI" {
             $manyFiles = Get-ChildItem -Path $manyDirectory -File | Sort-Object -Property Name
         }
 
-        It "Should return the matches of many files in input order" {
-            $actual = $manyFiles | Select-String -Pattern 'match' | ForEach-Object { '{0}:{1}:{2}' -f $_.Filename, $_.LineNumber, $_.Line }
+        It "Should take -Context lines from results as changed downstream" {
+            $empty = Join-Path $TestDrive 'context-empty.txt'
+            $data = Join-Path $TestDrive 'context-data.txt'
+            Set-Content -LiteralPath $empty -Value @() -NoNewline
+            Set-Content -LiteralPath $data -Value 'pad', 'hit1', 'hit2'
+            $actual = Select-String -LiteralPath $empty, $data -Pattern '^hit' -Context 1, 0 | ForEach-Object {
+                if ($_.Line -eq 'hit1') { $_.Line = 'edited' }
+                else { $_.Context.PreContext[0] }
+            }
+
+            $actual | Should -BeExactly 'edited'
+        }
+
+        It "Should return the matches of many files in input order: <name>" -TestCases @(
+            @{ name = 'piped one at a time' }
+            @{ name = 'named together in -LiteralPath' }
+        ) {
+            param ($name)
+
+            $actual = if ($name -eq 'piped one at a time') {
+                $manyFiles | Select-String -Pattern 'match'
+            }
+            else {
+                Select-String -LiteralPath $manyFiles.FullName -Pattern 'match'
+            }
+
+            $actual = $actual | ForEach-Object { '{0}:{1}:{2}' -f $_.Filename, $_.LineNumber, $_.Line }
             $actual -join "`n" | Should -BeExactly ($expectedMatches -join "`n")
+        }
+
+        It "Should leave out files by -Include in input order when named together" {
+            $actual = Select-String -LiteralPath $manyFiles.FullName -Pattern 'match' -Include '*file00*' | ForEach-Object { $_.Filename } | Select-Object -Unique
+            $actual | Should -Be @('file001.txt', 'file002.txt', 'file003.txt', 'file004.txt', 'file005.txt', 'file006.txt', 'file008.txt', 'file009.txt')
+        }
+
+        It "Should not raise an -Include error for a file after the -Quiet answer" {
+            $bin = Join-Path $TestDrive 'later.bin'
+            Set-Content -Path $bin -Value 'match'
+            Select-String -LiteralPath $manyFiles[1].FullName, $bin -Pattern 'match' -Include '*.txt', '[' -Quiet | Should -BeExactly $true
+        }
+
+        It "Should skip a folder before applying -Include: <name>" -TestCases @(
+            @{ name = 'the folder alone' }
+            @{ name = 'with a file named together' }
+        ) {
+            param ($name)
+
+            if ($name -eq 'the folder alone') {
+                Select-String -Path $manyDirectory -Pattern 'match' -Include '[' -Quiet | Should -BeExactly $false
+            }
+            else {
+                Select-String -Path $manyDirectory, $manyFiles[1].FullName -Pattern 'match' -Include '*.txt', '[' -Quiet | Should -BeExactly $true
+            }
+        }
+
+        It "Should close each file before writing its -List result" {
+            $copy = Join-Path $TestDrive 'listcopy'
+            Copy-Item -Path $manyDirectory -Destination $copy -Recurse
+            $paths = (Get-ChildItem $copy -File | Sort-Object Name | Select-Object -First 20).FullName
+            { Select-String -LiteralPath $paths -Pattern 'match' -List | Remove-Item -ErrorAction Stop } | Should -Not -Throw
+            (Get-ChildItem $copy -File).Count | Should -Be ((Get-ChildItem $manyDirectory -File).Count - 17)
+        }
+
+        It "Should search an empty file among files named together" {
+            $empty = Join-Path $TestDrive 'empty.txt'
+            Set-Content -Path $empty -Value $null -NoNewline
+            $actual = Select-String -LiteralPath $empty, $manyFiles[1].FullName -Pattern 'match' | ForEach-Object { $_.Filename }
+            $actual | Should -Be @('file001.txt', 'file001.txt')
         }
 
         It "Should return one -Quiet result per file, in input order" {
@@ -289,15 +354,72 @@ Describe "Select-String" -Tags "CI" {
             $actual | Should -Be @($false, $true, $true, $true)
         }
 
-        It "Should return the first match of each file with -List" {
-            $actual = $manyFiles | Select-String -Pattern 'match' -List | ForEach-Object { '{0}:{1}' -f $_.Filename, $_.LineNumber }
+        It "Should return the first match of each file with -List: <name>" -TestCases @(
+            @{ name = 'piped one at a time' }
+            @{ name = 'named together in -LiteralPath' }
+        ) {
+            param ($name)
+
+            $actual = if ($name -eq 'piped one at a time') {
+                $manyFiles | Select-String -Pattern 'match' -List
+            }
+            else {
+                Select-String -LiteralPath $manyFiles.FullName -Pattern 'match' -List
+            }
+
+            $actual = $actual | ForEach-Object { '{0}:{1}' -f $_.Filename, $_.LineNumber }
             $actual.Count | Should -Be ($expectedMatches.Count / 2)
             $actual[0] | Should -BeExactly 'file001.txt:2'
         }
 
-        It "Should stop when a later command needs no more input" {
-            $actual = $manyFiles | Select-String -Pattern 'match' | Select-Object -First 1
+        It "Should write every match found before the command feeding it fails" {
+            $written = [System.Collections.Generic.List[object]]::new()
+            {
+                & { $manyFiles[1..5]; throw 'upstream stopped' } | Select-String -Pattern 'match' | ForEach-Object { $written.Add($_) }
+            } | Should -Throw 'upstream stopped'
+            $written.Count | Should -Be 10
+        }
+
+        It "Should give the same results for files named together in -Path when they hold too many matches" {
+            $paths = $manyFiles.FullName
+            $normal = Select-String -Path $paths -Pattern 'match' | ForEach-Object { '{0}:{1}' -f $_.Filename, $_.LineNumber }
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('SelectStringMaxHeldMatchesPerRecord', 7)
+            try {
+                $limited = Select-String -Path $paths -Pattern 'match' | ForEach-Object { '{0}:{1}' -f $_.Filename, $_.LineNumber }
+            }
+            finally {
+                [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('SelectStringMaxHeldMatchesPerRecord', 0)
+            }
+
+            $normal.Count | Should -Be $expectedMatches.Count
+            ($limited -join "`n") | Should -BeExactly ($normal -join "`n")
+        }
+
+        It "Should return one -Quiet result for files named together in -Path" {
+            Select-String -Path $manyFiles.FullName -Pattern 'match' -Quiet | Should -BeExactly $true
+            Select-String -Path $manyFiles.FullName -Pattern 'not present anywhere' -Quiet | Should -BeExactly $false
+        }
+
+        It "Should stop when a later command needs no more input: <name>" -TestCases @(
+            @{ name = 'piped one at a time' }
+            @{ name = 'named together in -LiteralPath' }
+        ) {
+            param ($name)
+
+            $actual = if ($name -eq 'piped one at a time') {
+                $manyFiles | Select-String -Pattern 'match' | Select-Object -First 1
+            }
+            else {
+                Select-String -LiteralPath $manyFiles.FullName -Pattern 'match' | Select-Object -First 1
+            }
+
             '{0}:{1}' -f $actual.Filename, $actual.LineNumber | Should -BeExactly 'file001.txt:2'
+
+            # Every search has finished and closed its file: the files can be deleted at once.
+            $copy = Join-Path $TestDrive 'stopcopy'
+            Copy-Item -Path $manyDirectory -Destination $copy -Recurse
+            Select-String -LiteralPath (Get-ChildItem $copy -File).FullName -Pattern 'match' | Select-Object -First 1 | Out-Null
+            { Remove-Item -Path $copy -Recurse -ErrorAction Stop } | Should -Not -Throw
         }
     }
 
@@ -328,14 +450,18 @@ Describe "Select-String" -Tags "CI" {
         ) {
             param ($arguments)
 
+            # Two files in one -LiteralPath, so they are searched on worker threads and their matches held.
             $manyMatchesFile = Join-Path $TestDrive 'manymatches.txt'
             Set-Content -Path $manyMatchesFile -Value (1..500 | ForEach-Object { "line $_" })
-            $describe = { $input | ForEach-Object { '{0}|{1}|{2}' -f $_.LineNumber, $_.Line, ($_.Context.PreContext -join ',') } }
+            $otherFile = Join-Path $TestDrive 'manymatches2.txt'
+            Set-Content -Path $otherFile -Value (1..300 | ForEach-Object { "other $_" })
+            $paths = $manyMatchesFile, $otherFile
+            $describe = { $input | ForEach-Object { '{0}|{1}|{2}|{3}' -f $_.Filename, $_.LineNumber, $_.Line, ($_.Context.PreContext -join ',') } }
 
-            $normal = Select-String -Path $manyMatchesFile @arguments | & $describe
+            $normal = Select-String -LiteralPath $paths @arguments | & $describe
             [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('SelectStringMaxHeldMatches', 5)
             try {
-                $searchedAgain = Select-String -Path $manyMatchesFile @arguments | & $describe
+                $searchedAgain = Select-String -LiteralPath $paths @arguments | & $describe
             }
             finally {
                 [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('SelectStringMaxHeldMatches', 0)
@@ -343,6 +469,16 @@ Describe "Select-String" -Tags "CI" {
 
             $normal.Count | Should -BeGreaterThan 5
             ($searchedAgain -join "`n") | Should -BeExactly ($normal -join "`n")
+        }
+
+        It "Should write the matches before an invalid byte with a strict encoding" {
+            $strictFile = Join-Path $TestDrive 'strict.txt'
+            $bytes = [System.Collections.Generic.List[byte]]::new()
+            $bytes.AddRange([System.Text.Encoding]::ASCII.GetBytes("hit`n" + ('a' * 4091)))
+            $bytes.Add(0xFF)
+            [System.IO.File]::WriteAllBytes($strictFile, $bytes.ToArray())
+            $strict = [System.Text.UTF8Encoding]::new($false, $true)
+            Select-String -LiteralPath $strictFile -Pattern 'hit' -Quiet -Encoding $strict | Should -BeExactly $true
         }
 
         It "Should return a line longer than the read buffer whole" {
@@ -381,12 +517,17 @@ Describe "Select-String" -Tags "CI" {
             function Get-Description($result) {
                 $result | ForEach-Object {
                     if ($_ -is [Microsoft.PowerShell.Commands.MatchInfo]) {
-                        '{0}|{1}|{2}' -f $_.LineNumber, $_.Line, (($_.Matches | ForEach-Object { "$($_.Index),$($_.Length)" }) -join ';')
+                        '{0}|{1}|{2}|{3}' -f $_.Filename, $_.LineNumber, $_.Line, (($_.Matches | ForEach-Object { "$($_.Index),$($_.Length)" }) -join ';')
                     }
                     else {
                         "$_"
                     }
                 }
+            }
+
+            function Get-ChunksStarted {
+                $chunkedType = [Microsoft.PowerShell.Commands.MatchInfo].Assembly.GetType('Microsoft.PowerShell.Commands.ChunkedFile')
+                $chunkedType.GetProperty('ChunksStarted', [System.Reflection.BindingFlags]'Static, NonPublic').GetValue($null)
             }
 
             function Set-SplitHooks([long] $minLength, [int] $chunkLength, [int] $maxHeld) {
@@ -400,18 +541,39 @@ Describe "Select-String" -Tags "CI" {
             Set-SplitHooks 0 0 0
         }
 
-        It "Should take the chunked path while the test hooks are set" {
-            $chunkedType = [Microsoft.PowerShell.Commands.MatchInfo].Assembly.GetType('Microsoft.PowerShell.Commands.ChunkedFile')
-            $flags = [System.Reflection.BindingFlags]'Static, NonPublic'
+        It "Should search a large file in chunks only while the test hooks are set" {
+            $before = Get-ChunksStarted
+            $null = Select-String -Path $chunkedFile -Pattern 'needle'
+            Get-ChunksStarted | Should -Be $before
+
             Set-SplitHooks 1024 256 0
-            $chunkLength = $chunkedType.GetProperty('ChunkLength', $flags).GetValue($null)
-            $minLength = $chunkedType.GetProperty('MinLength', $flags).GetValue($null)
-            Set-SplitHooks 0 0 0
-            $chunkLength | Should -Be 256
-            $minLength | Should -Be 1024
-            (Get-Item $chunkedFile).Length | Should -BeGreaterThan 1024
-            $chunkedType.GetProperty('ChunkLength', $flags).GetValue($null) | Should -Be (16 -shl 20)
+            try {
+                $null = Select-String -Path $chunkedFile -Pattern 'needle'
+            }
+            finally {
+                Set-SplitHooks 0 0 0
+            }
+
+            (Get-ChunksStarted) - $before | Should -BeGreaterThan 10
         }
+
+        It "Should not split a large file that starts with a UTF-16 byte-order mark" {
+            $utf16File = Join-Path $TestDrive 'utf16.txt'
+            [System.IO.File]::WriteAllText($utf16File, ((1..200 | ForEach-Object { "line $_ needle" }) -join "`n"), [System.Text.UnicodeEncoding]::new($false, $true))
+            $onePass = Get-Description (Select-String -Path $utf16File -Pattern 'needle')
+            $before = Get-ChunksStarted
+            Set-SplitHooks 1024 256 0
+            try {
+                $split = Get-Description (Select-String -Path $utf16File -Pattern 'needle')
+            }
+            finally {
+                Set-SplitHooks 0 0 0
+            }
+
+            Get-ChunksStarted | Should -Be $before
+            ($split -join "`n") | Should -BeExactly ($onePass -join "`n")
+        }
+
         It "Should give the same results in chunks as in one pass: <name>" -TestCases @(
             @{ name = 'any case';         arguments = @{ Pattern = 'needle' } }
             @{ name = 'case-sensitive';   arguments = @{ Pattern = 'Needle'; CaseSensitive = $true } }
@@ -428,11 +590,112 @@ Describe "Select-String" -Tags "CI" {
 
             Set-SplitHooks 0 0 0
             $onePass = Get-Description (Select-String -Path $chunkedFile @arguments)
+            $before = Get-ChunksStarted
             Set-SplitHooks 1024 256 0
-            $chunked = Get-Description (Select-String -Path $chunkedFile @arguments)
-            Set-SplitHooks 0 0 0
+            try {
+                $chunked = Get-Description (Select-String -Path $chunkedFile @arguments)
+            }
+            finally {
+                Set-SplitHooks 0 0 0
+            }
 
+            # -List and -Quiet stop at the first match and read in one pass; everything else is split.
+            $expectSplit = -not ($arguments.List -or $arguments.Quiet)
+            ((Get-ChunksStarted) - $before -gt 0) | Should -Be $expectSplit
             $onePass | Should -Not -BeNullOrEmpty
+            ($chunked -join "`n") | Should -BeExactly ($onePass -join "`n")
+        }
+
+        It "Should read a large file in one pass with -List and -Quiet: <name>" -TestCases @(
+            @{ name = 'list';  arguments = @{ Pattern = '\d'; List = $true } }
+            @{ name = 'quiet'; arguments = @{ Pattern = '\d'; Quiet = $true } }
+        ) {
+            param ($arguments)
+
+            $onePass = Get-Description (Select-String -Path $chunkedFile @arguments)
+            $before = Get-ChunksStarted
+            Set-SplitHooks 1024 256 3
+            try {
+                $split = Get-Description (Select-String -Path $chunkedFile @arguments)
+            }
+            finally {
+                Set-SplitHooks 0 0 0
+            }
+
+            Get-ChunksStarted | Should -Be $before
+            @($split).Count | Should -Be 1
+            ($split -join "`n") | Should -BeExactly ($onePass -join "`n")
+        }
+
+        It "Should close a large file before writing its -List result" {
+            $copy = Join-Path $TestDrive 'chunked-delete.txt'
+            Copy-Item -Path $chunkedFile -Destination $copy
+            Set-SplitHooks 1024 256 0
+            try {
+                { Select-String -LiteralPath $copy -Pattern 'needle' -List | Remove-Item -ErrorAction Stop } | Should -Not -Throw
+            }
+            finally {
+                Set-SplitHooks 0 0 0
+            }
+
+            Test-Path $copy | Should -BeFalse
+        }
+
+        It "Should give the same results when large files hold too many matches together" {
+            $second = Join-Path $TestDrive 'chunked3.txt'
+            Copy-Item -Path $chunkedFile -Destination $second
+            $onePass = Get-Description (Select-String -LiteralPath $chunkedFile, $second -Pattern '\d')
+            $before = Get-ChunksStarted
+            Set-SplitHooks 1024 256 0
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('SelectStringMaxHeldMatchesPerRecord', 50)
+            try {
+                $split = Get-Description (Select-String -LiteralPath $chunkedFile, $second -Pattern '\d')
+            }
+            finally {
+                Set-SplitHooks 0 0 0
+                [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('SelectStringMaxHeldMatchesPerRecord', 0)
+            }
+
+            (Get-ChunksStarted) - $before | Should -BeGreaterThan 10
+            ($split -join "`n") | Should -BeExactly ($onePass -join "`n")
+        }
+
+        It "Should give the same results when a large file and small files share the match limit" {
+            $paths = [System.Collections.Generic.List[string]]::new()
+            foreach ($i in 1..3) {
+                $small = Join-Path $TestDrive "small$i.txt"
+                Set-Content -LiteralPath $small -Value (1..300 | ForEach-Object { "small $i line $_" })
+                $paths.Add($small)
+            }
+            $paths.Insert(1, $chunkedFile)
+            $onePass = Get-Description (Select-String -LiteralPath $paths -Pattern '\d')
+            $before = Get-ChunksStarted
+            Set-SplitHooks 1024 256 0
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('SelectStringMaxHeldMatchesPerRecord', 50)
+            try {
+                $split = Get-Description (Select-String -LiteralPath $paths -Pattern '\d')
+            }
+            finally {
+                Set-SplitHooks 0 0 0
+                [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('SelectStringMaxHeldMatchesPerRecord', 0)
+            }
+
+            (Get-ChunksStarted) - $before | Should -BeGreaterThan 10
+            ($split -join "`n") | Should -BeExactly ($onePass -join "`n")
+        }
+
+        It "Should give the same results for several large files named together" {
+            $second = Join-Path $TestDrive 'chunked2.txt'
+            Copy-Item -Path $chunkedFile -Destination $second
+            $onePass = Get-Description (Select-String -LiteralPath $chunkedFile, $second -Pattern 'needle')
+            Set-SplitHooks 1024 256 5
+            try {
+                $chunked = Get-Description (Select-String -LiteralPath $chunkedFile, $second -Pattern 'needle')
+            }
+            finally {
+                Set-SplitHooks 0 0 0
+            }
+
             ($chunked -join "`n") | Should -BeExactly ($onePass -join "`n")
         }
 
@@ -440,8 +703,12 @@ Describe "Select-String" -Tags "CI" {
             Set-SplitHooks 0 0 0
             $onePass = Get-Description (Select-String -Path $chunkedFile -Pattern '\d')
             Set-SplitHooks 1024 4096 3
-            $chunked = Get-Description (Select-String -Path $chunkedFile -Pattern '\d')
-            Set-SplitHooks 0 0 0
+            try {
+                $chunked = Get-Description (Select-String -Path $chunkedFile -Pattern '\d')
+            }
+            finally {
+                Set-SplitHooks 0 0 0
+            }
 
             $onePass.Count | Should -Be 2000
             ($chunked -join "`n") | Should -BeExactly ($onePass -join "`n")
