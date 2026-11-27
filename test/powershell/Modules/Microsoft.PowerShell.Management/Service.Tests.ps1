@@ -98,8 +98,9 @@ Describe "Unix Service cmdlets" -Tags "CI" {
         $managerShimBody = @'
 #!/bin/bash
 printf '%s\n' "$*" >> "$PS_SERVICE_SHIM_LOG"
-# a manager can be made to fail, like one that is installed but not running
-case "$(basename "$0")" in
+# a manager can be made to fail, like one that is installed but not running.
+# Only bash built-ins are used: PATH is restricted to the shims.
+case "${0##*/}" in
     "$PS_SERVICE_SHIM_FAIL_MANAGER") printf '%s\n' "${PS_SERVICE_SHIM_FAIL_MESSAGE:-not running}" >&2; exit 1 ;;
 esac
 case "$1" in
