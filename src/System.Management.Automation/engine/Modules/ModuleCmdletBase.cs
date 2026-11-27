@@ -2514,6 +2514,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     try
                     {
+                        iss.AppendFormatsOnImport = !BaseForce;
                         iss.Bind(Context, updateOnly: true, module: null, noClobber: false, local: false, setLocation: false);
                     }
                     catch (Exception e)

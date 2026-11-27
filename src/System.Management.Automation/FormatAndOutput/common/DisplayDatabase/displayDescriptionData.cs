@@ -44,6 +44,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// Cache for resource strings in format.ps1xml.
         /// </summary>
         internal DisplayResourceManagerCache displayResourceManagerCache = new DisplayResourceManagerCache();
+
+        internal TypeInfoDataBase CopyForAppend()
+        {
+            var copy = new TypeInfoDataBase
+            {
+                defaultSettingsSection = defaultSettingsSection.Copy()
+            };
+            // Retain loaded definitions and their provenance, but isolate containers and resource caches.
+            copy.typeGroupSection.typeGroupDefinitionList.AddRange(typeGroupSection.typeGroupDefinitionList);
+            copy.viewDefinitionsSection.viewDefinitionList.AddRange(viewDefinitionsSection.viewDefinitionList);
+            copy.formatControlDefinitionHolder.controlDefinitionList.AddRange(formatControlDefinitionHolder.controlDefinitionList);
+            return copy;
+        }
     }
 
     internal sealed class DatabaseLoadingInfo
@@ -123,6 +136,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal FormatErrorPolicy formatErrorPolicy = new FormatErrorPolicy();
         internal ShapeSelectionDirectives shapeSelectionDirectives = new ShapeSelectionDirectives();
         internal List<EnumerableExpansionDirective> enumerableExpansionDirectiveList = new List<EnumerableExpansionDirective>();
+
+        internal DefaultSettingsSection Copy()
+        {
+            var copy = (DefaultSettingsSection)MemberwiseClone();
+            copy.formatErrorPolicy = formatErrorPolicy.Copy();
+            copy.shapeSelectionDirectives = shapeSelectionDirectives.Copy();
+            copy.enumerableExpansionDirectiveList = new List<EnumerableExpansionDirective>(enumerableExpansionDirectiveList);
+            return copy;
+        }
     }
 
     internal sealed class FormatErrorPolicy
@@ -185,6 +207,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// when a format operation on a value fails.
         /// </summary>
         internal string formatErrorStringInFormattedOutput = "#FMTERR";
+
+        internal FormatErrorPolicy Copy() => (FormatErrorPolicy)MemberwiseClone();
     }
 
     internal sealed class ShapeSelectionDirectives
@@ -210,6 +234,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private int? _propertyCountForTable;
 
         internal List<FormatShapeSelectionOnType> formatShapeSelectionOnTypeList = new List<FormatShapeSelectionOnType>();
+
+        internal ShapeSelectionDirectives Copy()
+        {
+            var copy = (ShapeSelectionDirectives)MemberwiseClone();
+            copy.formatShapeSelectionOnTypeList = new List<FormatShapeSelectionOnType>(formatShapeSelectionOnTypeList);
+            return copy;
+        }
     }
 
     internal enum FormatShape { Table, List, Wide, Complex, Undefined }

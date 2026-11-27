@@ -1838,6 +1838,8 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         internal bool RefreshTypeAndFormatSetting = false;
 
+        internal bool AppendFormatsOnImport { get; set; }
+
         /// <summary>
         /// Specifies the authorization manager to be used for this session state instance.
         /// If no authorization manager is specified, then the default authorization manager
@@ -3709,7 +3711,12 @@ namespace System.Management.Automation.Runspaces
 
             if (entries.Count > 0)
             {
-                context.FormatDBManager.UpdateDataBase(entries, context.AuthorizationManager, context.EngineHostInterface, true);
+                context.FormatDBManager.UpdateDataBase(
+                    entries,
+                    context.AuthorizationManager,
+                    context.EngineHostInterface,
+                    true,
+                    append: update && AppendFormatsOnImport && !RefreshTypeAndFormatSetting);
 
                 var allErrors = new StringBuilder("\n");
                 bool hasErrors = false;
