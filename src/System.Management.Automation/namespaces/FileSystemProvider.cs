@@ -3857,15 +3857,17 @@ namespace Microsoft.PowerShell.Commands
         /// and paths without symbolic links are returned unchanged.
         /// </summary>
         /// <param name="path">The path to resolve.</param>
-        /// <param name="depth">
-        /// The current resolution depth, which stops cyclic symbolic link
-        /// chains.
+        /// <param name="linkDepth">
+        /// The number of symbolic links followed so far, which stops cyclic
+        /// symbolic link chains. Walking ordinary parent directories does not
+        /// consume the budget because it is bounded by the number of path
+        /// components.
         /// </param>
         /// <returns>The resolved path.</returns>
-        private static string ResolvePathThroughLinks(string path, int depth = 0)
+        private static string ResolvePathThroughLinks(string path, int linkDepth = 0)
         {
             // The depth limit stops cyclic symbolic link chains.
-            if (depth > 64)
+            if (linkDepth > 64)
             {
                 return path;
             }
@@ -3879,7 +3881,7 @@ namespace Microsoft.PowerShell.Commands
                 return path;
             }
 
-            string resolvedParent = ResolvePathThroughLinks(parent, depth + 1);
+            string resolvedParent = ResolvePathThroughLinks(parent, linkDepth);
             string current = Path.Combine(resolvedParent, Path.GetFileName(trimmedPath));
 
             FileSystemInfo info = Directory.Exists(current)
@@ -3901,8 +3903,9 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // The target path of the link can itself contain symbolic
-                // links, so it is resolved as well.
-                return ResolvePathThroughLinks(target, depth + 1);
+                // links, so it is resolved as well; following a symbolic link
+                // consumes the budget.
+                return ResolvePathThroughLinks(target, linkDepth + 1);
             }
             catch (IOException)
             {
