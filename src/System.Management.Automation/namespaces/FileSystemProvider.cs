@@ -3852,13 +3852,24 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Resolves the specified path through symbolic links: every existing
         /// component of the path that is a symbolic link is replaced by its
-        /// final target. Components that do not exist are preserved, and paths
-        /// without symbolic links are returned unchanged.
+        /// final target, and the target path itself is resolved through
+        /// symbolic links as well. Components that do not exist are preserved,
+        /// and paths without symbolic links are returned unchanged.
         /// </summary>
         /// <param name="path">The path to resolve.</param>
+        /// <param name="depth">
+        /// The current resolution depth, which stops cyclic symbolic link
+        /// chains.
+        /// </param>
         /// <returns>The resolved path.</returns>
-        private static string ResolvePathThroughLinks(string path)
+        private static string ResolvePathThroughLinks(string path, int depth = 0)
         {
+            // The depth limit stops cyclic symbolic link chains.
+            if (depth > 64)
+            {
+                return path;
+            }
+
             string trimmedPath = Path.TrimEndingDirectorySeparator(path);
             string parent = Path.GetDirectoryName(trimmedPath);
 
@@ -3868,7 +3879,7 @@ namespace Microsoft.PowerShell.Commands
                 return path;
             }
 
-            string resolvedParent = ResolvePathThroughLinks(parent);
+            string resolvedParent = ResolvePathThroughLinks(parent, depth + 1);
             string current = Path.Combine(resolvedParent, Path.GetFileName(trimmedPath));
 
             FileSystemInfo info = Directory.Exists(current)
@@ -3882,7 +3893,16 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                return info.ResolveLinkTarget(returnFinalTarget: true)?.FullName ?? current;
+                string target = info.ResolveLinkTarget(returnFinalTarget: true)?.FullName;
+
+                if (target is null)
+                {
+                    return current;
+                }
+
+                // The target path of the link can itself contain symbolic
+                // links, so it is resolved as well.
+                return ResolvePathThroughLinks(target, depth + 1);
             }
             catch (IOException)
             {

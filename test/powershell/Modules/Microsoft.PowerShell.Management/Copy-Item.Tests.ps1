@@ -235,6 +235,37 @@ Describe "Copy-Item with -PreservePathFrom" -Tags "CI" {
         }
     }
 
+    It "Rejects a destination that resolves inside the source through nested symbolic links" {
+        # mid points to the source and lnk points to mid/Sub1, so the target
+        # path of lnk itself contains a symbolic link; the destination only
+        # resolves below the source when the link target is resolved too.
+        $midPath = Join-Path (Split-Path $sourceDirectory -Parent) "PreservePathFromMid"
+        $linkPath = Join-Path (Split-Path $sourceDirectory -Parent) "PreservePathFromLink2"
+        $mid = New-Item -ItemType SymbolicLink -Path $midPath -Target $sourceDirectory -ErrorAction SilentlyContinue
+
+        if ($null -eq $mid) {
+            # Creating a symbolic link requires elevated privileges on Windows.
+            Write-Warning "Skipping the test because a symbolic link could not be created."
+            return
+        }
+
+        New-Item -ItemType SymbolicLink -Path $linkPath -Target (Join-Path $midPath "Sub1") | Out-Null
+
+        try {
+            $errorRecord = $null
+            Copy-Item $sourceDirectory `
+                -PreservePathFrom (Split-Path $sourceDirectory -Parent) `
+                -Destination $linkPath -Recurse -ErrorVariable errorRecord -ErrorAction SilentlyContinue
+
+            $errorRecord.FullyQualifiedErrorId | Should -Be "CopyItemTargetInsideSource,Microsoft.PowerShell.Commands.CopyItemCommand"
+            Join-Path $sourceDirectory "Sub1/PreservePathFromSource" | Should -Not -Exist
+            (Get-ChildItem $sourceDirectory -Recurse -File).Count | Should -Be 4
+        }
+        finally {
+            Remove-Item $midPath, $linkPath -Force -ErrorAction SilentlyContinue
+        }
+    }
+
     It "Copies every wildcard match when the destination is created by the first item" {
         Copy-Item (Join-Path $sourceDirectory "Sub*") `
             -PreservePathFrom $sourceDirectory `
