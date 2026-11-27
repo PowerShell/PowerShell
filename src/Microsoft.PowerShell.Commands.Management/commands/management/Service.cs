@@ -489,7 +489,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (WildcardPattern.ContainsWildcardCharacters(pattern))
                 {
-                    WildcardPattern wildcard = WildcardPattern.Get(pattern, WildcardOptions.IgnoreCase);
+                    WildcardPattern wildcard = WildcardPattern.Get(NormalizeServiceNamePattern(pattern), WildcardOptions.IgnoreCase);
                     foreach (ServiceController service in AllServices)
                     {
                         if (!wildcard.IsMatch(service.ServiceName))
@@ -541,6 +541,12 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewInvalidOperationException();
             }
 
+#if UNIX
+            // Installed services that were never loaded are listed without a description.
+            // Look their descriptions up so that they can be found by display name as well.
+            UnixServiceController.LoadMissingDescriptions(AllServices, ServiceInvocationToken);
+#endif
+
             foreach (string pattern in DisplayName)
             {
                 WildcardPattern wildcard =
@@ -587,12 +593,12 @@ namespace Microsoft.PowerShell.Commands
 #if UNIX
             // Create invocation-local controllers for the input objects: they carry the
             // producer run's owner token, so refresh and mutation must run under the
-            // consuming run's token and stay cancellable by it. Refresh before filtering
-            // so the query observes the current manager state.
+            // consuming run's token and stay cancellable by it. Their state is brought up
+            // to date from the cmdlet's enumeration, which is taken once however many
+            // objects are piped, instead of once per object.
             foreach (ServiceController service in InputObject)
             {
-                UnixServiceController local = ((UnixServiceController)service).CreateInvocationLocal(ServiceInvocationToken);
-                local.Refresh();
+                UnixServiceController local = ((UnixServiceController)service).CreateInvocationLocal(ServiceInvocationToken, AllServices);
                 IncludeExcludeAdd(matchingServices, local, false);
             }
 #else
@@ -653,14 +659,34 @@ namespace Microsoft.PowerShell.Commands
             string serviceID = (selectionMode == SelectionMode.DisplayName)
                                 ? service.DisplayName
                                 : service.ServiceName;
+            // Patterns for names get the same treatment as the names themselves.
+            bool byDisplayName = selectionMode == SelectionMode.DisplayName;
             foreach (string pattern in matchList)
             {
-                WildcardPattern wildcard = WildcardPattern.Get(pattern, WildcardOptions.IgnoreCase);
+                WildcardPattern wildcard = WildcardPattern.Get(
+                    byDisplayName ? pattern : NormalizeServiceNamePattern(pattern),
+                    WildcardOptions.IgnoreCase);
                 if (wildcard.IsMatch(serviceID))
                     return true;
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Adapts a service name pattern to the way the platform reports service names.
+        /// </summary>
+        /// <param name="pattern">The pattern given for a service name.</param>
+        /// <returns>The pattern to match against the reported names.</returns>
+        private static string NormalizeServiceNamePattern(string pattern)
+        {
+#if UNIX
+            // systemd unit suffixes are left off service names, so they are left off
+            // patterns too: 'ssh*.service' matches the same services as 'ssh*'.
+            return UnixServiceController.RemoveUnitSuffixFromPattern(pattern);
+#else
+            return pattern;
+#endif
         }
         #endregion Internal
 
@@ -1573,6 +1599,15 @@ namespace Microsoft.PowerShell.Commands
 
                 if (DoStartService(serviceController))
                 {
+#if UNIX
+                    // Report the state the manager sees rather than the one assumed after
+                    // the command: a oneshot unit, for example, can have completed and be
+                    // inactive again already.
+                    if (PassThru)
+                    {
+                        serviceController.Refresh();
+                    }
+#endif
                     if (PassThru)
                         WriteObject(serviceController);
                 }
@@ -1722,7 +1757,12 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 if (PassThru)
+                {
+                    // Report the state the manager sees rather than the one assumed after
+                    // the command.
+                    serviceController.Refresh();
                     WriteObject(serviceController);
+                }
             }
 #else
             foreach (ServiceController serviceController in MatchingServices())

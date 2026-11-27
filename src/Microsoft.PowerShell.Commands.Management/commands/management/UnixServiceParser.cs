@@ -376,6 +376,125 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Creates a service from the output of 'systemctl show &lt;unit&gt; --property=...'
+        /// for a single unit.
+        /// </summary>
+        /// <remarks>
+        /// The properties are requested as 'key=value' pairs and looked up by key, because
+        /// systemctl doesn't preserve the order of the requested properties.
+        /// </remarks>
+        /// <param name="output">The standard output of the command.</param>
+        /// <returns>The service, or null when the unit isn't a service unit or isn't known.</returns>
+        internal static UnixServiceController? CreateFromSystemdUnitProperties(string output)
+        {
+            Dictionary<string, string> properties = ParseSystemdUnitProperties(output);
+            if (!properties.TryGetValue("LoadState", out string? loadState)
+                || string.Equals(loadState, "not-found", StringComparison.OrdinalIgnoreCase))
+            {
+                return null;
+            }
+
+            if (!properties.TryGetValue("Id", out string? id)
+                || !id.EndsWith(ServiceSuffix, StringComparison.Ordinal))
+            {
+                return null;
+            }
+
+            properties.TryGetValue("ActiveState", out string? activeState);
+            properties.TryGetValue("SubState", out string? subState);
+            properties.TryGetValue("Description", out string? description);
+            properties.TryGetValue("UnitFileState", out string? unitFileState);
+            if (string.IsNullOrEmpty(description))
+            {
+                description = null;
+            }
+
+            string name = RemoveServiceSuffix(id);
+            return new UnixServiceController
+            {
+                Name = name,
+                DisplayName = description ?? name,
+                Description = description,
+                Status = MapSystemdStatus(activeState ?? string.Empty),
+                SubState = subState,
+                UnitFileState = string.IsNullOrEmpty(unitFileState) ? null : unitFileState,
+                StartType = MapSystemdUnitFileState(unitFileState ?? string.Empty),
+                ManagerKind = ServiceManagerKind.Systemd,
+            };
+        }
+
+        /// <summary>
+        /// Parses the output of 'systemctl show &lt;unit...&gt; --property=Id,Description' for
+        /// one or more units into a map from service name to description.
+        /// </summary>
+        /// <param name="output">The standard output of the command.</param>
+        /// <returns>The description of each unit that has one.</returns>
+        internal static Dictionary<string, string> ParseSystemdUnitDescriptions(string output)
+        {
+            var descriptions = new Dictionary<string, string>(StringComparer.Ordinal);
+
+            // The units are separated by blank lines.
+            string name = string.Empty;
+            string description = string.Empty;
+            foreach (string rawLine in output.Split('\n'))
+            {
+                string line = rawLine.TrimEnd('\r');
+                if (line.Length == 0)
+                {
+                    AddDescription(descriptions, name, description);
+                    name = string.Empty;
+                    description = string.Empty;
+                    continue;
+                }
+
+                int separator = line.IndexOf('=');
+                if (separator < 0)
+                {
+                    continue;
+                }
+
+                string key = line[..separator];
+                string value = line[(separator + 1)..];
+                if (key == "Id" && value.EndsWith(ServiceSuffix, StringComparison.Ordinal))
+                {
+                    name = RemoveServiceSuffix(value);
+                }
+                else if (key == "Description")
+                {
+                    description = value;
+                }
+            }
+
+            AddDescription(descriptions, name, description);
+            return descriptions;
+        }
+
+        private static void AddDescription(Dictionary<string, string> descriptions, string name, string description)
+        {
+            if (name.Length > 0 && description.Length > 0)
+            {
+                descriptions[name] = description;
+            }
+        }
+
+        private static Dictionary<string, string> ParseSystemdUnitProperties(string output)
+        {
+            var properties = new Dictionary<string, string>(StringComparer.Ordinal);
+            foreach (string rawLine in output.Split('\n'))
+            {
+                int separator = rawLine.IndexOf('=');
+                if (separator <= 0)
+                {
+                    continue;
+                }
+
+                properties[rawLine[..separator]] = rawLine[(separator + 1)..].TrimEnd('\r');
+            }
+
+            return properties;
+        }
+
+        /// <summary>
         /// Parses a single line of 'launchctl list' output. Returns null for header
         /// lines and lines that do not describe a service label.
         /// </summary>
@@ -431,7 +550,8 @@ namespace Microsoft.PowerShell.Commands
                 return null;
             }
 
-            // Format: '[ + ] name [ (description) ]'. '+' marks a running service.
+            // Format: '[ + ] name [ (description) ]'. '+' marks a running service, '-' a
+            // stopped one, '?' that the script has no 'status' action at all.
             string state = line[1..closeIndex].Trim();
             string rest = line[(closeIndex + 1)..].Trim();
             if (rest.Length == 0)
@@ -462,6 +582,8 @@ namespace Microsoft.PowerShell.Commands
                 DisplayName = description ?? name,
                 Description = description,
                 Status = state == "+" ? ServiceControllerStatus.Running : ServiceControllerStatus.Stopped,
+                // '?' means the status is unknown, not that the service is stopped.
+                StatusKnown = state != "?",
                 StartType = ServiceStartMode.Manual,
             };
         }

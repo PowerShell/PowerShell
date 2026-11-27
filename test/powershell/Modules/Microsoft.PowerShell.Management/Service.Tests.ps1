@@ -2,11 +2,12 @@
 # Licensed under the MIT License.
 
 # The suite runs under the Pester 4.x restored by the CI harness as well as Pester 5.
-# Both provide BeforeAll, AfterAll and Set-ItResult; 'it:skip' is the exception: it
-# must be set before the tests are discovered, so it is set at load time for Windows.
-$global:serviceCmdletSavedParameterValues = $PSDefaultParameterValues.Clone()
+# Both provide BeforeAll, AfterAll and Set-ItResult.
+$PSDefaultParameterValues = $PSDefaultParameterValues.Clone()
 if ($IsWindows) {
-    # The service cmdlets are only compiled on Unix
+    # The service cmdlets are only compiled on Unix. The cloned dictionary keeps the
+    # setting local to this file: it is set during discovery and would otherwise be
+    # inherited by the files that run later.
     $PSDefaultParameterValues["it:skip"] = $true
 }
 
@@ -19,9 +20,13 @@ function script:Reset-ServiceShim {
         [string]$UnitFilesStdout = "",
         [string]$DependencyStdout = "",
         [string]$ShowStdout = "",
+        [string]$DescriptionStdout = "",
         [string]$RcListStdout = "",
         [string]$Stderr = "",
-        [int]$ExitCode = 0
+        [int]$ExitCode = 0,
+        [string]$Domain = "",
+        [string]$FailManager = "",
+        [string]$FailMessage = "The manager is not running."
     )
 
     if (-not $PSCmdlet.ShouldProcess("service manager shim invocation log and environment", "Reset shim state")) {
@@ -32,10 +37,16 @@ function script:Reset-ServiceShim {
     $env:PS_SERVICE_SHIM_UF_STDOUT = $UnitFilesStdout
     $env:PS_SERVICE_SHIM_DEP_STDOUT = $DependencyStdout
     $env:PS_SERVICE_SHIM_SHOW_STDOUT = $ShowStdout
+    $env:PS_SERVICE_SHIM_DESC_STDOUT = $DescriptionStdout
     $env:PS_SERVICE_SHIM_RC_LIST_STDOUT = $RcListStdout
     $env:PS_SERVICE_SHIM_STDERR = $Stderr
     $env:PS_SERVICE_SHIM_EXITCODE = "$ExitCode"
     $env:PS_SERVICE_SHIM_ENUM_FAILS = ""
+    $env:PS_SERVICE_SHIM_FAIL_MANAGER = $FailManager
+    $env:PS_SERVICE_SHIM_FAIL_MESSAGE = $FailMessage
+
+    # the launchd domain of the caller: system daemons for root, the GUI session otherwise
+    $env:PS_SERVICE_SHIM_DOMAIN = if ($Domain) { $Domain } elseif ($script:isRoot) { "System" } else { "Gui" }
     if (Test-Path $script:logFile) {
         Remove-Item $script:logFile -Force
     }
@@ -62,7 +73,6 @@ function script:Test-SkipAsRoot {
     return $script:isRoot
 }
 
-
 Describe "Unix Service cmdlets" -Tags "CI" {
     BeforeAll {
         if ($IsWindows) {
@@ -70,6 +80,7 @@ Describe "Unix Service cmdlets" -Tags "CI" {
         }
 
         $script:isRoot = ([int](& id -u)) -eq 0
+        $script:uid = "$(& id -u)"
         $script:shimDir = Join-Path ([System.IO.Path]::GetTempPath()) "pwsh-service-shims-$([guid]::NewGuid().ToString('N'))"
         $script:utilityDir = Join-Path $script:shimDir "util"
         $script:emptyDir = Join-Path $script:shimDir "empty"
@@ -87,9 +98,20 @@ Describe "Unix Service cmdlets" -Tags "CI" {
         $managerShimBody = @'
 #!/bin/bash
 printf '%s\n' "$*" >> "$PS_SERVICE_SHIM_LOG"
+# a manager can be made to fail, like one that is installed but not running
+case "$(basename "$0")" in
+    "$PS_SERVICE_SHIM_FAIL_MANAGER") printf '%s\n' "${PS_SERVICE_SHIM_FAIL_MESSAGE:-not running}" >&2; exit 1 ;;
+esac
 case "$1" in
     list-unit-files) stdout="$PS_SERVICE_SHIM_UF_STDOUT"; enum=1 ;;
-    show) case "$*" in *LoadState*) stdout="$PS_SERVICE_SHIM_SHOW_STDOUT" ;; *) stdout="$PS_SERVICE_SHIM_DEP_STDOUT" ;; esac; enum=1 ;;
+    show)
+        case "$*" in
+            *LoadState*) stdout="$PS_SERVICE_SHIM_SHOW_STDOUT" ;;
+            *Description*) stdout="$PS_SERVICE_SHIM_DESC_STDOUT" ;;
+            *) stdout="$PS_SERVICE_SHIM_DEP_STDOUT" ;;
+        esac
+        enum=1 ;;
+    managername) printf '%s\n' "${PS_SERVICE_SHIM_DOMAIN:-System}"; exit 0 ;;
     --list) stdout="$PS_SERVICE_SHIM_RC_LIST_STDOUT"; enum=1 ;;
     list-units|list|--all|--status-all) stdout="$PS_SERVICE_SHIM_STDOUT"; enum=1 ;;
     *) stdout="$PS_SERVICE_SHIM_STDOUT" ;;
@@ -144,15 +166,15 @@ exec "${@:2}"
     }
 
     AfterAll {
-        $global:PSDefaultParameterValues = $global:serviceCmdletSavedParameterValues
-        Remove-Variable serviceCmdletSavedParameterValues -Scope Global -ErrorAction SilentlyContinue
         if ($script:originalPath) {
             $env:PATH = $script:originalPath
         }
 
         foreach ($variable in "PS_SERVICE_SHIM_LOG", "PS_SERVICE_SHIM_STDOUT", "PS_SERVICE_SHIM_UF_STDOUT",
-            "PS_SERVICE_SHIM_DEP_STDOUT", "PS_SERVICE_SHIM_SHOW_STDOUT", "PS_SERVICE_SHIM_RC_LIST_STDOUT",
-            "PS_SERVICE_SHIM_STDERR", "PS_SERVICE_SHIM_EXITCODE", "PS_SERVICE_SHIM_ENUM_FAILS") {
+            "PS_SERVICE_SHIM_DEP_STDOUT", "PS_SERVICE_SHIM_SHOW_STDOUT", "PS_SERVICE_SHIM_DESC_STDOUT",
+            "PS_SERVICE_SHIM_RC_LIST_STDOUT", "PS_SERVICE_SHIM_STDERR", "PS_SERVICE_SHIM_EXITCODE",
+            "PS_SERVICE_SHIM_ENUM_FAILS", "PS_SERVICE_SHIM_FAIL_MANAGER", "PS_SERVICE_SHIM_FAIL_MESSAGE",
+            "PS_SERVICE_SHIM_DOMAIN") {
             Remove-Item "Env:\$variable" -ErrorAction SilentlyContinue
         }
 
@@ -228,13 +250,30 @@ exec "${@:2}"
         It "Get-Service resolves an alias unit name to the unit it refers to" {
             Reset-ServiceShim -Stdout "ssh.service loaded active running OpenSSH server daemon" `
                 -UnitFilesStdout "ssh.service enabled enabled`nsshd.service alias enabled" `
-                -ShowStdout "loaded`nssh.service"
+                -ShowStdout "Id=ssh.service`nLoadState=loaded`nActiveState=active`nSubState=running`nDescription=OpenSSH server daemon`nUnitFileState=enabled"
 
             # 'sshd.service' is an alias of 'ssh.service': looking it up yields the
-            # target's live state instead of a separate stopped service
+            # target's live state instead of a separate stopped service. The properties
+            # are read by key, in whatever order the manager reports them.
             $alias = Get-Service -Name "sshd"
             $alias.Name | Should -Be "ssh"
             $alias.Status.ToString() | Should -Be "Running"
+        }
+
+        It "Get-Service finds a template instance that was never loaded" {
+            Reset-ServiceShim -UnitFilesStdout "worker@.service enabled enabled" `
+                -ShowStdout "LoadState=loaded`nId=worker@one.service`nActiveState=inactive`nSubState=dead`nDescription=Worker`nUnitFileState="
+
+            # template units aren't listed as services, and neither are their not-yet-loaded
+            # instances; the manager is asked about the instance itself
+            $service = Get-Service -Name "worker@one"
+            $service.Name | Should -Be "worker@one"
+            $service.Status.ToString() | Should -Be "Stopped"
+            $service.DisplayName | Should -Be "Worker"
+
+            # so it can be started on the first try
+            Start-Service -Name "worker@one"
+            (Get-InvocationLog)[-1] | Should -Be "start worker@one.service"
         }
 
         It "Get-Service supports wildcard patterns in -Name" {
@@ -247,11 +286,32 @@ exec "${@:2}"
             (Get-Service -Name "sshd.service").Name | Should -Be "sshd"
         }
 
+        It "Get-Service applies the unit suffix to wildcard patterns" {
+            Reset-ServiceShim -Stdout "sshd.service loaded active running OpenSSH server daemon`nsyslog.service loaded inactive dead Syslog"
+
+            # service names are reported without their unit suffix, so patterns are
+            # matched without it as well
+            (Get-Service -Name "ssh*.service").Name | Should -Be "sshd"
+            @(Get-Service -Name "*.service").Name -join "," | Should -Be "sshd,syslog"
+            (Get-Service -Include "ssh*.service").Name | Should -Be "sshd"
+            @(Get-Service -Exclude "*.service").Count | Should -Be 0
+        }
+
         It "Get-Service supports -DisplayName with wildcards" {
             Reset-ServiceShim -Stdout "sshd.service loaded active running OpenSSH server daemon"
 
             $services = Get-Service -DisplayName "OpenSSH*"
             $services.Name | Should -Be "sshd"
+        }
+
+        It "Get-Service -DisplayName finds installed services that were never loaded" {
+            Reset-ServiceShim -Stdout "sshd.service loaded active running OpenSSH server daemon" `
+                -UnitFilesStdout "sshd.service enabled enabled`ncron.service enabled enabled" `
+                -DescriptionStdout "Id=sshd.service`nDescription=`n`nId=cron.service`nDescription=Time scheduler"
+
+            # services that are only known from their unit file are listed without a
+            # description; it is looked up when matching display names
+            (Get-Service -DisplayName "Time*").Name | Should -Be "cron"
         }
 
         It "Get-Service supports -Include and -Exclude" {
@@ -294,13 +354,26 @@ exec "${@:2}"
         }
 
         It "Start-Service calls 'systemctl start <unit>' and supports -PassThru" {
-            Reset-ServiceShim -Stdout "sshd.service loaded active running OpenSSH server daemon"
+            Reset-ServiceShim -Stdout "sshd.service loaded active running OpenSSH server daemon" `
+                -ShowStdout "LoadState=loaded`nId=sshd.service`nActiveState=active`nSubState=running`nDescription=OpenSSH server daemon`nUnitFileState=enabled"
 
             $service = Start-Service -Name "sshd" -PassThru
             $service.Name | Should -Be "sshd"
             $service.Status.ToString() | Should -Be "Running"
 
-            (Get-InvocationLog)[-1] | Should -Match "start sshd\.service"
+            # the object written for -PassThru reflects a query of the manager
+            $log = Get-InvocationLog
+            @($log | Where-Object { $_ -match "^(-n .+systemctl )?start sshd\.service$" }).Count | Should -Be 1
+            $log[-1] | Should -Be "show sshd.service --property=LoadState,Id,ActiveState,SubState,Description,UnitFileState --no-pager"
+        }
+
+        It "Start-Service -PassThru reports the state the manager reports" {
+            Reset-ServiceShim -Stdout "sshd.service loaded active running OpenSSH server daemon" `
+                -ShowStdout "LoadState=loaded`nId=sshd.service`nActiveState=inactive`nSubState=dead`nDescription=OpenSSH server daemon`nUnitFileState=enabled"
+
+            # a oneshot unit can complete successfully and be inactive again by the time
+            # the command returns; the output object must not claim that it is running
+            (Start-Service -Name "sshd" -PassThru).Status.ToString() | Should -Be "Stopped"
         }
 
         It "Restart-Service calls the manager's native restart operation" {
@@ -316,7 +389,8 @@ exec "${@:2}"
         }
 
         It "Restart-Service supports -PassThru and reports manager failures" {
-            Reset-ServiceShim -Stdout "sshd.service loaded active running OpenSSH server daemon"
+            Reset-ServiceShim -Stdout "sshd.service loaded active running OpenSSH server daemon" `
+                -ShowStdout "LoadState=loaded`nId=sshd.service`nActiveState=active`nSubState=running`nDescription=OpenSSH server daemon`nUnitFileState=enabled"
 
             $service = Restart-Service -Name "sshd" -PassThru
             $service.Name | Should -Be "sshd"
@@ -347,6 +421,16 @@ exec "${@:2}"
             # variable first so that Where-Object counts individual invocations
             $log = Get-InvocationLog
             @($log | Where-Object { $_ -match "^stop sshd\.service$" }).Count | Should -Be 1
+        }
+
+        It "a pipeline over many services enumerates the catalog once for all of them" {
+            Reset-ServiceShim -Stdout "a.service loaded active running A`nb.service loaded active running B`nc.service loaded inactive dead C"
+
+            # one enumeration for Get-Service and one for Stop-Service, however many
+            # services are piped: not one per service
+            Get-Service | Stop-Service -WhatIf
+            $log = Get-InvocationLog
+            @($log | Where-Object { $_ -match "^list-units " }).Count | Should -Be 2
         }
 
         It "Get-Service -InputObject observes the current state of a saved service object" {
@@ -459,6 +543,31 @@ exec "${@:2}"
             $dependents = @(Get-Service -Name "sshd" -DependentServices)
             $dependents.Count | Should -Be 0
         }
+
+        It "dependency names are matched case-sensitively" {
+            Reset-ServiceShim -Stdout "sshd.service loaded active running OpenSSH server daemon`nFOO.service loaded active running Upper foo" `
+                -DependencyStdout "foo.service"
+
+            # systemd unit names are case-sensitive: a missing 'foo.service' isn't the
+            # distinct, existing 'FOO.service'
+            $dependents = @(Get-Service -Name "sshd" -DependentServices)
+            $dependents.Count | Should -Be 0
+        }
+
+        It "dependency lookups are done once per service object" {
+            Reset-ServiceShim -Stdout "sshd.service loaded active running OpenSSH server daemon`nnetwork.service loaded active running Network" `
+                -DependencyStdout "network.service"
+
+            $service = Get-Service -Name "sshd"
+            $null = $service.ServicesDependedOn
+            $null = $service.RequiredServices
+            $null = $service.ServicesDependedOn
+
+            # RequiredServices is the same lookup as ServicesDependedOn, and a repeated
+            # read uses the earlier result
+            $log = Get-InvocationLog
+            @($log | Where-Object { $_ -match "--property=Wants,Requires" }).Count | Should -Be 1
+        }
     }
 
     Context "fallback service managers" {
@@ -481,33 +590,61 @@ exec "${@:2}"
                 Stop-Service -Name "com.example.running"
                 Restart-Service -Name "com.example.running"
 
-                # mutating operations use the launchctl domain of the current user
-                # (system for root, gui/<uid> otherwise) and are sudo-wrapped when
-                # not running as root.
+                # mutating operations use the launchd domain of the caller (system for
+                # root, the GUI session otherwise) and are sudo-wrapped only when they
+                # target the system domain.
                 $log = Get-InvocationLog
                 $ops = @($log | Where-Object { $_ -match "com\.example\.running" })
-                if ($script:isRoot) {
-                    $ops.Count | Should -Be 3
-                    $ops[0] | Should -Be "kickstart system/com.example.running"
-                    $ops[1] | Should -Be "kill SIGTERM system/com.example.running"
-                    $ops[2] | Should -Be "kickstart -k system/com.example.running"
-                } else {
-                    # the sudo shim logs its own invocation, then the exec'd shim logs
-                    # the payload, so the lines alternate
-                    $ops.Count | Should -Be 6
-                    $ops[0] | Should -Match '^-n .+launchctl kickstart gui/\d+/com\.example\.running$'
-                    $ops[1] | Should -Match '^kickstart gui/\d+/com\.example\.running$'
-                    $ops[2] | Should -Match '^-n .+launchctl kill SIGTERM gui/\d+/com\.example\.running$'
-                    $ops[3] | Should -Match '^kill SIGTERM gui/\d+/com\.example\.running$'
-                    $ops[4] | Should -Match '^-n .+launchctl kickstart -k gui/\d+/com\.example\.running$'
-                    $ops[5] | Should -Match '^kickstart -k gui/\d+/com\.example\.running$'
-                }
+                $domain = if ($script:isRoot) { "system" } else { "gui/$script:uid" }
+                $ops.Count | Should -Be 3
+                $ops[0] | Should -Be "kickstart $domain/com.example.running"
+                $ops[1] | Should -Be "kill SIGTERM $domain/com.example.running"
+                $ops[2] | Should -Be "kickstart -k $domain/com.example.running"
 
                 # a loaded job without a running process is already stopped: stopping it
                 # neither fails ('No such process') nor invokes the manager
                 Stop-Service -Name "com.example.stopped" -ErrorAction Stop
                 $log = Get-InvocationLog
                 @($log | Where-Object { $_ -match "com\.example\.stopped" }).Count | Should -Be 0
+            } finally {
+                Move-Item "$systemctlShim.bak" $systemctlShim
+                $env:PATH = $script:testPath
+            }
+        }
+
+        It "targets the launchd domain that launchctl reports for the caller" {
+            $systemctlShim = Join-Path $script:shimDir "systemctl"
+            Move-Item $systemctlShim "$systemctlShim.bak"
+            $env:PATH = $script:shimDir
+            try {
+                Reset-ServiceShim -Stdout "PID`tStatus`tLabel`n123`t0`tcom.example.running" -Domain "User"
+
+                Start-Service -Name "com.example.running"
+
+                # an SSH session, for example, runs in the per-user domain rather than in
+                # the GUI domain that the UID alone would suggest
+                (Get-InvocationLog)[-1] | Should -Be "kickstart user/$script:uid/com.example.running"
+            } finally {
+                Move-Item "$systemctlShim.bak" $systemctlShim
+                $env:PATH = $script:testPath
+            }
+        }
+
+        It "wraps launchd operations in sudo only for the system domain" {
+            if (Test-SkipAsRoot -Because "sudo is not used when running as root") { return }
+
+            $systemctlShim = Join-Path $script:shimDir "systemctl"
+            Move-Item $systemctlShim "$systemctlShim.bak"
+            $env:PATH = $script:shimDir
+            try {
+                Reset-ServiceShim -Stdout "PID`tStatus`tLabel`n123`t0`tcom.example.running" -Domain "System"
+
+                Start-Service -Name "com.example.running"
+                Stop-Service -Name "com.example.running"
+
+                $log = Get-InvocationLog
+                @($log | Where-Object { $_ -match '^-n .+launchctl kickstart system/com\.example\.running$' }).Count | Should -Be 1
+                @($log | Where-Object { $_ -match '^-n .+launchctl kill SIGTERM system/com\.example\.running$' }).Count | Should -Be 1
             } finally {
                 Move-Item "$systemctlShim.bak" $systemctlShim
                 $env:PATH = $script:testPath
@@ -612,6 +749,54 @@ exec "${@:2}"
             }
         }
 
+        It "stops a sysvinit service whose status is unknown" {
+            $systemctlShim = Join-Path $script:shimDir "systemctl"
+            $launchctlShim = Join-Path $script:shimDir "launchctl"
+            $rcServiceShim = Join-Path $script:shimDir "rc-service"
+            Move-Item $systemctlShim "$systemctlShim.bak"
+            Move-Item $launchctlShim "$launchctlShim.bak"
+            Move-Item $rcServiceShim "$rcServiceShim.bak"
+            $env:PATH = $script:shimDir
+            try {
+                # '[ ? ]' means that the script has no 'status' action: the service may
+                # well be running, so it must still be stopped
+                Reset-ServiceShim -Stderr "[ ? ]  apparmor`n[ - ]  cron"
+
+                (Get-Service | Where-Object { $_.Name -eq "apparmor" }).Status.ToString() | Should -Be "Stopped"
+
+                Stop-Service -Name "apparmor" -ErrorAction Stop
+                Stop-Service -Name "cron" -ErrorAction Stop
+
+                $log = Get-InvocationLog
+                @($log | Where-Object { $_ -match "^(-n .+service )?apparmor stop$" }).Count | Should -Be 1
+
+                # a service that is known to be stopped isn't stopped again
+                @($log | Where-Object { $_ -match "cron stop$" }).Count | Should -Be 0
+            } finally {
+                Move-Item "$systemctlShim.bak" $systemctlShim
+                Move-Item "$launchctlShim.bak" $launchctlShim
+                Move-Item "$rcServiceShim.bak" $rcServiceShim
+                $env:PATH = $script:testPath
+            }
+        }
+
+        It "uses the next service manager when systemd is installed but not running" {
+            Reset-ServiceShim -Stdout "PID`tStatus`tLabel`n123`t0`tcom.example.running" -FailManager "systemctl" `
+                -FailMessage "System has not been booted with systemd (init system). Can't operate."
+
+            # 'systemctl' is present on systems that don't run systemd, such as some WSL
+            # distributions and containers; enumeration continues with the next manager
+            $services = Get-Service
+            ($services | Where-Object { $_.Name -eq "com.example.running" }).Status.ToString() | Should -Be "Running"
+            $log = Get-InvocationLog
+            $log[0] | Should -Be "list-units --type=service --all --plain --no-legend --no-pager"
+            $log[1] | Should -Be "list"
+
+            # operations use the manager that answered, not the one that is preferred
+            Stop-Service -Name "com.example.running" -ErrorAction Stop
+            (Get-InvocationLog)[-1] | Should -Be "kill SIGTERM system/com.example.running"
+        }
+
         It "throws a terminating error when no service manager is found" {
             $savedPath = $env:PATH
             try {
@@ -657,7 +842,7 @@ exec "${@:2}"
         }
     }
 
-    Context "cancellation" {
+    Context "cancellation and output draining" {
         It "cancels a blocking service manager command when the pipeline is stopped" {
             $dir = Join-Path $script:shimDir "blocking"
             New-Item -ItemType Directory -Path $dir -Force | Out-Null
@@ -678,6 +863,7 @@ esac
             # available; a full restriction would fail the command before it blocks
             $env:PATH = "$dir$([System.IO.Path]::PathSeparator)$savedPath"
             $ps = $null
+            $completed = $false
             try {
                 $ps = [PowerShell]::Create()
                 $null = $ps.AddScript('Stop-Service -Name blocking -WarningAction SilentlyContinue -ErrorAction SilentlyContinue')
@@ -692,7 +878,59 @@ esac
                 $ps.InvocationStateInfo.State | Should -BeIn @("Completed", "Stopped")
             } finally {
                 if ($ps) {
-                    $ps.Stop()
+                    if ($completed) {
+                        $ps.Stop()
+                    }
+
+                    $ps.Dispose()
+                }
+
+                $env:PATH = $savedPath
+                Remove-Item $dir -Recurse -Force -ErrorAction SilentlyContinue
+            }
+        }
+
+        It "does not wait for a background child that keeps the manager's pipes open" {
+            $dir = Join-Path $script:shimDir "pipes"
+            New-Item -ItemType Directory -Path $dir -Force | Out-Null
+            $pipesBody = @'
+#!/bin/bash
+case "$1" in
+    list-unit-files|show) exit 0 ;;
+    list-units)
+        printf 'inherited.service loaded active running Inherited\n'
+        # a daemon started in the background inherits the output pipes of the script
+        sleep 60 &
+        exit 0 ;;
+    *) exit 0 ;;
+esac
+'@
+            $shimPath = Join-Path $dir "systemctl"
+            Set-Content -Path $shimPath -Value ($pipesBody -replace "`r", "")
+            $null = & chmod +x $shimPath
+            $savedPath = $env:PATH
+            $env:PATH = "$dir$([System.IO.Path]::PathSeparator)$savedPath"
+            $ps = $null
+            $completed = $false
+            try {
+                $ps = [PowerShell]::Create()
+                $null = $ps.AddScript('Get-Service')
+                $async = $ps.BeginInvoke()
+                # the manager itself exits right away; the cmdlet must not wait for the
+                # child that inherited its pipes
+                $completed = $async.AsyncWaitHandle.WaitOne(15000)
+                $completed | Should -BeTrue
+                $result = $ps.EndInvoke($async)
+
+                # the output received before the manager exited is kept
+                @($result).Count | Should -Be 1
+                $result[0].Name | Should -Be "inherited"
+            } finally {
+                if ($ps) {
+                    if ($completed) {
+                        $ps.Stop()
+                    }
+
                     $ps.Dispose()
                 }
 

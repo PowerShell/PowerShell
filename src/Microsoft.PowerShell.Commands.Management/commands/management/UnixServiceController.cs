@@ -14,6 +14,7 @@ using System.Globalization;
 using System.IO; // Path, File
 using System.Management.Automation; // PSObject
 using System.ServiceProcess;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -47,7 +48,8 @@ namespace Microsoft.PowerShell.Commands
     /// Operations are performed through the init system's service manager,
     /// discovered in this order: systemctl (systemd), launchctl (macOS),
     /// service (sysvinit) and rc-service (OpenRC). Mutating operations are
-    /// wrapped with <c>sudo -n</c> when not running as root.
+    /// wrapped with <c>sudo -n</c> when they need elevation and the process isn't
+    /// running as root.
     /// </para>
     /// </summary>
     public sealed class UnixServiceController : IDisposable
@@ -55,6 +57,15 @@ namespace Microsoft.PowerShell.Commands
         private const string ServiceSuffix = ".service";
 
         private const string SudoDiagnosticPrefix = "sudo:";
+
+        /// <summary>The launchd domain of system-wide daemons, which needs elevation.</summary>
+        private const string SystemLaunchDomain = "system";
+
+        /// <summary>
+        /// How long output is still collected after the manager exited. A daemon started by
+        /// an init script can inherit the pipes and keep them open long after the script is done.
+        /// </summary>
+        private static readonly TimeSpan StreamDrainTimeout = TimeSpan.FromSeconds(1);
 
         private static readonly (string ControlCommand, string StatusCommand, ServiceManagerKind Kind)[] ManagerCandidates =
         {
@@ -70,9 +81,10 @@ namespace Microsoft.PowerShell.Commands
 
         private bool _resolved;
         private bool _exists = true;
-        private ServiceManagerKind _managerKind = ServiceManagerKind.Systemd;
         private ServiceControllerStatus _status;
         private PSObject? _displayMemberSet;
+        private UnixServiceController[]? _dependentServices;
+        private UnixServiceController[]? _servicesDependedOn;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UnixServiceController"/> class
@@ -130,6 +142,9 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal Guid? OwnerToken { get; set; }
 
+        /// <summary>Gets or sets the service manager that reported this service.</summary>
+        internal ServiceManagerKind ManagerKind { get; set; } = ServiceManagerKind.Systemd;
+
         /// <summary>Gets the display name of the service.</summary>
         public string DisplayName { get; internal set; } = string.Empty;
 
@@ -162,6 +177,12 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Gets a value indicating whether the manager positively reported the status. A
+        /// sysvinit script without a 'status' action only reports that the status is unknown.
+        /// </summary>
+        internal bool StatusKnown { get; set; } = true;
+
+        /// <summary>
         /// Gets the start type of the service, mapped onto the
         /// <see cref="ServiceStartMode"/> values also used on Windows.
         /// </summary>
@@ -189,21 +210,24 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>Gets a value indicating whether the service can be paused and continued. Always false on Unix.</summary>
         public bool CanPauseAndContinue => false;
 
-        /// <summary>Gets the services that depend on this service (systemd only).</summary>
+        /// <summary>Gets the services that directly depend on this service (systemd only).</summary>
         public UnixServiceController[] DependentServices
         {
             get
             {
-                return GetRelatedServices(reverse: true);
+                // Each read would otherwise start a manager command and an enumeration.
+                _dependentServices ??= GetRelatedServices(reverse: true);
+                return _dependentServices;
             }
         }
 
-        /// <summary>Gets the services this service depends on (systemd only).</summary>
+        /// <summary>Gets the services this service directly depends on (systemd only).</summary>
         public UnixServiceController[] ServicesDependedOn
         {
             get
             {
-                return GetRelatedServices(reverse: false);
+                _servicesDependedOn ??= GetRelatedServices(reverse: false);
+                return _servicesDependedOn;
             }
         }
 
@@ -231,66 +255,142 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>All services reported by the service manager, sorted by name.</returns>
         internal static UnixServiceController[] GetServices(Guid? ownerToken)
         {
+            return EnumerateServices(ownerToken, out _);
+        }
+
+        /// <summary>
+        /// Removes the systemd unit suffix from a name pattern, so that '<c>ssh*.service</c>'
+        /// matches the same services as '<c>ssh*</c>' and '<c>*.service</c>' as '<c>*</c>'.
+        /// Service names don't carry the suffix, and neither do patterns for other managers.
+        /// </summary>
+        /// <param name="pattern">The name pattern to normalize.</param>
+        /// <returns>The pattern to match against service names.</returns>
+        internal static string RemoveUnitSuffixFromPattern(string pattern)
+        {
+            if (pattern.EndsWith(ServiceSuffix, StringComparison.OrdinalIgnoreCase)
+                && ResolveManager().Kind == ServiceManagerKind.Systemd)
+            {
+                return pattern[..^ServiceSuffix.Length];
+            }
+
+            return pattern;
+        }
+
+        /// <summary>
+        /// Loads the descriptions of installed services that were never loaded and therefore
+        /// aren't listed with a description. A display-name lookup can't find them otherwise.
+        /// </summary>
+        /// <param name="services">The enumerated services.</param>
+        /// <param name="ownerToken">The invocation token used to correlate the query with the
+        /// owning cmdlet run for cancellation.</param>
+        internal static void LoadMissingDescriptions(UnixServiceController[] services, Guid? ownerToken)
+        {
+            List<UnixServiceController> pending = new();
+            foreach (UnixServiceController service in services)
+            {
+                if (service.ManagerKind == ServiceManagerKind.Systemd && service.Description is null)
+                {
+                    pending.Add(service);
+                }
+            }
+
+            if (pending.Count == 0)
+            {
+                return;
+            }
+
+            // One query for a batch of units keeps this at a single manager command for the
+            // usual case.
+            const int batchSize = 50;
+            var query = new UnixServiceController { OwnerToken = ownerToken };
+            for (int start = 0; start < pending.Count; start += batchSize)
+            {
+                int count = Math.Min(batchSize, pending.Count - start);
+                string[] arguments = new string[count + 3];
+                arguments[0] = "show";
+                for (int index = 0; index < count; index++)
+                {
+                    arguments[index + 1] = pending[start + index].Name + ServiceSuffix;
+                }
+
+                arguments[arguments.Length - 2] = "--property=Id,Description";
+                arguments[arguments.Length - 1] = "--no-pager";
+
+                string output;
+                try
+                {
+                    output = query.RunQueryCommand("systemctl", arguments);
+                }
+                catch (Win32Exception)
+                {
+                    // Descriptions are best effort; matching by name still works.
+                    return;
+                }
+
+                Dictionary<string, string> descriptions = UnixServiceParser.ParseSystemdUnitDescriptions(output);
+                for (int index = 0; index < count; index++)
+                {
+                    UnixServiceController service = pending[start + index];
+                    if (descriptions.TryGetValue(service.Name, out string? description) && description.Length > 0)
+                    {
+                        service.Description = description;
+                        service.DisplayName = description;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Enumerates all services known to the service manager.
+        /// </summary>
+        /// <remarks>
+        /// The managers found on PATH are tried in order of preference. A manager that is
+        /// installed but doesn't answer is skipped in favor of the next one: 'systemctl' for
+        /// example is present on systems that don't run systemd, such as some WSL
+        /// distributions and containers, where the generic 'service' wrapper still works.
+        /// When no manager answers, the failure of the preferred one is reported.
+        /// </remarks>
+        /// <param name="ownerToken">The invocation token used to correlate the enumeration
+        /// commands with the owning cmdlet run for cancellation.</param>
+        /// <param name="managerKind">The manager that answered.</param>
+        /// <returns>All services reported by the service manager, sorted by name.</returns>
+        internal static UnixServiceController[] EnumerateServices(Guid? ownerToken, out ServiceManagerKind managerKind)
+        {
             // Enumeration queries run on a transient instance carrying the caller's
             // invocation token, so cancellation reaches the manager commands.
             var query = new UnixServiceController { OwnerToken = ownerToken };
-            (string control, _, ServiceManagerKind kind) = ResolveManager();
-            List<UnixServiceController> services;
-
-            switch (kind)
+            Win32Exception? preferredFailure = null;
+            foreach ((string control, string status, ServiceManagerKind kind) in FindAvailableManagers())
             {
-                case ServiceManagerKind.Systemd:
-                    {
-                        // --plain keeps failed units from being prefixed with a marker,
-                        // so their rows still start with the unit name.
-                        string units = query.RunQueryCommand(control, new[] { "list-units", "--type=service", "--all", "--plain", "--no-legend", "--no-pager" });
-                        string unitFiles = query.RunQueryCommand(control, new[] { "list-unit-files", "--type=service", "--no-legend", "--no-pager" });
-                        services = UnixServiceParser.ParseSystemdListUnits(units);
-                        UnixServiceParser.MergeSystemdUnitFiles(services, unitFiles);
-                    }
+                List<UnixServiceController> services;
+                try
+                {
+                    services = query.Enumerate(control, status, kind);
+                }
+                catch (Win32Exception e)
+                {
+                    preferredFailure ??= e;
+                    continue;
+                }
 
-                    break;
+                services.Sort(static (x, y) => string.CompareOrdinal(x.Name, y.Name));
+                foreach (UnixServiceController service in services)
+                {
+                    service.ManagerKind = kind;
+                    service.AttachDisplaySettings();
+                }
 
-                case ServiceManagerKind.LaunchD:
-                    {
-                        services = UnixServiceParser.ParseLaunchCtlList(query.RunQueryCommand("launchctl", new[] { "list" }));
-                    }
-
-                    break;
-
-                case ServiceManagerKind.SysVInit:
-                    {
-                        // Some init scripts write their status to standard error.
-                        string output = query.RunQueryCommand("service", new[] { "--status-all" }, mergeErrorStream: true);
-                        services = UnixServiceParser.ParseSysVStatusAll(output);
-                    }
-
-                    break;
-
-                case ServiceManagerKind.OpenRC:
-                    {
-                        services = UnixServiceParser.ParseOpenRcStatusAll(query.RunQueryCommand("rc-status", new[] { "--all" }));
-
-                        // 'rc-status' only reports services in a runlevel or started dynamically;
-                        // add the installed services that belong to no runlevel as stopped.
-                        UnixServiceParser.MergeOpenRcInstalledServices(services, query.RunQueryCommand("rc-service", new[] { "--list" }));
-                    }
-
-                    break;
-
-                default:
-                    services = new List<UnixServiceController>();
-                    break;
+                managerKind = kind;
+                return services.ToArray();
             }
 
-            services.Sort(static (x, y) => string.CompareOrdinal(x.Name, y.Name));
-            foreach (UnixServiceController service in services)
+            if (preferredFailure is not null)
             {
-                service._managerKind = kind;
-                service.AttachDisplaySettings();
+                // Every installed manager failed; report the preferred one's failure.
+                throw preferredFailure;
             }
 
-            return services.ToArray();
+            throw NewServiceManagerNotFoundException();
         }
 
         /// <summary>Starts the service.</summary>
@@ -298,20 +398,23 @@ namespace Microsoft.PowerShell.Commands
         {
             RunManagerOperation("start");
             Status = ServiceControllerStatus.Running;
+            StatusKnown = true;
         }
 
         /// <summary>Stops the service.</summary>
         public void Stop()
         {
-            // Stopping a service that isn't running is a no-op, like the Windows cmdlets, which
-            // ignore ERROR_SERVICE_NOT_ACTIVE. This also avoids launchd's 'kill' failing with
-            // 'No such process' for a loaded job that has no running process.
-            if (Status is ServiceControllerStatus.Running or ServiceControllerStatus.StartPending or ServiceControllerStatus.StopPending)
+            // Stopping a service that is known to be inactive is a no-op, like the Windows
+            // cmdlets, which ignore ERROR_SERVICE_NOT_ACTIVE. This also avoids launchd's
+            // 'kill' failing with 'No such process' for a loaded job with no running process.
+            // A service whose status the manager can't report is still stopped.
+            if (!StatusKnown || Status is ServiceControllerStatus.Running or ServiceControllerStatus.StartPending or ServiceControllerStatus.StopPending)
             {
                 RunManagerOperation("stop");
             }
 
             Status = ServiceControllerStatus.Stopped;
+            StatusKnown = true;
         }
 
         /// <summary>
@@ -322,6 +425,7 @@ namespace Microsoft.PowerShell.Commands
         {
             RunManagerOperation("restart");
             Status = ServiceControllerStatus.Running;
+            StatusKnown = true;
         }
 
         /// <summary>Pausing a service is not supported on Unix.</summary>
@@ -373,6 +477,19 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>Re-queries the service manager for the current service state.</summary>
         public void Refresh()
         {
+            _dependentServices = null;
+            _servicesDependedOn = null;
+            if (ManagerKind == ServiceManagerKind.Systemd)
+            {
+                // A single-unit query is much cheaper than enumerating the whole catalog.
+                UnixServiceController? current = QueryUnit();
+                if (current is not null)
+                {
+                    CopyFrom(current);
+                    return;
+                }
+            }
+
             _resolved = false;
             Resolve();
         }
@@ -386,30 +503,26 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The service name.</returns>
         public override string ToString() => Name;
 
-        internal UnixServiceController CreateInvocationLocal(Guid ownerToken)
+        /// <summary>
+        /// Creates a controller for this service that belongs to the given cmdlet invocation,
+        /// with its state brought up to date from an enumeration snapshot taken by that
+        /// invocation.
+        /// </summary>
+        /// <param name="ownerToken">The token of the consuming cmdlet invocation.</param>
+        /// <param name="snapshot">A current enumeration of all services.</param>
+        /// <returns>A controller owned by the invocation.</returns>
+        internal UnixServiceController CreateInvocationLocal(Guid ownerToken, UnixServiceController[] snapshot)
         {
             // Input objects carry the producer run's owner token; create an invocation-local
             // controller so refresh and mutation run under the consuming run's token and are
-            // cancellable by it.
+            // cancellable by it. Its state comes from the snapshot so that a pipeline over
+            // many services doesn't re-enumerate the whole catalog for each of them.
             var local = new UnixServiceController { OwnerToken = ownerToken };
-            local.Name = Name;
-            local.DisplayName = DisplayName;
-            local.StartType = StartType;
-            local.Description = Description;
-            local.SubState = SubState;
-            local.UnitFileState = UnitFileState;
-            local._managerKind = _managerKind;
-            try
+            local.CopyStateFrom(this);
+            UnixServiceController? match = MatchService(snapshot, Name);
+            if (match is not null)
             {
-                local.Status = Status;
-                local._exists = _exists;
-            }
-            catch (InvalidOperationException)
-            {
-                // The producer resolved a service that no longer exists; keep the local view
-                // consistent so the consumer surfaces the manager-side error instead.
-                local.Status = ServiceControllerStatus.Stopped;
-                local._exists = true;
+                local.CopyFrom(match);
             }
 
             local.AttachDisplaySettings();
@@ -465,15 +578,26 @@ namespace Microsoft.PowerShell.Commands
             return pathVariable.Split(':', StringSplitOptions.RemoveEmptyEntries);
         }
 
-        private static (string Control, string Status, ServiceManagerKind Kind) ResolveManager()
+        private static IEnumerable<(string Control, string Status, ServiceManagerKind Kind)> FindAvailableManagers()
         {
             string[] pathDirectories = GetPathDirectories();
             foreach ((string control, string status, ServiceManagerKind kind) in ManagerCandidates)
             {
-                if (FindCommandOnPath(control, pathDirectories) is not null)
+                if (FindCommandOnPath(control, pathDirectories) is not null
+                    && FindCommandOnPath(status, pathDirectories) is not null)
                 {
-                    return (control, status, kind);
+                    yield return (control, status, kind);
                 }
+            }
+        }
+
+        private static (string Control, string Status, ServiceManagerKind Kind) ResolveManager()
+        {
+            // The manager is only looked up, not contacted: this is used for naming decisions
+            // and ahead of the enumeration that picks the manager that actually answers.
+            foreach ((string control, string status, ServiceManagerKind kind) in FindAvailableManagers())
+            {
+                return (control, status, kind);
             }
 
             throw NewServiceManagerNotFoundException();
@@ -501,7 +625,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private static void ObserveRead(Task<string>? task)
+        private static void ObserveRead(Task? task)
         {
             if (task is null || task.IsCompleted)
             {
@@ -515,6 +639,23 @@ namespace Microsoft.PowerShell.Commands
                 CancellationToken.None,
                 TaskContinuationOptions.OnlyOnFaulted,
                 TaskScheduler.Default);
+        }
+
+        private static async Task ReadIntoAsync(StreamReader reader, StringBuilder destination, CancellationToken cancellationToken)
+        {
+            // The output is collected incrementally, so whatever arrived is kept even when
+            // the rest of the stream is abandoned.
+            char[] buffer = new char[4096];
+            while (true)
+            {
+                int read = await reader.ReadAsync(buffer.AsMemory(), cancellationToken).ConfigureAwait(false);
+                if (read == 0)
+                {
+                    return;
+                }
+
+                destination.Append(buffer, 0, read);
+            }
         }
 
         private static string? FindCommandOnPath(string command, string[] pathDirectories)
@@ -599,8 +740,10 @@ namespace Microsoft.PowerShell.Commands
                 throw new OperationCanceledException(cts.Token);
             }
 
-            Task<string>? stdoutTask = null;
-            Task<string>? stderrTask = null;
+            StringBuilder stdout = new();
+            StringBuilder stderr = new();
+            Task? stdoutTask = null;
+            Task? stderrTask = null;
             using Process process = new() { StartInfo = startInfo };
             s_activeProcesses[executionKey] = process;
             try
@@ -613,14 +756,29 @@ namespace Microsoft.PowerShell.Commands
                     static state => TryKillProcess((Process)state!),
                     process);
 
-                // Drain both streams concurrently with cancellation: reading them
-                // sequentially can deadlock on a full pipe, and a background child that
-                // inherits the pipes must not keep the pipeline blocked after cancellation.
-                stdoutTask = process.StandardOutput.ReadToEndAsync(cts.Token);
-                stderrTask = process.StandardError.ReadToEndAsync(cts.Token);
+                // Drain both streams concurrently: reading them sequentially can deadlock
+                // on a full pipe.
+                stdoutTask = ReadIntoAsync(process.StandardOutput, stdout, cts.Token);
+                stderrTask = ReadIntoAsync(process.StandardError, stderr, cts.Token);
                 process.WaitForExitAsync(cts.Token).GetAwaiter().GetResult();
 
-                return (stdoutTask.GetAwaiter().GetResult(), stderrTask.GetAwaiter().GetResult(), process.ExitCode);
+                // The manager exited. A daemon it started can inherit the pipes and keep
+                // them open, so the remaining drain is bounded and whatever was received
+                // so far is used.
+                try
+                {
+                    if (!Task.WhenAll(stdoutTask, stderrTask).Wait(StreamDrainTimeout))
+                    {
+                        ObserveRead(stdoutTask);
+                        ObserveRead(stderrTask);
+                    }
+                }
+                catch (AggregateException)
+                {
+                    // A stream failed after the manager exited; its output so far is kept.
+                }
+
+                return (stdout.ToString(), stderr.ToString(), process.ExitCode);
             }
             catch (OperationCanceledException)
             {
@@ -655,40 +813,148 @@ namespace Microsoft.PowerShell.Commands
             return mergeErrorStream ? stdout + stderr : stdout;
         }
 
-        private string UnitName() => Name + ServiceSuffix;
-
-        private string LaunchdUnitPath()
+        private List<UnixServiceController> Enumerate(string control, string status, ServiceManagerKind kind)
         {
-            string domain = UnixServiceNativeMethods.GetEffectiveUserId() == 0
-                ? "system"
-                : $"gui/{UnixServiceNativeMethods.GetUserId()}";
-            return domain + "/" + Name;
+            switch (kind)
+            {
+                case ServiceManagerKind.Systemd:
+                    {
+                        // --plain keeps failed units from being prefixed with a marker,
+                        // so their rows still start with the unit name.
+                        string units = RunQueryCommand(control, new[] { "list-units", "--type=service", "--all", "--plain", "--no-legend", "--no-pager" });
+                        string unitFiles = RunQueryCommand(control, new[] { "list-unit-files", "--type=service", "--no-legend", "--no-pager" });
+                        List<UnixServiceController> services = UnixServiceParser.ParseSystemdListUnits(units);
+                        UnixServiceParser.MergeSystemdUnitFiles(services, unitFiles);
+                        return services;
+                    }
+
+                case ServiceManagerKind.LaunchD:
+                    {
+                        // 'launchctl list' reports the jobs of the caller's own domain.
+                        return UnixServiceParser.ParseLaunchCtlList(RunQueryCommand(status, new[] { "list" }));
+                    }
+
+                case ServiceManagerKind.SysVInit:
+                    {
+                        // Some init scripts write their status to standard error.
+                        string output = RunQueryCommand(status, new[] { "--status-all" }, mergeErrorStream: true);
+                        return UnixServiceParser.ParseSysVStatusAll(output);
+                    }
+
+                case ServiceManagerKind.OpenRC:
+                    {
+                        List<UnixServiceController> services = UnixServiceParser.ParseOpenRcStatusAll(RunQueryCommand(status, new[] { "--all" }));
+
+                        // 'rc-status' only reports services in a runlevel or started dynamically;
+                        // add the installed services that belong to no runlevel as stopped.
+                        UnixServiceParser.MergeOpenRcInstalledServices(services, RunQueryCommand(control, new[] { "--list" }));
+                        return services;
+                    }
+
+                default:
+                    return new List<UnixServiceController>();
+            }
         }
 
-        private string[] LaunchArguments(string action)
+        private string UnitName() => Name + ServiceSuffix;
+
+        private UnixServiceController? QueryUnit()
+        {
+            // The properties are requested in 'key=value' form and read by key: systemctl
+            // doesn't preserve the order of the requested properties.
+            string output;
+            try
+            {
+                output = RunQueryCommand("systemctl", new[] { "show", UnitName(), "--property=LoadState,Id,ActiveState,SubState,Description,UnitFileState", "--no-pager" });
+            }
+            catch (Win32Exception)
+            {
+                // The manager doesn't know a unit by that name, or didn't answer.
+                return null;
+            }
+
+            return UnixServiceParser.CreateFromSystemdUnitProperties(output);
+        }
+
+        private static string QueryLaunchDomain()
+        {
+            // 'launchctl managername' reports the bootstrap domain of the caller, which the
+            // jobs of 'launchctl list' belong to. It can't be derived from the UID alone:
+            // an SSH session runs in the per-user domain 'user/<uid>', a GUI session in
+            // 'gui/<uid>'.
+            string uid = UnixServiceNativeMethods.GetUserId().ToString(CultureInfo.InvariantCulture);
+            string fallback = UnixServiceNativeMethods.GetEffectiveUserId() == 0
+                ? SystemLaunchDomain
+                : $"gui/{uid}";
+            string managerName;
+            try
+            {
+                managerName = new UnixServiceController().RunQueryCommand("launchctl", new[] { "managername" }).Trim();
+            }
+            catch (Win32Exception)
+            {
+                return fallback;
+            }
+
+            return managerName.ToUpperInvariant() switch
+            {
+                "SYSTEM" => SystemLaunchDomain,
+                "GUI" => $"gui/{uid}",
+                "USER" => $"user/{uid}",
+                _ => fallback,
+            };
+        }
+
+        private static string[] LaunchArguments(string action, string target)
         {
             return action switch
             {
-                "start" => new[] { "kickstart", LaunchdUnitPath() },
-                "stop" => new[] { "kill", "SIGTERM", LaunchdUnitPath() },
-                _ => new[] { "kickstart", "-k", LaunchdUnitPath() },
+                "start" => new[] { "kickstart", target },
+                "stop" => new[] { "kill", "SIGTERM", target },
+                _ => new[] { "kickstart", "-k", target },
             };
         }
 
         private void RunManagerOperation(string action)
         {
-            (string control, _, ServiceManagerKind kind) = ResolveManager();
-            string[] arguments = kind switch
+            bool isRoot = UnixServiceNativeMethods.GetEffectiveUserId() == 0;
+            string control;
+            string[] arguments;
+            bool needsElevation = !isRoot;
+            switch (ManagerKind)
             {
-                ServiceManagerKind.Systemd => new[] { action, UnitName() },
-                ServiceManagerKind.LaunchD => LaunchArguments(action),
-                _ => new[] { Name, action },
-            };
+                case ServiceManagerKind.Systemd:
+                    control = "systemctl";
+                    arguments = new[] { action, UnitName() };
+                    break;
 
-            RunControlCommand(control, arguments);
+                case ServiceManagerKind.LaunchD:
+                    {
+                        control = "launchctl";
+                        string domain = QueryLaunchDomain();
+
+                        // Jobs in the caller's own domain are managed without elevation;
+                        // only the system domain needs it.
+                        needsElevation = !isRoot && domain == SystemLaunchDomain;
+                        arguments = LaunchArguments(action, domain + "/" + Name);
+                        break;
+                    }
+
+                case ServiceManagerKind.OpenRC:
+                    control = "rc-service";
+                    arguments = new[] { Name, action };
+                    break;
+
+                default:
+                    control = "service";
+                    arguments = new[] { Name, action };
+                    break;
+            }
+
+            RunControlCommand(control, arguments, needsElevation);
         }
 
-        private void RunControlCommand(string control, string[] arguments)
+        private void RunControlCommand(string control, string[] arguments, bool needsElevation)
         {
             string? commandPath = FindCommandOnPath(control, GetPathDirectories());
             if (commandPath is null)
@@ -696,10 +962,9 @@ namespace Microsoft.PowerShell.Commands
                 throw NewServiceManagerNotFoundException();
             }
 
-            bool isRoot = UnixServiceNativeMethods.GetEffectiveUserId() == 0;
             ProcessStartInfo startInfo = CreateStartInfo(commandPath, arguments);
             bool usedSudo = false;
-            if (!isRoot)
+            if (needsElevation)
             {
                 // Wrap with 'sudo -n' so that prompts never hang; failures surface
                 // as SudoRequired errors in the cmdlet layer.
@@ -746,7 +1011,7 @@ namespace Microsoft.PowerShell.Commands
         private UnixServiceController[] GetRelatedServices(bool reverse)
         {
             Resolve();
-            if (!_exists || _managerKind != ServiceManagerKind.Systemd)
+            if (!_exists || ManagerKind != ServiceManagerKind.Systemd)
             {
                 return Array.Empty<UnixServiceController>();
             }
@@ -754,8 +1019,8 @@ namespace Microsoft.PowerShell.Commands
             // Query the direct dependency properties instead of 'list-dependencies', which
             // recursively expands target units and would pull in transitive dependencies.
             string[] arguments = reverse
-                ? new[] { "show", UnitName(), "--property=WantedBy,RequiredBy", "--value" }
-                : new[] { "show", UnitName(), "--property=Wants,Requires", "--value" };
+                ? new[] { "show", UnitName(), "--property=WantedBy,RequiredBy", "--value", "--no-pager" }
+                : new[] { "show", UnitName(), "--property=Wants,Requires", "--value", "--no-pager" };
             string output = RunQueryCommand("systemctl", arguments);
             List<string> dependencyNames = UnixServiceParser.ParseSystemdDependencyUnits(output);
             if (dependencyNames.Count == 0)
@@ -770,14 +1035,24 @@ namespace Microsoft.PowerShell.Commands
             List<UnixServiceController> result = new();
             foreach (string dependencyName in dependencyNames)
             {
-                // Systemd unit names are case-sensitive, so only the service itself is
-                // excluded; a distinct service that differs in case is a real dependency.
+                // Systemd unit names are case-sensitive: exclude only the service itself, and
+                // match the native names exactly so that a missing 'foo.service' isn't
+                // resolved to a distinct 'FOO.service'.
                 if (string.Equals(dependencyName, Name, StringComparison.Ordinal))
                 {
                     continue;
                 }
 
-                UnixServiceController? match = MatchService(services, dependencyName);
+                UnixServiceController? match = null;
+                foreach (UnixServiceController candidate in services)
+                {
+                    if (string.Equals(candidate.Name, dependencyName, StringComparison.Ordinal))
+                    {
+                        match = candidate;
+                        break;
+                    }
+                }
+
                 if (match is null)
                 {
                     // The dependency isn't reported by the enumeration, for example a
@@ -805,16 +1080,19 @@ namespace Microsoft.PowerShell.Commands
             _resolved = true;
             _exists = false;
 
-            UnixServiceController[] services = GetServices(OwnerToken);
+            UnixServiceController[] services = EnumerateServices(OwnerToken, out ServiceManagerKind managerKind);
+            ManagerKind = managerKind;
             UnixServiceController? match = MatchService(services, Name);
-            if (match is null)
+            if (match is null && managerKind == ServiceManagerKind.Systemd)
             {
-                // An alias unit (for example sshd.service for ssh.service) isn't listed
-                // under its own name, so ask the manager which unit the name refers to.
-                string? canonicalName = ResolveCanonicalUnitName();
-                if (canonicalName is not null)
+                // Not listed under this name: an alias unit, or a not-yet-loaded template
+                // instance. Ask the manager about the unit itself.
+                UnixServiceController? queried = QueryUnit();
+                if (queried is not null)
                 {
-                    match = MatchService(services, canonicalName);
+                    // Prefer the catalog entry so that the service looks the same as in
+                    // Get-Service; a unit that isn't listed is taken from the query.
+                    match = MatchService(services, queried.Name) ?? queried;
                 }
             }
 
@@ -824,37 +1102,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
             AttachDisplaySettings();
-        }
-
-        private string? ResolveCanonicalUnitName()
-        {
-            if (ResolveManager().Kind != ServiceManagerKind.Systemd)
-            {
-                return null;
-            }
-
-            string output;
-            try
-            {
-                output = RunQueryCommand("systemctl", new[] { "show", UnitName(), "--property=LoadState,Id", "--value" });
-            }
-            catch (Win32Exception)
-            {
-                // The manager doesn't know a unit by that name at all.
-                return null;
-            }
-
-            // One value per property, in the requested order.
-            string[] values = output.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-            if (values.Length < 2 || !string.Equals(values[0].Trim(), "loaded", StringComparison.Ordinal))
-            {
-                return null;
-            }
-
-            string unit = values[1].Trim();
-            return unit.EndsWith(ServiceSuffix, StringComparison.Ordinal)
-                ? UnixServiceParser.RemoveServiceSuffix(unit)
-                : null;
         }
 
         private static UnixServiceController? MatchService(UnixServiceController[] services, string name)
@@ -880,20 +1127,29 @@ namespace Microsoft.PowerShell.Commands
             return null;
         }
 
+        private void CopyStateFrom(UnixServiceController source)
+        {
+            Name = source.Name;
+            DisplayName = source.DisplayName;
+            _status = source._status;
+            StatusKnown = source.StatusKnown;
+            StartType = source.StartType;
+            Description = source.Description;
+            SubState = source.SubState;
+            UnitFileState = source.UnitFileState;
+            ManagerKind = source.ManagerKind;
+            _exists = source._exists;
+        }
+
         private void CopyFrom(UnixServiceController match)
         {
             // Adopt the canonical native name so that subsequent operations target the
             // service that was actually resolved, even when the lookup only matched
             // case-insensitively.
-            Name = match.Name;
-            DisplayName = match.DisplayName;
-            Status = match.Status;
-            StartType = match.StartType;
-            Description = match.Description;
-            SubState = match.SubState;
-            UnitFileState = match.UnitFileState;
-            _managerKind = match._managerKind;
-            _exists = true;
+            CopyStateFrom(match);
+            _resolved = true;
+            _dependentServices = null;
+            _servicesDependedOn = null;
         }
 
         private void AttachDisplaySettings()
