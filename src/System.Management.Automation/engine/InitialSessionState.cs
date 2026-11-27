@@ -1838,6 +1838,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         internal bool RefreshTypeAndFormatSetting = false;
 
+        /// <summary>
+        /// Allows non-force manifest imports to reuse loaded formats,
+        /// subject to the format loader's input and security checks.
+        /// </summary>
         internal bool AppendFormatsOnImport { get; set; }
 
         /// <summary>
