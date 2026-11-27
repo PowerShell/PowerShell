@@ -2023,6 +2023,21 @@ namespace System.Management.Automation.Language
                 return;
             }
 
+            // Validate the parameter name before reporting errors about its argument.
+            if (!shellIDToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase)
+                && !PSSnapinToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase)
+                && !editionToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase)
+                && !versionToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase)
+                && !assemblyToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase)
+                && !modulesToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase))
+            {
+                ReportError(parameter.Extent,
+                    nameof(ParserStrings.RequiresUnknownParameter),
+                    ParserStrings.RequiresUnknownParameter,
+                    parameter.ParameterName);
+                return;
+            }
+
             if (argumentAst == null)
             {
                 ReportError(parameter.Extent,
@@ -2204,12 +2219,6 @@ namespace System.Management.Automation.Language
                     requiredModules ??= new List<ModuleSpecification>();
                     requiredModules.Add(moduleSpecification);
                 }
-            }
-            else
-            {
-                ReportError(parameter.Extent,
-                    nameof(DiscoveryExceptions.ScriptRequiresInvalidFormat),
-                    DiscoveryExceptions.ScriptRequiresInvalidFormat);
             }
         }
 

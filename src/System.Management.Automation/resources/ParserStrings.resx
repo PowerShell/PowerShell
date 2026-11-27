@@ -833,6 +833,10 @@ The correct form is: foreach ($a in $b) {...}</value>
   <data name="RequiresArgumentMustBeConstant" xml:space="preserve">
     <value>Argument must be constant.</value>
   </data>
+  <data name="RequiresUnknownParameter" xml:space="preserve">
+    <value>Unknown #requires parameter: -{0}.</value>
+    <comment>{StrContains="#requires"}</comment>
+  </data>
   <data name="RequiresInvalidStringArgument" xml:space="preserve">
     <value>The argument for the {0} parameter is not valid. Specify a valid string argument.</value>
   </data>
