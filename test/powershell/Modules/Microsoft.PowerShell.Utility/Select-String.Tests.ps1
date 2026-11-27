@@ -279,9 +279,39 @@ Describe "Select-String" -Tags "CI" {
             $manyFiles = Get-ChildItem -Path $manyDirectory -File | Sort-Object -Property Name
         }
 
-        It "Should return the matches of many files in input order" {
-            $actual = $manyFiles | Select-String -Pattern 'match' | ForEach-Object { '{0}:{1}:{2}' -f $_.Filename, $_.LineNumber, $_.Line }
+        It "Should return the matches of many files in input order: <name>" -TestCases @(
+            @{ name = 'piped one at a time' }
+            @{ name = 'named together in -LiteralPath' }
+        ) {
+            param ($name)
+
+            $actual = if ($name -eq 'piped one at a time') {
+                $manyFiles | Select-String -Pattern 'match'
+            }
+            else {
+                Select-String -LiteralPath $manyFiles.FullName -Pattern 'match'
+            }
+
+            $actual = $actual | ForEach-Object { '{0}:{1}:{2}' -f $_.Filename, $_.LineNumber, $_.Line }
             $actual -join "`n" | Should -BeExactly ($expectedMatches -join "`n")
+        }
+
+        It "Should leave out files by -Include in input order when named together" {
+            $actual = Select-String -LiteralPath $manyFiles.FullName -Pattern 'match' -Include '*file00*' | ForEach-Object { $_.Filename } | Select-Object -Unique
+            $actual | Should -Be @('file001.txt', 'file002.txt', 'file003.txt', 'file004.txt', 'file005.txt', 'file006.txt', 'file008.txt', 'file009.txt')
+        }
+
+        It "Should not raise an -Include error for a file after the -Quiet answer" {
+            $bin = Join-Path $TestDrive 'later.bin'
+            Set-Content -Path $bin -Value 'match'
+            Select-String -LiteralPath $manyFiles[1].FullName, $bin -Pattern 'match' -Include '*.txt', '[' -Quiet | Should -BeExactly $true
+        }
+
+        It "Should search an empty file among files named together" {
+            $empty = Join-Path $TestDrive 'empty.txt'
+            Set-Content -Path $empty -Value $null -NoNewline
+            $actual = Select-String -LiteralPath $empty, $manyFiles[1].FullName -Pattern 'match' | ForEach-Object { $_.Filename }
+            $actual | Should -Be @('file001.txt', 'file001.txt')
         }
 
         It "Should return one -Quiet result per file, in input order" {
@@ -289,8 +319,20 @@ Describe "Select-String" -Tags "CI" {
             $actual | Should -Be @($false, $true, $true, $true)
         }
 
-        It "Should return the first match of each file with -List" {
-            $actual = $manyFiles | Select-String -Pattern 'match' -List | ForEach-Object { '{0}:{1}' -f $_.Filename, $_.LineNumber }
+        It "Should return the first match of each file with -List: <name>" -TestCases @(
+            @{ name = 'piped one at a time' }
+            @{ name = 'named together in -LiteralPath' }
+        ) {
+            param ($name)
+
+            $actual = if ($name -eq 'piped one at a time') {
+                $manyFiles | Select-String -Pattern 'match' -List
+            }
+            else {
+                Select-String -LiteralPath $manyFiles.FullName -Pattern 'match' -List
+            }
+
+            $actual = $actual | ForEach-Object { '{0}:{1}' -f $_.Filename, $_.LineNumber }
             $actual.Count | Should -Be ($expectedMatches.Count / 2)
             $actual[0] | Should -BeExactly 'file001.txt:2'
         }
@@ -323,9 +365,26 @@ Describe "Select-String" -Tags "CI" {
             Select-String -Path $manyFiles.FullName -Pattern 'not present anywhere' -Quiet | Should -BeExactly $false
         }
 
-        It "Should stop when a later command needs no more input" {
-            $actual = $manyFiles | Select-String -Pattern 'match' | Select-Object -First 1
+        It "Should stop when a later command needs no more input: <name>" -TestCases @(
+            @{ name = 'piped one at a time' }
+            @{ name = 'named together in -LiteralPath' }
+        ) {
+            param ($name)
+
+            $actual = if ($name -eq 'piped one at a time') {
+                $manyFiles | Select-String -Pattern 'match' | Select-Object -First 1
+            }
+            else {
+                Select-String -LiteralPath $manyFiles.FullName -Pattern 'match' | Select-Object -First 1
+            }
+
             '{0}:{1}' -f $actual.Filename, $actual.LineNumber | Should -BeExactly 'file001.txt:2'
+
+            # Every search has finished and closed its file: the files can be deleted at once.
+            $copy = Join-Path $TestDrive 'stopcopy'
+            Copy-Item -Path $manyDirectory -Destination $copy -Recurse
+            Select-String -LiteralPath (Get-ChildItem $copy -File).FullName -Pattern 'match' | Select-Object -First 1 | Out-Null
+            { Remove-Item -Path $copy -Recurse -ErrorAction Stop } | Should -Not -Throw
         }
     }
 
@@ -356,14 +415,18 @@ Describe "Select-String" -Tags "CI" {
         ) {
             param ($arguments)
 
+            # Two files in one -LiteralPath, so they are searched on worker threads and their matches held.
             $manyMatchesFile = Join-Path $TestDrive 'manymatches.txt'
             Set-Content -Path $manyMatchesFile -Value (1..500 | ForEach-Object { "line $_" })
-            $describe = { $input | ForEach-Object { '{0}|{1}|{2}' -f $_.LineNumber, $_.Line, ($_.Context.PreContext -join ',') } }
+            $otherFile = Join-Path $TestDrive 'manymatches2.txt'
+            Set-Content -Path $otherFile -Value (1..300 | ForEach-Object { "other $_" })
+            $paths = $manyMatchesFile, $otherFile
+            $describe = { $input | ForEach-Object { '{0}|{1}|{2}|{3}' -f $_.Filename, $_.LineNumber, $_.Line, ($_.Context.PreContext -join ',') } }
 
-            $normal = Select-String -Path $manyMatchesFile @arguments | & $describe
+            $normal = Select-String -LiteralPath $paths @arguments | & $describe
             [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('SelectStringMaxHeldMatches', 5)
             try {
-                $searchedAgain = Select-String -Path $manyMatchesFile @arguments | & $describe
+                $searchedAgain = Select-String -LiteralPath $paths @arguments | & $describe
             }
             finally {
                 [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('SelectStringMaxHeldMatches', 0)
@@ -371,6 +434,16 @@ Describe "Select-String" -Tags "CI" {
 
             $normal.Count | Should -BeGreaterThan 5
             ($searchedAgain -join "`n") | Should -BeExactly ($normal -join "`n")
+        }
+
+        It "Should write the matches before an invalid byte with a strict encoding" {
+            $strictFile = Join-Path $TestDrive 'strict.txt'
+            $bytes = [System.Collections.Generic.List[byte]]::new()
+            $bytes.AddRange([System.Text.Encoding]::ASCII.GetBytes("hit`n" + ('a' * 4091)))
+            $bytes.Add(0xFF)
+            [System.IO.File]::WriteAllBytes($strictFile, $bytes.ToArray())
+            $strict = [System.Text.UTF8Encoding]::new($false, $true)
+            Select-String -LiteralPath $strictFile -Pattern 'hit' -Quiet -Encoding $strict | Should -BeExactly $true
         }
 
         It "Should return a line longer than the read buffer whole" {

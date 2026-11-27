@@ -1397,8 +1397,7 @@ namespace Microsoft.PowerShell.Commands
 
         private int _postContext = 0;
 
-        // When we are in Raw mode or pre- and postcontext are zero, use the _noContextTracker, since we will not be needing trackedLines.
-        // A new tracker every time: files are searched on several threads at once, so none may share one.
+        // When we are in Raw mode or pre- and postcontext are zero, no lines need tracking. A new tracker every time: files are searched on several threads at once, so none may share one.
         private IContextTracker GetContextTracker() => (Raw || (_preContext == 0 && _postContext == 0))
             ? new NoContextTracker()
             : new ContextTracker(_preContext, _postContext);
@@ -1411,8 +1410,6 @@ namespace Microsoft.PowerShell.Commands
         // a mixed list of strings and FileInfo, the context tracker
         // would get reset after each file.
         private IContextTracker _globalContextTracker;
-
-        private IContextTracker _noContextTracker;
 
         /// <summary>
         /// This is used to handle the case were we're done processing input objects.
@@ -1460,11 +1457,10 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            _noContextTracker = new NoContextTracker();
             _globalContextTracker = GetContextTracker();
 
-            // Read once here: worker threads must not touch the host.
-            _shouldEmphasize = !NoEmphasis && Host.UI.SupportsVirtualTerminal;
+            // Read once here: worker threads must not touch the host. A host may have no UI.
+            _shouldEmphasize = !NoEmphasis && Host?.UI?.SupportsVirtualTerminal == true;
             _compareInfo = (CompareInfo)_cultureInfoIndexOf.Target;
         }
 
@@ -1504,8 +1500,6 @@ namespace Microsoft.PowerShell.Commands
         private sealed class RecordState
         {
             private int _held;
-
-            public bool Stopped { get; set; }
 
             /// <summary>Adds to the number of matches held by this record's searches and returns the new total.</summary>
             public int AddHeld(int count) => Interlocked.Add(ref _held, count);
@@ -1573,19 +1567,16 @@ namespace Microsoft.PowerShell.Commands
                 // across records. A record with one file (for example a FileInfo from Get-ChildItem) is searched here,
                 // writing each match as it is found; several files named in one record (-Path with a list or wildcards)
                 // are searched in parallel and written in order.
-                var files = new List<string>(expandedPaths.Count);
-                foreach (var filename in expandedPaths)
+                bool foundMatch;
+                if (expandedPaths.Count == 1)
                 {
                     // see if the file is one the include exclude list...
-                    if (MeetsIncludeExcludeCriteria(filename))
-                    {
-                        files.Add(filename);
-                    }
+                    foundMatch = MeetsIncludeExcludeCriteria(expandedPaths[0]) && SearchFileHere(expandedPaths[0], expandedPathsMaybeDirectory);
                 }
-
-                bool foundMatch = files.Count == 1
-                    ? SearchFileHere(files[0], expandedPathsMaybeDirectory)
-                    : SearchFilesInParallel(files, expandedPathsMaybeDirectory);
+                else
+                {
+                    foundMatch = SearchFilesInParallel(expandedPaths, expandedPathsMaybeDirectory);
+                }
 
                 // No results in any files.
                 if (Quiet && !foundMatch)
@@ -1666,62 +1657,149 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Search the files of one input record on worker threads and write their results in order. With -Quiet,
-        /// files after the first that matched are not reported, and their searches are cancelled.
-        /// Returns whether any file matched.
+        /// One file of a record, as planned for searching: searched ahead on a worker (Search set), searched in its
+        /// turn on the pipeline thread (Search null), left out by -Include/-Exclude, or a filter error to raise in
+        /// its turn.
+        /// </summary>
+        private readonly struct PlannedFile
+        {
+            public PlannedFile(string name, Task<FileResult> search, bool leftOut, Exception filterError)
+            {
+                Name = name;
+                Search = search;
+                LeftOut = leftOut;
+                FilterError = filterError;
+            }
+
+            public string Name { get; }
+
+            public Task<FileResult> Search { get; }
+
+            public bool LeftOut { get; }
+
+            public Exception FilterError { get; }
+        }
+
+        /// <summary>
+        /// Search the files of one input record and write their results in input order, as the one-file-at-a-time
+        /// loop would. Regular files with content are searched ahead on worker threads; other files (empty files,
+        /// pipes, devices, folders, missing paths) are opened only in their turn, on the pipeline thread, as before.
+        /// An -Include/-Exclude error is raised in the position where the original would have raised it. With -Quiet
+        /// the first matching file answers for the record; later searches are cancelled.
+        /// Returns whether any file matched. Before returning, every search started here has finished, so no file is
+        /// left open.
         /// </summary>
         private bool SearchFilesInParallel(List<string> files, bool maybeDirectory)
         {
             using var recordCancel = CancellationTokenSource.CreateLinkedTokenSource(_cancel.Token);
             var record = new RecordState();
             var token = recordCancel.Token;
-            var queue = new Queue<Task<FileResult>>();
+            var queue = new Queue<PlannedFile>();
             int next = 0;
+            bool planningStopped = false;
             try
             {
-                while (next < files.Count || queue.Count > 0)
+                while (true)
                 {
-                    // Keep up to s_maxQueued files searching ahead of the one being written.
-                    while (next < files.Count && queue.Count < s_maxQueued && !record.Stopped)
+                    // Plan up to s_maxQueued files ahead of the one being written.
+                    while (!planningStopped && next < files.Count && queue.Count < s_maxQueued)
                     {
                         string name = files[next++];
-                        queue.Enqueue(s_workers.StartNew(() => SearchFile(name, maybeDirectory, record, token), token));
+                        PlannedFile planned;
+                        try
+                        {
+                            planned = !MeetsIncludeExcludeCriteria(name)
+                                ? new PlannedFile(name, null, leftOut: true, null)
+                                : IsSearchableAhead(name)
+                                    ? new PlannedFile(name, s_workers.StartNew(() => SearchFile(name, maybeDirectory, record, token), token), false, null)
+                                    : new PlannedFile(name, null, false, null);
+                        }
+                        catch (Exception e) when (e is not OperationCanceledException)
+                        {
+                            // Raised in this file's turn; nothing after it is planned.
+                            planned = new PlannedFile(name, null, false, e);
+                            planningStopped = true;
+                        }
+
+                        queue.Enqueue(planned);
                     }
 
                     if (queue.Count == 0)
                     {
-                        break;
+                        return false;
                     }
 
-                    FileResult result;
-                    try
+                    var item = queue.Dequeue();
+                    if (item.FilterError != null)
                     {
-                        result = queue.Dequeue().GetAwaiter().GetResult();
-                    }
-                    catch (OperationCanceledException)
-                    {
-                        // The command is being stopped.
-                        return record.Stopped;
+                        System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(item.FilterError).Throw();
                     }
 
-                    record.AddHeld(-result.Held);
-                    WriteResult(result);
-                    if (Quiet && result.FoundMatch)
+                    if (item.LeftOut)
+                    {
+                        continue;
+                    }
+
+                    bool found;
+                    if (item.Search == null)
+                    {
+                        found = SearchFileHere(item.Name, maybeDirectory);
+                    }
+                    else
+                    {
+                        FileResult result;
+                        try
+                        {
+                            result = item.Search.GetAwaiter().GetResult();
+                        }
+                        catch (OperationCanceledException)
+                        {
+                            // The command is being stopped.
+                            return false;
+                        }
+
+                        WriteResult(result);
+                        record.AddHeld(-result.Held);
+                        found = result.FoundMatch;
+                    }
+
+                    if (Quiet && found)
                     {
                         // -Quiet has its answer for this record: later files are not reported.
-                        record.Stopped = true;
-                        recordCancel.Cancel();
                         return true;
                     }
                 }
             }
             finally
             {
-                // Searches still running belong to files that will not be reported.
+                // Searches still running belong to files that will not be reported: stop them, and wait for them so
+                // that no file stays open after this record (a following command may want to delete or write it).
                 recordCancel.Cancel();
+                foreach (var item in queue)
+                {
+                    if (item.Search != null)
+                    {
+                        try
+                        {
+                            item.Search.Wait(CancellationToken.None);
+                        }
+                        catch (AggregateException)
+                        {
+                        }
+                    }
+                }
             }
+        }
 
-            return record.Stopped;
+        /// <summary>
+        /// Whether a file may be searched before its turn: an existing file that reports content. Pipes, devices and
+        /// files such as those under /proc report a length of 0 and are opened only in their turn, because opening or
+        /// reading them early can block or consume data. Checking the length does not open the file.
+        /// </summary>
+        private static bool IsSearchableAhead(string path)
+        {
+            var info = new FileInfo(path);
+            return info.Exists && info.Length > 0;
         }
 
         /// <summary>
@@ -1769,7 +1847,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Write one batch of matches, as FlushTrackerQueue writes its emit queue.
         /// </summary>
-        private void WriteBatch(List<MatchInfo> batch)
+        private void WriteBatch(IList<MatchInfo> batch)
         {
             if (Raw)
             {
@@ -1828,18 +1906,23 @@ namespace Microsoft.PowerShell.Commands
             var contextTracker = GetContextTracker();
             bool writeNow = record == null;
 
-            // A line can only become output if it matches, unless -NotMatch inverts that or context lines are kept.
-            // In that case the line is tested in place, and only a matching line is turned into a string and
-            // handed to DoMatch, which builds the same MatchInfo as before.
-            bool testInPlace = !NotMatch && contextTracker is NoContextTracker;
+            // Without context lines, a line becomes output only if it matches (or, with -NotMatch, only if it does not).
+            // The line is tested in place, and only a line that will be output is turned into a string and handed to
+            // DoMatch, which builds the same MatchInfo as before.
+            bool testInPlace = contextTracker is NoContextTracker;
+
+            // An encoding whose decoder throws on invalid bytes, or replaces one with several characters, is read
+            // exactly as before (StreamReader.ReadLine with its default buffer), so an error is raised at the same
+            // point, after the same lines have been written.
+            bool readAsBefore = !IsPlainDecoding(Encoding);
 
             try
             {
                 using (var handle = File.OpenHandle(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, FileOptions.SequentialScan))
-                using (FileStream fs = new(handle, FileAccess.Read, 1))
+                using (FileStream fs = new(handle, FileAccess.Read, readAsBefore ? 4096 : 1))
                 {
-                    using (StreamReader sr = new(fs, Encoding, true, 16 * 1024))
-                    using (var reader = new LineReader(sr))
+                    using (StreamReader sr = readAsBefore ? new(fs, Encoding) : new(fs, Encoding, true, 16 * 1024))
+                    using (var reader = new LineReader(sr, readAsBefore, token))
                     {
                         ulong lineNo = 0;
 
@@ -1847,12 +1930,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             lineNo++;
 
-                            if ((lineNo & 0x3FFF) == 0)
-                            {
-                                token.ThrowIfCancellationRequested();
-                            }
-
-                            if (testInPlace && !MayMatch(span))
+                            if (testInPlace && MayMatch(span) == NotMatch)
                             {
                                 continue;
                             }
@@ -2004,28 +2082,57 @@ namespace Microsoft.PowerShell.Commands
         private sealed class LineReader : IDisposable
         {
             private readonly TextReader _reader;
+            private readonly bool _readAsBefore;
+            private readonly CancellationToken _token;
 
             // Reused between files; buffers of 85 KB or more go to the large-object heap, which only a full
             // collection frees, and one per file made the search several times slower.
-            private char[] _buffer = System.Buffers.ArrayPool<char>.Shared.Rent(16 * 1024);
+            private char[] _buffer;
 
             private int _start;
             private int _end;
             private bool _eof;
+            private int _linesSinceCheck;
+
+            /// <param name="reader">The text to split.</param>
+            /// <param name="readAsBefore">Read with TextReader.ReadLine, line by line, as the original loop did.</param>
+            /// <param name="token">Checked on every read, so a stopped search ends promptly.</param>
+            public LineReader(TextReader reader, bool readAsBefore, CancellationToken token)
+            {
+                _reader = reader;
+                _readAsBefore = readAsBefore;
+                _token = token;
+                if (!readAsBefore)
+                {
+                    _buffer = System.Buffers.ArrayPool<char>.Shared.Rent(16 * 1024);
+                }
+            }
 
             public void Dispose()
             {
-                System.Buffers.ArrayPool<char>.Shared.Return(_buffer);
+                char[] buffer = _buffer;
                 _buffer = null;
-            }
-
-            public LineReader(TextReader reader)
-            {
-                _reader = reader;
+                if (buffer != null)
+                {
+                    System.Buffers.ArrayPool<char>.Shared.Return(buffer);
+                }
             }
 
             public bool ReadLine(out ReadOnlySpan<char> line)
             {
+                if (_readAsBefore)
+                {
+                    if (++_linesSinceCheck == 1024)
+                    {
+                        _linesSinceCheck = 0;
+                        _token.ThrowIfCancellationRequested();
+                    }
+
+                    string text = _reader.ReadLine();
+                    line = text;
+                    return text != null;
+                }
+
                 // Characters after _start already looked at and known not to hold a line end.
                 int scanned = 0;
                 while (true)
@@ -2072,6 +2179,7 @@ namespace Microsoft.PowerShell.Commands
             // Moves unread text to the front, grows the buffer when one line fills it, and reads more.
             private bool Fill()
             {
+                _token.ThrowIfCancellationRequested();
                 if (_start > 0)
                 {
                     Array.Copy(_buffer, _start, _buffer, 0, _end - _start);
@@ -2113,9 +2221,18 @@ namespace Microsoft.PowerShell.Commands
                 return false;
             }
 
-            WriteBatch(new List<MatchInfo>(contextTracker.EmitQueue));
+            WriteBatch(contextTracker.EmitQueue);
             contextTracker.EmitQueue.Clear();
             return true;
+        }
+
+        /// <summary>
+        /// Whether an encoding decodes every invalid byte to at most one character and never throws, as the default
+        /// (UTF-8 with replacement) does. Only then may text be decoded ahead of the line being searched.
+        /// </summary>
+        private static bool IsPlainDecoding(Encoding encoding)
+        {
+            return encoding?.DecoderFallback is DecoderReplacementFallback fallback && fallback.MaxCharCount <= 1;
         }
 
         /// <summary>
