@@ -3,12 +3,10 @@
 Describe "Unimplemented Management Cmdlet Tests" -Tags "CI" {
 
     $Commands = @(
-        "Get-Service",
-        "Stop-Service",
-        "Start-Service",
+        # Get-Service, Start-Service, Stop-Service and Restart-Service are also
+        # available on Unix.
         "Suspend-Service",
         "Resume-Service",
-        "Restart-Service",
         "Set-Service",
         "New-Service",
 

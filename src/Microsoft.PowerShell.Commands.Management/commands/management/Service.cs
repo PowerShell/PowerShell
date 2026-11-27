@@ -35,6 +35,17 @@ namespace Microsoft.PowerShell.Commands
     public abstract class ServiceBaseCommand : Cmdlet
 #endif
     {
+#if UNIX
+        /// <summary>
+        /// Initializes the base command and registers the invocation, so the service manager
+        /// commands it launches can be cancelled until the command is disposed.
+        /// </summary>
+        protected ServiceBaseCommand()
+        {
+            UnixServiceController.BeginInvocation(ServiceInvocationToken);
+        }
+#endif
+
         #region Internal
 
         /// <summary>
@@ -1664,6 +1675,55 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
+#if UNIX
+            // On Unix the service manager's native restart operation is used, so that the
+            // manager's dependency semantics (for example systemd's PartOf=) are preserved:
+            // a stop followed by a start would leave services stopped through such a
+            // dependency down.
+            foreach (ServiceController serviceController in MatchingServices())
+            {
+                // confirm the operation first
+                // this is always false if WhatIf is set
+                if (!ShouldProcessServiceOperation(serviceController))
+                {
+                    continue;
+                }
+
+                Exception exception = null;
+                try
+                {
+                    serviceController.Restart();
+                }
+                catch (InvalidOperationException e) when (e.Data.Contains("SudoRequired"))
+                {
+                    WriteError(new ErrorRecord(
+                        new ServiceCommandException(e.Message) { ServiceName = serviceController.ServiceName },
+                        "SudoRequired",
+                        ErrorCategory.PermissionDenied,
+                        serviceController));
+                    continue;
+                }
+                catch (Win32Exception e)
+                {
+                    exception = e;
+                }
+
+                if (exception != null)
+                {
+                    // This service refused to accept the restart command,
+                    // so write a non-terminating error.
+                    WriteNonTerminatingError(serviceController,
+                        exception,
+                        "CouldNotRestartService",
+                        ServiceResources.CouldNotRestartService,
+                        ErrorCategory.OpenError);
+                    continue;
+                }
+
+                if (PassThru)
+                    WriteObject(serviceController);
+            }
+#else
             foreach (ServiceController serviceController in MatchingServices())
             {
                 // confirm the operation first
@@ -1688,6 +1748,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+#endif
         }
     }
     #endregion RestartServiceCommand

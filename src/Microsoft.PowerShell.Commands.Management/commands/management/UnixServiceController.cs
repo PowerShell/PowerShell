@@ -54,6 +54,8 @@ namespace Microsoft.PowerShell.Commands
     {
         private const string ServiceSuffix = ".service";
 
+        private const string SudoDiagnosticPrefix = "sudo:";
+
         private static readonly (string ControlCommand, string StatusCommand, ServiceManagerKind Kind)[] ManagerCandidates =
         {
             ("systemctl", "systemctl", ServiceManagerKind.Systemd),
@@ -64,6 +66,7 @@ namespace Microsoft.PowerShell.Commands
 
         private static readonly ConcurrentDictionary<Guid, Process> s_activeProcesses = new();
         private static readonly ConcurrentDictionary<Guid, CancellationTokenSource> s_cancellationSources = new();
+        private static readonly ConcurrentDictionary<Guid, byte> s_liveInvocations = new();
 
         private bool _resolved;
         private bool _exists = true;
@@ -77,9 +80,19 @@ namespace Microsoft.PowerShell.Commands
         /// <see cref="InvalidOperationException"/> when the service does not exist.
         /// </summary>
         /// <param name="serviceName">The service name, with or without the '.service' suffix.</param>
+        public UnixServiceController(string serviceName)
+            : this(serviceName, ownerToken: null)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UnixServiceController"/> class
+        /// for the specified service on behalf of a running cmdlet invocation.
+        /// </summary>
+        /// <param name="serviceName">The service name, with or without the '.service' suffix.</param>
         /// <param name="ownerToken">The invocation token used to correlate commands launched
         /// during resolution with the owning cmdlet run for cancellation.</param>
-        public UnixServiceController(string serviceName, Guid? ownerToken = null)
+        internal UnixServiceController(string serviceName, Guid? ownerToken)
         {
             // The '.service' suffix is a systemd naming detail; other managers
             // use the name exactly as provided.
@@ -112,7 +125,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the invocation token that correlates this instance with the service
         /// cmdlet run that owns it, so a pipeline stop cancels the commands launched for it.
-        /// Instances without a token use their own isolated execution key.
+        /// Tokens of invocations that are no longer running are ignored, so work performed
+        /// through a controller that outlived its cmdlet is treated as transient.
         /// </summary>
         internal Guid? OwnerToken { get; set; }
 
@@ -194,10 +208,28 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Gets the services this service depends on. Windows exposes this as an alias of
+        /// <see cref="ServicesDependedOn"/> through type data, which doesn't apply to this type.
+        /// </summary>
+        public UnixServiceController[] RequiredServices => ServicesDependedOn;
+
+        /// <summary>
         /// Enumerates all services known to the service manager.
         /// </summary>
         /// <returns>All services reported by the service manager, sorted by name.</returns>
-        public static UnixServiceController[] GetServices(Guid? ownerToken = null)
+        public static UnixServiceController[] GetServices()
+        {
+            return GetServices(ownerToken: null);
+        }
+
+        /// <summary>
+        /// Enumerates all services known to the service manager on behalf of a running cmdlet
+        /// invocation.
+        /// </summary>
+        /// <param name="ownerToken">The invocation token used to correlate the enumeration
+        /// commands with the owning cmdlet run for cancellation.</param>
+        /// <returns>All services reported by the service manager, sorted by name.</returns>
+        internal static UnixServiceController[] GetServices(Guid? ownerToken)
         {
             // Enumeration queries run on a transient instance carrying the caller's
             // invocation token, so cancellation reaches the manager commands.
@@ -238,6 +270,10 @@ namespace Microsoft.PowerShell.Commands
                 case ServiceManagerKind.OpenRC:
                     {
                         services = UnixServiceParser.ParseOpenRcStatusAll(query.RunQueryCommand("rc-status", new[] { "--all" }));
+
+                        // 'rc-status' only reports services in a runlevel or started dynamically;
+                        // add the installed services that belong to no runlevel as stopped.
+                        UnixServiceParser.MergeOpenRcInstalledServices(services, query.RunQueryCommand("rc-service", new[] { "--list" }));
                     }
 
                     break;
@@ -267,8 +303,25 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>Stops the service.</summary>
         public void Stop()
         {
-            RunManagerOperation("stop");
+            // Stopping a service that isn't running is a no-op, like the Windows cmdlets, which
+            // ignore ERROR_SERVICE_NOT_ACTIVE. This also avoids launchd's 'kill' failing with
+            // 'No such process' for a loaded job that has no running process.
+            if (Status is ServiceControllerStatus.Running or ServiceControllerStatus.StartPending or ServiceControllerStatus.StopPending)
+            {
+                RunManagerOperation("stop");
+            }
+
             Status = ServiceControllerStatus.Stopped;
+        }
+
+        /// <summary>
+        /// Restarts the service through the service manager's native restart operation, which
+        /// preserves the manager's dependency semantics (for example systemd's <c>PartOf=</c>).
+        /// </summary>
+        public void Restart()
+        {
+            RunManagerOperation("restart");
+            Status = ServiceControllerStatus.Running;
         }
 
         /// <summary>Pausing a service is not supported on Unix.</summary>
@@ -333,6 +386,79 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The service name.</returns>
         public override string ToString() => Name;
 
+        internal UnixServiceController CreateInvocationLocal(Guid ownerToken)
+        {
+            // Input objects carry the producer run's owner token; create an invocation-local
+            // controller so refresh and mutation run under the consuming run's token and are
+            // cancellable by it.
+            var local = new UnixServiceController { OwnerToken = ownerToken };
+            local.Name = Name;
+            local.DisplayName = DisplayName;
+            local.StartType = StartType;
+            local.Description = Description;
+            local.SubState = SubState;
+            local.UnitFileState = UnitFileState;
+            local._managerKind = _managerKind;
+            try
+            {
+                local.Status = Status;
+                local._exists = _exists;
+            }
+            catch (InvalidOperationException)
+            {
+                // The producer resolved a service that no longer exists; keep the local view
+                // consistent so the consumer surfaces the manager-side error instead.
+                local.Status = ServiceControllerStatus.Stopped;
+                local._exists = true;
+            }
+
+            local.AttachDisplaySettings();
+            return local;
+        }
+
+        /// <summary>
+        /// Registers a starting cmdlet invocation. Controllers created for it correlate their
+        /// service manager commands with the invocation token until <see cref="EndInvocation"/>.
+        /// </summary>
+        /// <param name="ownerToken">The invocation token to register.</param>
+        internal static void BeginInvocation(Guid ownerToken)
+        {
+            s_liveInvocations[ownerToken] = 0;
+        }
+
+        /// <summary>
+        /// Kills the in-flight service manager command, if any. Called from the service
+        /// cmdlets' <see cref="Cmdlet.StopProcessing"/> when the pipeline is stopped, so a
+        /// hung init script or manager command can't keep the pipeline waiting. The
+        /// cancellation persists for the invocation: a manager command launched later for
+        /// the same owner token is terminated immediately.
+        /// </summary>
+        /// <param name="ownerToken">The invocation token whose commands to cancel.</param>
+        internal static void CancelActiveCommand(Guid ownerToken)
+        {
+            CancellationTokenSource cts = s_cancellationSources.GetOrAdd(ownerToken, static _ => new CancellationTokenSource());
+            cts.Cancel();
+            if (s_activeProcesses.TryRemove(ownerToken, out Process? process))
+            {
+                TryKillProcess(process);
+            }
+        }
+
+        /// <summary>
+        /// Releases the state of a finished cmdlet invocation. Called through cmdlet disposal,
+        /// which the engine guarantees even after terminating errors and cancellations. Work
+        /// performed afterwards through controllers that outlived the invocation is transient.
+        /// </summary>
+        /// <param name="ownerToken">The invocation token to clean up.</param>
+        internal static void EndInvocation(Guid ownerToken)
+        {
+            s_liveInvocations.TryRemove(ownerToken, out _);
+            if (s_cancellationSources.TryRemove(ownerToken, out CancellationTokenSource? cts))
+            {
+                cts.Dispose();
+            }
+        }
+
         private static string[] GetPathDirectories()
         {
             string pathVariable = Environment.GetEnvironmentVariable("PATH") ?? string.Empty;
@@ -353,41 +479,11 @@ namespace Microsoft.PowerShell.Commands
             throw NewServiceManagerNotFoundException();
         }
 
-        /// <summary>
-        /// Kills the in-flight service manager command, if any. Called from the service
-        /// cmdlets' <see cref="Cmdlet.StopProcessing"/> when the pipeline is stopped, so a
-        /// hung init script or manager command can't keep the pipeline waiting. The
-        /// cancellation persists for the invocation: a manager command launched later for
-        /// the same owner token is terminated immediately.
-        /// </summary>
-        /// <param name="ownerToken">The invocation token whose commands to cancel.</param>
-        internal static void CancelActiveCommand(Guid ownerToken)
-        {
-            CancellationTokenSource cts = s_cancellationSources.GetOrAdd(ownerToken, static _ => new CancellationTokenSource());
-            cts.Cancel();
-            if (s_activeProcesses.TryRemove(ownerToken, out Process? process))
-            {
-                CancelActiveProcess(process);
-            }
-        }
-
-        /// <summary>
-        /// Releases the cancellation state of a finished cmdlet invocation. Called from the
-        /// service cmdlets' <see cref="Cmdlet.EndProcessing"/>.
-        /// </summary>
-        /// <param name="ownerToken">The invocation token to clean up.</param>
-        internal static void EndInvocation(Guid ownerToken)
-        {
-            if (s_cancellationSources.TryRemove(ownerToken, out CancellationTokenSource? cts))
-            {
-                cts.Dispose();
-            }
-        }
-
-        private static void CancelActiveProcess(Process process)
+        private static void TryKillProcess(Process process)
         {
             try
             {
+                // Kill the whole tree so the sudo wrapper and init scripts are terminated too.
                 process.Kill(entireProcessTree: true);
             }
             catch (InvalidOperationException)
@@ -396,8 +492,29 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (Win32Exception)
             {
-                // The process could not be killed because it already exited.
+                // The process could not be killed, for example because it already exited.
             }
+            catch (AggregateException)
+            {
+                // The process tree was only partially terminated, for example because an
+                // elevated descendant survived. The waits are cancelled independently of it.
+            }
+        }
+
+        private static void ObserveRead(Task<string>? task)
+        {
+            if (task is null || task.IsCompleted)
+            {
+                return;
+            }
+
+            // Never block on a read that may still be waiting for a pipe the process tree
+            // left open; just make sure a late failure doesn't surface as unobserved.
+            _ = task.ContinueWith(
+                static completed => _ = completed.Exception,
+                CancellationToken.None,
+                TaskContinuationOptions.OnlyOnFaulted,
+                TaskScheduler.Default);
         }
 
         private static string? FindCommandOnPath(string command, string[] pathDirectories)
@@ -422,6 +539,23 @@ namespace Microsoft.PowerShell.Commands
             return UnixServiceNativeMethods.CanExecute(path);
         }
 
+        private static bool HasSudoDiagnostic(string stderr)
+        {
+            // sudo reports its own failures on stderr with a 'sudo:' prefix, for example when
+            // a password is required or the user isn't allowed to run the command. The prefix
+            // is the program name, so it's stable across locales; everything else is the
+            // wrapped command's own output.
+            foreach (string rawLine in stderr.Split('\n'))
+            {
+                if (rawLine.TrimStart().StartsWith(SudoDiagnosticPrefix, StringComparison.Ordinal))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private static ProcessStartInfo CreateStartInfo(string fileName, string[] arguments)
         {
             var startInfo = new ProcessStartInfo
@@ -439,9 +573,25 @@ namespace Microsoft.PowerShell.Commands
             return startInfo;
         }
 
+        private static InvalidOperationException NewServiceManagerNotFoundException()
+        {
+            var exception = new InvalidOperationException(ServiceResources.ServiceManagerNotFound);
+            exception.Data["NoServiceManagerFound"] = true;
+            return exception;
+        }
+
+        private static string FormatMessage(string resourceId, params object[] args)
+        {
+            return string.Format(CultureInfo.CurrentCulture, resourceId, args);
+        }
+
         private (string Stdout, string Stderr, int ExitCode) Execute(ProcessStartInfo startInfo)
         {
-            Guid executionKey = OwnerToken ?? Guid.NewGuid();
+            // Only a live cmdlet invocation owns persistent cancellation state. Controllers
+            // that outlived their invocation (for example saved Get-Service output) run as
+            // transient work with an isolated key that is released right after the command.
+            bool isLiveInvocation = OwnerToken.HasValue && s_liveInvocations.ContainsKey(OwnerToken.Value);
+            Guid executionKey = isLiveInvocation ? OwnerToken!.Value : Guid.NewGuid();
             CancellationTokenSource cts = s_cancellationSources.GetOrAdd(executionKey, static _ => new CancellationTokenSource());
             if (cts.IsCancellationRequested)
             {
@@ -449,40 +599,41 @@ namespace Microsoft.PowerShell.Commands
                 throw new OperationCanceledException(cts.Token);
             }
 
+            Task<string>? stdoutTask = null;
+            Task<string>? stderrTask = null;
             using Process process = new() { StartInfo = startInfo };
             s_activeProcesses[executionKey] = process;
             try
             {
                 process.Start();
 
-                // Drain both streams concurrently; reading them sequentially can deadlock when
-                // the child process fills one pipe buffer while the other stream is still open.
-                Task<string> stdoutTask = process.StandardOutput.ReadToEndAsync();
-                Task<string> stderrTask = process.StandardError.ReadToEndAsync();
+                // Best-effort termination on cancellation. Elevated descendants may survive
+                // the kill, so the waits below are cancelled independently of it.
+                using CancellationTokenRegistration registration = cts.Token.Register(
+                    static state => TryKillProcess((Process)state!),
+                    process);
 
-                // StopProcessing cancels the invocation token when the pipeline is stopped.
-                // The registration is placed after Start, so a cancellation that arrived
-                // before launch is applied here immediately, and a later one kills the
-                // process, closes the pipes, completes both stream reads, and releases
-                // this wait.
-                using (cts.Token.Register(
-                    static state => CancelActiveProcess((Process)state!),
-                    process))
-                {
-                    process.WaitForExit();
-                }
+                // Drain both streams concurrently with cancellation: reading them
+                // sequentially can deadlock on a full pipe, and a background child that
+                // inherits the pipes must not keep the pipeline blocked after cancellation.
+                stdoutTask = process.StandardOutput.ReadToEndAsync(cts.Token);
+                stderrTask = process.StandardError.ReadToEndAsync(cts.Token);
+                process.WaitForExitAsync(cts.Token).GetAwaiter().GetResult();
 
                 return (stdoutTask.GetAwaiter().GetResult(), stderrTask.GetAwaiter().GetResult(), process.ExitCode);
+            }
+            catch (OperationCanceledException)
+            {
+                ObserveRead(stdoutTask);
+                ObserveRead(stderrTask);
+                throw;
             }
             finally
             {
                 s_activeProcesses.TryRemove(executionKey, out _);
-                if (OwnerToken is null && !cts.IsCancellationRequested)
+                if (!isLiveInvocation && s_cancellationSources.TryRemove(executionKey, out CancellationTokenSource? transientSource))
                 {
-                    // Transient executions have no cmdlet run to clean up after them;
-                    // owned sources persist until EndInvocation, so a cancellation that
-                    // lands between manager commands still terminates the next one.
-                    s_cancellationSources.TryRemove(executionKey, out _);
+                    transientSource.Dispose();
                 }
             }
         }
@@ -502,18 +653,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return mergeErrorStream ? stdout + stderr : stdout;
-        }
-
-        private static InvalidOperationException NewServiceManagerNotFoundException()
-        {
-            var exception = new InvalidOperationException(ServiceResources.ServiceManagerNotFound);
-            exception.Data["NoServiceManagerFound"] = true;
-            return exception;
-        }
-
-        private static string FormatMessage(string resourceId, params object[] args)
-        {
-            return string.Format(CultureInfo.CurrentCulture, resourceId, args);
         }
 
         private string UnitName() => Name + ServiceSuffix;
@@ -559,6 +698,7 @@ namespace Microsoft.PowerShell.Commands
 
             bool isRoot = UnixServiceNativeMethods.GetEffectiveUserId() == 0;
             ProcessStartInfo startInfo = CreateStartInfo(commandPath, arguments);
+            bool usedSudo = false;
             if (!isRoot)
             {
                 // Wrap with 'sudo -n' so that prompts never hang; failures surface
@@ -574,17 +714,21 @@ namespace Microsoft.PowerShell.Commands
                 sudoArguments[1] = commandPath;
                 arguments.CopyTo(sudoArguments, 2);
                 startInfo = CreateStartInfo(sudoPath, sudoArguments);
+                usedSudo = true;
             }
 
             (_, string stderr, int exitCode) = Execute(startInfo);
             if (exitCode != 0)
             {
-                string detail = stderr.TrimEnd();
-                if (!isRoot && detail.Contains("password", StringComparison.OrdinalIgnoreCase))
+                // Only sudo's own diagnostics mean that elevation was unavailable. The
+                // wrapped manager's stderr is reported as the manager failure it is, even
+                // when it happens to mention a password (for example 'password-store.service').
+                if (usedSudo && HasSudoDiagnostic(stderr))
                 {
                     throw NewSudoRequiredException();
                 }
 
+                string detail = stderr.TrimEnd();
                 throw new Win32Exception(
                     exitCode,
                     detail.Length > 0 ? detail : FormatMessage(ServiceResources.ExitCodeWithoutStderr, exitCode));
@@ -607,9 +751,11 @@ namespace Microsoft.PowerShell.Commands
                 return Array.Empty<UnixServiceController>();
             }
 
+            // Query the direct dependency properties instead of 'list-dependencies', which
+            // recursively expands target units and would pull in transitive dependencies.
             string[] arguments = reverse
-                ? new[] { "list-dependencies", "--reverse", "--plain", UnitName() }
-                : new[] { "list-dependencies", "--plain", UnitName() };
+                ? new[] { "show", UnitName(), "--property=WantedBy,RequiredBy", "--value" }
+                : new[] { "show", UnitName(), "--property=Wants,Requires", "--value" };
             string output = RunQueryCommand("systemctl", arguments);
             List<string> dependencyNames = UnixServiceParser.ParseSystemdDependencyUnits(output);
             if (dependencyNames.Count == 0)
@@ -618,12 +764,15 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Resolve the dependencies against a single enumeration snapshot instead of
-            // re-enumerating the whole catalog for every dependency.
-            UnixServiceController[] services = GetServices();
+            // re-enumerating the whole catalog for every dependency. The invocation token is
+            // carried along so the enumeration stays cancellable.
+            UnixServiceController[] services = GetServices(OwnerToken);
             List<UnixServiceController> result = new();
             foreach (string dependencyName in dependencyNames)
             {
-                if (string.Equals(dependencyName, Name, StringComparison.OrdinalIgnoreCase))
+                // Systemd unit names are case-sensitive, so only the service itself is
+                // excluded; a distinct service that differs in case is a real dependency.
+                if (string.Equals(dependencyName, Name, StringComparison.Ordinal))
                 {
                     continue;
                 }
@@ -631,9 +780,9 @@ namespace Microsoft.PowerShell.Commands
                 UnixServiceController? match = MatchService(services, dependencyName);
                 if (match is null)
                 {
-                    // The dependency isn't reported by the enumeration (for example a
-                    // template instance); resolve it by name instead.
-                    result.Add(new UnixServiceController(dependencyName));
+                    // The dependency isn't reported by the enumeration, for example a
+                    // 'not-found' unit. Skip it instead of emitting a controller whose
+                    // status can't be read.
                     continue;
                 }
 
@@ -702,36 +851,6 @@ namespace Microsoft.PowerShell.Commands
             UnitFileState = match.UnitFileState;
             _managerKind = match._managerKind;
             _exists = true;
-        }
-
-        internal UnixServiceController CreateInvocationLocal(Guid ownerToken)
-        {
-            // Input objects carry the producer run's owner token; create an invocation-local
-            // controller so refresh and mutation run under the consuming run's token and are
-            // cancellable by it.
-            var local = new UnixServiceController { OwnerToken = ownerToken };
-            local.Name = Name;
-            local.DisplayName = DisplayName;
-            local.StartType = StartType;
-            local.Description = Description;
-            local.SubState = SubState;
-            local.UnitFileState = UnitFileState;
-            local._managerKind = _managerKind;
-            try
-            {
-                local.Status = Status;
-                local._exists = _exists;
-            }
-            catch (InvalidOperationException)
-            {
-                // The producer resolved a service that no longer exists; keep the local view
-                // consistent so the consumer surfaces the manager-side error instead.
-                local.Status = ServiceControllerStatus.Stopped;
-                local._exists = true;
-            }
-
-            local.AttachDisplaySettings();
-            return local;
         }
 
         private void AttachDisplaySettings()

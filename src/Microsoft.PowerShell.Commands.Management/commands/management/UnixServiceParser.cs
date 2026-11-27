@@ -62,6 +62,13 @@ namespace Microsoft.PowerShell.Commands
                     continue;
                 }
 
+                // An alias unit file is another name for a different unit, not a service of
+                // its own; listing it as a separate stopped service would be wrong.
+                if (string.Equals(unitFile.State, "alias", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
                 if (servicesByName.TryGetValue(unitFile.Name, out UnixServiceController? service))
                 {
                     service.UnitFileState = unitFile.State;
@@ -167,28 +174,69 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Parses the output of 'systemctl list-dependencies --plain', returning service names.
+        /// Adds the services installed but not reported by 'rc-status --all' as stopped.
+        /// </summary>
+        /// <remarks>
+        /// 'rc-status' only lists services in a runlevel or started dynamically, so an
+        /// installed service that belongs to no runlevel only appears in
+        /// 'rc-service --list'.
+        /// </remarks>
+        /// <param name="services">The services parsed from the status output.</param>
+        /// <param name="output">The standard output of 'rc-service --list'.</param>
+        internal static void MergeOpenRcInstalledServices(List<UnixServiceController> services, string output)
+        {
+            var knownNames = new HashSet<string>(StringComparer.Ordinal);
+            foreach (UnixServiceController service in services)
+            {
+                knownNames.Add(service.Name);
+            }
+
+            foreach (string rawLine in output.Split('\n'))
+            {
+                // One service name per line; the names of a service provided by several
+                // init scripts are separated by whitespace.
+                foreach (string name in rawLine.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    if (!knownNames.Add(name))
+                    {
+                        continue;
+                    }
+
+                    services.Add(new UnixServiceController
+                    {
+                        Name = name,
+                        DisplayName = name,
+                        Status = ServiceControllerStatus.Stopped,
+                        StartType = ServiceStartMode.Manual,
+                    });
+                }
+            }
+        }
+
+        /// <summary>
+        /// Parses the output of 'systemctl show --property=... --value' for dependency
+        /// properties such as Wants, Requires, WantedBy and RequiredBy.
         /// </summary>
         /// <param name="output">The standard output of the command.</param>
-        /// <returns>The names of the listed services, without the '.service' suffix.</returns>
+        /// <returns>The names of the referenced services, without the '.service' suffix.</returns>
         internal static List<string> ParseSystemdDependencyUnits(string output)
         {
             var names = new List<string>();
 
+            // Each property value is a whitespace-separated list of unit names.
             foreach (string rawLine in output.Split('\n'))
             {
-                string line = rawLine.TrimEnd('\r').Trim();
-                if (line.Length == 0)
+                foreach (string unit in rawLine.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries))
                 {
-                    continue;
-                }
-
-                string[] tokens = line.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
-                string unit = tokens[0];
-                if (unit.EndsWith(ServiceSuffix, StringComparison.Ordinal) &&
-                    !unit.EndsWith("@.service", StringComparison.Ordinal))
-                {
-                    names.Add(RemoveServiceSuffix(unit));
+                    if (unit.EndsWith(ServiceSuffix, StringComparison.Ordinal) &&
+                        !unit.EndsWith("@.service", StringComparison.Ordinal))
+                    {
+                        string name = RemoveServiceSuffix(unit);
+                        if (!names.Contains(name))
+                        {
+                            names.Add(name);
+                        }
+                    }
                 }
             }
 
@@ -440,7 +488,14 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Format: ' * name [ state ]'. Runlevel headers do not contain brackets.
-            string state = line[(openIndex + 1)..closeIndex].Trim();
+            // For supervised services OpenRC appends uptime details to the state, for
+            // example 'started 00:12:34 (0)'; only the first word is the state.
+            string[] stateTokens = line[(openIndex + 1)..closeIndex].Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
+            if (stateTokens.Length == 0)
+            {
+                return (null, ServiceControllerStatus.Stopped);
+            }
+
             string before = line[..openIndex].Trim();
             string? name = null;
             foreach (string token in before.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries))
@@ -456,7 +511,7 @@ namespace Microsoft.PowerShell.Commands
                 return (null, ServiceControllerStatus.Stopped);
             }
 
-            return (name, MapOpenRcStatus(state));
+            return (name, MapOpenRcStatus(stateTokens[0]));
         }
     }
 }
