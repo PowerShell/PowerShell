@@ -352,6 +352,102 @@ Describe "Select-String" -Tags "CI" {
         }
     }
 
+    Context "Large files searched in chunks" {
+        BeforeAll {
+            # Lines ended by LF, CRLF, CR and CR CR LF, empty lines, invalid UTF-8, characters of 2 to 4 bytes,
+            # a line longer than a chunk, a UTF-8 byte-order mark and no final line end.
+            $bytes = [System.Collections.Generic.List[byte]]::new()
+            $bytes.AddRange([byte[]](0xEF, 0xBB, 0xBF))
+            $words = 'alpha', 'needle', 'Needle', "caf`u{00E9}", "`u{65E5}`u{672C}", "`u{1F600}", 'beta'
+            $ends = "`n", "`r`n", "`r", "`r`r`n", "`n`n"
+            for ($i = 0; $i -lt 2000; $i++) {
+                $line = '{0} {1} {2}' -f $i, $words[$i % $words.Count], $words[($i * 3) % $words.Count]
+                $bytes.AddRange([System.Text.Encoding]::UTF8.GetBytes($line))
+                if ($i % 97 -eq 0) {
+                    $bytes.AddRange([byte[]](0xFF, 0x80, 0x20, 0x6E, 0x65, 0x65, 0x64, 0x6C, 0x65, 0xE2, 0x82))
+                }
+
+                if ($i -eq 1000) {
+                    $bytes.AddRange([System.Text.Encoding]::UTF8.GetBytes((' long' * 400) + ' needle'))
+                }
+
+                $bytes.AddRange([System.Text.Encoding]::UTF8.GetBytes($ends[$i % $ends.Count]))
+            }
+
+            $bytes.AddRange([System.Text.Encoding]::UTF8.GetBytes('last needle without a line end'))
+            $chunkedFile = Join-Path $TestDrive 'chunked.txt'
+            [System.IO.File]::WriteAllBytes($chunkedFile, $bytes.ToArray())
+
+            function Get-Description($result) {
+                $result | ForEach-Object {
+                    if ($_ -is [Microsoft.PowerShell.Commands.MatchInfo]) {
+                        '{0}|{1}|{2}' -f $_.LineNumber, $_.Line, (($_.Matches | ForEach-Object { "$($_.Index),$($_.Length)" }) -join ';')
+                    }
+                    else {
+                        "$_"
+                    }
+                }
+            }
+
+            function Set-SplitHooks([long] $minLength, [int] $chunkLength, [int] $maxHeld) {
+                [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('SelectStringSplitMinLength', $minLength)
+                [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('SelectStringChunkLength', $chunkLength)
+                [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('SelectStringMaxHeldMatches', $maxHeld)
+            }
+        }
+
+        AfterAll {
+            Set-SplitHooks 0 0 0
+        }
+
+        It "Should take the chunked path while the test hooks are set" {
+            $chunkedType = [Microsoft.PowerShell.Commands.MatchInfo].Assembly.GetType('Microsoft.PowerShell.Commands.ChunkedFile')
+            $flags = [System.Reflection.BindingFlags]'Static, NonPublic'
+            Set-SplitHooks 1024 256 0
+            $chunkLength = $chunkedType.GetProperty('ChunkLength', $flags).GetValue($null)
+            $minLength = $chunkedType.GetProperty('MinLength', $flags).GetValue($null)
+            Set-SplitHooks 0 0 0
+            $chunkLength | Should -Be 256
+            $minLength | Should -Be 1024
+            (Get-Item $chunkedFile).Length | Should -BeGreaterThan 1024
+            $chunkedType.GetProperty('ChunkLength', $flags).GetValue($null) | Should -Be (16 -shl 20)
+        }
+        It "Should give the same results in chunks as in one pass: <name>" -TestCases @(
+            @{ name = 'any case';         arguments = @{ Pattern = 'needle' } }
+            @{ name = 'case-sensitive';   arguments = @{ Pattern = 'Needle'; CaseSensitive = $true } }
+            @{ name = 'simple match';     arguments = @{ Pattern = "caf`u{00E9}"; SimpleMatch = $true } }
+            @{ name = 'regex';            arguments = @{ Pattern = '^\d+ \S+ beta$' } }
+            @{ name = 'all matches';      arguments = @{ Pattern = 'needle'; AllMatches = $true } }
+            @{ name = 'not match';        arguments = @{ Pattern = 'a'; NotMatch = $true } }
+            @{ name = 'list';             arguments = @{ Pattern = 'beta'; List = $true } }
+            @{ name = 'quiet';            arguments = @{ Pattern = "`u{1F600}"; Quiet = $true } }
+            @{ name = 'raw';              arguments = @{ Pattern = 'needle'; Raw = $true } }
+            @{ name = 'last line';        arguments = @{ Pattern = 'without a line end' } }
+        ) {
+            param ($arguments)
+
+            Set-SplitHooks 0 0 0
+            $onePass = Get-Description (Select-String -Path $chunkedFile @arguments)
+            Set-SplitHooks 1024 256 0
+            $chunked = Get-Description (Select-String -Path $chunkedFile @arguments)
+            Set-SplitHooks 0 0 0
+
+            $onePass | Should -Not -BeNullOrEmpty
+            ($chunked -join "`n") | Should -BeExactly ($onePass -join "`n")
+        }
+
+        It "Should give the same results when chunks have too many matches to hold" {
+            Set-SplitHooks 0 0 0
+            $onePass = Get-Description (Select-String -Path $chunkedFile -Pattern '\d')
+            Set-SplitHooks 1024 4096 3
+            $chunked = Get-Description (Select-String -Path $chunkedFile -Pattern '\d')
+            Set-SplitHooks 0 0 0
+
+            $onePass.Count | Should -Be 2000
+            ($chunked -join "`n") | Should -BeExactly ($onePass -join "`n")
+        }
+    }
+
     Context "Culture parameter" {
         It "Should throw if -Culture parameter is used without -SimpleMatch parameter" {
             { "1" | Select-String -Pattern "hello" -Culture "ru-RU" } | Should -Throw -ErrorId "CannotSpecifyCultureWithoutSimpleMatch,Microsoft.PowerShell.Commands.SelectStringCommand"

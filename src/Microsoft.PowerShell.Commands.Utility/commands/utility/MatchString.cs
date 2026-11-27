@@ -11,6 +11,7 @@ using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -1500,9 +1501,11 @@ namespace Microsoft.PowerShell.Commands
             public int Held;
             public string Filename;
             public bool MaybeDirectory;
+            // Set for a large file searched in chunks; its matches are written as each chunk finishes, in order.
+            public ChunkedJob Chunked;
         }
 
-        // Matches one file may hold until it is written. Holding many long-lived MatchInfo objects forces full garbage
+        // Matches one file, or one chunk of a large file, may hold until it is written. Holding many long-lived MatchInfo objects forces full garbage
         // collections: 1.2 million held matches paused the process for 1.6 to 1.7 s, against 0.02 s when each match is
         // written as it is found.
         private static int MaxHeldMatches => InternalTestHooks.SelectStringMaxHeldMatches > 0 ? InternalTestHooks.SelectStringMaxHeldMatches : 20000;
@@ -1731,6 +1734,11 @@ namespace Microsoft.PowerShell.Commands
                 WriteBatch(batch);
             }
 
+            if (result.Chunked != null)
+            {
+                WriteChunked(result);
+            }
+
             if (result.Error != null)
             {
                 WriteError(result.Error);
@@ -1818,6 +1826,13 @@ namespace Microsoft.PowerShell.Commands
                 using (var handle = File.OpenHandle(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, FileOptions.SequentialScan))
                 using (FileStream fs = new(handle, FileAccess.Read, 1))
                 {
+                    // A large UTF-8 file is split across threads when each line stands alone (no context lines).
+                    if (contextTracker is NoContextTracker && ChunkedFile.CanSplit(handle, fs.Length, Encoding))
+                    {
+                        SearchChunked(filename, fs.Length, result, token);
+                        return;
+                    }
+
                     fs.Position = 0;
                     using (StreamReader sr = new(fs, Encoding, true, 16 * 1024))
                     using (var reader = new LineReader(sr))
@@ -1915,6 +1930,264 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 result.Error = BuildErrorRecord(MatchStringStrings.FileReadError, filename, uae.Message, "ProcessingFile", uae);
+            }
+        }
+
+        // Threads for one split file: about three quarters of the logical processors. Reading one cached file stops
+        // scaling well before every processor is busy, and the rest keeps the machine responsive.
+        private static readonly int s_chunkThreads = Math.Max(2, Environment.ProcessorCount * 3 / 4);
+
+        /// <summary>
+        /// The chunks of one large file being searched. Each chunk's matches are written as soon as it and every chunk
+        /// before it have finished, then dropped. Keeping a whole file's matches until the end made a file with
+        /// 1.2 million matches 2.7 to 3.2 times slower than the one-pass loop (long-lived objects force full
+        /// garbage collections).
+        /// </summary>
+        private sealed class ChunkedJob
+        {
+            public string Filename;
+            public Task<ChunkOutput>[] Chunks;
+            public List<long> Starts;
+            public long Length;
+            public bool FirstOnly;
+        }
+
+        private sealed class ChunkOutput
+        {
+            public List<(ulong Line, MatchInfo Match)> Found;
+            public ulong Lines;
+            public Exception Error;
+
+            // More than MaxHeldMatches matches: the chunk is searched again on the writing thread instead.
+            public bool Heavy;
+        }
+
+        /// <summary>
+        /// Start searching a large UTF-8 file in chunks on several threads (see ChunkedFile). Every line is tested
+        /// exactly as in the one-pass loop. Returns at once; WriteChunked writes the matches in order.
+        /// </summary>
+        private void SearchChunked(string filename, long length, FileResult result, CancellationToken token)
+        {
+            List<long> starts;
+            using (var cutHandle = File.OpenHandle(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
+            {
+                starts = ChunkedFile.Cut(cutHandle, length);
+            }
+
+            int count = starts.Count;
+            bool firstOnly = Quiet || List;
+            var firstMatchChunk = new StrongBox<int>(int.MaxValue);
+
+            // Chunks run on the shared pool, at most s_chunkThreads at a time for this file. Not on the
+            // one-search-per-processor scheduler: its slots are taken by other files.
+            var scheduler = new ConcurrentExclusiveSchedulerPair(TaskScheduler.Default, s_chunkThreads).ConcurrentScheduler;
+            var chunks = new Task<ChunkOutput>[count];
+            for (int c = 0; c < count; c++)
+            {
+                int i = c;
+                long start = starts[i];
+                long end = i + 1 < count ? starts[i + 1] : length;
+                chunks[i] = Task.Factory.StartNew(
+                    () => SearchChunk(filename, i, start, end, firstOnly, firstMatchChunk, token),
+                    token,
+                    TaskCreationOptions.None,
+                    scheduler);
+            }
+
+            result.Chunked = new ChunkedJob { Filename = filename, Chunks = chunks, Starts = starts, Length = length, FirstOnly = firstOnly };
+        }
+
+        private ChunkOutput SearchChunk(string filename, int i, long start, long end, bool firstOnly, StrongBox<int> firstMatchChunk, CancellationToken token)
+        {
+            var output = new ChunkOutput { Found = new List<(ulong, MatchInfo)>() };
+
+            // With -Quiet or -List a chunk after one that already matched cannot hold the first match.
+            if (firstOnly && i > Volatile.Read(ref firstMatchChunk.Value))
+            {
+                return output;
+            }
+
+            ulong lineNo = 0;
+            try
+            {
+                // Each chunk opens its own handle: reads on one shared handle are completed one at a time.
+                using var handle = File.OpenHandle(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+                using var text = new ChunkTextReader(handle, start, end, Encoding);
+                using var reader = new LineReader(text);
+                while (reader.ReadLine(out ReadOnlySpan<char> span))
+                {
+                    lineNo++;
+                    if ((lineNo & 0x3FFF) == 0)
+                    {
+                        token.ThrowIfCancellationRequested();
+                    }
+
+                    if (!NotMatch && !MayMatch(span))
+                    {
+                        continue;
+                    }
+
+                    string line = span.ToString();
+                    if (DoMatch(line, out MatchInfo match))
+                    {
+                        match.Path = filename;
+                        if (output.Found.Count == MaxHeldMatches)
+                        {
+                            // Too many to hold: drop them; the writing thread searches this chunk again.
+                            output.Found = new List<(ulong, MatchInfo)>();
+                            output.Heavy = true;
+                            return output;
+                        }
+
+                        output.Found.Add((lineNo, match));
+                        if (firstOnly)
+                        {
+                            int seen;
+                            while (i < (seen = Volatile.Read(ref firstMatchChunk.Value)) && Interlocked.CompareExchange(ref firstMatchChunk.Value, i, seen) != seen)
+                            {
+                            }
+
+                            break;
+                        }
+                    }
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                output.Error = e;
+            }
+
+            output.Lines = lineNo;
+            return output;
+        }
+
+        /// <summary>
+        /// Search one chunk on this (the writing) thread and write each match at once. Used for chunks with too many
+        /// matches to hold. Returns the chunk's line count and any read error, with no held matches.
+        /// </summary>
+        private ChunkOutput RewriteChunk(string filename, long start, long end, ulong before, FileResult result)
+        {
+            var output = new ChunkOutput { Found = new List<(ulong, MatchInfo)>() };
+            ulong lineNo = 0;
+            var token = _cancel.Token;
+            try
+            {
+                using var handle = File.OpenHandle(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+                using var text = new ChunkTextReader(handle, start, end, Encoding);
+                using var reader = new LineReader(text);
+                var one = new List<MatchInfo>(1) { null };
+                while (reader.ReadLine(out ReadOnlySpan<char> span))
+                {
+                    lineNo++;
+                    if ((lineNo & 0x3FFF) == 0)
+                    {
+                        token.ThrowIfCancellationRequested();
+                    }
+
+                    if (!NotMatch && !MayMatch(span))
+                    {
+                        continue;
+                    }
+
+                    string line = span.ToString();
+                    if (DoMatch(line, out MatchInfo match))
+                    {
+                        match.Path = filename;
+                        match.LineNumber = before + lineNo;
+                        result.FoundMatch = true;
+                        one[0] = match;
+                        WriteBatch(one);
+                    }
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                output.Error = e;
+            }
+
+            output.Lines = lineNo;
+            return output;
+        }
+
+        /// <summary>
+        /// Write a chunked file's matches in file order with global line numbers, each chunk as soon as it is done.
+        /// A read error ends the file where it happened, as in the one-pass loop: matches before it, then the error.
+        /// </summary>
+        private void WriteChunked(FileResult result)
+        {
+            var job = result.Chunked;
+            ulong before = 0;
+            for (int i = 0; i < job.Chunks.Length; i++)
+            {
+                ChunkOutput chunk;
+                try
+                {
+                    chunk = job.Chunks[i].GetAwaiter().GetResult();
+                }
+                catch (OperationCanceledException)
+                {
+                    // Only happens while the command is being stopped.
+                    return;
+                }
+
+                job.Chunks[i] = null;
+
+                if (chunk.Heavy)
+                {
+                    // Search it again here and write each match as it is found, as the one-pass loop does.
+                    long end = i + 1 < job.Starts.Count ? job.Starts[i + 1] : job.Length;
+                    chunk = RewriteChunk(job.Filename, job.Starts[i], end, before, result);
+                }
+
+                if (chunk.Found.Count > 0)
+                {
+                    result.FoundMatch = true;
+                    var batch = new List<MatchInfo>(job.FirstOnly ? 1 : chunk.Found.Count);
+                    foreach (var (line, match) in chunk.Found)
+                    {
+                        match.LineNumber = before + line;
+                        batch.Add(match);
+                        if (job.FirstOnly)
+                        {
+                            break;
+                        }
+                    }
+
+                    WriteBatch(batch);
+                }
+
+                if (chunk.Error != null)
+                {
+                    result.Error = chunk.Error switch
+                    {
+                        IOException ioe => BuildErrorRecord(MatchStringStrings.FileReadError, job.Filename, ioe.Message, "ProcessingFile", ioe),
+                        UnauthorizedAccessException uae => BuildErrorRecord(MatchStringStrings.FileReadError, job.Filename, uae.Message, "ProcessingFile", uae),
+                        NotSupportedException nse => BuildErrorRecord(MatchStringStrings.FileReadError, job.Filename, nse.Message, "ProcessingFile", nse),
+                        System.Security.SecurityException se => BuildErrorRecord(MatchStringStrings.FileReadError, job.Filename, se.Message, "ProcessingFile", se),
+                        _ => null,
+                    };
+                    if (result.Error == null)
+                    {
+                        result.Fatal = chunk.Error;
+                    }
+
+                    break;
+                }
+
+                if (job.FirstOnly && result.FoundMatch)
+                {
+                    break;
+                }
+
+                before += chunk.Lines;
             }
         }
 

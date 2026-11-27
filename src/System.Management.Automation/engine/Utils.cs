@@ -1663,8 +1663,11 @@ namespace System.Management.Automation.Internal
         internal static int TestStopComputerResults;
         internal static int TestRenameComputerResults;
 
-        // Select-String tests: hold fewer matches per file before searching it again on the pipeline thread
+        // Select-String tests (0 means the normal value): hold fewer matches per file or chunk before searching it
+        // again on the pipeline thread, and make small files take the large-file path
         internal static int SelectStringMaxHeldMatches;
+        internal static long SelectStringSplitMinLength;
+        internal static int SelectStringChunkLength;
 
         // It's useful to test that we don't depend on the ScriptBlock and AST objects and can use a re-parsed version.
         internal static bool IgnoreScriptBlockCache;
