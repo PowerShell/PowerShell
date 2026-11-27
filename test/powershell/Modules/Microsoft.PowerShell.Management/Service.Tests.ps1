@@ -1,15 +1,72 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-# The suite is written for the Pester version restored by the CI harness (4.x) as well as
-# Pester 5: setup runs at script scope instead of BeforeAll, conditional tests use It -Skip,
-# and $WhatIfPreference (set by Pester 5 during discovery) keeps the setup from running twice.
-$script:savedDefaultParameterValues = $PSDefaultParameterValues.Clone()
-if (-not $WhatIfPreference) {
-    if ($IsWindows) {
-        # The service cmdlets are only compiled on Unix
-        $PSDefaultParameterValues["it:skip"] = $true
-    } else {
+# The suite runs under the Pester 4.x restored by the CI harness as well as Pester 5.
+# Both provide BeforeAll, AfterAll and Set-ItResult; 'it:skip' is the exception: it
+# must be set before the tests are discovered, so it is set at load time for Windows.
+$global:serviceCmdletSavedParameterValues = $PSDefaultParameterValues.Clone()
+if ($IsWindows) {
+    # The service cmdlets are only compiled on Unix
+    $PSDefaultParameterValues["it:skip"] = $true
+}
+
+# The helpers are defined in the script scope so that It blocks find them under both
+# Pester versions.
+function script:Reset-ServiceShim {
+    [CmdletBinding(SupportsShouldProcess)]
+    param(
+        [string]$Stdout = "",
+        [string]$UnitFilesStdout = "",
+        [string]$DependencyStdout = "",
+        [string]$RcListStdout = "",
+        [string]$Stderr = "",
+        [int]$ExitCode = 0
+    )
+
+    if (-not $PSCmdlet.ShouldProcess("service manager shim invocation log and environment", "Reset shim state")) {
+        return
+    }
+
+    $env:PS_SERVICE_SHIM_STDOUT = $Stdout
+    $env:PS_SERVICE_SHIM_UF_STDOUT = $UnitFilesStdout
+    $env:PS_SERVICE_SHIM_DEP_STDOUT = $DependencyStdout
+    $env:PS_SERVICE_SHIM_RC_LIST_STDOUT = $RcListStdout
+    $env:PS_SERVICE_SHIM_STDERR = $Stderr
+    $env:PS_SERVICE_SHIM_EXITCODE = "$ExitCode"
+    $env:PS_SERVICE_SHIM_ENUM_FAILS = ""
+    if (Test-Path $script:logFile) {
+        Remove-Item $script:logFile -Force
+    }
+}
+
+function script:Get-InvocationLog {
+    if (Test-Path $script:logFile) {
+        # the unary comma preserves the array when the file has a single line
+        return , @(Get-Content $script:logFile)
+    }
+
+    return , @()
+}
+
+function script:Test-SkipAsRoot {
+    param([string]$Because)
+
+    # The root flag is established in BeforeAll, after the tests were already created,
+    # so 'It -Skip' can't use it; the test requests the skip when it runs instead.
+    if ($script:isRoot) {
+        Set-ItResult -Skipped -Because $Because
+    }
+
+    return $script:isRoot
+}
+
+
+Describe "Unix Service cmdlets" -Tags "CI" {
+    BeforeAll {
+        if ($IsWindows) {
+            return
+        }
+
         $script:isRoot = ([int](& id -u)) -eq 0
         $script:shimDir = Join-Path ([System.IO.Path]::GetTempPath()) "pwsh-service-shims-$([guid]::NewGuid().ToString('N'))"
         $script:utilityDir = Join-Path $script:shimDir "util"
@@ -83,122 +140,10 @@ exec "${@:2}"
         $script:testPath = "$script:shimDir$([System.IO.Path]::PathSeparator)$script:utilityDir"
         $env:PATH = $script:testPath
     }
-}
-
-# The helpers are defined in the script scope: plain functions defined at the top level
-# or in the Describe body are gone by the time It blocks run, under Pester 4 as well as 5.
-function script:Reset-ServiceShim {
-    [CmdletBinding(SupportsShouldProcess)]
-    param(
-        [string]$Stdout = "",
-        [string]$UnitFilesStdout = "",
-        [string]$DependencyStdout = "",
-        [string]$RcListStdout = "",
-        [string]$Stderr = "",
-        [int]$ExitCode = 0
-    )
-
-    if (-not $PSCmdlet.ShouldProcess("service manager shim invocation log and environment", "Reset shim state")) {
-        return
-    }
-
-    $env:PS_SERVICE_SHIM_STDOUT = $Stdout
-    $env:PS_SERVICE_SHIM_UF_STDOUT = $UnitFilesStdout
-    $env:PS_SERVICE_SHIM_DEP_STDOUT = $DependencyStdout
-    $env:PS_SERVICE_SHIM_RC_LIST_STDOUT = $RcListStdout
-    $env:PS_SERVICE_SHIM_STDERR = $Stderr
-    $env:PS_SERVICE_SHIM_EXITCODE = "$ExitCode"
-    $env:PS_SERVICE_SHIM_ENUM_FAILS = ""
-    if (Test-Path $script:logFile) {
-        Remove-Item $script:logFile -Force
-    }
-}
-
-function script:Get-InvocationLog {
-    if (Test-Path $script:logFile) {
-        # the unary comma preserves the array when the file has a single line
-        return , @(Get-Content $script:logFile)
-    }
-
-    return , @()
-}
-
-function script:Test-SkipAsRoot {
-    param([string]$Because)
-
-    # Pester 4 evaluates 'It -Skip' when the block is created, so the flag on the test is
-    # enough there. Pester 5 fixes the flag during discovery, before the setup above ran,
-    # so the body requests the skip at run time instead.
-    if (-not $script:isRoot) {
-        return $false
-    }
-
-    if (Get-Command Set-ItResult -ErrorAction SilentlyContinue) {
-        Set-ItResult -Skipped -Because $Because
-    }
-
-    return $true
-}
-
-
-Describe "Unix Service cmdlets" -Tags "CI" {
-    # The helpers are defined in the Describe scope: script-level functions of a test
-    # file are not visible from BeforeEach and It blocks under either Pester version.
-    function Reset-ServiceShim {
-        [CmdletBinding(SupportsShouldProcess)]
-        param(
-            [string]$Stdout = "",
-            [string]$UnitFilesStdout = "",
-            [string]$DependencyStdout = "",
-            [string]$RcListStdout = "",
-            [string]$Stderr = "",
-            [int]$ExitCode = 0
-        )
-
-        if (-not $PSCmdlet.ShouldProcess("service manager shim invocation log and environment", "Reset shim state")) {
-            return
-        }
-
-        $env:PS_SERVICE_SHIM_STDOUT = $Stdout
-        $env:PS_SERVICE_SHIM_UF_STDOUT = $UnitFilesStdout
-        $env:PS_SERVICE_SHIM_DEP_STDOUT = $DependencyStdout
-        $env:PS_SERVICE_SHIM_RC_LIST_STDOUT = $RcListStdout
-        $env:PS_SERVICE_SHIM_STDERR = $Stderr
-        $env:PS_SERVICE_SHIM_EXITCODE = "$ExitCode"
-        $env:PS_SERVICE_SHIM_ENUM_FAILS = ""
-        if (Test-Path $script:logFile) {
-            Remove-Item $script:logFile -Force
-        }
-    }
-
-    function Get-InvocationLog {
-        if (Test-Path $script:logFile) {
-            # the unary comma preserves the array when the file has a single line
-            return , @(Get-Content $script:logFile)
-        }
-
-        return , @()
-    }
-
-    function Test-SkipAsRoot {
-        param([string]$Because)
-
-        # Pester 4 evaluates 'It -Skip' when the block is created, so the flag on the test is
-        # enough there. Pester 5 fixes the flag during discovery, before the setup above ran,
-        # so the body requests the skip at run time instead.
-        if (-not $script:isRoot) {
-            return $false
-        }
-
-        if (Get-Command Set-ItResult -ErrorAction SilentlyContinue) {
-            Set-ItResult -Skipped -Because $Because
-        }
-
-        return $true
-    }
 
     AfterAll {
-        $global:PSDefaultParameterValues = $script:savedDefaultParameterValues
+        $global:PSDefaultParameterValues = $global:serviceCmdletSavedParameterValues
+        Remove-Variable serviceCmdletSavedParameterValues -Scope Global -ErrorAction SilentlyContinue
         if ($script:originalPath) {
             $env:PATH = $script:originalPath
         }
@@ -407,7 +352,7 @@ Describe "Unix Service cmdlets" -Tags "CI" {
                 Should -Throw -ErrorId "CouldNotStopService,Microsoft.PowerShell.Commands.StopServiceCommand"
         }
 
-        It "reports a manager failure mentioning a password as a manager failure" -Skip:$script:isRoot {
+        It "reports a manager failure mentioning a password as a manager failure" {
             if (Test-SkipAsRoot -Because "sudo is not used when running as root") { return }
 
             # only sudo's own diagnostics ('sudo:' prefix) mean that elevation was
@@ -426,7 +371,7 @@ Describe "Unix Service cmdlets" -Tags "CI" {
                 Should -Throw -ErrorId "System.ComponentModel.Win32Exception,Microsoft.PowerShell.Commands.StopServiceCommand"
         }
 
-        It "reports a clear error when sudo requires a password" -Skip:$script:isRoot {
+        It "reports a clear error when sudo requires a password" {
             if (Test-SkipAsRoot -Because "sudo is not used when running as root") { return }
 
             Reset-ServiceShim -Stdout "sshd.service loaded active running OpenSSH server daemon" -Stderr "sudo: a password is required" -ExitCode 1
@@ -435,7 +380,7 @@ Describe "Unix Service cmdlets" -Tags "CI" {
                 Should -Throw -ErrorId "SudoRequired,Microsoft.PowerShell.Commands.StopServiceCommand"
         }
 
-        It "reports a clear error for a localized sudo authorization failure" -Skip:$script:isRoot {
+        It "reports a clear error for a localized sudo authorization failure" {
             if (Test-SkipAsRoot -Because "sudo is not used when running as root") { return }
 
             # the 'sudo:' prefix is the program name and is stable across locales
@@ -445,7 +390,7 @@ Describe "Unix Service cmdlets" -Tags "CI" {
                 Should -Throw -ErrorId "SudoRequired,Microsoft.PowerShell.Commands.StopServiceCommand"
         }
 
-        It "reports SudoRequired when sudo is not available and the user is not root" -Skip:$script:isRoot {
+        It "reports SudoRequired when sudo is not available and the user is not root" {
             if (Test-SkipAsRoot -Because "sudo is not used when running as root") { return }
 
             $sudoPath = Join-Path $script:shimDir "sudo"
@@ -677,7 +622,7 @@ Describe "Unix Service cmdlets" -Tags "CI" {
             }
         }
 
-        It "skips non-executable manager commands during discovery" -Skip:$script:isRoot {
+        It "skips non-executable manager commands during discovery" {
             if (Test-SkipAsRoot -Because "root can execute files regardless of the execute bit") { return }
 
             $dir = Join-Path $script:shimDir "nonexec"
