@@ -192,6 +192,7 @@ namespace Microsoft.PowerShell.Commands
         void IDisposable.Dispose()
         {
             UnixServiceController.EndInvocation(ServiceInvocationToken);
+            GC.SuppressFinalize(this);
         }
 #endif
         #endregion Internal
