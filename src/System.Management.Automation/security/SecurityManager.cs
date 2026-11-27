@@ -192,6 +192,14 @@ namespace Microsoft.PowerShell
 
             if (_executionPolicy == ExecutionPolicy.Unrestricted)
             {
+                // Local data files need no signature under Unrestricted. Format loading
+                // independently verifies product identity for embedded script blocks.
+                if (string.Equals(fi.Extension, ".ps1xml", StringComparison.OrdinalIgnoreCase) &&
+                    IsLocalFile(fi.FullName))
+                {
+                    return true;
+                }
+
                 // Product binaries are always trusted
                 // This avoids signature and security zone checks
                 if (SecuritySupport.IsProductBinary(path))
