@@ -9046,6 +9046,12 @@ namespace System.Management.Automation
                 // $t[0].MainModule.<TAB>
                 //
                 value = Compiler.GetExpressionValue(ast, true, executionContext);
+                // Completion and type inference should treat an empty command result like null.
+                if (value == AutomationNull.Value)
+                {
+                    value = null;
+                }
+
                 return true;
             }
             catch

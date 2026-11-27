@@ -2,6 +2,28 @@
 # Licensed under the MIT License.
 Describe "Tab completion bug fix" -Tags "CI" {
 
+    It 'Issue#24737 - <valueKind> variables should not offer member completions' -TestCases @(
+        @{ valueKind = 'AutomationNull'; valueFactory = { & {} } }
+        @{ valueKind = '$null'; valueFactory = { $null } }
+    ) {
+        param($ValueKind, $ValueFactory)
+
+        $completionTarget24737 = & $valueFactory
+        $result = TabExpansion2 -inputScript '$completionTarget24737.'
+        $result.CompletionMatches | Should -HaveCount 0
+    }
+
+    It 'Issue#24737 - An empty command result assignment should not offer member completions' {
+        $result = TabExpansion2 -inputScript '$completionTarget24737 = & {}; $completionTarget24737.'
+        $result.CompletionMatches | Should -HaveCount 0
+    }
+
+    It 'Issue#24737 - Objects should still offer their own member completions' {
+        $completionTarget24737 = [pscustomobject]@{ ExampleProperty = 1 }
+        $result = TabExpansion2 -inputScript '$completionTarget24737.Exa'
+        $result.CompletionMatches.CompletionText | Should -BeExactly 'ExampleProperty'
+    }
+
     It "Issue#682 - '[system.manage<tab>' should work" {
         $result = TabExpansion2 -inputScript "[system.manage" -cursorColumn "[system.manage".Length
         $result.CompletionMatches | Should -HaveCount 1
