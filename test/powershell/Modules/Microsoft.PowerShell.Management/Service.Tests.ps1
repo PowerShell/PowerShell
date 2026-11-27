@@ -541,18 +541,19 @@ esac
             Set-Content -Path $shimPath -Value ($blockingBody -replace "`r", "")
             $null = & chmod +x $shimPath
             $savedPath = $env:PATH
-            $env:PATH = $dir
+            # prepend the blocking directory so the shim's `sleep` and the sudo shim stay
+            # available; a full restriction would fail the command before it blocks
+            $env:PATH = "$dir$([System.IO.Path]::PathSeparator)$savedPath"
             $ps = $null
             try {
                 $ps = [PowerShell]::Create()
                 $null = $ps.AddScript('Stop-Service -Name blocking -WarningAction SilentlyContinue -ErrorAction SilentlyContinue')
                 $async = $ps.BeginInvoke()
-                # wait until the blocking stop command is in flight, then stop the pipeline
+                # wait until the blocking stop command is in flight, then stop the pipeline;
+                # request the stop asynchronously so the bounded wait below can detect a
+                # missing cancellation instead of blocking on it
                 Start-Sleep -Seconds 2
-                $ps.Stop()
-                # the killed manager command surfaces as a regular error write, so the
-                # pipeline completes promptly; without cancellation it would hang in the
-                # shim's sleep and the wait would time out
+                $null = $ps.BeginStop($null, $null)
                 $completed = $async.AsyncWaitHandle.WaitOne(15000)
                 $completed | Should -BeTrue
                 $ps.InvocationStateInfo.State | Should -BeIn @("Completed", "Stopped")

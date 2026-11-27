@@ -29,7 +29,11 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements the base for service commands.
     /// </summary>
+#if UNIX
+    public abstract class ServiceBaseCommand : Cmdlet, IDisposable
+#else
     public abstract class ServiceBaseCommand : Cmdlet
+#endif
     {
         #region Internal
 
@@ -170,9 +174,11 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Releases the cancellation state of this cmdlet invocation when it completes.
+        /// Releases the invocation's cancellation state. Engine disposal is guaranteed
+        /// even after terminating errors and pipeline cancellations, so the static
+        /// cancellation registry can't accumulate state across invocations.
         /// </summary>
-        protected override void EndProcessing()
+        void IDisposable.Dispose()
         {
             UnixServiceController.EndInvocation(ServiceInvocationToken);
         }
@@ -569,10 +575,12 @@ namespace Microsoft.PowerShell.Commands
 #if UNIX
             // Create invocation-local controllers for the input objects: they carry the
             // producer run's owner token, so refresh and mutation must run under the
-            // consuming run's token and stay cancellable by it.
+            // consuming run's token and stay cancellable by it. Refresh before filtering
+            // so the query observes the current manager state.
             foreach (ServiceController service in InputObject)
             {
                 UnixServiceController local = ((UnixServiceController)service).CreateInvocationLocal(ServiceInvocationToken);
+                local.Refresh();
                 IncludeExcludeAdd(matchingServices, local, false);
             }
 #else
