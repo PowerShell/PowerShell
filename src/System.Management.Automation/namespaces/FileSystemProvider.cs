@@ -3836,7 +3836,60 @@ namespace Microsoft.PowerShell.Commands
                 parent = Path.GetDirectoryName(parent);
             }
 
-            return false;
+            // The identity comparison only detects ancestors that are the source
+            // itself. A destination can also reach INSIDE the source through a
+            // symbolic link that points to a subdirectory of the source, which
+            // would make the copy write its own output into the enumerated source,
+            // so both paths are resolved through symbolic links and the resolved
+            // destination is compared with the resolved source.
+            string resolvedDestination = ResolvePathThroughLinks(destination);
+            string resolvedSource = ResolvePathThroughLinks(pathWithoutEndingSeparator);
+
+            return resolvedDestination.StartsWith(resolvedSource + Path.DirectorySeparatorChar, comparison)
+                || resolvedDestination.Equals(resolvedSource, comparison);
+        }
+
+        /// <summary>
+        /// Resolves the specified path through symbolic links: every existing
+        /// component of the path that is a symbolic link is replaced by its
+        /// final target. Components that do not exist are preserved, and paths
+        /// without symbolic links are returned unchanged.
+        /// </summary>
+        /// <param name="path">The path to resolve.</param>
+        /// <returns>The resolved path.</returns>
+        private static string ResolvePathThroughLinks(string path)
+        {
+            string trimmedPath = Path.TrimEndingDirectorySeparator(path);
+            string parent = Path.GetDirectoryName(trimmedPath);
+
+            if (string.IsNullOrEmpty(parent))
+            {
+                // The path is a filesystem root and cannot be a symbolic link.
+                return path;
+            }
+
+            string resolvedParent = ResolvePathThroughLinks(parent);
+            string current = Path.Combine(resolvedParent, Path.GetFileName(trimmedPath));
+
+            FileSystemInfo info = Directory.Exists(current)
+                ? new DirectoryInfo(current)
+                : new FileInfo(current);
+
+            if (!info.Exists)
+            {
+                return current;
+            }
+
+            try
+            {
+                return info.ResolveLinkTarget(returnFinalTarget: true)?.FullName ?? current;
+            }
+            catch (IOException)
+            {
+                // A symbolic link chain could not be resolved, for example
+                // because it is cyclic; keep the path as it is.
+                return current;
+            }
         }
 
         /// <summary>

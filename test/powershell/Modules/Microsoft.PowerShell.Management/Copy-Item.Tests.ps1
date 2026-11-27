@@ -208,6 +208,33 @@ Describe "Copy-Item with -PreservePathFrom" -Tags "CI" {
         }
     }
 
+    It "Rejects a destination that resolves inside the source through a symbolic link" {
+        # The link points to a subdirectory of the source, so the destination
+        # is not an alias of the source itself but resolves below it.
+        $linkPath = Join-Path (Split-Path $sourceDirectory -Parent) "PreservePathFromLink"
+        $link = New-Item -ItemType SymbolicLink -Path $linkPath -Target (Join-Path $sourceDirectory "Sub1") -ErrorAction SilentlyContinue
+
+        if ($null -eq $link) {
+            # Creating a symbolic link requires elevated privileges on Windows.
+            Write-Warning "Skipping the test because a symbolic link could not be created."
+            return
+        }
+
+        try {
+            $errorRecord = $null
+            Copy-Item $sourceDirectory `
+                -PreservePathFrom (Split-Path $sourceDirectory -Parent) `
+                -Destination $linkPath -Recurse -ErrorVariable errorRecord -ErrorAction SilentlyContinue
+
+            $errorRecord.FullyQualifiedErrorId | Should -Be "CopyItemTargetInsideSource,Microsoft.PowerShell.Commands.CopyItemCommand"
+            Join-Path $sourceDirectory "Sub1/PreservePathFromSource" | Should -Not -Exist
+            (Get-ChildItem $sourceDirectory -Recurse -File).Count | Should -Be 4
+        }
+        finally {
+            Remove-Item $linkPath -Force -ErrorAction SilentlyContinue
+        }
+    }
+
     It "Copies every wildcard match when the destination is created by the first item" {
         Copy-Item (Join-Path $sourceDirectory "Sub*") `
             -PreservePathFrom $sourceDirectory `
