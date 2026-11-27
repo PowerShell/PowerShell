@@ -169,27 +169,23 @@ Describe "Module format data appends" -Tags "CI" {
 '@
         Add-Type @'
 using System;
-using System.Collections.Generic;
 using System.Management.Automation;
 using System.Management.Automation.Host;
 public class FormatAppendAuthorizationManager : AuthorizationManager
 {
-    public readonly List<string> Paths = new List<string>();
-    public string DeniedFile;
+    public string File;
+    public int FileChecks;
+    public bool Deny;
     public FormatAppendAuthorizationManager() : base("Microsoft.PowerShell") { }
     protected override bool ShouldRun(CommandInfo command, CommandOrigin origin, PSHost host, out Exception reason)
     {
         reason = null;
-        if (command is ExternalScriptInfo script)
+        if (command is ExternalScriptInfo script && script.Path == File)
         {
-            Paths.Add(script.Path);
-            if (script.Path == DeniedFile)
-            {
-                reason = new UnauthorizedAccessException("Test authorization denial");
-                return false;
-            }
+            FileChecks++;
+            reason = Deny ? new UnauthorizedAccessException("Test authorization denial") : null;
         }
-        return true;
+        return reason == null;
     }
 }
 '@
@@ -212,14 +208,14 @@ public class FormatAppendAuthorizationManager : AuthorizationManager
         Set-Content $secondFormat $formatTemplate.Replace('MARKER', 'second')
         $script:changedFormat = $formatTemplate.Replace('MARKER', 'changed')
         $script:ps = [PowerShell]::Create()
-        $script:runspace = $null
     }
 
     AfterEach {
+        if (-not $ps.IsRunspaceOwner) { $ps.Runspace.Dispose() }
         $ps.Dispose()
-        if ($runspace) { $runspace.Dispose() }
     }
 
+    # Unrelated imports retain the snapshot; each explicit reload path must observe file edits.
     It "Retains the loaded snapshot until <Operation>" -TestCases @(
         @{ Operation = 'Refresh' }
         @{ Operation = 'Force' }
@@ -249,6 +245,7 @@ public class FormatAppendAuthorizationManager : AuthorizationManager
         $result.After | Should -Match 'changed'
     }
 
+    # Copying defaults must preserve unset values so later files can supply them.
     It "Applies newly specified defaults without losing prior views" {
         $withDefaults = $formatTemplate.Replace('MARKER', 'second').Replace(
             '<Configuration>', '<Configuration><DefaultSettings><PropertyCountForTable>1</PropertyCountForTable></DefaultSettings>')
@@ -266,6 +263,7 @@ public class FormatAppendAuthorizationManager : AuthorizationManager
         $result.Rendered | Should -Match 'Alpha\s+:'
     }
 
+    # New views must still resolve definitions copied from earlier files.
     It "Resolves earlier selection sets and global controls after append" {
         [xml]$definitions = Get-Content (Join-Path $PSScriptRoot 'assets\UpdateFormatDataTests.format.ps1xml') -Raw
         $textNode = $definitions.SelectSingleNode('//Text')
@@ -288,9 +286,11 @@ public class FormatAppendAuthorizationManager : AuthorizationManager
         $result | Should -Match '42'
     }
 
-    It "Does not publish a failed addition and retries it after repair" {
+    # A valid view parsed before a later error must not leak into the published database.
+    It "Discards a partially loaded addition and retries it after repair" {
         $validSecond = Get-Content $secondFormat -Raw
-        Set-Content $secondFormat '<Configuration><ViewDefinitions><View><Name>broken</Name></View></ViewDefinitions></Configuration>'
+        Set-Content $secondFormat $validSecond.Replace(
+            '</ViewDefinitions>', '<View><Name>broken</Name></View></ViewDefinitions>')
         $result = $ps.AddScript({
             param($FirstModule, $SecondModule, $SecondFormat, $ValidSecond)
             Import-Module $FirstModule -ErrorAction Stop
@@ -309,29 +309,29 @@ public class FormatAppendAuthorizationManager : AuthorizationManager
         $result.After | Should -BeExactly 'first,second'
     }
 
+    # Custom managers must reauthorize existing inputs and propagate denials.
     It "Preserves custom authorization callbacks (deny=<Deny>)" -TestCases @(
         @{ Deny = $false }
         @{ Deny = $true }
     ) {
         param($Deny)
         $manager = [FormatAppendAuthorizationManager]::new()
+        $manager.File = $firstFormat
         $iss = [initialsessionstate]::CreateDefault2()
         $iss.AuthorizationManager = $manager
-        $script:runspace = [runspacefactory]::CreateRunspace($iss)
-        $runspace.Open()
-        $ps.Runspace = $runspace
+        $ps.Dispose()
+        $script:ps = [PowerShell]::Create($iss)
         $result = $ps.AddScript({
-            param($FirstModule, $SecondModule, $FirstFormat, $Manager, $Deny)
+            param($FirstModule, $SecondModule, $Manager, $Deny)
             Import-Module $FirstModule -ErrorAction Stop
-            if ($Deny) { $Manager.DeniedFile = $FirstFormat }
+            $Manager.Deny = $Deny
             $failure = $null
             try { Import-Module $SecondModule -ErrorAction Stop } catch { $failure = $_.FullyQualifiedErrorId }
             [pscustomobject]@{
                 Failure = $failure
-                FirstFileChecks = @($Manager.Paths | Where-Object { $_ -eq $FirstFormat }).Count
+                FirstFileChecks = $Manager.FileChecks
             }
-        }).AddArgument($firstModule).AddArgument($secondModule).AddArgument($firstFormat).
-            AddArgument($manager).AddArgument($Deny).Invoke()
+        }).AddArgument($firstModule).AddArgument($secondModule).AddArgument($manager).AddArgument($Deny).Invoke()
         $result.FirstFileChecks | Should -BeGreaterThan 1
         if ($Deny) {
             $result.Failure | Should -Match 'FormatXmlUpdateException'
@@ -340,6 +340,7 @@ public class FormatAppendAuthorizationManager : AuthorizationManager
         }
     }
 
+    # Policies outside Unrestricted must re-read existing inputs instead of retaining the snapshot.
     It "Falls back to a full reload under RemoteSigned" -Skip:(-not $IsWindows) {
         try {
             Set-ExecutionPolicy RemoteSigned -Scope Process -Force
