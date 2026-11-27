@@ -307,6 +307,28 @@ Describe "Select-String" -Tags "CI" {
             Select-String -LiteralPath $manyFiles[1].FullName, $bin -Pattern 'match' -Include '*.txt', '[' -Quiet | Should -BeExactly $true
         }
 
+        It "Should skip a folder before applying -Include: <name>" -TestCases @(
+            @{ name = 'the folder alone' }
+            @{ name = 'with a file named together' }
+        ) {
+            param ($name)
+
+            if ($name -eq 'the folder alone') {
+                Select-String -Path $manyDirectory -Pattern 'match' -Include '[' -Quiet | Should -BeExactly $false
+            }
+            else {
+                Select-String -Path $manyDirectory, $manyFiles[1].FullName -Pattern 'match' -Include '*.txt', '[' -Quiet | Should -BeExactly $true
+            }
+        }
+
+        It "Should close each file before writing its -List result" {
+            $copy = Join-Path $TestDrive 'listcopy'
+            Copy-Item -Path $manyDirectory -Destination $copy -Recurse
+            $paths = (Get-ChildItem $copy -File | Sort-Object Name | Select-Object -First 20).FullName
+            { Select-String -LiteralPath $paths -Pattern 'match' -List | Remove-Item -ErrorAction Stop } | Should -Not -Throw
+            (Get-ChildItem $copy -File).Count | Should -Be ((Get-ChildItem $manyDirectory -File).Count - 17)
+        }
+
         It "Should search an empty file among files named together" {
             $empty = Join-Path $TestDrive 'empty.txt'
             Set-Content -Path $empty -Value $null -NoNewline

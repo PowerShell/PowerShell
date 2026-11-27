@@ -1571,7 +1571,9 @@ namespace Microsoft.PowerShell.Commands
                 if (expandedPaths.Count == 1)
                 {
                     // see if the file is one the include exclude list...
-                    foundMatch = MeetsIncludeExcludeCriteria(expandedPaths[0]) && SearchFileHere(expandedPaths[0], expandedPathsMaybeDirectory);
+                    foundMatch = !IsFolderToSkip(expandedPaths[0], expandedPathsMaybeDirectory)
+                        && MeetsIncludeExcludeCriteria(expandedPaths[0])
+                        && SearchFileHere(expandedPaths[0], expandedPathsMaybeDirectory);
                 }
                 else
                 {
@@ -1708,7 +1710,7 @@ namespace Microsoft.PowerShell.Commands
                         PlannedFile planned;
                         try
                         {
-                            planned = !MeetsIncludeExcludeCriteria(name)
+                            planned = IsFolderToSkip(name, maybeDirectory) || !MeetsIncludeExcludeCriteria(name)
                                 ? new PlannedFile(name, null, leftOut: true, null)
                                 : IsSearchableAhead(name)
                                     ? new PlannedFile(name, s_workers.StartNew(() => SearchFile(name, maybeDirectory, record, token), token), false, null)
@@ -1798,8 +1800,20 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private static bool IsSearchableAhead(string path)
         {
+            // A symbolic link reports the length of its target's name, not of the target (which may be a pipe or
+            // /dev/stdin), so links are opened only in their turn too.
             var info = new FileInfo(path);
-            return info.Exists && info.Length > 0;
+            return info.Exists && info.Length > 0 && info.LinkTarget == null && (info.Attributes & FileAttributes.ReparsePoint) == 0;
+        }
+
+        /// <summary>
+        /// Whether a path from -Path is a folder that the original loop skipped before applying -Include and
+        /// -Exclude. Asked only when a filter is set: without one, a folder is skipped after its open fails, with the
+        /// same result and one less call to the file system for every file.
+        /// </summary>
+        private bool IsFolderToSkip(string path, bool maybeDirectory)
+        {
+            return maybeDirectory && (_include != null || _exclude != null) && Directory.Exists(path);
         }
 
         /// <summary>
@@ -1911,16 +1925,17 @@ namespace Microsoft.PowerShell.Commands
             // DoMatch, which builds the same MatchInfo as before.
             bool testInPlace = contextTracker is NoContextTracker;
 
-            // An encoding whose decoder throws on invalid bytes, or replaces one with several characters, is read
-            // exactly as before (StreamReader.ReadLine with its default buffer), so an error is raised at the same
-            // point, after the same lines have been written.
-            bool readAsBefore = !IsPlainDecoding(Encoding);
-
             try
             {
                 using (var handle = File.OpenHandle(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, FileOptions.SequentialScan))
-                using (FileStream fs = new(handle, FileAccess.Read, readAsBefore ? 4096 : 1))
+                using (FileStream fs = new(handle, FileAccess.Read, 1))
                 {
+                    // Read exactly as before (StreamReader.ReadLine with its default buffer) when reading ahead could
+                    // change what is seen: an encoding whose decoder throws on invalid bytes, or replaces one with
+                    // several characters, must raise its error after the same lines; a stream that cannot seek (a pipe)
+                    // must hand back a complete line without asking for more input first.
+                    bool readAsBefore = !IsPlainDecoding(Encoding) || !fs.CanSeek;
+
                     using (StreamReader sr = readAsBefore ? new(fs, Encoding) : new(fs, Encoding, true, 16 * 1024))
                     using (var reader = new LineReader(sr, readAsBefore, token))
                     {
