@@ -85,6 +85,62 @@ exec "${@:2}"
     }
 }
 
+# The helpers are defined in the script scope: plain functions defined at the top level
+# or in the Describe body are gone by the time It blocks run, under Pester 4 as well as 5.
+function script:Reset-ServiceShim {
+    [CmdletBinding(SupportsShouldProcess)]
+    param(
+        [string]$Stdout = "",
+        [string]$UnitFilesStdout = "",
+        [string]$DependencyStdout = "",
+        [string]$RcListStdout = "",
+        [string]$Stderr = "",
+        [int]$ExitCode = 0
+    )
+
+    if (-not $PSCmdlet.ShouldProcess("service manager shim invocation log and environment", "Reset shim state")) {
+        return
+    }
+
+    $env:PS_SERVICE_SHIM_STDOUT = $Stdout
+    $env:PS_SERVICE_SHIM_UF_STDOUT = $UnitFilesStdout
+    $env:PS_SERVICE_SHIM_DEP_STDOUT = $DependencyStdout
+    $env:PS_SERVICE_SHIM_RC_LIST_STDOUT = $RcListStdout
+    $env:PS_SERVICE_SHIM_STDERR = $Stderr
+    $env:PS_SERVICE_SHIM_EXITCODE = "$ExitCode"
+    $env:PS_SERVICE_SHIM_ENUM_FAILS = ""
+    if (Test-Path $script:logFile) {
+        Remove-Item $script:logFile -Force
+    }
+}
+
+function script:Get-InvocationLog {
+    if (Test-Path $script:logFile) {
+        # the unary comma preserves the array when the file has a single line
+        return , @(Get-Content $script:logFile)
+    }
+
+    return , @()
+}
+
+function script:Test-SkipAsRoot {
+    param([string]$Because)
+
+    # Pester 4 evaluates 'It -Skip' when the block is created, so the flag on the test is
+    # enough there. Pester 5 fixes the flag during discovery, before the setup above ran,
+    # so the body requests the skip at run time instead.
+    if (-not $script:isRoot) {
+        return $false
+    }
+
+    if (Get-Command Set-ItResult -ErrorAction SilentlyContinue) {
+        Set-ItResult -Skipped -Because $Because
+    }
+
+    return $true
+}
+
+
 Describe "Unix Service cmdlets" -Tags "CI" {
     # The helpers are defined in the Describe scope: script-level functions of a test
     # file are not visible from BeforeEach and It blocks under either Pester version.
