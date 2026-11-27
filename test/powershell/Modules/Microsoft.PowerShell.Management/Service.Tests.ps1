@@ -18,6 +18,7 @@ function script:Reset-ServiceShim {
         [string]$Stdout = "",
         [string]$UnitFilesStdout = "",
         [string]$DependencyStdout = "",
+        [string]$ShowStdout = "",
         [string]$RcListStdout = "",
         [string]$Stderr = "",
         [int]$ExitCode = 0
@@ -30,6 +31,7 @@ function script:Reset-ServiceShim {
     $env:PS_SERVICE_SHIM_STDOUT = $Stdout
     $env:PS_SERVICE_SHIM_UF_STDOUT = $UnitFilesStdout
     $env:PS_SERVICE_SHIM_DEP_STDOUT = $DependencyStdout
+    $env:PS_SERVICE_SHIM_SHOW_STDOUT = $ShowStdout
     $env:PS_SERVICE_SHIM_RC_LIST_STDOUT = $RcListStdout
     $env:PS_SERVICE_SHIM_STDERR = $Stderr
     $env:PS_SERVICE_SHIM_EXITCODE = "$ExitCode"
@@ -87,7 +89,7 @@ Describe "Unix Service cmdlets" -Tags "CI" {
 printf '%s\n' "$*" >> "$PS_SERVICE_SHIM_LOG"
 case "$1" in
     list-unit-files) stdout="$PS_SERVICE_SHIM_UF_STDOUT"; enum=1 ;;
-    show) stdout="$PS_SERVICE_SHIM_DEP_STDOUT"; enum=1 ;;
+    show) case "$*" in *LoadState*) stdout="$PS_SERVICE_SHIM_SHOW_STDOUT" ;; *) stdout="$PS_SERVICE_SHIM_DEP_STDOUT" ;; esac; enum=1 ;;
     --list) stdout="$PS_SERVICE_SHIM_RC_LIST_STDOUT"; enum=1 ;;
     list-units|list|--all|--status-all) stdout="$PS_SERVICE_SHIM_STDOUT"; enum=1 ;;
     *) stdout="$PS_SERVICE_SHIM_STDOUT" ;;
@@ -149,8 +151,8 @@ exec "${@:2}"
         }
 
         foreach ($variable in "PS_SERVICE_SHIM_LOG", "PS_SERVICE_SHIM_STDOUT", "PS_SERVICE_SHIM_UF_STDOUT",
-            "PS_SERVICE_SHIM_DEP_STDOUT", "PS_SERVICE_SHIM_RC_LIST_STDOUT", "PS_SERVICE_SHIM_STDERR",
-            "PS_SERVICE_SHIM_EXITCODE", "PS_SERVICE_SHIM_ENUM_FAILS") {
+            "PS_SERVICE_SHIM_DEP_STDOUT", "PS_SERVICE_SHIM_SHOW_STDOUT", "PS_SERVICE_SHIM_RC_LIST_STDOUT",
+            "PS_SERVICE_SHIM_STDERR", "PS_SERVICE_SHIM_EXITCODE", "PS_SERVICE_SHIM_ENUM_FAILS") {
             Remove-Item "Env:\$variable" -ErrorAction SilentlyContinue
         }
 
@@ -221,6 +223,18 @@ exec "${@:2}"
             # case-insensitive matches resolve to the canonical native name, so that
             # subsequent operations target the service systemd actually knows about
             (Get-Service -Name "SSHD").Name | Should -Be "sshd"
+        }
+
+        It "Get-Service resolves an alias unit name to the unit it refers to" {
+            Reset-ServiceShim -Stdout "ssh.service loaded active running OpenSSH server daemon" `
+                -UnitFilesStdout "ssh.service enabled enabled`nsshd.service alias enabled" `
+                -ShowStdout "loaded`nssh.service"
+
+            # 'sshd.service' is an alias of 'ssh.service': looking it up yields the
+            # target's live state instead of a separate stopped service
+            $alias = Get-Service -Name "sshd"
+            $alias.Name | Should -Be "ssh"
+            $alias.Status.ToString() | Should -Be "Running"
         }
 
         It "Get-Service supports wildcard patterns in -Name" {

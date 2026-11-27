@@ -805,13 +805,56 @@ namespace Microsoft.PowerShell.Commands
             _resolved = true;
             _exists = false;
 
-            UnixServiceController? match = MatchService(GetServices(OwnerToken), Name);
+            UnixServiceController[] services = GetServices(OwnerToken);
+            UnixServiceController? match = MatchService(services, Name);
+            if (match is null)
+            {
+                // An alias unit (for example sshd.service for ssh.service) isn't listed
+                // under its own name, so ask the manager which unit the name refers to.
+                string? canonicalName = ResolveCanonicalUnitName();
+                if (canonicalName is not null)
+                {
+                    match = MatchService(services, canonicalName);
+                }
+            }
+
             if (match is not null)
             {
                 CopyFrom(match);
             }
 
             AttachDisplaySettings();
+        }
+
+        private string? ResolveCanonicalUnitName()
+        {
+            if (ResolveManager().Kind != ServiceManagerKind.Systemd)
+            {
+                return null;
+            }
+
+            string output;
+            try
+            {
+                output = RunQueryCommand("systemctl", new[] { "show", UnitName(), "--property=LoadState,Id", "--value" });
+            }
+            catch (Win32Exception)
+            {
+                // The manager doesn't know a unit by that name at all.
+                return null;
+            }
+
+            // One value per property, in the requested order.
+            string[] values = output.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+            if (values.Length < 2 || !string.Equals(values[0].Trim(), "loaded", StringComparison.Ordinal))
+            {
+                return null;
+            }
+
+            string unit = values[1].Trim();
+            return unit.EndsWith(ServiceSuffix, StringComparison.Ordinal)
+                ? UnixServiceParser.RemoveServiceSuffix(unit)
+                : null;
         }
 
         private static UnixServiceController? MatchService(UnixServiceController[] services, string name)
