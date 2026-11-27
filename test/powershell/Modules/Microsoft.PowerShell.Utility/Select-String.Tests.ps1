@@ -257,6 +257,101 @@ Describe "Select-String" -Tags "CI" {
         }
     }
 
+    Context "Many files" {
+        BeforeAll {
+            $manyDirectory = Join-Path $TestDrive 'many'
+            $null = New-Item -ItemType Directory -Path $manyDirectory
+            $expectedMatches = [System.Collections.Generic.List[string]]::new()
+            for ($i = 0; $i -lt 300; $i++) {
+                $name = 'file{0:D3}.txt' -f $i
+                if ($i % 7 -eq 0) {
+                    $lines = 'nothing here', 'or here'
+                }
+                else {
+                    $lines = 'first line', "match $i", 'other', "match again $i"
+                    $expectedMatches.Add("${name}:2:match $i")
+                    $expectedMatches.Add("${name}:4:match again $i")
+                }
+
+                Set-Content -Path (Join-Path $manyDirectory $name) -Value $lines
+            }
+
+            $manyFiles = Get-ChildItem -Path $manyDirectory -File | Sort-Object -Property Name
+        }
+
+        It "Should return the matches of many files in input order" {
+            $actual = $manyFiles | Select-String -Pattern 'match' | ForEach-Object { '{0}:{1}:{2}' -f $_.Filename, $_.LineNumber, $_.Line }
+            $actual -join "`n" | Should -BeExactly ($expectedMatches -join "`n")
+        }
+
+        It "Should return one -Quiet result per file, in input order" {
+            $actual = $manyFiles[0..3] | Select-String -Pattern 'match' -Quiet
+            $actual | Should -Be @($false, $true, $true, $true)
+        }
+
+        It "Should return the first match of each file with -List" {
+            $actual = $manyFiles | Select-String -Pattern 'match' -List | ForEach-Object { '{0}:{1}' -f $_.Filename, $_.LineNumber }
+            $actual.Count | Should -Be ($expectedMatches.Count / 2)
+            $actual[0] | Should -BeExactly 'file001.txt:2'
+        }
+
+        It "Should stop when a later command needs no more input" {
+            $actual = $manyFiles | Select-String -Pattern 'match' | Select-Object -First 1
+            '{0}:{1}' -f $actual.Filename, $actual.LineNumber | Should -BeExactly 'file001.txt:2'
+        }
+    }
+
+    Context "Line ends and long lines" {
+        BeforeAll {
+            $lineEndsFile = Join-Path $TestDrive 'lineends.txt'
+            [System.IO.File]::WriteAllText($lineEndsFile, "a needle`r`nb`rneedle c`nneedle`r`r`nlast needle")
+            $longLineFile = Join-Path $TestDrive 'longline.txt'
+            [System.IO.File]::WriteAllText($longLineFile, "short`n" + ('x' * 100000) + "needle`nend")
+        }
+
+        It "Should count lines ended by CR, LF and CRLF as ReadLine does" {
+            $actual = Select-String -Path $lineEndsFile -Pattern 'needle'
+            $actual.LineNumber | Should -Be @(1, 3, 4, 6)
+            $actual.Line | Should -Be @('a needle', 'needle c', 'needle', 'last needle')
+        }
+
+        It "Should return the non-matching lines, including an empty one, with -NotMatch" {
+            $actual = Select-String -Path $lineEndsFile -Pattern 'needle' -NotMatch
+            $actual.LineNumber | Should -Be @(2, 5)
+            $actual.Line | Should -Be @('b', '')
+        }
+
+        It "Should give the same results when a file has too many matches to hold: <name>" -TestCases @(
+            @{ name = 'matches';       arguments = @{ Pattern = '\d' } }
+            @{ name = 'context lines'; arguments = @{ Pattern = '\d'; Context = 1, 2 } }
+            @{ name = 'not match';     arguments = @{ Pattern = '7'; NotMatch = $true } }
+        ) {
+            param ($arguments)
+
+            $manyMatchesFile = Join-Path $TestDrive 'manymatches.txt'
+            Set-Content -Path $manyMatchesFile -Value (1..500 | ForEach-Object { "line $_" })
+            $describe = { $input | ForEach-Object { '{0}|{1}|{2}' -f $_.LineNumber, $_.Line, ($_.Context.PreContext -join ',') } }
+
+            $normal = Select-String -Path $manyMatchesFile @arguments | & $describe
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('SelectStringMaxHeldMatches', 5)
+            try {
+                $searchedAgain = Select-String -Path $manyMatchesFile @arguments | & $describe
+            }
+            finally {
+                [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('SelectStringMaxHeldMatches', 0)
+            }
+
+            $normal.Count | Should -BeGreaterThan 5
+            ($searchedAgain -join "`n") | Should -BeExactly ($normal -join "`n")
+        }
+
+        It "Should return a line longer than the read buffer whole" {
+            $actual = Select-String -Path $longLineFile -Pattern 'needle'
+            $actual.LineNumber | Should -Be 2
+            $actual.Line.Length | Should -Be 100006
+        }
+    }
+
     Context "Culture parameter" {
         It "Should throw if -Culture parameter is used without -SimpleMatch parameter" {
             { "1" | Select-String -Pattern "hello" -Culture "ru-RU" } | Should -Throw -ErrorId "CannotSpecifyCultureWithoutSimpleMatch,Microsoft.PowerShell.Commands.SelectStringCommand"
