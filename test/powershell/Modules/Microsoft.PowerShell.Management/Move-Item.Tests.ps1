@@ -111,3 +111,163 @@ Describe "Move-Item tests" -Tag "CI" {
         }
     }
 }
+
+Describe "Move-Item with -PreservePathFrom" -Tag "CI" {
+    BeforeAll {
+        $sourceDirectory = "$TESTDRIVE/PreservePathFromSource"
+        $destinationDirectory = "$TESTDRIVE/PreservePathFromDestination"
+
+        # Returns the relative paths of all files below a path, with platform
+        # separators and in a stable order, so that they can be compared.
+        function Get-RelativeFilePathsBelow {
+            param([string]$Path)
+
+            Get-ChildItem $Path -Recurse -File | ForEach-Object {
+                $_.FullName.Substring($Path.Length).TrimStart('\', '/') -replace '/', [IO.Path]::DirectorySeparatorChar
+            } | Sort-Object
+        }
+    }
+
+    BeforeEach {
+        Remove-Item $sourceDirectory, $destinationDirectory -Recurse -Force -ErrorAction SilentlyContinue
+
+        New-Item -ItemType Directory -Path (Join-Path $sourceDirectory "Sub1/Deep"), (Join-Path $sourceDirectory "Sub2") -Force | Out-Null
+        Set-Content (Join-Path $sourceDirectory "Root.log") -Value "root"
+        Set-Content (Join-Path $sourceDirectory "Sub1/First.log") -Value "first"
+        Set-Content (Join-Path $sourceDirectory "Sub1/Deep/Second.log") -Value "second"
+        Set-Content (Join-Path $sourceDirectory "Sub2/Third.log") -Value "third"
+    }
+
+    AfterAll {
+        Remove-Item $sourceDirectory, $destinationDirectory -Recurse -Force -ErrorAction SilentlyContinue
+    }
+
+    It "Preserves the folder structure of piped files below the base path" {
+        Get-ChildItem $sourceDirectory -File -Recurse |
+            Move-Item -PreservePathFrom $sourceDirectory -Destination $destinationDirectory
+
+        $separator = [IO.Path]::DirectorySeparatorChar
+        Get-RelativeFilePathsBelow $destinationDirectory | Should -Be @(
+            "Root.log"
+            "Sub1${separator}Deep${separator}Second.log"
+            "Sub1${separator}First.log"
+            "Sub2${separator}Third.log"
+        )
+        (Get-ChildItem $sourceDirectory -Recurse -File).Count | Should -Be 0
+    }
+
+    It "Preserves the folder structure of piped directories" {
+        Get-ChildItem $sourceDirectory -Directory |
+            Move-Item -PreservePathFrom $sourceDirectory -Destination $destinationDirectory
+
+        Join-Path $destinationDirectory "Sub1/First.log" | Should -Exist
+        Join-Path $destinationDirectory "Sub1/Deep/Second.log" | Should -Exist
+        Join-Path $destinationDirectory "Sub2/Third.log" | Should -Exist
+        Join-Path $sourceDirectory "Sub1" | Should -Not -Exist
+    }
+
+    It "Does not create directories when the move is rejected" {
+        $errorRecord = $null
+        Move-Item (Join-Path $sourceDirectory "Sub1") `
+            -PreservePathFrom $sourceDirectory `
+            -Destination (Join-Path $sourceDirectory "Sub1/Export") -ErrorVariable errorRecord -ErrorAction SilentlyContinue
+
+        $errorRecord.FullyQualifiedErrorId | Should -Be "MoveItemArgumentError,Microsoft.PowerShell.Commands.MoveItemCommand"
+        Join-Path $sourceDirectory "Sub1/Export" | Should -Not -Exist
+    }
+
+    It "Rejects a differently cased destination inside the source" -Skip:(!$IsWindows) {
+        $casedDestination = Join-Path (Split-Path $sourceDirectory -Parent) "PRESERVEPATHFROMSOURCE/Sub1/Export"
+
+        $errorRecord = $null
+        Move-Item (Join-Path $sourceDirectory "Sub1") `
+            -PreservePathFrom $sourceDirectory `
+            -Destination $casedDestination -ErrorVariable errorRecord -ErrorAction SilentlyContinue
+
+        $errorRecord.FullyQualifiedErrorId | Should -Be "MoveItemArgumentError,Microsoft.PowerShell.Commands.MoveItemCommand"
+        Join-Path $sourceDirectory "Sub1/Export" | Should -Not -Exist
+        Join-Path $sourceDirectory "Sub1" | Should -Exist
+    }
+
+    It "Moves a directory symbolic link into its referent" {
+        $linkPath = Join-Path (Split-Path $sourceDirectory -Parent) "PreservePathFromLink"
+        $link = New-Item -ItemType SymbolicLink -Path $linkPath -Target (Join-Path $sourceDirectory "Sub1") -ErrorAction SilentlyContinue
+
+        if ($null -eq $link) {
+            # Creating a symbolic link requires elevated privileges on Windows.
+            Write-Warning "Skipping the test because a symbolic link could not be created."
+            return
+        }
+
+        try {
+            # Moving a symbolic link renames the link entry, so moving it into the
+            # directory it points to must not be rejected as a move into the source.
+            $errorRecord = $null
+            Move-Item $linkPath -Destination (Join-Path $sourceDirectory "Sub1") -ErrorVariable errorRecord -ErrorAction SilentlyContinue
+
+            $errorRecord | Should -BeNullOrEmpty
+            Join-Path $sourceDirectory "Sub1/PreservePathFromLink" | Should -Exist
+            (Get-Item (Join-Path $sourceDirectory "Sub1/PreservePathFromLink") -Force).LinkTarget | Should -Be (Join-Path $sourceDirectory "Sub1")
+
+            # The target directory itself is not moved and keeps its contents.
+            (Get-ChildItem (Join-Path $sourceDirectory "Sub1") -File -Recurse).Count | Should -Be 2
+        }
+        finally {
+            Remove-Item $linkPath -Force -ErrorAction SilentlyContinue
+            Remove-Item (Join-Path $sourceDirectory "Sub1/PreservePathFromLink") -Force -ErrorAction SilentlyContinue
+        }
+    }
+
+    It "Reports an error for an existing target directory instead of nesting it again" {
+        New-Item -ItemType Directory (Join-Path $destinationDirectory "Sub1") -Force | Out-Null
+
+        $errorRecord = $null
+        Move-Item (Join-Path $sourceDirectory "Sub1") `
+            -PreservePathFrom $sourceDirectory `
+            -Destination $destinationDirectory -ErrorVariable errorRecord -ErrorAction SilentlyContinue
+
+        $errorRecord | Should -Not -BeNullOrEmpty
+        Join-Path $destinationDirectory "Sub1/Sub1" | Should -Not -Exist
+        Join-Path $sourceDirectory "Sub1" | Should -Exist
+    }
+
+    It "Rejects moving an item onto itself" {
+        $selfFile = Join-Path $sourceDirectory "Root.log"
+
+        $errorRecord = $null
+        Move-Item $selfFile `
+            -PreservePathFrom $sourceDirectory `
+            -Destination $sourceDirectory -Force -ErrorVariable errorRecord -ErrorAction SilentlyContinue
+
+        $errorRecord.FullyQualifiedErrorId | Should -Be "MoveItemSameItemError,Microsoft.PowerShell.Commands.MoveItemCommand"
+        $selfFile | Should -Exist
+        $selfFile | Should -FileContentMatchExactly "root"
+    }
+
+    It "Writes a non-terminating error when the item is not below the base path" {
+        $outsideFile = "$TESTDRIVE/PreservePathFromOutside.log"
+        Set-Content $outsideFile -Value "outside"
+
+        try {
+            $errorRecord = $null
+            Move-Item $outsideFile `
+                -PreservePathFrom $sourceDirectory `
+                -Destination $destinationDirectory -ErrorVariable errorRecord -ErrorAction SilentlyContinue
+
+            $errorRecord.FullyQualifiedErrorId | Should -Be "PreservePathFromOutsideBasePath,Microsoft.PowerShell.Commands.MoveItemCommand"
+            $outsideFile | Should -Exist
+        }
+        finally {
+            Remove-Item $outsideFile -Force -ErrorAction SilentlyContinue
+        }
+    }
+
+    It "Writes an error when the base path does not exist" {
+        $errorRecord = $null
+        Move-Item (Join-Path $sourceDirectory "Root.log") `
+            -PreservePathFrom "$TESTDRIVE/DoesNotExist" `
+            -Destination $destinationDirectory -ErrorVariable errorRecord -ErrorAction SilentlyContinue
+
+        $errorRecord.FullyQualifiedErrorId | Should -Be "PreservePathFromPathNotFound,Microsoft.PowerShell.Commands.MoveItemCommand"
+    }
+}

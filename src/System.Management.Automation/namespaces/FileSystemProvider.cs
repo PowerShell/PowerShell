@@ -323,6 +323,17 @@ namespace Microsoft.PowerShell.Commands
             return new CopyItemDynamicParameters();
         }
 
+        /// <summary>
+        /// Gets the dynamic parameters for Move-Item on the FileSystemProvider.
+        /// </summary>
+        /// <param name="path">Source for the move operation.</param>
+        /// <param name="destination">Destination for the move operation.</param>
+        /// <returns></returns>
+        protected override object MoveItemDynamicParameters(string path, string destination)
+        {
+            return new MoveItemDynamicParameters();
+        }
+
         #region ICmdletProviderSupportsHelp members
 
         /// <summary>
@@ -3560,6 +3571,351 @@ namespace Microsoft.PowerShell.Commands
         #region CopyItem
 
         /// <summary>
+        /// Determines the destination for an item when preserving its relative path
+        /// below a base path, so that the folder structure of the source item is
+        /// preserved at the destination.
+        /// </summary>
+        /// <param name="path">
+        /// The provider path of the item being copied or moved.
+        /// </param>
+        /// <param name="preservePathFrom">
+        /// The user-specified base path from which the relative path is preserved.
+        /// </param>
+        /// <param name="resolvedBasePath">
+        /// The resolved base path. It is null on the first call of an invocation
+        /// and is then filled with the resolved base path so that subsequent
+        /// items of the same invocation reuse it.
+        /// </param>
+        /// <param name="destinationPath">
+        /// The destination provider path. When this method returns true it contains
+        /// the destination adjusted to preserve the relative path of the item.
+        /// </param>
+        /// <param name="destinationIsExactTarget">
+        /// When true, the returned destination is the exact target path of the item
+        /// and no item name should be appended to it when copying or moving.
+        /// </param>
+        /// <returns>
+        /// False if the destination could not be computed, in which case an error
+        /// has been written; otherwise true.
+        /// </returns>
+        private bool TryGetPreservedDestination(
+            string path,
+            string preservePathFrom,
+            ref string resolvedBasePath,
+            ref string destinationPath,
+            out bool destinationIsExactTarget)
+        {
+            destinationIsExactTarget = false;
+
+            // The base path is resolved only once per invocation and cached by
+            // the caller, because the provider processes every item in a separate
+            // call: re-resolving (and re-globbing) the base path for each item
+            // would be wasteful and would allow the base path to resolve
+            // differently, or to stop resolving at all, mid-operation.
+            string basePath = resolvedBasePath;
+
+            if (basePath == null)
+            {
+                // Resolve the base path with an isolated context so that the Include,
+                // Exclude, and Filter settings of the copy or move operation are not
+                // applied to the base directory while it is being resolved. The base
+                // path is an argument of its own, so it is always globbed normally
+                // even when the item paths come from the pipeline and are treated as
+                // literal paths by the operation context.
+                Collection<string> resolvedBasePaths = null;
+                ProviderInfo baseProvider = null;
+
+                CmdletProviderContext resolutionContext = new CmdletProviderContext(Context);
+                resolutionContext.SetFilters(
+                    new Collection<string>(),
+                    new Collection<string>(),
+                    null);
+                resolutionContext.SuppressWildcardExpansion = false;
+
+                // Save the context of the running operation and restore it after the
+                // resolution: the path resolution calls back into providers and must
+                // not leave the provider running on the temporary context. The
+                // temporary context is also removed from the stop referrals of the
+                // operation context so that it is not retained by it.
+                CmdletProviderContext operationContext = Context;
+
+                try
+                {
+                    try
+                    {
+                        resolvedBasePaths = Context.ExecutionContext.SessionState.Path.GetResolvedProviderPathFromPSPath(
+                            preservePathFrom,
+                            resolutionContext,
+                            out baseProvider);
+                    }
+                    finally
+                    {
+                        Context = operationContext;
+                        resolutionContext.RemoveStopReferral();
+                    }
+                }
+                catch (ItemNotFoundException pathNotFound)
+                {
+                    WriteError(new ErrorRecord(pathNotFound, "PreservePathFromPathNotFound", ErrorCategory.ObjectNotFound, preservePathFrom));
+                    return false;
+                }
+                catch (System.Management.Automation.DriveNotFoundException driveNotFound)
+                {
+                    WriteError(new ErrorRecord(driveNotFound, "PreservePathFromDriveNotFound", ErrorCategory.ObjectNotFound, preservePathFrom));
+                    return false;
+                }
+                catch (ProviderNotFoundException providerNotFound)
+                {
+                    WriteError(new ErrorRecord(providerNotFound, "PreservePathFromProviderNotFound", ErrorCategory.InvalidArgument, preservePathFrom));
+                    return false;
+                }
+
+                // Forward errors that the path resolution accumulated on the
+                // temporary context instead of throwing them.
+                if (resolutionContext.HasErrors())
+                {
+                    WriteError(resolutionContext.GetAccumulatedErrorObjects()[0]);
+                    return false;
+                }
+
+                if (baseProvider == null || baseProvider.ImplementingType != typeof(FileSystemProvider))
+                {
+                    string error = StringUtil.Format(
+                        FileSystemProviderStrings.PreservePathFromWrongProvider,
+                        preservePathFrom,
+                        ProviderInfo.Name);
+                    WriteError(new ErrorRecord(
+                        new ArgumentException(error),
+                        "PreservePathFromWrongProvider",
+                        ErrorCategory.InvalidArgument,
+                        preservePathFrom));
+                    return false;
+                }
+
+                if (resolvedBasePaths.Count != 1)
+                {
+                    string error = StringUtil.Format(
+                        FileSystemProviderStrings.PreservePathFromAmbiguous,
+                        preservePathFrom,
+                        resolvedBasePaths.Count);
+                    WriteError(new ErrorRecord(
+                        new ArgumentException(error),
+                        "PreservePathFromAmbiguous",
+                        ErrorCategory.InvalidArgument,
+                        preservePathFrom));
+                    return false;
+                }
+
+                basePath = NormalizePath(resolvedBasePaths[0]);
+
+                if (!IsItemContainer(basePath))
+                {
+                    string error = StringUtil.Format(
+                        FileSystemProviderStrings.PreservePathFromNotDirectory,
+                        basePath);
+                    WriteError(new ErrorRecord(
+                        new ArgumentException(error),
+                        "PreservePathFromNotDirectory",
+                        ErrorCategory.InvalidArgument,
+                        basePath));
+                    return false;
+                }
+
+                resolvedBasePath = basePath;
+            }
+
+            // Compute the relative path of the item below the base path.
+            string relativePath = Path.GetRelativePath(basePath, path);
+
+            if (relativePath == ".")
+            {
+                // The item is the base path itself; keep the destination and the
+                // regular copy or move semantics unchanged.
+                return true;
+            }
+
+            if (Path.IsPathRooted(relativePath)
+                || relativePath == ".."
+                || relativePath.StartsWith($"..{Path.DirectorySeparatorChar}")
+                || relativePath.StartsWith($"..{Path.AltDirectorySeparatorChar}"))
+            {
+                string error = StringUtil.Format(
+                    FileSystemProviderStrings.PreservePathFromOutsideBasePath,
+                    path,
+                    basePath);
+                WriteError(new ErrorRecord(
+                    new ArgumentException(error),
+                    "PreservePathFromOutsideBasePath",
+                    ErrorCategory.InvalidArgument,
+                    path));
+                return false;
+            }
+
+            // The destination is the exact target of the item; the copy and move
+            // code paths must not append the item name to it again. The parent of
+            // the destination is created by the callers once the operation has been
+            // validated and confirmed, so that rejected operations do not leave
+            // newly created directories behind.
+            destinationPath = MakePath(destinationPath, relativePath);
+            destinationIsExactTarget = true;
+
+            return true;
+        }
+
+        /// <summary>
+        /// Creates the parent directory of the specified destination path when it
+        /// does not exist yet, so that an item with a preserved relative path can
+        /// be copied or moved below it.
+        /// </summary>
+        /// <param name="destinationPath">The exact target path of the item.</param>
+        private void CreateDestinationParent(string destinationPath)
+        {
+            string destinationParent = GetParentPath(destinationPath, null);
+
+            if (!string.IsNullOrEmpty(destinationParent) && !IsItemContainer(destinationParent))
+            {
+                Directory.CreateDirectory(destinationParent);
+            }
+        }
+
+        /// <summary>
+        /// Determines whether the destination is the source itself or a path
+        /// below the source, so that an item is not copied or moved into its
+        /// own subtree.
+        /// </summary>
+        /// <param name="path">The path of the item being copied or moved.</param>
+        /// <param name="destination">The destination path of the item.</param>
+        /// <param name="checkSourceAliases">
+        /// True to also detect destinations that reach the source through a
+        /// symbolic link or a differently cased path by comparing file
+        /// identities. This must be false when a symbolic link is moved,
+        /// because the link entry is renamed instead of its referent being
+        /// moved, so a destination inside the referent is not inside the
+        /// source.
+        /// </param>
+        /// <returns>
+        /// True if the destination is the source or below the source.
+        /// </returns>
+        private static bool IsDestinationInsideSource(string path, string destination, bool checkSourceAliases = true)
+        {
+            string pathWithoutEndingSeparator = Path.TrimEndingDirectorySeparator(path);
+            StringComparison comparison = Platform.IsWindows
+                ? StringComparison.OrdinalIgnoreCase
+                : StringComparison.Ordinal;
+
+            // A destination that is textually equal to or below the source is
+            // inside the source. This also covers destinations below not yet
+            // existing subdirectories of the source.
+            if (destination.StartsWith(pathWithoutEndingSeparator + Path.DirectorySeparatorChar, comparison)
+                || destination.Equals(pathWithoutEndingSeparator, comparison))
+            {
+                return true;
+            }
+
+            // The aliases of the source are only compared when the directory
+            // itself is moved or copied.
+            if (!checkSourceAliases)
+            {
+                return false;
+            }
+
+            // The textual comparison can be bypassed by differently cased paths on
+            // case-insensitive filesystems (for example the default APFS on macOS)
+            // and by paths that reach the source through a symbolic link, so each
+            // existing ancestor of the destination is also compared with the source
+            // by file identity, which resolves both.
+            string parent = Path.GetDirectoryName(Path.TrimEndingDirectorySeparator(destination));
+
+            while (!string.IsNullOrEmpty(parent))
+            {
+                if (InternalSymbolicLinkLinkCodeMethods.IsSameFileSystemItem(parent, path))
+                {
+                    return true;
+                }
+
+                parent = Path.GetDirectoryName(parent);
+            }
+
+            // The identity comparison only detects ancestors that are the source
+            // itself. A destination can also reach INSIDE the source through a
+            // symbolic link that points to a subdirectory of the source, which
+            // would make the copy write its own output into the enumerated source,
+            // so both paths are resolved through symbolic links and the resolved
+            // destination is compared with the resolved source.
+            string resolvedDestination = ResolvePathThroughLinks(destination);
+            string resolvedSource = ResolvePathThroughLinks(pathWithoutEndingSeparator);
+
+            return resolvedDestination.StartsWith(resolvedSource + Path.DirectorySeparatorChar, comparison)
+                || resolvedDestination.Equals(resolvedSource, comparison);
+        }
+
+        /// <summary>
+        /// Resolves the specified path through symbolic links: every existing
+        /// component of the path that is a symbolic link is replaced by its
+        /// final target, and the target path itself is resolved through
+        /// symbolic links as well. Components that do not exist are preserved,
+        /// and paths without symbolic links are returned unchanged.
+        /// </summary>
+        /// <param name="path">The path to resolve.</param>
+        /// <param name="linkDepth">
+        /// The number of symbolic links followed so far, which stops cyclic
+        /// symbolic link chains. Walking ordinary parent directories does not
+        /// consume the budget because it is bounded by the number of path
+        /// components.
+        /// </param>
+        /// <returns>The resolved path.</returns>
+        private static string ResolvePathThroughLinks(string path, int linkDepth = 0)
+        {
+            // The depth limit stops cyclic symbolic link chains.
+            if (linkDepth > 64)
+            {
+                return path;
+            }
+
+            string trimmedPath = Path.TrimEndingDirectorySeparator(path);
+            string parent = Path.GetDirectoryName(trimmedPath);
+
+            if (string.IsNullOrEmpty(parent))
+            {
+                // The path is a filesystem root and cannot be a symbolic link.
+                return path;
+            }
+
+            string resolvedParent = ResolvePathThroughLinks(parent, linkDepth);
+            string current = Path.Combine(resolvedParent, Path.GetFileName(trimmedPath));
+
+            FileSystemInfo info = Directory.Exists(current)
+                ? new DirectoryInfo(current)
+                : new FileInfo(current);
+
+            if (!info.Exists)
+            {
+                return current;
+            }
+
+            try
+            {
+                string target = info.ResolveLinkTarget(returnFinalTarget: true)?.FullName;
+
+                if (target is null)
+                {
+                    return current;
+                }
+
+                // The target path of the link can itself contain symbolic
+                // links, so it is resolved as well; following a symbolic link
+                // consumes the budget.
+                return ResolvePathThroughLinks(target, linkDepth + 1);
+            }
+            catch (IOException)
+            {
+                // A symbolic link chain could not be resolved, for example
+                // because it is cyclic; keep the path as it is.
+                return current;
+            }
+        }
+
+        /// <summary>
         /// Copies an item at the specified path to the given destination.
         /// </summary>
         /// <param name="path">
@@ -3613,6 +3969,58 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
+            // When preserving the folder structure below a base path, adjust the
+            // destination by the relative path of the item below that base path.
+            bool preservePath = false;
+
+            if (!string.IsNullOrEmpty(copyDynamicParameter?.PreservePathFrom))
+            {
+                if (fromSession != null || toSession != null)
+                {
+                    string sessionError = StringUtil.Format(
+                        FileSystemProviderStrings.PreservePathFromNotSupportedWithSession,
+                        "PreservePathFrom");
+                    WriteError(new ErrorRecord(
+                        new ArgumentException(sessionError),
+                        "PreservePathFromNotSupportedWithSession",
+                        ErrorCategory.InvalidArgument,
+                        copyDynamicParameter.PreservePathFrom));
+                    return;
+                }
+
+                string resolvedBasePath = copyDynamicParameter.ResolvedPreservePathFrom;
+
+                if (!TryGetPreservedDestination(
+                        path,
+                        copyDynamicParameter.PreservePathFrom,
+                        ref resolvedBasePath,
+                        ref destinationPath,
+                        out bool destinationIsExactTarget))
+                {
+                    return;
+                }
+
+                copyDynamicParameter.ResolvedPreservePathFrom = resolvedBasePath;
+                preservePath = destinationIsExactTarget;
+            }
+
+            // Reject copying a directory into its own subtree when the folder
+            // structure is preserved: the copy would create the target below
+            // the source and then copy the target into itself while enumerating
+            // the source, until the path length limit is reached.
+            if (preservePath && IsItemContainer(path) && IsDestinationInsideSource(path, destinationPath))
+            {
+                string insideSourceError = StringUtil.Format(
+                    FileSystemProviderStrings.TargetCannotBeSubdirectoryOfSource,
+                    destinationPath);
+                WriteError(new ErrorRecord(
+                    new IOException(insideSourceError),
+                    "CopyItemTargetInsideSource",
+                    ErrorCategory.InvalidArgument,
+                    destinationPath));
+                return;
+            }
+
             _excludeMatcher = SessionStateUtilities.CreateWildcardsFromStrings(Exclude, WildcardOptions.IgnoreCase);
 
             // if the source and destination path are same (for a local copy) then flag it as error.
@@ -3637,7 +4045,7 @@ namespace Microsoft.PowerShell.Commands
                     using (System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create())
                     {
                         ps.Runspace = toSession.Runspace;
-                        CopyItemLocalOrToSession(path, destinationPath, recurse, Force, ps);
+                        CopyItemLocalOrToSession(path, destinationPath, recurse, Force, ps, destinationIsExactTarget: preservePath);
                     }
                 }
                 else // Copy-Item local
@@ -3653,7 +4061,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    CopyItemLocalOrToSession(path, destinationPath, recurse, Force, null);
+                    CopyItemLocalOrToSession(path, destinationPath, recurse, Force, null, destinationIsExactTarget: preservePath);
                     if (Stopping || _copiedFiles == _totalFiles)
                     {
                         _copyStopwatch.Stop();
@@ -3788,7 +4196,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void CopyItemLocalOrToSession(string path, string destinationPath, bool recurse, bool Force, System.Management.Automation.PowerShell ps)
+        private void CopyItemLocalOrToSession(string path, string destinationPath, bool recurse, bool Force, System.Management.Automation.PowerShell ps, bool destinationIsExactTarget = false)
         {
             bool isContainer = IsItemContainer(path);
 
@@ -3802,14 +4210,14 @@ namespace Microsoft.PowerShell.Commands
                     DirectoryInfo dir = new DirectoryInfo(path);
 
                     // Now copy the directory to the destination
-                    CopyDirectoryInfoItem(dir, destinationPath, recurse, Force, ps);
+                    CopyDirectoryInfoItem(dir, destinationPath, recurse, Force, ps, destinationIsExactTarget);
                 }
                 else // !isContainer
                 {
                     // Get the file info
                     FileInfo file = new FileInfo(path);
 
-                    CopyFileInfoItem(file, destinationPath, Force, ps);
+                    CopyFileInfoItem(file, destinationPath, Force, ps, destinationIsExactTarget);
                 }
             }
             finally
@@ -3823,7 +4231,8 @@ namespace Microsoft.PowerShell.Commands
             string destination,
             bool recurse,
             bool force,
-            System.Management.Automation.PowerShell ps)
+            System.Management.Automation.PowerShell ps,
+            bool destinationIsExactTarget = false)
         {
             Dbg.Diagnostics.Assert(
                 directory != null,
@@ -3835,12 +4244,31 @@ namespace Microsoft.PowerShell.Commands
             // will become a child of that directory.
             // If the destination doesn't exist we will just try to copy to that new
             // path.
+            // If the destination is the exact target of the directory, for example
+            // when preserving the relative path of an item, the directory name is
+            // not appended to it.
 
             if (ps == null)
             {
-                if (IsItemContainer(destination))
+                if (!destinationIsExactTarget && IsItemContainer(destination))
                 {
                     destination = MakePath(destination, directory.Name);
+                }
+                else if (destinationIsExactTarget && ItemExists(destination) && !IsItemContainer(destination))
+                {
+                    // The destination is an existing file. Copying the directory
+                    // would overwrite the file with the contents of the copied
+                    // children, so the copy is rejected before any child is copied.
+                    string error = StringUtil.Format(
+                        FileSystemProviderStrings.CopyDirectoryItemTargetIsFile,
+                        directory.FullName,
+                        destination);
+                    WriteError(new ErrorRecord(
+                        new IOException(error),
+                        "CopyDirectoryItemTargetIsFile",
+                        ErrorCategory.WriteError,
+                        destination));
+                    return;
                 }
             }
             else
@@ -3964,19 +4392,38 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void CopyFileInfoItem(FileInfo file, string destinationPath, bool force, System.Management.Automation.PowerShell ps)
+        private void CopyFileInfoItem(FileInfo file, string destinationPath, bool force, System.Management.Automation.PowerShell ps, bool destinationIsExactTarget = false)
         {
             Dbg.Diagnostics.Assert(
                 file != null,
                 "The caller should verify file.");
 
             // If the destination is a container, add the file name
-            // to the destination path.
+            // to the destination path. If the destination is the exact target of
+            // the file, for example when preserving the relative path of an item,
+            // the file name is not appended to it.
             if (ps == null)
             {
-                if (IsItemContainer(destinationPath))
+                if (!destinationIsExactTarget && IsItemContainer(destinationPath))
                 {
                     destinationPath = MakePath(destinationPath, file.Name);
+                }
+                else if (destinationIsExactTarget && ItemExists(destinationPath) && IsItemContainer(destinationPath))
+                {
+                    // The destination is an existing directory. The copy would
+                    // fail at the latest when the file is written, but not before
+                    // the retry logic has cleared attributes of the directory, so
+                    // the copy is rejected up front with a non-terminating error.
+                    string error = StringUtil.Format(
+                        FileSystemProviderStrings.CopyFileItemTargetIsDirectory,
+                        file.FullName,
+                        destinationPath);
+                    WriteError(new ErrorRecord(
+                        new IOException(error),
+                        "CopyFileItemTargetIsDirectory",
+                        ErrorCategory.WriteError,
+                        destinationPath));
+                    return;
                 }
 
                 // if the source and destination path are same then flag it as error.
@@ -4010,6 +4457,15 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (ps == null)
                         {
+                            // When the destination is the exact target of the file,
+                            // for example when preserving the relative path of an
+                            // item, create the parent of the destination if it does
+                            // not exist yet.
+                            if (destinationIsExactTarget)
+                            {
+                                CreateDestinationParent(destinationPath);
+                            }
+
                             // Now copy the file
                             // We assume that if we get called we want to make
                             // the copy even if the destination already exists.
@@ -5899,6 +6355,46 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
+            // When preserving the folder structure below a base path, adjust the
+            // destination by the relative path of the item below that base path.
+            // The adjusted destination is the exact target of the item.
+            MoveItemDynamicParameters moveDynamicParameter = DynamicParameters as MoveItemDynamicParameters;
+            bool preservePath = false;
+
+            if (!string.IsNullOrEmpty(moveDynamicParameter?.PreservePathFrom))
+            {
+                string resolvedBasePath = moveDynamicParameter.ResolvedPreservePathFrom;
+
+                if (!TryGetPreservedDestination(
+                        path,
+                        moveDynamicParameter.PreservePathFrom,
+                        ref resolvedBasePath,
+                        ref destination,
+                        out bool destinationIsExactTarget))
+                {
+                    return;
+                }
+
+                moveDynamicParameter.ResolvedPreservePathFrom = resolvedBasePath;
+                preservePath = destinationIsExactTarget;
+            }
+
+            // Moving an item onto itself is rejected up front: the move would be
+            // a no-op at best and, when the move fails and -Force is specified,
+            // the retry logic deletes the destination, which is the item itself.
+            if (preservePath && InternalSymbolicLinkLinkCodeMethods.IsSameFileSystemItem(path, destination))
+            {
+                string sameItemError = StringUtil.Format(
+                    FileSystemProviderStrings.MoveItemSameItemError,
+                    path);
+                WriteError(new ErrorRecord(
+                    new IOException(sameItemError),
+                    "MoveItemSameItemError",
+                    ErrorCategory.WriteError,
+                    path));
+                return;
+            }
+
             try
             {
                 bool isContainer = IsItemContainer(path);
@@ -5909,16 +6405,22 @@ namespace Microsoft.PowerShell.Commands
                     // Get the DirectoryInfo
                     DirectoryInfo dir = new DirectoryInfo(path);
 
-                    if (ItemExists(destination) &&
+                    if (!preservePath && ItemExists(destination) &&
                         IsItemContainer(destination))
                     {
                         destination = MakePath(destination, dir.Name);
                     }
 
                     // Don't allow moving a directory into itself or its sub-directory.
-                    string pathWithoutEndingSeparator = Path.TrimEndingDirectorySeparator(path);
-                    if (destination.StartsWith(pathWithoutEndingSeparator + Path.DirectorySeparatorChar)
-                        || destination.Equals(pathWithoutEndingSeparator, StringComparison.OrdinalIgnoreCase))
+                    // The comparison is case-insensitive on Windows so that a
+                    // differently cased destination cannot bypass the check, which
+                    // would create the destination parent inside the source tree
+                    // before the filesystem rejects the move. A symbolic link is
+                    // moved by renaming the link entry instead of moving its
+                    // referent, so a destination inside the directory the link
+                    // points to is not inside the source, and aliases of the source
+                    // are not checked for symbolic links.
+                    if (IsDestinationInsideSource(path, destination, checkSourceAliases: dir.LinkTarget is null))
                     {
                         string error = StringUtil.Format(FileSystemProviderStrings.TargetCannotBeSubdirectoryOfSource, destination);
                         var e = new IOException(error);
@@ -5934,6 +6436,14 @@ namespace Microsoft.PowerShell.Commands
                     // Confirm the move with the user
                     if (ShouldProcess(resource, action))
                     {
+                        // When the destination is the exact target of the directory,
+                        // for example when preserving the relative path of an item,
+                        // create the parent of the destination if it does not exist yet.
+                        if (preservePath)
+                        {
+                            CreateDestinationParent(destination);
+                        }
+
                         // Now move the directory
                         MoveDirectoryInfoItem(dir, destination, Force);
                     }
@@ -5948,7 +6458,7 @@ namespace Microsoft.PowerShell.Commands
                         "FileInfo should be throwing an exception but it's " +
                         "returning null instead");
 
-                    if (IsItemContainer(destination))
+                    if (!preservePath && IsItemContainer(destination))
                     {
                         // Construct the new file path from the destination
                         // directory and the file name
@@ -5963,6 +6473,14 @@ namespace Microsoft.PowerShell.Commands
                     // Confirm the move with the user
                     if (ShouldProcess(resource, action))
                     {
+                        // When the destination is the exact target of the file,
+                        // for example when preserving the relative path of an item,
+                        // create the parent of the destination if it does not exist yet.
+                        if (preservePath)
+                        {
+                            CreateDestinationParent(destination);
+                        }
+
                         MoveFileInfoItem(file, destination, Force, true);
                     }
                 }
@@ -7398,6 +7916,42 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [ValidateNotNullOrEmpty]
         public PSSession ToSession { get; set; }
+
+        /// <summary>
+        /// Gets or sets the base path from which the relative path of the item
+        /// being copied is preserved at the destination.
+        /// </summary>
+        [Parameter]
+        [ValidateNotNullOrEmpty]
+        public string PreservePathFrom { get; set; }
+
+        /// <summary>
+        /// Gets or sets the resolved base path of the <see cref="PreservePathFrom"/>
+        /// parameter. The base path is resolved once per invocation and cached here
+        /// because the provider processes every item in a separate call.
+        /// </summary>
+        internal string ResolvedPreservePathFrom { get; set; }
+    }
+
+    /// <summary>
+    /// Defines the dynamic parameters for the move-item cmdlet on the FileSystemProvider.
+    /// </summary>
+    internal sealed class MoveItemDynamicParameters
+    {
+        /// <summary>
+        /// Gets or sets the base path from which the relative path of the item
+        /// being moved is preserved at the destination.
+        /// </summary>
+        [Parameter]
+        [ValidateNotNullOrEmpty]
+        public string PreservePathFrom { get; set; }
+
+        /// <summary>
+        /// Gets or sets the resolved base path of the <see cref="PreservePathFrom"/>
+        /// parameter. The base path is resolved once per invocation and cached here
+        /// because the provider processes every item in a separate call.
+        /// </summary>
+        internal string ResolvedPreservePathFrom { get; set; }
     }
 
     /// <summary>
