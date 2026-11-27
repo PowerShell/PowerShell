@@ -321,4 +321,7 @@
   <data name="FormatTableCannotCoExist" xml:space="preserve">
     <value>A shared format table cannot be updated with more than one entry.</value>
   </data>
+  <data name="DatabaseChangedDuringUpdate" xml:space="preserve">
+    <value>The formatting database or authorization policy changed during an incremental update. Retry the operation.</value>
+  </data>
 </root>

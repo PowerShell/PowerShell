@@ -10,6 +10,7 @@ using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
+using System.Management.Automation.Security;
 using System.Threading;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
@@ -34,6 +35,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         // this is used to throw errors when updating a shared TypeTable.
         internal bool isShared;
         private readonly List<string> _formatFileList;
+        private List<PSSnapInTypeAndFormatErrors> _loadedFiles;
+        private AuthorizationManager _loadedAuthorizationManager;
 
         internal bool DisableFormatTableUpdates { get; set; }
 
@@ -273,12 +276,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// True if the format data has been pre-validated (build time, manual testing, etc) so that validation can be
         /// skipped at runtime.
         /// </param>
+        /// <param name="append">Whether this is an append-only module-manifest import.</param>
         /// <returns>Database instance.</returns>
         internal void UpdateDataBase(
             Collection<PSSnapInTypeAndFormatErrors> mshsnapins,
             AuthorizationManager authorizationManager,
             PSHost host,
-            bool preValidated
+            bool preValidated,
+            bool append = false
             )
         {
             if (DisableFormatTableUpdates)
@@ -293,7 +298,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             PSPropertyExpressionFactory expressionFactory = new PSPropertyExpressionFactory();
             List<XmlLoaderLoggerEntry> logEntries = null;
-            LoadFromFile(mshsnapins, expressionFactory, false, authorizationManager, host, preValidated, out logEntries);
+            LoadFromFile(mshsnapins, expressionFactory, false, authorizationManager, host, preValidated, out logEntries, append);
         }
 
         /// <summary>
@@ -314,6 +319,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// skipped at runtime.
         /// </param>
         /// <param name="logEntries">Trace and error logs from loading the format Xml files.</param>
+        /// <param name="append">Whether this is an append-only module-manifest import.</param>
         /// <returns>True if we had a successful load.</returns>
         internal bool LoadFromFile(
             Collection<PSSnapInTypeAndFormatErrors> files,
@@ -322,7 +328,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             AuthorizationManager authorizationManager,
             PSHost host,
             bool preValidated,
-            out List<XmlLoaderLoggerEntry> logEntries)
+            out List<XmlLoaderLoggerEntry> logEntries,
+            bool append = false)
         {
             bool success;
             try
@@ -330,14 +337,30 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 TypeInfoDataBase newDataBase = null;
                 lock (updateDatabaseLock)
                 {
-                    newDataBase = LoadFromFileHelper(files, expressionFactory, authorizationManager, host, preValidated, out logEntries, out success);
-                }
-                // if we have a valid database, assign it to the
-                // current database
-                lock (databaseLock)
-                {
-                    if (acceptLoadingErrors || success)
-                        Database = newDataBase;
+                    TypeInfoDataBase originalDatabase = Database;
+                    int startIndex = append ? GetAppendStartIndex(files, authorizationManager) : 0;
+                    newDataBase = LoadFromFileHelper(
+                        files, expressionFactory, authorizationManager, host, preValidated, out logEntries, out success,
+                        startIndex > 0 ? originalDatabase.CopyForAppend() : null, startIndex);
+
+                    // Host callbacks can reenter this lock and publish another database.
+                    if (startIndex > 0 &&
+                        (!ReferenceEquals(Database, originalDatabase) || !CanRetainLoadedFormats(authorizationManager)))
+                    {
+                        throw PSTraceSource.NewInvalidOperationException(FormatAndOutXmlLoadingStrings.DatabaseChangedDuringUpdate);
+                    }
+
+                    lock (databaseLock)
+                    {
+                        if (acceptLoadingErrors || success)
+                        {
+                            Database = newDataBase;
+                            _loadedFiles = success && CanRetainLoadedFormats(authorizationManager)
+                                ? new List<PSSnapInTypeAndFormatErrors>(files)
+                                : null;
+                            _loadedAuthorizationManager = authorizationManager;
+                        }
+                    }
                 }
             }
             finally
@@ -359,6 +382,34 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return success;
         }
 
+        private static bool CanRetainLoadedFormats(AuthorizationManager authorizationManager)
+        {
+            return authorizationManager is PSAuthorizationManager &&
+                SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.None &&
+                SecuritySupport.GetExecutionPolicy(authorizationManager.ShellId) == ExecutionPolicy.Unrestricted;
+        }
+
+        private int GetAppendStartIndex(Collection<PSSnapInTypeAndFormatErrors> files, AuthorizationManager authorizationManager)
+        {
+            if (Database == null || _loadedFiles == null || _loadedFiles.Count >= files.Count ||
+                !ReferenceEquals(authorizationManager, _loadedAuthorizationManager) ||
+                !CanRetainLoadedFormats(authorizationManager))
+            {
+                return 0;
+            }
+
+            for (int i = 0; i < _loadedFiles.Count; i++)
+            {
+                if (!StringComparer.OrdinalIgnoreCase.Equals(files[i].FullPath, _loadedFiles[i].FullPath) ||
+                    !ReferenceEquals(files[i].FormatData, _loadedFiles[i].FormatData))
+                {
+                    return 0;
+                }
+            }
+
+            return _loadedFiles.Count;
+        }
+
         /// <summary>
         /// It loads a database from file(s).
         /// </summary>
@@ -376,6 +427,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </param>
         /// <param name="logEntries">List of logger entries (errors, etc.) to return to the caller.</param>
         /// <param name="success">True if no error occurred.</param>
+        /// <param name="existingDataBase">Detached containers holding previously loaded definitions, or null for a full reload.</param>
+        /// <param name="startIndex">The first input not represented in the existing database.</param>
         /// <returns>A database instance loaded from file(s).</returns>
         private static TypeInfoDataBase LoadFromFileHelper(
             Collection<PSSnapInTypeAndFormatErrors> files,
@@ -384,24 +437,30 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             PSHost host,
             bool preValidated,
             out List<XmlLoaderLoggerEntry> logEntries,
-            out bool success)
+            out bool success,
+            TypeInfoDataBase existingDataBase = null,
+            int startIndex = 0)
         {
             success = true;
             // Holds the aggregated log entries for all files...
             logEntries = new List<XmlLoaderLoggerEntry>();
 
             // fresh instance of the database
-            TypeInfoDataBase db = new TypeInfoDataBase();
+            TypeInfoDataBase db = existingDataBase ?? new TypeInfoDataBase();
 
             // prepopulate the database with any necessary overriding data
-            AddPreLoadIntrinsics(db);
+            if (existingDataBase == null)
+            {
+                AddPreLoadIntrinsics(db);
+            }
 
             var etwEnabled = RunspaceEventSource.Log.IsEnabled();
 
             // load the XML document into a copy of the
             // in memory database
-            foreach (PSSnapInTypeAndFormatErrors file in files)
+            for (int i = startIndex; i < files.Count; i++)
             {
+                PSSnapInTypeAndFormatErrors file = files[i];
                 // Loads formatting data from ExtendedTypeDefinition instance
                 if (file.FormatData != null)
                 {
@@ -449,7 +508,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // add any sensible defaults to the database
-            AddPostLoadIntrinsics(db);
+            if (existingDataBase == null)
+            {
+                AddPostLoadIntrinsics(db);
+            }
 
             return db;
         }

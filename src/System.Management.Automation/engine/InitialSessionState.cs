@@ -1839,6 +1839,12 @@ namespace System.Management.Automation.Runspaces
         internal bool RefreshTypeAndFormatSetting = false;
 
         /// <summary>
+        /// Allows non-force manifest imports to reuse loaded formats,
+        /// subject to the format loader's input and security checks.
+        /// </summary>
+        internal bool AppendFormatsOnImport { get; set; }
+
+        /// <summary>
         /// Specifies the authorization manager to be used for this session state instance.
         /// If no authorization manager is specified, then the default authorization manager
         /// for PowerShell will be used which checks the ExecutionPolicy before running a command.
@@ -3709,7 +3715,12 @@ namespace System.Management.Automation.Runspaces
 
             if (entries.Count > 0)
             {
-                context.FormatDBManager.UpdateDataBase(entries, context.AuthorizationManager, context.EngineHostInterface, true);
+                context.FormatDBManager.UpdateDataBase(
+                    entries,
+                    context.AuthorizationManager,
+                    context.EngineHostInterface,
+                    true,
+                    append: update && AppendFormatsOnImport && !RefreshTypeAndFormatSetting);
 
                 var allErrors = new StringBuilder("\n");
                 bool hasErrors = false;
