@@ -81,10 +81,15 @@ namespace Microsoft.PowerShell.Commands
 
         private bool _resolved;
         private bool _exists = true;
+
+        // Whether the name was typed by a user, which allows the Windows-style lookup that
+        // isn't case-sensitive. A name reported by the manager is only matched exactly.
+        private bool _nameFromUser;
         private ServiceControllerStatus _status;
         private PSObject? _displayMemberSet;
         private UnixServiceController[]? _dependentServices;
         private UnixServiceController[]? _servicesDependedOn;
+        private UnixServiceController[]? _catalog;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UnixServiceController"/> class
@@ -106,13 +111,9 @@ namespace Microsoft.PowerShell.Commands
         /// during resolution with the owning cmdlet run for cancellation.</param>
         internal UnixServiceController(string serviceName, Guid? ownerToken)
         {
-            // The '.service' suffix is a systemd naming detail; other managers
-            // use the name exactly as provided.
-            string trimmed = serviceName.Trim();
-            Name = ResolveManager().Kind == ServiceManagerKind.Systemd
-                ? UnixServiceParser.RemoveServiceSuffix(trimmed)
-                : trimmed;
+            Name = serviceName.Trim();
             OwnerToken = ownerToken;
+            _nameFromUser = true;
             Resolve();
             AttachDisplaySettings();
         }
@@ -264,16 +265,55 @@ namespace Microsoft.PowerShell.Commands
         /// Service names don't carry the suffix, and neither do patterns for other managers.
         /// </summary>
         /// <param name="pattern">The name pattern to normalize.</param>
+        /// <param name="usesUnitSuffix">Whether the manager that reported the services names
+        /// its units with the suffix.</param>
         /// <returns>The pattern to match against service names.</returns>
-        internal static string RemoveUnitSuffixFromPattern(string pattern)
+        internal static string RemoveUnitSuffixFromPattern(string pattern, bool usesUnitSuffix)
         {
-            if (pattern.EndsWith(ServiceSuffix, StringComparison.OrdinalIgnoreCase)
-                && ResolveManager().Kind == ServiceManagerKind.Systemd)
+            // Only the manager that answered the enumeration decides this. Going by the
+            // first manager on PATH would turn '*.service' into '*' on a system where an
+            // idle systemd fell back to another manager, and stop every service.
+            if (usesUnitSuffix && pattern.EndsWith(ServiceSuffix, StringComparison.OrdinalIgnoreCase))
             {
                 return pattern[..^ServiceSuffix.Length];
             }
 
             return pattern;
+        }
+
+        /// <summary>
+        /// Determines whether the manager that reported the given services names its units
+        /// with the systemd unit suffix.
+        /// </summary>
+        /// <param name="services">The enumerated services.</param>
+        /// <returns>True for a catalog that was reported by systemd.</returns>
+        internal static bool UsesUnitSuffix(UnixServiceController[] services)
+        {
+            return services.Length > 0 && services[0].ManagerKind == ServiceManagerKind.Systemd;
+        }
+
+        /// <summary>
+        /// Finds a service by the name a user gave for it in an enumerated catalog. Resolving
+        /// each name through a new controller would enumerate the catalog again per name.
+        /// </summary>
+        /// <param name="serviceName">The name given for the service.</param>
+        /// <param name="catalog">An enumeration of all services.</param>
+        /// <param name="ownerToken">The token of the cmdlet invocation that looks the name up.</param>
+        /// <returns>The service, or null when the catalog doesn't know the name.</returns>
+        internal static UnixServiceController? FindService(string serviceName, UnixServiceController[] catalog, Guid? ownerToken)
+        {
+            if (catalog.Length == 0)
+            {
+                return null;
+            }
+
+            UnixServiceController? match = LookupName(serviceName.Trim(), catalog, catalog[0].ManagerKind, ownerToken, typedByUser: true);
+            if (match is not null)
+            {
+                match.OwnerToken = ownerToken;
+            }
+
+            return match;
         }
 
         /// <summary>
@@ -374,14 +414,19 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 services.Sort(static (x, y) => string.CompareOrdinal(x.Name, y.Name));
-                foreach (UnixServiceController service in services)
+                UnixServiceController[] catalog = services.ToArray();
+
+                // The services share the catalog they came from: resolving a name or a
+                // dependency against it doesn't need to enumerate the manager again.
+                foreach (UnixServiceController service in catalog)
                 {
                     service.ManagerKind = kind;
+                    service._catalog = catalog;
                     service.AttachDisplaySettings();
                 }
 
                 managerKind = kind;
-                return services.ToArray();
+                return catalog;
             }
 
             if (preferredFailure is not null)
@@ -442,7 +487,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Waits for the service to reach the specified status or throws
-        /// System.ServiceProcess.TimeoutException when the timeout expires.
+        /// <see cref="System.TimeoutException"/> when the timeout expires.
         /// </summary>
         /// <param name="desiredStatus">The status to wait for.</param>
         /// <param name="timeout">The maximum time to wait.</param>
@@ -458,10 +503,10 @@ namespace Microsoft.PowerShell.Commands
 
                 if (DateTime.UtcNow > deadline)
                 {
-                    // System.ServiceProcess.ServiceController.WaitForStatus throws
-                    // System.ServiceProcess.TimeoutException, which is what the
-                    // shared cmdlet code catches.
-                    throw new System.ServiceProcess.TimeoutException(
+                    // System.TimeoutException is what the shared cmdlet code catches on
+                    // Unix. System.ServiceProcess.TimeoutException can't be used here:
+                    // constructing it throws PlatformNotSupportedException on Unix.
+                    throw new System.TimeoutException(
                         string.Format(
                             CultureInfo.CurrentCulture,
                             "The service '{0}' did not reach the '{1}' status within the required timeout.",
@@ -504,25 +549,52 @@ namespace Microsoft.PowerShell.Commands
         public override string ToString() => Name;
 
         /// <summary>
-        /// Creates a controller for this service that belongs to the given cmdlet invocation,
-        /// with its state brought up to date from an enumeration snapshot taken by that
-        /// invocation.
+        /// Creates a controller for this service that belongs to the given cmdlet invocation
+        /// and queries its current state from the manager.
         /// </summary>
         /// <param name="ownerToken">The token of the consuming cmdlet invocation.</param>
-        /// <param name="snapshot">A current enumeration of all services.</param>
         /// <returns>A controller owned by the invocation.</returns>
-        internal UnixServiceController CreateInvocationLocal(Guid ownerToken, UnixServiceController[] snapshot)
+        internal UnixServiceController CreateInvocationLocal(Guid ownerToken)
         {
             // Input objects carry the producer run's owner token; create an invocation-local
             // controller so refresh and mutation run under the consuming run's token and are
-            // cancellable by it. Its state comes from the snapshot so that a pipeline over
-            // many services doesn't re-enumerate the whole catalog for each of them.
+            // cancellable by it.
             var local = new UnixServiceController { OwnerToken = ownerToken };
             local.CopyStateFrom(this);
-            UnixServiceController? match = MatchService(snapshot, Name);
+
+            // Each record is refreshed when it is processed: an enumeration taken at an
+            // earlier record can be outdated by now, for example in
+            // 'Get-Service a,b | Start-Service -PassThru | Stop-Service'.
+            local.Refresh();
+            local.AttachDisplaySettings();
+            return local;
+        }
+
+        /// <summary>
+        /// Creates a controller for this service that belongs to the given cmdlet invocation,
+        /// with its state brought up to date from an enumeration that the invocation took.
+        /// Used for managers that have no query for a single service.
+        /// </summary>
+        /// <param name="ownerToken">The token of the consuming cmdlet invocation.</param>
+        /// <param name="catalog">An enumeration of all services.</param>
+        /// <returns>A controller owned by the invocation.</returns>
+        internal UnixServiceController CreateInvocationLocal(Guid ownerToken, UnixServiceController[] catalog)
+        {
+            var local = new UnixServiceController { OwnerToken = ownerToken };
+            local.CopyStateFrom(this);
+
+            // A piped service has its own canonical name, so it is matched exactly: a
+            // differently cased service must never be operated on in its place.
+            UnixServiceController? match = MatchExact(catalog, Name);
             if (match is not null)
             {
                 local.CopyFrom(match);
+            }
+            else
+            {
+                // Not in that enumeration: ask the manager again instead of keeping a
+                // possibly outdated status and existence.
+                local.Resolve();
             }
 
             local.AttachDisplaySettings();
@@ -591,18 +663,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private static (string Control, string Status, ServiceManagerKind Kind) ResolveManager()
-        {
-            // The manager is only looked up, not contacted: this is used for naming decisions
-            // and ahead of the enumeration that picks the manager that actually answers.
-            foreach ((string control, string status, ServiceManagerKind kind) in FindAvailableManagers())
-            {
-                return (control, status, kind);
-            }
-
-            throw NewServiceManagerNotFoundException();
-        }
-
         private static void TryKillProcess(Process process)
         {
             try
@@ -644,7 +704,8 @@ namespace Microsoft.PowerShell.Commands
         private static async Task ReadIntoAsync(StreamReader reader, StringBuilder destination, CancellationToken cancellationToken)
         {
             // The output is collected incrementally, so whatever arrived is kept even when
-            // the rest of the stream is abandoned.
+            // the rest of the stream is abandoned. A reader can outlive the drain, so
+            // appends and the final copy share the builder as their lock.
             char[] buffer = new char[4096];
             while (true)
             {
@@ -654,7 +715,18 @@ namespace Microsoft.PowerShell.Commands
                     return;
                 }
 
-                destination.Append(buffer, 0, read);
+                lock (destination)
+                {
+                    destination.Append(buffer, 0, read);
+                }
+            }
+        }
+
+        private static string Snapshot(StringBuilder builder)
+        {
+            lock (builder)
+            {
+                return builder.ToString();
             }
         }
 
@@ -744,6 +816,7 @@ namespace Microsoft.PowerShell.Commands
             StringBuilder stderr = new();
             Task? stdoutTask = null;
             Task? stderrTask = null;
+            using CancellationTokenSource drain = CancellationTokenSource.CreateLinkedTokenSource(cts.Token);
             using Process process = new() { StartInfo = startInfo };
             s_activeProcesses[executionKey] = process;
             try
@@ -758,8 +831,8 @@ namespace Microsoft.PowerShell.Commands
 
                 // Drain both streams concurrently: reading them sequentially can deadlock
                 // on a full pipe.
-                stdoutTask = ReadIntoAsync(process.StandardOutput, stdout, cts.Token);
-                stderrTask = ReadIntoAsync(process.StandardError, stderr, cts.Token);
+                stdoutTask = ReadIntoAsync(process.StandardOutput, stdout, drain.Token);
+                stderrTask = ReadIntoAsync(process.StandardError, stderr, drain.Token);
                 process.WaitForExitAsync(cts.Token).GetAwaiter().GetResult();
 
                 // The manager exited. A daemon it started can inherit the pipes and keep
@@ -769,6 +842,9 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (!Task.WhenAll(stdoutTask, stderrTask).Wait(StreamDrainTimeout))
                     {
+                        // Stop the readers as soon as they return from the pipe they may
+                        // still be blocked on.
+                        drain.Cancel();
                         ObserveRead(stdoutTask);
                         ObserveRead(stderrTask);
                     }
@@ -778,7 +854,9 @@ namespace Microsoft.PowerShell.Commands
                     // A stream failed after the manager exited; its output so far is kept.
                 }
 
-                return (stdout.ToString(), stderr.ToString(), process.ExitCode);
+                // The readers append under the same lock, so one that hasn't stopped yet
+                // can't change the output while it is copied.
+                return (Snapshot(stdout), Snapshot(stderr), process.ExitCode);
             }
             catch (OperationCanceledException)
             {
@@ -860,12 +938,23 @@ namespace Microsoft.PowerShell.Commands
 
         private UnixServiceController? QueryUnit()
         {
+            return QueryUnit(Name, OwnerToken);
+        }
+
+        private static UnixServiceController? QueryUnit(string serviceName, Guid? ownerToken)
+        {
+            string unit = serviceName.EndsWith(ServiceSuffix, StringComparison.OrdinalIgnoreCase)
+                ? serviceName
+                : serviceName + ServiceSuffix;
+
             // The properties are requested in 'key=value' form and read by key: systemctl
             // doesn't preserve the order of the requested properties.
             string output;
             try
             {
-                output = RunQueryCommand("systemctl", new[] { "show", UnitName(), "--property=LoadState,Id,ActiveState,SubState,Description,UnitFileState", "--no-pager" });
+                output = new UnixServiceController { OwnerToken = ownerToken }.RunQueryCommand(
+                    "systemctl",
+                    new[] { "show", unit, "--property=LoadState,Id,ActiveState,SubState,Description,UnitFileState", "--no-pager" });
             }
             catch (Win32Exception)
             {
@@ -876,12 +965,13 @@ namespace Microsoft.PowerShell.Commands
             return UnixServiceParser.CreateFromSystemdUnitProperties(output);
         }
 
-        private static string QueryLaunchDomain()
+        private string QueryLaunchDomain()
         {
             // 'launchctl managername' reports the bootstrap domain of the caller, which the
-            // jobs of 'launchctl list' belong to. It can't be derived from the UID alone:
-            // an SSH session runs in the per-user domain 'user/<uid>', a GUI session in
-            // 'gui/<uid>'.
+            // jobs of 'launchctl list' belong to. It can't be derived from the UID alone: a
+            // GUI session ('Aqua') runs in 'gui/<uid>', an SSH or background session
+            // ('StandardIO', 'Background') in the per-user domain 'user/<uid>'.
+            // The query runs through this controller so that a pipeline stop can cancel it.
             string uid = UnixServiceNativeMethods.GetUserId().ToString(CultureInfo.InvariantCulture);
             string fallback = UnixServiceNativeMethods.GetEffectiveUserId() == 0
                 ? SystemLaunchDomain
@@ -889,7 +979,7 @@ namespace Microsoft.PowerShell.Commands
             string managerName;
             try
             {
-                managerName = new UnixServiceController().RunQueryCommand("launchctl", new[] { "managername" }).Trim();
+                managerName = RunQueryCommand("launchctl", new[] { "managername" }).Trim();
             }
             catch (Win32Exception)
             {
@@ -899,8 +989,8 @@ namespace Microsoft.PowerShell.Commands
             return managerName.ToUpperInvariant() switch
             {
                 "SYSTEM" => SystemLaunchDomain,
-                "GUI" => $"gui/{uid}",
-                "USER" => $"user/{uid}",
+                "AQUA" => $"gui/{uid}",
+                "STANDARDIO" or "BACKGROUND" => $"user/{uid}",
                 _ => fallback,
             };
         }
@@ -1028,10 +1118,12 @@ namespace Microsoft.PowerShell.Commands
                 return Array.Empty<UnixServiceController>();
             }
 
-            // Resolve the dependencies against a single enumeration snapshot instead of
-            // re-enumerating the whole catalog for every dependency. The invocation token is
-            // carried along so the enumeration stays cancellable.
-            UnixServiceController[] services = GetServices(OwnerToken);
+            // Resolve the dependencies against a single enumeration instead of
+            // re-enumerating the whole catalog for every dependency: the one this service
+            // came from, so that reading the properties of many services doesn't enumerate
+            // once per service. The invocation token is carried along so that an
+            // enumeration that is still needed stays cancellable.
+            UnixServiceController[] services = _catalog ?? GetServices(OwnerToken);
             List<UnixServiceController> result = new();
             foreach (string dependencyName in dependencyNames)
             {
@@ -1080,31 +1172,66 @@ namespace Microsoft.PowerShell.Commands
             _resolved = true;
             _exists = false;
 
-            UnixServiceController[] services = EnumerateServices(OwnerToken, out ServiceManagerKind managerKind);
-            ManagerKind = managerKind;
-            UnixServiceController? match = MatchService(services, Name);
-            if (match is null && managerKind == ServiceManagerKind.Systemd)
-            {
-                // Not listed under this name: an alias unit, or a not-yet-loaded template
-                // instance. Ask the manager about the unit itself.
-                UnixServiceController? queried = QueryUnit();
-                if (queried is not null)
-                {
-                    // Prefer the catalog entry so that the service looks the same as in
-                    // Get-Service; a unit that isn't listed is taken from the query.
-                    match = MatchService(services, queried.Name) ?? queried;
-                }
-            }
-
+            UnixServiceController[] catalog = EnumerateServices(OwnerToken, out ServiceManagerKind managerKind);
+            UnixServiceController? match = LookupName(Name, catalog, managerKind, OwnerToken, _nameFromUser);
             if (match is not null)
             {
                 CopyFrom(match);
+            }
+            else
+            {
+                ManagerKind = managerKind;
             }
 
             AttachDisplaySettings();
         }
 
-        private static UnixServiceController? MatchService(UnixServiceController[] services, string name)
+        /// <summary>
+        /// Resolves the name a user gave for a service against an enumeration of the
+        /// services, in this order: the exact name; for systemd, the name without its unit
+        /// suffix; for systemd, the unit with exactly that name even when it isn't listed
+        /// (an alias, or a template instance that was never loaded); and only then a
+        /// differently cased name, since lookups aren't case-sensitive like on Windows.
+        /// </summary>
+        /// <param name="name">The name given for the service.</param>
+        /// <param name="catalog">An enumeration of all services.</param>
+        /// <param name="managerKind">The manager that reported the enumeration.</param>
+        /// <param name="ownerToken">The token of the cmdlet invocation, if any.</param>
+        /// <param name="typedByUser">Whether the name was typed by a user, in which case a
+        /// differently cased name is accepted when there is no exact match. A name that the
+        /// manager reported is only matched exactly.</param>
+        /// <returns>The service, or null when the name isn't known.</returns>
+        private static UnixServiceController? LookupName(string name, UnixServiceController[] catalog, ServiceManagerKind managerKind, Guid? ownerToken, bool typedByUser)
+        {
+            bool isSystemd = managerKind == ServiceManagerKind.Systemd;
+
+            // The unit suffix is a systemd naming detail and is only dropped for the
+            // manager that answered: other managers use the name exactly as it is.
+            string bareName = isSystemd ? UnixServiceParser.RemoveServiceSuffix(name) : name;
+
+            UnixServiceController? match = MatchExact(catalog, name);
+            if (match is null && typedByUser && !string.Equals(bareName, name, StringComparison.Ordinal))
+            {
+                match = MatchExact(catalog, bareName);
+            }
+
+            if (match is null && isSystemd)
+            {
+                // Not listed under this name. The exact unit is asked about before a
+                // differently cased name is considered.
+                UnixServiceController? queried = QueryUnit(name, ownerToken);
+                if (queried is not null)
+                {
+                    // Prefer the catalog entry so that the service looks the same as in
+                    // Get-Service; a unit that isn't listed is taken from the query.
+                    return MatchExact(catalog, queried.Name) ?? queried;
+                }
+            }
+
+            return typedByUser ? match ?? MatchIgnoreCase(catalog, bareName) : match;
+        }
+
+        private static UnixServiceController? MatchExact(UnixServiceController[] services, string name)
         {
             foreach (UnixServiceController candidate in services)
             {
@@ -1114,7 +1241,12 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            // Fall back to the Windows-style case-insensitive lookup only when there is
+            return null;
+        }
+
+        private static UnixServiceController? MatchIgnoreCase(UnixServiceController[] services, string name)
+        {
+            // The Windows-style lookup for names typed by a user, used only when there is
             // no exact match.
             foreach (UnixServiceController candidate in services)
             {
@@ -1138,6 +1270,7 @@ namespace Microsoft.PowerShell.Commands
             SubState = source.SubState;
             UnitFileState = source.UnitFileState;
             ManagerKind = source.ManagerKind;
+            _catalog = source._catalog;
             _exists = source._exists;
         }
 

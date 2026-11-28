@@ -383,7 +383,22 @@ namespace Microsoft.PowerShell.Commands
             try
             {
 #if UNIX
-                var sc = new ServiceController(nameOfService, ServiceInvocationToken);
+                // Look the name up in the cmdlet's enumeration first: resolving each name
+                // through a new controller would enumerate the whole catalog again for
+                // every name. An enumeration that doesn't contain the name is conclusive.
+                UnixServiceController sc;
+                if (AllServices.Length > 0)
+                {
+                    sc = UnixServiceController.FindService(nameOfService, AllServices, ServiceInvocationToken);
+                    if (sc is null)
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    sc = new UnixServiceController(nameOfService, ServiceInvocationToken);
+                }
 #else
                 var sc = new ServiceController(nameOfService);
 #endif
@@ -489,7 +504,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (WildcardPattern.ContainsWildcardCharacters(pattern))
                 {
-                    WildcardPattern wildcard = WildcardPattern.Get(NormalizeServiceNamePattern(pattern), WildcardOptions.IgnoreCase);
+                    WildcardPattern wildcard = WildcardPattern.Get(NormalizeServiceNamePattern(pattern, AllServices), WildcardOptions.IgnoreCase);
                     foreach (ServiceController service in AllServices)
                     {
                         if (!wildcard.IsMatch(service.ServiceName))
@@ -593,12 +608,15 @@ namespace Microsoft.PowerShell.Commands
 #if UNIX
             // Create invocation-local controllers for the input objects: they carry the
             // producer run's owner token, so refresh and mutation must run under the
-            // consuming run's token and stay cancellable by it. Their state is brought up
-            // to date from the cmdlet's enumeration, which is taken once however many
-            // objects are piped, instead of once per object.
+            // consuming run's token and stay cancellable by it. Each record is brought up
+            // to date when it is processed: with a single-unit query on systemd, and from
+            // the cmdlet's enumeration for the managers that have no such query.
             foreach (ServiceController service in InputObject)
             {
-                UnixServiceController local = ((UnixServiceController)service).CreateInvocationLocal(ServiceInvocationToken, AllServices);
+                UnixServiceController source = (UnixServiceController)service;
+                UnixServiceController local = source.ManagerKind == ServiceManagerKind.Systemd
+                    ? source.CreateInvocationLocal(ServiceInvocationToken)
+                    : source.CreateInvocationLocal(ServiceInvocationToken, AllServices);
                 IncludeExcludeAdd(matchingServices, local, false);
             }
 #else
@@ -664,7 +682,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (string pattern in matchList)
             {
                 WildcardPattern wildcard = WildcardPattern.Get(
-                    byDisplayName ? pattern : NormalizeServiceNamePattern(pattern),
+                    byDisplayName ? pattern : NormalizeServiceNamePattern(pattern, AllServices),
                     WildcardOptions.IgnoreCase);
                 if (wildcard.IsMatch(serviceID))
                     return true;
@@ -677,13 +695,15 @@ namespace Microsoft.PowerShell.Commands
         /// Adapts a service name pattern to the way the platform reports service names.
         /// </summary>
         /// <param name="pattern">The pattern given for a service name.</param>
+        /// <param name="services">The services the pattern is matched against.</param>
         /// <returns>The pattern to match against the reported names.</returns>
-        private static string NormalizeServiceNamePattern(string pattern)
+        private static string NormalizeServiceNamePattern(string pattern, ServiceController[] services)
         {
 #if UNIX
             // systemd unit suffixes are left off service names, so they are left off
-            // patterns too: 'ssh*.service' matches the same services as 'ssh*'.
-            return UnixServiceController.RemoveUnitSuffixFromPattern(pattern);
+            // patterns too: 'ssh*.service' matches the same services as 'ssh*'. Only the
+            // manager that reported the services decides whether names carry the suffix.
+            return UnixServiceController.RemoveUnitSuffixFromPattern(pattern, UnixServiceController.UsesUnitSuffix(services));
 #else
             return pattern;
 #endif
@@ -1092,7 +1112,11 @@ namespace Microsoft.PowerShell.Commands
                         );
                     return true; // service reached target status
                 }
+#if UNIX
+                catch (System.TimeoutException) // still waiting
+#else
                 catch (System.ServiceProcess.TimeoutException) // still waiting
+#endif
                 {
                     if (serviceController.Status != pendingStatus
                         // NTRAID#Windows Out Of Band Releases-919945-2005/09/27-JonN
