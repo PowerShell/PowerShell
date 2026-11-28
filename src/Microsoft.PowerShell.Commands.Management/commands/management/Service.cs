@@ -1,7 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#if !UNIX // Not built on Unix
+#if UNIX
+// On Unix the service cmdlets run through a Unix service-manager facade; the
+// aliases below make the cmdlet implementation in this file work unchanged.
+using NativeMethods = Microsoft.PowerShell.Commands.UnixServiceNativeMethods;
+using ServiceController = Microsoft.PowerShell.Commands.UnixServiceController;
+#endif
 
 using System;
 using System.Collections.Generic;
@@ -24,8 +29,23 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements the base for service commands.
     /// </summary>
+#if UNIX
+    public abstract class ServiceBaseCommand : Cmdlet, IDisposable
+#else
     public abstract class ServiceBaseCommand : Cmdlet
+#endif
     {
+#if UNIX
+        /// <summary>
+        /// Initializes the base command and registers the invocation, so the service manager
+        /// commands it launches can be cancelled until the command is disposed.
+        /// </summary>
+        protected ServiceBaseCommand()
+        {
+            UnixServiceController.BeginInvocation(ServiceInvocationToken);
+        }
+#endif
+
         #region Internal
 
         /// <summary>
@@ -116,6 +136,7 @@ namespace Microsoft.PowerShell.Commands
             string securityDescriptorSddl,
             NakedWin32Handle hService)
         {
+#if !UNIX
             var rawSecurityDescriptor = new RawSecurityDescriptor(securityDescriptorSddl);
             RawAcl rawDiscretionaryAcl = rawSecurityDescriptor.DiscretionaryAcl;
             var discretionaryAcl = new DiscretionaryAcl(false, false, rawDiscretionaryAcl);
@@ -143,7 +164,37 @@ namespace Microsoft.PowerShell.Commands
                     StringUtil.Format(ServiceResources.CouldNotSetServiceSecurityDescriptorSddl, service.ServiceName, exception.Message),
                     accessDenied ? ErrorCategory.PermissionDenied : ErrorCategory.InvalidOperation);
             }
+#endif // !UNIX
         }
+
+#if UNIX
+        /// <summary>
+        /// Gets the invocation token that correlates this cmdlet run with its in-flight
+        /// service manager commands, so a pipeline stop cancels exactly this run's commands.
+        /// </summary>
+        internal Guid ServiceInvocationToken { get; } = Guid.NewGuid();
+
+        /// <summary>
+        /// Cancels a blocking service-manager command when the pipeline is stopped,
+        /// so a hung init script or manager command can't keep the pipeline waiting
+        /// after <see cref="Cmdlet.StopProcessing"/> or remoting cancellation.
+        /// </summary>
+        protected override void StopProcessing()
+        {
+            UnixServiceController.CancelActiveCommand(ServiceInvocationToken);
+        }
+
+        /// <summary>
+        /// Releases the invocation's cancellation state. Engine disposal is guaranteed
+        /// even after terminating errors and pipeline cancellations, so the static
+        /// cancellation registry can't accumulate state across invocations.
+        /// </summary>
+        void IDisposable.Dispose()
+        {
+            UnixServiceController.EndInvocation(ServiceInvocationToken);
+            GC.SuppressFinalize(this);
+        }
+#endif
         #endregion Internal
     }
     #endregion ServiceBaseCommand
@@ -300,7 +351,28 @@ namespace Microsoft.PowerShell.Commands
         /// but it is reasonable to expect that SecurityException is
         /// among them.  Errors here will terminate the cmdlet.
         /// </exception>
+#if UNIX
+        internal ServiceController[] AllServices
+        {
+            get
+            {
+                if (_allServices is null)
+                {
+                    _allServices = ServiceController.GetServices(ServiceInvocationToken);
+                    foreach (ServiceController service in _allServices)
+                    {
+                        // Correlate each service with this cmdlet run so a pipeline stop
+                        // cancels the commands launched through it.
+                        ((UnixServiceController)service).OwnerToken = ServiceInvocationToken;
+                    }
+                }
+
+                return _allServices;
+            }
+        }
+#else
         internal ServiceController[] AllServices => _allServices ??= ServiceController.GetServices();
+#endif
 
         private ServiceController[] _allServices;
 
@@ -310,15 +382,41 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
+#if UNIX
+                // Look the name up in the cmdlet's enumeration first: resolving each name
+                // through a new controller would enumerate the whole catalog again for
+                // every name. An enumeration that doesn't contain the name is conclusive.
+                UnixServiceController sc;
+                if (AllServices.Length > 0)
+                {
+                    sc = UnixServiceController.FindService(nameOfService, AllServices, ServiceInvocationToken);
+                    if (sc is null)
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    sc = new UnixServiceController(nameOfService, ServiceInvocationToken);
+                }
+#else
                 var sc = new ServiceController(nameOfService);
+#endif
                 // This will throw if the service doesn't exist
                 var unused = sc.Status;
 
                 // No exception, then this is an existing, valid service. Return it.
                 return sc;
             }
-            catch (InvalidOperationException) { }
-            catch (ArgumentException) { }
+            catch (InvalidOperationException e) when (!e.Data.Contains("NoServiceManagerFound"))
+            {
+                // The service doesn't exist. A tagged exception means no service manager
+                // was found at all, which is an infrastructure failure that must not be
+                // reported as a missing service.
+            }
+            catch (ArgumentException)
+            {
+            }
 
             return null;
         }
@@ -331,18 +429,35 @@ namespace Microsoft.PowerShell.Commands
         internal List<ServiceController> MatchingServices()
         {
             List<ServiceController> matchingServices;
-            switch (selectionMode)
+            try
             {
-                case SelectionMode.DisplayName:
-                    matchingServices = MatchingServicesByDisplayName();
-                    break;
-                case SelectionMode.InputObject:
-                    matchingServices = MatchingServicesByInput();
-                    break;
-                default:
-                    matchingServices = MatchingServicesByServiceName();
-                    break;
+                switch (selectionMode)
+                {
+                    case SelectionMode.DisplayName:
+                        matchingServices = MatchingServicesByDisplayName();
+                        break;
+                    case SelectionMode.InputObject:
+                        matchingServices = MatchingServicesByInput();
+                        break;
+                    default:
+                        matchingServices = MatchingServicesByServiceName();
+                        break;
+                }
             }
+            catch (InvalidOperationException e) when (e.Data.Contains("NoServiceManagerFound"))
+            {
+                // On Unix, no supported service manager was found on PATH. Report the
+                // documented terminating error for every service cmdlet instead of
+                // letting the tagged exception escape with a generic error ID.
+                ErrorRecord err = new ErrorRecord(
+                    e,
+                    "NoServiceManagerFound",
+                    ErrorCategory.ObjectNotFound,
+                    null);
+                ThrowTerminatingError(err);
+                throw;
+            }
+
             // 2004/12/16 Note that the services will be sorted
             //  before being stopped.  JimTru confirms that this is OK.
             matchingServices.Sort(ServiceComparison);
@@ -389,7 +504,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (WildcardPattern.ContainsWildcardCharacters(pattern))
                 {
-                    WildcardPattern wildcard = WildcardPattern.Get(pattern, WildcardOptions.IgnoreCase);
+                    WildcardPattern wildcard = WildcardPattern.Get(NormalizeServiceNamePattern(pattern, AllServices), WildcardOptions.IgnoreCase);
                     foreach (ServiceController service in AllServices)
                     {
                         if (!wildcard.IsMatch(service.ServiceName))
@@ -441,6 +556,12 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewInvalidOperationException();
             }
 
+#if UNIX
+            // Installed services that were never loaded are listed without a description.
+            // Look their descriptions up so that they can be found by display name as well.
+            UnixServiceController.LoadMissingDescriptions(AllServices, ServiceInvocationToken);
+#endif
+
             foreach (string pattern in DisplayName)
             {
                 WildcardPattern wildcard =
@@ -484,11 +605,27 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewInvalidOperationException();
             }
 
+#if UNIX
+            // Create invocation-local controllers for the input objects: they carry the
+            // producer run's owner token, so refresh and mutation must run under the
+            // consuming run's token and stay cancellable by it. Each record is brought up
+            // to date when it is processed: with a single-unit query on systemd, and from
+            // the cmdlet's enumeration for the managers that have no such query.
+            foreach (ServiceController service in InputObject)
+            {
+                UnixServiceController source = (UnixServiceController)service;
+                UnixServiceController local = source.ManagerKind == ServiceManagerKind.Systemd
+                    ? source.CreateInvocationLocal(ServiceInvocationToken)
+                    : source.CreateInvocationLocal(ServiceInvocationToken, AllServices);
+                IncludeExcludeAdd(matchingServices, local, false);
+            }
+#else
             foreach (ServiceController service in InputObject)
             {
                 service.Refresh();
                 IncludeExcludeAdd(matchingServices, service, false);
             }
+#endif
 
             return matchingServices;
         }
@@ -540,14 +677,36 @@ namespace Microsoft.PowerShell.Commands
             string serviceID = (selectionMode == SelectionMode.DisplayName)
                                 ? service.DisplayName
                                 : service.ServiceName;
+            // Patterns for names get the same treatment as the names themselves.
+            bool byDisplayName = selectionMode == SelectionMode.DisplayName;
             foreach (string pattern in matchList)
             {
-                WildcardPattern wildcard = WildcardPattern.Get(pattern, WildcardOptions.IgnoreCase);
+                WildcardPattern wildcard = WildcardPattern.Get(
+                    byDisplayName ? pattern : NormalizeServiceNamePattern(pattern, AllServices),
+                    WildcardOptions.IgnoreCase);
                 if (wildcard.IsMatch(serviceID))
                     return true;
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Adapts a service name pattern to the way the platform reports service names.
+        /// </summary>
+        /// <param name="pattern">The pattern given for a service name.</param>
+        /// <param name="services">The services the pattern is matched against.</param>
+        /// <returns>The pattern to match against the reported names.</returns>
+        private static string NormalizeServiceNamePattern(string pattern, ServiceController[] services)
+        {
+#if UNIX
+            // systemd unit suffixes are left off service names, so they are left off
+            // patterns too: 'ssh*.service' matches the same services as 'ssh*'. Only the
+            // manager that reported the services decides whether names carry the suffix.
+            return UnixServiceController.RemoveUnitSuffixFromPattern(pattern, UnixServiceController.UsesUnitSuffix(services));
+#else
+            return pattern;
+#endif
         }
         #endregion Internal
 
@@ -610,6 +769,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
+#if !UNIX
             nint scManagerHandle = nint.Zero;
             if (!DependentServices && !RequiredServices)
             {
@@ -669,12 +829,53 @@ namespace Microsoft.PowerShell.Commands
                     Diagnostics.Assert(succeeded, "SCManager handle close failed");
                 }
             }
+#else
+            // On Unix the enumeration and status come from the service manager facade.
+            try
+            {
+                foreach (ServiceController service in MatchingServices())
+                {
+                    if (!DependentServices.IsPresent && !RequiredServices.IsPresent)
+                    {
+                        WriteObject(service);
+                    }
+                    else
+                    {
+                        if (DependentServices.IsPresent)
+                        {
+                            foreach (ServiceController dependantserv in service.DependentServices)
+                            {
+                                WriteObject(dependantserv);
+                            }
+                        }
+
+                        if (RequiredServices.IsPresent)
+                        {
+                            foreach (ServiceController servicedependedon in service.ServicesDependedOn)
+                            {
+                                WriteObject(servicedependedon);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (InvalidOperationException e) when (e.Data.Contains("NoServiceManagerFound"))
+            {
+                ErrorRecord err = new ErrorRecord(
+                    e,
+                    "NoServiceManagerFound",
+                    ErrorCategory.ObjectNotFound,
+                    null);
+                ThrowTerminatingError(err);
+            }
+#endif
         }
 
         #endregion Overrides
 
 #nullable enable
 
+#if !UNIX
         /// <summary>
         /// Writes a verbose message when a service property query fails.
         /// </summary>
@@ -799,6 +1000,7 @@ namespace Microsoft.PowerShell.Commands
 
             return serviceAsPSObj;
         }
+#endif // !UNIX
     }
 #nullable disable
     #endregion GetServiceCommand
@@ -910,7 +1112,11 @@ namespace Microsoft.PowerShell.Commands
                         );
                     return true; // service reached target status
                 }
+#if UNIX
+                catch (System.TimeoutException) // still waiting
+#else
                 catch (System.ServiceProcess.TimeoutException) // still waiting
+#endif
                 {
                     if (serviceController.Status != pendingStatus
                         // NTRAID#Windows Out Of Band Releases-919945-2005/09/27-JonN
@@ -947,6 +1153,17 @@ namespace Microsoft.PowerShell.Commands
             {
                 serviceController.Start();
             }
+#if UNIX
+            catch (InvalidOperationException e) when (e.Data.Contains("SudoRequired"))
+            {
+                WriteError(new ErrorRecord(
+                    new ServiceCommandException(e.Message) { ServiceName = serviceController.ServiceName },
+                    "SudoRequired",
+                    ErrorCategory.PermissionDenied,
+                    serviceController));
+                return false;
+            }
+#endif
             catch (Win32Exception e)
             {
                 if (e.NativeErrorCode != NativeMethods.ERROR_SERVICE_ALREADY_RUNNING)
@@ -1002,6 +1219,7 @@ namespace Microsoft.PowerShell.Commands
             // if the service is not running, but this is not an error.
 
             List<ServiceController> stoppedServices = new();
+#if !UNIX
             ServiceController[] dependentServices = null;
 
             try
@@ -1057,12 +1275,30 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+#else
+            // On Unix, the system service manager handles service ordering and dependencies
+            // itself, so the Windows dependency precheck is skipped and **Force** is accepted
+            // for script compatibility. Dependent services can still be queried explicitly
+            // through **DependentServices**.
+#endif
 
             Exception exception = null;
             try
             {
                 serviceController.Stop();
             }
+#if UNIX
+            catch (InvalidOperationException e) when (e.Data.Contains("SudoRequired"))
+            {
+                WriteError(new ErrorRecord(
+                    new ServiceCommandException(e.Message) { ServiceName = serviceController.ServiceName },
+                    "SudoRequired",
+                    ErrorCategory.PermissionDenied,
+                    serviceController));
+                RemoveNotStoppedServices(stoppedServices);
+                return stoppedServices;
+            }
+#endif
             catch (Win32Exception e)
             {
                 if (e.NativeErrorCode != NativeMethods.ERROR_SERVICE_NOT_ACTIVE)
@@ -1116,6 +1352,7 @@ namespace Microsoft.PowerShell.Commands
             return stoppedServices;
         }
 
+#if !UNIX
         /// <summary>
         /// Check if all dependent services are stopped.
         /// </summary>
@@ -1128,6 +1365,7 @@ namespace Microsoft.PowerShell.Commands
         {
             return Array.TrueForAll(dependentServices, static service => service.Status == ServiceControllerStatus.Stopped);
         }
+#endif
 
         /// <summary>
         /// This removes all services that are not stopped from a list of services.
@@ -1385,6 +1623,15 @@ namespace Microsoft.PowerShell.Commands
 
                 if (DoStartService(serviceController))
                 {
+#if UNIX
+                    // Report the state the manager sees rather than the one assumed after
+                    // the command: a oneshot unit, for example, can have completed and be
+                    // inactive again already.
+                    if (PassThru)
+                    {
+                        serviceController.Refresh();
+                    }
+#endif
                     if (PassThru)
                         WriteObject(serviceController);
                 }
@@ -1393,6 +1640,7 @@ namespace Microsoft.PowerShell.Commands
     }
     #endregion StartServiceCommand
 
+#if !UNIX
     #region SuspendServiceCommand
     /// <summary>
     /// This class implements the suspend-service command.
@@ -1424,7 +1672,9 @@ namespace Microsoft.PowerShell.Commands
         }
     }
     #endregion SuspendServiceCommand
+#endif // !UNIX
 
+#if !UNIX
     #region ResumeServiceCommand
     /// <summary>
     /// This class implements the resume-service command.
@@ -1457,6 +1707,7 @@ namespace Microsoft.PowerShell.Commands
         }
     }
     #endregion ResumeServiceCommand
+#endif // !UNIX
 
     #region RestartServiceCommand
 
@@ -1484,6 +1735,60 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
+#if UNIX
+            // On Unix the service manager's native restart operation is used, so that the
+            // manager's dependency semantics (for example systemd's PartOf=) are preserved:
+            // a stop followed by a start would leave services stopped through such a
+            // dependency down.
+            foreach (ServiceController serviceController in MatchingServices())
+            {
+                // confirm the operation first
+                // this is always false if WhatIf is set
+                if (!ShouldProcessServiceOperation(serviceController))
+                {
+                    continue;
+                }
+
+                Exception exception = null;
+                try
+                {
+                    serviceController.Restart();
+                }
+                catch (InvalidOperationException e) when (e.Data.Contains("SudoRequired"))
+                {
+                    WriteError(new ErrorRecord(
+                        new ServiceCommandException(e.Message) { ServiceName = serviceController.ServiceName },
+                        "SudoRequired",
+                        ErrorCategory.PermissionDenied,
+                        serviceController));
+                    continue;
+                }
+                catch (Win32Exception e)
+                {
+                    exception = e;
+                }
+
+                if (exception != null)
+                {
+                    // This service refused to accept the restart command,
+                    // so write a non-terminating error.
+                    WriteNonTerminatingError(serviceController,
+                        exception,
+                        "CouldNotRestartService",
+                        ServiceResources.CouldNotRestartService,
+                        ErrorCategory.OpenError);
+                    continue;
+                }
+
+                if (PassThru)
+                {
+                    // Report the state the manager sees rather than the one assumed after
+                    // the command.
+                    serviceController.Refresh();
+                    WriteObject(serviceController);
+                }
+            }
+#else
             foreach (ServiceController serviceController in MatchingServices())
             {
                 // confirm the operation first
@@ -1508,10 +1813,12 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+#endif
         }
     }
     #endregion RestartServiceCommand
 
+#if !UNIX
     #region SetServiceCommand
 
     /// <summary>
@@ -2030,7 +2337,9 @@ namespace Microsoft.PowerShell.Commands
 
     }
     #endregion SetServiceCommand
+#endif // !UNIX
 
+#if !UNIX
     #region NewServiceCommand
     /// <summary>
     /// This class implements the New-Service command.
@@ -2396,7 +2705,9 @@ namespace Microsoft.PowerShell.Commands
         #endregion Overrides
     }
     #endregion NewServiceCommand
+#endif // !UNIX
 
+#if !UNIX
     #region RemoveServiceCommand
     /// <summary>
     /// This class implements the Remove-Service command.
@@ -2565,6 +2876,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion Overrides
     }
     #endregion RemoveServiceCommand
+#endif // !UNIX
 
     #region ServiceCommandException
     /// <summary>
@@ -2636,6 +2948,7 @@ namespace Microsoft.PowerShell.Commands
     }
     #endregion ServiceCommandException
 
+#if !UNIX
     #region NativeMethods
     internal static class NativeMethods
     {
@@ -2922,6 +3235,7 @@ namespace Microsoft.PowerShell.Commands
         }
     }
     #endregion NativeMethods
+#endif // !UNIX
 
     #region ServiceStartupType
     /// <summary>
@@ -2942,5 +3256,3 @@ namespace Microsoft.PowerShell.Commands
     }
     #endregion ServiceStartupType
 }
-
-#endif // Not built on Unix
